@@ -46,7 +46,7 @@ const config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://gitlab.hidora.com/hikube/documentation-hikube',
+            'https://gitlab.hidora.com/hikube/documentation-hikube/-/tree/main',
         },
         theme: {
           customCss: './src/css/custom.css',
