@@ -1,5 +1,5 @@
 ---
-title: Installation
+title: API
 ---
 
 # Installation du Cloud Privé
@@ -15,3 +15,4 @@ title: Installation
 1. **Télécharger l'ISO** :
    ```bash
    wget http://example.com/cloud-private.iso
+   ```

@@ -16,6 +16,4 @@ Cette documentation vous guidera pour :
 ---
 
 **Sections principales** :
-- [Guide de démarrage](getting-started/installation.md)
-- [Tutoriels](tutorials/deploy-vm.md)
-- [Référence technique](reference/api.md)
+- [API](api/index.md)
