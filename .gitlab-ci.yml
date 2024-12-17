@@ -1,0 +1,35 @@
+stages:
+  - build
+  - deploy
+
+variables:
+  NODE_VERSION: "18" 
+  GIT_DEPTH: 1
+
+build:
+  stage: build
+  image: node:$NODE_VERSION-alpine
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}-yarn
+    paths:
+      - node_modules/
+  script:
+    - yarn install --frozen-lockfile --prefer-offline
+    - yarn build
+  artifacts:
+    paths:
+      - build/
+
+deploy_prod:
+  stage: deploy
+  image: debian:latest  # Utilisez une image qui a `apt`, ou ajustez en fonction de votre environnement
+  before_script:
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - 'which rsync || ( apt-get update -y && apt-get install rsync -y )' # Installe rsync si ce n'est pas déjà fait
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+  script:
+    - rsync -avz --delete --chown=apache:apache -e "ssh -o StrictHostKeyChecking=no" build/ $SSH_USER@$SSH_HOST_PROD:/var/www/webroot/ROOT/build/
+    - ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST_PROD 'sudo systemctl reload httpd'
+  only:
+    - main
