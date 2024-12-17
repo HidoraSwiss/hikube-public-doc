@@ -119,7 +119,8 @@ const config = {
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} Hidora
+        copyright: `Copyright © ${new Date().getFullYear()} Hidora`,
+      },
       prism: {
         theme: prismThemes.github,
         darkTheme: prismThemes.dracula,
