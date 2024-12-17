@@ -29,7 +29,7 @@ deploy_prod:
     - eval $(ssh-agent -s)
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
   script:
-    - rsync -avz --delete --chown=apache:apache -e "ssh -o StrictHostKeyChecking=no" build/ $SSH_USER@$SSH_HOST_PROD:/var/www/webroot/ROOT/build/
+    - rsync -avz --delete --chown=apache:apache -e "ssh -2 -o StrictHostKeyChecking=no" build/ $SSH_USER@$SSH_HOST_PROD:/var/www/webroot/ROOT/build/
     - ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST_PROD 'sudo systemctl reload httpd'
   only:
     - main
