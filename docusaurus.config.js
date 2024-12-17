@@ -68,6 +68,9 @@ const config = {
         },
         items: [
           {
+            type: 'localeDropdown',
+          },
+          {
             type: 'docSidebar',
             sidebarId: 'tutorialSidebar',
             position: 'left',
