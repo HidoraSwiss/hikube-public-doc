@@ -72,9 +72,9 @@ const config = {
           },
           {
             type: 'docSidebar',
-            sidebarId: 'tutorialSidebar',
+            sidebarId: 'docsSidebar',
             position: 'left',
-            label: 'Getting Started',
+            label: 'Documentation',
           },
           {
             href: 'https://hidora.io/ressources/',
