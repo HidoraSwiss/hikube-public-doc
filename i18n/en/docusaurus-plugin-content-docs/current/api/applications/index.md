@@ -1,5 +1,5 @@
 ---
-title: Applications Disponibles
+title: Applications
 ---
 
 # Applications disponibles dans l'API
