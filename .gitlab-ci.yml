@@ -14,8 +14,8 @@ build:
     paths:
       - node_modules/
   script:
-    - yarn install --frozen-lockfile --prefer-offline
-    - yarn build
+    - npm install --frozen-lockfile --prefer-offline
+    - npm build
   artifacts:
     paths:
       - build/
