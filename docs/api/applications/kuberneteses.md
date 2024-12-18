@@ -58,7 +58,7 @@ Les nœuds worker du cluster Kubernetes sont déployés en tant que **machines v
 - **Hugepages** pour améliorer les performances mémoire.
 - **vCPU-To-Memory Ratios** pour une utilisation optimale des ressources.
 
-Pour plus de détails sur les séries et les ressources des machines virtuelles, consultez la page [Machines Virtuelles](machines-virtuelles.md).
+Pour plus de détails sur les séries et les ressources des machines virtuelles, consultez la page [Machines Virtuelles](virtualmachines.md).
 
 ---
 
