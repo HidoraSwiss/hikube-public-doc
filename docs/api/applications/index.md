@@ -15,12 +15,10 @@ Vous trouverez ci-dessous la liste des applications disponibles, chacune avec un
 ### Stockage
 
 - **[Bucket](buckets.md)** : Gestion des espaces de stockage d'objets.
-- **[SeaweedFS](seaweedfses.md)** : Système de fichiers distribué et rapide pour le stockage en cloud.
 
 ### Bases de Données
 
 - **[ClickHouse](clickhouses.md)** : Base de données analytique orientée colonnes, idéale pour des requêtes rapides.
-- **[Etcd](etcds.md)** : Base de données clé-valeur distribuée pour le stockage de configuration.
 - **[FerretDB](ferretdb.md)** : Base de données MongoDB-compatible, déployée sur PostgreSQL.
 - **[MySQL](mysqls.md)** : Base de données relationnelle populaire.
 - **[Postgres](postgreses.md)** : Base de données relationnelle robuste et extensible.
@@ -32,12 +30,7 @@ Vous trouverez ci-dessous la liste des applications disponibles, chacune avec un
 
 - **[HTTP Cache](httpcaches.md)** : Gestion des caches HTTP pour améliorer les performances web.
 - **[TCP Balancer](tcpbalancers.md)** : Équilibrage de charge TCP pour les applications réseau.
-- **[Ingress](ingresses.md)** : Gestion des accès HTTP et HTTPS aux services.
 - **[VPN](vpns.md)** : Gestion des connexions sécurisées à travers le cloud.
-
-### Monitoring et Observabilité
-
-- **[Monitoring](monitorings.md)** : Solutions pour superviser et visualiser vos applications et services.
 
 ### Virtualisation
 
