@@ -2,8 +2,6 @@
 title: HTTPCache
 ---
 
-# HTTPCache
-
 Le service **HTTPCache** est un système de cache géré basé sur **Nginx** conçu pour optimiser le trafic web et améliorer les performances des applications web. Il combine des instances Nginx personnalisées avec **HAProxy** pour fournir un caching efficace et un équilibrage de charge.
 
 ---
@@ -68,14 +66,6 @@ Voici un schéma illustrant l'architecture :
 
 ---
 
-## Problèmes Connus
-
-- **Temps de réponse des upstreams dans le module VTS** :  
-  Le module **VTS** affiche des temps de réponse incorrects. Ce problème est documenté ici :  
-  [GitHub Issue - VTS Module](https://github.com/vozlt/nginx-module-vts/issues/198)
-
----
-
 ## Paramètres Configurables
 
 ### **Paramètres Généraux**
@@ -84,7 +74,7 @@ Voici un schéma illustrant l'architecture :
 |---------------------|--------------------------------------------------------------|------------------------|
 | `external`         | Permet l'accès externe au service HTTPCache depuis l'extérieur du cluster. | `false`               |
 | `size`             | Taille du volume persistant utilisé pour le cache.           | `10Gi`                |
-| `storageClass`     | Classe de stockage utilisée pour les données.                | `""` (non spécifié)   |
+| `storageClass`     | Classe de stockage utilisée pour les données.                | `"replicated"` ou `"local"`   |
 | `haproxy.replicas` | Nombre de réplicas pour HAProxy.                              | `2`                   |
 | `nginx.replicas`   | Nombre de réplicas pour Nginx.                                | `2`                   |
 
@@ -110,7 +100,7 @@ metadata:
 spec:
   external: true
   size: 20Gi
-  storageClass: "fast-storage"
+  storageClass: "replicated"
   haproxy:
     replicas: 2
   nginx:
@@ -119,6 +109,14 @@ spec:
     - url: "https://example-origin.com"
     - url: "https://another-origin.com"
 ```
+
+---
+
+## Problèmes Connus
+
+- **Temps de réponse des upstreams dans le module VTS** :  
+  Le module **VTS** affiche des temps de réponse incorrects. Ce problème est documenté ici :  
+  [GitHub Issue - VTS Module](https://github.com/vozlt/nginx-module-vts/issues/198)
 
 ---
 

@@ -2,8 +2,6 @@
 title: VPN
 ---
 
-# VPN
-
 Le **Managed VPN Service** est une solution essentielle pour garantir une communication sécurisée et privée sur Internet. Ce service simplifie le déploiement et la gestion des serveurs VPN, vous permettant d'établir facilement des connexions sécurisées.
 
 ---

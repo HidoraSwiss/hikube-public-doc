@@ -2,8 +2,6 @@
 title: Redis
 ---
 
-# Redis
-
 **Redis** est un data store en mémoire ultra-rapide et polyvalent, souvent utilisé comme cache pour améliorer considérablement les performances des applications. Le service **Managed Redis** fournit une solution clé en main pour le déploiement et la gestion des clusters Redis, garantissant une disponibilité et une réactivité optimales de vos données.
 
 ---
@@ -23,7 +21,7 @@ Ce service managé repose sur le **Spotahome Redis Operator**, qui offre une ges
 | `external`     | Permet l'accès externe depuis l'extérieur du cluster. | `false`               |
 | `size`         | Taille du volume persistant pour les données.         | `1Gi`                 |
 | `replicas`     | Nombre de réplicas Redis.                             | `2`                   |
-| `storageClass` | Classe de stockage utilisée pour les données.         | `""` (non spécifié)   |
+| `storageClass` | Classe de stockage utilisée pour les données.         | `"replicated"` ou `"local"`   |
 | `authEnabled`  | Active la génération automatique d'un mot de passe.   | `true`                |
 
 ---
@@ -41,7 +39,7 @@ spec:
   external: false
   size: 1Gi
   replicas: 2
-  storageClass: "fast-storage"
+  storageClass: "replicated"
   authEnabled: true
 ```
 

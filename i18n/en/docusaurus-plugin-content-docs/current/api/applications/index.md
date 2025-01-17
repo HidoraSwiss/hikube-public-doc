@@ -1,8 +1,6 @@
 ---
-title: Applications
+title: Applications disponibles dans l'API
 ---
-
-# Applications disponibles dans l'API
 
 L'API de notre cloud fournit un large éventail d'applications basées sur des ressources Kubernetes. Ces applications sont conçues pour répondre aux besoins variés en matière de stockage, bases de données, réseau, virtualisation et monitoring. Chaque application est gérée comme une ressource Kubernetes, permettant une intégration facile dans vos workflows existants.
 

@@ -2,8 +2,6 @@
 title: RabbitMQ
 ---
 
-# RabbitMQ
-
 **RabbitMQ** est un puissant courtier de messages, essentiel dans les systèmes distribués modernes. Le service **Managed RabbitMQ** simplifie le déploiement et la gestion des clusters RabbitMQ, garantissant fiabilité et évolutivité pour vos besoins de messagerie.
 
 ---
@@ -23,7 +21,7 @@ Ce service utilise l'opérateur officiel RabbitMQ (**RabbitMQ Cluster Operator**
 | `external`     | Permet l'accès externe depuis l'extérieur du cluster. | `false`               |
 | `size`         | Taille du volume persistant pour les données.         | `10Gi`                |
 | `replicas`     | Nombre de réplicas RabbitMQ.                          | `3`                   |
-| `storageClass` | Classe de stockage utilisée pour les données.         | `""` (non spécifié)   |
+| `storageClass` | Classe de stockage utilisée pour les données.         | `"replicated"` ou `"local"`   |
 
 ---
 
@@ -49,7 +47,7 @@ spec:
   external: false
   size: 20Gi
   replicas: 3
-  storageClass: "fast-storage"
+  storageClass: "replicated"
   users:
     - name: "admin"
       password: "secure-password"

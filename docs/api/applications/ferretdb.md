@@ -2,33 +2,7 @@
 title: FerretDB
 ---
 
-# FerretDB
-
 FerretDB est une base de données compatible avec MongoDB, s'appuyant sur PostgreSQL comme backend. Elle permet de bénéficier de la simplicité de MongoDB tout en exploitant la robustesse de PostgreSQL.
-
----
-
-## Restaurer un Backup
-
-Vous pouvez restaurer un backup de ClickHouse à l'aide de Restic. Voici les étapes principales :
-
-### Trouver un Snapshot
-
-Utilisez la commande suivante pour lister les snapshots disponibles dans votre bucket S3 :
-
-```bash
-restic -r s3:s3.example.org/clickhouse-backups/table_name snapshots
-```
-
-### Restaurer le Snapshot
-
-Pour restaurer le snapshot le plus récent, exécutez la commande suivante en spécifiant une cible de restauration :
-
-```bash
-restic -r s3:s3.example.org/clickhouse-backups/table_name restore latest --target /tmp/
-````
-
-Pour en savoir plus sur l'utilisation de Restic, consultez [cet article détaillé](https://blog.aenix.io/restic-effective-backup-from-stdin-4bc1e8f083c1).
 
 ---
 
@@ -43,7 +17,7 @@ Ces paramètres permettent de configurer les aspects fondamentaux de FerretDB.
 | `external`              | Permet l'accès externe à FerretDB depuis l'extérieur du cluster.                                         | `false`               |
 | `size`                  | Taille du volume persistant principal.                                                                   | `10Gi`                |
 | `replicas`              | Nombre de réplicas PostgreSQL pour FerretDB.                                                             | `2`                   |
-| `storageClass`          | Classe de stockage Kubernetes utilisée pour les données.                                                 | `""` (non spécifié)   |
+| `storageClass`          | Classe de stockage Kubernetes utilisée pour les données.                                                 | `"replicated"` ou `"local"`   |
 | `quorum.minSyncReplicas`| Nombre minimum de réplicas synchrones nécessaires pour qu'une transaction soit considérée comme validée. | `0`                   |
 | `quorum.maxSyncReplicas`| Nombre maximum de réplicas synchrones pouvant valider une transaction (doit être inférieur au nombre total d'instances). | `0`                   |
 
@@ -51,11 +25,20 @@ Ces paramètres permettent de configurer les aspects fondamentaux de FerretDB.
 
 ### **Paramètres de Configuration**
 
-Ces paramètres concernent les configurations spécifiques à FerretDB.
+| **Nom**  | **Description**                                                      | **Valeur Par Défaut** |
+|----------|----------------------------------------------------------------------|------------------------|
+| `users`  | Configuration des utilisateurs ClickHouse. Chaque utilisateur peut avoir des permissions personnalisées. | `{}`                  |
 
-| **Nom**  | **Description**                       | **Valeur Par Défaut** |
-|----------|---------------------------------------|------------------------|
-| `users`  | Configuration des utilisateurs (sous forme d'objet YAML). | `{}`                  |
+**Exemple** :
+
+```yaml
+users:
+  user1:
+    password: strongpassword
+  user2:
+    readonly: true
+    password: hackme
+```
 
 ---
 
@@ -89,20 +72,44 @@ spec:
   external: true
   size: 20Gi
   replicas: 3
-  storageClass: "fast-storage"
+  storageClass: "replicated"
   quorum:
     minSyncReplicas: 1
     maxSyncReplicas: 2
   backup:
     enabled: true
     s3Region: "us-east-1"
-    s3Bucket: "s3.example.org/postgres-backups"
+    s3Bucket: "s3.tenant.hikube.cloud/postgres-backups"
     schedule: "0 2 * * *"
     cleanupStrategy: "--keep-last=5 --keep-daily=5 --keep-within-weekly=1m"
     s3AccessKey: "your-s3-access-key"
     s3SecretKey: "your-s3-secret-key"
     resticPassword: "your-restic-password"
 ```
+
+---
+
+## Restaurer un Backup
+
+Vous pouvez restaurer un backup de ClickHouse à l'aide de Restic. Voici les étapes principales :
+
+### Trouver un Snapshot
+
+Utilisez la commande suivante pour lister les snapshots disponibles dans votre bucket S3 :
+
+```bash
+restic -r s3:s3.tenant.hikube.cloud/clickhouse-backups/table_name snapshots
+```
+
+### Restaurer le Snapshot
+
+Pour restaurer le snapshot le plus récent, exécutez la commande suivante en spécifiant une cible de restauration :
+
+```bash
+restic -r s3:s3.tenant.hikube.cloud/clickhouse-backups/table_name restore latest --target /tmp/
+```
+
+Pour en savoir plus sur l'utilisation de Restic, consultez [cet article détaillé](https://blog.aenix.io/restic-effective-backup-from-stdin-4bc1e8f083c1).
 
 ---
 

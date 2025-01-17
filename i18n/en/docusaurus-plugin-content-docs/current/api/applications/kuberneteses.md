@@ -2,8 +2,6 @@
 title: Kubernetes
 ---
 
-# Kubernetes
-
 Le service **Managed Kubernetes** offre une solution optimisée pour gérer efficacement les charges de travail serveur. Kubernetes, devenu un standard de l'industrie, fournit une API unifiée et accessible, principalement configurée en YAML, facilitant la gestion des infrastructures par les équipes.
 
 ---
@@ -71,7 +69,7 @@ Pour plus de détails sur les séries et les ressources des machines virtuelles,
 |-----------------------------|---------------------------------------------------------------------------------|---------------------------|
 | `host`                     | Nom d'hôte utilisé pour accéder au cluster Kubernetes.                          | `""` (nom du cluster)     |
 | `controlPlane.replicas`    | Nombre de réplicas pour les composants du plan de contrôle.                     | `2`                      |
-| `storageClass`             | Classe de stockage utilisée pour les données des utilisateurs.                  | `replicated`             |
+| `storageClass`             | Classe de stockage utilisée pour les données des utilisateurs.                  | `"replicated"` ou `"local"`             |
 
 ### **Configuration des Groupes de Nœuds**
 

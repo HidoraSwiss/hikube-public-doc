@@ -2,8 +2,6 @@
 title: TCP Balancers
 ---
 
-# TCP Balancers
-
 Le service **Managed TCP Load Balancer** simplifie le déploiement et la gestion des load balancers TCP. Il permet de distribuer efficacement le trafic TCP entrant sur plusieurs serveurs backend, garantissant une haute disponibilité et une utilisation optimale des ressources.
 
 ---

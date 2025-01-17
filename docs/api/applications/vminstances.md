@@ -2,8 +2,6 @@
 title: Virtual Machine Instances
 ---
 
-# Virtual Machine Instances
-
 Une **Virtual Machine (VM)** simule du matériel informatique, permettant à divers systèmes d'exploitation et applications de s'exécuter dans un environnement isolé.
 
 ---
@@ -67,7 +65,7 @@ spec:
   disks:
     - name: "root-disk"
       size: "20Gi"
-      storageClass: "fast-storage"
+      storageClass: "replicated"
   resources:
     cpu: "2"
     memory: "4Gi"

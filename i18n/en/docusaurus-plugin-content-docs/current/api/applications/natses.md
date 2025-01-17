@@ -2,8 +2,6 @@
 title: NATS
 ---
 
-# NATS
-
 **NATS** est une solution de messagerie légère et performante utilisée pour les communications entre microservices, IoT et applications en temps réel. Ce service managé facilite la gestion des clusters NATS, avec prise en charge de Jetstream pour la messagerie persistante.
 
 ---
@@ -16,7 +14,7 @@ title: NATS
 |-----------------|------------------------------------------------------|------------------------|
 | `external`     | Permet l'accès externe depuis l'extérieur du cluster. | `false`               |
 | `replicas`     | Nombre de réplicas du cluster NATS.                   | `2`                   |
-| `storageClass` | Classe de stockage utilisée pour les données.         | `""` (non spécifié)   |
+| `storageClass` | Classe de stockage utilisée pour les données.         | `"replicated"` ou `"local"`  |
 
 ---
 
@@ -44,7 +42,7 @@ metadata:
 spec:
   external: false
   replicas: 3
-  storageClass: "fast-storage"
+  storageClass: "replicated"
   users:
     user1:
       password: "strongpassword"

@@ -2,8 +2,6 @@
 title: Virtual Machines
 ---
 
-# Virtual Machines
-
 Les **Virtual Machines (VMs)** offrent des ressources flexibles et personnalisables pour répondre aux besoins variés des applications. Cozystack propose plusieurs séries de VM adaptées à différents scénarios, ainsi que des préférences pour les systèmes d'exploitation invités.
 
 ---
@@ -118,7 +116,7 @@ spec:
   disks:
     - name: "root-disk"
       size: "20Gi"
-      storageClass: "fast-storage"
+      storageClass: "replicated"
   networks:
     - name: "default"
       type: "bridge"

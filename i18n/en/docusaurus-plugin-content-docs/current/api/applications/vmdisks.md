@@ -2,8 +2,6 @@
 title: VMDisks
 ---
 
-# VMDisks
-
 Un **Virtual Machine Disk (VM Disk)** est une unité de stockage virtuelle utilisée par les machines virtuelles. Ce disque peut être basé sur une image source ou défini avec une taille spécifique. Le service permet une configuration flexible des disques pour répondre aux besoins des machines virtuelles.
 
 ---
@@ -17,7 +15,7 @@ Un **Virtual Machine Disk (VM Disk)** est une unité de stockage virtuelle utili
 | `source`       | Emplacement de l'image source utilisée pour créer le disque.       | `{}`                  |
 | `optical`      | Indique si le disque doit être considéré comme un disque optique.  | `false`               |
 | `storage`      | Taille du disque allouée pour la machine virtuelle.                | `5Gi`                 |
-| `storageClass` | Classe de stockage utilisée pour les données.                      | `replicated`          |
+| `storageClass` | Classe de stockage utilisée pour les données.                      | `"replicated"` ou `"local"`          |
 
 ---
 
@@ -36,7 +34,7 @@ spec:
       url: "https://download.cirros-cloud.net/0.6.2/cirros-0.6.2-x86_64-disk.img"
   optical: false
   storage: 10Gi
-  storageClass: "fast-storage"
+  storageClass: "replicated"
 ```
 
 ---

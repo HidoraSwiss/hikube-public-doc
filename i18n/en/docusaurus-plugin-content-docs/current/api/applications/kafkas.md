@@ -2,8 +2,6 @@
 title: Kafka
 ---
 
-# Kafka
-
 Kafka est une plateforme de messagerie distribuée conçue pour gérer des flux de données en temps réel avec une haute disponibilité et une tolérance aux pannes. Cette page détaille les paramètres de configuration pour Kafka, y compris les options pour ZooKeeper, et propose un exemple d'utilisation.
 
 ---
@@ -19,10 +17,10 @@ Ces paramètres configurent les composants Kafka et ZooKeeper pour assurer leur 
 | `external`            | Permet l'accès externe à Kafka depuis l'extérieur du cluster. | `false`               |
 | `kafka.size`          | Taille du volume persistant pour les données Kafka.           | `10Gi`                |
 | `kafka.replicas`      | Nombre de réplicas Kafka.                                     | `3`                   |
-| `kafka.storageClass`  | Classe de stockage utilisée pour les données Kafka.           | `""` (non spécifié)   |
+| `kafka.storageClass`  | Classe de stockage utilisée pour les données Kafka.           | `"replicated"` ou `"local"`   |
 | `zookeeper.size`      | Taille du volume persistant pour les données ZooKeeper.       | `5Gi`                 |
 | `zookeeper.replicas`  | Nombre de réplicas ZooKeeper.                                 | `3`                   |
-| `zookeeper.storageClass` | Classe de stockage utilisée pour les données ZooKeeper.    | `""` (non spécifié)   |
+| `zookeeper.storageClass` | Classe de stockage utilisée pour les données ZooKeeper.    | `"replicated"` ou `"local"`   |
 
 ---
 
@@ -50,7 +48,7 @@ spec:
   kafka:
     size: 20Gi
     replicas: 3
-    storageClass: "fast-storage"
+    storageClass: "replicated"
   zookeeper:
     size: 10Gi
     replicas: 3
@@ -69,7 +67,7 @@ Dans cet exemple :
 - **`external`** : Activé pour permettre un accès externe à Kafka depuis l'extérieur du cluster.
 - **`kafka.size`** : Défini à `20Gi`, spécifiant la taille du volume persistant pour Kafka.
 - **`kafka.replicas`** : Configuré à `3`, garantissant la redondance et la haute disponibilité.
-- **`kafka.storageClass`** : Utilise une classe de stockage nommée `fast-storage`.
+- **`kafka.storageClass`** : Utilise une classe de stockage nommée `replicated`.
 - **`zookeeper.size`** : Défini à `10Gi` pour le stockage persistant des données ZooKeeper.
 - **`zookeeper.replicas`** : Configuré à `3`, assurant une tolérance aux pannes pour ZooKeeper.
 - **`zookeeper.storageClass`** : Utilise une classe de stockage fiable nommée `reliable-storage`.
@@ -90,7 +88,3 @@ Pour approfondir vos connaissances sur Kafka et ses composants, consultez les re
 
 - [**ZooKeeper Documentation**](https://zookeeper.apache.org/doc/r3.8.0/index.html)  
   Guide complet pour comprendre et configurer ZooKeeper, une composante clé pour le bon fonctionnement de Kafka.
-
----
-
-Cette page offre une vue d’ensemble complète pour configurer et déployer Kafka et ZooKeeper dans un environnement Kubernetes, tout en fournissant des outils pour optimiser leur utilisation.

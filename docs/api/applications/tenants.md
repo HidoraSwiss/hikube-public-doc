@@ -2,8 +2,6 @@
 title: Tenant
 ---
 
-# Tenant
-
 Un **Tenant** est l'unité principale de sécurité sur la plateforme. Il peut être comparé aux namespaces du noyau Linux. Les tenants peuvent être créés de manière récursive et suivent des règles spécifiques pour la gestion et l'héritage.
 
 ---
@@ -26,7 +24,7 @@ Chaque tenant possède son propre domaine. Par défaut, il hérite du domaine de
 
 Arborescence :
 
-```
+```scss
 tenant-root (example.org)
 └── tenant-foo (foo.example.org)
     └── kubernetes-cluster1 (kubernetes-cluster1.foo.example.org)
@@ -44,7 +42,7 @@ Un tenant de niveau inférieur peut accéder aux services du cluster de son pare
 
 Arborescence :
 
-```
+```scss
 tenant-u1
 ├── etcd
 ├── ingress

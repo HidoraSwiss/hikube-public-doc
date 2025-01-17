@@ -2,8 +2,6 @@
 title: PostgreSQL
 ---
 
-# PostgreSQL
-
 PostgreSQL est l'un des choix les plus populaires parmi les bases de données relationnelles, réputé pour ses fonctionnalités robustes et ses performances élevées. Le service **Managed PostgreSQL** offre un cluster répliqué auto-réparant, géré efficacement par l'opérateur **CloudNativePG**, largement reconnu dans la communauté.
 
 ---
@@ -11,22 +9,6 @@ PostgreSQL est l'un des choix les plus populaires parmi les bases de données re
 ## Détails du Déploiement
 
 Ce service managé repose sur l'opérateur **CloudNativePG**, garantissant une gestion fluide et des performances optimales pour vos charges de travail PostgreSQL.
-
----
-
-## Tutoriels
-
-### Comment basculer la réplique Master/Slave
-
-Pour effectuer un basculement manuel des répliques dans le cluster, suivez les instructions détaillées dans la [documentation officielle CloudNativePG](https://cloudnative-pg.io/documentation/1.15/rolling_update/#manual-updates-supervised).
-
-### Comment restaurer un backup
-
-1. Trouvez un snapshot disponible dans votre bucket S3 :
-   - Commande : `restic -r s3:s3.example.org/postgres-backups/database_name snapshots`
-2. Restaurez le dernier snapshot :
-   - Commande : `restic -r s3:s3.example.org/postgres-backups/database_name restore latest --target /tmp/`
-3. Consultez la section **Ressources Additionnelles** pour des détails sur Restic.
 
 ---
 
@@ -39,7 +21,7 @@ Pour effectuer un basculement manuel des répliques dans le cluster, suivez les 
 | `external`                  | Permet l'accès externe depuis l'extérieur du cluster.                                              | `false`               |
 | `size`                      | Taille du volume persistant pour les données.                                                      | `10Gi`                |
 | `replicas`                  | Nombre de réplicas PostgreSQL.                                                                     | `2`                   |
-| `storageClass`              | Classe de stockage utilisée pour les données.                                                      | `""` (non spécifié)   |
+| `storageClass`              | Classe de stockage utilisée pour les données.                                                      | `"replicated"` ou `"local"` |
 | `postgresql.parameters.max_connections` | Nombre maximal de connexions simultanées au serveur PostgreSQL.                              | `100`                 |
 | `quorum.minSyncReplicas`    | Nombre minimum de réplicas synchrones nécessaires pour valider une transaction.                    | `0`                   |
 | `quorum.maxSyncReplicas`    | Nombre maximum de réplicas synchrones pouvant valider une transaction (doit être inférieur au nombre total d'instances). | `0`                   |
@@ -53,6 +35,34 @@ Pour effectuer un basculement manuel des répliques dans le cluster, suivez les 
 | `users`      | Configuration des utilisateurs.   | `{}`                  |
 | `databases`  | Configuration des bases de données. | `{}`                  |
 
+**Exemple :**  
+
+```yaml
+users:
+  user1:
+    password: strongpassword
+  user2:
+    password: hackme
+  airflow:
+    password: qwerty123
+  debezium:
+    replication: true
+
+databases:
+  myapp:
+    roles:
+      admin:
+      - user1
+      - debezium
+      readonly:
+      - user2
+  airflow:
+    roles:
+      admin:
+      - airflow
+    extensions:
+    - hstore
+    
 ---
 
 ### **Paramètres de Backup**
@@ -76,30 +86,69 @@ Voici un exemple de configuration YAML pour un déploiement PostgreSQL avec deux
 
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
-kind: PostgreSQL
+kind: Postgres
 metadata:
   name: postgres-example
 spec:
-  external: true
+  external: false
   size: 20Gi
-  replicas: 2
-  storageClass: "fast-storage"
+  replicas: 3
+  storageClass: "local"
   postgresql:
     parameters:
       max_connections: 200
   quorum:
     minSyncReplicas: 1
     maxSyncReplicas: 2
+  users:
+    user1:
+      password: "securepassword"
+    user2:
+      password: "readonlypassword"
+    airflow:
+      password: "airflowpassword"
+    debezium:
+      replication: true
+  databases:
+    myapp:
+      roles:
+        admin:
+        - user1
+        - debezium
+        readonly:
+        - user2
+    airflow:
+      roles:
+        admin:
+        - airflow
+      extensions:
+      - hstore
   backup:
     enabled: true
-    s3Region: "us-east-1"
-    s3Bucket: "s3.example.org/postgres-backups"
-    schedule: "0 2 * * *"
-    cleanupStrategy: "--keep-last=5 --keep-daily=5 --keep-within-weekly=1m"
+    s3Region: "us-west-2"
+    s3Bucket: "s3.tenant.hikube.cloud/postgres-backups"
+    schedule: "0 3 * * *"
+    cleanupStrategy: "--keep-last=5 --keep-daily=7 --keep-within-weekly=2m"
     s3AccessKey: "your-s3-access-key"
     s3SecretKey: "your-s3-secret-key"
     resticPassword: "your-restic-password"
 ```
+
+---
+
+## Tutoriels
+
+### Comment basculer la réplique Master/Slave
+
+Pour effectuer un basculement manuel des répliques dans le cluster, suivez les instructions détaillées dans la [documentation officielle CloudNativePG](https://cloudnative-pg.io/documentation/1.15/rolling_update/#manual-updates-supervised).
+
+### Comment restaurer un backup
+
+1. Trouvez un snapshot disponible dans votre bucket S3 :
+   - Commande : `restic -r s3:s3.tenant.hikube.cloud/postgres-backups/database_name snapshots`
+2. Restaurez le dernier snapshot :
+   - Commande : `restic -r s3:s3.tenant.hikube.cloud/postgres-backups/database_name restore latest --target /tmp/`
+3. Consultez la section **Ressources Additionnelles** pour des détails sur Restic.
 
 ---
 
