@@ -62,7 +62,8 @@ databases:
       - airflow
     extensions:
     - hstore
-    
+```
+
 ---
 
 ### **Paramètres de Backup**
