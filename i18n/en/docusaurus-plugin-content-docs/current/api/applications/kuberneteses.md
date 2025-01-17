@@ -26,12 +26,13 @@ Le service déploie un cluster Kubernetes standard en utilisant :
 
 Les charges de travail utilisent des nœuds worker déployés en tant que machines virtuelles, tandis que le plan de contrôle est exécuté dans des conteneurs.
 
-### Fonctionnalités Disponibles :
+### Fonctionnalités Disponibles
 
 - Services **LoadBalancer** pour gérer l'accès externe.
 - Provisionnement facile de volumes persistants pour les applications.
 
 **Liens Utiles** :
+
 - [Documentation Kamaji](https://github.com/clastix/kamaji)
 - [Documentation Cluster API](https://cluster-api.sigs.k8s.io/)
 - [GitHub KubeVirt CSI Driver](https://github.com/kubevirt/csi-driver)
@@ -103,6 +104,7 @@ Les fonctionnalités suivantes peuvent être activées pour améliorer les capac
 Gère automatiquement les certificats SSL/TLS.
 
 Configuration :
+
 ```yaml
 addons:
   certManager:
@@ -117,6 +119,7 @@ addons:
 Gère l'accès HTTP/HTTPS au cluster.
 
 Configuration :
+
 ```yaml
 addons:
   ingressNginx:
@@ -134,6 +137,7 @@ addons:
 Implémente des pratiques GitOps pour le déploiement des applications.
 
 Configuration :
+
 ```yaml
 addons:
   fluxcd:
@@ -148,6 +152,7 @@ addons:
 Permet l'intégration avec des agents de monitoring comme FluentBit pour la collecte des logs et des métriques.
 
 Configuration :
+
 ```yaml
 addons:
   monitoringAgents:
@@ -167,7 +172,4 @@ addons:
   Guide sur l'utilisation de Kamaji en tant que fournisseur du plan de contrôle.
 - **[KubeVirt Documentation](https://kubevirt.io/)**  
   Informations sur l'orchestration des machines virtuelles dans Kubernetes.
-
----
-
-Cette page offre une vue complète sur la configuration et le déploiement de Kubernetes dans un environnement managé, avec des liens vers des ressources supplémentaires pour approfondir vos connaissances.
+  

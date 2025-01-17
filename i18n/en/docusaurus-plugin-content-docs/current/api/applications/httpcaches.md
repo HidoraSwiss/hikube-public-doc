@@ -27,7 +27,8 @@ Le service **HTTPCache** est un système de cache géré basé sur **Nginx** con
 
 ## Architecture de Déploiement
 
-L'architecture de déploiement se décompose en trois couches principales : 
+L'architecture de déploiement se décompose en trois couches principales :
+
 1. **Load Balancer** : HAProxy pour l'équilibrage de charge.
 2. **Caching Layer** : Instances Nginx avec PVC.
 3. **Origin Layer** : Les serveurs d'origine pour les contenus non mis en cache.
@@ -136,7 +137,3 @@ Pour en savoir plus sur la configuration et l'utilisation des composants de HTTP
 
 - [**Guide HAProxy : Hash Cohérent**](https://www.haproxy.com/blog/consisten-hashing-in-haproxy/)  
   Article détaillé expliquant le fonctionnement et les avantages du hash cohérent pour l'équilibrage de charge.
-
----
-
-Ces ressources vous permettront de mieux comprendre et maîtriser les différentes fonctionnalités de HTTPCache.

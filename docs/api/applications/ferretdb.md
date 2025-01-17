@@ -124,8 +124,4 @@ Pour approfondir vos connaissances sur FerretDB et ses fonctionnalités, voici q
 
 - [**Documentation Kubernetes - StorageClass**](https://kubernetes.io/docs/concepts/storage/storage-classes/)  
   En savoir plus sur la configuration des StorageClasses, essentielles pour gérer le stockage persistant.
-
----
-
-Ces ressources vous aideront à configurer et exploiter efficacement FerretDB.
-
+  

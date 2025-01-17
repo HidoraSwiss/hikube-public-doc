@@ -151,7 +151,4 @@ Pour approfondir vos connaissances sur MariaDB et son opérateur, consultez les 
 
 - **[Issue GitHub : Réplication MariaDB](https://github.com/mariadb-operator/mariadb-operator/issues/141#issuecomment-1804760231)**  
   Étapes pour résoudre les problèmes de réplication liés aux journaux binlog purgés.
-
----
-
-Cette page fournit une vue complète pour configurer et utiliser MariaDB dans un environnement managé, avec des tutoriels, des exemples de configuration, et des liens vers des ressources supplémentaires pour une meilleure maîtrise du service.
+  

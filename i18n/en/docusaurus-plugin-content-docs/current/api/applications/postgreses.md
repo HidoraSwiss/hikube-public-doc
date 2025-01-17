@@ -1,0 +1,115 @@
+---
+title: PostgreSQL
+---
+
+# PostgreSQL
+
+PostgreSQL est l'un des choix les plus populaires parmi les bases de données relationnelles, réputé pour ses fonctionnalités robustes et ses performances élevées. Le service **Managed PostgreSQL** offre un cluster répliqué auto-réparant, géré efficacement par l'opérateur **CloudNativePG**, largement reconnu dans la communauté.
+
+---
+
+## Détails du Déploiement
+
+Ce service managé repose sur l'opérateur **CloudNativePG**, garantissant une gestion fluide et des performances optimales pour vos charges de travail PostgreSQL.
+
+---
+
+## Tutoriels
+
+### Comment basculer la réplique Master/Slave
+
+Pour effectuer un basculement manuel des répliques dans le cluster, suivez les instructions détaillées dans la [documentation officielle CloudNativePG](https://cloudnative-pg.io/documentation/1.15/rolling_update/#manual-updates-supervised).
+
+### Comment restaurer un backup
+
+1. Trouvez un snapshot disponible dans votre bucket S3 :
+   - Commande : `restic -r s3:s3.example.org/postgres-backups/database_name snapshots`
+2. Restaurez le dernier snapshot :
+   - Commande : `restic -r s3:s3.example.org/postgres-backups/database_name restore latest --target /tmp/`
+3. Consultez la section **Ressources Additionnelles** pour des détails sur Restic.
+
+---
+
+## Paramètres Configurables
+
+### **Paramètres Généraux**
+
+| **Nom**                     | **Description**                                                                                     | **Valeur Par Défaut** |
+|------------------------------|-----------------------------------------------------------------------------------------------------|------------------------|
+| `external`                  | Permet l'accès externe depuis l'extérieur du cluster.                                              | `false`               |
+| `size`                      | Taille du volume persistant pour les données.                                                      | `10Gi`                |
+| `replicas`                  | Nombre de réplicas PostgreSQL.                                                                     | `2`                   |
+| `storageClass`              | Classe de stockage utilisée pour les données.                                                      | `""` (non spécifié)   |
+| `postgresql.parameters.max_connections` | Nombre maximal de connexions simultanées au serveur PostgreSQL.                              | `100`                 |
+| `quorum.minSyncReplicas`    | Nombre minimum de réplicas synchrones nécessaires pour valider une transaction.                    | `0`                   |
+| `quorum.maxSyncReplicas`    | Nombre maximum de réplicas synchrones pouvant valider une transaction (doit être inférieur au nombre total d'instances). | `0`                   |
+
+---
+
+### **Paramètres de Configuration**
+
+| **Nom**      | **Description**                    | **Valeur Par Défaut** |
+|--------------|------------------------------------|------------------------|
+| `users`      | Configuration des utilisateurs.   | `{}`                  |
+| `databases`  | Configuration des bases de données. | `{}`                  |
+
+---
+
+### **Paramètres de Backup**
+
+| **Nom**                  | **Description**                                    | **Valeur Par Défaut**                         |
+|---------------------------|----------------------------------------------------|-----------------------------------------------|
+| `backup.enabled`         | Active ou désactive les sauvegardes périodiques.  | `false`                                      |
+| `backup.s3Region`        | Région AWS S3 pour les sauvegardes.               | `us-east-1`                                  |
+| `backup.s3Bucket`        | Bucket S3 utilisé pour les sauvegardes.           | `s3.example.org/postgres-backups`            |
+| `backup.schedule`        | Planification des sauvegardes (format Cron).      | `0 2 * * *`                                  |
+| `backup.cleanupStrategy` | Stratégie pour nettoyer les anciennes sauvegardes. | `--keep-last=3 --keep-daily=3 --keep-within-weekly=1m` |
+| `backup.s3AccessKey`     | Clé d'accès AWS S3 pour l'authentification.       | `oobaiRus9pah8PhohL1ThaeTa4UVa7gu`           |
+| `backup.s3SecretKey`     | Clé secrète AWS S3 pour l'authentification.       | `ju3eum4dekeich9ahM1te8waeGai0oog`           |
+| `backup.resticPassword`  | Mot de passe pour le chiffrement Restic.          | `ChaXoveekoh6eigh4siesheeda2quai0`           |
+
+---
+
+## Exemple de Configuration
+
+Voici un exemple de configuration YAML pour un déploiement PostgreSQL avec deux réplicas et des sauvegardes activées :
+
+```yaml
+apiVersion: apps.cozystack.io/v1alpha1
+kind: PostgreSQL
+metadata:
+  name: postgres-example
+spec:
+  external: true
+  size: 20Gi
+  replicas: 2
+  storageClass: "fast-storage"
+  postgresql:
+    parameters:
+      max_connections: 200
+  quorum:
+    minSyncReplicas: 1
+    maxSyncReplicas: 2
+  backup:
+    enabled: true
+    s3Region: "us-east-1"
+    s3Bucket: "s3.example.org/postgres-backups"
+    schedule: "0 2 * * *"
+    cleanupStrategy: "--keep-last=5 --keep-daily=5 --keep-within-weekly=1m"
+    s3AccessKey: "your-s3-access-key"
+    s3SecretKey: "your-s3-secret-key"
+    resticPassword: "your-restic-password"
+```
+
+---
+
+## Ressources Additionnelles
+
+- **[Documentation Officielle CloudNativePG](https://cloudnative-pg.io/docs/)**  
+  Guide complet pour utiliser et configurer l'opérateur CloudNativePG.
+- **[GitHub CloudNativePG](https://github.com/cloudnative-pg/cloudnative-pg)**  
+  Détails sur l'opérateur CloudNativePG et ses fonctionnalités.
+- **[Guide Restic](https://itnext.io/restic-effective-backup-from-stdin-4bc1e8f083c1)**  
+  Apprenez à utiliser Restic pour gérer vos sauvegardes.
+- **[Documentation CloudNativePG sur le basculement manuel](https://cloudnative-pg.io/documentation/1.15/rolling_update/#manual-updates-supervised)**  
+  Instructions détaillées pour effectuer un basculement manuel.
