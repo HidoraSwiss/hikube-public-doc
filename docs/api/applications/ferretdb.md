@@ -6,6 +6,40 @@ FerretDB est une base de données compatible avec MongoDB, s'appuyant sur Postgr
 
 ---
 
+## Exemple de Configuration
+
+Voici un exemple de configuration pour FerretDB avec des sauvegardes activées et une personnalisation des réplicas :
+
+```yaml
+apiVersion: apps.cozystack.io/v1alpha1
+kind: FerretDB
+metadata:
+  name: ferretdb-example
+spec:
+  external: true
+  size: 20Gi
+  replicas: 3
+  storageClass: "replicated"
+  quorum:
+    minSyncReplicas: 1
+    maxSyncReplicas: 2
+  backup:
+    enabled: false
+  #  s3Region: "us-east-1"
+  #  s3Bucket: "s3.tenant.hikube.cloud/postgres-backups"
+  #  schedule: "0 2 * * *"
+  #  cleanupStrategy: "--keep-last=5 --keep-daily=5 --keep-within-weekly=1m"
+  #  s3AccessKey: "your-s3-access-key"
+  #  s3SecretKey: "your-s3-secret-key"
+  #  resticPassword: "your-restic-password"
+```
+
+À l'aide du kubeconfig fourni par Hikube et de ce yaml d'exemple, enregistré sous un fichier manifest.yaml, vous pouvez facilement tester le déploiement de l'application à l'aide de la commande suivante :
+
+`kubectl apply -f manifest.yaml`
+
+---
+
 ## Paramètres Configurables
 
 ### **Paramètres Généraux**
@@ -59,36 +93,6 @@ Ces paramètres permettent de configurer les sauvegardes périodiques de FerretD
 
 ---
 
-## Exemple de Configuration
-
-Voici un exemple de configuration pour FerretDB avec des sauvegardes activées et une personnalisation des réplicas :
-
-```yaml
-apiVersion: apps.cozystack.io/v1alpha1
-kind: FerretDB
-metadata:
-  name: ferretdb-example
-spec:
-  external: true
-  size: 20Gi
-  replicas: 3
-  storageClass: "replicated"
-  quorum:
-    minSyncReplicas: 1
-    maxSyncReplicas: 2
-  backup:
-    enabled: true
-    s3Region: "us-east-1"
-    s3Bucket: "s3.tenant.hikube.cloud/postgres-backups"
-    schedule: "0 2 * * *"
-    cleanupStrategy: "--keep-last=5 --keep-daily=5 --keep-within-weekly=1m"
-    s3AccessKey: "your-s3-access-key"
-    s3SecretKey: "your-s3-secret-key"
-    resticPassword: "your-restic-password"
-```
-
----
-
 ## Restaurer un Backup
 
 Vous pouvez restaurer un backup de ClickHouse à l'aide de Restic. Voici les étapes principales :
@@ -108,8 +112,6 @@ Pour restaurer le snapshot le plus récent, exécutez la commande suivante en sp
 ```bash
 restic -r s3:s3.tenant.hikube.cloud/clickhouse-backups/table_name restore latest --target /tmp/
 ```
-
-Pour en savoir plus sur l'utilisation de Restic, consultez [cet article détaillé](https://blog.aenix.io/restic-effective-backup-from-stdin-4bc1e8f083c1).
 
 ---
 

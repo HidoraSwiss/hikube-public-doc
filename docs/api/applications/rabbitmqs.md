@@ -6,9 +6,32 @@ title: RabbitMQ
 
 ---
 
-## Détails du Déploiement
+## Exemple de Configuration
 
-Ce service utilise l'opérateur officiel RabbitMQ (**RabbitMQ Cluster Operator**), garantissant la fiabilité et le fonctionnement fluide de vos instances RabbitMQ.
+Voici un exemple de configuration YAML pour un déploiement RabbitMQ avec trois réplicas :
+
+```yaml
+apiVersion: apps.cozystack.io/v1alpha1
+kind: RabbitMQ
+metadata:
+  name: rabbitmq-example
+spec:
+  external: false
+  size: 20Gi
+  replicas: 3
+  storageClass: "replicated"
+  users:
+    - name: "admin"
+      password: "secure-password"
+      tags: "administrator"
+  vhosts:
+    - name: "/"
+    - name: "app-vhost"
+```
+
+À l'aide du kubeconfig fourni par Hikube et de ce yaml d'exemple, enregistré sous un fichier manifest.yaml, vous pouvez facilement tester le déploiement de l'application à l'aide de la commande suivante :
+
+`kubectl apply -f manifest.yaml`
 
 ---
 
@@ -34,37 +57,9 @@ Ce service utilise l'opérateur officiel RabbitMQ (**RabbitMQ Cluster Operator**
 
 ---
 
-## Exemple de Configuration
-
-Voici un exemple de configuration YAML pour un déploiement RabbitMQ avec trois réplicas :
-
-```yaml
-apiVersion: apps.cozystack.io/v1alpha1
-kind: RabbitMQ
-metadata:
-  name: rabbitmq-example
-spec:
-  external: false
-  size: 20Gi
-  replicas: 3
-  storageClass: "replicated"
-  users:
-    - name: "admin"
-      password: "secure-password"
-      tags: "administrator"
-  vhosts:
-    - name: "/"
-    - name: "app-vhost"
-```
-
----
-
 ## Ressources Additionnelles
 
 Pour en savoir plus sur RabbitMQ et son opérateur, consultez les ressources suivantes :
-
-- **[GitHub RabbitMQ Cluster Operator](https://github.com/rabbitmq/cluster-operator/)**  
-  Référentiel officiel pour l'opérateur RabbitMQ.
 
 - **[Documentation Officielle RabbitMQ Cluster Operator](https://www.rabbitmq.com/kubernetes/operator/operator-overview.html)**  
   Guide complet sur l'utilisation de l'opérateur RabbitMQ.

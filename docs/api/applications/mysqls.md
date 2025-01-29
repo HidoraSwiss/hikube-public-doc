@@ -6,9 +6,41 @@ Le service **Managed MariaDB** offre une solution de base de données relationne
 
 ---
 
-## Détails du Déploiement
+## Exemple de Configuration
 
-Ce service managé est géré par le **mariadb-operator**, garantissant une gestion efficace et une opération fluide des clusters MariaDB.
+Voici un exemple de configuration YAML pour un déploiement MariaDB avec deux réplicas et des sauvegardes activées :
+
+```yaml
+apiVersion: apps.cozystack.io/v1alpha1
+kind: MariaDB
+metadata:
+  name: mariadb-example
+spec:
+  external: true
+  size: 20Gi
+  replicas: 2
+  storageClass: "replicated"
+  users:
+    admin:
+      password: "secure-password"
+  databases:
+    mydb:
+      charset: utf8mb4
+      collation: utf8mb4_general_ci
+  backup:
+    enabled: false
+  #  s3Region: "us-east-1"
+  #  s3Bucket: "s3.tenant.hikube.cloud/mariadb-backups"
+  #  schedule: "0 2 * * *"
+  #  cleanupStrategy: "--keep-last=3 --keep-daily=3 --keep-within-weekly=1m"
+  #  s3AccessKey: "your-s3-access-key"
+  #  s3SecretKey: "your-s3-secret-key"
+  #  resticPassword: "your-restic-password"
+```
+
+À l'aide du kubeconfig fourni par Hikube et de ce yaml d'exemple, enregistré sous un fichier manifest.yaml, vous pouvez facilement tester le déploiement de l'application à l'aide de la commande suivante :
+
+`kubectl apply -f manifest.yaml`
 
 ---
 
@@ -49,40 +81,6 @@ Ce service managé est géré par le **mariadb-operator**, garantissant une gest
 
 ---
 
-## Exemple de Configuration
-
-Voici un exemple de configuration YAML pour un déploiement MariaDB avec deux réplicas et des sauvegardes activées :
-
-```yaml
-apiVersion: apps.cozystack.io/v1alpha1
-kind: MariaDB
-metadata:
-  name: mariadb-example
-spec:
-  external: true
-  size: 20Gi
-  replicas: 2
-  storageClass: "replicated"
-  users:
-    admin:
-      password: "secure-password"
-  databases:
-    mydb:
-      charset: utf8mb4
-      collation: utf8mb4_general_ci
-  backup:
-    enabled: true
-    s3Region: "us-east-1"
-    s3Bucket: "s3.tenant.hikube.cloud/mariadb-backups"
-    schedule: "0 2 * * *"
-    cleanupStrategy: "--keep-last=3 --keep-daily=3 --keep-within-weekly=1m"
-    s3AccessKey: "your-s3-access-key"
-    s3SecretKey: "your-s3-secret-key"
-    resticPassword: "your-restic-password"
-```
-
----
-
 ## Tutoriels
 
 ### Bascule Master/Slave
@@ -118,22 +116,6 @@ restic -r s3:s3.tenant.hikube.cloud/mariadb-backups/database_name snapshots
 ```bash restic -r s3:s3.tenant.hikube.cloud/mariadb-backups/database_name restore latest --target /tmp/
 ```
 
-3. Consultez les détails pour plus d'informations :
-   - [https://itnext.io/restic-effective-backup-from-stdin-4bc1e8f083c1](https://itnext.io/restic-effective-backup-from-stdin-4bc1e8f083c1)
-
----
-
-## Problèmes Connus
-
-- **La réplication ne se termine pas correctement** :
-  - Si les journaux binlog ont été purgés, suivez ces étapes manuelles pour résoudre le problème :  
-    [Issue sur GitHub](https://github.com/mariadb-operator/mariadb-operator/issues/141#issuecomment-1804760231)
-
-- **Indices corrompus** :  
-  - Si certains indices sont corrompus sur la réplique principale, vous pouvez les récupérer depuis une réplique secondaire :
-    - Exportez la table depuis la réplique secondaire.
-    - Réimportez la table dans la réplique principale.
-
 ---
 
 ## Ressources Additionnelles
@@ -143,12 +125,6 @@ Pour approfondir vos connaissances sur MariaDB et son opérateur, consultez les 
 - **[Documentation Officielle MariaDB](https://mariadb.com/kb/en/documentation/)**  
   Guide complet pour utiliser et configurer MariaDB.
 
-- **[GitHub MariaDB Operator](https://github.com/mariadb-operator/mariadb-operator)**  
-  Informations détaillées sur l'opérateur MariaDB, incluant les fonctionnalités et les limitations.
-
 - **[Guide Restic](https://itnext.io/restic-effective-backup-from-stdin-4bc1e8f083c1)**  
   Découvrez comment utiliser Restic pour gérer vos sauvegardes, avec des exemples pratiques.
-
-- **[Issue GitHub : Réplication MariaDB](https://github.com/mariadb-operator/mariadb-operator/issues/141#issuecomment-1804760231)**  
-  Étapes pour résoudre les problèmes de réplication liés aux journaux binlog purgés.
   

@@ -6,6 +6,55 @@ Kafka est une plateforme de messagerie distribuée conçue pour gérer des flux 
 
 ---
 
+## Exemple de Configuration
+
+Voici un exemple de configuration YAML pour déployer Kafka avec ZooKeeper dans un cluster Kubernetes :
+
+```yaml
+apiVersion: apps.cozystack.io/v1alpha1
+kind: Kafka
+metadata:
+  name: kafka-example
+spec:
+  external: true
+  kafka:
+    size: 20Gi
+    replicas: 3
+    storageClass: "replicated"
+  zookeeper:
+    size: 10Gi
+    replicas: 3
+    storageClass: "replicated"
+  topics:
+    - name: "example-topic"
+      partitions: 3
+      replicationFactor: 2
+    - name: "another-topic"
+      partitions: 5
+      replicationFactor: 3
+```
+
+À l'aide du kubeconfig fourni par Hikube et de ce yaml d'exemple, enregistré sous un fichier manifest.yaml, vous pouvez facilement tester le déploiement de l'application à l'aide de la commande suivante :
+
+`kubectl apply -f manifest.yaml`
+
+Dans cet exemple :
+
+- **`external`** : Activé pour permettre un accès externe à Kafka depuis l'extérieur du cluster.
+- **`kafka.size`** : Défini à `20Gi`, spécifiant la taille du volume persistant pour Kafka.
+- **`kafka.replicas`** : Configuré à `3`, garantissant la redondance et la haute disponibilité.
+- **`kafka.storageClass`** : Utilise une classe de stockage nommée `replicated`.
+- **`zookeeper.size`** : Défini à `10Gi` pour le stockage persistant des données ZooKeeper.
+- **`zookeeper.replicas`** : Configuré à `3`, assurant une tolérance aux pannes pour ZooKeeper.
+- **`zookeeper.storageClass`** : Utilise une classe de stockage fiable nommée `reliable-storage`.
+- **`topics`** :
+  - **`example-topic`** : Un topic avec 3 partitions et un facteur de réplication de 2.
+  - **`another-topic`** : Un topic avec 5 partitions et un facteur de réplication de 3.
+
+Cette configuration garantit un déploiement robuste et performant de Kafka, en intégrant des pratiques optimales pour la gestion des données et des topics.
+
+---
+
 ## Paramètres Configurables
 
 ### **Paramètres Généraux**
@@ -31,51 +80,6 @@ Ces paramètres permettent de personnaliser la gestion des topics Kafka.
 | **Nom**   | **Description**              | **Valeur Par Défaut** |
 |-----------|------------------------------|------------------------|
 | `topics`  | Configuration des topics.    | `[]`                  |
-
----
-
-## Exemple de Configuration
-
-Voici un exemple de configuration YAML pour déployer Kafka avec ZooKeeper dans un cluster Kubernetes :
-
-```yaml
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Kafka
-metadata:
-  name: kafka-example
-spec:
-  external: true
-  kafka:
-    size: 20Gi
-    replicas: 3
-    storageClass: "replicated"
-  zookeeper:
-    size: 10Gi
-    replicas: 3
-    storageClass: "reliable-storage"
-  topics:
-    - name: "example-topic"
-      partitions: 3
-      replicationFactor: 2
-    - name: "another-topic"
-      partitions: 5
-      replicationFactor: 3
-```
-
-Dans cet exemple :
-
-- **`external`** : Activé pour permettre un accès externe à Kafka depuis l'extérieur du cluster.
-- **`kafka.size`** : Défini à `20Gi`, spécifiant la taille du volume persistant pour Kafka.
-- **`kafka.replicas`** : Configuré à `3`, garantissant la redondance et la haute disponibilité.
-- **`kafka.storageClass`** : Utilise une classe de stockage nommée `replicated`.
-- **`zookeeper.size`** : Défini à `10Gi` pour le stockage persistant des données ZooKeeper.
-- **`zookeeper.replicas`** : Configuré à `3`, assurant une tolérance aux pannes pour ZooKeeper.
-- **`zookeeper.storageClass`** : Utilise une classe de stockage fiable nommée `reliable-storage`.
-- **`topics`** :
-  - **`example-topic`** : Un topic avec 3 partitions et un facteur de réplication de 2.
-  - **`another-topic`** : Un topic avec 5 partitions et un facteur de réplication de 3.
-
-Cette configuration garantit un déploiement robuste et performant de Kafka, en intégrant des pratiques optimales pour la gestion des données et des topics.
 
 ---
 

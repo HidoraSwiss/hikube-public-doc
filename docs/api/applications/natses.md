@@ -6,30 +6,6 @@ title: NATS
 
 ---
 
-## Paramètres Configurables
-
-### **Paramètres Généraux**
-
-| **Nom**        | **Description**                                      | **Valeur Par Défaut** |
-|-----------------|------------------------------------------------------|------------------------|
-| `external`     | Permet l'accès externe depuis l'extérieur du cluster. | `false`               |
-| `replicas`     | Nombre de réplicas du cluster NATS.                   | `2`                   |
-| `storageClass` | Classe de stockage utilisée pour les données.         | `"replicated"` ou `"local"`  |
-
----
-
-### **Paramètres de Configuration**
-
-| **Nom**              | **Description**                                                                                     | **Valeur Par Défaut** |
-|-----------------------|-----------------------------------------------------------------------------------------------------|------------------------|
-| `users`              | Configuration des utilisateurs.                                                                     | `{}`                  |
-| `jetstream.size`     | Taille du stockage persistant pour Jetstream (message store).                                        | `10Gi`                |
-| `jetstream.enabled`  | Active ou désactive Jetstream pour la messagerie persistante.                                        | `true`                |
-| `config.merge`       | Configuration supplémentaire à fusionner dans la configuration de NATS.                             | `{}`                  |
-| `config.resolver`    | Configuration supplémentaire à fusionner pour la résolution dans la configuration de NATS.          | `{}`                  |
-
----
-
 ## Exemple de Configuration
 
 Voici un exemple de configuration YAML pour un cluster NATS avec Jetstream activé et des paramètres personnalisés :
@@ -59,6 +35,34 @@ spec:
         max_memory_store: 2Gi
 ```
 
+À l'aide du kubeconfig fourni par Hikube et de ce yaml d'exemple, enregistré sous un fichier manifest.yaml, vous pouvez facilement tester le déploiement de l'application à l'aide de la commande suivante :
+
+`kubectl apply -f manifest.yaml`
+
+---
+
+## Paramètres Configurables
+
+### **Paramètres Généraux**
+
+| **Nom**        | **Description**                                      | **Valeur Par Défaut** |
+|-----------------|------------------------------------------------------|------------------------|
+| `external`     | Permet l'accès externe depuis l'extérieur du cluster. | `false`               |
+| `replicas`     | Nombre de réplicas du cluster NATS.                   | `2`                   |
+| `storageClass` | Classe de stockage utilisée pour les données.         | `"replicated"` ou `"local"`  |
+
+---
+
+### **Paramètres de Configuration**
+
+| **Nom**              | **Description**                                                                                     | **Valeur Par Défaut** |
+|-----------------------|-----------------------------------------------------------------------------------------------------|------------------------|
+| `users`              | Configuration des utilisateurs.                                                                     | `{}`                  |
+| `jetstream.size`     | Taille du stockage persistant pour Jetstream (message store).                                        | `10Gi`                |
+| `jetstream.enabled`  | Active ou désactive Jetstream pour la messagerie persistante.                                        | `true`                |
+| `config.merge`       | Configuration supplémentaire à fusionner dans la configuration de NATS.                             | `{}`                  |
+| `config.resolver`    | Configuration supplémentaire à fusionner pour la résolution dans la configuration de NATS.          | `{}`                  |
+
 ---
 
 ## Ressources Additionnelles
@@ -70,6 +74,3 @@ Pour en savoir plus sur NATS et Jetstream, consultez les ressources suivantes :
 
 - **[Documentation Jetstream](https://docs.nats.io/jetstream/)**  
   Guide sur l'utilisation de Jetstream pour la messagerie persistante.
-
-- **[Exemple de Configuration NATS Resolver](https://github.com/nats-io/k8s/blob/main/helm/charts/nats/values.yaml#L247)**  
-  Exemple de configuration de résolveur NATS.

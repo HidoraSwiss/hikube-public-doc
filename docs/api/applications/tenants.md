@@ -6,6 +6,30 @@ Un **Tenant** est l'unité principale de sécurité sur la plateforme. Il peut �
 
 ---
 
+## Exemple de Configuration
+
+Voici un exemple de configuration YAML pour un tenant avec ses propres services et une isolation réseau activée :
+
+```yaml
+apiVersion: apps.cozystack.io/v1alpha1
+kind: Tenant
+metadata:
+  name: tenant-u1
+spec:
+  host: "u1.example.org"
+  etcd: true
+  monitoring: true
+  ingress: true
+  seaweedfs: true
+  isolated: true
+```
+
+À l'aide du kubeconfig fourni par Hikube et de ce yaml d'exemple, enregistré sous un fichier manifest.yaml, vous pouvez facilement tester le déploiement de l'application à l'aide de la commande suivante :
+
+`kubectl apply -f manifest.yaml`
+
+---
+
 ## Détails sur les Tenants
 
 ### Règles de Gestion
@@ -74,30 +98,3 @@ Dans cet exemple :
 | `isolated`   | Applique des politiques réseau pour isoler le namespace du tenant.                  | `false`               |
 
 ---
-
-## Exemple de Configuration
-
-Voici un exemple de configuration YAML pour un tenant avec ses propres services et une isolation réseau activée :
-
-```yaml
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Tenant
-metadata:
-  name: tenant-u1
-spec:
-  host: "u1.example.org"
-  etcd: true
-  monitoring: true
-  ingress: true
-  seaweedfs: true
-  isolated: true
-```
-
----
-
-## Ressources Additionnelles
-
-Pour plus d'informations sur les tenants et leur gestion, consultez les ressources suivantes :
-
-- **[Documentation Officielle Kubernetes Namespaces](https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/)**  
-  Guide officiel pour comprendre les namespaces dans Kubernetes.

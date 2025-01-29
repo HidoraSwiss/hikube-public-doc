@@ -6,33 +6,6 @@ Le **Managed VPN Service** est une solution essentielle pour garantir une commun
 
 ---
 
-## Détails du Déploiement
-
-Le service VPN repose sur le **Outline Server**, une solution avancée et conviviale basée sur **Shadowbox**. Cette technologie simplifie le processus de configuration et de partage des serveurs **Shadowsocks**. Shadowbox lance des instances Shadowsocks à la demande et est compatible avec les clients Shadowsocks standards, offrant flexibilité et facilité d'utilisation.
-
----
-
-## Paramètres Configurables
-
-### **Paramètres Généraux**
-
-| **Nom**        | **Description**                                      | **Valeur Par Défaut** |
-|-----------------|------------------------------------------------------|------------------------|
-| `external`     | Permet l'accès externe depuis l'extérieur du cluster. | `false`               |
-| `replicas`     | Nombre de réplicas du serveur VPN.                    | `2`                   |
-
----
-
-### **Paramètres de Configuration**
-
-| **Nom**          | **Description**                                     | **Valeur Par Défaut** |
-|-------------------|-----------------------------------------------------|------------------------|
-| `host`           | Hôte utilisé pour générer des URL.                  | `""`                  |
-| `users`          | Configuration des utilisateurs.                     | `{}`                  |
-| `externalIPs`    | Liste des adresses IP externes pour le service.      | `[]`                  |
-
----
-
 ## Exemple de Configuration
 
 Voici un exemple de configuration YAML pour un serveur VPN avec deux réplicas et des adresses IP externes spécifiées :
@@ -55,6 +28,31 @@ spec:
     - "192.168.1.100"
     - "192.168.1.101"
 ```
+
+À l'aide du kubeconfig fourni par Hikube et de ce yaml d'exemple, enregistré sous un fichier manifest.yaml, vous pouvez facilement tester le déploiement de l'application à l'aide de la commande suivante :
+
+`kubectl apply -f manifest.yaml`
+
+---
+
+## Paramètres Configurables
+
+### **Paramètres Généraux**
+
+| **Nom**        | **Description**                                      | **Valeur Par Défaut** |
+|-----------------|------------------------------------------------------|------------------------|
+| `external`     | Permet l'accès externe depuis l'extérieur du cluster. | `false`               |
+| `replicas`     | Nombre de réplicas du serveur VPN.                    | `2`                   |
+
+---
+
+### **Paramètres de Configuration**
+
+| **Nom**          | **Description**                                     | **Valeur Par Défaut** |
+|-------------------|-----------------------------------------------------|------------------------|
+| `host`           | Hôte utilisé pour générer des URL.                  | `""`                  |
+| `users`          | Configuration des utilisateurs.                     | `{}`                  |
+| `externalIPs`    | Liste des adresses IP externes pour le service.      | `[]`                  |
 
 ---
 
