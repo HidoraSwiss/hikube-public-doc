@@ -34,9 +34,11 @@ spec:
   #  resticPassword: "your-restic-password"
 ```
 
-À l'aide du kubeconfig fourni par Hikube et de ce yaml d'exemple, enregistré sous un fichier manifest.yaml, vous pouvez facilement tester le déploiement de l'application à l'aide de la commande suivante :
+À l'aide du kubeconfig fourni par Hikube et de ce yaml d'exemple, enregistré sous un fichier `manifest.yaml`, vous pouvez facilement tester le déploiement de l'application à l'aide de la commande suivante :
 
-`kubectl apply -f manifest.yaml`
+```sh
+kubectl apply -f manifest.yaml
+```
 
 ---
 
@@ -127,10 +129,3 @@ Pour approfondir vos connaissances sur FerretDB et ses fonctionnalités, voici q
 
 - [**Tutoriel : Format Cron**](https://crontab.guru/)  
   Un outil pratique pour créer et comprendre les expressions Cron utilisées pour les sauvegardes planifiées.
-
-- [**Documentation AWS S3**](https://docs.aws.amazon.com/s3/index.html)  
-  Guide officiel pour configurer et utiliser les buckets S3 pour le stockage des sauvegardes.
-
-- [**Documentation Kubernetes - StorageClass**](https://kubernetes.io/docs/concepts/storage/storage-classes/)  
-  En savoir plus sur la configuration des StorageClasses, essentielles pour gérer le stockage persistant.
-  

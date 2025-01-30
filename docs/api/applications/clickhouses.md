@@ -39,9 +39,11 @@ spec:
   #  resticPassword: "your-restic-password"
 ```
 
-À l'aide du kubeconfig fourni par Hikube et de ce yaml d'exemple, enregistré sous un fichier manifest.yaml, vous pouvez facilement tester le déploiement de l'application à l'aide de la commande suivante :
+À l'aide du kubeconfig fourni par Hikube et de ce yaml d'exemple, enregistré sous un fichier `manifest.yaml`, vous pouvez facilement tester le déploiement de l'application à l'aide de la commande suivante :
 
-`kubectl apply -f manifest.yaml`
+```sh
+kubectl apply -f manifest.yaml
+```
 
 ---
 
@@ -124,5 +126,3 @@ Pour en savoir plus sur ClickHouse et sa gestion, consultez les ressources suiva
   Guide complet pour configurer et optimiser ClickHouse.
 - **[Restic Documentation](https://restic.net/)**  
   Guide pour configurer et utiliser Restic pour les sauvegardes.
-- **[AWS S3 Documentation](https://aws.amazon.com/s3/)**  
-  Informations sur la configuration des buckets et des permissions AWS S3.

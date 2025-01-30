@@ -27,9 +27,11 @@ spec:
       type: "bridge"
 ```
 
-À l'aide du kubeconfig fourni par Hikube et de ce yaml d'exemple, enregistré sous un fichier manifest.yaml, vous pouvez facilement tester le déploiement de l'application à l'aide de la commande suivante :
+À l'aide du kubeconfig fourni par Hikube et de ce yaml d'exemple, enregistré sous un fichier `manifest.yaml`, vous pouvez facilement tester le déploiement de l'application à l'aide de la commande suivante :
 
-`kubectl apply -f manifest.yaml`
+```sh
+kubectl apply -f manifest.yaml
+```
 
 ---
 

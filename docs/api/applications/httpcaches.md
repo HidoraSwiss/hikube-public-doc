@@ -28,9 +28,11 @@ spec:
     - url: "https://another-origin.com"
 ```
 
-À l'aide du kubeconfig fourni par Hikube et de ce yaml d'exemple, enregistré sous un fichier manifest.yaml, vous pouvez facilement tester le déploiement de l'application à l'aide de la commande suivante :
+À l'aide du kubeconfig fourni par Hikube et de ce yaml d'exemple, enregistré sous un fichier `manifest.yaml`, vous pouvez facilement tester le déploiement de l'application à l'aide de la commande suivante :
 
-`kubectl apply -f manifest.yaml`
+```sh
+kubectl apply -f manifest.yaml
+```
 
 ---
 
@@ -133,6 +135,3 @@ Pour en savoir plus sur la configuration et l'utilisation des composants de HTTP
 
 - [**Documentation Officielle HAProxy**](https://haproxy.org/)  
   Tout ce que vous devez savoir pour configurer HAProxy en tant qu'équilibreur de charge performant.
-
-- [**Issue GitHub : VTS Module**](https://github.com/vozlt/nginx-module-vts/issues/198)  
-  Informations sur le problème connu lié aux temps de réponse incorrects dans le module VTS de Nginx.
