@@ -115,7 +115,8 @@ restic -r s3:s3.tenant.hikube.cloud/mariadb-backups/database_name snapshots
 
 2. Restaurez le dernier snapshot :
 
-```bash restic -r s3:s3.tenant.hikube.cloud/mariadb-backups/database_name restore latest --target /tmp/
+```bash
+restic -r s3:s3.tenant.hikube.cloud/mariadb-backups/database_name restore latest --target /tmp/
 ```
 
 ---
