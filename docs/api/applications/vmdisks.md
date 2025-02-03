@@ -12,7 +12,7 @@ Voici un exemple de configuration YAML pour un disque virtuel utilisant une imag
 
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
-kind: VMDisks
+kind: VMDisk
 metadata:
   name: vm-disk-example
 spec:

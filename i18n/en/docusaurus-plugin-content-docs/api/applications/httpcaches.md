@@ -6,6 +6,36 @@ Le service **HTTPCache** est un système de cache géré basé sur **Nginx** con
 
 ---
 
+## Exemple de Configuration
+
+Voici un exemple de configuration YAML pour déployer HTTPCache avec deux réplicas pour HAProxy et Nginx :
+
+```yaml
+apiVersion: apps.cozystack.io/v1alpha1
+kind: HTTPCache
+metadata:
+  name: httpcache-example
+spec:
+  external: true
+  size: 20Gi
+  storageClass: "replicated"
+  haproxy:
+    replicas: 2
+  nginx:
+    replicas: 2
+  endpoints:
+    - url: "https://example-origin.com"
+    - url: "https://another-origin.com"
+```
+
+À l'aide du kubeconfig fourni par Hikube et de ce yaml d'exemple, enregistré sous un fichier `manifest.yaml`, vous pouvez facilement tester le déploiement de l'application à l'aide de la commande suivante :
+
+```sh
+kubectl apply -f manifest.yaml
+```
+
+---
+
 ## Fonctionnalités Principales
 
 - **Modules et Intégrations Nginx** :
@@ -88,30 +118,6 @@ Voici un schéma illustrant l'architecture :
 
 ---
 
-## Exemple de Configuration
-
-Voici un exemple de configuration YAML pour déployer HTTPCache avec deux réplicas pour HAProxy et Nginx :
-
-```yaml
-apiVersion: apps.cozystack.io/v1alpha1
-kind: HTTPCache
-metadata:
-  name: httpcache-example
-spec:
-  external: true
-  size: 20Gi
-  storageClass: "replicated"
-  haproxy:
-    replicas: 2
-  nginx:
-    replicas: 2
-  endpoints:
-    - url: "https://example-origin.com"
-    - url: "https://another-origin.com"
-```
-
----
-
 ## Problèmes Connus
 
 - **Temps de réponse des upstreams dans le module VTS** :  
@@ -129,9 +135,3 @@ Pour en savoir plus sur la configuration et l'utilisation des composants de HTTP
 
 - [**Documentation Officielle HAProxy**](https://haproxy.org/)  
   Tout ce que vous devez savoir pour configurer HAProxy en tant qu'équilibreur de charge performant.
-
-- [**Issue GitHub : VTS Module**](https://github.com/vozlt/nginx-module-vts/issues/198)  
-  Informations sur le problème connu lié aux temps de réponse incorrects dans le module VTS de Nginx.
-
-- [**Guide HAProxy : Hash Cohérent**](https://www.haproxy.com/blog/consisten-hashing-in-haproxy/)  
-  Article détaillé expliquant le fonctionnement et les avantages du hash cohérent pour l'équilibrage de charge.

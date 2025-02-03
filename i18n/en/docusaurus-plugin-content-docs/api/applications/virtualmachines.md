@@ -2,7 +2,36 @@
 title: Virtual Machines
 ---
 
-Les **Virtual Machines (VMs)** offrent des ressources flexibles et personnalisables pour répondre aux besoins variés des applications. Cozystack propose plusieurs séries de VM adaptées à différents scénarios, ainsi que des préférences pour les systèmes d'exploitation invités.
+Les **Virtual Machines (VMs)** offrent des ressources flexibles et personnalisables pour répondre aux besoins variés des applications. Hikube propose plusieurs séries de VM adaptées à différents scénarios, ainsi que des préférences pour les systèmes d'exploitation invités.
+
+---
+
+## Exemple de Configuration
+
+Voici un exemple de configuration YAML pour une VM utilisant une instance de type CX avec Ubuntu comme système d'exploitation :
+
+```yaml
+apiVersion: apps.cozystack.io/v1alpha1
+kind: VirtualMachine
+metadata:
+  name: vm-example
+spec:
+  instanceType: "cx1.xlarge"
+  guestOS: "ubuntu"
+  disks:
+    - name: "root-disk"
+      size: "20Gi"
+      storageClass: "replicated"
+  networks:
+    - name: "default"
+      type: "bridge"
+```
+
+À l'aide du kubeconfig fourni par Hikube et de ce yaml d'exemple, enregistré sous un fichier `manifest.yaml`, vous pouvez facilement tester le déploiement de l'application à l'aide de la commande suivante :
+
+```sh
+kubectl apply -f manifest.yaml
+```
 
 ---
 
@@ -79,8 +108,6 @@ Les **Virtual Machines (VMs)** offrent des ressources flexibles et personnalisab
 | `m1.8xlarge`  | 32        | 256Gi       |
 | …             | …         | …           |
 
-(Consultez la documentation complète pour plus de types d'instances.)
-
 ---
 
 ### **Systèmes d’Exploitation Invités**
@@ -96,41 +123,3 @@ Les **Virtual Machines (VMs)** offrent des ressources flexibles et personnalisab
 | `alpine`                 | Alpine                                   |
 | `cirros`                 | Cirros                                   |
 | …                        | …                                        |
-
-(Consultez la documentation complète pour les options avancées.)
-
----
-
-## Exemple de Configuration
-
-Voici un exemple de configuration YAML pour une VM utilisant une instance de type CX avec Ubuntu comme système d'exploitation :
-
-```yaml
-apiVersion: apps.cozystack.io/v1alpha1
-kind: VirtualMachine
-metadata:
-  name: vm-example
-spec:
-  instanceType: "cx1.xlarge"
-  guestOS: "ubuntu"
-  disks:
-    - name: "root-disk"
-      size: "20Gi"
-      storageClass: "replicated"
-  networks:
-    - name: "default"
-      type: "bridge"
-```
-
----
-
-## Ressources Additionnelles
-
-- **[Documentation Ubuntu Cloud Images](https://cloud-images.ubuntu.com/)**  
-  Guide pour les images cloud Ubuntu.
-- **[Documentation Fedora](https://getfedora.org/)**  
-  Informations sur Fedora pour le cloud.
-- **[Documentation HAProxy](https://www.haproxy.com/documentation/)**  
-  Guide complet sur HAProxy.
-- **[Documentation officielle Red Hat](https://www.redhat.com/)**  
-  Références sur les systèmes Red Hat.

@@ -6,26 +6,13 @@ Un **Virtual Machine Disk (VM Disk)** est une unité de stockage virtuelle utili
 
 ---
 
-## Paramètres Configurables
-
-### **Paramètres Généraux**
-
-| **Nom**        | **Description**                                                    | **Valeur Par Défaut** |
-|-----------------|--------------------------------------------------------------------|------------------------|
-| `source`       | Emplacement de l'image source utilisée pour créer le disque.       | `{}`                  |
-| `optical`      | Indique si le disque doit être considéré comme un disque optique.  | `false`               |
-| `storage`      | Taille du disque allouée pour la machine virtuelle.                | `5Gi`                 |
-| `storageClass` | Classe de stockage utilisée pour les données.                      | `"replicated"` ou `"local"`          |
-
----
-
 ## Exemple de Configuration
 
 Voici un exemple de configuration YAML pour un disque virtuel utilisant une image source téléchargée depuis un HTTP :
 
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
-kind: VMDisks
+kind: VMDisk
 metadata:
   name: vm-disk-example
 spec:
@@ -36,6 +23,25 @@ spec:
   storage: 10Gi
   storageClass: "replicated"
 ```
+
+À l'aide du kubeconfig fourni par Hikube et de ce yaml d'exemple, enregistré sous un fichier `manifest.yaml`, vous pouvez facilement tester le déploiement de l'application à l'aide de la commande suivante :
+
+```sh
+kubectl apply -f manifest.yaml
+```
+
+---
+
+## Paramètres Configurables
+
+### **Paramètres Généraux**
+
+| **Nom**        | **Description**                                                    | **Valeur Par Défaut** |
+|-----------------|--------------------------------------------------------------------|------------------------|
+| `source`       | Emplacement de l'image source utilisée pour créer le disque.       | `{}`                  |
+| `optical`      | Indique si le disque doit être considéré comme un disque optique.  | `false`               |
+| `storage`      | Taille du disque allouée pour la machine virtuelle.                | `5Gi`                 |
+| `storageClass` | Classe de stockage utilisée pour les données.                      | `"replicated"` ou `"local"`          |
 
 ---
 
@@ -57,19 +63,3 @@ Voici des exemples d'images source couramment utilisées pour les disques virtue
 
 - **Talos** :  
   `https://github.com/siderolabs/talos/releases/download/v1.7.6/nocloud-amd64.raw.xz`
-
----
-
-## Ressources Additionnelles
-
-Pour en savoir plus sur la gestion des disques virtuels et les images source :
-
-- **[Documentation Ubuntu Cloud Images](https://cloud-images.ubuntu.com/)**  
-  Guide pour accéder et configurer les images Ubuntu pour le cloud.
-
-- **[Documentation Fedora Cloud](https://fedoraproject.org/wiki/Cloud)**  
-  Guide complet pour utiliser les images Fedora dans les environnements cloud.
-
-- **[Documentation Cirros](https://cirros-cloud.net/)**  
-  Informations sur l'utilisation des images Cirros.
-  

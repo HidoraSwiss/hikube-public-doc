@@ -6,6 +6,47 @@ title: ClickHouse
 
 ---
 
+## Exemple de Configuration
+
+Voici un exemple de configuration YAML pour un cluster ClickHouse avec deux réplicas par shard, une taille de stockage personnalisée et des sauvegardes activées :
+
+```yaml
+apiVersion: apps.cozystack.io/v1alpha1
+kind: ClickHouse
+metadata:
+  name: clickhouse-example
+spec:
+  size: 20Gi
+  logStorageSize: 5Gi
+  shards: 2
+  replicas: 2
+  storageClass: "replicated"
+  logTTL: 30
+  users:
+    user1:
+      password: "securepassword"
+    user2:
+      readonly: true
+      password: "readonlypassword"
+  backup:
+    enabled: false
+  #  s3Region: "hikube"
+  #  s3Bucket: "s3.tenant.hikube.cloud/clickhouse-backups"
+  #  schedule: "0 3 * * *"
+  #  cleanupStrategy: "--keep-last=5 --keep-daily=7 --keep-within-weekly=2m"
+  #  s3AccessKey: "your-s3-access-key"
+  #  s3SecretKey: "your-s3-secret-key"
+  #  resticPassword: "your-restic-password"
+```
+
+À l'aide du kubeconfig fourni par Hikube et de ce yaml d'exemple, enregistré sous un fichier `manifest.yaml`, vous pouvez facilement tester le déploiement de l'application à l'aide de la commande suivante :
+
+```sh
+kubectl apply -f manifest.yaml
+```
+
+---
+
 ## Paramètres Configurables
 
 ### **Paramètres Généraux**
@@ -55,41 +96,6 @@ users:
 
 ---
 
-## Exemple de Configuration
-
-Voici un exemple de configuration YAML pour un cluster ClickHouse avec deux réplicas par shard, une taille de stockage personnalisée et des sauvegardes activées :
-
-```yaml
-apiVersion: apps.cozystack.io/v1alpha1
-kind: ClickHouse
-metadata:
-  name: clickhouse-example
-spec:
-  size: 20Gi
-  logStorageSize: 5Gi
-  shards: 2
-  replicas: 2
-  storageClass: "replicated"
-  logTTL: 30
-  users:
-    user1:
-      password: "securepassword"
-    user2:
-      readonly: true
-      password: "readonlypassword"
-  backup:
-    enabled: true
-    s3Region: "hikube"
-    s3Bucket: "s3.tenant.hikube.cloud/clickhouse-backups"
-    schedule: "0 3 * * *"
-    cleanupStrategy: "--keep-last=5 --keep-daily=7 --keep-within-weekly=2m"
-    s3AccessKey: "your-s3-access-key"
-    s3SecretKey: "your-s3-secret-key"
-    resticPassword: "your-restic-password"
-```
-
----
-
 ## Restaurer un Backup
 
 Vous pouvez restaurer un backup de ClickHouse à l'aide de Restic. Voici les étapes principales :
@@ -110,8 +116,6 @@ Pour restaurer le snapshot le plus récent, exécutez la commande suivante en sp
 restic -r s3:s3.tenant.hikube.cloud/clickhouse-backups/table_name restore latest --target /tmp/
 ```
 
-Pour en savoir plus sur l'utilisation de Restic, consultez [cet article détaillé](https://blog.aenix.io/restic-effective-backup-from-stdin-4bc1e8f083c1).
-
 ---
 
 ## Ressources Additionnelles
@@ -122,5 +126,3 @@ Pour en savoir plus sur ClickHouse et sa gestion, consultez les ressources suiva
   Guide complet pour configurer et optimiser ClickHouse.
 - **[Restic Documentation](https://restic.net/)**  
   Guide pour configurer et utiliser Restic pour les sauvegardes.
-- **[AWS S3 Documentation](https://aws.amazon.com/s3/)**  
-  Informations sur la configuration des buckets et des permissions AWS S3.

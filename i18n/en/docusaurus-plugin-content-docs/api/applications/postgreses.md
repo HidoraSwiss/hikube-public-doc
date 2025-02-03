@@ -2,13 +2,69 @@
 title: PostgreSQL
 ---
 
-PostgreSQL est l'un des choix les plus populaires parmi les bases de données relationnelles, réputé pour ses fonctionnalités robustes et ses performances élevées. Le service **Managed PostgreSQL** offre un cluster répliqué auto-réparant, géré efficacement par l'opérateur **CloudNativePG**, largement reconnu dans la communauté.
+PostgreSQL est l'un des choix les plus populaires parmi les bases de données relationnelles, réputé pour ses fonctionnalités robustes et ses performances élevées. Le service **Managed PostgreSQL** offre un cluster répliqué auto-réparant.
 
 ---
 
-## Détails du Déploiement
+## Exemple de Configuration
 
-Ce service managé repose sur l'opérateur **CloudNativePG**, garantissant une gestion fluide et des performances optimales pour vos charges de travail PostgreSQL.
+Voici un exemple de configuration YAML pour un déploiement PostgreSQL avec deux réplicas et des sauvegardes activées :
+
+```yaml
+apiVersion: apps.cozystack.io/v1alpha1
+kind: Postgres
+metadata:
+  name: postgres-example
+spec:
+  external: false
+  size: 20Gi
+  replicas: 3
+  storageClass: "local"
+  postgresql:
+    parameters:
+      max_connections: 200
+  quorum:
+    minSyncReplicas: 1
+    maxSyncReplicas: 2
+  users:
+    user1:
+      password: "securepassword"
+    user2:
+      password: "readonlypassword"
+    airflow:
+      password: "airflowpassword"
+    debezium:
+      replication: true
+  databases:
+    myapp:
+      roles:
+        admin:
+        - user1
+        - debezium
+        readonly:
+        - user2
+    airflow:
+      roles:
+        admin:
+        - airflow
+      extensions:
+      - hstore
+  backup:
+    enabled: false
+  #  s3Region: "us-west-2"
+  #  s3Bucket: "s3.tenant.hikube.cloud/postgres-backups"
+  #  schedule: "0 3 * * *"
+  #  cleanupStrategy: "--keep-last=5 --keep-daily=7 --keep-within-weekly=2m"
+  #  s3AccessKey: "your-s3-access-key"
+  #  s3SecretKey: "your-s3-secret-key"
+  #  resticPassword: "your-restic-password"
+```
+
+À l'aide du kubeconfig fourni par Hikube et de ce yaml d'exemple, enregistré sous un fichier `manifest.yaml`, vous pouvez facilement tester le déploiement de l'application à l'aide de la commande suivante :
+
+```sh
+kubectl apply -f manifest.yaml
+```
 
 ---
 
@@ -81,62 +137,6 @@ databases:
 
 ---
 
-## Exemple de Configuration
-
-Voici un exemple de configuration YAML pour un déploiement PostgreSQL avec deux réplicas et des sauvegardes activées :
-
-```yaml
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Postgres
-metadata:
-  name: postgres-example
-spec:
-  external: false
-  size: 20Gi
-  replicas: 3
-  storageClass: "local"
-  postgresql:
-    parameters:
-      max_connections: 200
-  quorum:
-    minSyncReplicas: 1
-    maxSyncReplicas: 2
-  users:
-    user1:
-      password: "securepassword"
-    user2:
-      password: "readonlypassword"
-    airflow:
-      password: "airflowpassword"
-    debezium:
-      replication: true
-  databases:
-    myapp:
-      roles:
-        admin:
-        - user1
-        - debezium
-        readonly:
-        - user2
-    airflow:
-      roles:
-        admin:
-        - airflow
-      extensions:
-      - hstore
-  backup:
-    enabled: true
-    s3Region: "us-west-2"
-    s3Bucket: "s3.tenant.hikube.cloud/postgres-backups"
-    schedule: "0 3 * * *"
-    cleanupStrategy: "--keep-last=5 --keep-daily=7 --keep-within-weekly=2m"
-    s3AccessKey: "your-s3-access-key"
-    s3SecretKey: "your-s3-secret-key"
-    resticPassword: "your-restic-password"
-```
-
----
-
 ## Tutoriels
 
 ### Comment basculer la réplique Master/Slave
@@ -155,11 +155,5 @@ Pour effectuer un basculement manuel des répliques dans le cluster, suivez les 
 
 ## Ressources Additionnelles
 
-- **[Documentation Officielle CloudNativePG](https://cloudnative-pg.io/docs/)**  
-  Guide complet pour utiliser et configurer l'opérateur CloudNativePG.
-- **[GitHub CloudNativePG](https://github.com/cloudnative-pg/cloudnative-pg)**  
-  Détails sur l'opérateur CloudNativePG et ses fonctionnalités.
 - **[Guide Restic](https://itnext.io/restic-effective-backup-from-stdin-4bc1e8f083c1)**  
   Apprenez à utiliser Restic pour gérer vos sauvegardes.
-- **[Documentation CloudNativePG sur le basculement manuel](https://cloudnative-pg.io/documentation/1.15/rolling_update/#manual-updates-supervised)**  
-  Instructions détaillées pour effectuer un basculement manuel.

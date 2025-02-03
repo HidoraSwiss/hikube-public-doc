@@ -12,7 +12,7 @@ Voici un exemple de configuration YAML pour un d√©ploiement MariaDB avec deux r√
 
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
-kind: MariaDB
+kind: MySQL
 metadata:
   name: mariadb-example
 spec:
