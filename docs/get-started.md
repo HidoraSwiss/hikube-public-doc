@@ -49,7 +49,7 @@ Une fois vos tenants créés, vous pouvez y accéder :
 - **Depuis l'interface web** (menu déroulant en haut à droite).
 - **Via leurs Kubeconfigs respectifs**, disponibles dans **l'onglet "Applications"** → cliquez sur le tenant souhaité → récupérez le fichier **dans la section "Secrets"**.
 
-Pour plus d'informations sur la gestion et la création des Tenants, n'hésitez pas à aller consulter **[notre page dédiée aux Tenants.](./api/applications/tenant.md)**
+Pour plus d'informations sur la gestion et la création des Tenants, n'hésitez pas à aller consulter **[notre page dédiée aux Tenants.](./api/applications/tenants.md)**
 
 ---
 
@@ -60,7 +60,7 @@ Il est déconseillé d'installer des applications directement sur les clusters d
 🔹 **Créez un cluster Kubernetes à l’intérieur du tenant** (via l’interface web ou en CLI).  
 🔹 **Installez vos applications sur ce nouveau cluster**, plutôt que sur celui du tenant directement.
 
-Pour plus d'informations sur le provisionnement de Kubernetes, consultez la page **[Kubernetes](./api/applications/kubernetes.md)**.
+Pour plus d'informations sur le provisionnement de Kubernetes, consultez la page **[Kubernetes](./api/applications/kuberneteses.md)**.
 
 ---
 
