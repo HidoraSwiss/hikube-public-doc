@@ -2,13 +2,13 @@
 title: VPN
 ---
 
-Le **Managed VPN Service** est une solution essentielle pour garantir une communication sécurisée et privée sur Internet. Ce service simplifie le déploiement et la gestion des serveurs VPN, vous permettant d'établir facilement des connexions sécurisées.
+The **Managed VPN Service** is an essential solution for ensuring secure and private communication over the Internet. This service simplifies the deployment and management of VPN servers, allowing you to easily establish secure connections.
 
 ---
 
-## Exemple de Configuration
+## Configuration Example
 
-Voici un exemple de configuration YAML pour un serveur VPN avec deux réplicas et des adresses IP externes spécifiées :
+Here is a YAML configuration example for a VPN server with two replicas and specified external IP addresses:
 
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
@@ -29,7 +29,7 @@ spec:
     - "192.168.1.101"
 ```
 
-À l'aide du kubeconfig fourni par Hikube et de ce yaml d'exemple, enregistré sous un fichier `manifest.yaml`, vous pouvez facilement tester le déploiement de l'application à l'aide de la commande suivante :
+Using the kubeconfig provided by Hikube and this example yaml, saved as a `manifest.yaml` file, you can easily test the application deployment using the following command:
 
 ```sh
 kubectl apply -f manifest.yaml
@@ -37,37 +37,36 @@ kubectl apply -f manifest.yaml
 
 ---
 
-## Paramètres Configurables
+## Configurable Parameters
 
-### **Paramètres Généraux**
+### **General Parameters**
 
-| **Nom**        | **Description**                                      | **Valeur Par Défaut** |
+| **Name**      | **Description**                                  | **Default Value** |
 |-----------------|------------------------------------------------------|------------------------|
-| `external`     | Permet l'accès externe depuis l'extérieur du cluster. | `false`               |
-| `replicas`     | Nombre de réplicas du serveur VPN.                    | `2`                   |
+| `external`     | Allows external access from outside the cluster.    | `false`               |
+| `replicas`     | Number of VPN server replicas.                      | `2`                   |
 
 ---
 
-### **Paramètres de Configuration**
+### **Configuration Parameters**
 
-| **Nom**          | **Description**                                     | **Valeur Par Défaut** |
+| **Name**       | **Description**                                 | **Default Value** |
 |-------------------|-----------------------------------------------------|------------------------|
-| `host`           | Hôte utilisé pour générer des URL.                  | `""`                  |
-| `users`          | Configuration des utilisateurs.                     | `{}`                  |
-| `externalIPs`    | Liste des adresses IP externes pour le service.      | `[]`                  |
+| `host`           | Host used to generate URLs.                        | `""`                  |
+| `users`          | Users configuration.                               | `{}`                  |
+| `externalIPs`    | List of external IP addresses for the service.      | `[]`                  |
 
 ---
 
-## Ressources Additionnelles
+## Additional Resources
 
-Pour en savoir plus sur le service VPN et ses clients compatibles, consultez les ressources suivantes :
+To learn more about the VPN service and its compatible clients, check the following resources:
 
-- **[Clients Compatibles Shadowsocks](https://shadowsocks5.github.io/en/download/clients.html)**  
-  Liste des clients compatibles avec Shadowsocks.
+- **[Compatible Shadowsocks Clients](https://shadowsocks5.github.io/en/download/clients.html)**
+  List of clients compatible with Shadowsocks.
 
-- **[Documentation Shadowsocks](https://shadowsocks.org/)**  
-  Guide officiel pour comprendre et configurer Shadowsocks.
+- **[Shadowsocks Documentation](https://shadowsocks.org/)**
+  Official guide for understanding and configuring Shadowsocks.
 
-- **[Shadowbox sur GitHub](https://github.com/Jigsaw-Code/outline-server/tree/master/src/shadowbox)**  
-  Référentiel GitHub pour Shadowbox et Outline Server.
-  
+- **[Shadowbox on GitHub](https://github.com/Jigsaw-Code/outline-server/tree/master/src/shadowbox)**
+  GitHub repository for Shadowbox and Outline Server.

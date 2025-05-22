@@ -2,13 +2,13 @@
 title: Virtual Machines
 ---
 
-Les **Virtual Machines (VMs)** offrent des ressources flexibles et personnalisables pour répondre aux besoins variés des applications. Hikube propose plusieurs séries de VM adaptées à différents scénarios, ainsi que des préférences pour les systèmes d'exploitation invités.
+**Virtual Machines (VMs)** offer flexible and customizable resources to meet the varied needs of applications. Hikube provides several VM series adapted to different scenarios, as well as preferences for guest operating systems.
 
 ---
 
-## Exemple de Configuration
+## Configuration Example
 
-Voici un exemple de configuration YAML pour une VM utilisant une instance de type CX avec Ubuntu comme système d'exploitation :
+Here is a YAML configuration example for a VM using a CX type instance with Ubuntu as the operating system:
 
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
@@ -27,7 +27,7 @@ spec:
       type: "bridge"
 ```
 
-À l'aide du kubeconfig fourni par Hikube et de ce yaml d'exemple, enregistré sous un fichier `manifest.yaml`, vous pouvez facilement tester le déploiement de l'application à l'aide de la commande suivante :
+Using the kubeconfig provided by Hikube and this example yaml, saved as a `manifest.yaml` file, you can easily test the application deployment using the following command:
 
 ```sh
 kubectl apply -f manifest.yaml
@@ -35,65 +35,65 @@ kubectl apply -f manifest.yaml
 
 ---
 
-## Séries Disponibles
+## Available Series
 
 ### **U Series**
 
-- **Description** : Conçue pour les applications générales. Les VMs partagent les cœurs physiques sur une base temporelle.
-- **Caractéristiques** :
-  - **Burstable CPU Performance** : Les performances de calcul peuvent dépasser la limite de base si des ressources supplémentaires sont disponibles.
-  - **vCPU-To-Memory Ratio** : 1:4, pour réduire le bruit par nœud.
+- **Description**: Designed for general applications. VMs share physical cores on a time basis.
+- **Characteristics**:
+  - **Burstable CPU Performance**: Computing performance can exceed the base limit if additional resources are available.
+  - **vCPU-To-Memory Ratio**: 1:4, to reduce noise per node.
 
 ---
 
 ### **O Series**
 
-- **Description** : Basée sur la série U avec une mémoire sur-engagée.
-- **Caractéristiques** :
-  - **Burstable CPU Performance** : Comme la série U.
-  - **Overcommitted Memory** : Permet une densité de charge plus élevée.
-  - **vCPU-To-Memory Ratio** : 1:4.
+- **Description**: Based on the U series with overcommitted memory.
+- **Characteristics**:
+  - **Burstable CPU Performance**: Like the U series.
+  - **Overcommitted Memory**: Allows higher load density.
+  - **vCPU-To-Memory Ratio**: 1:4.
 
 ---
 
 ### **CX Series**
 
-- **Description** : Fournit des ressources exclusives pour les applications intensives en calcul.
-- **Caractéristiques** :
-  - **Hugepages** : Amélioration des performances mémoire.
-  - **Dedicated CPU** : Chaque vCPU est associé à un cœur physique.
-  - **Isolated Emulator Threads** : Réduction de l'impact des threads d'émulation.
-  - **vNUMA** : Optimisation de la cache grâce à une topologie NUMA physique.
-  - **vCPU-To-Memory Ratio** : 1:2.
+- **Description**: Provides exclusive resources for compute-intensive applications.
+- **Characteristics**:
+  - **Hugepages**: Improved memory performance.
+  - **Dedicated CPU**: Each vCPU is associated with a physical core.
+  - **Isolated Emulator Threads**: Reduced impact of emulation threads.
+  - **vNUMA**: Cache optimization through physical NUMA topology.
+  - **vCPU-To-Memory Ratio**: 1:2.
 
 ---
 
 ### **M Series**
 
-- **Description** : Conçue pour les applications gourmandes en mémoire.
-- **Caractéristiques** :
-  - **Hugepages** : Amélioration des performances mémoire.
-  - **Burstable CPU Performance** : Permet des performances variables.
-  - **vCPU-To-Memory Ratio** : 1:8.
+- **Description**: Designed for memory-intensive applications.
+- **Characteristics**:
+  - **Hugepages**: Improved memory performance.
+  - **Burstable CPU Performance**: Allows variable performance.
+  - **vCPU-To-Memory Ratio**: 1:8.
 
 ---
 
 ### **RT Series**
 
-- **Description** : Idéal pour les applications en temps réel (ex. : Oslat).
-- **Caractéristiques** :
-  - **Hugepages** : Optimisation des performances mémoire.
-  - **Dedicated CPU** : Garanties élevées de calcul.
-  - **Isolated Emulator Threads** : Réduction de l'impact des threads d'émulation.
-  - **vCPU-To-Memory Ratio** : 1:4 (à partir de la taille médium).
+- **Description**: Ideal for real-time applications (e.g., Oslat).
+- **Characteristics**:
+  - **Hugepages**: Memory performance optimization.
+  - **Dedicated CPU**: High computing guarantees.
+  - **Isolated Emulator Threads**: Reduced impact of emulation threads.
+  - **vCPU-To-Memory Ratio**: 1:4 (from medium size and up).
 
 ---
 
-## Ressources Disponibles
+## Available Resources
 
-### **Types d'Instances**
+### **Instance Types**
 
-| **Nom**       | **vCPUs** | **Mémoire** |
+| **Name**      | **vCPUs** | **Memory** |
 |---------------|-----------|-------------|
 | `cx1.medium`  | 1         | 2Gi         |
 | `cx1.large`   | 2         | 4Gi         |
@@ -110,9 +110,9 @@ kubectl apply -f manifest.yaml
 
 ---
 
-### **Systèmes d’Exploitation Invités**
+### **Guest Operating Systems**
 
-| **Nom**                  | **Description**                           |
+| **Name**                | **Description**                           |
 |--------------------------|-------------------------------------------|
 | `ubuntu`                 | Ubuntu                                   |
 | `fedora`                 | Fedora (amd64)                           |

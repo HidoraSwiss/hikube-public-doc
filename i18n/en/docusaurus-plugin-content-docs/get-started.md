@@ -1,126 +1,126 @@
 ---
 sidebar_position: 2
-title: Bien démarrer
+title: Getting Started
 ---
 
-Bienvenue sur **Hikube** ! Cette documentation vous guidera à travers les étapes essentielles pour commencer à utiliser la plateforme et gérer vos ressources (tenants, clusters Kubernetes, machines virtuelles et applications).
+Welcome to **Hikube**! This documentation will guide you through the essential steps to start using the platform and manage your resources (tenants, Kubernetes clusters, virtual machines, and applications).
 
 ---
 
-## Accès à la Plateforme
+## Platform Access
 
-Deux méthodes sont disponibles pour vous connecter à votre **tenant** Hikube :
+Two methods are available to connect to your Hikube **tenant**:
 
-### **1. Via l'Interface Web**
+### **1. Via Web Interface**
 
-- Accédez au **Dashboard Hikube** : [https://dashboard.hikube.cloud/](https://dashboard.hikube.cloud/)
-- Connectez-vous avec vos identifiants.
-- Une fois connecté, vous pourrez **provisionner et gérer vos ressources** (applications, Kubernetes, VMs) via une interface graphique.
+- Access the **Hikube Dashboard**: [https://dashboard.hikube.cloud/](https://dashboard.hikube.cloud/)
+- Log in with your credentials.
+- Once connected, you can **provision and manage your resources** (applications, Kubernetes, VMs) via a graphical interface.
 
 ### **2. Via Kubeconfig**
 
-Pour une gestion avancée, vous pouvez utiliser le fichier **Kubeconfig** fourni.
+For advanced management, you can use the provided **Kubeconfig** file.
 
-#### **Installation des outils nécessaires :**
+#### **Installing necessary tools:**
 
 - [kubectl](https://kubernetes.io/docs/tasks/tools/)
 - [kubelogin](https://github.com/int128/kubelogin)
-- [Lens](https://k8slens.dev/) *(optionnel pour une interface Desktop)*
+- [Lens](https://k8slens.dev/) *(optional for a Desktop interface)*
 
-Une fois ces outils installés, vous pouvez interagir avec votre tenant directement depuis votre terminal.
-
----
-
-## Organisation des Tenants
-
-Hikube repose sur un **système de tenants** permettant d'organiser et d'isoler vos ressources.
-
-### **Création de Tenants**
-
-Il est recommandé de structurer votre organisation en plusieurs tenants.
-Pour créer un **tenant**, utilisez l'interface web :
-
-1. Rendez-vous dans **l'onglet "Catalog"**.
-2. Sélectionnez **l'application "Tenant"**.
-3. Définissez les paramètres souhaités (**host, ingress, isolation...**).
-
-Une fois vos tenants créés, vous pouvez y accéder :
-
-- **Depuis l'interface web** (menu déroulant en haut à droite).
-- **Via leurs Kubeconfigs respectifs**, disponibles dans **l'onglet "Applications"** → cliquez sur le tenant souhaité → récupérez le fichier **dans la section "Secrets"**.
-
-Pour plus d'informations sur la gestion et la création des Tenants, n'hésitez pas à aller consulter **[notre page dédiée aux Tenants.](./api/applications/tenants.md)**
+Once these tools are installed, you can interact with your tenant directly from your terminal.
 
 ---
 
-## Déploiement d'Applications Kubernetes
+## Tenant Organization
 
-Il est déconseillé d'installer des applications directement sur les clusters des tenants.  
-**Bonne pratique** :  
-🔹 **Créez un cluster Kubernetes à l’intérieur du tenant** (via l’interface web ou en CLI).  
-🔹 **Installez vos applications sur ce nouveau cluster**, plutôt que sur celui du tenant directement.
+Hikube is based on a **tenant system** that allows you to organize and isolate your resources.
 
-Pour plus d'informations sur le provisionnement de Kubernetes, consultez la page **[Kubernetes](./api/applications/kuberneteses.md)**.
+### **Creating Tenants**
+
+It is recommended to structure your organization into multiple tenants.
+To create a **tenant**, use the web interface:
+
+1. Go to the **"Catalog" tab**.
+2. Select **the "Tenant" application**.
+3. Define the desired parameters (**host, ingress, isolation...**).
+
+Once your tenants are created, you can access them:
+
+- **From the web interface** (dropdown menu in the top right).
+- **Via their respective Kubeconfigs**, available in the **"Applications" tab** → click on the desired tenant → retrieve the file **in the "Secrets" section**.
+
+For more information on managing and creating Tenants, feel free to check out **[our dedicated Tenants page.](./api/applications/tenants.md)**
 
 ---
 
-## Création d’une Machine Virtuelle (VM)
+## Deploying Kubernetes Applications
 
-### **Étapes de Création**
+It is not recommended to install applications directly on tenant clusters.
+**Best practice**:
+🔹 **Create a Kubernetes cluster inside the tenant** (via web interface or CLI).
+🔹 **Install your applications on this new cluster**, rather than directly on the tenant's cluster.
 
-Une VM sur Hikube repose sur deux ressources essentielles :
+For more information on Kubernetes provisioning, see the **[Kubernetes](./api/applications/kuberneteses.md)** page.
 
-1. **VMDisk** – Définit l’image disque à utiliser.
-2. **VMInstance** – Utilise un VMDisk pour démarrer la VM.
+---
 
-### **Procédure**
+## Creating a Virtual Machine (VM)
 
-1. **Créer un VMDisk**
-   - Sélectionnez l'application **"VMDisk"** dans le **Catalog**.
-   - Utilisez une image cloud ISO, par exemple :
+### **Creation Steps**
+
+A VM on Hikube relies on two essential resources:
+
+1. **VMDisk** – Defines the disk image to use.
+2. **VMInstance** – Uses a VMDisk to start the VM.
+
+### **Procedure**
+
+1. **Create a VMDisk**
+   - Select the **"VMDisk"** application in the **Catalog**.
+   - Use a cloud ISO image, for example:
 
      ```yaml
      https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img
      ```
 
-   - Configurez la taille du disque et la **StorageClass** (`replicated` ou `local`).
+   - Configure the disk size and **StorageClass** (`replicated` or `local`).
 
-2. **Créer une VMInstance**
-   - Sélectionnez l'application **"VMInstance"**.
-   - Associez-la au **VMDisk** précédemment créé.
-   - Configurez la machine (RAM, CPU, réseau, etc.).
-   - Utilisez **cloud-init** pour automatiser la configuration de la VM :
-     - Documentation : [Cloud-Init](https://cloudinit.readthedocs.io/en/latest/)
+2. **Create a VMInstance**
+   - Select the **"VMInstance"** application.
+   - Associate it with the previously created **VMDisk**.
+   - Configure the machine (RAM, CPU, network, etc.).
+   - Use **cloud-init** to automate VM configuration:
+     - Documentation: [Cloud-Init](https://cloudinit.readthedocs.io/en/latest/)
 
-Pour plus d'informations sur le provisionnement de Kubernetes, consultez les pages **[VMDisks](./api/applications/vmdisks.md)** et **[VMInstances](./api/applications/vminstances.md)**.
+For more information on Kubernetes provisioning, see the **[VMDisks](./api/applications/vmdisks.md)** and **[VMInstances](./api/applications/vminstances.md)** pages.
 
 ---
 
-## Récupérer les Kubeconfigs des Tenants
+## Retrieving Tenant Kubeconfigs
 
-Chaque tenant a un Kubeconfig unique, permettant d'y accéder via **kubectl**.  
-Pour récupérer un **Kubeconfig** :
+Each tenant has a unique Kubeconfig, allowing access via **kubectl**.
+To retrieve a **Kubeconfig**:
 
-1. **Accédez à l'interface web**.
-2. **Ouvrez l'onglet "Applications"**.
-3. **Sélectionnez votre tenant**.
-4. **Récupérez le Kubeconfig** dans la section **"Secrets"**.
+1. **Access the web interface**.
+2. **Open the "Applications" tab**.
+3. **Select your tenant**.
+4. **Retrieve the Kubeconfig** in the **"Secrets"** section.
 
-Une fois le Kubeconfig récupéré, utilisez la commande suivante pour l’ajouter :
+Once the Kubeconfig is retrieved, use the following command to add it:
 
 ```sh
-export KUBECONFIG=/chemin/vers/kubeconfig.yaml
+export KUBECONFIG=/path/to/kubeconfig.yaml
 kubectl get nodes
 ```
 
 ---
 
-## Recommandations Générales
+## General Recommendations
 
-✔ **Isoler les environnements** : Utilisez plusieurs tenants pour organiser vos ressources proprement.  
-✔ **Créer un Kubernetes par besoin** : Ne pas installer les applications sur les clusters des tenants directement.  
-✔ **Utiliser Cloud-Init pour les VMs** : Simplifie l’automatisation de l’installation et la configuration.
+✔ **Isolate environments**: Use multiple tenants to organize your resources properly.
+✔ **Create one Kubernetes per need**: Don't install applications directly on tenant clusters.
+✔ **Use Cloud-Init for VMs**: Simplifies automation of installation and configuration.
 
 ---
 
-Bienvenue sur **Hikube** ! 🎉 Si vous avez des questions ou besoin d’aide, consultez la documentation ou contactez notre support.
+Welcome to **Hikube**! 🎉 If you have any questions or need help, consult the documentation or contact our support.

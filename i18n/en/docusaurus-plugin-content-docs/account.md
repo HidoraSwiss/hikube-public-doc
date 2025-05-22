@@ -1,6 +1,6 @@
 ---
 sidebar_position: 3
-title: Compte
+title: Account
 ---
 
-Bienvenue sur **Hikube** ! Cette documentation vous guidera à travers les étapes essentielles pour commencer à utiliser la plateforme et gérer vos ressources (tenants, clusters Kubernetes, machines virtuelles et applications).
+Welcome to **Hikube**! This documentation will guide you through the essential steps to start using the platform and manage your resources (tenants, Kubernetes clusters, virtual machines, and applications).

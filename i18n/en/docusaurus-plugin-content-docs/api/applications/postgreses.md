@@ -2,13 +2,13 @@
 title: PostgreSQL
 ---
 
-PostgreSQL est l'un des choix les plus populaires parmi les bases de données relationnelles, réputé pour ses fonctionnalités robustes et ses performances élevées. Le service **Managed PostgreSQL** offre un cluster répliqué auto-réparant.
+PostgreSQL is one of the most popular choices among relational databases, known for its robust features and high performance. The **Managed PostgreSQL** service offers a self-healing replicated cluster.
 
 ---
 
-## Exemple de Configuration
+## Configuration Example
 
-Voici un exemple de configuration YAML pour un déploiement PostgreSQL avec deux réplicas et des sauvegardes activées :
+Here is a YAML configuration example for a PostgreSQL deployment with two replicas and enabled backups:
 
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
@@ -60,7 +60,7 @@ spec:
   #  resticPassword: "your-restic-password"
 ```
 
-À l'aide du kubeconfig fourni par Hikube et de ce yaml d'exemple, enregistré sous un fichier `manifest.yaml`, vous pouvez facilement tester le déploiement de l'application à l'aide de la commande suivante :
+Using the kubeconfig provided by Hikube and this example yaml, saved as a `manifest.yaml` file, you can easily test the application deployment using the following command:
 
 ```sh
 kubectl apply -f manifest.yaml
@@ -68,30 +68,30 @@ kubectl apply -f manifest.yaml
 
 ---
 
-## Paramètres Configurables
+## Configurable Parameters
 
-### **Paramètres Généraux**
+### **General Parameters**
 
-| **Nom**                     | **Description**                                                                                     | **Valeur Par Défaut** |
+| **Name**                    | **Description**                                                                                | **Default Value** |
 |------------------------------|-----------------------------------------------------------------------------------------------------|------------------------|
-| `external`                  | Permet l'accès externe depuis l'extérieur du cluster.                                              | `false`               |
-| `size`                      | Taille du volume persistant pour les données.                                                      | `10Gi`                |
-| `replicas`                  | Nombre de réplicas PostgreSQL.                                                                     | `2`                   |
-| `storageClass`              | Classe de stockage utilisée pour les données.                                                      | `"replicated"` ou `"local"` |
-| `postgresql.parameters.max_connections` | Nombre maximal de connexions simultanées au serveur PostgreSQL.                              | `100`                 |
-| `quorum.minSyncReplicas`    | Nombre minimum de réplicas synchrones nécessaires pour valider une transaction.                    | `0`                   |
-| `quorum.maxSyncReplicas`    | Nombre maximum de réplicas synchrones pouvant valider une transaction (doit être inférieur au nombre total d'instances). | `0`                   |
+| `external`                  | Allows external access from outside the cluster.                                                | `false`               |
+| `size`                      | Size of the persistent volume for data.                                                        | `10Gi`                |
+| `replicas`                  | Number of PostgreSQL replicas.                                                                 | `2`                   |
+| `storageClass`              | Storage class used for data.                                                                   | `"replicated"` or `"local"` |
+| `postgresql.parameters.max_connections` | Maximum number of simultaneous connections to the PostgreSQL server.                     | `100`                 |
+| `quorum.minSyncReplicas`    | Minimum number of synchronous replicas required to validate a transaction.                     | `0`                   |
+| `quorum.maxSyncReplicas`    | Maximum number of synchronous replicas that can validate a transaction (must be less than the total number of instances). | `0`                   |
 
 ---
 
-### **Paramètres de Configuration**
+### **Configuration Parameters**
 
-| **Nom**      | **Description**                    | **Valeur Par Défaut** |
+| **Name**    | **Description**               | **Default Value** |
 |--------------|------------------------------------|------------------------|
-| `users`      | Configuration des utilisateurs.   | `{}`                  |
-| `databases`  | Configuration des bases de données. | `{}`                  |
+| `users`      | Users configuration.               | `{}`                  |
+| `databases`  | Databases configuration.           | `{}`                  |
 
-**Exemple :**  
+**Example:**
 
 ```yaml
 users:
@@ -122,38 +122,38 @@ databases:
 
 ---
 
-### **Paramètres de Backup**
+### **Backup Parameters**
 
-| **Nom**                  | **Description**                                    | **Valeur Par Défaut**                         |
+| **Name**               | **Description**                                | **Default Value**                         |
 |---------------------------|----------------------------------------------------|-----------------------------------------------|
-| `backup.enabled`         | Active ou désactive les sauvegardes périodiques.  | `false`                                      |
-| `backup.s3Region`        | Région AWS S3 pour les sauvegardes.               | `us-east-1`                                  |
-| `backup.s3Bucket`        | Bucket S3 utilisé pour les sauvegardes.           | `s3.example.org/postgres-backups`            |
-| `backup.schedule`        | Planification des sauvegardes (format Cron).      | `0 2 * * *`                                  |
-| `backup.cleanupStrategy` | Stratégie pour nettoyer les anciennes sauvegardes. | `--keep-last=3 --keep-daily=3 --keep-within-weekly=1m` |
-| `backup.s3AccessKey`     | Clé d'accès AWS S3 pour l'authentification.       | `oobaiRus9pah8PhohL1ThaeTa4UVa7gu`           |
-| `backup.s3SecretKey`     | Clé secrète AWS S3 pour l'authentification.       | `ju3eum4dekeich9ahM1te8waeGai0oog`           |
-| `backup.resticPassword`  | Mot de passe pour le chiffrement Restic.          | `ChaXoveekoh6eigh4siesheeda2quai0`           |
+| `backup.enabled`         | Enables or disables periodic backups.              | `false`                                      |
+| `backup.s3Region`        | AWS S3 region for backups.                         | `us-east-1`                                  |
+| `backup.s3Bucket`        | S3 bucket used for backups.                        | `s3.example.org/postgres-backups`            |
+| `backup.schedule`        | Backup schedule (Cron format).                     | `0 2 * * *`                                  |
+| `backup.cleanupStrategy` | Strategy for cleaning up old backups.              | `--keep-last=3 --keep-daily=3 --keep-within-weekly=1m` |
+| `backup.s3AccessKey`     | AWS S3 access key for authentication.              | `oobaiRus9pah8PhohL1ThaeTa4UVa7gu`           |
+| `backup.s3SecretKey`     | AWS S3 secret key for authentication.              | `ju3eum4dekeich9ahM1te8waeGai0oog`           |
+| `backup.resticPassword`  | Password for Restic encryption.                    | `ChaXoveekoh6eigh4siesheeda2quai0`           |
 
 ---
 
-## Tutoriels
+## Tutorials
 
-### Comment basculer la réplique Master/Slave
+### How to switch Master/Slave replica
 
-Pour effectuer un basculement manuel des répliques dans le cluster, suivez les instructions détaillées dans la [documentation officielle CloudNativePG](https://cloudnative-pg.io/documentation/1.15/rolling_update/#manual-updates-supervised).
+To perform a manual failover of replicas in the cluster, follow the detailed instructions in the [official CloudNativePG documentation](https://cloudnative-pg.io/documentation/1.15/rolling_update/#manual-updates-supervised).
 
-### Comment restaurer un backup
+### How to restore a backup
 
-1. Trouvez un snapshot disponible dans votre bucket S3 :
-   - Commande : `restic -r s3:s3.tenant.hikube.cloud/postgres-backups/database_name snapshots`
-2. Restaurez le dernier snapshot :
-   - Commande : `restic -r s3:s3.tenant.hikube.cloud/postgres-backups/database_name restore latest --target /tmp/`
-3. Consultez la section **Ressources Additionnelles** pour des détails sur Restic.
+1. Find an available snapshot in your S3 bucket:
+   - Command: `restic -r s3:s3.tenant.hikube.cloud/postgres-backups/database_name snapshots`
+2. Restore the latest snapshot:
+   - Command: `restic -r s3:s3.tenant.hikube.cloud/postgres-backups/database_name restore latest --target /tmp/`
+3. See the **Additional Resources** section for details on Restic.
 
 ---
 
-## Ressources Additionnelles
+## Additional Resources
 
-- **[Guide Restic](https://itnext.io/restic-effective-backup-from-stdin-4bc1e8f083c1)**  
-  Apprenez à utiliser Restic pour gérer vos sauvegardes.
+- **[Restic Guide](https://itnext.io/restic-effective-backup-from-stdin-4bc1e8f083c1)**
+  Learn how to use Restic to manage your backups.

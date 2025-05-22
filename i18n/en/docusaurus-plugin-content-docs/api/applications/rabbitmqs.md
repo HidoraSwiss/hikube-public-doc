@@ -2,13 +2,13 @@
 title: RabbitMQ
 ---
 
-**RabbitMQ** est un puissant courtier de messages, essentiel dans les systèmes distribués modernes. Le service **Managed RabbitMQ** simplifie le déploiement et la gestion des clusters RabbitMQ, garantissant fiabilité et évolutivité pour vos besoins de messagerie.
+**RabbitMQ** is a powerful message broker, essential in modern distributed systems. The **Managed RabbitMQ** service simplifies the deployment and management of RabbitMQ clusters, ensuring reliability and scalability for your messaging needs.
 
 ---
 
-## Exemple de Configuration
+## Configuration Example
 
-Voici un exemple de configuration YAML pour un déploiement RabbitMQ avec trois réplicas :
+Here is a YAML configuration example for a RabbitMQ deployment with three replicas:
 
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
@@ -17,19 +17,21 @@ metadata:
   name: rabbitmq-example
 spec:
   external: false
-  size: 20Gi
   replicas: 3
-  storageClass: "replicated"
+  size: 20Gi
+  storageClass: replicated
   users:
-    - name: "admin"
-      password: "secure-password"
-      tags: "administrator"
+    user1:
+      password: securepassword
   vhosts:
-    - name: "/"
-    - name: "app-vhost"
+    myapp:
+      roles:
+        admin:
+        - user1
+
 ```
 
-À l'aide du kubeconfig fourni par Hikube et de ce yaml d'exemple, enregistré sous un fichier `manifest.yaml`, vous pouvez facilement tester le déploiement de l'application à l'aide de la commande suivante :
+Using the kubeconfig provided by Hikube and this example yaml, saved as a `manifest.yaml` file, you can easily test the application deployment using the following command:
 
 ```sh
 kubectl apply -f manifest.yaml
@@ -37,31 +39,31 @@ kubectl apply -f manifest.yaml
 
 ---
 
-## Paramètres Configurables
+## Configurable Parameters
 
-### **Paramètres Généraux**
+### **General Parameters**
 
-| **Nom**        | **Description**                                      | **Valeur Par Défaut** |
+| **Name**      | **Description**                                  | **Default Value** |
 |-----------------|------------------------------------------------------|------------------------|
-| `external`     | Permet l'accès externe depuis l'extérieur du cluster. | `false`               |
-| `size`         | Taille du volume persistant pour les données.         | `10Gi`                |
-| `replicas`     | Nombre de réplicas RabbitMQ.                          | `3`                   |
-| `storageClass` | Classe de stockage utilisée pour les données.         | `"replicated"` ou `"local"`   |
+| `external`     | Allows external access from outside the cluster.    | `false`               |
+| `size`         | Size of the persistent volume for data.             | `10Gi`                |
+| `replicas`     | Number of RabbitMQ replicas.                        | `3`                   |
+| `storageClass` | Storage class used for data.                        | `"replicated"` or `"local"`   |
 
 ---
 
-### **Paramètres de Configuration**
+### **Configuration Parameters**
 
-| **Nom**      | **Description**                       | **Valeur Par Défaut** |
+| **Name**    | **Description**                   | **Default Value** |
 |--------------|---------------------------------------|------------------------|
-| `users`      | Configuration des utilisateurs.      | `{}`                  |
-| `vhosts`     | Configuration des Virtual Hosts.     | `{}`                  |
+| `users`      | Users configuration.                  | `{}`                  |
+| `vhosts`     | Virtual Hosts configuration.          | `{}`                  |
 
 ---
 
-## Ressources Additionnelles
+## Additional Resources
 
-Pour en savoir plus sur RabbitMQ et son opérateur, consultez les ressources suivantes :
+To learn more about RabbitMQ and its operator, check the following resources:
 
-- **[Documentation Officielle RabbitMQ Cluster Operator](https://www.rabbitmq.com/kubernetes/operator/operator-overview.html)**  
-  Guide complet sur l'utilisation de l'opérateur RabbitMQ.
+- **[Official RabbitMQ Cluster Operator Documentation](https://www.rabbitmq.com/kubernetes/operator/operator-overview.html)**
+  Comprehensive guide on using the RabbitMQ operator.
