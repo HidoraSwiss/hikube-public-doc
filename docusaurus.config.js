@@ -15,7 +15,7 @@ const config = {
   favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
-  url: 'https://hikube-docs.sh1.hidora.com',
+  url: 'https://docs.hikube.cloud',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/',
@@ -46,7 +46,7 @@ const config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://gitlab.hidora.com/hikube/documentation-hikube/-/tree/main',
+            'https://gitlab.internal.hidora/hikube/documentation-hikube/-/tree/main',
         },
         theme: {
           customCss: './src/css/custom.css',
@@ -64,7 +64,8 @@ const config = {
         title: 'Hikube',
         logo: {
           alt: 'Hikube Logo',
-          src: 'img/logo.svg',
+          src: 'img/logo_whitemode.svg',
+          srcDark: 'img/logo_darkmode.svg',
         },
         items: [
           {
@@ -78,7 +79,7 @@ const config = {
             label: 'Documentation',
           },
           {
-            href: 'https://hidora.io/ressources/',
+            href: 'https://hikube.cloud',
             label: 'Hikube',
             position: 'right',
           },
@@ -114,7 +115,7 @@ const config = {
             items: [
               {
                 label: 'Hikube',
-                href: 'https://dashboard.hikube.cloud',
+                href: 'https://hikube.cloud',
               },
               {
                 label: 'Hidora',
