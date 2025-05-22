@@ -1,5 +1,5 @@
 ---
-title: MySQL
+title: MariaDB/MySQL
 ---
 
 Le service **Managed MariaDB** offre une solution de base de données relationnelle puissante et largement utilisée. Ce service permet de créer et gérer facilement un cluster MariaDB répliqué.
@@ -25,8 +25,9 @@ spec:
       password: "secure-password"
   databases:
     mydb:
-      charset: utf8mb4
-      collation: utf8mb4_general_ci
+      roles:
+        admin:
+          - admin
   backup:
     enabled: false
   #  s3Region: "us-east-1"
@@ -125,9 +126,8 @@ restic -r s3:s3.tenant.hikube.cloud/mariadb-backups/database_name restore latest
 
 Pour approfondir vos connaissances sur MariaDB et son opérateur, consultez les ressources suivantes :
 
-- **[Documentation Officielle MariaDB](https://mariadb.com/kb/en/documentation/)**  
+- **[Documentation Officielle MariaDB](https://mariadb.com/kb/en/documentation/)**
   Guide complet pour utiliser et configurer MariaDB.
 
-- **[Guide Restic](https://itnext.io/restic-effective-backup-from-stdin-4bc1e8f083c1)**  
+- **[Guide Restic](https://itnext.io/restic-effective-backup-from-stdin-4bc1e8f083c1)**
   Découvrez comment utiliser Restic pour gérer vos sauvegardes, avec des exemples pratiques.
-  
