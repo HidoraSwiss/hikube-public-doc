@@ -17,16 +17,18 @@ metadata:
   name: rabbitmq-example
 spec:
   external: false
-  size: 20Gi
   replicas: 3
-  storageClass: "replicated"
+  size: 20Gi
+  storageClass: replicated
   users:
-    - name: "admin"
-      password: "secure-password"
-      tags: "administrator"
+    user1:
+      password: securepassword
   vhosts:
-    - name: "/"
-    - name: "app-vhost"
+    myapp:
+      roles:
+        admin:
+        - user1
+
 ```
 
 À l'aide du kubeconfig fourni par Hikube et de ce yaml d'exemple, enregistré sous un fichier `manifest.yaml`, vous pouvez facilement tester le déploiement de l'application à l'aide de la commande suivante :
@@ -63,5 +65,5 @@ kubectl apply -f manifest.yaml
 
 Pour en savoir plus sur RabbitMQ et son opérateur, consultez les ressources suivantes :
 
-- **[Documentation Officielle RabbitMQ Cluster Operator](https://www.rabbitmq.com/kubernetes/operator/operator-overview.html)**  
+- **[Documentation Officielle RabbitMQ Cluster Operator](https://www.rabbitmq.com/kubernetes/operator/operator-overview.html)**
   Guide complet sur l'utilisation de l'opérateur RabbitMQ.

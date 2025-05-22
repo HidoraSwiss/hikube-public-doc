@@ -25,6 +25,9 @@ spec:
     maxSyncReplicas: 2
   backup:
     enabled: false
+  users:
+    user1:
+      password: "securepassword"
   #  s3Region: "us-east-1"
   #  s3Bucket: "s3.tenant.hikube.cloud/postgres-backups"
   #  schedule: "0 2 * * *"
@@ -63,7 +66,7 @@ Ces paramètres permettent de configurer les aspects fondamentaux de FerretDB.
 
 | **Nom**  | **Description**                                                      | **Valeur Par Défaut** |
 |----------|----------------------------------------------------------------------|------------------------|
-| `users`  | Configuration des utilisateurs ClickHouse. Chaque utilisateur peut avoir des permissions personnalisées. | `{}`                  |
+| `users`  | Configuration des utilisateurs FerretDB. Chaque utilisateur peut avoir des permissions personnalisées. | `{}`                  |
 
 **Exemple** :
 
@@ -97,14 +100,14 @@ Ces paramètres permettent de configurer les sauvegardes périodiques de FerretD
 
 ## Restaurer un Backup
 
-Vous pouvez restaurer un backup de ClickHouse à l'aide de Restic. Voici les étapes principales :
+Vous pouvez restaurer un backup de FerretDB à l'aide de Restic. Voici les étapes principales :
 
 ### Trouver un Snapshot
 
 Utilisez la commande suivante pour lister les snapshots disponibles dans votre bucket S3 :
 
 ```bash
-restic -r s3:s3.tenant.hikube.cloud/clickhouse-backups/table_name snapshots
+restic -r s3:s3.tenant.hikube.cloud/ferret-backups/table_name snapshots
 ```
 
 ### Restaurer le Snapshot
@@ -112,7 +115,7 @@ restic -r s3:s3.tenant.hikube.cloud/clickhouse-backups/table_name snapshots
 Pour restaurer le snapshot le plus récent, exécutez la commande suivante en spécifiant une cible de restauration :
 
 ```bash
-restic -r s3:s3.tenant.hikube.cloud/clickhouse-backups/table_name restore latest --target /tmp/
+restic -r s3:s3.tenant.hikube.cloud/ferret-backups/table_name restore latest --target /tmp/
 ```
 
 ---
@@ -121,11 +124,11 @@ restic -r s3:s3.tenant.hikube.cloud/clickhouse-backups/table_name restore latest
 
 Pour approfondir vos connaissances sur FerretDB et ses fonctionnalités, voici quelques ressources utiles :
 
-- [**Documentation Officielle FerretDB**](https://github.com/FerretDB/FerretDB)  
+- [**Documentation Officielle FerretDB**](https://github.com/FerretDB/FerretDB)
   Découvrez les détails techniques, les options de configuration et les exemples d'utilisation de FerretDB.
 
-- [**Guide Restic**](https://restic.readthedocs.io/)  
+- [**Guide Restic**](https://restic.readthedocs.io/)
   Apprenez à utiliser Restic pour la gestion des sauvegardes, y compris les meilleures pratiques pour le chiffrement et la restauration.
 
-- [**Tutoriel : Format Cron**](https://crontab.guru/)  
+- [**Tutoriel : Format Cron**](https://crontab.guru/)
   Un outil pratique pour créer et comprendre les expressions Cron utilisées pour les sauvegardes planifiées.
