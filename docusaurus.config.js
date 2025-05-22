@@ -11,7 +11,6 @@ import {themes as prismThemes} from 'prism-react-renderer';
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'Documentation | Hikube',
-  tagline: 'Hikube is so cool',
   favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
@@ -42,12 +41,15 @@ const config = {
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
+          routeBasePath: '/', // Set this value to '/'.
           sidebarPath: './sidebars.js',
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
             'https://gitlab.internal.hidora/hikube/documentation-hikube/-/tree/main',
         },
+        blog: false,
+        
         theme: {
           customCss: './src/css/custom.css',
         },
@@ -72,12 +74,6 @@ const config = {
             position: 'right',
           },
           {
-            type: 'docSidebar',
-            sidebarId: 'docsSidebar',
-            position: 'left',
-            label: 'Documentation',
-          },
-          {
             href: 'https://hikube.cloud',
             label: 'Hikube',
             position: 'right',
@@ -92,7 +88,7 @@ const config = {
             items: [
               {
                 label: 'API',
-                to: '/docs/api',
+                to: '/api',
               },
             ],
           },
