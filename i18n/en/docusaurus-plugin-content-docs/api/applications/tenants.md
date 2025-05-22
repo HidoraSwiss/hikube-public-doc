@@ -2,13 +2,13 @@
 title: Tenant
 ---
 
-Un **Tenant** est l'unité principale de sécurité sur la plateforme. Il peut être comparé aux namespaces du noyau Linux. Les tenants peuvent être créés de manière récursive et suivent des règles spécifiques pour la gestion et l'héritage.
+A **Tenant** is the main security unit on the platform. It can be compared to kernel namespaces in Linux. Tenants can be created recursively and follow specific rules for management and inheritance.
 
 ---
 
-## Exemple de Configuration
+## Configuration Example
 
-Voici un exemple de configuration YAML pour un tenant avec ses propres services et une isolation réseau activée :
+Here is a YAML configuration example for a tenant with its own services and enabled network isolation:
 
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
@@ -24,7 +24,7 @@ spec:
   isolated: true
 ```
 
-À l'aide du kubeconfig fourni par Hikube et de ce yaml d'exemple, enregistré sous un fichier `manifest.yaml`, vous pouvez facilement tester le déploiement de l'application à l'aide de la commande suivante :
+Using the kubeconfig provided by Hikube and this example yaml, saved as a `manifest.yaml` file, you can easily test the application deployment using the following command:
 
 ```sh
 kubectl apply -f manifest.yaml
@@ -32,23 +32,23 @@ kubectl apply -f manifest.yaml
 
 ---
 
-## Détails sur les Tenants
+## Tenant Details
 
-### Règles de Gestion
+### Management Rules
 
-1. Les tenants de niveau supérieur peuvent accéder aux tenants de niveau inférieur.
-2. Les tenants de niveau supérieur peuvent visualiser et gérer les applications de tous leurs enfants.
+1. Higher-level tenants can access lower-level tenants.
+2. Higher-level tenants can view and manage applications for all their children.
 
-### Héritage des Domaines
+### Domain Inheritance
 
-Chaque tenant possède son propre domaine. Par défaut, il hérite du domaine de son parent avec un préfixe basé sur son nom.
+Each tenant has its own domain. By default, it inherits the domain of its parent with a prefix based on its name.
 
-**Exemple** :
+**Example**:
 
-- Si le parent possède le domaine `example.org`, alors un tenant nommé `tenant-foo` obtiendra le domaine `foo.example.org` par défaut.
-- Les clusters Kubernetes créés dans ce namespace obtiendront des sous-domaines comme `kubernetes-cluster.foo.example.org`.
+- If the parent has the domain `example.org`, then a tenant named `tenant-foo` will get the domain `foo.example.org` by default.
+- Kubernetes clusters created in this namespace will get subdomains like `kubernetes-cluster.foo.example.org`.
 
-Arborescence :
+Tree structure:
 
 ```scss
 tenant-root (example.org)
@@ -56,17 +56,17 @@ tenant-root (example.org)
     └── kubernetes-cluster1 (kubernetes-cluster1.foo.example.org)
 ```
 
-### Partage de Services
+### Service Sharing
 
-Un tenant de niveau inférieur peut accéder aux services du cluster de son parent (s'il ne déploie pas ses propres services).
+A lower-level tenant can access its parent's cluster services (if it doesn't deploy its own services).
 
-**Exemple** :
+**Example**:
 
-- Créons `tenant-u1` avec un ensemble de services : `etcd`, `ingress`, `monitoring`.
-- Créons un tenant de niveau inférieur `tenant-u2` dans le namespace de `tenant-u1`.
-- Si `tenant-u2` n’a pas ses propres services comme `etcd`, `ingress` ou `monitoring`, les applications utiliseront ceux de `tenant-u1`.
+- Let's create `tenant-u1` with a set of services: `etcd`, `ingress`, `monitoring`.
+- Let's create a lower-level tenant `tenant-u2` in the namespace of `tenant-u1`.
+- If `tenant-u2` doesn't have its own services like `etcd`, `ingress` or `monitoring`, applications will use those of `tenant-u1`.
 
-Arborescence :
+Tree structure:
 
 ```scss
 tenant-u1
@@ -78,25 +78,25 @@ tenant-u1
     └── postgres-db1
 ```
 
-Dans cet exemple :
+In this example:
 
-- Les données Kubernetes de `tenant-u2` seront stockées dans le `etcd` de `tenant-u1`.
-- L'accès se fera via le `ingress` commun de `tenant-u1`.
-- Les métriques seront collectées dans le système de monitoring de `tenant-u1`.
+- Kubernetes data for `tenant-u2` will be stored in `tenant-u1`'s `etcd`.
+- Access will be through the common `ingress` of `tenant-u1`.
+- Metrics will be collected in `tenant-u1`'s monitoring system.
 
 ---
 
-## Paramètres Configurables
+## Configurable Parameters
 
-### **Paramètres Généraux**
+### **General Parameters**
 
-| **Nom**      | **Description**                                                                      | **Valeur Par Défaut** |
+| **Name**    | **Description**                                                                    | **Default Value** |
 |--------------|--------------------------------------------------------------------------------------|------------------------|
-| `host`       | Nom d'hôte utilisé pour accéder aux services du tenant (basé sur le domaine parent). | `""`                  |
-| `etcd`       | Déploie un cluster Etcd propre au tenant.                                            | `false`               |
-| `monitoring` | Déploie une stack de monitoring propre au tenant.                                    | `false`               |
-| `ingress`    | Déploie un contrôleur Ingress propre au tenant.                                      | `false`               |
-| `seaweedfs`  | Déploie une instance SeaweedFS propre au tenant.                                     | `false`               |
-| `isolated`   | Applique des politiques réseau pour isoler le namespace du tenant.                  | `false`               |
+| `host`       | Hostname used to access tenant services (based on parent domain).                   | `""`                  |
+| `etcd`       | Deploys an Etcd cluster specific to the tenant.                                    | `false`               |
+| `monitoring` | Deploys a monitoring stack specific to the tenant.                                  | `false`               |
+| `ingress`    | Deploys an Ingress controller specific to the tenant.                               | `false`               |
+| `seaweedfs`  | Deploys a SeaweedFS instance specific to the tenant.                                | `false`               |
+| `isolated`   | Applies network policies to isolate the tenant's namespace.                         | `false`               |
 
 ---

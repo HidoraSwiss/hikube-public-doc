@@ -2,13 +2,13 @@
 title: Virtual Machine Instances
 ---
 
-Une **Virtual Machine (VM)** simule du matériel informatique, permettant à divers systèmes d'exploitation et applications de s'exécuter dans un environnement isolé.
+A **Virtual Machine (VM)** simulates computer hardware, allowing various operating systems and applications to run in an isolated environment.
 
 ---
 
-## Exemple de Configuration
+## Configuration Example
 
-Voici un exemple de configuration YAML pour une machine virtuelle avec des paramètres typiques :
+Here is a YAML configuration example for a virtual machine with typical parameters:
 
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
@@ -39,7 +39,7 @@ spec:
           - "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAr..."
 ```
 
-À l'aide du kubeconfig fourni par Hikube et de ce yaml d'exemple, enregistré sous un fichier `manifest.yaml`, vous pouvez facilement tester le déploiement de l'application à l'aide de la commande suivante :
+Using the kubeconfig provided by Hikube and this example yaml, saved as a `manifest.yaml` file, you can easily test the application deployment using the following command:
 
 ```sh
 kubectl apply -f manifest.yaml
@@ -47,34 +47,34 @@ kubectl apply -f manifest.yaml
 
 ---
 
-## Accéder à une Machine Virtuelle
+## Accessing a Virtual Machine
 
-Vous pouvez accéder à une machine virtuelle en utilisant l'outil **virtctl** :
+You can access a virtual machine using the **virtctl** tool:
 
-- **Console Série** :  
+- **Serial Console**:
   `virtctl console <vm>`
 
-- **Accès VNC** :  
+- **VNC Access**:
   `virtctl vnc <vm>`
 
-- **Accès SSH** :  
+- **SSH Access**:
   `virtctl ssh <user>@<vm>`
 
 ---
 
-## Paramètres Configurables
+## Configurable Parameters
 
-### **Paramètres Généraux**
+### **General Parameters**
 
-| **Nom**              | **Description**                                                                   | **Valeur Par Défaut** |
+| **Name**           | **Description**                                                             | **Default Value** |
 |-----------------------|-----------------------------------------------------------------------------------|------------------------|
-| `external`           | Permet l'accès externe depuis l'extérieur du cluster.                            | `false`               |
-| `externalPorts`      | Spécifie les ports à exposer en dehors du cluster.                                | `[]`                  |
-| `running`            | Indique si la VM doit être en cours d'exécution.                                 | `true`                |
-| `instanceType`       | Type d'instance de la machine virtuelle.                                          | `u1.medium`           |
-| `instanceProfile`    | Profil des préférences pour la machine virtuelle (OS invité).                    | `ubuntu`              |
-| `disks`              | Liste des disques à attacher.                                                    | `[]`                  |
-| `resources.cpu`      | Nombre de cœurs CPU alloués à la machine virtuelle.                               | `""`                  |
-| `resources.memory`   | Quantité de mémoire allouée à la machine virtuelle.                               | `""`                  |
-| `sshKeys`            | Liste des clés publiques SSH pour l'authentification (clé unique ou liste).       | `[]`                  |
-| `cloudInit`          | Configuration des données utilisateur via cloud-init. Voir la documentation pour plus de détails. | `#cloud-config`       |
+| `external`           | Allows external access from outside the cluster.                             | `false`               |
+| `externalPorts`      | Specifies ports to expose outside the cluster.                               | `[]`                  |
+| `running`            | Indicates if the VM should be running.                                       | `true`                |
+| `instanceType`       | Virtual machine instance type.                                               | `u1.medium`           |
+| `instanceProfile`    | Profile preferences for the virtual machine (guest OS).                      | `ubuntu`              |
+| `disks`              | List of disks to attach.                                                     | `[]`                  |
+| `resources.cpu`      | Number of CPU cores allocated to the virtual machine.                        | `""`                  |
+| `resources.memory`   | Amount of memory allocated to the virtual machine.                           | `""`                  |
+| `sshKeys`            | List of SSH public keys for authentication (single key or list).             | `[]`                  |
+| `cloudInit`          | User data configuration via cloud-init. See documentation for more details.  | `#cloud-config`       |

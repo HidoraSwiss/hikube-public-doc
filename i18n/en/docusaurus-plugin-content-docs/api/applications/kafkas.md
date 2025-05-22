@@ -2,13 +2,13 @@
 title: Kafka
 ---
 
-Kafka est une plateforme de messagerie distribuée conçue pour gérer des flux de données en temps réel avec une haute disponibilité et une tolérance aux pannes. Cette page détaille les paramètres de configuration pour Kafka, y compris les options pour ZooKeeper, et propose un exemple d'utilisation.
+Kafka is a distributed messaging platform designed to manage real-time data streams with high availability and fault tolerance. This page details the configuration parameters for Kafka, including options for ZooKeeper, and provides a usage example.
 
 ---
 
-## Exemple de Configuration
+## Configuration Example
 
-Voici un exemple de configuration YAML pour déployer Kafka avec ZooKeeper dans un cluster Kubernetes :
+Here is a YAML configuration example to deploy Kafka with ZooKeeper in a Kubernetes cluster:
 
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
@@ -34,63 +34,63 @@ spec:
       replicationFactor: 3
 ```
 
-À l'aide du kubeconfig fourni par Hikube et de ce yaml d'exemple, enregistré sous un fichier `manifest.yaml`, vous pouvez facilement tester le déploiement de l'application à l'aide de la commande suivante :
+Using the kubeconfig provided by Hikube and this example yaml, saved as a `manifest.yaml` file, you can easily test the application deployment using the following command:
 
 ```sh
 kubectl apply -f manifest.yaml
 ```
 
-Dans cet exemple :
+In this example:
 
-- **`external`** : Activé pour permettre un accès externe à Kafka depuis l'extérieur du cluster.
-- **`kafka.size`** : Défini à `20Gi`, spécifiant la taille du volume persistant pour Kafka.
-- **`kafka.replicas`** : Configuré à `3`, garantissant la redondance et la haute disponibilité.
-- **`kafka.storageClass`** : Utilise une classe de stockage nommée `replicated`.
-- **`zookeeper.size`** : Défini à `10Gi` pour le stockage persistant des données ZooKeeper.
-- **`zookeeper.replicas`** : Configuré à `3`, assurant une tolérance aux pannes pour ZooKeeper.
-- **`zookeeper.storageClass`** : Utilise une classe de stockage fiable nommée `reliable-storage`.
-- **`topics`** :
-  - **`example-topic`** : Un topic avec 3 partitions et un facteur de réplication de 2.
-  - **`another-topic`** : Un topic avec 5 partitions et un facteur de réplication de 3.
+- **`external`**: Enabled to allow external access to Kafka from outside the cluster.
+- **`kafka.size`**: Set to `20Gi`, specifying the size of the persistent volume for Kafka.
+- **`kafka.replicas`**: Configured to `3`, ensuring redundancy and high availability.
+- **`kafka.storageClass`**: Uses a storage class named `replicated`.
+- **`zookeeper.size`**: Set to `10Gi` for persistent storage of ZooKeeper data.
+- **`zookeeper.replicas`**: Configured to `3`, ensuring fault tolerance for ZooKeeper.
+- **`zookeeper.storageClass`**: Uses a reliable storage class named `reliable-storage`.
+- **`topics`**:
+  - **`example-topic`**: A topic with 3 partitions and a replication factor of 2.
+  - **`another-topic`**: A topic with 5 partitions and a replication factor of 3.
 
-Cette configuration garantit un déploiement robuste et performant de Kafka, en intégrant des pratiques optimales pour la gestion des données et des topics.
+This configuration ensures a robust and high-performance Kafka deployment, incorporating best practices for data and topic management.
 
 ---
 
-## Paramètres Configurables
+## Configurable Parameters
 
-### **Paramètres Généraux**
+### **General Parameters**
 
-Ces paramètres configurent les composants Kafka et ZooKeeper pour assurer leur déploiement et leur bon fonctionnement.
+These parameters configure the Kafka and ZooKeeper components to ensure their deployment and proper functioning.
 
-| **Nom**               | **Description**                                              | **Valeur Par Défaut** |
+| **Name**              | **Description**                                           | **Default Value** |
 |------------------------|--------------------------------------------------------------|------------------------|
-| `external`            | Permet l'accès externe à Kafka depuis l'extérieur du cluster. | `false`               |
-| `kafka.size`          | Taille du volume persistant pour les données Kafka.           | `10Gi`                |
-| `kafka.replicas`      | Nombre de réplicas Kafka.                                     | `3`                   |
-| `kafka.storageClass`  | Classe de stockage utilisée pour les données Kafka.           | `"replicated"` ou `"local"`   |
-| `zookeeper.size`      | Taille du volume persistant pour les données ZooKeeper.       | `5Gi`                 |
-| `zookeeper.replicas`  | Nombre de réplicas ZooKeeper.                                 | `3`                   |
-| `zookeeper.storageClass` | Classe de stockage utilisée pour les données ZooKeeper.    | `"replicated"` ou `"local"`   |
+| `external`            | Allows external access to Kafka from outside the cluster. | `false`               |
+| `kafka.size`          | Size of the persistent volume for Kafka data.             | `10Gi`                |
+| `kafka.replicas`      | Number of Kafka replicas.                                 | `3`                   |
+| `kafka.storageClass`  | Storage class used for Kafka data.                        | `"replicated"` or `"local"`   |
+| `zookeeper.size`      | Size of the persistent volume for ZooKeeper data.         | `5Gi`                 |
+| `zookeeper.replicas`  | Number of ZooKeeper replicas.                             | `3`                   |
+| `zookeeper.storageClass` | Storage class used for ZooKeeper data.                 | `"replicated"` or `"local"`   |
 
 ---
 
-### **Paramètres de Configuration**
+### **Configuration Parameters**
 
-Ces paramètres permettent de personnaliser la gestion des topics Kafka.
+These parameters allow customizing Kafka topic management.
 
-| **Nom**   | **Description**              | **Valeur Par Défaut** |
+| **Name**  | **Description**           | **Default Value** |
 |-----------|------------------------------|------------------------|
-| `topics`  | Configuration des topics.    | `[]`                  |
+| `topics`  | Topics configuration.        | `[]`                  |
 
 ---
 
-## Ressources Additionnelles
+## Additional Resources
 
-Pour approfondir vos connaissances sur Kafka et ses composants, consultez les ressources suivantes :
+To deepen your knowledge of Kafka and its components, check the following resources:
 
-- [**Documentation Officielle Kafka**](https://kafka.apache.org/documentation/)  
-  Guide officiel pour configurer et exploiter Kafka, avec des exemples pratiques et des concepts avancés.
+- [**Official Kafka Documentation**](https://kafka.apache.org/documentation/)
+  Official guide for configuring and operating Kafka, with practical examples and advanced concepts.
 
-- [**ZooKeeper Documentation**](https://zookeeper.apache.org/doc/r3.8.0/index.html)  
-  Guide complet pour comprendre et configurer ZooKeeper, une composante clé pour le bon fonctionnement de Kafka.
+- [**ZooKeeper Documentation**](https://zookeeper.apache.org/doc/r3.8.0/index.html)
+  Comprehensive guide to understanding and configuring ZooKeeper, a key component for Kafka's proper functioning.

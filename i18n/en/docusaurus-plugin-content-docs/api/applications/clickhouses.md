@@ -2,13 +2,13 @@
 title: ClickHouse
 ---
 
-**ClickHouse** est une base de données analytique orientée colonnes, conçue pour des requêtes rapides et efficaces. Cette page décrit les options de configuration disponibles pour ClickHouse, y compris la gestion des sauvegardes.
+**ClickHouse** is a column-oriented analytical database designed for fast and efficient queries. This page describes the configuration options available for ClickHouse, including backup management.
 
 ---
 
-## Exemple de Configuration
+## Configuration Example
 
-Voici un exemple de configuration YAML pour un cluster ClickHouse avec deux réplicas par shard, une taille de stockage personnalisée et des sauvegardes activées :
+Here is a YAML configuration example for a ClickHouse cluster with two replicas per shard, custom storage size, and enabled backups:
 
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
@@ -39,7 +39,7 @@ spec:
   #  resticPassword: "your-restic-password"
 ```
 
-À l'aide du kubeconfig fourni par Hikube et de ce yaml d'exemple, enregistré sous un fichier `manifest.yaml`, vous pouvez facilement tester le déploiement de l'application à l'aide de la commande suivante :
+Using the kubeconfig provided by Hikube and this example yaml, saved as a `manifest.yaml` file, you can easily test the application deployment using the following command:
 
 ```sh
 kubectl apply -f manifest.yaml
@@ -47,28 +47,28 @@ kubectl apply -f manifest.yaml
 
 ---
 
-## Paramètres Configurables
+## Configurable Parameters
 
-### **Paramètres Généraux**
+### **General Parameters**
 
-| **Nom**           | **Description**                                                                 | **Valeur Par Défaut** |
+| **Name**           | **Description**                                                                 | **Default Value** |
 |--------------------|---------------------------------------------------------------------------------|------------------------|
-| `size`            | Taille du volume persistant pour les données.                                   | `10Gi`                |
-| `logStorageSize`  | Taille du volume persistant pour les journaux (logs).                           | `2Gi`                 |
-| `shards`          | Nombre de shards ClickHouse.                                                    | `1`                   |
-| `replicas`        | Nombre de réplicas ClickHouse dans chaque shard.                                | `2`                   |
-| `storageClass`    | Classe de stockage utilisée pour les données et les journaux.                   | `"replicated"` ou `"local"`    |
-| `logTTL`          | Temps de rétention pour `query_log` et `query_thread_log`, exprimé en jours.    | `15`                  |
+| `size`            | Persistent volume size for data.                                   | `10Gi`                |
+| `logStorageSize`  | Persistent volume size for logs.                           | `2Gi`                 |
+| `shards`          | Number of ClickHouse shards.                                                    | `1`                   |
+| `replicas`        | Number of ClickHouse replicas in each shard.                                | `2`                   |
+| `storageClass`    | Storage class used for data and logs.                   | `"replicated"` or `"local"`    |
+| `logTTL`          | Retention time for `query_log` and `query_thread_log`, expressed in days.    | `15`                  |
 
 ---
 
-### **Paramètres de Configuration**
+### **Configuration Parameters**
 
-| **Nom**  | **Description**                                                      | **Valeur Par Défaut** |
+| **Name**  | **Description**                                                      | **Default Value** |
 |----------|----------------------------------------------------------------------|------------------------|
-| `users`  | Configuration des utilisateurs ClickHouse. Chaque utilisateur peut avoir des permissions personnalisées. | `{}`                  |
+| `users`  | ClickHouse users configuration. Each user can have custom permissions. | `{}`                  |
 
-**Exemple** :
+**Example**:
 
 ```yaml
 users:
@@ -81,36 +81,36 @@ users:
 
 ---
 
-### **Paramètres de Backup**
+### **Backup Parameters**
 
-| **Nom**                | **Description**                                                | **Valeur Par Défaut**                         |
+| **Name**                | **Description**                                                | **Default Value**                         |
 |-------------------------|----------------------------------------------------------------|-----------------------------------------------|
-| `backup.enabled`       | Active ou désactive les sauvegardes périodiques.               | `false`                                      |
-| `backup.s3Region`      | Région AWS S3 où les sauvegardes sont stockées.                | `us-east-1`                                  |
-| `backup.s3Bucket`      | Nom du bucket S3 utilisé pour les sauvegardes.                 | `s3.example.org/clickhouse-backups`          |
-| `backup.schedule`      | Planification des sauvegardes (format Cron).                   | `0 2 * * *`                                  |
-| `backup.cleanupStrategy` | Stratégie de nettoyage pour les anciennes sauvegardes.        | `--keep-last=3 --keep-daily=3 --keep-within-weekly=1m` |
-| `backup.s3AccessKey`   | Clé d'accès AWS S3 pour l'authentification.                    | `oobaiRus9pah8PhohL1ThaeTa4UVa7gu`           |
-| `backup.s3SecretKey`   | Clé secrète AWS S3 pour l'authentification.                    | `ju3eum4dekeich9ahM1te8waeGai0oog`           |
-| `backup.resticPassword` | Mot de passe pour le chiffrement des sauvegardes Restic.      | `ChaXoveekoh6eigh4siesheeda2quai0`           |
+| `backup.enabled`       | Enables or disables periodic backups.               | `false`                                      |
+| `backup.s3Region`      | AWS S3 region where backups are stored.                | `us-east-1`                                  |
+| `backup.s3Bucket`      | S3 bucket name used for backups.                 | `s3.example.org/clickhouse-backups`          |
+| `backup.schedule`      | Backup schedule (Cron format).                   | `0 2 * * *`                                  |
+| `backup.cleanupStrategy` | Cleanup strategy for old backups.        | `--keep-last=3 --keep-daily=3 --keep-within-weekly=1m` |
+| `backup.s3AccessKey`   | AWS S3 access key for authentication.                    | `oobaiRus9pah8PhohL1ThaeTa4UVa7gu`           |
+| `backup.s3SecretKey`   | AWS S3 secret key for authentication.                    | `ju3eum4dekeich9ahM1te8waeGai0oog`           |
+| `backup.resticPassword` | Password for Restic backup encryption.      | `ChaXoveekoh6eigh4siesheeda2quai0`           |
 
 ---
 
-## Restaurer un Backup
+## Restoring a Backup
 
-Vous pouvez restaurer un backup de ClickHouse à l'aide de Restic. Voici les étapes principales :
+You can restore a ClickHouse backup using Restic. Here are the main steps:
 
-### Trouver un Snapshot
+### Finding a Snapshot
 
-Utilisez la commande suivante pour lister les snapshots disponibles dans votre bucket S3 :
+Use the following command to list available snapshots in your S3 bucket:
 
 ```bash
 restic -r s3:s3.tenant.hikube.cloud/clickhouse-backups/table_name snapshots
 ```
 
-### Restaurer le Snapshot
+### Restoring the Snapshot
 
-Pour restaurer le snapshot le plus récent, exécutez la commande suivante en spécifiant une cible de restauration :
+To restore the most recent snapshot, run the following command specifying a restoration target:
 
 ```bash
 restic -r s3:s3.tenant.hikube.cloud/clickhouse-backups/table_name restore latest --target /tmp/
@@ -118,11 +118,11 @@ restic -r s3:s3.tenant.hikube.cloud/clickhouse-backups/table_name restore latest
 
 ---
 
-## Ressources Additionnelles
+## Additional Resources
 
-Pour en savoir plus sur ClickHouse et sa gestion, consultez les ressources suivantes :
+To learn more about ClickHouse and its management, check the following resources:
 
-- **[Documentation Officielle ClickHouse](https://clickhouse.com/docs/)**  
-  Guide complet pour configurer et optimiser ClickHouse.
-- **[Restic Documentation](https://restic.net/)**  
-  Guide pour configurer et utiliser Restic pour les sauvegardes.
+- **[Official ClickHouse Documentation](https://clickhouse.com/docs/)**
+  Comprehensive guide for configuring and optimizing ClickHouse.
+- **[Restic Documentation](https://restic.net/)**
+  Guide for configuring and using Restic for backups.

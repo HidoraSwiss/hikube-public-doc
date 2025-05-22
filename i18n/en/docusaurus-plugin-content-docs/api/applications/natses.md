@@ -2,13 +2,13 @@
 title: NATS
 ---
 
-**NATS** est une solution de messagerie légère et performante utilisée pour les communications entre microservices, IoT et applications en temps réel. Ce service managé facilite la gestion des clusters NATS, avec prise en charge de Jetstream pour la messagerie persistante.
+**NATS** is a lightweight and high-performance messaging solution used for microservices communication, IoT, and real-time applications. This managed service facilitates the management of NATS clusters, with support for Jetstream for persistent messaging.
 
 ---
 
-## Exemple de Configuration
+## Configuration Example
 
-Voici un exemple de configuration YAML pour un cluster NATS avec Jetstream activé et des paramètres personnalisés :
+Here is a YAML configuration example for a NATS cluster with Jetstream enabled and custom parameters:
 
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
@@ -35,7 +35,7 @@ spec:
         max_memory_store: 2Gi
 ```
 
-À l'aide du kubeconfig fourni par Hikube et de ce yaml d'exemple, enregistré sous un fichier `manifest.yaml`, vous pouvez facilement tester le déploiement de l'application à l'aide de la commande suivante :
+Using the kubeconfig provided by Hikube and this example yaml, saved as a `manifest.yaml` file, you can easily test the application deployment using the following command:
 
 ```sh
 kubectl apply -f manifest.yaml
@@ -43,36 +43,36 @@ kubectl apply -f manifest.yaml
 
 ---
 
-## Paramètres Configurables
+## Configurable Parameters
 
-### **Paramètres Généraux**
+### **General Parameters**
 
-| **Nom**        | **Description**                                      | **Valeur Par Défaut** |
+| **Name**       | **Description**                                   | **Default Value** |
 |-----------------|------------------------------------------------------|------------------------|
-| `external`     | Permet l'accès externe depuis l'extérieur du cluster. | `false`               |
-| `replicas`     | Nombre de réplicas du cluster NATS.                   | `2`                   |
-| `storageClass` | Classe de stockage utilisée pour les données.         | `"replicated"` ou `"local"`  |
+| `external`     | Allows external access from outside the cluster.    | `false`               |
+| `replicas`     | Number of replicas in the NATS cluster.             | `2`                   |
+| `storageClass` | Storage class used for data.                        | `"replicated"` or `"local"`  |
 
 ---
 
-### **Paramètres de Configuration**
+### **Configuration Parameters**
 
-| **Nom**              | **Description**                                                                                     | **Valeur Par Défaut** |
+| **Name**           | **Description**                                                                       | **Default Value** |
 |-----------------------|-----------------------------------------------------------------------------------------------------|------------------------|
-| `users`              | Configuration des utilisateurs.                                                                     | `{}`                  |
-| `jetstream.size`     | Taille du stockage persistant pour Jetstream (message store).                                        | `10Gi`                |
-| `jetstream.enabled`  | Active ou désactive Jetstream pour la messagerie persistante.                                        | `true`                |
-| `config.merge`       | Configuration supplémentaire à fusionner dans la configuration de NATS.                             | `{}`                  |
-| `config.resolver`    | Configuration supplémentaire à fusionner pour la résolution dans la configuration de NATS.          | `{}`                  |
+| `users`              | Users configuration.                                                                  | `{}`                  |
+| `jetstream.size`     | Size of persistent storage for Jetstream (message store).                            | `10Gi`                |
+| `jetstream.enabled`  | Enables or disables Jetstream for persistent messaging.                              | `true`                |
+| `config.merge`       | Additional configuration to merge into the NATS configuration.                        | `{}`                  |
+| `config.resolver`    | Additional configuration to merge for resolution in the NATS configuration.           | `{}`                  |
 
 ---
 
-## Ressources Additionnelles
+## Additional Resources
 
-Pour en savoir plus sur NATS et Jetstream, consultez les ressources suivantes :
+To learn more about NATS and Jetstream, check the following resources:
 
-- **[Documentation Officielle NATS](https://docs.nats.io/)**  
-  Guide complet pour configurer et utiliser NATS.
+- **[Official NATS Documentation](https://docs.nats.io/)**
+  Comprehensive guide for configuring and using NATS.
 
-- **[Documentation Jetstream](https://docs.nats.io/jetstream/)**  
-  Guide sur l'utilisation de Jetstream pour la messagerie persistante.
+- **[Jetstream Documentation](https://docs.nats.io/jetstream/)**
+  Guide on using Jetstream for persistent messaging.

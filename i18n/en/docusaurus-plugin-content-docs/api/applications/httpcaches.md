@@ -2,13 +2,13 @@
 title: HTTPCache
 ---
 
-Le service **HTTPCache** est un système de cache géré basé sur **Nginx** conçu pour optimiser le trafic web et améliorer les performances des applications web. Il combine des instances Nginx personnalisées avec **HAProxy** pour fournir un caching efficace et un équilibrage de charge.
+The **HTTPCache** service is a managed cache system based on **Nginx** designed to optimize web traffic and improve web application performance. It combines customized Nginx instances with **HAProxy** to provide efficient caching and load balancing.
 
 ---
 
-## Exemple de Configuration
+## Configuration Example
 
-Voici un exemple de configuration YAML pour déployer HTTPCache avec deux réplicas pour HAProxy et Nginx :
+Here is a YAML configuration example to deploy HTTPCache with two replicas for HAProxy and Nginx:
 
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
@@ -28,7 +28,7 @@ spec:
     - url: "https://another-origin.com"
 ```
 
-À l'aide du kubeconfig fourni par Hikube et de ce yaml d'exemple, enregistré sous un fichier `manifest.yaml`, vous pouvez facilement tester le déploiement de l'application à l'aide de la commande suivante :
+Using the kubeconfig provided by Hikube and this example yaml, saved as a `manifest.yaml` file, you can easily test the application deployment using the following command:
 
 ```sh
 kubectl apply -f manifest.yaml
@@ -36,32 +36,32 @@ kubectl apply -f manifest.yaml
 
 ---
 
-## Fonctionnalités Principales
+## Main Features
 
-- **Modules et Intégrations Nginx** :
-  - Module **VTS** pour les statistiques.
-  - Intégration avec **ip2location** et **ip2proxy** pour la géolocalisation IP.
-  - Support de **51Degrees** pour la détection d'appareils.
-  - Fonctionnalité de purge de cache.
+- **Nginx Modules and Integrations**:
+  - **VTS** module for statistics.
+  - Integration with **ip2location** and **ip2proxy** for IP geolocation.
+  - **51Degrees** support for device detection.
+  - Cache purge functionality.
 
-- **Rôle de HAProxy** :
-  - HAProxy utilise un **hash cohérent** basé sur l'URL pour diriger le trafic vers les instances Nginx appropriées.
-  - Fonctionnement actif/backup pour une haute disponibilité.
+- **HAProxy Role**:
+  - HAProxy uses a **consistent hash** based on URL to direct traffic to appropriate Nginx instances.
+  - Active/backup operation for high availability.
 
-- **Stockage des Caches** :
-  - Chaque instance Nginx utilise un **Persistent Volume Claim (PVC)** pour stocker les contenus mis en cache, assurant un accès rapide et fiable aux ressources fréquemment utilisées.
+- **Cache Storage**:
+  - Each Nginx instance uses a **Persistent Volume Claim (PVC)** to store cached content, ensuring fast and reliable access to frequently used resources.
 
 ---
 
-## Architecture de Déploiement
+## Deployment Architecture
 
-L'architecture de déploiement se décompose en trois couches principales :
+The deployment architecture is divided into three main layers:
 
-1. **Load Balancer** : HAProxy pour l'équilibrage de charge.
-2. **Caching Layer** : Instances Nginx avec PVC.
-3. **Origin Layer** : Les serveurs d'origine pour les contenus non mis en cache.
+1. **Load Balancer**: HAProxy for load balancing.
+2. **Caching Layer**: Nginx instances with PVC.
+3. **Origin Layer**: Origin servers for non-cached content.
 
-Voici un schéma illustrant l'architecture :
+Here is a diagram illustrating the architecture:
 
 ```scss
       ┌─────────┐
@@ -89,49 +89,49 @@ Voici un schéma illustrant l'architecture :
        │             │              │
   ┌────┴───────┬─────┴────┬─────────┴──┐
   │            │          │            │
-┌───▼────┐ ┌────▼───┐ ┌───▼────┐  ┌────▼───┐ 
-│ origin │ │ origin │ │ origin │  │ origin │ 
+┌───▼────┐ ┌────▼───┐ ┌───▼────┐  ┌────▼───┐
+│ origin │ │ origin │ │ origin │  │ origin │
 └────────┘ └────────┘ └────────┘  └────────┘
 ```
 
 ---
 
-## Paramètres Configurables
+## Configurable Parameters
 
-### **Paramètres Généraux**
+### **General Parameters**
 
-| **Nom**            | **Description**                                              | **Valeur Par Défaut** |
+| **Name**          | **Description**                                           | **Default Value** |
 |---------------------|--------------------------------------------------------------|------------------------|
-| `external`         | Permet l'accès externe au service HTTPCache depuis l'extérieur du cluster. | `false`               |
-| `size`             | Taille du volume persistant utilisé pour le cache.           | `10Gi`                |
-| `storageClass`     | Classe de stockage utilisée pour les données.                | `"replicated"` ou `"local"`   |
-| `haproxy.replicas` | Nombre de réplicas pour HAProxy.                              | `2`                   |
-| `nginx.replicas`   | Nombre de réplicas pour Nginx.                                | `2`                   |
+| `external`         | Allows external access to the HTTPCache service from outside the cluster. | `false`               |
+| `size`             | Size of the persistent volume used for caching.           | `10Gi`                |
+| `storageClass`     | Storage class used for data.                              | `"replicated"` or `"local"`   |
+| `haproxy.replicas` | Number of HAProxy replicas.                               | `2`                   |
+| `nginx.replicas`   | Number of Nginx replicas.                                 | `2`                   |
 
 ---
 
-### **Paramètres de Configuration**
+### **Configuration Parameters**
 
-| **Nom**        | **Description**                 | **Valeur Par Défaut** |
+| **Name**      | **Description**               | **Default Value** |
 |-----------------|---------------------------------|------------------------|
-| `endpoints`    | Configuration des endpoints.    | `[]`                  |
+| `endpoints`    | Endpoints configuration.        | `[]`                  |
 
 ---
 
-## Problèmes Connus
+## Known Issues
 
-- **Temps de réponse des upstreams dans le module VTS** :  
-  Le module **VTS** affiche des temps de réponse incorrects. Ce problème est documenté ici :  
+- **Upstream response times in the VTS module**:
+  The **VTS** module displays incorrect response times. This issue is documented here:
   [GitHub Issue - VTS Module](https://github.com/vozlt/nginx-module-vts/issues/198)
 
 ---
 
-## Ressources Additionnelles
+## Additional Resources
 
-Pour en savoir plus sur la configuration et l'utilisation des composants de HTTPCache, voici quelques ressources utiles :
+To learn more about configuring and using HTTPCache components, here are some useful resources:
 
-- [**Documentation Officielle Nginx**](https://nginx.org/en/docs/)  
-  Guide complet pour configurer et optimiser Nginx, incluant des modules spécifiques comme la gestion des caches.
+- [**Official Nginx Documentation**](https://nginx.org/en/docs/)
+  Comprehensive guide for configuring and optimizing Nginx, including specific modules like cache management.
 
-- [**Documentation Officielle HAProxy**](https://haproxy.org/)  
-  Tout ce que vous devez savoir pour configurer HAProxy en tant qu'équilibreur de charge performant.
+- [**Official HAProxy Documentation**](https://haproxy.org/)
+  Everything you need to know to configure HAProxy as a high-performance load balancer.

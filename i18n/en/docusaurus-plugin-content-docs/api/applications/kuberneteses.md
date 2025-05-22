@@ -2,82 +2,82 @@
 title: Kubernetes
 ---
 
-Le service **Managed Kubernetes** offre une solution optimisée pour gérer efficacement les charges de travail serveur. Kubernetes, devenu un standard de l'industrie, fournit une API unifiée et accessible, principalement configurée en YAML, facilitant la gestion des infrastructures par les équipes.
+The **Managed Kubernetes** service offers an optimized solution for efficiently managing server workloads. Kubernetes, now an industry standard, provides a unified and accessible API, primarily configured in YAML, making infrastructure management easier for teams.
 
 ---
 
-## Aperçu
+## Overview
 
-Le service Kubernetes repose sur des modèles de conception logicielle robustes, permettant une récupération continue via la méthode de réconciliation. Il garantit également une mise à l'échelle fluide sur plusieurs serveurs, éliminant les défis des API complexes des plateformes de virtualisation traditionnelles.
+The Kubernetes service is built on robust software design patterns, enabling continuous recovery through the reconciliation method. It also ensures seamless scaling across multiple servers, eliminating the challenges of complex APIs from traditional virtualization platforms.
 
-Cette solution managée simplifie considérablement la gestion des charges de travail en éliminant le besoin de solutions personnalisées ou de modifications de code source, économisant temps et efforts.
+This managed solution significantly simplifies workload management by eliminating the need for custom solutions or source code modifications, saving time and effort.
 
 ---
 
-## Détails du Déploiement
+## Deployment Details
 
-Le service déploie un cluster Kubernetes standard en utilisant :
+The service deploys a standard Kubernetes cluster using:
 
-- **Cluster API** : Pour la gestion des clusters Kubernetes.
-- **Kamaji** : Fournisseur du plan de contrôle (Control Plane).
-- **KubeVirt** : Fournisseur de l'infrastructure pour l'orchestration des machines virtuelles.
+- **Cluster API**: For Kubernetes cluster management.
+- **Kamaji**: Control Plane provider.
+- **KubeVirt**: Infrastructure provider for virtual machine orchestration.
 
-Les charges de travail utilisent des nœuds worker déployés en tant que machines virtuelles, tandis que le plan de contrôle est exécuté dans des conteneurs.
+Workloads use worker nodes deployed as virtual machines, while the control plane runs in containers.
 
-### Fonctionnalités Disponibles
+### Available Features
 
-- Services **LoadBalancer** pour gérer l'accès externe.
-- Provisionnement facile de volumes persistants pour les applications.
+- **LoadBalancer** services to manage external access.
+- Easy provisioning of persistent volumes for applications.
 
-**Liens Utiles** :
+**Useful Links**:
 
-- [Documentation Kamaji](https://github.com/clastix/kamaji)
-- [Documentation Cluster API](https://cluster-api.sigs.k8s.io/)
+- [Kamaji Documentation](https://github.com/clastix/kamaji)
+- [Cluster API Documentation](https://cluster-api.sigs.k8s.io/)
 - [GitHub KubeVirt CSI Driver](https://github.com/kubevirt/csi-driver)
 
 ---
 
-## Accès au Cluster Déployé
+## Accessing the Deployed Cluster
 
-Pour accéder au cluster Kubernetes déployé, utilisez la commande suivante pour obtenir le fichier kubeconfig :
+To access the deployed Kubernetes cluster, use the following command to obtain the kubeconfig file:
 
 ```bash
 kubectl get secret -n <namespace> kubernetes-<clusterName>-admin-kubeconfig -o go-template='{{ printf "%s\n" (index .data "super-admin.conf" | base64decode) }}' > kubeconfig.yaml
 ```
 
-Cela génère un fichier `kubeconfig.yaml` que vous pouvez utiliser avec `kubectl` pour interagir avec le cluster.
+This generates a `kubeconfig.yaml` file that you can use with `kubectl` to interact with the cluster.
 
 ---
 
-## Machines Virtuelles et Séries de Ressources
+## Virtual Machines and Resource Series
 
-Les nœuds worker du cluster Kubernetes sont déployés en tant que **machines virtuelles** avec des caractéristiques adaptées à différentes charges de travail. Ces caractéristiques incluent :
+The worker nodes of the Kubernetes cluster are deployed as **virtual machines** with characteristics adapted to different workloads. These characteristics include:
 
-- **Burstable CPU** pour les charges de travail variables.
-- **Hugepages** pour améliorer les performances mémoire.
-- **vCPU-To-Memory Ratios** pour une utilisation optimale des ressources.
+- **Burstable CPU** for variable workloads.
+- **Hugepages** to improve memory performance.
+- **vCPU-To-Memory Ratios** for optimal resource utilization.
 
-Pour plus de détails sur les séries et les ressources des machines virtuelles, consultez la page [Machines Virtuelles](virtualmachines.md).
+For more details on virtual machine series and resources, see the [Virtual Machines](virtualmachines.md) page.
 
 ---
 
-## Paramètres Configurables
+## Configurable Parameters
 
-### **Paramètres Généraux**
+### **General Parameters**
 
-| **Nom**                    | **Description**                                                                 | **Valeur Par Défaut**    |
+| **Name**                  | **Description**                                                           | **Default Value**        |
 |-----------------------------|---------------------------------------------------------------------------------|---------------------------|
-| `host`                     | Nom d'hôte utilisé pour accéder au cluster Kubernetes.                          | `""` (nom du cluster)     |
-| `controlPlane.replicas`    | Nombre de réplicas pour les composants du plan de contrôle.                     | `2`                      |
-| `storageClass`             | Classe de stockage utilisée pour les données des utilisateurs.                  | `"replicated"` ou `"local"`             |
+| `host`                     | Hostname used to access the Kubernetes cluster.                         | `""` (cluster name)       |
+| `controlPlane.replicas`    | Number of replicas for control plane components.                         | `2`                      |
+| `storageClass`             | Storage class used for user data.                                       | `"replicated"` or `"local"`             |
 
-### **Configuration des Groupes de Nœuds**
+### **Node Group Configuration**
 
-| **Nom**           | **Description**                                                                                     | **Valeur Par Défaut** |
+| **Name**         | **Description**                                                                                | **Default Value** |
 |--------------------|-----------------------------------------------------------------------------------------------------|------------------------|
-| `nodeGroups`       | Configuration des groupes de nœuds, incluant les types d'instances, le stockage et les rôles attribués. | `{}`                  |
+| `nodeGroups`       | Node group configuration, including instance types, storage, and assigned roles. | `{}`                  |
 
-Exemple pour un groupe de nœuds :
+Example for a node group:
 
 ```yaml
 nodeGroups:
@@ -93,15 +93,15 @@ nodeGroups:
       memory: ""
 ```
 
-## Add-ons Disponibles
+## Available Add-ons
 
-Les fonctionnalités suivantes peuvent être activées pour améliorer les capacités du cluster :
+The following features can be enabled to enhance the cluster capabilities:
 
 ### Cert-Manager
 
-Gère automatiquement les certificats SSL/TLS.
+Automatically manages SSL/TLS certificates.
 
-Configuration :
+Configuration:
 
 ```yaml
 addons:
@@ -114,9 +114,9 @@ addons:
 
 ### Ingress-NGINX Controller
 
-Gère l'accès HTTP/HTTPS au cluster.
+Manages HTTP/HTTPS access to the cluster.
 
-Configuration :
+Configuration:
 
 ```yaml
 addons:
@@ -132,9 +132,9 @@ addons:
 
 ### Flux CD
 
-Implémente des pratiques GitOps pour le déploiement des applications.
+Implements GitOps practices for application deployment.
 
-Configuration :
+Configuration:
 
 ```yaml
 addons:
@@ -145,11 +145,11 @@ addons:
 
 ---
 
-### Agents de Monitoring
+### Monitoring Agents
 
-Permet l'intégration avec des agents de monitoring comme FluentBit pour la collecte des logs et des métriques.
+Enables integration with monitoring agents like FluentBit for log and metrics collection.
 
-Configuration :
+Configuration:
 
 ```yaml
 addons:
@@ -160,14 +160,13 @@ addons:
 
 ---
 
-## Ressources Additionnelles
+## Additional Resources
 
-- **[Documentation Officielle Kubernetes](https://kubernetes.io/docs/)**  
-  Guide officiel couvrant tous les aspects de Kubernetes.
-- **[Cluster API Documentation](https://cluster-api.sigs.k8s.io/)**  
-  Documentation détaillée pour la gestion des clusters Kubernetes via Cluster API.
-- **[Kamaji Documentation](https://github.com/clastix/kamaji)**  
-  Guide sur l'utilisation de Kamaji en tant que fournisseur du plan de contrôle.
-- **[KubeVirt Documentation](https://kubevirt.io/)**  
-  Informations sur l'orchestration des machines virtuelles dans Kubernetes.
-  
+- **[Official Kubernetes Documentation](https://kubernetes.io/docs/)**
+  Official guide covering all aspects of Kubernetes.
+- **[Cluster API Documentation](https://cluster-api.sigs.k8s.io/)**
+  Detailed documentation for managing Kubernetes clusters via Cluster API.
+- **[Kamaji Documentation](https://github.com/clastix/kamaji)**
+  Guide on using Kamaji as a control plane provider.
+- **[KubeVirt Documentation](https://kubevirt.io/)**
+  Information on orchestrating virtual machines in Kubernetes.

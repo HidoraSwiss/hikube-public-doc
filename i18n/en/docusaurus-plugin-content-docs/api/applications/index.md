@@ -1,52 +1,52 @@
 ---
-title: Applications disponibles dans l'API
+title: Applications Available in the API
 ---
 
-L'API de notre cloud fournit un large éventail d'applications basées sur des ressources Kubernetes. Ces applications sont conçues pour répondre aux besoins variés en matière de stockage, bases de données, réseau, virtualisation et monitoring. Chaque application est gérée comme une ressource Kubernetes, permettant une intégration facile dans vos workflows existants.
+Our cloud API provides a wide range of applications based on Kubernetes resources. These applications are designed to meet various needs in storage, databases, networking, virtualization, and monitoring. Each application is managed as a Kubernetes resource, allowing easy integration into your existing workflows.
 
-Vous trouverez ci-dessous la liste des applications disponibles, chacune avec une page dédiée contenant une description complète, des exemples d'utilisation et des détails sur les options de configuration.
-
----
-
-## Liste des Applications
-
-### Stockage
-
-- **[Bucket](buckets.md)** : Gestion des espaces de stockage d'objets.
-
-### Bases de Données
-
-- **[ClickHouse](clickhouses.md)** : Base de données analytique orientée colonnes, idéale pour des requêtes rapides.
-- **[FerretDB](ferretdb.md)** : Base de données MongoDB-compatible, déployée sur PostgreSQL.
-- **[MySQL](mysqls.md)** : Base de données relationnelle populaire.
-- **[Postgres](postgreses.md)** : Base de données relationnelle robuste et extensible.
-- **[Redis](redises.md)** : Base de données clé-valeur en mémoire pour des performances rapides.
-- **[RabbitMQ](rabbitmqs.md)** : Système de gestion de messages performant.
-- **[NATS](natses.md)** : Messagerie légère et hautement performante.
-
-### Réseau
-
-- **[HTTP Cache](httpcaches.md)** : Gestion des caches HTTP pour améliorer les performances web.
-- **[TCP Balancer](tcpbalancers.md)** : Équilibrage de charge TCP pour les applications réseau.
-- **[VPN](vpns.md)** : Gestion des connexions sécurisées à travers le cloud.
-
-### Virtualisation
-
-- **[Virtual Machine](virtualmachines.md)** : Gestion des machines virtuelles dans le cloud.
-- **[VM Disk](vmdisks.md)** : Gestion des disques associés aux machines virtuelles.
-- **[VM Instance](vminstances.md)** : Gestion des instances de machines virtuelles.
-
-### Orchestration et Multi-Cloud
-
-- **[Kubernetes](kuberneteses.md)** : Gestion des clusters Kubernetes intégrés.
-- **[Tenant](tenants.md)** : Gestion des environnements multi-tenants dans le cloud.
-
-### Messagerie
-
-- **[Kafka](kafkas.md)** : Système de messagerie distribué pour le traitement de flux en temps réel.
+Below you'll find the list of available applications, each with a dedicated page containing a complete description, usage examples, and details on configuration options.
 
 ---
 
-Chaque application est documentée avec ses spécificités, son API associée, et des exemples pratiques pour une intégration optimale dans vos infrastructures cloud.
+## Applications List
 
-**Prochaine étape** : Sélectionnez une application pour en savoir plus !
+### Storage
+
+- **[Bucket](buckets.md)**: Object storage space management.
+
+### Databases
+
+- **[ClickHouse](clickhouses.md)**: Column-oriented analytical database, ideal for fast queries.
+- **[FerretDB](ferretdb.md)**: MongoDB-compatible database, deployed on PostgreSQL.
+- **[MySQL](mysqls.md)**: Popular relational database.
+- **[Postgres](postgreses.md)**: Robust and extensible relational database.
+- **[Redis](redises.md)**: In-memory key-value database for fast performance.
+- **[RabbitMQ](rabbitmqs.md)**: High-performance message management system.
+- **[NATS](natses.md)**: Lightweight and high-performance messaging.
+
+### Network
+
+- **[HTTP Cache](httpcaches.md)**: HTTP cache management to improve web performance.
+- **[TCP Balancer](tcpbalancers.md)**: TCP load balancing for network applications.
+- **[VPN](vpns.md)**: Management of secure connections across the cloud.
+
+### Virtualization
+
+- **[Virtual Machine](virtualmachines.md)**: Management of virtual machines in the cloud.
+- **[VM Disk](vmdisks.md)**: Management of disks associated with virtual machines.
+- **[VM Instance](vminstances.md)**: Management of virtual machine instances.
+
+### Orchestration and Multi-Cloud
+
+- **[Kubernetes](kuberneteses.md)**: Management of integrated Kubernetes clusters.
+- **[Tenant](tenants.md)**: Management of multi-tenant environments in the cloud.
+
+### Messaging
+
+- **[Kafka](kafkas.md)**: Distributed messaging system for real-time stream processing.
+
+---
+
+Each application is documented with its specifics, associated API, and practical examples for optimal integration into your cloud infrastructures.
+
+**Next step**: Select an application to learn more!

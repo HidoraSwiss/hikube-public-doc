@@ -1,14 +1,14 @@
 ---
-title: MySQL
+title: MariaDB/MySQL
 ---
 
-Le service **Managed MariaDB** offre une solution de base de données relationnelle puissante et largement utilisée. Ce service permet de créer et gérer facilement un cluster MariaDB répliqué.
+The **Managed MariaDB** service offers a powerful and widely used relational database solution. This service allows you to easily create and manage a replicated MariaDB cluster.
 
 ---
 
-## Exemple de Configuration
+## Configuration Example
 
-Voici un exemple de configuration YAML pour un déploiement MariaDB avec deux réplicas et des sauvegardes activées :
+Here is a YAML configuration example for a MariaDB deployment with two replicas and enabled backups:
 
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
@@ -25,8 +25,9 @@ spec:
       password: "secure-password"
   databases:
     mydb:
-      charset: utf8mb4
-      collation: utf8mb4_general_ci
+      roles:
+        admin:
+          - admin
   backup:
     enabled: false
   #  s3Region: "us-east-1"
@@ -38,7 +39,7 @@ spec:
   #  resticPassword: "your-restic-password"
 ```
 
-À l'aide du kubeconfig fourni par Hikube et de ce yaml d'exemple, enregistré sous un fichier `manifest.yaml`, vous pouvez facilement tester le déploiement de l'application à l'aide de la commande suivante :
+Using the kubeconfig provided by Hikube and this example yaml, saved as a `manifest.yaml` file, you can easily test the application deployment using the following command:
 
 ```sh
 kubectl apply -f manifest.yaml
@@ -46,74 +47,74 @@ kubectl apply -f manifest.yaml
 
 ---
 
-## Paramètres Configurables
+## Configurable Parameters
 
-### **Paramètres Généraux**
+### **General Parameters**
 
-| **Nom**        | **Description**                                      | **Valeur Par Défaut** |
+| **Name**      | **Description**                                  | **Default Value** |
 |-----------------|------------------------------------------------------|------------------------|
-| `external`     | Permet l'accès externe depuis l'extérieur du cluster. | `false`               |
-| `size`         | Taille du volume persistant pour les données.         | `10Gi`                |
-| `replicas`     | Nombre de réplicas MariaDB.                           | `2`                   |
-| `storageClass` | Classe de stockage utilisée.                          | `"replicated"` ou `"local"`  |
+| `external`     | Allows external access from outside the cluster. | `false`               |
+| `size`         | Size of the persistent volume for data.          | `10Gi`                |
+| `replicas`     | Number of MariaDB replicas.                      | `2`                   |
+| `storageClass` | Storage class used.                               | `"replicated"` or `"local"`  |
 
 ---
 
-### **Paramètres de Configuration**
+### **Configuration Parameters**
 
-| **Nom**      | **Description**                   | **Valeur Par Défaut** |
+| **Name**    | **Description**              | **Default Value** |
 |--------------|-----------------------------------|------------------------|
-| `users`      | Configuration des utilisateurs.  | `{}`                  |
-| `databases`  | Configuration des bases de données. | `{}`                  |
+| `users`      | Users configuration.              | `{}`                  |
+| `databases`  | Databases configuration.          | `{}`                  |
 
 ---
 
-### **Paramètres de Backup**
+### **Backup Parameters**
 
-| **Nom**                  | **Description**                                    | **Valeur Par Défaut**                         |
+| **Name**               | **Description**                                | **Default Value**                         |
 |---------------------------|----------------------------------------------------|-----------------------------------------------|
-| `backup.enabled`         | Active ou désactive les sauvegardes périodiques.  | `false`                                      |
-| `backup.s3Region`        | Région AWS S3 pour les sauvegardes.               | `us-east-1`                                  |
-| `backup.s3Bucket`        | Bucket S3 utilisé pour les sauvegardes.           | `s3.example.org/mariadb-backups`             |
-| `backup.schedule`        | Planification des sauvegardes (format Cron).      | `0 2 * * *`                                  |
-| `backup.cleanupStrategy` | Stratégie pour nettoyer les anciennes sauvegardes. | `--keep-last=3 --keep-daily=3 --keep-within-weekly=1m` |
-| `backup.s3AccessKey`     | Clé d'accès AWS S3 pour l'authentification.       | `oobaiRus9pah8PhohL1ThaeTa4UVa7gu`           |
-| `backup.s3SecretKey`     | Clé secrète AWS S3 pour l'authentification.       | `ju3eum4dekeich9ahM1te8waeGai0oog`           |
-| `backup.resticPassword`  | Mot de passe pour le chiffrement Restic.          | `ChaXoveekoh6eigh4siesheeda2quai0`           |
+| `backup.enabled`         | Enables or disables periodic backups.              | `false`                                      |
+| `backup.s3Region`        | AWS S3 region for backups.                         | `us-east-1`                                  |
+| `backup.s3Bucket`        | S3 bucket used for backups.                        | `s3.example.org/mariadb-backups`             |
+| `backup.schedule`        | Backup schedule (Cron format).                     | `0 2 * * *`                                  |
+| `backup.cleanupStrategy` | Strategy for cleaning up old backups.              | `--keep-last=3 --keep-daily=3 --keep-within-weekly=1m` |
+| `backup.s3AccessKey`     | AWS S3 access key for authentication.              | `oobaiRus9pah8PhohL1ThaeTa4UVa7gu`           |
+| `backup.s3SecretKey`     | AWS S3 secret key for authentication.              | `ju3eum4dekeich9ahM1te8waeGai0oog`           |
+| `backup.resticPassword`  | Password for Restic encryption.                    | `ChaXoveekoh6eigh4siesheeda2quai0`           |
 
 ---
 
-## Tutoriels
+## Tutorials
 
-### Bascule Master/Slave
+### Master/Slave Failover
 
-1. Modifiez l'instance MariaDB pour définir une nouvelle réplique principale. Utilisez la commande suivante pour éditer l'instance :
+1. Modify the MariaDB instance to set a new primary replica. Use the following command to edit the instance:
 
 ```bash
 kubectl edit mariadb <instance>
 ```
 
-2. Modifiez la configuration pour définir le pod principal :
+2. Modify the configuration to set the primary pod:
 
 ```yaml
 spec.replication.primary.podIndex: 1
 ```
 
-3. Vérifiez l'état du cluster :
+3. Check the cluster status:
 
 ```bash
 kubectl get mariadb
 ```
 
-### Restaurer un Backup
+### Restoring a Backup
 
-1. Trouvez un snapshot disponible dans votre bucket S3 :
+1. Find an available snapshot in your S3 bucket:
 
 ```bash
 restic -r s3:s3.tenant.hikube.cloud/mariadb-backups/database_name snapshots
 ```
 
-2. Restaurez le dernier snapshot :
+2. Restore the latest snapshot:
 
 ```bash
 restic -r s3:s3.tenant.hikube.cloud/mariadb-backups/database_name restore latest --target /tmp/
@@ -121,13 +122,12 @@ restic -r s3:s3.tenant.hikube.cloud/mariadb-backups/database_name restore latest
 
 ---
 
-## Ressources Additionnelles
+## Additional Resources
 
-Pour approfondir vos connaissances sur MariaDB et son opérateur, consultez les ressources suivantes :
+To deepen your knowledge of MariaDB and its operator, check the following resources:
 
-- **[Documentation Officielle MariaDB](https://mariadb.com/kb/en/documentation/)**  
-  Guide complet pour utiliser et configurer MariaDB.
+- **[Official MariaDB Documentation](https://mariadb.com/kb/en/documentation/)**
+  Comprehensive guide for using and configuring MariaDB.
 
-- **[Guide Restic](https://itnext.io/restic-effective-backup-from-stdin-4bc1e8f083c1)**  
-  Découvrez comment utiliser Restic pour gérer vos sauvegardes, avec des exemples pratiques.
-  
+- **[Restic Guide](https://itnext.io/restic-effective-backup-from-stdin-4bc1e8f083c1)**
+  Learn how to use Restic to manage your backups, with practical examples.

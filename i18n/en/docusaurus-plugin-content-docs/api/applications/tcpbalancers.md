@@ -2,13 +2,13 @@
 title: TCP Balancers
 ---
 
-Le service **Managed TCP Load Balancer** simplifie le déploiement et la gestion des load balancers TCP. Il permet de distribuer efficacement le trafic TCP entrant sur plusieurs serveurs backend, garantissant une haute disponibilité et une utilisation optimale des ressources.
+The **Managed TCP Load Balancer** service simplifies the deployment and management of TCP load balancers. It efficiently distributes incoming TCP traffic across multiple backend servers, ensuring high availability and optimal resource utilization.
 
 ---
 
-## Exemple de Configuration
+## Configuration Example
 
-Voici un exemple de configuration YAML pour un déploiement de TCP Load Balancer avec deux réplicas et une liste blanche réseau activée :
+Here is a YAML configuration example for a TCP Load Balancer deployment with two replicas and an enabled network whitelist:
 
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
@@ -32,7 +32,7 @@ spec:
     - "10.0.0.0/8"
 ```
 
-À l'aide du kubeconfig fourni par Hikube et de ce yaml d'exemple, enregistré sous un fichier `manifest.yaml`, vous pouvez facilement tester le déploiement de l'application à l'aide de la commande suivante :
+Using the kubeconfig provided by Hikube and this example yaml, saved as a `manifest.yaml` file, you can easily test the application deployment using the following command:
 
 ```sh
 kubectl apply -f manifest.yaml
@@ -40,33 +40,33 @@ kubectl apply -f manifest.yaml
 
 ---
 
-## Paramètres Configurables
+## Configurable Parameters
 
-### **Paramètres Généraux**
+### **General Parameters**
 
-| **Nom**        | **Description**                                      | **Valeur Par Défaut** |
+| **Name**      | **Description**                                  | **Default Value** |
 |-----------------|------------------------------------------------------|------------------------|
-| `external`     | Permet l'accès externe depuis l'extérieur du cluster. | `false`               |
-| `replicas`     | Nombre de réplicas HAProxy.                           | `2`                   |
+| `external`     | Allows external access from outside the cluster.    | `false`               |
+| `replicas`     | Number of HAProxy replicas.                         | `2`                   |
 
 ---
 
-### **Paramètres de Configuration**
+### **Configuration Parameters**
 
-| **Nom**                     | **Description**                                           | **Valeur Par Défaut** |
+| **Name**                    | **Description**                                      | **Default Value** |
 |------------------------------|----------------------------------------------------------|------------------------|
-| `httpAndHttps.mode`         | Mode pour le balancer (`tcp` ou `tcp-with-proxy`).         | `tcp`                 |
-| `httpAndHttps.targetPorts.http` | Port HTTP utilisé par le balancer.                       | `80`                  |
-| `httpAndHttps.targetPorts.https` | Port HTTPS utilisé par le balancer.                     | `443`                 |
-| `httpAndHttps.endpoints`    | Liste des adresses des endpoints backend.                 | `[]`                  |
-| `whitelistHTTP`             | Active la sécurisation HTTP via une liste blanche réseau. | `false`               |
-| `whitelist`                 | Liste des réseaux clients autorisés.                      | `[]`                  |
+| `httpAndHttps.mode`         | Mode for the balancer (`tcp` or `tcp-with-proxy`).    | `tcp`                 |
+| `httpAndHttps.targetPorts.http` | HTTP port used by the balancer.                      | `80`                  |
+| `httpAndHttps.targetPorts.https` | HTTPS port used by the balancer.                    | `443`                 |
+| `httpAndHttps.endpoints`    | List of backend endpoint addresses.                   | `[]`                  |
+| `whitelistHTTP`             | Enables HTTP security via a network whitelist.        | `false`               |
+| `whitelist`                 | List of authorized client networks.                   | `[]`                  |
 
 ---
 
-## Ressources Additionnelles
+## Additional Resources
 
-Pour en savoir plus sur HAProxy et l'équilibrage de charge TCP, consultez les ressources suivantes :
+To learn more about HAProxy and TCP load balancing, check the following resources:
 
-- **[Documentation Officielle HAProxy](https://www.haproxy.com/documentation/)**  
-  Guide complet pour configurer et utiliser HAProxy dans des scénarios d'équilibrage de charge.
+- **[Official HAProxy Documentation](https://www.haproxy.com/documentation/)**
+  Comprehensive guide for configuring and using HAProxy in load balancing scenarios.
