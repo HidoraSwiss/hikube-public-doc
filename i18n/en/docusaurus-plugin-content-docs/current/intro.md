@@ -4,16 +4,16 @@ title: Introduction
 slug: /
 ---
 
-# Documentation du Cloud Privé EN ANGLAIS
+# Private Cloud Documentation
 
-Bienvenue dans la documentation officielle de notre solution **Cloud Privé**.
+Welcome to the official documentation for our **Private Cloud** solution.
 
-Cette documentation vous guidera pour :
-- Installer et configurer votre environnement.
-- Déployer des machines virtuelles et gérer le stockage.
-- Utiliser les outils API et CLI pour automatiser vos opérations.
+This documentation will guide you to:
+- Install and configure your environment.
+- Deploy virtual machines and manage storage.
+- Use API and CLI tools to automate your operations.
 
 ---
 
-**Sections principales** :
+**Main sections**:
 - [API](api/index.md)

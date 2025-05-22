@@ -1,19 +1,19 @@
 ---
 sidebar_position: 4
-title: Machines virtuelles
+title: Virtual Machines
 ---
 
-# Installation du Cloud Privé
+# Private Cloud Installation
 
-## Prérequis
+## Prerequisites
 
-- Serveurs physiques ou virtuels.
-- Systèmes d'exploitation supportés : **CentOS**, **Ubuntu**.
-- Accès administrateur.
+- Physical or virtual servers.
+- Supported operating systems: **CentOS**, **Ubuntu**.
+- Administrator access.
 
-## Étapes d'installation
+## Installation Steps
 
-1. **Télécharger l'ISO** :
+1. **Download the ISO**:
    ```bash
    wget http://example.com/cloud-private.iso
    ```
