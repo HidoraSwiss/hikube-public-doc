@@ -61,7 +61,6 @@ const config = {
       // Replace with your project's social card
       image: 'img/docusaurus-social-card.jpg',
       navbar: {
-        title: 'Hikube',
         logo: {
           alt: 'Hikube Logo',
           src: 'img/logo_whitemode.svg',
