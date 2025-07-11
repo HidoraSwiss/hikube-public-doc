@@ -110,7 +110,7 @@ Once the Kubeconfig is retrieved, use the following command to add it:
 
 ```sh
 export KUBECONFIG=/path/to/kubeconfig.yaml
-kubectl get nodes
+kubectl get vmis
 ```
 
 ---
