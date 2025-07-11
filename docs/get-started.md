@@ -1,6 +1,7 @@
 ---
-sidebar_position: 2
+sidebar_position: 1
 title: Bien démarrer
+slug: /
 ---
 
 Bienvenue sur **Hikube** ! Cette documentation vous guidera à travers les étapes essentielles pour commencer à utiliser la plateforme et gérer vos ressources (tenants, clusters Kubernetes, machines virtuelles et applications).
