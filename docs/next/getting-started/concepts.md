@@ -93,7 +93,7 @@ Kubernetes sur Hikube fournit :
 
 ### Classes de stockage
 
-```yaml
+```text
 storageClass: "replicated"  # Haute disponibilité
 storageClass: "local"       # Performance
 ```
@@ -163,7 +163,8 @@ Hikube supporte Terraform pour :
 
 ### Exemple Terraform
 
-```hcl
+```text
+# Définition d'une ressource PostgreSQL avec Terraform
 resource "kubernetes_manifest" "postgres" {
   manifest = {
     apiVersion = "apps.cozystack.io/v1alpha1"

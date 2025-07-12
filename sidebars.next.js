@@ -34,9 +34,6 @@ const sidebars = {
               items: [
                 'services/storage/buckets/overview',
                 'services/storage/buckets/quick-start',
-                'services/storage/buckets/api-reference',
-                'services/storage/buckets/tutorials',
-                'services/storage/buckets/troubleshooting',
               ],
             },
           ],
@@ -52,7 +49,6 @@ const sidebars = {
                 'services/databases/postgresql/overview',
                 'services/databases/postgresql/quick-start',
                 'services/databases/postgresql/api-reference',
-                'services/databases/postgresql/tutorials',
                 'services/databases/postgresql/troubleshooting',
               ],
             },
@@ -61,10 +57,6 @@ const sidebars = {
               label: 'MySQL',
               items: [
                 'services/databases/mysql/overview',
-                'services/databases/mysql/quick-start',
-                'services/databases/mysql/api-reference',
-                'services/databases/mysql/tutorials',
-                'services/databases/mysql/troubleshooting',
               ],
             },
             {
@@ -72,10 +64,13 @@ const sidebars = {
               label: 'Redis',
               items: [
                 'services/databases/redis/overview',
-                'services/databases/redis/quick-start',
-                'services/databases/redis/api-reference',
-                'services/databases/redis/tutorials',
-                'services/databases/redis/troubleshooting',
+              ],
+            },
+            {
+              type: 'category',
+              label: 'ClickHouse',
+              items: [
+                'services/databases/clickhouse/overview',
               ],
             },
           ],
@@ -89,10 +84,6 @@ const sidebars = {
               label: 'Virtual Machines',
               items: [
                 'services/compute/virtual-machines/overview',
-                'services/compute/virtual-machines/quick-start',
-                'services/compute/virtual-machines/api-reference',
-                'services/compute/virtual-machines/tutorials',
-                'services/compute/virtual-machines/troubleshooting',
               ],
             },
             {
@@ -100,10 +91,6 @@ const sidebars = {
               label: 'GPU',
               items: [
                 'services/compute/gpu/overview',
-                'services/compute/gpu/quick-start',
-                'services/compute/gpu/api-reference',
-                'services/compute/gpu/tutorials',
-                'services/compute/gpu/troubleshooting',
               ],
             },
           ],
@@ -112,39 +99,7 @@ const sidebars = {
           type: 'category',
           label: 'Kubernetes',
           items: [
-            'services/kubernetes/overview',
             'services/kubernetes/quick-start',
-            'services/kubernetes/api-reference',
-            'services/kubernetes/tutorials',
-            'services/kubernetes/troubleshooting',
-          ],
-        },
-        {
-          type: 'category',
-          label: 'Networking',
-          items: [
-            {
-              type: 'category',
-              label: 'VPN',
-              items: [
-                'services/networking/vpn/overview',
-                'services/networking/vpn/quick-start',
-                'services/networking/vpn/api-reference',
-                'services/networking/vpn/tutorials',
-                'services/networking/vpn/troubleshooting',
-              ],
-            },
-            {
-              type: 'category',
-              label: 'Load Balancers',
-              items: [
-                'services/networking/load-balancers/overview',
-                'services/networking/load-balancers/quick-start',
-                'services/networking/load-balancers/api-reference',
-                'services/networking/load-balancers/tutorials',
-                'services/networking/load-balancers/troubleshooting',
-              ],
-            },
           ],
         },
         {
@@ -156,21 +111,6 @@ const sidebars = {
               label: 'Kafka',
               items: [
                 'services/messaging/kafka/overview',
-                'services/messaging/kafka/quick-start',
-                'services/messaging/kafka/api-reference',
-                'services/messaging/kafka/tutorials',
-                'services/messaging/kafka/troubleshooting',
-              ],
-            },
-            {
-              type: 'category',
-              label: 'RabbitMQ',
-              items: [
-                'services/messaging/rabbitmq/overview',
-                'services/messaging/rabbitmq/quick-start',
-                'services/messaging/rabbitmq/api-reference',
-                'services/messaging/rabbitmq/tutorials',
-                'services/messaging/rabbitmq/troubleshooting',
               ],
             },
           ],
@@ -179,22 +119,12 @@ const sidebars = {
     },
     {
       type: 'category',
-      label: '📚 Resources',
-      items: [
-        'resources/troubleshooting',
-        'resources/faq',
-        'resources/glossary',
-      ],
-    },
-    {
-      type: 'category',
       label: '🛠️ Tools',
       items: [
         'tools/terraform',
-        'tools/cli',
       ],
     },
   ],
 };
 
-module.exports = sidebars; 
+export default sidebars; 

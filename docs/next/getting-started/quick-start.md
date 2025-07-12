@@ -30,7 +30,7 @@ Ce guide vous accompagne pour déployer votre première application sur Hikube e
 
 ## Étape 2 : Créer votre premier tenant
 
-```yaml
+```text
 # tenant.yaml
 apiVersion: apps.cozystack.io/v1alpha1
 kind: Tenant
@@ -50,7 +50,7 @@ kubectl apply -f tenant.yaml
 
 ## Étape 3 : Déployer PostgreSQL
 
-```yaml
+```text
 # postgres.yaml
 apiVersion: apps.cozystack.io/v1alpha1
 kind: Postgres
