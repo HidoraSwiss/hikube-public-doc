@@ -10,15 +10,13 @@ Bienvenue sur **Hikube** ! Cette documentation vous guidera à travers les étap
 
 ## Accès à la Plateforme
 
-Deux méthodes sont disponibles pour vous connecter à votre **tenant** Hikube :
+Pour obtenir un accès à la plateforme Hikube, vous devez faire une demande de création de compte. Toutes les demandes de création de compte doivent être envoyées à **sales@hidora.io**.  
+Notre équipe commerciale vous guidera dans le processus d'ouverture de votre compte et vous fournira les informations nécessaires pour commencer à utiliser Hikube.
 
-### **1. Via l'Interface Web**
 
-- Accédez au **Dashboard Hikube** : [https://dashboard.hikube.cloud/](https://dashboard.hikube.cloud/)
-- Connectez-vous avec vos identifiants.
-- Une fois connecté, vous pourrez **provisionner et gérer vos ressources** (applications, Kubernetes, VMs) via une interface graphique.
+Voici comment vous connecter à votre **tenant** Hikube :
 
-### **2. Via Kubeconfig**
+### **. via Kubeconfig**
 
 Pour une gestion avancée, vous pouvez utiliser le fichier **Kubeconfig** fourni.
 
