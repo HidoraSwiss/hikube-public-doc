@@ -47,6 +47,21 @@ const config = {
           // Remove this to remove the "edit this page" links.
           editUrl:
             'https://gitlab.hidora/hikube/documentation-hikube/-/tree/main',
+          // Configuration des versions
+          versions: {
+            current: {
+              label: 'Version actuelle',
+              path: '/',
+              banner: 'none',
+              sidebarPath: './sidebars.js',
+            },
+            next: {
+              label: 'Nouvelle structure (Bêta)',
+              path: '/next',
+              banner: 'unreleased',
+              sidebarPath: './sidebars.next.js',
+            },
+          },
         },
         blog: false,
         
@@ -69,6 +84,11 @@ const config = {
           srcDark: 'img/logo_darkmode.svg',
         },
         items: [
+          {
+            type: 'docsVersionDropdown',
+            position: 'right',
+            dropdownActiveClassDisabled: true,
+          },
           {
             type: 'localeDropdown',
             position: 'right',
