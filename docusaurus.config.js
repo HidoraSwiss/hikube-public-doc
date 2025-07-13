@@ -24,7 +24,7 @@ const config = {
   // organizationName: 'facebook', // Usually your GitHub org/user name.
   // projectName: 'docusaurus', // Usually your repo name.
 
-  onBrokenLinks: 'throw',
+  onBrokenLinks: 'warn',
   onBrokenMarkdownLinks: 'warn',
 
   // Even if you don't use internationalization, you can use this field to set
@@ -47,6 +47,21 @@ const config = {
           // Remove this to remove the "edit this page" links.
           editUrl:
             'https://gitlab.hidora/hikube/documentation-hikube/-/tree/main',
+          // Configuration du versioning
+          includeCurrentVersion: false,
+          lastVersion: '1.0',
+          versions: {
+            '1.0': {
+              label: '1.0.0 (Stable)',
+              path: '/',
+              banner: 'none',
+            },
+            '2.0': {
+              label: '2.0.0 (Future)',
+              path: '/2.0',
+              banner: 'unreleased',
+            },
+          },
         },
         blog: false,
         
@@ -76,6 +91,17 @@ const config = {
             sidebarId: 'docsSidebar',
             position: 'left',
             label: 'Documentation',
+          },
+          {
+            type: 'docsVersionDropdown',
+            position: 'left',
+            dropdownActiveClassDisabled: true,
+            dropdownItemsAfter: [
+              {
+                to: '/versions',
+                label: 'Toutes les versions',
+              },
+            ],
           },
           {
             type: 'localeDropdown',

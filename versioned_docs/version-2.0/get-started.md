@@ -40,7 +40,7 @@ Cette documentation est maintenant versionnée ! Vous pouvez consulter :
 
 ## Prochaines étapes
 
-1. **Consultez l'[API](./api)** pour comprendre les ressources disponibles
+1. **Consultez l'[API](/api)** pour comprendre les ressources disponibles
 2. **Explorez les templates Terraform** pour l'Infrastructure as Code
 3. **Découvrez les applications** supportées par Hikube
 
