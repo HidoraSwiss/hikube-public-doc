@@ -57,19 +57,7 @@ const config = {
     ],
   ],
 
-  plugins: [
-    [
-      '@docusaurus/plugin-content-docs',
-      {
-        id: 'next',
-        path: 'docs/next',
-        routeBasePath: 'next',
-        sidebarPath: './sidebars.next.js',
-        editUrl:
-          'https://gitlab.hidora/hikube/documentation-hikube/-/tree/main',
-      },
-    ],
-  ],
+  plugins: [],
 
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
@@ -85,15 +73,9 @@ const config = {
         items: [
           {
             type: 'docSidebar',
-            sidebarId: 'tutorialSidebar',
+            sidebarId: 'docsSidebar',
             position: 'left',
             label: 'Documentation',
-          },
-          {
-            type: 'docSidebar',
-            sidebarId: 'nextSidebar',
-            position: 'left',
-            label: 'Nouvelle structure',
           },
           {
             type: 'localeDropdown',
@@ -150,6 +132,7 @@ const config = {
       prism: {
         theme: prismThemes.github,
         darkTheme: prismThemes.dracula,
+        additionalLanguages: ['bash', 'yaml', 'hcl', 'json'],
       },
     }),
 };
