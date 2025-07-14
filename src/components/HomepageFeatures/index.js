@@ -4,32 +4,35 @@ import styles from './styles.module.css';
 
 const FeatureList = [
   {
-    title: 'Easy to Use',
-    Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
+    title: 'Sécurité Maximale',
+    Svg: require('@site/static/img/logo_whitemode.svg').default,
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        Infrastructure 100% privée avec chiffrement bout en bout.
+        Isolation complète entre environnements et conformité RGPD native
+        pour protéger vos données les plus sensibles.
       </>
     ),
   },
   {
-    title: 'Focus on What Matters',
-    Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
+    title: 'Haute Disponibilité',
+    Svg: require('@site/static/img/logo_whitemode.svg').default,
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+        Redondance intégrée sur tous les composants critiques.
+        SLA garantie avec basculement automatique et sauvegarde continue
+        pour une continuité de service maximale.
       </>
     ),
   },
   {
-    title: 'Powered by React',
-    Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
+    title: 'Simplicité & Performance',
+    Svg: require('@site/static/img/logo_whitemode.svg').default,
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+        Déployez Kubernetes et VMs en quelques clics.
+        Interface intuitive, API complète et scaling automatique
+        pour une expérience cloud moderne et efficace.
       </>
     ),
   },

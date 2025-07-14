@@ -11,7 +11,7 @@ import {themes as prismThemes} from 'prism-react-renderer';
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'Documentation | Hikube',
-  favicon: 'img/favicon.ico',
+  favicon: 'img/hikube-favicon.svg',
 
   // Set the production url of your site here
   url: 'https://docs.hikube.cloud',
@@ -78,7 +78,7 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       // Replace with your project's social card
-      image: 'img/docusaurus-social-card.jpg',
+      image: 'img/hikube-social-card.svg',
       navbar: {
         logo: {
           alt: 'Hikube Logo',

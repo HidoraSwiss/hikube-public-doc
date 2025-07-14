@@ -1,0 +1,122 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fond dégradé moderne -->
+  <rect width="1200" height="630" fill="url(#gradient_bg)"/>
+  
+  <!-- Formes géométriques décoratives -->
+  <circle cx="1000" cy="100" r="80" fill="url(#circle1)" opacity="0.3"/>
+  <circle cx="200" cy="500" r="60" fill="url(#circle2)" opacity="0.4"/>
+  <rect x="50" y="50" width="100" height="100" rx="20" fill="url(#rect1)" opacity="0.2"/>
+  
+  <!-- Logo Hikube géométrique simplifié (version plus grande) -->
+  <g transform="translate(100, 150)">
+    <path d="M60 20L120 50V50L60 0L60 20Z" fill="url(#logo1)" opacity="0.9"/>
+    <path d="M0 80L60 58L60 0L0 40L0 80Z" fill="url(#logo2)" opacity="0.9"/>
+    <path d="M0 80L60 120V58L0 80Z" fill="url(#logo3)" opacity="0.9"/>
+    <path d="M120 70L60 110V58L120 40L120 70Z" fill="url(#logo4)" opacity="0.9"/>
+    <path d="M60 70L40 85L40 70L60 55L60 70Z" fill="url(#logo5)" opacity="0.9"/>
+    <path d="M60 55L25 75L60 95L95 75L60 55Z" fill="url(#logo_center)" opacity="0.9"/>
+  </g>
+  
+  <!-- Texte principal -->
+  <text x="300" y="220" font-family="Arial, sans-serif" font-size="64" font-weight="bold" fill="#FFFFFF">
+    Hikube
+  </text>
+  
+  <!-- Sous-titre -->
+  <text x="300" y="280" font-family="Arial, sans-serif" font-size="32" font-weight="500" fill="#E5E7EB">
+    Cloud Privé Enterprise
+  </text>
+  
+  <!-- Description -->
+  <text x="300" y="340" font-family="Arial, sans-serif" font-size="24" fill="#9CA3AF">
+    Infrastructure sécurisée, haute disponibilité native
+  </text>
+  
+  <!-- Points clés -->
+  <g transform="translate(300, 380)">
+    <!-- Point 1 -->
+    <circle cx="10" cy="10" r="4" fill="#38BA6A"/>
+    <text x="25" y="17" font-family="Arial, sans-serif" font-size="20" fill="#D1D5DB">
+      Sécurité maximale & conformité RGPD
+    </text>
+    
+    <!-- Point 2 -->
+    <circle cx="10" cy="45" r="4" fill="#06B6D4"/>
+    <text x="25" y="52" font-family="Arial, sans-serif" font-size="20" fill="#D1D5DB">
+      Redondance intégrée & SLA 99.9%
+    </text>
+    
+    <!-- Point 3 -->
+    <circle cx="10" cy="80" r="4" fill="#8B5CF6"/>
+    <text x="25" y="87" font-family="Arial, sans-serif" font-size="20" fill="#D1D5DB">
+      Kubernetes & VMs en 5 minutes
+    </text>
+  </g>
+  
+  <!-- URL en bas -->
+  <text x="300" y="580" font-family="Arial, sans-serif" font-size="18" fill="#6B7280">
+    docs.hikube.cloud
+  </text>
+  
+  <!-- Badge "Private Cloud" -->
+  <rect x="850" y="180" width="280" height="60" rx="30" fill="url(#badge_bg)" opacity="0.8"/>
+  <text x="990" y="215" font-family="Arial, sans-serif" font-size="22" font-weight="600" fill="#FFFFFF" text-anchor="middle">
+    PRIVATE CLOUD
+  </text>
+  
+  <!-- Définitions des dégradés -->
+  <defs>
+    <!-- Fond principal -->
+    <linearGradient id="gradient_bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F172A"/>
+      <stop offset="50%" stop-color="#1E293B"/>
+      <stop offset="100%" stop-color="#0F172A"/>
+    </linearGradient>
+    
+    <!-- Logo dégradés -->
+    <linearGradient id="logo1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop stop-color="#38BA6A"/>
+      <stop offset="1" stop-color="#22C55E"/>
+    </linearGradient>
+    <linearGradient id="logo2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop stop-color="#06B6D4"/>
+      <stop offset="1" stop-color="#0EA5E9"/>
+    </linearGradient>
+    <linearGradient id="logo3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop stop-color="#8B5CF6"/>
+      <stop offset="1" stop-color="#A855F7"/>
+    </linearGradient>
+    <linearGradient id="logo4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop stop-color="#F59E0B"/>
+      <stop offset="1" stop-color="#EAB308"/>
+    </linearGradient>
+    <linearGradient id="logo5" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop stop-color="#EF4444"/>
+      <stop offset="1" stop-color="#F97316"/>
+    </linearGradient>
+    <radialGradient id="logo_center" cx="50%" cy="50%" r="50%">
+      <stop stop-color="#FFFFFF" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#E5E7EB" stop-opacity="0.6"/>
+    </radialGradient>
+    
+    <!-- Éléments décoratifs -->
+    <radialGradient id="circle1" cx="50%" cy="50%" r="50%">
+      <stop stop-color="#38BA6A" stop-opacity="0.6"/>
+      <stop offset="1" stop-color="#22C55E" stop-opacity="0.2"/>
+    </radialGradient>
+    <radialGradient id="circle2" cx="50%" cy="50%" r="50%">
+      <stop stop-color="#06B6D4" stop-opacity="0.6"/>
+      <stop offset="1" stop-color="#0EA5E9" stop-opacity="0.2"/>
+    </radialGradient>
+    <linearGradient id="rect1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop stop-color="#8B5CF6" stop-opacity="0.4"/>
+      <stop offset="1" stop-color="#A855F7" stop-opacity="0.2"/>
+    </linearGradient>
+    
+    <!-- Badge -->
+    <linearGradient id="badge_bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop stop-color="#1E40AF"/>
+      <stop offset="1" stop-color="#1D4ED8"/>
+    </linearGradient>
+  </defs>
+</svg> 
