@@ -16,6 +16,7 @@ L'architecture version 2.0 a été créée selon les recommandations du rapport 
 - ✅ Template standardisé pour chaque service
 - ✅ Sections globales (resources, tools)
 - ✅ Compilation réussie et fonctionnelle
+- ✅ Section API legacy supprimée pour une structure plus propre
 
 ---
 
@@ -95,10 +96,9 @@ versioned_docs/version-2.0/
 │   ├── troubleshooting.md
 │   ├── faq.md
 │   └── glossary.md
-├── 🛠️ tools/
-│   ├── terraform.md
-│   └── cli.md
-└── api/ (Legacy - conservé pour compatibilité)
+└── 🛠️ tools/
+    ├── terraform.md
+    └── cli.md
 ```
 
 ---
@@ -118,7 +118,7 @@ versioned_docs/version-2.0/
 - **Tools :** 2 fichiers
 - **Configuration :** 1 sidebar
 
-**Total :** 52 fichiers créés
+**Total :** 51 fichiers créés
 
 ### **Services couverts :**
 - ✅ **Storage** : Buckets
@@ -176,8 +176,7 @@ Chaque service suit le template standard recommandé :
     "Messaging": { "Kafka": [...], "RabbitMQ": [...] }
   },
   "📚 Resources": ["Dépannage", "FAQ", "Glossaire"],
-  "🛠️ Tools": ["Terraform", "CLI"],
-  "API (Legacy)": [...]
+  "🛠️ Tools": ["Terraform", "CLI"]
 }
 ```
 
@@ -232,7 +231,7 @@ Chaque service suit le template standard recommandé :
 ## 📈 MÉTRIQUES DE SUCCÈS
 
 ### **Indicateurs à suivre :**
-- **Complétude** : 0/52 fichiers avec contenu complet
+- **Complétude** : 0/51 fichiers avec contenu complet
 - **Cohérence** : Template respecté sur tous les services
 - **Navigation** : Temps de recherche réduit
 - **Adoption** : Utilisation des nouveaux parcours
