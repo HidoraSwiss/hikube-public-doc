@@ -12,24 +12,24 @@ Hikube est une plateforme cloud basée sur Kubernetes qui simplifie le déploiem
 
 Cette documentation est maintenant versionnée ! Vous pouvez consulter :
 - **Version 1.0** : Documentation stable actuelle
-- **Version actuelle (Next)** : Documentation en développement avec les dernières fonctionnalités
+- **Version actuelle (Version 2.0)** : Documentation en développement avec les dernières fonctionnalités
 
 ## Fonctionnalités principales
 
 ### 🚀 **Déploiement simplifié**
-- Interface web intuitive
-- Déploiement en un clic
-- Gestion automatisée des ressources
+- API Kubernetes native et compatible
+- Déploiement via `kubectl apply`
+- Infrastructure as Code (IaC) avec YAML
 
 ### 📦 **Applications supportées**
 - **Bases de données** : PostgreSQL, MySQL, Redis, ClickHouse
 - **Services de messagerie** : Kafka, RabbitMQ, NATS
-- **Stockage** : Buckets S3 compatibles
+- **Stockage**: Chiffré, repliqué sur 3 datacenter
+- **Stockage S3** : Buckets S3 compatibles
 - **Réseaux** : Load balancers TCP, caches HTTP, VPN
 - **Compute** : Machines virtuelles, GPU
 
 ### 🔧 **Infrastructure as Code**
-- Templates Terraform intégrés
 - Gestion déclarative des ressources
 - Déploiement reproductible
 
