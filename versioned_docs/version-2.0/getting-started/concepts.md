@@ -198,55 +198,46 @@ Hikube vous permet de déployer votre propre stack de monitoring dans votre tena
 
 ```mermaid
 graph TB
-    subgraph "🏢 TENANT PRINCIPAL"
-        direction TB
-        G[📊 Grafana]
-        VM[📈 VictoriaMetrics]
-        VL[📋 VictoriaLogs]
+    subgraph "TENANT PRINCIPAL"
+        G[Grafana]
+        VM[VictoriaMetrics]
+        VL[VictoriaLogs]
         
         G -.-> VM
         G -.-> VL
     end
     
-    subgraph "👥 SOUS-TENANT A"
-        direction TB
-        K8S_A[☸️ Kubernetes]
-        VM_A[🖥️ VMs]
-        APP_A[🚀 Applications]
+    subgraph "SOUS-TENANT A"
+        K8S_A[Kubernetes]
+        VM_A[VMs]
+        APP_A[Applications]
         
-        K8S_A --> M_A[📊 Métriques]
+        K8S_A --> M_A[Métriques]
         VM_A --> M_A
         APP_A --> M_A
-        APP_A --> L_A[📝 Logs]
+        APP_A --> L_A[Logs]
     end
     
-    subgraph "👥 SOUS-TENANT B"
-        direction TB
-        K8S_B[☸️ Kubernetes]
-        VM_B[🖥️ VMs]
-        APP_B[🚀 Applications]
+    subgraph "SOUS-TENANT B"
+        K8S_B[Kubernetes]
+        VM_B[VMs]
+        APP_B[Applications]
         
-        K8S_B --> M_B[📊 Métriques]
+        K8S_B --> M_B[Métriques]
         VM_B --> M_B
         APP_B --> M_B
-        APP_B --> L_B[📝 Logs]
+        APP_B --> L_B[Logs]
     end
     
-    %% Remontée des données
     M_A --> VM
     L_A --> VL
     M_B --> VM
     L_B --> VL
     
-    %% Dashboards par ressource
-    VM --> D1[📋 Dashboard K8s]
-    VM --> D2[📋 Dashboard VMs]
-    VM --> D3[📋 Dashboard Apps]
-    VL --> D4[📋 Dashboard Logs]
-    
-    style G fill:#e1f5fe
-    style VM fill:#e8f5e8
-    style VL fill:#fff3e0
+    VM --> D1[Dashboard K8s]
+    VM --> D2[Dashboard VMs]
+    VM --> D3[Dashboard Apps]
+    VL --> D4[Dashboard Logs]
 ```
 
 ### **Architecture Multi-Tenant du Monitoring**

@@ -95,16 +95,7 @@
               "items": [
                 "services/compute/virtual-machines/overview",
                 "services/compute/virtual-machines/quick-start",
-                "services/compute/virtual-machines/api-reference",
-                {
-                  "type": "category",
-                  "label": "Tutoriels",
-                  "items": [
-                    "services/compute/virtual-machines/tutorials/create-first-vm",
-                    "services/compute/virtual-machines/tutorials/networking"
-                  ]
-                },
-                "services/compute/virtual-machines/troubleshooting"
+                "services/compute/virtual-machines/api-reference"
               ]
             },
             {
