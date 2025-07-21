@@ -126,6 +126,20 @@ kubectl get vminstance vm-example -w
 
 ## 🔌 Étape 3 : Accéder à votre VM (1 minute)
 
+### **Installation de virtctl**
+
+Si vous n'avez pas encore `virtctl` installé :
+
+```bash
+# Installation de virtctl
+export VERSION=$(curl https://storage.googleapis.com/kubevirt-prow/release/kubevirt/kubevirt/stable.txt)
+wget https://github.com/kubevirt/kubevirt/releases/download/${VERSION}/virtctl-${VERSION}-linux-amd64
+chmod +x virtctl
+sudo mv virtctl /usr/local/bin/
+
+# Vérifier l'installation
+virtctl version
+```
 ### **Vérification du déploiement**
 
 ```bash
@@ -140,12 +154,7 @@ kubectl describe vminstance vm-example
 
 #### **Option 1 : Console Série (toujours disponible)**
 ```bash
-# Installation de virtctl (si pas déjà fait)
-curl -L -o virtctl https://github.com/kubevirt/kubevirt/releases/download/v1.1.1/virtctl-linux-amd64
-chmod +x virtctl
-sudo mv virtctl /usr/local/bin/
-
-# Accès console
+# Accès console directe
 virtctl console vm-example
 ```
 
@@ -157,14 +166,8 @@ virtctl vnc vm-example
 
 #### **Option 3 : SSH Direct**
 ```bash
-# Trouver l'IP externe
-kubectl get service
-
-# SSH vers la VM
-virtctl ssh ubuntu@vm-example
-# ou directement si IP accessible :
-# ssh -i ~/.ssh/hikube-vm ubuntu@<IP-EXTERNE>
-```
+# SSH via virtctl (avec clé personnalisée)
+virtctl ssh -i ~/.ssh/hikube-vm ubuntu@vm-example
 
 ---
 
@@ -191,7 +194,6 @@ curl -I https://httpbin.org/ip
 
 ### **Résultat attendu**
 ```bash
-
 ubuntu@vm-example:~$ free -h
                total        used        free      shared
 Mem:            3.8Gi       180Mi       3.4Gi       1.0Mi
@@ -205,24 +207,29 @@ Votre machine virtuelle Hikube est **opérationnelle** ! 🎊
 
 ### **Ce que vous avez accompli :**
 - ✅ **VM Ubuntu** déployée avec 4 vCPU / 16 GB RAM
-- ✅ **Stockage persistant** de 20 GB
+- ✅ **Stockage persistant** de 20 GB répliqué
 - ✅ **Accès SSH** sécurisé configuré
 - ✅ **Connectivité externe** activée
-- ✅ **Cloud-init** avec packages personnalisés
+- ✅ **Infrastructure résiliente** avec séparation compute/stockage
 
 ---
 
-## 🔧 Gestion de votre VM
+## 🗑️ Nettoyage (Optionnel)
 
-### **Commandes utiles**
+Si vous voulez supprimer les ressources créées :
 
 ```bash
 # Supprimer la VM (attention !)
 kubectl delete vminstance vm-example
 
 # Supprimer le disque (attention !)
-kubectl delete vmdisk vm-disk
+kubectl delete vmdisk disk-example
 ```
+
+:::warning Suppression Irréversible
+La suppression des VMs et disques est **irréversible**. Assurez-vous d'avoir sauvegardé toutes les données importantes avant de procéder.
+:::
+
 ---
 
 ## 🎯 Prochaines Étapes
@@ -232,8 +239,8 @@ kubectl delete vmdisk vm-disk
 **📚 Configuration Avancée**  
 → [API Reference complète](./api-reference.md)
 
-**📖 Guide Détaillé**  
-→ [Types d'instances et optimisation](./overview.md)
+**📖 Architecture Technique**  
+→ [Comprendre le fonctionnement](./overview.md)
 
 </div>
 
@@ -242,12 +249,20 @@ kubectl delete vmdisk vm-disk
 :::tip Astuces Pro
 - Utilisez `virtctl` pour une gestion simplifiée des VMs
 - Configurez des **snapshots** réguliers pour sauvegarder vos VMs
-- Explorez les **séries CX** pour des workloads compute-intensifs
+- Explorez les **séries d'instances** pour optimiser performances/coûts
+- La classe de stockage `replicated` garantit la haute disponibilité
 :::
 
 :::info Dépannage
 Si votre VM ne démarre pas, vérifiez :
 1. Le statut du VMDisk avec `kubectl get vmdisk`
 2. Les events avec `kubectl get events`
-3. Les logs avec `kubectl logs -l kubevirt.io=<vm-name>`
-::: 
+3. Les logs avec `kubectl logs -l kubevirt.io=vm-example`
+:::
+
+---
+
+**💡 Points Clés à Retenir :**
+- Vos **données sont toujours sûres** grâce à la réplication DRBD
+- Votre VM peut être **relocalisée automatiquement** en cas de panne nœud
+- L'**isolation totale** garantit la sécurité entre tenants 
