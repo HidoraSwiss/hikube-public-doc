@@ -3,135 +3,89 @@ sidebar_position: 1
 title: Introduction à Hikube
 ---
 
-# Bienvenue sur Hikube ! 🚀
+# Introduction à Hikube
 
-**Hikube** est une plateforme cloud privée révolutionnaire qui transforme la façon dont vous gérez votre infrastructure. Conçue pour les entreprises qui exigent le meilleur en matière de **sécurité**, **performance** et **contrôle**, Hikube vous offre la puissance du cloud public avec la sérénité du private cloud.
+## **Qu'est-ce qu'Hikube ?**
 
----
+**Hikube** est une plateforme cloud privée qui vous permet de déployer et gérer votre infrastructure moderne en quelques clics :
 
-## 🏆 Pourquoi choisir Hikube ?
-
-### **🔒 Sécurité et Confidentialité Maximales**
-- **Chiffrement bout en bout** de toutes les communications
-- **Isolation complète** entre environnements et tenants
-- **Conformité réglementaire** (RGPD, ISO 27001)
-
-### **⚡ Performance et Fiabilité**
-- **Redondance intégrée** sur tous les composants critiques
-- **Haute disponibilité** garantie
-- **Latence ultra-faible** grâce à l'infrastructure locale
-- **Scaling automatique** selon vos besoins
-
-### **🎯 Simplicité et Flexibilité**
-- **API complète** pour l'automatisation avancée
-- **Gestion unifiée** de toute votre infrastructure
+- **☸️ Clusters Kubernetes** managés avec autoscaling et monitoring intégré
+- **🖥️ Machines virtuelles** haute performance avec redimensionnement dynamique
+- **🗄️ Services managés** : Bases de données, cache, messaging, stockage
+- **🌐 Réseau et sécurité** : Load balancers, VPN, isolation multi-tenant
 
 ---
 
-## 🌟 Ce que Hikube vous apporte
+## **👥 Qui utilise cette documentation ?**
 
-### **Pour les Équipes DevOps**
-```yaml
-✅ Déploiement Kubernetes en quelques clics
-✅ Gestion automatisée des mises à jour
-✅ Monitoring et observabilité intégrés
-✅ CI/CD natif avec GitOps
-```
-
-### **Pour les Équipes Infrastructure**
-```yaml
-✅ Machines virtuelles haute performance
-✅ Stockage distribué résilient
-✅ Backup automatisé multi-sites
-```
-
-### **Pour les Décideurs**
-```yaml
-✅ Contrôle total des données sensibles
-✅ Mise en conformité simplifiée
-✅ Évolutivité sans vendor lock-in
-✅ Très haute disponibilité pour le métier
-
-```
+| **Profil** | **Objectifs** | **Sections recommandées** |
+|------------|---------------|----------------------------|
+| **🔧 DevOps/SRE** | Déploiements, CI/CD, monitoring | [Quick Start](./quick-start.md) → [Kubernetes](../services/kubernetes/) |
+| **💻 Développeurs** | APIs, intégrations, debug | [Concepts](./concepts.md) → [API Reference](../services/) |
+| **🏗️ Architectes** | Conception, sécurité, compliance | [Concepts](./concepts.md) → [Security](../services/networking/) |
+| **⚙️ Administrateurs** | Gestion tenants, monitoring, backup | [Concepts](./concepts.md) → [Compute](../services/compute/) |
 
 ---
 
-## 🏗️ Architecture Unique
+## **🗺️ Parcours d'apprentissage recommandé**
 
-### **Multi-Tenant Sécurisé**
-Chaque équipe dispose de son **environnement isolé** avec ses propres ressources, utilisateurs et politiques de sécurité.
+### **⚡ Démarrage Express (15 minutes)**
+1. **[🚀 Quick Start](./quick-start.md)** → Déployez votre première application
+2. **Test pratique** → Validez votre compréhension
 
-### **Redondance Native**
-- **Réplication automatique** des données sur plusieurs datacenters
-- **Basculement transparent** en cas de panne
-- **Sauvegardes continues** avec restauration point-in-time
+### **🧠 Compréhension Approfondie (30 minutes)** 
+1. **[📚 Concepts](./concepts.md)** → Architecture et fonctionnalités détaillées
+2. **Choix des services** → Selon vos besoins spécifiques
 
----
-
-## 🚀 Cas d'Usage Typiques
-
-### **🏢 Entreprises Réglementées**
-*Banques, Assurances, Santé, Secteur Public*
-- Hébergement de données sensibles
-- Applications critiques 24/7
-- Conformité réglementaire stricte
-
-### **🔬 R&D et Innovation**
-*Startups, Labs, Universités*
-- Environnements de développement rapides
-- Calcul haute performance (GPU/CPU)
-- Prototypage et expérimentation
-
-### **🏭 Industrie et IoT**
-*Manufacturing, Énergie, Transport*
-- Edge computing distribué
-- Traitement temps réel des données
-- Intégration systèmes industriels
+### **🔧 Maîtrise Complète (selon besoins)**
+1. **[📖 Services](../services/)** → Catalogue exhaustif des fonctionnalités
+2. **Intégrations avancées** → APIs et automatisation
 
 ---
 
-## 💡 Commencer Maintenant
+## **✅ Prérequis techniques**
 
-Hikube est conçu pour être **simple** dès le premier jour, mais **puissant** quand vous en avez besoin.
+### **Connaissances recommandées :**
+- **Kubernetes** : Concepts de base (pods, services, deployments)
+- **Infrastructure cloud** : VMs, réseaux, stockage
+- **DevOps** : CI/CD, monitoring, logs
+- **APIs REST** : Pour l'automatisation avancée
 
-### **⏱️ En 5 minutes**
-- Accès à votre premier tenant
-- Déploiement d'une application
-- Configuration de votre équipe
+### **Accès requis :**
+- **Tenant Hikube** actif avec vos identifiants
+- **Droits appropriés** selon votre rôle (dev/admin/viewer)
 
-### **📚 Apprentissage progressif**
-1. **[Démarrage rapide](./quick-start.md)** → Première expérience en quelques clics
-2. **[Concepts clés](./concepts.md)** → Compréhension approfondie
-3. **[Services](../services/)** → Maîtrise de tous les composants
-
----
-
-## 🤝 Support et Communauté
-
-### **Support Enterprise**
-- **Équipe dédiée** disponible 24/7 en option
-- **Formation personnalisée** de vos équipes
-
-### **Documentation Vivante**
-- **Guides interactifs** avec exemples réels
-- **API Reference** complète et à jour
-- **Troubleshooting** avec solutions pratiques
-
-### **Écosystème Ouvert**
-- **Intégrations** avec vos outils existants
-- **Contributions** de la communauté
-- **Roadmap transparente** et collaborative
-
----
-
-## 🎯 Prêt à Transformer votre Infrastructure ?
-
-**Hikube** n'est pas juste une plateforme cloud – c'est votre **partenaire technologique** pour construire l'avenir de votre entreprise avec confiance et sérénité.
-
-:::tip Besoin d'aide pour commencer ?
-Notre équipe d'experts est là pour vous accompagner. Contactez-nous à **sales@hidora.io** pour une démonstration personnalisée !
+:::tip Première connexion ?
+Si vous n'avez pas encore d'accès, contactez votre administrateur ou l'équipe Hikube à **support@hidora.io**
 :::
 
 ---
 
-**Prochaine étape :** [🚀 Démarrage rapide](./quick-start.md) → Créez votre premier projet en 5 minutes ! 
+## **🎯 Commencer maintenant**
+
+Hikube est conçu pour être **simple** au démarrage, mais **puissant** quand vous maîtrisez.
+
+### **⏱️ Choix rapide :**
+
+<div style={{display: 'flex', gap: '20px', marginBottom: '20px'}}>
+
+**🚀 Je veux tester rapidement**  
+→ [Quick Start](./quick-start.md)
+
+**🧠 Je veux tout comprendre**  
+→ [Concepts](./concepts.md)
+
+**📖 Je cherche une fonctionnalité**  
+→ [Services](../services/)
+
+</div>
+
+---
+
+:::info **Prochaine étape recommandée**
+**[🚀 Quick Start](./quick-start.md)** → Déployez votre première application Kubernetes en 5 minutes !
+:::
+
+---
+
+*Cette documentation est maintenue à jour en continu. Dernière mise à jour : Version 2.0* 
