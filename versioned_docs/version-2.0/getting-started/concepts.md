@@ -13,10 +13,10 @@ Cette page vous explique les **concepts fondamentaux** qui font d'Hikube une pla
 
 ### **Qu'est-ce qu'un Tenant ?**
 Un **tenant** est votre environnement isolé et sécurisé au sein de Hikube. C'est comme avoir votre propre "datacenter virtuel" avec :
-- **Ressources dédiées** (CPU, RAM, stockage)
-- **Réseau isolé** avec firewall intégré
-- **Utilisateurs et permissions** séparés
+- **Réseau isolé**
+- **Utilisateurs et permissions** séparés 
 - **Politiques de sécurité** personnalisées
+- **Sous-tenants** à disposition
 
 ### **Pourquoi cette approche ?**
 ```mermaid
@@ -61,7 +61,6 @@ Sécurité Hikube:
   Infrastructure:
     - Chiffrement au repos (AES-256)
     - Chiffrement en transit (TLS 1.3)
-    - Hardware Security Modules (HSM)
   
   Réseau:
     - Micro-segmentation automatique
@@ -69,9 +68,9 @@ Sécurité Hikube:
     - Intrusion Detection System (IDS)
   
   Applications:
-    - Pod Security Standards
+    - Security Standards
     - Network Policies par défaut
-    - Secret management intégré
+    - Secret management 
   
   Accès:
     - Multi-Factor Authentication (MFA)
@@ -80,18 +79,16 @@ Sécurité Hikube:
 ```
 
 ### **Protection des Données**
-- **Chiffrement transparent** : Vos données sont chiffrées automatiquement
-- **Clés de chiffrement séparées** : Chaque tenant a ses propres clés
-- **Rotation automatique** : Renouvellement régulier des secrets
-- **Compliance** : RGPD, ISO 27001, SOC 2
+- **Chiffrement transparent** : Vos données sont chiffrées automatiquement at rest
+- **Compliance** : RGPD, ISO 27001, FINMA
 
 ### **Isolation Réseau**
 ```
-┌─── Tenant A ───┐    ┌─── Tenant B ───┐
-│  🔒 App 1      │    │  🔒 App 3      │
-│  🔒 App 2      │    │  🔒 App 4      │
-│  Private VLAN  │    │  Private VLAN  │
-└────────────────┘    └────────────────┘
+┌─── Tenant A ──-─-┐    ┌─── Tenant B ───--┐
+│  🔒 App 1        │    │  🔒 App 3         │
+│  🔒 App 2        │    │  🔒 App 4         │
+│  Private Network │    │  Private Network │
+└───────────────-─-┘    └────────────────--┘
         │                     │
     🔥 Firewall         🔥 Firewall
         │                     │
@@ -112,60 +109,15 @@ Hikube garantit la continuité de service grâce à une architecture redondante 
 - **Refroidissement redondant** : Systèmes de climatisation multiples
 
 #### **Données et Stockage**
-- **Réplication synchrone** : Vos données sur 3+ nœuds minimum
+- **Réplication synchrone** : Vos données sur 3+ datacenters
 - **Backup automatique** : Sauvegardes continues et testées
 - **Geo-redondance** : Copies sur sites distants
-- **Point-in-time recovery** : Restauration à n'importe quel moment
 
 #### **Applications et Services**
 - **Auto-scaling** : Adaptation automatique à la charge
 - **Health checks** : Détection proactive des problèmes
 - **Rolling updates** : Mises à jour sans interruption
 - **Circuit breakers** : Protection contre les cascades de pannes
-
-### **SLA et Garanties**
-| Composant | Disponibilité | Temps d'arrêt max/an |
-|-----------|---------------|---------------------|
-| **Infrastructure** | 99.95% | 4.38 heures |
-| **Stockage** | 99.99% | 52.6 minutes |
-| **Réseau** | 99.9% | 8.77 heures |
-| **Applications** | 99.9%+ | Selon configuration |
-
----
-
-## ☁️ Cloud Privé : Le Meilleur des Deux Mondes
-
-### **Qu'est-ce qu'un Cloud Privé ?**
-Le cloud privé combine les **avantages du cloud public** (élasticité, simplicité) avec les **garanties du datacenter privé** (sécurité, contrôle).
-
-```mermaid
-graph LR
-    A[Cloud Public] --> C[Cloud Privé Hikube]
-    B[Datacenter Traditionnel] --> C
-    
-    A2[Élasticité] --> C
-    A3[Self-service] --> C
-    A4[APIs modernes] --> C
-    
-    B2[Sécurité] --> C
-    B3[Contrôle] --> C
-    B4[Conformité] --> C
-```
-
-### **Avantages Spécifiques**
-| Aspect | Cloud Public | Datacenter Privé | **Hikube Cloud Privé** |
-|--------|-------------|------------------|----------------------|
-| **Sécurité** | ⚠️ Partagée | ✅ Totale | ✅ **Totale + Expertise** |
-| **Performance** | ⚠️ Variable | ✅ Prévisible | ✅ **Optimisée + Prévisible** |
-| **Coûts** | ⚠️ Imprévisibles | ❌ CAPEX élevé | ✅ **OPEX prévisible** |
-| **Agilité** | ✅ Immédiate | ❌ Lente | ✅ **Immédiate + Contrôlée** |
-| **Compliance** | ⚠️ Limitée | ✅ Complète | ✅ **Complète + Simplifiée** |
-
-### **Cas d'Usage Idéaux**
-- **Données sensibles** : Finance, santé, défense
-- **Applications critiques** : Systèmes de paiement, ERP
-- **Conformité stricte** : RGPD, HIPAA, PCI-DSS
-- **Performance garantie** : Applications temps réel, trading
 
 ---
 
@@ -179,99 +131,163 @@ Avec Hikube, vous décrivez **ce que vous voulez**, la plateforme s'occupe du **
 apiVersion: apps.cozystack.io/v1alpha1
 kind: Kubernetes
 metadata:
-  name: production-cluster
+  name: kube
+  namespace: tenant-test <-- A modifer
 spec:
-  replicas: 5                    # 5 nœuds automatiquement
-  version: "1.28"               # Version Kubernetes
-  monitoring:
-    enabled: true               # Observabilité intégrée
-  backup:
-    schedule: "0 2 * * *"       # Backup quotidien 2h
-    retention: "30d"            # Conservation 30 jours
-  networking:
-    cni: cilium                 # Réseau sécurisé
-    policies: strict            # Policies réseau strictes
+  addons:
+    certManager:
+      enabled: true
+      valuesOverride: {}
+    fluxcd:
+      enabled: false
+      valuesOverride: {}
+    ingressNginx:
+      enabled: true
+      hosts:
+      - mon-nginx.kube.testmonitoring.hikube.cloud <-- A modifer
+      valuesOverride: {}
+    monitoringAgents:
+      enabled: false
+      valuesOverride: {}
+    verticalPodAutoscaler:
+      valuesOverride: {}
+  controlPlane:
+    replicas: 3
+  host: kube.testmonitoring.hikube.cloud <-- A modifer
+  kamajiControlPlane:
+    addons:
+      konnectivity:
+        server:
+          resources: {}
+          resourcesPreset: small
+    apiServer:
+      resources: {}
+      resourcesPreset: small
+    controllerManager:
+      resources: {}
+      resourcesPreset: small
+    scheduler:
+      resources: {}
+      resourcesPreset: small
+  nodeGroups:
+    md0:
+      ephemeralStorage: 30Gi
+      instanceType: u1.large
+      maxReplicas: 6
+      minReplicas: 3
+      resources:
+        cpu: ""
+        memory: ""
+      roles:
+      - ingress-nginx
+  storageClass: replicated
+
 ```
 
 ### **Avantages de l'Approche Déclarative**
 - **Reproductibilité** : Même configuration = même résultat
 - **Versionning** : Historique des changements
 - **Collaboration** : Code partagé et révisé
-- **Automatisation** : CI/CD natif
-
 ---
 
 ## 🔄 Observabilité et Monitoring
 
-### **Monitoring Intégré**
-Hikube inclut nativement tous les outils d'observabilité modernes :
+### **Stack Monitoring Complète**
+
+Hikube vous permet de déployer votre propre stack de monitoring dans votre tenant avec **Grafana + VictoriaMetrics + VictoriaLogs**. Cette stack peut centraliser les données de tous vos sous-tenants pour une vision globale de votre infrastructure.
 
 ```mermaid
 graph TB
-    A[Applications] --> B[Métriques]
-    A --> C[Logs]
-    A --> D[Traces]
+    subgraph "🏢 TENANT PRINCIPAL"
+        direction TB
+        G[📊 Grafana]
+        VM[📈 VictoriaMetrics]
+        VL[📋 VictoriaLogs]
+        
+        G -.-> VM
+        G -.-> VL
+    end
     
-    B --> E[Prometheus]
-    C --> F[Loki]
-    D --> G[Jaeger]
+    subgraph "👥 SOUS-TENANT A"
+        direction TB
+        K8S_A[☸️ Kubernetes]
+        VM_A[🖥️ VMs]
+        APP_A[🚀 Applications]
+        
+        K8S_A --> M_A[📊 Métriques]
+        VM_A --> M_A
+        APP_A --> M_A
+        APP_A --> L_A[📝 Logs]
+    end
     
-    E --> H[Grafana]
-    F --> H
-    G --> H
+    subgraph "👥 SOUS-TENANT B"
+        direction TB
+        K8S_B[☸️ Kubernetes]
+        VM_B[🖥️ VMs]
+        APP_B[🚀 Applications]
+        
+        K8S_B --> M_B[📊 Métriques]
+        VM_B --> M_B
+        APP_B --> M_B
+        APP_B --> L_B[📝 Logs]
+    end
     
-    H --> I[Alerting]
-    H --> J[Dashboards]
+    %% Remontée des données
+    M_A --> VM
+    L_A --> VL
+    M_B --> VM
+    L_B --> VL
+    
+    %% Dashboards par ressource
+    VM --> D1[📋 Dashboard K8s]
+    VM --> D2[📋 Dashboard VMs]
+    VM --> D3[📋 Dashboard Apps]
+    VL --> D4[📋 Dashboard Logs]
+    
+    style G fill:#e1f5fe
+    style VM fill:#e8f5e8
+    style VL fill:#fff3e0
 ```
 
-### **Métriques et Alertes**
-- **Métriques infrastructure** : CPU, RAM, disque, réseau
-- **Métriques applicatives** : Latence, erreurs, throughput
-- **Alertes intelligentes** : Machine learning pour réduire le bruit
-- **Escalation automatique** : Notifications graduées selon la criticité
+### **Architecture Multi-Tenant du Monitoring**
 
-### **Logs Centralisés**
-- **Collecte automatique** : Tous les logs aggregés
-- **Recherche avancée** : Filtres et corrélations
-- **Rétention configurable** : Selon vos politiques
-- **Export facilité** : Intégration SIEM externe
+#### **🎯 Centralisation Intelligente**
+- **Tenant principal** : Héberge la stack Grafana + VictoriaMetrics + VictoriaLogs
+- **Sous-tenants** : Génèrent métriques et logs automatiquement
+- **Remontée sécurisée** : Agrégation centralisée avec isolation des données
+- **Vue globale** : Dashboard unifié de toute votre infrastructure
+
+#### **📊 Dashboards par Ressource**
+
+Hikube fournit des **dashboards préconfigurés** pour chaque type de ressource :
+
+| 🗂️ **Type de Ressource** | 📋 **Dashboard Inclus** | 🔍 **Métriques Clés** |
+|---------------------------|-------------------------|------------------------|
+| **☸️ Kubernetes** | Cluster, Nodes, Pods, Services | CPU, RAM, réseau, stockage |
+| **🖥️ Machines Virtuelles** | Host, VM, Performance | Utilisation, I/O, disponibilité |
+| **🗄️ Bases de Données** | MySQL, PostgreSQL, Redis | Connexions, requêtes, cache |
+| **📦 Applications** | Performances, Erreurs | Latence, throughput, 5xx |
+| **🌐 Réseau** | LoadBalancer, VPN | Trafic, latence, connexions |
+| **💾 Stockage** | Buckets, Volumes | Capacité, IOPS, transferts |
 
 ---
 
 ## 🚀 Évolutivité et Performance
 
-### **Scaling Automatique**
-Hikube adapte automatiquement les ressources à vos besoins :
+### **Gestion Dynamique des Ressources**
 
-#### **Horizontal Pod Autoscaling (HPA)**
-```yaml
-# Scaling basé sur les métriques
-spec:
-  minReplicas: 2
-  maxReplicas: 50
-  targetCPUUtilizationPercentage: 70
-  targetMemoryUtilizationPercentage: 80
-```
+Hikube vous offre une **flexibilité totale** pour adapter vos ressources selon vos besoins :
 
-#### **Vertical Pod Autoscaling (VPA)**
-```yaml
-# Optimisation automatique des ressources
-spec:
-  updateMode: "Auto"        # Ajustement automatique
-  resourcePolicy:
-    cpu:
-      min: 100m
-      max: 2000m
-```
+- **📦 Applications** : Augmentez ou diminuez CPU, RAM et stockage en temps réel
+- **🖥️ Machines Virtuelles** : Redimensionnement vertical (vCPU, mémoire, disques)
+- **☸️ Clusters Kubernetes** : **Autoscaling automatique** avec ajout et suppression intelligente de nœuds
+- **🏗️ NodePools Kubernetes** : Création de **pools de nœuds séparés** avec des caractéristiques spécifiques (CPU, GPU, stockage, labels)
+- **📊 Pods Kubernetes** : **Vertical Pod Autoscaling (VPA)** pour l'optimisation automatique des ressources applicatives
 
-#### **Cluster Autoscaling**
-- **Ajout automatique** de nœuds selon la demande
-- **Suppression intelligente** des nœuds sous-utilisés
-- **Optimisation des coûts** en temps réel
+Cette approche garantit des **performances optimales** tout en **maîtrisant les coûts** grâce à un dimensionnement précis et automatisé.
 
 ### **Performance Optimisée**
 - **SSD NVMe** pour le stockage haute performance
-- **Réseau 10Gbps+** pour la bande passante
 - **CPU dernière génération** pour le calcul intensif
 - **GPU** disponibles pour l'IA et le calcul scientifique
 
@@ -282,17 +298,8 @@ spec:
 ### **Outils DevOps Natifs**
 Hikube s'intègre parfaitement avec votre stack existant :
 
-| Catégorie | Outils Supportés |
-|-----------|------------------|
-| **CI/CD** | GitLab CI, GitHub Actions, Jenkins, Tekton |
-| **Monitoring** | Prometheus, Grafana, DataDog, New Relic |
-| **Logs** | ELK Stack, Fluentd, Loki, Splunk |
-| **Security** | Falco, OPA, Vault, Cert-Manager |
-| **Storage** | Ceph, MinIO, NFS, iSCSI |
-
 ### **APIs Standards**
 - **Kubernetes API** : Compatibilité totale
-- **OpenStack API** : Pour les VMs et le réseau
 - **S3 API** : Pour le stockage objet
 - **Prometheus API** : Pour les métriques
 
