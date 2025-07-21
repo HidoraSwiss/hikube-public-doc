@@ -70,11 +70,3 @@ Les **Machines Virtuelles (VMs)** d'Hikube offrent une virtualisation complète 
 </div>
 
 ---
-
-:::tip Performance Optimale
-Pour des workloads critiques, utilisez les séries **CX** ou **RT** avec du stockage **replicated** pour garantir performance et haute disponibilité.
-:::
-
-:::info Assistance
-Les machines virtuelles Hikube sont basées sur [KubeVirt](https://kubevirt.io/), bénéficiant de tout l'écosystème et des bonnes pratiques de cette technologie éprouvée.
-::: 
