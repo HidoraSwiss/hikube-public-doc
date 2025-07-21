@@ -96,15 +96,6 @@
                 "services/compute/virtual-machines/quick-start",
                 "services/compute/virtual-machines/api-reference"
               ]
-            },
-            {
-              "type": "category",
-              "label": "GPU",
-              "items": [
-                "services/compute/gpu/overview",
-                "services/compute/gpu/quick-start",
-                "services/compute/gpu/api-reference"
-              ]
             }
           ]
         },
