@@ -59,8 +59,8 @@ Hikube applique le principe **"never trust, always verify"** à tous les niveaux
 ```yaml
 Sécurité Hikube:
   Infrastructure:
-    - Chiffrement au repos (AES-256)
-    - Chiffrement en transit (TLS 1.3)
+    - Chiffrement au repos
+    - Chiffrement en transit
   
   Réseau:
     - Micro-segmentation automatique
@@ -85,8 +85,8 @@ Sécurité Hikube:
 ### **Isolation Réseau**
 ```
 ┌─── Tenant A ──-─-┐    ┌─── Tenant B ───--┐
-│  🔒 App 1        │    │  🔒 App 3         │
-│  🔒 App 2        │    │  🔒 App 4         │
+│  🔒 App 1        │    │  🔒 App 3        │
+│  🔒 App 2        │    │  🔒 App 4        │
 │  Private Network │    │  Private Network │
 └───────────────-─-┘    └────────────────--┘
         │                     │
@@ -127,60 +127,28 @@ Hikube garantit la continuité de service grâce à une architecture redondante 
 Avec Hikube, vous décrivez **ce que vous voulez**, la plateforme s'occupe du **comment** :
 
 ```yaml
-# Exemple : Cluster Kubernetes haute disponibilité
+# Exemple : Cluster Kafka haute disponibilité
 apiVersion: apps.cozystack.io/v1alpha1
-kind: Kubernetes
+kind: Kafka
 metadata:
-  name: kube
-  namespace: tenant-test <-- A modifer
+  name: # kafka-example -> A modifier
 spec:
-  addons:
-    certManager:
-      enabled: true
-      valuesOverride: {}
-    fluxcd:
-      enabled: false
-      valuesOverride: {}
-    ingressNginx:
-      enabled: true
-      hosts:
-      - mon-nginx.kube.testmonitoring.hikube.cloud <-- A modifer
-      valuesOverride: {}
-    monitoringAgents:
-      enabled: false
-      valuesOverride: {}
-    verticalPodAutoscaler:
-      valuesOverride: {}
-  controlPlane:
+  external: true
+  kafka:
+    size: 20Gi
     replicas: 3
-  host: kube.testmonitoring.hikube.cloud <-- A modifer
-  kamajiControlPlane:
-    addons:
-      konnectivity:
-        server:
-          resources: {}
-          resourcesPreset: small
-    apiServer:
-      resources: {}
-      resourcesPreset: small
-    controllerManager:
-      resources: {}
-      resourcesPreset: small
-    scheduler:
-      resources: {}
-      resourcesPreset: small
-  nodeGroups:
-    md0:
-      ephemeralStorage: 30Gi
-      instanceType: u1.large
-      maxReplicas: 6
-      minReplicas: 3
-      resources:
-        cpu: ""
-        memory: ""
-      roles:
-      - ingress-nginx
-  storageClass: replicated
+    storageClass: "replicated"
+  zookeeper:
+    size: 10Gi
+    replicas: 3
+    storageClass: "replicated"
+  topics:
+    - name: "example-topic"
+      partitions: 3
+      replicationFactor: 2
+    - name: "another-topic"
+      partitions: 5
+      replicationFactor: 3
 
 ```
 
