@@ -56,43 +56,59 @@ graph TB
 ### **Architecture Zero-Trust**
 Hikube applique le principe **"never trust, always verify"** à tous les niveaux :
 
-```yaml
-Sécurité Hikube:
-  Infrastructure:
-    - Chiffrement au repos
-    - Chiffrement en transit
-  
-  Réseau:
-    - Micro-segmentation automatique
-    - Firewall distribué
-    - Intrusion Detection System (IDS)
-  
-  Applications:
-    - Security Standards
-    - Network Policies par défaut
-    - Secret management 
-  
-  Accès:
-    - Multi-Factor Authentication (MFA)
-    - Role-Based Access Control (RBAC)
-    - Audit complet des actions
-```
+#### **🏗️ Infrastructure**
+- **Chiffrement au repos** : Données protégées sur disque
+- **Chiffrement en transit** : Communications sécurisées
+
+#### **🌐 Réseau**
+- **Micro-segmentation automatique** : Isolation fine des flux
+- **Firewall distribué** : Protection périmétrique avancée
+- **Intrusion Detection System (IDS)** : Détection temps réel
+
+#### **🚀 Applications**
+- **Security Standards** : Conformité aux standards de sécurité
+- **Network Policies par défaut** : Règles réseau restrictives
+- **Secret management** : Gestion sécurisée des secrets
+
+#### **🔐 Accès**
+- **Multi-Factor Authentication (MFA)** : Double authentification
+- **Role-Based Access Control (RBAC)** : Permissions granulaires
+- **Audit complet des actions** : Traçabilité totale
 
 ### **Protection des Données**
 - **Chiffrement transparent** : Vos données sont chiffrées automatiquement at rest
 - **Compliance** : RGPD, ISO 27001, FINMA
 
 ### **Isolation Réseau**
-```
-┌─── Tenant A ──-─-┐    ┌─── Tenant B ───--┐
-│  🔒 App 1        │    │  🔒 App 3        │
-│  🔒 App 2        │    │  🔒 App 4        │
-│  Private Network │    │  Private Network │
-└───────────────-─-┘    └────────────────--┘
-        │                     │
-    🔥 Firewall         🔥 Firewall
-        │                     │
-     ☁️ Internet         ☁️ Internet
+
+```mermaid
+flowchart TD
+    subgraph TA["🏢 Tenant A"]
+        A1["🔒 App 1"]
+        A2["🔒 App 2"]
+        NA["🔐 Private Network A"]
+    end
+    
+    subgraph TB["🏢 Tenant B"]
+        A3["🔒 App 3"]
+        A4["🔒 App 4"]
+        NB["🔐 Private Network B"]
+    end
+    
+    FA["🔥 Firewall A"]
+    FB["🔥 Firewall B"]
+    INTERNET["☁️ Internet"]
+    
+    TA --> FA
+    TB --> FB
+    FA --> INTERNET
+    FB --> INTERNET
+    
+    style TA fill:#e1f5fe
+    style TB fill:#f3e5f5
+    style FA fill:#ffecb3
+    style FB fill:#ffecb3
+    style INTERNET fill:#e8f5e8
 ```
 
 ---
@@ -123,39 +139,18 @@ Hikube garantit la continuité de service grâce à une architecture redondante 
 
 ## 🎛️ Infrastructure as Code (IaC)
 
-### **Gestion Déclarative**
-Avec Hikube, vous décrivez **ce que vous voulez**, la plateforme s'occupe du **comment** :
+### **Pensé pour l'Industrialisation**
+Hikube est conçu pour l'automatisation et l'industrialisation de votre infrastructure. Toutes les fonctionnalités sont accessibles via :
 
-```yaml
-# Exemple : Cluster Kafka haute disponibilité
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Kafka
-metadata:
-  name: # kafka-example -> A modifier
-spec:
-  external: true
-  kafka:
-    size: 20Gi
-    replicas: 3
-    storageClass: "replicated"
-  zookeeper:
-    size: 10Gi
-    replicas: 3
-    storageClass: "replicated"
-  topics:
-    - name: "example-topic"
-      partitions: 3
-      replicationFactor: 2
-    - name: "another-topic"
-      partitions: 5
-      replicationFactor: 3
+- **🔌 API complète** : Intégration native dans vos pipelines CI/CD
+- **💻 CLI puissant** : Automatisation et scripts pour vos équipes DevOps
+- **📄 Déclaratif** : Décrivez l'état souhaité, Hikube s'occupe du reste
 
-```
-
-### **Avantages de l'Approche Déclarative**
-- **Reproductibilité** : Même configuration = même résultat
-- **Versionning** : Historique des changements
-- **Collaboration** : Code partagé et révisé
+### **Avantages de l'Approche Industrielle**
+- **🔄 Reproductibilité** : Déploiements identiques à chaque fois
+- **📚 Versionning** : Suivi complet des changements infrastructure
+- **👥 Collaboration** : Code partagé entre équipes développement et ops
+- **⚡ Automatisation** : Intégration transparente dans vos workflows
 ---
 
 ## 🔄 Observabilité et Monitoring
@@ -165,47 +160,39 @@ spec:
 Hikube vous permet de déployer votre propre stack de monitoring dans votre tenant avec **Grafana + VictoriaMetrics + VictoriaLogs**. Cette stack peut centraliser les données de tous vos sous-tenants pour une vision globale de votre infrastructure.
 
 ```mermaid
-graph TB
-    subgraph "TENANT PRINCIPAL"
-        G[Grafana]
-        VM[VictoriaMetrics]
-        VL[VictoriaLogs]
-        
-        G -.-> VM
-        G -.-> VL
+flowchart TD
+    subgraph TENANT["🏢 TENANT PRINCIPAL"]
+        G[📊 Grafana]
+        VM[📈 VictoriaMetrics]
+        VL[📋 VictoriaLogs]
     end
     
-    subgraph "SOUS-TENANT A"
-        K8S_A[Kubernetes]
-        VM_A[VMs]
-        APP_A[Applications]
-        
-        K8S_A --> M_A[Métriques]
-        VM_A --> M_A
-        APP_A --> M_A
-        APP_A --> L_A[Logs]
+    TENANT --> SPACER[ ]
+    
+    subgraph SOUS["👥 SOUS-TENANT"]
+        K8S[☸️ Kubernetes]
+        VMS[🖥️ VMs]
+        APP[🚀 Applications]
+        M[📊 Métriques]
+        L[📝 Logs]
     end
     
-    subgraph "SOUS-TENANT B"
-        K8S_B[Kubernetes]
-        VM_B[VMs]
-        APP_B[Applications]
-        
-        K8S_B --> M_B[Métriques]
-        VM_B --> M_B
-        APP_B --> M_B
-        APP_B --> L_B[Logs]
-    end
+    G -.-> VM
+    G -.-> VL
+    K8S --> M
+    VMS --> M
+    APP --> M
+    APP --> L
     
-    M_A --> VM
-    L_A --> VL
-    M_B --> VM
-    L_B --> VL
+    M --> VM
+    L --> VL
     
-    VM --> D1[Dashboard K8s]
-    VM --> D2[Dashboard VMs]
-    VM --> D3[Dashboard Apps]
-    VL --> D4[Dashboard Logs]
+    VM --> D1[📋 Dashboard K8s]
+    VM --> D2[📋 Dashboard VMs] 
+    VM --> D3[📋 Dashboard Apps]
+    VL --> D4[📋 Dashboard Logs]
+    
+    style SPACER fill:transparent,stroke:transparent
 ```
 
 ### **Architecture Multi-Tenant du Monitoring**
@@ -244,57 +231,6 @@ Hikube vous offre une **flexibilité totale** pour adapter vos ressources selon 
 - **📊 Pods Kubernetes** : **Vertical Pod Autoscaling (VPA)** pour l'optimisation automatique des ressources applicatives
 
 Cette approche garantit des **performances optimales** tout en **maîtrisant les coûts** grâce à un dimensionnement précis et automatisé.
-
-### **Performance Optimisée**
-- **SSD NVMe** pour le stockage haute performance
-- **CPU dernière génération** pour le calcul intensif
-- **GPU** disponibles pour l'IA et le calcul scientifique
-
----
-
-## 🔧 Intégrations et Écosystème
-
-### **Outils DevOps Natifs**
-Hikube s'intègre parfaitement avec votre stack existant :
-
-### **APIs Standards**
-- **Kubernetes API** : Compatibilité totale
-- **S3 API** : Pour le stockage objet
-- **Prometheus API** : Pour les métriques
-
----
-
-## 💡 Bonnes Pratiques
-
-### **Organisation des Tenants**
-```
-Entreprise
-├── production (critique)
-│   ├── web-frontend
-│   ├── api-backend
-│   └── database
-├── staging (test pré-prod)
-│   ├── integration-tests
-│   └── performance-tests
-├── development (dev actif)
-│   ├── feature-branches
-│   └── experiments
-└── sandbox (formation)
-    ├── training
-    └── demos
-```
-
-### **Sécurité par Défaut**
-- **Principle of least privilege** : Permissions minimales
-- **Defense in depth** : Sécurité multi-couches
-- **Regular audits** : Revues périodiques des accès
-- **Automated updates** : Patches de sécurité automatiques
-
-### **Monitoring Proactif**
-- **SLI/SLO définies** : Objectifs mesurables
-- **Runbooks automatisés** : Réponses aux incidents
-- **Chaos engineering** : Tests de résilience
-- **Post-mortems** : Apprentissage continu
 
 ---
 
