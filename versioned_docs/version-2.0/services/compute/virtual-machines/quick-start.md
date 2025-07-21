@@ -24,14 +24,6 @@ Ce guide vous accompagne dans la création de votre première machine virtuelle 
 Avant de commencer, assurez-vous d'avoir :
 - ✅ **kubectl** configuré avec votre kubeconfig Hikube
 - ✅ **Droits administrateur** sur votre tenant
-- ✅ **Connexion internet** pour télécharger l'image OS
-
-:::tip Vérification rapide
-```bash
-kubectl get nodes
-kubectl config current-context
-```
-:::
 
 ---
 
@@ -45,12 +37,11 @@ Créez un fichier `vm-disk.yaml` avec une image Ubuntu Cloud :
 apiVersion: apps.cozystack.io/v1alpha1
 kind: VMDisk
 metadata:
-  name: ubuntu-disk
-  namespace: default
+  name: disk-example
 spec:
   source:
     http:
-      url: "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
+      url: https://cloud-images.ubuntu.com/oracular/current/oracular-server-cloudimg-amd64.img
   optical: false
   storage: 20Gi
   storageClass: "replicated"
@@ -63,13 +54,13 @@ spec:
 kubectl apply -f vm-disk.yaml
 
 # Vérifier le statut (peut prendre 1-2 minutes)
-kubectl get vmdisk ubuntu-disk -w
+kubectl get vmdisk disk-example -w
 ```
 
 **Résultat attendu :**
 ```
 NAME          STATUS   SIZE   STORAGECLASS   AGE
-ubuntu-disk   Ready    20Gi   replicated     90s
+disk-example  Ready    20Gi   replicated     90s
 ```
 
 ---
@@ -96,39 +87,25 @@ Créez un fichier `vm-instance.yaml` :
 apiVersion: apps.cozystack.io/v1alpha1
 kind: VMInstance
 metadata:
-  name: ubuntu-vm
-  namespace: default
+  name: vm-example
 spec:
   external: true
+  externalMethod: WholeIP
   externalPorts:
-    - port: 22
-      protocol: TCP
+    - 22
   running: true
-  instanceType: "u1.medium"
+  instanceType: u1.xlarge
   instanceProfile: "ubuntu"
   disks:
-    - name: "ubuntu-disk"
-      size: "20Gi"
-      storageClass: "replicated"
+    - name: disk-example #Spécifier le nom de votre disque
   resources:
-    cpu: "2"
-    memory: "4Gi"
+    cpu: ""
+    memory: ""
   sshKeys:
-    - "ssh-rsa AAAAB3NzaC1yc2EAAA... votre-clé-publique-ici"
+    - votre-clé-publique-ici
   cloudInit: |
     #cloud-config
-    users:
-      - name: ubuntu
-        sudo: ALL=(ALL) NOPASSWD:ALL
-        shell: /bin/bash
-        ssh_authorized_keys:
-          - "ssh-rsa AAAAB3NzaC1yc2EAAA... votre-clé-publique-ici"
-    packages:
-      - htop
-      - curl
-      - wget
-    runcmd:
-      - echo "VM Hikube prête !" > /tmp/hikube-ready
+  cloudInitSeed: ""
 ```
 
 :::warning Attention
@@ -142,7 +119,7 @@ Remplacez `votre-clé-publique-ici` par votre vraie clé SSH publique !
 kubectl apply -f vm-instance.yaml
 
 # Suivre le démarrage
-kubectl get vminstance ubuntu-vm -w
+kubectl get vminstance vm-example -w
 ```
 
 ---
@@ -153,13 +130,10 @@ kubectl get vminstance ubuntu-vm -w
 
 ```bash
 # Status de la VM
-kubectl get vminstance ubuntu-vm
+kubectl get vminstance vm-example
 
 # Détails complets
-kubectl describe vminstance ubuntu-vm
-
-# Logs de démarrage (si nécessaire)
-kubectl logs -l kubevirt.io=ubuntu-vm
+kubectl describe vminstance vm-example
 ```
 
 ### **Méthodes d'accès**
@@ -172,13 +146,13 @@ chmod +x virtctl
 sudo mv virtctl /usr/local/bin/
 
 # Accès console
-virtctl console ubuntu-vm
+virtctl console vm-example
 ```
 
 #### **Option 2 : Interface VNC**
 ```bash
 # Accès graphique
-virtctl vnc ubuntu-vm
+virtctl vnc vm-example
 ```
 
 #### **Option 3 : SSH Direct**
@@ -187,7 +161,7 @@ virtctl vnc ubuntu-vm
 kubectl get service
 
 # SSH vers la VM
-virtctl ssh ubuntu@ubuntu-vm
+virtctl ssh ubuntu@vm-example
 # ou directement si IP accessible :
 # ssh -i ~/.ssh/hikube-vm ubuntu@<IP-EXTERNE>
 ```
@@ -213,17 +187,12 @@ df -h
 # Connectivité réseau
 ping -c 3 google.com
 curl -I https://httpbin.org/ip
-
-# Fichier de validation Hikube
-cat /tmp/hikube-ready
 ```
 
 ### **Résultat attendu**
 ```bash
-ubuntu@ubuntu-vm:~$ cat /tmp/hikube-ready
-VM Hikube prête !
 
-ubuntu@ubuntu-vm:~$ free -h
+ubuntu@vm-example:~$ free -h
                total        used        free      shared
 Mem:            3.8Gi       180Mi       3.4Gi       1.0Mi
 ```
@@ -235,7 +204,7 @@ Mem:            3.8Gi       180Mi       3.4Gi       1.0Mi
 Votre machine virtuelle Hikube est **opérationnelle** ! 🎊
 
 ### **Ce que vous avez accompli :**
-- ✅ **VM Ubuntu** déployée avec 2 vCPU / 4 GB RAM
+- ✅ **VM Ubuntu** déployée avec 4 vCPU / 16 GB RAM
 - ✅ **Stockage persistant** de 20 GB
 - ✅ **Accès SSH** sécurisé configuré
 - ✅ **Connectivité externe** activée
@@ -248,29 +217,12 @@ Votre machine virtuelle Hikube est **opérationnelle** ! 🎊
 ### **Commandes utiles**
 
 ```bash
-# Arrêter la VM
-kubectl patch vminstance ubuntu-vm --type merge -p '{"spec":{"running":false}}'
-
-# Redémarrer la VM
-kubectl patch vminstance ubuntu-vm --type merge -p '{"spec":{"running":true}}'
-
 # Supprimer la VM (attention !)
-kubectl delete vminstance ubuntu-vm
+kubectl delete vminstance vm-example
 
 # Supprimer le disque (attention !)
-kubectl delete vmdisk ubuntu-disk
+kubectl delete vmdisk vm-disk
 ```
-
-### **Monitoring**
-
-```bash
-# Métriques en temps réel
-kubectl top pod -l kubevirt.io=ubuntu-vm
-
-# Events de la VM
-kubectl get events --field-selector involvedObject.name=ubuntu-vm
-```
-
 ---
 
 ## 🎯 Prochaines Étapes
