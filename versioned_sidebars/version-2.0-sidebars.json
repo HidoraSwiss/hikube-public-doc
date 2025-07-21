@@ -35,8 +35,7 @@
                     "services/storage/buckets/tutorials/backup-strategy",
                     "services/storage/buckets/tutorials/access-control"
                   ]
-                },
-                "services/storage/buckets/troubleshooting"
+                }
               ]
             }
           ]
@@ -104,15 +103,7 @@
               "items": [
                 "services/compute/gpu/overview",
                 "services/compute/gpu/quick-start",
-                "services/compute/gpu/api-reference",
-                {
-                  "type": "category",
-                  "label": "Tutoriels",
-                  "items": [
-                    "services/compute/gpu/tutorials/machine-learning"
-                  ]
-                },
-                "services/compute/gpu/troubleshooting"
+                "services/compute/gpu/api-reference"
               ]
             }
           ]
@@ -123,29 +114,7 @@
           "items": [
             "services/kubernetes/overview",
             "services/kubernetes/quick-start",
-            "services/kubernetes/api-reference",
-            "services/kubernetes/troubleshooting"
-          ]
-        },
-        {
-          "type": "category",
-          "label": "Networking",
-          "items": [
-            {
-              "type": "category",
-              "label": "VPN",
-              "items": [
-                "services/networking/vpn/overview",
-                "services/networking/vpn/quick-start"
-              ]
-            },
-            {
-              "type": "category",
-              "label": "Load Balancers",
-              "items": [
-                "services/networking/load-balancers/overview"
-              ]
-            }
+            "services/kubernetes/api-reference"
           ]
         },
         {
