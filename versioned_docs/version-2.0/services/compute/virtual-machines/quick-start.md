@@ -209,23 +209,7 @@ La suppression des VMs et disques est **irréversible**. Assurez-vous d'avoir sa
 
 ---
 
-:::tip Astuces Pro
-- Utilisez `virtctl` pour une gestion simplifiée des VMs
-- Configurez des **snapshots** réguliers pour sauvegarder vos VMs
-- Explorez les **séries d'instances** pour optimiser performances/coûts
-- La classe de stockage `replicated` garantit la haute disponibilité
-:::
-
-:::info Dépannage
-Si votre VM ne démarre pas, vérifiez :
-1. Le statut du VMDisk avec `kubectl get vmdisk`
-2. Les events avec `kubectl get events`
-3. Les logs avec `kubectl logs -l kubevirt.io=vm-example`
-:::
-
----
-
 **💡 Points Clés à Retenir :**
-- Vos **données sont toujours sûres** grâce à la réplication DRBD
+- Vos **données sont toujours sûres** grâce à la réplication 3 datacenters
 - Votre VM peut être **relocalisée automatiquement** en cas de panne nœud
 - L'**isolation totale** garantit la sécurité entre tenants 
