@@ -27,15 +27,7 @@
               "items": [
                 "services/storage/buckets/overview",
                 "services/storage/buckets/quick-start",
-                "services/storage/buckets/api-reference",
-                {
-                  "type": "category",
-                  "label": "Tutoriels",
-                  "items": [
-                    "services/storage/buckets/tutorials/backup-strategy",
-                    "services/storage/buckets/tutorials/access-control"
-                  ]
-                }
+                "services/storage/buckets/api-reference"
               ]
             }
           ]
@@ -50,16 +42,7 @@
               "items": [
                 "services/databases/postgresql/overview",
                 "services/databases/postgresql/quick-start",
-                "services/databases/postgresql/api-reference",
-                {
-                  "type": "category",
-                  "label": "Tutoriels",
-                  "items": [
-                    "services/databases/postgresql/tutorials/high-availability",
-                    "services/databases/postgresql/tutorials/backup-restore"
-                  ]
-                },
-                "services/databases/postgresql/troubleshooting"
+                "services/databases/postgresql/api-reference"
               ]
             },
             {
@@ -68,8 +51,7 @@
               "items": [
                 "services/databases/mysql/overview",
                 "services/databases/mysql/quick-start",
-                "services/databases/mysql/api-reference",
-                "services/databases/mysql/troubleshooting"
+                "services/databases/mysql/api-reference"
               ]
             },
             {
@@ -78,8 +60,7 @@
               "items": [
                 "services/databases/redis/overview",
                 "services/databases/redis/quick-start",
-                "services/databases/redis/api-reference",
-                "services/databases/redis/troubleshooting"
+                "services/databases/redis/api-reference"
               ]
             }
           ]
@@ -147,8 +128,7 @@
       "type": "category",
       "label": "🛠️ Tools",
       "items": [
-        "tools/terraform",
-        "tools/cli"
+        "tools/terraform"
       ]
     }
   ]
