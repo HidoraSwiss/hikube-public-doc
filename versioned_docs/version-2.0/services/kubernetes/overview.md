@@ -12,7 +12,7 @@ Les **clusters Kubernetes managés** d'Hikube offrent une solution d'orchestrati
 ## 🚀 Pourquoi Kubernetes sur Hikube ?
 
 ### **🎯 Simplicité Opérationnelle**
-- **Déploiement rapide** : Cluster prêt en 5 minutes
+- **Déploiement rapide** : Cluster prêt en moins de 5 minutes
 - **Gestion automatisée** : Mises à jour, sauvegardes et scaling transparents
 - **API native Kubernetes** : Compatibilité totale avec l'écosystème
 
@@ -87,7 +87,7 @@ flowchart TD
 
 ### **Composants Clés**
 
-#### **🎯 Kamaji - Plan de Contrôle**
+#### **🎯 Plan de Contrôle**
 - **Control Plane containerisé** : API Server, etcd, Scheduler en conteneurs
 - **Multi-tenant natif** : Isolation parfaite entre clusters
 - **Haute disponibilité** : Control Planes distribués sur 3 datacenters avec réplication automatique
@@ -97,7 +97,7 @@ flowchart TD
 - **Infrastructure as Code** : Gestion déclarative via YAML
 - **Standardisation** : API unifiée pour tous types de déploiements
 
-#### **🖥️ KubeVirt - Infrastructure Workers**
+#### **🖥️ Infrastructure Workers**
 - **Nœuds workers en VMs** : Isolation et sécurité maximales
 - **Gestion automatisée** : Provisioning, mise à l'échelle, maintenance
 - **Intégration native** : Support des volumes et réseaux Hikube
@@ -105,8 +105,8 @@ flowchart TD
 ### **🌍 Résilience Multi-Datacenter**
 
 #### **📍 Distribution Géographique**
-- **3 Datacenters européens** : Paris, Amsterdam, Frankfurt
-- **Latence optimisée** : Moins de 10ms entre datacenters
+- **3 Datacenters suisses** : Genève, Lucerne, Gland
+- **Latence optimisée** : Moins de 5ms entre datacenters
 - **Redondance géographique** : Protection contre les pannes régionales
 
 #### **💾 Réplication des Volumes**
@@ -114,25 +114,6 @@ flowchart TD
 - **Basculement transparent** : Récupération instantanée en cas de panne
 - **Cohérence des données** : Garantie de consistance entre réplicas
 - **Classes de stockage répliquées** : `replicated` avec facteur de réplication 3
-
----
-
-## 💡 Cas d'Usage
-
-### **🚀 Applications Cloud-Native**
-- **Microservices** : Orchestration d'architectures distribuées
-- **CI/CD pipelines** : Environnements de build et déploiement
-- **API backends** : Services web scalables et résilients
-
-### **📊 Workloads Spécialisés**
-- **Machine Learning** : Clusters avec nœuds GPU pour l'IA
-- **Bases de données** : PostgreSQL, Redis, MongoDB en mode operator
-- **Big Data** : Apache Spark, Kafka pour le traitement de données
-
-### **🔧 Environnements de Développement**
-- **Dev/Test/Staging** : Environnements éphémères et reproductibles  
-- **Feature branches** : Clusters dédiés par fonctionnalité
-- **Formation** : Environnements d'apprentissage isolés
 
 ---
 
@@ -144,9 +125,9 @@ flowchart TD
 - **SSL/TLS natif** : Certificats automatiques avec Let's Encrypt
 
 ### **💾 Stockage Persistant**
-- **Classes de stockage multiples** : `local`, `replicated`, `fast-ssd`
+- **Classes de stockage multiples** : `local`, `replicated`
 - **Volumes dynamiques** : Provisioning automatique selon les besoins
-- **Réplication multi-datacenter** : PVC répliqués automatiquement sur les 3 datacenters (Paris, Amsterdam, Frankfurt)
+- **Réplication multi-datacenter** : PVC répliqués automatiquement sur les 3 datacenters
 - **Haute disponibilité** : Continuité de service garantie même en cas de panne d'un datacenter
 - **Snapshots et sauvegardes** : Protection des données critiques avec réplication géographique
 
@@ -154,11 +135,6 @@ flowchart TD
 - **RBAC granulaire** : Contrôle d'accès fin par namespace
 - **Network Policies** : Micro-segmentation du trafic réseau
 - **Pod Security Standards** : Conformité sécuritaire automatique
-
-### **📈 Observabilité Native**
-- **Métriques Prometheus** : Monitoring complet des clusters
-- **Logs centralisés** : Collecte et analyse des journaux
-- **Dashboards Grafana** : Visualisation temps réel des performances
 
 ---
 
@@ -175,25 +151,6 @@ Déploiement GitOps pour une approche "infrastructure as code" complète.
 
 ### **📊 Agents de Monitoring**
 Intégration avec FluentBit pour la collecte centralisée des logs et métriques.
-
----
-
-## 🎯 Avantages Hikube
-
-### **⚡ Performance Optimisée**
-- **SSD NVMe** : Stockage haute performance pour etcd et volumes
-- **Réseau dédié** : Bande passante garantie entre nœuds
-- **CPU/RAM dédiés** : Ressources garanties sans overselling
-
-### **🛡️ Sécurité Enterprise**
-- **Isolation complète** : Chaque cluster dans son propre tenant
-- **Chiffrement transparent** : Données chiffrées au repos et en transit
-- **Auditing complet** : Traçabilité de toutes les actions
-
-### **💰 Optimisation des Coûts**
-- **Scaling intelligent** : Ressources ajustées à la demande réelle
-- **Facturation granulaire** : Paiement uniquement des ressources utilisées
-- **Environnements éphémères** : Coûts optimisés pour dev/test
 
 ---
 
