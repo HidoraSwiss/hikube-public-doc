@@ -1,8 +1,8 @@
 ---
 sidebar_position: 2
-title: CLI
+title: Démarrage rapide
 ---
 
-# CLI Hikube
+# Déployer Kafka en 5 minutes
 
 <!-- TODO: Contenu à rédiger --> 
