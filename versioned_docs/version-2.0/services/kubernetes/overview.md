@@ -12,7 +12,7 @@ Les **clusters Kubernetes managés** d'Hikube offrent une solution d'orchestrati
 ## 🚀 Pourquoi Kubernetes sur Hikube ?
 
 ### **🎯 Simplicité Opérationnelle**
-- **Déploiement en quelques clics** : Cluster prêt en 5 minutes
+- **Déploiement rapide** : Cluster prêt en 5 minutes
 - **Gestion automatisée** : Mises à jour, sauvegardes et scaling transparents
 - **API native Kubernetes** : Compatibilité totale avec l'écosystème
 
@@ -30,44 +30,59 @@ Les **clusters Kubernetes managés** d'Hikube offrent une solution d'orchestrati
 
 ## 🏗️ Architecture Technique
 
-### **Stack Technologique**
+### **Architecture Multi-Datacenter**
 
-Hikube déploie Kubernetes en utilisant des composants éprouvés de l'écosystème CNCF :
+Hikube déploie Kubernetes avec une architecture distribuée sur 3 datacenters pour garantir haute disponibilité et résilience :
 
 ```mermaid
 flowchart TD
-    subgraph CP["🎮 Plan de Contrôle (Containerisé)"]
-        API["🔌 API Server"]
-        ETCD["💾 etcd"]
-        SCHED["📋 Scheduler"]
-        CM["⚙️ Controller Manager"]
+    subgraph DC1["🏢 Genève"]
+        CP1["🎮 Control Plane 1"]
+        API1["🔌 Kubernetes API"]
+        ETCD1["💾 etcd Cluster"]
+        PVC1["💾 PVC Replicas"]
+        WN1["☸️ Worker Nodes"]
     end
     
-    subgraph WN["💻 Nœuds Workers (VMs)"]
-        K1["☸️ Kubelet"]
-        K2["☸️ Kubelet"]
-        K3["☸️ Kubelet"]
-        CNI["🌐 CNI Plugin"]
-        CSI["💾 CSI Driver"]
+    subgraph DC2["🏢 Lucerne"]
+        CP2["🎮 Control Plane 2"]
+        API2["🔌 Kubernetes API"]
+        ETCD2["💾 etcd Cluster"]
+        PVC2["💾 PVC Replicas"]
+        WN2["☸️ Worker Nodes"]
     end
     
-    subgraph MGMT["🛠️ Composants de Gestion"]
-        CAPI["📊 Cluster API"]
-        KAMAJI["🎯 Kamaji"]
-        KUBEVIRT["🖥️ KubeVirt"]
+    subgraph DC3["🏢 Gland"]
+        CP3["🎮 Control Plane 3"]
+        API3["🔌 Kubernetes API"]
+        ETCD3["💾 etcd Cluster"]
+        PVC3["💾 PVC Replicas"]
+        WN3["☸️ Worker Nodes"]
     end
     
-    API --> K1
-    API --> K2
-    API --> K3
+    CP1 --> API1
+    CP2 --> API2
+    CP3 --> API3
     
-    CAPI --> CP
-    KAMAJI --> CP
-    KUBEVIRT --> WN
+    API1 --> ETCD1
+    API2 --> ETCD2
+    API3 --> ETCD3
     
-    style CP fill:#e3f2fd
-    style WN fill:#f3e5f5
-    style MGMT fill:#e8f5e8
+    ETCD1 <-.-> ETCD2
+    ETCD2 <-.-> ETCD3
+    ETCD3 <-.-> ETCD1
+    
+    PVC1 <-.-> PVC2
+    PVC2 <-.-> PVC3
+    PVC3 <-.-> PVC1
+    
+    API1 --> WN1
+    API2 --> WN2
+    API3 --> WN3
+    
+    style DC1 fill:#e3f2fd
+    style DC2 fill:#f3e5f5
+    style DC3 fill:#e8f5e8
 ```
 
 ### **Composants Clés**
@@ -75,7 +90,7 @@ flowchart TD
 #### **🎯 Kamaji - Plan de Contrôle**
 - **Control Plane containerisé** : API Server, etcd, Scheduler en conteneurs
 - **Multi-tenant natif** : Isolation parfaite entre clusters
-- **Haute disponibilité** : Réplication automatique des composants critiques
+- **Haute disponibilité** : Control Planes distribués sur 3 datacenters avec réplication automatique
 
 #### **📊 Cluster API - Gestion des Clusters** 
 - **Lifecycle management** : Création, mise à jour, suppression des clusters
@@ -86,6 +101,19 @@ flowchart TD
 - **Nœuds workers en VMs** : Isolation et sécurité maximales
 - **Gestion automatisée** : Provisioning, mise à l'échelle, maintenance
 - **Intégration native** : Support des volumes et réseaux Hikube
+
+### **🌍 Résilience Multi-Datacenter**
+
+#### **📍 Distribution Géographique**
+- **3 Datacenters européens** : Paris, Amsterdam, Frankfurt
+- **Latence optimisée** : Moins de 10ms entre datacenters
+- **Redondance géographique** : Protection contre les pannes régionales
+
+#### **💾 Réplication des Volumes**
+- **PVC répliqués en temps réel** : Synchronisation automatique entre les 3 sites
+- **Basculement transparent** : Récupération instantanée en cas de panne
+- **Cohérence des données** : Garantie de consistance entre réplicas
+- **Classes de stockage répliquées** : `replicated` avec facteur de réplication 3
 
 ---
 
@@ -118,7 +146,9 @@ flowchart TD
 ### **💾 Stockage Persistant**
 - **Classes de stockage multiples** : `local`, `replicated`, `fast-ssd`
 - **Volumes dynamiques** : Provisioning automatique selon les besoins
-- **Snapshots et sauvegardes** : Protection des données critiques
+- **Réplication multi-datacenter** : PVC répliqués automatiquement sur les 3 datacenters (Paris, Amsterdam, Frankfurt)
+- **Haute disponibilité** : Continuité de service garantie même en cas de panne d'un datacenter
+- **Snapshots et sauvegardes** : Protection des données critiques avec réplication géographique
 
 ### **🔐 Sécurité Intégrée**
 - **RBAC granulaire** : Contrôle d'accès fin par namespace

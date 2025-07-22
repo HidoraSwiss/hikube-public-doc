@@ -12,18 +12,18 @@ Ce guide vous accompagne dans la création de votre première machine virtuelle 
 ## 🎯 Objectif
 
 À la fin de ce guide, vous aurez :
-- ✅ Une machine virtuelle Ubuntu fonctionnelle
-- ✅ Accès SSH configuré
-- ✅ Connectivité réseau opérationnelle
-- ✅ Stockage persistant attaché
+- Une machine virtuelle Ubuntu fonctionnelle
+- Accès SSH configuré
+- Connectivité réseau opérationnelle
+- Stockage persistant attaché
 
 ---
 
 ## 📋 Prérequis
 
 Avant de commencer, assurez-vous d'avoir :
-- ✅ **kubectl** configuré avec votre kubeconfig Hikube
-- ✅ **Droits administrateur** sur votre tenant
+- **kubectl** configuré avec votre kubeconfig Hikube
+- **Droits administrateur** sur votre tenant
 
 ---
 
@@ -126,6 +126,15 @@ kubectl get vminstance vm-example -w
 
 ## 🔌 Étape 3 : Accéder à votre VM (1 minute)
 
+### **Méthodes d'accès**
+
+#### **Option 1 : SSH Direct**
+```bash
+# SSH via virtctl (avec clé personnalisée)
+virtctl ssh -i ~/.ssh/hikube-vm ubuntu@vm-example
+```
+
+### **Options avec virtcl**
 ### **Installation de virtctl**
 
 Si vous n'avez pas encore `virtctl` installé :
@@ -140,65 +149,19 @@ sudo mv virtctl /usr/local/bin/
 # Vérifier l'installation
 virtctl version
 ```
-### **Vérification du déploiement**
 
-```bash
-# Status de la VM
-kubectl get vminstance vm-example
 
-# Détails complets
-kubectl describe vminstance vm-example
-```
-
-### **Méthodes d'accès**
-
-#### **Option 1 : Console Série (toujours disponible)**
+#### **Option 2 : Console Série (toujours disponible)**
 ```bash
 # Accès console directe
 virtctl console vm-example
 ```
 
-#### **Option 2 : Interface VNC**
+#### **Option 3 : Interface VNC**
 ```bash
 # Accès graphique
 virtctl vnc vm-example
 ```
-
-#### **Option 3 : SSH Direct**
-```bash
-# SSH via virtctl (avec clé personnalisée)
-virtctl ssh -i ~/.ssh/hikube-vm ubuntu@vm-example
-
----
-
-## ✅ Étape 4 : Validation (30 secondes)
-
-### **Tests de fonctionnement**
-
-Une fois connecté à votre VM, testez :
-
-```bash
-# Information système
-hostnamectl
-uname -a
-
-# Ressources allouées
-lscpu
-free -h
-df -h
-
-# Connectivité réseau
-ping -c 3 google.com
-curl -I https://httpbin.org/ip
-```
-
-### **Résultat attendu**
-```bash
-ubuntu@vm-example:~$ free -h
-               total        used        free      shared
-Mem:            3.8Gi       180Mi       3.4Gi       1.0Mi
-```
-
 ---
 
 ## 🎉 Félicitations ! 

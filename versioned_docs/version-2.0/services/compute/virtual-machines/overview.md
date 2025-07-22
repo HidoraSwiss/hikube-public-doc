@@ -125,5 +125,5 @@ Maintenant que vous comprenez l'architecture des VMs Hikube :
 → [Référence API complète](./api-reference.md)
 
 :::tip Architecture Recommandée
-Pour la production, utilisez toujours la classe de stockage `replicated` et dimensionnez vos VMs avec au moins 2 vCPU pour bénéficier de meilleures performances réseau.
+Pour la production, utilisez toujours la classe de stockage `replicated` et dimensionnez vos VMs avec au moins 2 vCPU pour bénéficier de meilleures performances.
 :::
