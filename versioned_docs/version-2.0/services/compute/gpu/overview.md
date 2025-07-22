@@ -75,131 +75,65 @@ Hikube propose exclusivement des GPUs NVIDIA de dernière génération pour rép
 - **Usage** : LLM, transformers, calcul exascale
 - **Performance** : 1979 TOPS (INT8), 989 TFLOPs (Tensor)
 
----
 
-## 🏗️ Architecture GPU Passthrough
+## 🔧 Flexibilité des Configurations
 
-### **Technologie de Virtualisation**
+### **🎛️ Compatibilité Universelle des Types d'Instances**
 
-Hikube utilise **KubeVirt** avec le **GPU Operator** NVIDIA pour offrir un passthrough GPU complet :
+Hikube offre une **flexibilité totale** dans l'association des GPUs avec les types d'instances. Vous pouvez connecter **n'importe quel GPU disponible** (L40S, A100, H100) à **n'importe quel type d'instance** selon vos besoins spécifiques :
 
-```mermaid
-flowchart TD
-    subgraph DC1["🏢 Datacenter Genève"]
-        HOST1["🖥️ Serveur Physique"]
-        GPU1["🎮 NVIDIA GPU"]
-        VM1["🖥️ VM GPU"]
-    end
-    
-    subgraph DC2["🏢 Datacenter Lucerne"]
-        HOST2["🖥️ Serveur Physique"]
-        GPU2["🎮 NVIDIA GPU"]
-        VM2["🖥️ VM GPU"]
-    end
-    
-    subgraph DC3["🏢 Datacenter Gland"]
-        HOST3["🖥️ Serveur Physique"] 
-        GPU3["🎮 NVIDIA GPU"]
-        VM3["🖥️ VM GPU"]
-    end
-    
-    subgraph STORAGE["💾 Stockage Répliqué"]
-        DATA1["📁 Datasets"]
-        MODEL1["🧠 Modèles IA"]
-        RESULTS1["📊 Résultats"]
-    end
-    
-    HOST1 --> GPU1
-    GPU1 --> VM1
-    HOST2 --> GPU2
-    GPU2 --> VM2
-    HOST3 --> GPU3
-    GPU3 --> VM3
-    
-    VM1 --> STORAGE
-    VM2 --> STORAGE
-    VM3 --> STORAGE
-    
-    style DC1 fill:#e3f2fd
-    style DC2 fill:#e8f5e8
-    style DC3 fill:#fff2e1
-    style STORAGE fill:#f3e5f5
+#### **Exemples de Configurations Flexibles**
+
+```yaml
+# GPU L40S avec instance standard
+apiVersion: apps.cozystack.io/v1alpha1
+kind: VirtualMachine
+spec:
+  instanceType: "u1.xlarge"    # 4 vCPU, 16 GB RAM
+  gpus:
+    - name: "nvidia.com/L40S"   # GPU 48GB
 ```
 
-### **Mécanisme VFIO-PCI**
+```yaml
+# GPU H100 avec instance memory-optimized
+apiVersion: apps.cozystack.io/v1alpha1  
+kind: VirtualMachine
+spec:
+  instanceType: "m1.4xlarge"   # 16 vCPU, 128 GB RAM
+  gpus:
+    - name: "nvidia.com/H100"   # GPU 80GB
+```
 
-- **Isolation matérielle** : GPU dédié exclusivement à la VM
-- **Performance native** : Aucune virtualisation, accès direct au GPU
-- **Pilotes NVIDIA** : Installation standard dans la VM
-- **CUDA/ROCm** : Support complet des frameworks de calcul
+```yaml
+# Multi-GPU avec instance standard
+apiVersion: apps.cozystack.io/v1alpha1
+kind: VirtualMachine
+spec:
+  instanceType: "s1.8xlarge"   # 64 vCPU, 128 GB RAM
+  gpus:
+    - name: "nvidia.com/A100"
+    - name: "nvidia.com/A100"
+    - name: "nvidia.com/A100"
+    - name: "nvidia.com/A100"
+```
 
----
+#### **Types d'Instances Compatibles**
 
-## 💡 Cas d'Usage
+| **Série** | **Ratio CPU:RAM** | **Compatible GPU** | **Usage Recommandé** |
+|-----------|-------------------|-------------------|---------------------|
+| **S1** | 1:2 (Standard) | ✅ Tous GPUs | Workloads équilibrés |
+| **U1** | 1:4 (Universal) | ✅ Tous GPUs | Applications générales |  
+| **M1** | 1:8 (Memory) | ✅ Tous GPUs | IA/ML intensif mémoire |
 
-### **🤖 Intelligence Artificielle**
+:::tip Optimisation Recommandée 💡
+- **L40S** : Fonctionne parfaitement avec les instances S1/U1 pour l'inférence et le rendu
+- **A100** : Idéal avec les instances M1 pour l'entraînement nécessitant beaucoup de RAM
+- **H100** : Excellente performance avec toutes les séries selon le workload
+:::
 
-**Entraînement de Modèles**
-- **Deep Learning** : PyTorch, TensorFlow, JAX
-- **Large Language Models** : BERT, GPT, LLaMA
-- **Computer Vision** : YOLO, ResNet, Vision Transformers
-- **Reinforcement Learning** : Stable Baselines, Ray RLlib
-
-**Inférence et Production**
-- **Serving de modèles** : TensorRT, ONNX Runtime
-- **APIs ML** : FastAPI, BentoML, MLflow
-- **Edge AI** : Déploiement optimisé pour latence
-
-### **🔬 Calcul Scientifique**
-
-**Simulation Numérique**
-- **CFD** : OpenFOAM, ANSYS Fluent
-- **Dynamique moléculaire** : GROMACS, LAMMPS
-- **Astrophysique** : GADGET, RAMSES
-- **Météorologie** : WRF, ICON
-
-**Calcul Haute Performance**
-- **CUDA** : Développement natif GPU
-- **OpenACC** : Portage d'applications CPU
-- **Bibliothèques optimisées** : cuBLAS, cuDNN, NCCL
-
-### **🎨 Rendu et Visualisation**
-
-**Production Multimédia**
-- **Rendu 3D** : Blender, 3ds Max, Maya
-- **Post-production** : DaVinci Resolve, Adobe Premiere
-- **Streaming** : OBS Studio, FFmpeg avec NVENC
-
-**Visualisation Scientifique**
-- **ParaView** : Visualisation de données scientifiques
-- **VisIt** : Analyse de simulations complexes
-- **Jupyter** : Notebooks interactifs avec GPU
-
----
-
-## 🔧 Fonctionnalités Avancées
-
-### **🌐 Réseau Haute Performance**
-
-**Connectivité Optimisée**
-- **InfiniBand/Ethernet 100Gb** : Communication inter-nœuds
-- **RDMA** : Accès mémoire distant direct
-- **NCCL** : Communication collective optimisée NVIDIA
-
-### **💾 Stockage Haute Performance**
-
-**Storage Classes Spécialisées**
-- **NVMe local** : Latence ultra-faible pour données temporaires
-- **replicated** : Haute disponibilité pour datasets critiques
-- **Volumes GPU-aware** : Optimisation lecture/écriture massive
-
-### **📊 Monitoring GPU**
-
-**Observabilité Complète**
-- **NVIDIA DCGM** : Métriques temps réel des GPUs
-- **Prometheus** : Collecte et historisation
-- **Grafana** : Dashboards de performance détaillés
-- **Alerting** : Surveillance proactive température/utilisation
+:::info Dimensionnement Flexible 🎯
+Vous n'êtes **pas limité** aux types d'instances pré-configurés GPU (G1, G2, etc.). Choisissez librement votre ratio CPU/RAM optimal et ajoutez les GPUs selon vos besoins !
+:::
 
 ---
 
