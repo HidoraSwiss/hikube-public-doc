@@ -88,24 +88,18 @@
           "type": "category",
           "label": "Compute",
           "items": [
-            {
-              "type": "category",
-              "label": "Virtual Machines",
-              "items": [
-                "services/compute/virtual-machines/overview",
-                "services/compute/virtual-machines/quick-start",
-                "services/compute/virtual-machines/api-reference"
-              ]
-            },
-            {
-              "type": "category",
-              "label": "GPU",
-              "items": [
-                "services/compute/gpu/overview",
-                "services/compute/gpu/quick-start",
-                "services/compute/gpu/api-reference"
-              ]
-            }
+            "services/compute/overview",
+            "services/compute/quick-start",
+            "services/compute/api-reference"
+          ]
+        },
+        {
+          "type": "category",
+          "label": "GPU",
+          "items": [
+            "services/gpu/overview",
+            "services/gpu/quick-start",
+            "services/gpu/api-reference"
           ]
         },
         {
