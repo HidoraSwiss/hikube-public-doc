@@ -126,15 +126,6 @@ kubectl get vminstance vm-example -w
 
 ## 🔌 Étape 3 : Accéder à votre VM (1 minute)
 
-### **Méthodes d'accès**
-
-#### **Option 1 : SSH Direct**
-```bash
-# SSH via virtctl (avec clé personnalisée)
-virtctl ssh -i ~/.ssh/hikube-vm ubuntu@vm-example
-```
-
-### **Options avec virtcl**
 ### **Installation de virtctl**
 
 Si vous n'avez pas encore `virtctl` installé :
@@ -150,6 +141,15 @@ sudo mv virtctl /usr/local/bin/
 virtctl version
 ```
 
+### **Méthodes d'accès**
+
+#### **Option 1 : SSH Direct**
+```bash
+# SSH via virtctl (avec clé personnalisée)
+virtctl ssh -i ~/.ssh/hikube-vm ubuntu@vm-example
+# ou SSH via l'IP public ( avec clé personalisée)
+ssh -i ~/.ssh/hikube-vm ubuntu@public-ip
+```
 
 #### **Option 2 : Console Série (toujours disponible)**
 ```bash
