@@ -36,12 +36,6 @@ title: Introduction à Hikube
 **Encryption des Données**
 - Toutes les données stockées sont cryptées si besoin, garantissant que vos informations sensibles sont protégées même lorsqu'elles sont inactives.
 
-**Réseau Privé Virtuel (VPC) Uniquement**
-- Profitez d'une isolation réseau complète et d'une sécurité renforcée avec notre offre VPC uniquement, permettant de segmenter et de protéger vos ressources cloud.
-
-**Cloud Privé Uniquement**
-- Bénéficiez d'un environnement cloud dédié, offrant une sécurité accrue, une performance optimisée et un contrôle total sur vos ressources IT.
-
 ### **Automatisation et Intégration**
 
 **Pilotable via API et Terraform**
@@ -52,23 +46,23 @@ title: Introduction à Hikube
 
 ---
 
-## **🗺️ Parcours d'apprentissage recommandé**
+## **Parcours d'apprentissage recommandé**
 
-### **⚡ Démarrage Express (15 minutes)**
-1. **[🚀 Quick Start](./quick-start.md)** → Déployez votre première application
+### **Démarrage Express (15 minutes)**
+1. **[Quick Start](./quick-start.md)** → Déployez votre première application
 2. **Test pratique** → Validez votre compréhension
 
-### **🧠 Compréhension Approfondie (30 minutes)** 
-1. **[📚 Concepts](./concepts.md)** → Architecture et fonctionnalités détaillées
+### **Compréhension Approfondie (30 minutes)** 
+1. **[Concepts](./concepts.md)** → Architecture et fonctionnalités détaillées
 2. **Choix des services** → Selon vos besoins spécifiques
 
-### **🔧 Maîtrise Complète (selon besoins)**
-1. **[📖 Services](../services/)** → Catalogue exhaustif des fonctionnalités
+### **Maîtrise Complète (selon besoins)**
+1. **[Services](../services/)** → Catalogue exhaustif des fonctionnalités
 2. **Intégrations avancées** → APIs et automatisation
 
 ---
 
-## **✅ Prérequis techniques**
+## **Prérequis techniques**
 
 ### **Connaissances recommandées :**
 - **Kubernetes** : Concepts de base (pods, services, deployments)
@@ -86,21 +80,21 @@ Si vous n'avez pas encore d'accès, contactez votre administrateur ou l'équipe 
 
 ---
 
-## **🎯 Commencer maintenant**
+## **Commencer maintenant**
 
 Hikube est conçu pour être **simple** au démarrage, mais **puissant** quand vous maîtrisez.
 
-### **⏱️ Choix rapide :**
+### **Choix rapide :**
 
 <div style={{display: 'flex', gap: '20px', marginBottom: '20px'}}>
 
-**🚀 Je veux tester rapidement**  
+**Je veux tester rapidement**  
 → [Quick Start](./quick-start.md)
 
-**🧠 Je veux tout comprendre**  
+**Je veux tout comprendre**  
 → [Concepts](./concepts.md)
 
-**📖 Je cherche une fonctionnalité**  
+**Je cherche une fonctionnalité**  
 → [Services](../services/)
 
 </div>
@@ -108,7 +102,7 @@ Hikube est conçu pour être **simple** au démarrage, mais **puissant** quand v
 ---
 
 :::info **Prochaine étape recommandée**
-**[🚀 Quick Start](./quick-start.md)** → Déployez votre première application Kubernetes en 5 minutes !
+**[Quick Start](./quick-start.md)** → Déployez votre première application Kubernetes en 5 minutes !
 :::
 
 ---

@@ -125,7 +125,7 @@ kind: VirtualMachine
 spec:
   instanceType: "u1.xlarge"
   gpus:
-    - name: "nvidia.com/L40S"
+    - name: "nvidia.com/AD102GL_L40S"
 ```
 
 ### **GPU sur Kubernetes Worker**
@@ -137,7 +137,7 @@ spec:
     gpu-workers:
       instanceType: "u1.xlarge"
       gpus:
-        - name: "nvidia.com/L40S"
+        - name: "nvidia.com/AD102GL_L40S"
 ```
 
 ### **GPU dans Pod Kubernetes**

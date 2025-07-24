@@ -124,7 +124,7 @@ nodeGroups:
     maxReplicas: 5
     instanceType: "u1.xlarge"
     gpus:
-      - name: "nvidia.com/L40S"
+      - name: "nvidia.com/AD102GL_L40S"
 ```
 
 ### **Applications Critiques**

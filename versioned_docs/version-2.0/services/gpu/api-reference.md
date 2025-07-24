@@ -23,7 +23,7 @@ spec:
   instanceProfile: ubuntu
   instanceType: u1.xlarge
   gpus:
-    - name: "nvidia.com/L40S"
+    - name: "nvidia.com/AD102GL_L40S"
 ```
 
 #### **Paramètres GPU pour VM**
@@ -38,15 +38,15 @@ spec:
 ```yaml
 # GPU pour inférence et développement
 gpus:
-  - name: "nvidia.com/L40S"
+  - name: "nvidia.com/AD102GL_L40S"
 
 # GPU pour entraînement ML
 gpus:
-  - name: "nvidia.com/A100"
+  - name: "nvidia.com/GA100_A100_PCIE_80GB"
 
 # GPU pour LLM et calcul exascale
 gpus:
-  - name: "nvidia.com/H100"
+  - name: "nvidia.com/H100_94GB"
 ```
 
 #### **Spécifications Hardware**
@@ -69,7 +69,7 @@ spec:
   instanceProfile: ubuntu
   instanceType: u1.2xlarge  # 8 vCPU, 32 GB RAM
   gpus:
-    - name: "nvidia.com/A100"
+    - name: "nvidia.com/GA100_A100_PCIE_80GB"
   systemDisk:
     size: 200Gi
     storageClass: replicated
@@ -121,7 +121,7 @@ spec:
       instanceType: "u1.xlarge"
       ephemeralStorage: 100Gi
       gpus:
-        - name: "nvidia.com/L40S"
+        - name: "nvidia.com/AD102GL_L40S"
 ```
 
 #### **Paramètres GPU pour NodeGroups**
@@ -140,10 +140,10 @@ nodeGroups:
     maxReplicas: 2
     instanceType: "u1.4xlarge"  # 16 vCPU, 64 GB RAM
     gpus:
-      - name: "nvidia.com/A100"
-      - name: "nvidia.com/A100"
-      - name: "nvidia.com/A100"
-      - name: "nvidia.com/A100"
+      - name: "nvidia.com/GA100_A100_PCIE_80GB"
+      - name: "nvidia.com/GA100_A100_PCIE_80GB"
+      - name: "nvidia.com/GA100_A100_PCIE_80GB"
+      - name: "nvidia.com/GA100_A100_PCIE_80GB"
 ```
 
 #### **Utilisation dans les Pods**
@@ -236,10 +236,10 @@ metadata:
 spec:
   instanceType: u1.8xlarge  # 32 vCPU, 128 GB RAM
   gpus:
-    - name: "nvidia.com/H100"
-    - name: "nvidia.com/H100"
-    - name: "nvidia.com/H100"
-    - name: "nvidia.com/H100"
+    - name: "nvidia.com/H100_94GB"
+    - name: "nvidia.com/H100_94GB"
+    - name: "nvidia.com/H100_94GB"
+    - name: "nvidia.com/H100_94GB"
 ```
 
 ### **NodeGroup spécialisé GPU**
@@ -251,15 +251,15 @@ nodeGroups:
     maxReplicas: 10
     instanceType: "u1.large"
     gpus:
-      - name: "nvidia.com/L40S"
+      - name: "nvidia.com/AD102GL_L40S"
     
   gpu-training:
     minReplicas: 1
     maxReplicas: 3
     instanceType: "u1.4xlarge"
     gpus:
-      - name: "nvidia.com/A100"
-      - name: "nvidia.com/A100"
+      - name: "nvidia.com/GA100_A100_PCIE_80GB"
+      - name: "nvidia.com/GA100_A100_PCIE_80GB"
 ```
 
 ### **Pod avec GPU spécifique**

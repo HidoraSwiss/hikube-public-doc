@@ -63,6 +63,58 @@ flowchart TD
 
 ---
 
+## ⚙️ Types d'Instances
+
+### **Gamme Complète pour Tous les Besoins**
+
+Hikube propose trois séries d'instances optimisées pour différents profils d'usage, garantissant des performances adaptées à chaque workload :
+
+### **Série U - Universal (Équilibrée)**
+
+Instances **polyvalentes** offrant un équilibre optimal entre CPU, mémoire et coût pour la majorité des applications d'entreprise.
+
+| **Instance** | **vCPU** | **RAM** | **Cas d'Usage Typiques** |
+|--------------|----------|---------|---------------------------|
+| `u1.small`   | 1        | 2 GB    | Dev, tests, micro-services |
+| `u1.medium`  | 2        | 4 GB    | Applications web, APIs |
+| `u1.large`   | 2        | 8 GB    | Bases de données légères |
+| `u1.xlarge`  | 4        | 16 GB   | Applications métier |
+| `u1.2xlarge` | 8        | 32 GB   | Workloads intensifs |
+| `u1.4xlarge` | 16       | 64 GB   | Applications critiques |
+
+### **Série S - Standard (CPU Optimisé)**
+
+Instances **orientées calcul** avec un ratio CPU/mémoire élevé, idéales pour les charges CPU-intensives.
+
+| **Instance** | **vCPU** | **RAM** | **Cas d'Usage Typiques** |
+|--------------|----------|---------|---------------------------|
+| `s1.small`   | 1        | 1 GB    | Services légers, proxies |
+| `s1.medium`  | 2        | 2 GB    | Workers, batch processing |
+| `s1.large`   | 4        | 4 GB    | Calcul scientifique |
+| `s1.xlarge`  | 8        | 8 GB    | Rendu, compilation |
+| `s1.2xlarge` | 16       | 16 GB   | HPC, simulations |
+| `s1.4xlarge` | 32       | 32 GB   | Calcul massif |
+
+### **Série M - Memory (Mémoire Optimisée)**
+
+Instances **haute mémoire** avec des ratios mémoire/CPU élevés pour les applications gourmandes en RAM.
+
+| **Instance** | **vCPU** | **RAM** | **Cas d'Usage Typiques** |
+|--------------|----------|---------|---------------------------|
+| `m1.large`   | 2        | 16 GB   | Caches Redis, Memcached |
+| `m1.xlarge`  | 4        | 32 GB   | Bases de données in-memory |
+| `m1.2xlarge` | 8        | 64 GB   | Analytics, Big Data |
+| `m1.4xlarge` | 16       | 128 GB  | SAP HANA, Oracle |
+| `m1.8xlarge` | 32       | 256 GB  | Data warehouses |
+
+:::tip **Guide de Sélection**
+- **Applications web classiques** → Série **U** (équilibrée)
+- **Calcul intensif, CI/CD** → Série **S** (CPU optimisé)  
+- **Bases de données, Analytics** → Série **M** (mémoire optimisée)
+:::
+
+---
+
 ## 🔒 Isolation et Sécurité
 
 ### **Multi-Tenant par Design**

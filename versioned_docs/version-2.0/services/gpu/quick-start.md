@@ -48,7 +48,7 @@ spec:
   instanceProfile: ubuntu
   instanceType: u1.xlarge  # 4 vCPU, 16 GB RAM
   gpus:
-    - name: "nvidia.com/L40S"
+    - name: "nvidia.com/AD102GL_L40S"
   systemDisk:
     size: 50Gi
     storageClass: replicated
@@ -123,7 +123,7 @@ spec:
       instanceType: "u1.xlarge"
       ephemeralStorage: 100Gi
       gpus:
-        - name: "nvidia.com/L40S"
+        - name: "nvidia.com/AD102GL_L40S"
     
     # Workers standard (optionnel)
     standard-nodes:
@@ -207,15 +207,15 @@ kubectl exec -it gpu-test -- nvidia-smi
 ```yaml
 # Pour inférence/développement
 gpus:
-  - name: "nvidia.com/L40S"  # 48 GB GDDR6
+  - name: "nvidia.com/AD102GL_L40S"  # 48 GB GDDR6
 
 # Pour entraînement ML
 gpus:
-  - name: "nvidia.com/A100"  # 80 GB HBM2e
+  - name: "nvidia.com/GA100_A100_PCIE_80GB"  # 80 GB HBM2e
 
 # Pour LLM/calcul exascale
 gpus:
-  - name: "nvidia.com/H100"  # 80 GB HBM3
+  - name: "nvidia.com/H100_94GB"  # 80 GB HBM3
 ```
 
 ---

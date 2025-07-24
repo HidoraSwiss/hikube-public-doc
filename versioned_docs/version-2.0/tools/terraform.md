@@ -200,7 +200,7 @@ resource "kubectl_manifest" "vm_gpu" {
       
       gpus = [
         {
-          name = "nvidia.com/L40S"
+          name = "nvidia.com/AD102GL_L40S"
         }
       ]
       
