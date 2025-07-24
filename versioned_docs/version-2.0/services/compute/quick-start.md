@@ -41,7 +41,7 @@ metadata:
 spec:
   source:
     http:
-      url: https://cloud-images.ubuntu.com/oracular/current/oracular-server-cloudimg-amd64.img
+      url: https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img
   optical: false
   storage: 20Gi
   storageClass: "replicated"
@@ -90,7 +90,7 @@ metadata:
   name: vm-example
 spec:
   external: true
-  externalMethod: WholeIP
+  externalMethod: PortList
   externalPorts:
     - 22
   running: true
@@ -121,6 +121,31 @@ kubectl apply -f vm-instance.yaml
 # Suivre le démarrage
 kubectl get vminstance vm-example -w
 ```
+
+---
+
+## 🌐 Comprendre les Méthodes d'Exposition
+
+### **PortList vs WholeIP : Quelle différence ?**
+
+Hikube propose deux méthodes d'exposition externe, chacune avec ses spécificités :
+
+#### **🔒 PortList (Recommandé)**
+- **Firewall contrôlé** : Seuls les ports spécifiés dans `externalPorts` sont accessibles
+- **Sécurité renforcée** : Protection automatique contre les accès non autorisés
+- **Usage** : Production, environnements sécurisés
+- **Configuration** : `externalMethod: PortList` + `externalPorts: [22, 80, 443]`
+
+#### **🌍 WholeIP**
+- **Accès complet** : Tous les ports de la VM sont directement accessibles
+- **Pas de firewall** : Aucune protection au niveau réseau configurée via le service
+- **Usage** : Développement, accès administratif complet
+- **Configuration** : `externalMethod: WholeIP` (pas besoin d'`externalPorts`)
+
+:::tip Choix de la Méthode 🎯
+- **Production/Sécurisé** → `PortList` avec ports spécifiques
+- **Développement/Debug** → `WholeIP` pour un accès complet
+:::
 
 ---
 

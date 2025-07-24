@@ -254,38 +254,20 @@ kubectl get events --sort-by=.metadata.creationTimestamp
 
 ## 🎛️ Étape 6 : Gestion et Scaling
 
-### **Scaling Automatique**
+### **Scaling du Cluster**
 
-Votre cluster est configuré pour l'auto-scaling. Testez-le en augmentant la charge :
+Le cluster Hikube peut ajuster automatiquement le nombre de nœuds selon la demande :
 
 ```bash
-# Scaler l'application manuellement
-kubectl scale deployment hello-hikube --replicas=6
+# Vérifier le nombre de nœuds actuel
+kubectl get nodes
 
-# Créer une charge pour tester l'auto-scaling des nœuds
-kubectl apply -f - <<EOF
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: load-test
-spec:
-  replicas: 20
-  selector:
-    matchLabels:
-      app: load-test
-  template:
-    metadata:
-      labels:
-        app: load-test
-    spec:
-      containers:
-      - name: stress
-        image: nginx:alpine
-        resources:
-          requests:
-            memory: "512Mi"
-            cpu: "500m"
-EOF
+# Voir la configuration du nodeGroup
+kubectl get kubernetes my-first-cluster -o yaml | grep -A 10 nodeGroups
+
+# Le scaling automatique se déclenche selon les ressources demandées
+# Exemple : déployer plus de pods nécessitera plus de nœuds
+kubectl scale deployment hello-hikube --replicas=6
 ```
 
 ### **Observer le Scaling**
@@ -307,17 +289,19 @@ kubectl describe hpa  # Si HPA est configuré
 Maintenant que votre cluster fonctionne, explorez les fonctionnalités avancées :
 
 ```bash
-# Ajouter des node groups spécialisés
-kubectl patch kubernetes my-first-cluster --type='merge' -p='
-spec:
-  nodeGroups:
-    compute:
-      minReplicas: 0
-      maxReplicas: 3
-      instanceType: "s1.2xlarge"  # Plus puissant
-      ephemeralStorage: 100Gi
-      roles: []
-'
+# Pour ajouter des node groups, modifiez le fichier YAML et ré-appliquez
+# Exemple dans my-first-cluster.yaml :
+# nodeGroups:
+#   general:
+#     # ... configuration existante
+#   compute:
+#     minReplicas: 0
+#     maxReplicas: 3
+#     instanceType: "s1.2xlarge"
+#     ephemeralStorage: 100Gi
+
+# Puis appliquer les changements
+kubectl apply -f my-first-cluster.yaml
 ```
 
 ### **Stockage Persistant**
@@ -370,23 +354,19 @@ kubectl delete kubernetes my-first-cluster
 
 ---
 
-## 🎯 Points Clés à Retenir
+## 📋 Résumé
 
-### **✅ Ce que vous avez accompli**
-- ✅ **Cluster Kubernetes déployé** en moins de 5 minutes
-- ✅ **Application web fonctionnelle** avec Ingress
-- ✅ **Auto-scaling configuré** pour nœuds et applications
-- ✅ **Monitoring prêt** pour la production
+Vous avez créé :
+- Un cluster Kubernetes avec plan de contrôle managé
+- Des nœuds workers avec scaling automatique (1-5 nœuds)
+- Une application d'exemple avec Ingress
+- Un certificat SSL automatique via cert-manager
 
-### **📚 Prochaines Étapes Recommandées**
-1. **[Référence API complète](./api-reference.md)** → Configuration avancée
-2. **[Services de base de données](../databases/)** → PostgreSQL, Redis, etc.
-3. **[Stockage](../storage/)** → Volumes persistants et snapshots
-4. **[Monitoring](../monitoring/)** → Observabilité complète
+## 🚀 Prochaines Étapes
 
-:::tip Félicitations ! 🎉
-Vous avez successfully créé et configuré votre premier cluster Kubernetes sur Hikube. Votre infrastructure est maintenant prête pour vos applications de production !
-:::
+- **[API Reference](./api-reference.md)** → Configuration complète des clusters
+- **[Services](../databases/)** → Bases de données et autres services
+- **[GPU](../gpu/)** → Utiliser des GPU avec Kubernetes
 
 ---
 

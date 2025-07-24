@@ -1,19 +1,24 @@
 ---
 sidebar_position: 1
-title: Terraform avec Kubernetes
+title: Terraform avec Hikube
 ---
 
-# 🏗️ Terraform avec Kubernetes sur Hikube
+# Infrastructure as Code avec Hikube
 
-Utilisez **Terraform** pour automatiser le déploiement et la gestion de vos ressources Hikube via l'API. Cette approche **Infrastructure as Code** vous permet de gérer clusters Kubernetes et VMs de manière déclarative et versionnée.
+Hikube étant basé sur Kubernetes, vous pouvez utiliser **Terraform** pour gérer votre infrastructure de manière déclarative et reproductible. Cette approche vous permet de versionner, tester et déployer votre infrastructure Hikube de façon automatisée.
 
 ---
 
-## 🚀 Configuration Terraform
+## Configuration
 
-### **Provider Kubernetes**
+### Prérequis
 
-Configurez le provider Kubernetes pour Terraform :
+- [Terraform](https://www.terraform.io/downloads) (version >= 1.0)
+- [kubectl](https://kubernetes.io/docs/tasks/tools/)
+- Accès à un tenant Hikube
+- Kubeconfig configuré
+
+### Provider Kubernetes
 
 ```hcl title="main.tf"
 terraform {
@@ -29,20 +34,16 @@ terraform {
   }
 }
 
-# Configuration du provider Kubernetes
 provider "kubernetes" {
-  config_path = "~/.kube/config"  # Votre kubeconfig Hikube
-  # Ou utiliser config_context pour un contexte spécifique
-  # config_context = "hikube-context"
+  config_path = "~/.kube/config"
 }
 
-# Provider kubectl pour les ressources CRD
 provider "kubectl" {
   config_path = "~/.kube/config"
 }
 ```
 
-### **Variables Terraform**
+### Variables
 
 ```hcl title="variables.tf"
 variable "ssh_public_key" {
@@ -61,17 +62,15 @@ variable "vm_name" {
   type        = string
   default     = "terraform-vm"
 }
-
-
 ```
 
 ---
 
-## ☸️ Déployer un Cluster Kubernetes
+## Exemples
 
-### **Cluster Kubernetes avec Terraform**
+### Déployer un Cluster Kubernetes
 
-```hcl title="kubernetes-cluster.tf"
+```hcl title="kubernetes.tf"
 resource "kubectl_manifest" "kubernetes_cluster" {
   yaml_body = yamlencode({
     apiVersion = "apps.cozystack.io/v1alpha1"
@@ -81,28 +80,22 @@ resource "kubectl_manifest" "kubernetes_cluster" {
       namespace = "default"
     }
     spec = {
-      # Configuration du plan de contrôle
       controlPlane = {
-        replicas = 2  # Haute disponibilité
+        replicas = 2
       }
       
-      # Configuration des nœuds workers
       nodeGroups = {
         general = {
           minReplicas      = 1
           maxReplicas      = 5
-          instanceType     = "s1.large"     # 4 vCPU, 8 GB RAM
+          instanceType     = "s1.large"
           ephemeralStorage = "50Gi"
-          roles = [
-            "ingress-nginx"  # Support Ingress
-          ]
+          roles = ["ingress-nginx"]
         }
       }
       
-      # Classe de stockage par défaut
       storageClass = "replicated"
       
-      # Add-ons essentiels activés
       addons = {
         certManager = {
           enabled = true
@@ -110,7 +103,7 @@ resource "kubectl_manifest" "kubernetes_cluster" {
         ingressNginx = {
           enabled = true
           hosts = [
-            "${var.cluster_name}.hikube.local"
+            "${var.cluster_name}.example.com"
           ]
         }
       }
@@ -118,30 +111,7 @@ resource "kubectl_manifest" "kubernetes_cluster" {
   })
 }
 
-# Attendre que le cluster soit prêt
-resource "kubectl_manifest" "wait_cluster_ready" {
-  depends_on = [kubectl_manifest.kubernetes_cluster]
-  
-  yaml_body = yamlencode({
-    apiVersion = "v1"
-    kind       = "ConfigMap"
-    metadata = {
-      name      = "${var.cluster_name}-ready"
-      namespace = "default"
-    }
-    data = {
-      status = "waiting"
-    }
-  })
-  
-  wait_for_rollout = true
-}
-```
-
-### **Récupération du Kubeconfig**
-
-```hcl title="kubeconfig.tf"
-# Récupérer le kubeconfig du cluster Kubernetes
+# Récupérer le kubeconfig
 data "kubernetes_secret" "cluster_kubeconfig" {
   depends_on = [kubectl_manifest.kubernetes_cluster]
   
@@ -151,80 +121,42 @@ data "kubernetes_secret" "cluster_kubeconfig" {
   }
 }
 
-# Sauvegarder le kubeconfig dans un fichier local
+# Sauvegarder le kubeconfig
 resource "local_file" "kubeconfig" {
   content = base64decode(
     data.kubernetes_secret.cluster_kubeconfig.data["super-admin.conf"]
   )
   filename = "${path.module}/${var.cluster_name}-kubeconfig.yaml"
-  
-  # Permissions restrictives pour la sécurité
   file_permission = "0600"
-}
-
-# Output pour utiliser le kubeconfig
-output "kubeconfig_path" {
-  description = "Chemin vers le fichier kubeconfig"
-  value       = local_file.kubeconfig.filename
-}
-
-output "kubectl_command" {
-  description = "Commande pour utiliser kubectl avec ce cluster"
-  value       = "export KUBECONFIG=${local_file.kubeconfig.filename} && kubectl get nodes"
 }
 ```
 
----
-
-## 🖥️ Déployer des Machines Virtuelles
-
-### **VM Standard avec Terraform**
+### Déployer une Machine Virtuelle
 
 ```hcl title="virtual-machine.tf"
-# Disque pour la VM
-resource "kubectl_manifest" "vm_disk" {
-  yaml_body = yamlencode({
-    apiVersion = "apps.cozystack.io/v1alpha1"
-    kind       = "VMDisk"
-    metadata = {
-      name = "${var.vm_name}-disk"
-    }
-    spec = {
-      source = {
-        http = {
-          url = "https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img"
-        }
-      }
-      optical      = false
-      storage      = "20Gi"
-      storageClass = "replicated"
-    }
-  })
-}
-
-# Machine virtuelle
 resource "kubectl_manifest" "virtual_machine" {
-  depends_on = [kubectl_manifest.vm_disk]
-  
   yaml_body = yamlencode({
     apiVersion = "apps.cozystack.io/v1alpha1"
-    kind       = "VMInstance"
+    kind       = "VirtualMachine"
     metadata = {
       name = var.vm_name
     }
     spec = {
-      external       = true
-      externalMethod = "WholeIP"
-      externalPorts = [22, 80, 443]
-      running        = true
-      instanceType   = "u1.xlarge"
+      running         = true
       instanceProfile = "ubuntu"
-      disks = [
-        {
-          name = "${var.vm_name}-disk"
-        }
-      ]
+      instanceType    = "u1.xlarge"
+      
+      systemDisk = {
+        size         = "50Gi"
+        storageClass = "replicated"
+      }
+      
+      external       = true
+      externalMethod = "PortList"
+      externalPorts  = [22, 80, 443]
+      
       sshKeys = [var.ssh_public_key]
+      
       cloudInit = <<-EOT
         #cloud-config
         users:
@@ -251,37 +183,129 @@ resource "kubectl_manifest" "virtual_machine" {
 }
 ```
 
-### **Récupérer l'IP de la VM**
+### Déployer une VM avec GPU
 
-```hcl title="vm-outputs.tf"
-# Récupérer les informations de la VM
-data "kubectl_path_documents" "vm_status" {
-  depends_on = [kubectl_manifest.virtual_machine]
-  pattern    = "${path.module}/vm-status.yaml"
-  vars = {
-    vm_name = var.vm_name
-  }
-}
-
-# Output de l'IP externe
-output "vm_external_ip" {
-  description = "IP externe de la machine virtuelle"
-  value       = "Vérifiez avec: kubectl get vminstance ${var.vm_name} -o jsonpath='{.status.externalIP}'"
-}
-
-output "ssh_command" {
-  description = "Commande SSH pour se connecter à la VM"
-  value       = "ssh ubuntu@$(kubectl get vminstance ${var.vm_name} -o jsonpath='{.status.externalIP}')"
+```hcl title="vm-gpu.tf"
+resource "kubectl_manifest" "vm_gpu" {
+  yaml_body = yamlencode({
+    apiVersion = "apps.cozystack.io/v1alpha1"
+    kind       = "VirtualMachine"
+    metadata = {
+      name = "gpu-vm"
+    }
+    spec = {
+      running         = true
+      instanceProfile = "ubuntu"
+      instanceType    = "u1.xlarge"
+      
+      gpus = [
+        {
+          name = "nvidia.com/L40S"
+        }
+      ]
+      
+      systemDisk = {
+        size         = "100Gi"
+        storageClass = "replicated"
+      }
+      
+      external       = true
+      externalMethod = "PortList"
+      externalPorts  = [22, 8888]
+      
+      sshKeys = [var.ssh_public_key]
+      
+      cloudInit = <<-EOT
+        #cloud-config
+        users:
+          - name: ubuntu
+            sudo: ALL=(ALL) NOPASSWD:ALL
+            shell: /bin/bash
+        
+        package_update: true
+        packages:
+          - curl
+          - wget
+          - build-essential
+        
+        runcmd:
+          # Installation pilotes NVIDIA
+          - wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.0-1_all.deb
+          - dpkg -i cuda-keyring_1.0-1_all.deb
+          - apt-get update
+          - apt-get install -y cuda-toolkit nvidia-driver-535
+          - nvidia-smi -pm 1
+      EOT
+    }
+  })
 }
 ```
 
+### Déployer PostgreSQL
 
+```hcl title="postgresql.tf"
+resource "kubectl_manifest" "postgres" {
+  yaml_body = yamlencode({
+    apiVersion = "apps.cozystack.io/v1alpha1"
+    kind       = "Postgres"
+    metadata = {
+      name = "terraform-postgres"
+    }
+    spec = {
+      external     = false
+      size         = "20Gi"
+      replicas     = 2
+      storageClass = "replicated"
+      
+      users = {
+        admin = {
+          password = var.postgres_password
+        }
+      }
+      
+      databases = {
+        myapp = {
+          roles = {
+            admin = ["admin"]
+          }
+        }
+      }
+    }
+  })
+}
+
+variable "postgres_password" {
+  description = "Password for PostgreSQL admin user"
+  type        = string
+  sensitive   = true
+}
+```
 
 ---
 
-## 🗂️ Structure de Projet Complète
+## Outputs et Variables
 
-### **Fichier terraform.tfvars**
+### Outputs utiles
+
+```hcl title="outputs.tf"
+output "cluster_kubeconfig" {
+  description = "Chemin vers le kubeconfig du cluster"
+  value       = local_file.kubeconfig.filename
+}
+
+output "vm_status" {
+  description = "Commande pour vérifier le statut de la VM"
+  value       = "kubectl get virtualmachine ${var.vm_name}"
+}
+
+output "postgres_connection" {
+  description = "Commande pour se connecter à PostgreSQL"
+  value       = "kubectl exec -it postgres-terraform-postgres-0 -- psql -U admin -d myapp"
+  sensitive   = true
+}
+```
+
+### Fichier terraform.tfvars
 
 ```hcl title="terraform.tfvars"
 # Configuration de base
@@ -290,45 +314,50 @@ vm_name      = "my-app-vm"
 
 # Votre clé SSH publique
 ssh_public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQ... user@hostname"
-```
 
-### **Outputs Terraform**
-
-```hcl title="outputs.tf"
-output "cluster_info" {
-  description = "Informations du cluster Kubernetes"
-  value = {
-    name           = var.cluster_name
-    kubeconfig     = local_file.kubeconfig.filename
-    namespace      = "default"
-  }
-}
-
-output "vm_info" {
-  description = "Informations des machines virtuelles"
-  value = {
-    standard_vm = {
-      name = var.vm_name
-      type = "VMInstance"
-    }
-  }
-}
-
-output "useful_commands" {
-  description = "Commandes utiles"
-  value = {
-    kubeconfig    = "export KUBECONFIG=${local_file.kubeconfig.filename}"
-    check_cluster = "kubectl get kubernetes ${var.cluster_name}"
-    check_vms     = "kubectl get vminstance,virtualmachine"
-  }
-}
+# Mot de passe PostgreSQL
+postgres_password = "your-secure-password-here"
 ```
 
 ---
 
-## 🚀 Utilisation et Déploiement
+## Bonnes Pratiques
 
-### **Commandes Terraform**
+### Structure de projet
+
+```
+hikube-terraform/
+├── environments/
+│   ├── dev/
+│   ├── staging/
+│   └── production/
+├── modules/
+│   ├── kubernetes/
+│   ├── vm/
+│   └── database/
+└── shared/
+    ├── variables.tf
+    └── outputs.tf
+```
+
+### Backend distant
+
+```hcl title="backend.tf"
+terraform {
+  backend "s3" {
+    bucket         = "my-terraform-state"
+    key            = "hikube/terraform.tfstate"
+    endpoint       = "https://s3.hikube.cloud"
+    region         = "us-east-1"
+    
+    skip_credentials_validation = true
+    skip_region_validation      = true
+    force_path_style           = true
+  }
+}
+```
+
+### Commandes utiles
 
 ```bash
 # Initialiser Terraform
@@ -347,134 +376,10 @@ terraform show
 terraform destroy
 ```
 
-### **Après le Déploiement**
-
-```bash
-# Configurer kubectl pour le nouveau cluster
-export KUBECONFIG=./my-prod-cluster-kubeconfig.yaml
-
-# Vérifier les VMs
-kubectl get vmi
-```
-
 ---
 
-## 🔧 Bonnes Pratiques
+## Références
 
-### **Gestion des États**
-
-```hcl title="backend.tf"
-# Option 1: Backend avec Buckets Hikube (recommandé)
-terraform {
-  backend "s3" {
-    bucket   = "my-terraform-state"
-    key      = "hikube/terraform.tfstate"
-    endpoint = "https://s3.hikube.cloud"  # Endpoint Hikube
-    # Hikube utilise des datacenters suisses, pas de régions AWS
-    skip_region_validation      = true
-    skip_credentials_validation = true
-    force_path_style           = true
-  }
-}
-
-# Option 2: Backend HTTP (alternative)
-# terraform {
-#   backend "http" {
-#     address = "https://api.hikube.cloud/terraform/state"
-#     lock_address = "https://api.hikube.cloud/terraform/lock"
-#     unlock_address = "https://api.hikube.cloud/terraform/unlock"
-#   }
-# }
-
-# Option 3: Backend local (développement uniquement)
-# terraform {
-#   backend "local" {
-#     path = "./terraform.tfstate"
-#   }
-# }
-```
-
-### **Modules Terraform**
-
-```hcl title="modules/hikube-cluster/main.tf"
-# Module réutilisable pour cluster Hikube
-variable "cluster_config" {
-  type = object({
-    name         = string
-    node_groups  = map(any)
-    addons       = map(bool)
-  })
-}
-
-resource "kubectl_manifest" "cluster" {
-  yaml_body = yamlencode({
-    apiVersion = "apps.cozystack.io/v1alpha1"
-    kind       = "Kubernetes"
-    metadata = {
-      name = var.cluster_config.name
-    }
-    spec = var.cluster_config
-  })
-}
-```
-
-### **Validation et Sécurité**
-
-```hcl
-# Données sensibles
-variable "ssh_private_key" {
-  description = "Clé privée SSH (sensible)"
-  type        = string
-  sensitive   = true
-}
-```
-
----
-
-## 📚 Ressources Avancées
-
-### **Integration avec CI/CD**
-
-```yaml title=".github/workflows/terraform.yml"
-name: 'Terraform Hikube'
-
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-
-jobs:
-  terraform:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v2
-      with:
-        terraform_version: 1.6.0
-    
-    - name: Configure kubectl
-      run: |
-        echo "${{ secrets.KUBECONFIG }}" | base64 -d > ~/.kube/config
-    
-    - name: Terraform Init
-      run: terraform init
-    
-    - name: Terraform Plan
-      run: terraform plan
-    
-    - name: Terraform Apply
-      if: github.ref == 'refs/heads/main'
-      run: terraform apply -auto-approve
-```
-
-:::tip Terraform + Hikube 🚀
-Terraform avec Hikube vous permet de gérer votre infrastructure cloud-native de manière déclarative, versionnée et reproductible !
-:::
-
-:::warning Sécurité 🔒
-Toujours stocker vos clés SSH et kubeconfigs de manière sécurisée. Utilisez des backends distants pour l'état Terraform en production.
-:::
-
----
+- [Provider Kubernetes](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs)
+- [Provider kubectl](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs)
+- [Documentation Terraform](https://developer.hashicorp.com/terraform/docs)

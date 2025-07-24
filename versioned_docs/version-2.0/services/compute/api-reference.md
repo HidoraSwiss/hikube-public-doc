@@ -31,7 +31,7 @@ spec:
 | **Paramètre** | **Type** | **Description** | **Défaut** | **Requis** |
 |---------------|----------|-----------------|------------|------------|
 | `external` | `boolean` | Active l'accès externe depuis l'extérieur du cluster | `false` | ✅ |
-| `externalMethod` | `string` | Méthode d'exposition externe (WholeIP, LoadBalancer) | `LoadBalancer` | ✅ |
+| `externalMethod` | `string` | Méthode d'exposition externe (WholeIP, PortList) | `PortList` | ✅ |
 | `externalPorts` | `[]int` | Liste des ports à exposer externellement | `[]` | ✅ |
 | `running` | `boolean` | État de fonctionnement souhaité de la VM | `true` | ✅ |
 | `instanceType` | `string` | Type d'instance définissant CPU/Memory | - | ✅ |
@@ -46,7 +46,7 @@ spec:
 ```yaml
 spec:
   external: true
-  externalMethod: WholeIP
+  externalMethod: PortList
   externalPorts:
     - 22    # SSH
     - 80    # HTTP
@@ -188,7 +188,7 @@ metadata:
   name: vm-example
 spec:
   external: true
-  externalMethod: WholeIP
+  externalMethod: PortList
   externalPorts:
     - 22
   running: true
@@ -222,7 +222,7 @@ metadata:
 spec:
   source:
     http:
-      url: https://cloud-images.ubuntu.com/oracular/current/oracular-server-cloudimg-amd64.img
+      url: https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img
   optical: false
   storage: 30Gi
   storageClass: "replicated"
@@ -249,14 +249,6 @@ spec:
       url: "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
 ```
 
-##### **Source Registry (Container)**
-```yaml
-spec:
-  source:
-    registry:
-      url: "docker://quay.io/kubevirt/cirros-container-disk-demo"
-```
-
 ##### **Disque Vide**
 ```yaml
 spec:
@@ -274,7 +266,7 @@ metadata:
 spec:
   source:
     http:
-      url: "https://cloud-images.ubuntu.com/oracular/current/oracular-server-cloudimg-amd64.img"
+      url: "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
   optical: false
   storage: 20Gi
   storageClass: "replicated"
@@ -308,20 +300,7 @@ spec:
   storageClass: "replicated"
 ```
 
-#### **Image Windows via Registry**
-```yaml title="windows-disk.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: VMDisk
-metadata:
-  name: windows-container-disk
-spec:
-  source:
-    registry:
-      url: "docker://registry.example.com/windows-server:2022"
-  optical: false
-  storage: 50Gi
-  storageClass: "replicated"
-```
+
 
 ---
 
@@ -336,10 +315,28 @@ spec:
 
 ### **Méthodes d'Exposition**
 
-| **Méthode** | **Description** | **Usage** |
-|-------------|-----------------|-----------|
-| `LoadBalancer` | Service Kubernetes LoadBalancer | Exposition via IP dédiée |
-| `WholeIP` | IP publique complète pour la VM | Accès direct à tous les ports |
+| **Méthode** | **Description** | **Usage** | **Firewall** |
+|-------------|-----------------|-----------|--------------|
+| `PortList` | Exposition avec liste de ports contrôlée | Exposition sélective via IP dédiée | ✅ Ports spécifiés uniquement |
+| `WholeIP` | IP publique complète pour la VM | Accès direct complet | ❌ Aucune protection réseau |
+
+#### **Détails des Méthodes**
+
+**🔒 PortList**
+- **Sécurité** : Firewall automatique - seuls les ports dans `externalPorts` sont accessibles
+- **Configuration** : Requiert `externalPorts` pour spécifier les ports autorisés
+- **Usage recommandé** : Production, environnements sécurisés, applications web
+- **Exemple** : `externalMethod: PortList` + `externalPorts: [22, 80, 443]`
+
+**🌍 WholeIP**  
+- **Sécurité** : Aucune protection - tous les ports TCP/UDP sont accessibles depuis Internet
+- **Configuration** : `externalPorts` ignoré et inutile (tous les ports sont ouverts)
+- **Usage recommandé** : Développement, debug, accès administratif complet
+- **Exemple** : `externalMethod: WholeIP` (sans `externalPorts`)
+
+:::warning Sécurité WholeIP ⚠️
+Avec `WholeIP`, votre VM est entièrement exposée sur Internet. Configurez impérativement un firewall dans l'OS (UFW, iptables) pour sécuriser l'accès.
+:::
 
 ---
 
@@ -382,7 +379,7 @@ metadata:
   name: vm-production
 spec:
   external: true
-  externalMethod: LoadBalancer
+  externalMethod: PortList
   externalPorts:
     - 22    # SSH
     - 80    # HTTP
@@ -406,7 +403,6 @@ spec:
     packages:
       - nginx
       - certbot
-      - fail2ban
       - htop
     
     runcmd:
@@ -423,7 +419,6 @@ spec:
 
 ### **Sécurité**
 - Utilisez toujours des **clés SSH** plutôt que des mots de passe
-- Configurez **fail2ban** pour protéger contre les attaques brute-force
 - Activez le **firewall UFW** avec règles restrictives par défaut
 
 ### **Stockage**
@@ -438,7 +433,6 @@ spec:
 
 ### **Monitoring**
 - Surveillez les métriques des VMs via Kubernetes
-- Configurez des alertes sur l'utilisation des ressources
 - Gardez un historique des performances pour l'optimisation
 
 ---
@@ -447,8 +441,5 @@ spec:
 Pour la production, utilisez au minimum 2 disques séparés (système + données) avec la classe `replicated` pour garantir la haute disponibilité.
 :::
 
-:::warning Limites Importantes
-- Les VMs ne peuvent pas être redimensionnées à chaud (nécessite redémarrage)
-- La migration live n'est pas supportée entre classes de stockage différentes
-:::
+
 

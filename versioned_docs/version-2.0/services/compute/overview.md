@@ -67,11 +67,11 @@ flowchart TD
 
 ### **Multi-Tenant par Design**
 
-Chaque VM bénéficie d'une **isolation complète** grâce à :
+Chaque VM bénéficie d'une **isolation complète** grâce à une architecture sécurisée qui cloisonne strictement les ressources entre les différents tenants. Cette isolation s'appuie sur plusieurs couches de protection complémentaires :
 
-- **Tenant** : Séparation logique des ressources
-- **Réseau dédiés** : Isolation réseau au niveau L2/L3
-- **Storage classes** : Chiffrement et isolation des données
+- **Tenant** : Séparation logique des ressources au niveau applicatif, chaque tenant disposant de son propre espace d'exécution
+- **Isolation kernel** : Isolation réseau et processus au niveau du noyau Linux, garantissant qu'aucune VM ne peut accéder aux ressources d'une autre
+- **Storage classes** : Chiffrement automatique et isolation des données, avec séparation cryptographique des volumes par tenant
 
 ---
 
@@ -79,20 +79,11 @@ Chaque VM bénéficie d'une **isolation complète** grâce à :
 
 ### **Méthodes d'Accès Natives**
 
-Hikube offre plusieurs moyens d'accéder à vos VMs :
-
-- **Console série** : Accès direct via `virtctl console`
-- **VNC** : Interface graphique via `virtctl vnc`  
-- **SSH** : Connexion directe via `virtctl ssh` ou IP externe
-- **LoadBalancer** : Exposition de services spécifiques
+L'accès aux machines virtuelles Hikube s'effectue via des mécanismes natifs intégrés à la plateforme, éliminant le besoin d'infrastructure réseau complexe. La **console série** fournit un accès direct de bas niveau indépendant du réseau, idéal pour le debugging et la maintenance système. Pour les environnements graphiques, **VNC** permet une connexion à l'interface utilisateur de la VM via des tunnels sécurisés. L'accès **SSH** traditionnel reste disponible soit via `virtctl ssh` qui gère automatiquement la connectivité, soit directement via l'IP externe assignée. Les services applicatifs peuvent être exposés sélectivement via des **listes de ports contrôlées** qui filtrent intelligemment le trafic sans compromettre la sécurité du tenant.
 
 ### **Réseau Défini par Logiciel**
 
-Chaque VM dispose de :
-- **IP privée** automatique dans le VLAN du tenant
-- **IP publique v4** optionnelle 
-- **Routage automatique** entre VMs du même tenant
-- **Firewall distribué** avec règles par défaut sécurisées
+L'architecture réseau d'Hikube repose sur une approche Software-Defined qui virtualise complètement la couche réseau. Chaque VM reçoit automatiquement une **IP privée** dans un segment réseau isolé par tenant, garantissant l'isolation tout en permettant la communication interne. Le système peut optionnellement assigner une **IP publique IPv4** pour l'exposition externe, avec un routage automatique qui maintient la segmentation sécurisée. Le **firewall distribué** applique des politiques de sécurité granulaires directement au niveau de chaque VM, avec des règles restrictives par défaut qui s'adaptent dynamiquement aux besoins de l'application.
 
 ---
 
@@ -100,17 +91,11 @@ Chaque VM dispose de :
 
 ### **Import de Workloads Existants**
 
-Hikube supporte l'import depuis :
-- **Images cloud** (Ubuntu Cloud Images, CentOS Cloud, etc.)
-- **Images ISO** pour installations complètes
-- **Snapshots VMware** (via conversion VMDK → RAW)
-- **Images Proxmox/OpenStack** (format QCOW2)
+La plateforme Hikube facilite la migration d'infrastructures existantes grâce à des mécanismes d'import universels qui préservent l'intégrité des workloads. Les **images cloud standardisées** (Ubuntu Cloud Images, CentOS Cloud) s'intègrent nativement pour un déploiement immédiat avec les optimisations cloud natives. Pour les installations personnalisées, l'import d'**images ISO** permet de recréer des environnements sur mesure en conservant toutes les configurations spécifiques. Les **snapshots VMware** sont convertis automatiquement du format VMDK vers RAW, assurant une transition transparente depuis les infrastructures de virtualisation traditionnelles. La compatibilité avec les **formats Proxmox et OpenStack** (QCOW2) garantit l'interopérabilité avec la majorité des solutions cloud existantes.
 
 ### **Gestion du Cycle de Vie**
 
-- **Snapshots** : Sauvegarde instantanée de l'état VM
-- **Backup automatique** : Sauvegarde programmée des disques
-- **Migration live** : Déplacement sans interruption entre nœuds
+Le système de gestion du cycle de vie intègre des mécanismes automatisés qui assurent la continuité opérationnelle des machines virtuelles. Les **snapshots** capturent instantanément l'état complet de la VM, incluant la mémoire et le stockage, pour permettre des retours arrière précis lors de maintenance ou d'incidents. Le **backup automatique** orchestre des sauvegardes programmées des disques avec rétention configurable, répliquées automatiquement sur les trois datacenters pour garantir la récupération en cas de sinistre. La **migration live** déplace les VMs entre nœuds physiques sans interruption de service, facilitant la maintenance matérielle et l'optimisation des charges sans impact sur les applications critiques.
 
 ---
 

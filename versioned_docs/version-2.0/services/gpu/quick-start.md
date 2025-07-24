@@ -1,88 +1,44 @@
 ---
 sidebar_position: 2
-title: Démarrage Rapide - VM GPU
+title: Démarrage Rapide - GPU
 ---
 
-# Créer votre première Machine Virtuelle GPU
+# Utiliser les GPU sur Hikube
 
-Ce guide vous accompagne dans la création de votre première machine virtuelle GPU Hikube en **10 minutes** ! Découvrez la puissance d'accélération des GPUs NVIDIA L40S, A100 et H100. 🚀
-
----
-
-## 🎯 Objectif
-
-À la fin de ce guide, vous aurez :
-- Une machine virtuelle avec GPU NVIDIA dédié
-- Pilotes NVIDIA et CUDA opérationnels
-- Accès direct au GPU via passthrough
-- Environnement de développement IA prêt
+Ce guide présente les deux méthodes d'utilisation des GPU : avec des machines virtuelles et avec des clusters Kubernetes.
 
 ---
 
-## 📋 Prérequis
+## 🎯 Méthodes d'Usage
 
-Avant de commencer, assurez-vous d'avoir :
-- **kubectl** configuré avec votre kubeconfig Hikube
-- **Droits administrateur** sur votre tenant
-- **virtctl** installé pour l'accès console
+Hikube propose deux approches pour utiliser les GPU :
+
+1. **GPU avec VM** : Attachment direct d'un GPU à une machine virtuelle
+2. **GPU avec Kubernetes** : Allocation de GPU aux workers pour utilisation par les pods
 
 ---
 
-## 🚀 Étape 1 : Créer le Disque VM GPU (3 minutes)
+## 🖥️ Méthode 1 : GPU avec Machine Virtuelle
 
-### **Préparez le fichier manifest**
+### **Étape 1 : Créer le disque**
 
-Créez un fichier `vm-gpu-disk.yaml` avec une image Ubuntu optimisée pour GPU :
-
-```yaml title="vm-gpu-disk.yaml"
+```yaml title="vm-disk.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
 kind: VMDisk
 metadata:
-  name: disk-gpu-example
+  name: ubuntu-gpu-disk
 spec:
   source:
     http:
-      url: https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img
+      url: https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img
   optical: false
-  storage: 100Gi
+  storage: 50Gi
   storageClass: "replicated"
 ```
 
-### **Déployez le disque**
+### **Étape 2 : Créer la VM avec GPU**
 
-```bash
-# Créer le disque VM GPU
-kubectl apply -f vm-gpu-disk.yaml
-
-# Vérifier le statut (peut prendre 2-3 minutes)
-kubectl get vmdisk disk-gpu-example -w
-```
-
-**Résultat attendu :**
-```
-NAME               STATUS   SIZE    STORAGECLASS   AGE
-disk-gpu-example   Ready    100Gi   replicated     120s
-```
-
----
-
-## 🎮 Étape 2 : Créer la VM avec GPU (5 minutes)
-
-### **Choisissez votre GPU**
-
-Hikube propose 3 types de GPUs professionnels :
-
-| GPU Type | Architecture | Mémoire | Usage Principal |
-|----------|-------------|---------|-----------------|
-| **L40S** | Ada Lovelace | 48GB | IA générative, rendu |
-| **A100** | Ampere | 80GB | Entraînement IA |
-| **H100** | Hopper | 80GB | LLM, transformers |
-
-### **Préparez le manifest VM GPU**
-
-Créez un fichier `vm-gpu-instance.yaml` avec le GPU de votre choix :
-
-```yaml title="vm-gpu-instance.yaml"
+```yaml title="vm-gpu.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
 kind: VirtualMachine
 metadata:
@@ -90,187 +46,217 @@ metadata:
 spec:
   running: true
   instanceProfile: ubuntu
-  instanceType: g1.xlarge  # Type optimisé GPU
-  systemDisk:
-    size: 100Gi
-    storageClass: replicated
-  disks:
-    - name: disk-gpu-example
+  instanceType: u1.xlarge  # 4 vCPU, 16 GB RAM
   gpus:
-    - name: "nvidia.com/L40S"  # Changez selon votre besoin
-      # Options: nvidia.com/L40S, nvidia.com/A100, nvidia.com/H100
+    - name: "nvidia.com/L40S"
+  systemDisk:
+    size: 50Gi
+    storageClass: replicated
+  external: true
+  externalMethod: PortList
+  externalPorts:
+    - 22
+  sshKeys:
+    - "ssh-rsa AAAAB3NzaC... votre-clé-publique"
   cloudInit: |
     #cloud-config
     users:
       - name: ubuntu
         sudo: ALL=(ALL) NOPASSWD:ALL
         shell: /bin/bash
-        ssh_authorized_keys:
-          - ssh-rsa AAAAB3NzaC1yc2E... # Votre clé SSH publique
+    
     package_update: true
     packages:
       - curl
       - wget
-      - git
       - build-essential
+    
     runcmd:
-      - curl -fsSL https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/3bf863cc.pub | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-developers.gpg
-      - echo "deb [arch=amd64,arm64 signed-by=/usr/share/keyrings/nvidia-developers.gpg] https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/ /" | sudo tee /etc/apt/sources.list.d/nvidia-developers.list
-      - sudo apt update
-      - sudo apt install -y nvidia-driver-535 cuda-toolkit-12-2
-      - sudo systemctl enable nvidia-persistenced
+      # Installation pilotes NVIDIA
+      - wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.0-1_all.deb
+      - dpkg -i cuda-keyring_1.0-1_all.deb
+      - apt-get update
+      - apt-get install -y cuda-toolkit nvidia-driver-535
+      - nvidia-smi -pm 1
 ```
 
-### **Déployez la VM GPU**
+### **Étape 3 : Déployer**
 
 ```bash
-# Créer la VM GPU
-kubectl apply -f vm-gpu-instance.yaml
+kubectl apply -f vm-disk.yaml
+kubectl apply -f vm-gpu.yaml
 
-# Vérifier le statut (peut prendre 3-5 minutes)
-kubectl get vm vm-gpu-example -w
+# Vérifier l'état
+kubectl get virtualmachine vm-gpu-example
 ```
 
-**Résultat attendu :**
-```
-NAME             AGE   STATUS    READY
-vm-gpu-example   3m    Running   True
-```
-
----
-
-## 🔌 Étape 3 : Accéder à votre VM GPU (2 minutes)
-
-### **Méthodes d'accès**
-
-#### **Option 1 : SSH Direct**
-```bash
-# SSH via virtctl (avec clé personnalisée)
-virtctl ssh -i ~/.ssh/hikube-vm ubuntu@vm-gpu-example
-```
-
-### **Options avec virtctl**
-### **Installation de virtctl**
-
-Si vous n'avez pas encore `virtctl` installé :
+### **Étape 4 : Accéder et tester**
 
 ```bash
-# Installation de virtctl
-export VERSION=$(curl https://storage.googleapis.com/kubevirt-prow/release/kubevirt/kubevirt/stable.txt)
-wget https://github.com/kubevirt/kubevirt/releases/download/${VERSION}/virtctl-${VERSION}-linux-amd64
-chmod +x virtctl
-sudo mv virtctl /usr/local/bin/
+# Accès SSH
+virtctl ssh ubuntu@vm-gpu-example
 
-# Vérifier l'installation
-virtctl version
-```
-
-#### **Option 2 : Console Série (toujours disponible)**
-```bash
-# Accès console directe
-virtctl console vm-gpu-example
-```
-
-#### **Option 3 : Interface VNC**
-```bash
-# Accès graphique
-virtctl vnc vm-gpu-example
-```
-
----
-
-## ✅ Étape 4 : Validation GPU (2 minutes)
-
-### **Tests de fonctionnement GPU**
-
-Une fois connecté à votre VM, testez l'accès GPU :
-
-```bash
-# Vérification du driver NVIDIA
+# Vérifier le GPU
 nvidia-smi
-
-# Information système
-lspci | grep NVIDIA
-
-# Test CUDA (si installé)
-nvcc --version
-
-# Test simple de calcul GPU
-nvidia-smi --query-gpu=name,driver_version,memory.total --format=csv
-```
-
-### **Résultat attendu**
-```bash
-ubuntu@vm-gpu-example:~$ nvidia-smi
-+-----------------------------------------------------------------------------+
-| NVIDIA-SMI 535.XX       Driver Version: 535.XX       CUDA Version: 12.2   |
-|-------------------------------+----------------------+----------------------+
-| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
-| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
-|                               |                      |               MIG M. |
-|===============================+======================+======================|
-|   0  NVIDIA L40S         On   | 00000000:06:00.0 Off |                  Off |
-| N/A   30C    P8    25W / 300W |      1MiB / 48000MiB |      0%      Default |
-|                               |                      |                  N/A |
-+-------------------------------+----------------------+----------------------+
-```
-
-### **Installation de frameworks IA (optionnel)**
-
-```bash
-# Installation de PyTorch avec support CUDA
-pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
-
-# Installation de TensorFlow avec GPU
-pip3 install tensorflow[and-cuda]
-
-# Test PyTorch GPU
-python3 -c "import torch; print(f'CUDA disponible: {torch.cuda.is_available()}'); print(f'GPU: {torch.cuda.get_device_name(0) if torch.cuda.is_available() else \"Non détecté\"}')"
-```
-
-### **Résultat attendu PyTorch**
-```bash
-CUDA disponible: True
-GPU: NVIDIA L40S
 ```
 
 ---
 
-## 🎉 Félicitations !
+## ☸️ Méthode 2 : GPU avec Kubernetes
 
-Votre VM GPU est maintenant opérationnelle ! Vous pouvez :
+### **Étape 1 : Créer un cluster avec workers GPU**
 
-### **🔄 Prochaines étapes**
+```yaml title="cluster-gpu.yaml"
+apiVersion: apps.cozystack.io/v1alpha1
+kind: Kubernetes
+metadata:
+  name: cluster-gpu
+spec:
+  controlPlane:
+    replicas: 1
+  
+  nodeGroups:
+    # Workers GPU
+    gpu-nodes:
+      minReplicas: 1
+      maxReplicas: 3
+      instanceType: "u1.xlarge"
+      ephemeralStorage: 100Gi
+      gpus:
+        - name: "nvidia.com/L40S"
+    
+    # Workers standard (optionnel)
+    standard-nodes:
+      minReplicas: 1
+      maxReplicas: 2
+      instanceType: "s1.medium"
+      ephemeralStorage: 50Gi
+  
+  storageClass: "replicated"
+```
 
-**Développement IA :**
-- Installer Jupyter Lab pour le développement interactif
-- Cloner vos projets depuis GitHub
-- Télécharger des datasets depuis Hugging Face
+### **Étape 2 : Déployer le cluster**
 
-**Calcul Scientifique :**
-- Installer GROMACS, OpenFOAM ou autres outils
-- Configurer MPI pour calculs distribués
-- Optimiser les performances avec cuBLAS
+```bash
+kubectl apply -f cluster-gpu.yaml
 
-**Rendu et Visualisation :**
-- Installer Blender ou applications 3D
-- Configurer le streaming distant
-- Optimiser l'encoding vidéo avec NVENC
+# Attendre que le cluster soit prêt
+kubectl get kubernetes cluster-gpu -w
+```
 
-### **📖 Ressources Avancées**
+### **Étape 3 : Configurer l'accès**
 
-- **[Configuration Multi-GPU](./api-reference.md#multi-gpu)** → Scaling horizontal
-- **[Optimisation Performance](./api-reference.md#performance)** → Tuning avancé
-- **[Monitoring GPU](./api-reference.md#monitoring)** → Observabilité
+```bash
+# Récupérer le kubeconfig
+kubectl get secret cluster-gpu-admin-kubeconfig \
+  -o go-template='{{ printf "%s\n" (index .data "super-admin.conf" | base64decode) }}' \
+  > cluster-gpu-kubeconfig.yaml
 
-:::tip Performance Tip 💡
-Pour les workloads de production, utilisez toujours des instances g1.xxlarge ou supérieures avec stockage NVMe local pour les datasets temporaires.
-:::
+# Utiliser le cluster GPU
+export KUBECONFIG=cluster-gpu-kubeconfig.yaml
+kubectl get nodes
+```
 
-:::warning Important 🚨
-Les GPUs sont des ressources limitées. Pensez à arrêter vos VMs (`kubectl patch vm vm-gpu-example -p '{"spec":{"running":false}}'`) quand vous ne les utilisez pas pour optimiser les coûts.
-:::
+### **Étape 4 : Déployer un pod GPU**
+
+```yaml title="pod-gpu.yaml"
+apiVersion: v1
+kind: Pod
+metadata:
+  name: gpu-test
+spec:
+  containers:
+  - name: gpu-container
+    image: nvidia/cuda:12.0-runtime-ubuntu20.04
+    command: ["sleep", "infinity"]
+    resources:
+      limits:
+        nvidia.com/gpu: 1
+      requests:
+        nvidia.com/gpu: 1
+```
+
+```bash
+kubectl apply -f pod-gpu.yaml
+
+# Vérifier l'allocation GPU
+kubectl describe pod gpu-test
+
+# Tester le GPU
+kubectl exec -it gpu-test -- nvidia-smi
+```
 
 ---
 
-**Prêt pour plus ?** Consultez la [référence API complète](./api-reference.md) pour explorer toutes les possibilités des VMs GPU Hikube ! 🚀 
+## 📋 Comparaison Pratique
+
+| **Aspect** | **VM GPU** | **Kubernetes GPU** |
+|------------|------------|-------------------|
+| **Temps setup** | ~5 minutes | ~10 minutes |
+| **Complexité** | Simple | Modérée |
+| **Isolation** | Totale | Partielle |
+| **Flexibilité** | Limitée | Élevée |
+| **Scaling** | Manuel | Automatique |
+
+---
+
+## 🔧 Types de GPU Disponibles
+
+### **Configuration selon l'usage**
+
+```yaml
+# Pour inférence/développement
+gpus:
+  - name: "nvidia.com/L40S"  # 48 GB GDDR6
+
+# Pour entraînement ML
+gpus:
+  - name: "nvidia.com/A100"  # 80 GB HBM2e
+
+# Pour LLM/calcul exascale
+gpus:
+  - name: "nvidia.com/H100"  # 80 GB HBM3
+```
+
+---
+
+## ✅ Vérifications Post-Déploiement
+
+### **VM GPU**
+```bash
+# Vérifier le GPU
+virtctl ssh ubuntu@vm-gpu-example -- nvidia-smi
+
+# Test CUDA
+virtctl ssh ubuntu@vm-gpu-example -- nvcc --version
+```
+
+### **Kubernetes GPU**
+```bash
+# Voir les ressources GPU disponibles
+kubectl describe nodes
+
+# Vérifier l'allocation
+kubectl top nodes
+```
+
+---
+
+## 🚀 Prochaines Étapes
+
+### **Pour approfondir VM GPU :**
+- [Configuration avancée VM](./api-reference.md)
+- [Types d'instances optimisées](../compute/api-reference.md)
+
+### **Pour approfondir Kubernetes GPU :**
+- [Clusters avec GPU](../kubernetes/api-reference.md)
+- [Scaling automatique](../kubernetes/overview.md)
+
+---
+
+## 💡 Conseils
+
+- **VM GPU** : Idéal pour prototypage et applications legacy
+- **Kubernetes GPU** : Recommandé pour workloads de production scalables
+- Commencez par **L40S** pour tester avant d'utiliser A100/H100
+- Utilisez `replicated` storage class pour la production 
