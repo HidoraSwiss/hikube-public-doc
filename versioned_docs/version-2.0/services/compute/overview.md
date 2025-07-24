@@ -69,35 +69,38 @@ flowchart TD
 
 Hikube propose trois séries d'instances optimisées pour différents profils d'usage, garantissant des performances adaptées à chaque workload :
 
-### **Série U - Universal (Équilibrée)**
+### **Série S - Standard (Ratio 1:2)**
 
-Instances **polyvalentes** offrant un équilibre optimal entre CPU, mémoire et coût pour la majorité des applications d'entreprise.
+Instances **orientées calcul** avec un ratio CPU/mémoire de 1:2, idéales pour les charges CPU-intensives.
 
 | **Instance** | **vCPU** | **RAM** | **Cas d'Usage Typiques** |
 |--------------|----------|---------|---------------------------|
-| `u1.small`   | 1        | 2 GB    | Dev, tests, micro-services |
-| `u1.medium`  | 2        | 4 GB    | Applications web, APIs |
-| `u1.large`   | 2        | 8 GB    | Bases de données légères |
+| `s1.small`   | 1        | 2 GB    | Services légers, proxies |
+| `s1.medium`  | 2        | 4 GB    | Workers, batch processing |
+| `s1.large`   | 4        | 8 GB    | Calcul scientifique |
+| `s1.xlarge`  | 8        | 16 GB   | Rendu, compilation |
+| `s1.3large`  | 12       | 24 GB   | Applications intensives |
+| `s1.2xlarge` | 16       | 32 GB   | HPC, simulations |
+| `s1.3xlarge` | 24       | 48 GB   | Calcul distribué |
+| `s1.4xlarge` | 32       | 64 GB   | Calcul massif |
+| `s1.8xlarge` | 64       | 128 GB  | Calcul exascale |
+
+### **Série U - Universal (Ratio 1:4)**
+
+Instances **polyvalentes** offrant un équilibre optimal entre CPU et mémoire pour la majorité des applications d'entreprise.
+
+| **Instance** | **vCPU** | **RAM** | **Cas d'Usage Typiques** |
+|--------------|----------|---------|---------------------------|
+| `u1.medium`  | 1        | 4 GB    | Dev, tests, micro-services |
+| `u1.large`   | 2        | 8 GB    | Applications web, APIs |
 | `u1.xlarge`  | 4        | 16 GB   | Applications métier |
 | `u1.2xlarge` | 8        | 32 GB   | Workloads intensifs |
 | `u1.4xlarge` | 16       | 64 GB   | Applications critiques |
+| `u1.8xlarge` | 32       | 128 GB  | Applications enterprise |
 
-### **Série S - Standard (CPU Optimisé)**
+### **Série M - Memory (Ratio 1:8)**
 
-Instances **orientées calcul** avec un ratio CPU/mémoire élevé, idéales pour les charges CPU-intensives.
-
-| **Instance** | **vCPU** | **RAM** | **Cas d'Usage Typiques** |
-|--------------|----------|---------|---------------------------|
-| `s1.small`   | 1        | 1 GB    | Services légers, proxies |
-| `s1.medium`  | 2        | 2 GB    | Workers, batch processing |
-| `s1.large`   | 4        | 4 GB    | Calcul scientifique |
-| `s1.xlarge`  | 8        | 8 GB    | Rendu, compilation |
-| `s1.2xlarge` | 16       | 16 GB   | HPC, simulations |
-| `s1.4xlarge` | 32       | 32 GB   | Calcul massif |
-
-### **Série M - Memory (Mémoire Optimisée)**
-
-Instances **haute mémoire** avec des ratios mémoire/CPU élevés pour les applications gourmandes en RAM.
+Instances **haute mémoire** avec un ratio CPU/mémoire de 1:8 pour les applications gourmandes en RAM.
 
 | **Instance** | **vCPU** | **RAM** | **Cas d'Usage Typiques** |
 |--------------|----------|---------|---------------------------|
@@ -108,9 +111,9 @@ Instances **haute mémoire** avec des ratios mémoire/CPU élevés pour les appl
 | `m1.8xlarge` | 32       | 256 GB  | Data warehouses |
 
 :::tip **Guide de Sélection**
-- **Applications web classiques** → Série **U** (équilibrée)
-- **Calcul intensif, CI/CD** → Série **S** (CPU optimisé)  
-- **Bases de données, Analytics** → Série **M** (mémoire optimisée)
+- **Calcul intensif, CI/CD** → Série **S** (ratio 1:2, CPU optimisé)
+- **Applications web classiques** → Série **U** (ratio 1:4, équilibrée)  
+- **Bases de données, Analytics** → Série **M** (ratio 1:8, mémoire optimisée)
 :::
 
 ---

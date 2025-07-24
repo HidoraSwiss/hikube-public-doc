@@ -38,11 +38,27 @@ Cette documentation est maintenant versionnée ! Vous pouvez consulter :
 - Gestion des quotas et des ressources
 - Sécurité renforcée
 
-## Prochaines étapes
+## Choisissez votre parcours
 
-1. **Consultez l'[API](./api)** pour comprendre les ressources disponibles
-2. **Explorez les templates Terraform** pour l'Infrastructure as Code
-3. **Découvrez les applications** supportées par Hikube
+### **🚀 Je veux déployer rapidement**
+- **[Machines Virtuelles](./api/applications/virtualmachines.md)** → VM Ubuntu en 3 minutes
+- **[Base de données](./api/applications/postgreses.md)** → PostgreSQL prêt en production
+- **[Cluster Kubernetes](./api/applications/kuberneteses.md)** → K8s managé en 5 minutes
+
+### **💻 Je développe des applications**
+- **[Redis Cache](./api/applications/redises.md)** → Cache haute performance
+- **[Stockage S3](./api/applications/buckets.md)** → Stockage objet compatible AWS
+- **[Load Balancer](./api/applications/tcpbalancers.md)** → Équilibrage de charge
+
+### **🏗️ Je gère l'infrastructure**
+- **[Terraform avec Hikube](./terraform.md)** → Infrastructure as Code
+- **[Templates prêts à l'emploi](./terraform.md#exemples-complets)** → Architectures complètes
+- **[API Reference](./api/)** → Documentation technique complète
+
+### **🎯 Cas d'usage spécialisés**
+- **[GPU Computing](./api/applications/virtualmachines.md#gpu)** → IA et Machine Learning  
+- **[Messagerie](./api/applications/kafkas.md)** → Kafka, RabbitMQ, NATS
+- **[Monitoring](./api/applications/kuberneteses.md#monitoring)** → Observabilité intégrée
 
 ## Support
 
