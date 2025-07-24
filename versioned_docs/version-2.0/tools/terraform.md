@@ -5,7 +5,7 @@ title: Terraform avec Kubernetes
 
 # 🏗️ Terraform avec Kubernetes sur Hikube
 
-Utilisez **Terraform** pour automatiser le déploiement et la gestion de vos ressources Hikube via l'API. Cette approche **Infrastructure as Code** vous permet de gérer clusters Kubernetes, VMs et VMs GPU de manière déclarative et versionnée.
+Utilisez **Terraform** pour automatiser le déploiement et la gestion de vos ressources Hikube via l'API. Cette approche **Infrastructure as Code** vous permet de gérer clusters Kubernetes et VMs de manière déclarative et versionnée.
 
 ---
 
@@ -62,15 +62,7 @@ variable "vm_name" {
   default     = "terraform-vm"
 }
 
-variable "gpu_type" {
-  description = "Type de GPU (L40S, A100, H100)"
-  type        = string
-  default     = "L40S"
-  validation {
-    condition     = contains(["L40S", "A100", "H100"], var.gpu_type)
-    error_message = "Le type GPU doit être L40S, A100 ou H100."
-  }
-}
+
 ```
 
 ---
@@ -103,15 +95,6 @@ resource "kubectl_manifest" "kubernetes_cluster" {
           ephemeralStorage = "50Gi"
           roles = [
             "ingress-nginx"  # Support Ingress
-          ]
-        }
-        gpu = {
-          minReplicas      = 0
-          maxReplicas      = 3
-          instanceType     = "g1.xlarge"    # GPU optimisé
-          ephemeralStorage = "100Gi"
-          roles = [
-            "gpu-workloads"
           ]
         }
       }
@@ -292,136 +275,7 @@ output "ssh_command" {
 }
 ```
 
----
 
-## 🎮 Déployer des VMs GPU
-
-### **VM GPU avec Terraform**
-
-```hcl title="gpu-vm.tf"
-# Disque pour la VM GPU (plus grand pour les datasets)
-resource "kubectl_manifest" "gpu_vm_disk" {
-  yaml_body = yamlencode({
-    apiVersion = "apps.cozystack.io/v1alpha1"
-    kind       = "VMDisk"
-    metadata = {
-      name = "${var.vm_name}-gpu-disk"
-    }
-    spec = {
-      source = {
-        http = {
-          url = "https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img"
-        }
-      }
-      optical      = false
-      storage      = "100Gi"
-      storageClass = "replicated"
-    }
-  })
-}
-
-# Machine virtuelle avec GPU
-resource "kubectl_manifest" "gpu_virtual_machine" {
-  depends_on = [kubectl_manifest.gpu_vm_disk]
-  
-  yaml_body = yamlencode({
-    apiVersion = "apps.cozystack.io/v1alpha1"
-    kind       = "VirtualMachine"
-    metadata = {
-      name = "${var.vm_name}-gpu"
-    }
-    spec = {
-      running         = true
-      instanceProfile = "ubuntu"
-      instanceType    = "g1.xlarge"  # Type optimisé GPU
-      systemDisk = {
-        size         = "100Gi"
-        storageClass = "replicated"
-      }
-      disks = [
-        {
-          name = "${var.vm_name}-gpu-disk"
-        }
-      ]
-      gpus = [
-        {
-          name = "nvidia.com/${var.gpu_type}"
-        }
-      ]
-      cloudInit = <<-EOT
-        #cloud-config
-        users:
-          - name: ubuntu
-            sudo: ALL=(ALL) NOPASSWD:ALL
-            shell: /bin/bash
-            groups: [docker]
-            ssh_authorized_keys:
-              - ${var.ssh_public_key}
-        
-        package_update: true
-        packages:
-          - curl
-          - wget
-          - git
-          - build-essential
-          - dkms
-        
-        runcmd:
-          # Installation des drivers NVIDIA
-          - curl -fsSL https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/3bf863cc.pub | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-developers.gpg
-          - echo "deb [arch=amd64,arm64 signed-by=/usr/share/keyrings/nvidia-developers.gpg] https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/ /" | sudo tee /etc/apt/sources.list.d/nvidia-developers.list
-          - apt-get update
-          - apt-get install -y nvidia-driver-535 cuda-toolkit-12-2
-          - systemctl enable nvidia-persistenced
-          
-          # Installation Docker avec support NVIDIA
-          - curl -fsSL https://get.docker.com | sh
-          - distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
-          - curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg
-          - curl -s -L https://nvidia.github.io/libnvidia-container/$distribution/libnvidia-container.list | sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
-          - apt-get update
-          - apt-get install -y nvidia-container-toolkit
-          - nvidia-ctk runtime configure --runtime=docker
-          - systemctl restart docker
-          - usermod -aG docker ubuntu
-      EOT
-    }
-  })
-}
-```
-
-### **Multi-GPU Configuration**
-
-```hcl title="multi-gpu.tf"
-# VM avec plusieurs GPUs
-resource "kubectl_manifest" "multi_gpu_vm" {
-  count = var.multi_gpu_enabled ? 1 : 0
-  
-  yaml_body = yamlencode({
-    apiVersion = "apps.cozystack.io/v1alpha1"
-    kind       = "VirtualMachine"
-    metadata = {
-      name = "${var.vm_name}-multi-gpu"
-    }
-    spec = {
-      running         = true
-      instanceProfile = "ubuntu"
-      instanceType    = "g4.xlarge"  # 4 GPUs
-      systemDisk = {
-        size         = "200Gi"
-        storageClass = "replicated"
-      }
-      gpus = [
-        { name = "nvidia.com/${var.gpu_type}" },
-        { name = "nvidia.com/${var.gpu_type}" },
-        { name = "nvidia.com/${var.gpu_type}" },
-        { name = "nvidia.com/${var.gpu_type}" }
-      ]
-      cloudInit = file("${path.module}/cloud-init-gpu.yaml")
-    }
-  })
-}
-```
 
 ---
 
@@ -433,13 +287,9 @@ resource "kubectl_manifest" "multi_gpu_vm" {
 # Configuration de base
 cluster_name = "my-prod-cluster"
 vm_name      = "my-app-vm"
-gpu_type     = "A100"
 
 # Votre clé SSH publique
 ssh_public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQ... user@hostname"
-
-# Configuration multi-GPU
-multi_gpu_enabled = false
 ```
 
 ### **Outputs Terraform**
@@ -461,11 +311,6 @@ output "vm_info" {
       name = var.vm_name
       type = "VMInstance"
     }
-    gpu_vm = {
-      name = "${var.vm_name}-gpu"
-      type = "VirtualMachine"
-      gpu  = var.gpu_type
-    }
   }
 }
 
@@ -475,7 +320,6 @@ output "useful_commands" {
     kubeconfig    = "export KUBECONFIG=${local_file.kubeconfig.filename}"
     check_cluster = "kubectl get kubernetes ${var.cluster_name}"
     check_vms     = "kubectl get vminstance,virtualmachine"
-    gpu_status    = "kubectl exec ${var.vm_name}-gpu -- nvidia-smi"
   }
 }
 ```
@@ -577,12 +421,6 @@ resource "kubectl_manifest" "cluster" {
 ### **Validation et Sécurité**
 
 ```hcl
-# Validation des entrées
-variable "allowed_gpu_types" {
-  type    = list(string)
-  default = ["L40S", "A100", "H100"]
-}
-
 # Données sensibles
 variable "ssh_private_key" {
   description = "Clé privée SSH (sensible)"
