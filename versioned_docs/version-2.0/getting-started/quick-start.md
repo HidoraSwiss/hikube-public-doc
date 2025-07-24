@@ -183,7 +183,6 @@ Votre cluster Kubernetes est maintenant opérationnel avec **haute disponibilit�
 
 **Un cluster Kubernetes haute disponibilité** (3 nœuds)  
 **Un environnement totalement sécurisé** (isolation réseau)  
-**Un monitoring intégré** (métriques et logs)  
 **Un stockage résilient** (réplication automatique)
 
 **Le tout en moins de 10 minutes !**

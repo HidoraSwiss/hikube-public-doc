@@ -7,23 +7,48 @@ title: Introduction à Hikube
 
 ## **Qu'est-ce qu'Hikube ?**
 
-**Hikube** est une plateforme cloud privée qui vous permet de déployer et gérer votre infrastructure moderne en quelques clics :
+**Hikube** est une plateforme cloud privée d'entreprise offrant une infrastructure moderne avec des garanties de souveraineté et de sécurité maximales.
 
-- **☸️ Clusters Kubernetes** managés avec autoscaling et monitoring intégré
-- **🖥️ Machines virtuelles** haute performance avec redimensionnement dynamique
-- **🗄️ Services managés** : Bases de données, cache, messaging, stockage
-- **🌐 Réseau et sécurité** : Load balancers, VPN, isolation multi-tenant
+### **Infrastructure et Disponibilité**
 
----
+**Cloud Souverain avec Données Hébergées en Suisse**
+- Toutes vos données restent strictement sur le territoire suisse, garantissant la conformité avec les réglementations locales et offrant une tranquillité d'esprit maximale en matière de protection des données.
 
-## **👥 Qui utilise cette documentation ?**
+**Très Haute Disponibilité avec Réplication sur 3 Datacenters**
+- Assurez-vous que vos applications restent accessibles en permanence grâce à notre infrastructure redondante, répartie sur trois datacenters géographiquement distincts en Suisse.
 
-| **Profil** | **Objectifs** | **Sections recommandées** |
-|------------|---------------|----------------------------|
-| **🔧 DevOps/SRE** | Déploiements, CI/CD, monitoring | [Quick Start](./quick-start.md) → [Kubernetes](../services/kubernetes/) |
-| **💻 Développeurs** | APIs, intégrations, debug | [Concepts](./concepts.md) → [API Reference](../services/) |
-| **🏗️ Architectes** | Conception, sécurité, compliance | [Concepts](./concepts.md) → [Security](../services/networking/) |
-| **⚙️ Administrateurs** | Gestion tenants, monitoring, backup | [Concepts](./concepts.md) → [Compute](../services/compute/) |
+**Datacenter 100% Green IT**
+- Engagez-vous pour l'environnement avec notre datacenter alimenté par des énergies renouvelables, minimisant l'empreinte carbone de vos opérations IT.
+
+### **Services de Calcul**
+
+**Kubernetes as a Service**
+- Déployez et gérez vos applications conteneurisées facilement grâce à notre service Kubernetes, qui offre une orchestration automatisée, une évolutivité et une gestion simplifiée.
+
+**Support des Machines Virtuelles Windows et Linux**
+- Hébergez vos applications sur des machines virtuelles Windows ou Linux, adaptées à vos besoins spécifiques et optimisées pour une performance maximale.
+
+**GPU as a Service**
+- Exploitez la puissance du calcul haute performance avec notre offre GPU as a Service, idéale pour les charges de travail exigeantes comme l'intelligence artificielle, le machine learning et les simulations complexes.
+
+### **Sécurité et Isolation**
+
+**Encryption des Données**
+- Toutes les données stockées sont cryptées si besoin, garantissant que vos informations sensibles sont protégées même lorsqu'elles sont inactives.
+
+**Réseau Privé Virtuel (VPC) Uniquement**
+- Profitez d'une isolation réseau complète et d'une sécurité renforcée avec notre offre VPC uniquement, permettant de segmenter et de protéger vos ressources cloud.
+
+**Cloud Privé Uniquement**
+- Bénéficiez d'un environnement cloud dédié, offrant une sécurité accrue, une performance optimisée et un contrôle total sur vos ressources IT.
+
+### **Automatisation et Intégration**
+
+**Pilotable via API et Terraform**
+- Automatiser et gérer votre infrastructure cloud efficacement grâce à notre support des API et de Terraform, facilitant l'intégration et la gestion de vos ressources.
+
+**Orienté Entreprise et Qualité**
+- Notre offre est spécialement conçue pour répondre aux exigences des entreprises, offrant des solutions robustes, fiables et de haute qualité pour vos besoins professionnels.
 
 ---
 
