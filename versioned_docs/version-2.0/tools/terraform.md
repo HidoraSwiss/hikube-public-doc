@@ -348,7 +348,6 @@ terraform {
     bucket         = "my-terraform-state"
     key            = "hikube/terraform.tfstate"
     endpoint       = "https://s3.hikube.cloud"
-    region         = "us-east-1"
     
     skip_credentials_validation = true
     skip_region_validation      = true
