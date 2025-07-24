@@ -9,17 +9,17 @@ Ce guide vous accompagne dans la création de votre premier cluster Kubernetes s
 
 ---
 
-## 📋 Prérequis
+## Prérequis
 
 Avant de commencer, assurez-vous d'avoir :
 
-- ✅ **Accès à un tenant Hikube** avec permissions appropriées
-- ✅ **CLI kubectl configuré** pour interagir avec l'API Hikube
-- ✅ **Notions de base Kubernetes** (pods, services, deployments)
+- **Accès à un tenant Hikube** avec permissions appropriées
+- **CLI kubectl configuré** pour interagir avec l'API Hikube
+- **Notions de base Kubernetes** (pods, services, deployments)
 
 ---
 
-## 🎯 Étape 1 : Configuration du Cluster
+## Étape 1 : Configuration du Cluster
 
 ### **Cluster Kubernetes Basique**
 
@@ -69,7 +69,7 @@ kubectl apply -f my-first-cluster.yaml
 kubectl get kubernetes my-first-cluster -w
 ```
 
-**Temps d'attente :** Le cluster sera prêt en 3-5 minutes ⏱️
+**Temps d'attente :** Le cluster sera prêt en 3-5 minutes
 
 ---
 
@@ -139,7 +139,7 @@ spec:
             cpu: "100m"
         env:
         - name: WELCOME_MESSAGE
-          value: "Hello from Hikube Kubernetes! 🎉"
+          value: "Hello from Hikube Kubernetes!"
 
 ---
 # Service

@@ -9,7 +9,7 @@ Hikube propose des clusters Kubernetes managés où le plan de contrôle est gé
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ### **Composants**
 

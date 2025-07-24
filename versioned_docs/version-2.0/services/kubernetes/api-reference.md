@@ -3,13 +3,13 @@ sidebar_position: 3
 title: Référence API
 ---
 
-# 📚 Référence API Kubernetes
+# Référence API Kubernetes
 
 Cette page documente l'intégralité des paramètres de configuration disponibles pour déployer et gérer des clusters Kubernetes sur Hikube.
 
 ---
 
-## 🏗️ Structure de Base
+## Structure de Base
 
 ### **Ressource Kubernetes**
 
@@ -28,14 +28,14 @@ spec:
 
 ---
 
-## ⚙️ Paramètres Généraux
+## Paramètres Généraux
 
 ### **Configuration Cluster**
 
 | **Paramètre** | **Type** | **Description** | **Défaut** | **Requis** |
 |---------------|----------|-----------------|------------|------------|
-| `host` | `string` | Nom d'hôte pour accéder au cluster API | `""` (nom du cluster) | ❌ |
-| `storageClass` | `string` | Classe de stockage par défaut | `"replicated"` | ❌ |
+| `host` | `string` | Nom d'hôte pour accéder au cluster API | `""` (nom du cluster) | Non |
+| `storageClass` | `string` | Classe de stockage par défaut | `"replicated"` | Non |
 
 ```yaml
 spec:
@@ -47,7 +47,7 @@ spec:
 
 | **Paramètre** | **Type** | **Description** | **Défaut** | **Requis** |
 |---------------|----------|-----------------|------------|------------|
-| `controlPlane.replicas` | `int` | Nombre de réplicas du control plane | `2` | ❌ |
+| `controlPlane.replicas` | `int` | Nombre de réplicas du control plane | `2` | Non |
 
 ```yaml
 spec:
@@ -81,13 +81,13 @@ spec:
 
 | **Paramètre** | **Type** | **Description** | **Défaut** | **Requis** |
 |---------------|----------|-----------------|------------|------------|
-| `minReplicas` | `int` | Nombre minimum de nœuds | `0` | ✅ |
-| `maxReplicas` | `int` | Nombre maximum de nœuds | `10` | ✅ |
-| `instanceType` | `string` | Type d'instance VM (S1/U1/M1 - voir types disponibles) | `"s1.medium"` | ✅ |
-| `ephemeralStorage` | `string` | Taille du stockage éphémère | `"20Gi"` | ❌ |
-| `roles` | `[]string` | Rôles spéciaux assignés aux nœuds | `[]` | ❌ |
-| `resources.cpu` | `string` | Override CPU personnalisé | `""` | ❌ |
-| `resources.memory` | `string` | Override mémoire personnalisé | `""` | ❌ |
+| `minReplicas` | `int` | Nombre minimum de nœuds | `0` | Oui |
+| `maxReplicas` | `int` | Nombre maximum de nœuds | `10` | Oui |
+| `instanceType` | `string` | Type d'instance VM (S1/U1/M1 - voir types disponibles) | `"s1.medium"` | Oui |
+| `ephemeralStorage` | `string` | Taille du stockage éphémère | `"20Gi"` | Non |
+| `roles` | `[]string` | Rôles spéciaux assignés aux nœuds | `[]` | Non |
+| `resources.cpu` | `string` | Override CPU personnalisé | `""` | Non |
+| `resources.memory` | `string` | Override mémoire personnalisé | `""` | Non |
 
 #### **Types d'Instances Disponibles**
 
@@ -435,7 +435,7 @@ spec:
 
 ---
 
-## 📖 Exemples Complets
+## Exemples Complets
 
 ### **Cluster de Production**
 

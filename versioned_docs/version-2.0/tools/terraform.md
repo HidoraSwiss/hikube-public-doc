@@ -340,22 +340,6 @@ hikube-terraform/
     └── outputs.tf
 ```
 
-### Backend distant
-
-```hcl title="backend.tf"
-terraform {
-  backend "s3" {
-    bucket         = "my-terraform-state"
-    key            = "hikube/terraform.tfstate"
-    endpoint       = "https://s3.hikube.cloud"
-    
-    skip_credentials_validation = true
-    skip_region_validation      = true
-    force_path_style           = true
-  }
-}
-```
-
 ### Commandes utiles
 
 ```bash

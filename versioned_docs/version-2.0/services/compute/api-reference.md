@@ -9,7 +9,7 @@ Cette référence complète détaille les APIs **VMInstance** et **VMDisk** d'Hi
 
 ---
 
-## 🖥️ VMInstance
+## VMInstance
 
 ### **Vue d'ensemble**
 
@@ -208,7 +208,7 @@ spec:
 
 ---
 
-## 💾 VMDisk
+## VMDisk
 
 ### **Vue d'ensemble**
 
@@ -304,7 +304,7 @@ spec:
 
 ---
 
-## 🔧 Gestion des Ressources
+## Gestion des Ressources
 
 ### **Classes de Stockage**
 
@@ -322,13 +322,13 @@ spec:
 
 #### **Détails des Méthodes**
 
-**🔒 PortList**
+**PortList**
 - **Sécurité** : Firewall automatique - seuls les ports dans `externalPorts` sont accessibles
 - **Configuration** : Requiert `externalPorts` pour spécifier les ports autorisés
 - **Usage recommandé** : Production, environnements sécurisés, applications web
 - **Exemple** : `externalMethod: PortList` + `externalPorts: [22, 80, 443]`
 
-**🌍 WholeIP**  
+**WholeIP**  
 - **Sécurité** : Aucune protection - tous les ports TCP/UDP sont accessibles depuis Internet
 - **Configuration** : `externalPorts` ignoré et inutile (tous les ports sont ouverts)
 - **Usage recommandé** : Développement, debug, accès administratif complet
@@ -340,7 +340,7 @@ Avec `WholeIP`, votre VM est entièrement exposée sur Internet. Configurez imp�
 
 ---
 
-## 📋 Exemples Complets
+## Exemples Complets
 
 ### **VM de Production avec Données**
 

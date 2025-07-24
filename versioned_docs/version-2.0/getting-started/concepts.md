@@ -42,98 +42,12 @@ graph TB
 - **Facturation séparée** : Suivi des coûts par projet
 
 ### **Cas d'usage typiques**
-| Tenant | Usage | Exemples |
-|--------|-------|----------|
-| **Production** | Applications critiques | Sites web, APIs, bases de données |
-| **Staging** | Tests pré-production | Validation, performance tests |
-| **Development** | Développement actif | Prototypes, expérimentations |
-| **Sandbox** | Formation/démonstration | Tests sans risque |
-
----
-
-## Sécurité : Protection Multi-Niveaux
-
-### **Architecture Zero-Trust**
-Hikube applique le principe **"never trust, always verify"** à tous les niveaux :
-
-#### **Infrastructure**
-- **Chiffrement au repos** : Données protégées sur disque
-- **Chiffrement en transit** : Communications sécurisées
-
-#### **Réseau**
-- **Micro-segmentation automatique** : Isolation fine des flux
-- **Firewall distribué** : Protection périmétrique avancée
-- **Intrusion Detection System (IDS)** : Détection temps réel
-
-#### **Applications**
-- **Security Standards** : Conformité aux standards de sécurité
-- **Network Policies par défaut** : Règles réseau restrictives
-- **Secret management** : Gestion sécurisée des secrets
-
-#### **Accès**
-- **Multi-Factor Authentication (MFA)** : Double authentification
-- **Role-Based Access Control (RBAC)** : Permissions granulaires
-- **Audit complet des actions** : Traçabilité totale
-
-### **Protection des Données**
-- **Chiffrement transparent** : Vos données sont chiffrées automatiquement at rest
-- **Compliance** : RGPD, ISO 27001, FINMA
-
-### **Isolation Réseau**
-
-```mermaid
-flowchart TD
-    subgraph TA["Tenant A"]
-        A1["App 1"]
-        A2["App 2"]
-        NA["Private Network A"]
-    end
-    
-    subgraph TB["Tenant B"]
-        A3["App 3"]
-        A4["App 4"]
-        NB["Private Network B"]
-    end
-    
-    FA["Firewall A"]
-    FB["Firewall B"]
-    INTERNET["Internet"]
-    
-    TA --> FA
-    TB --> FB
-    FA --> INTERNET
-    FB --> INTERNET
-    
-    style TA fill:#e1f5fe
-    style TB fill:#f3e5f5
-    style FA fill:#ffecb3
-    style FB fill:#ffecb3
-    style INTERNET fill:#e8f5e8
-```
-
----
-
-## Redondance : Haute Disponibilité Native
-
-### **Redondance Multi-Niveaux**
-Hikube garantit la continuité de service grâce à une architecture redondante :
-
-#### **Infrastructure Physique**
-- **Serveurs multiples** : Pas de point de défaillance unique
-- **Alimentation redondante** : Onduleurs et générateurs
-- **Connexions réseau multiples** : Plusieurs fournisseurs d'accès
-- **Refroidissement redondant** : Systèmes de climatisation multiples
-
-#### **Données et Stockage**
-- **Réplication synchrone** : Vos données sur 3+ datacenters
-- **Backup automatique** : Sauvegardes continues et testées
-- **Geo-redondance** : Copies sur sites distants
-
-#### **Applications et Services**
-- **Auto-scaling** : Adaptation automatique à la charge
-- **Health checks** : Détection proactive des problèmes
-- **Rolling updates** : Mises à jour sans interruption
-- **Circuit breakers** : Protection contre les cascades de pannes
+| Tenant | Usage |
+|--------|-------|
+| **Production** | Applications critiques |
+| **Staging** | Tests pré-production |
+| **Development** | Développement actif |
+| **Sandbox** | Formation/démonstration |
 
 ---
 
@@ -216,22 +130,6 @@ Hikube fournit des **dashboards préconfigurés** pour chaque type de ressource 
 | **Applications** | Performances, Erreurs | Latence, throughput, 5xx |
 | **Réseau** | LoadBalancer, VPN | Trafic, latence, connexions |
 | **Stockage** | Buckets, Volumes | Capacité, IOPS, transferts |
-
----
-
-## Évolutivité et Performance
-
-### **Gestion Dynamique des Ressources**
-
-Hikube vous offre une **flexibilité totale** pour adapter vos ressources selon vos besoins :
-
-- **Applications** : Augmentez ou diminuez CPU, RAM et stockage en temps réel
-- **Machines Virtuelles** : Redimensionnement vertical (vCPU, mémoire, disques)
-- **Clusters Kubernetes** : **Autoscaling automatique** avec ajout et suppression intelligente de nœuds
-- **NodePools Kubernetes** : Création de **pools de nœuds séparés** avec des caractéristiques spécifiques (CPU, GPU, stockage, labels)
-- **Pods Kubernetes** : **Vertical Pod Autoscaling (VPA)** pour l'optimisation automatique des ressources applicatives
-
-Cette approche garantit des **performances optimales** tout en **maîtrisant les coûts** grâce à un dimensionnement précis et automatisé.
 
 ---
 

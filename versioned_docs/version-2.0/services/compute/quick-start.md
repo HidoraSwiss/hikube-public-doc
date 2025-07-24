@@ -5,11 +5,11 @@ title: Démarrage Rapide - VM
 
 # Créer votre première Machine Virtuelle
 
-Ce guide vous accompagne dans la création de votre première machine virtuelle Hikube en **5 minutes** chrono ! 🚀
+Ce guide vous accompagne dans la création de votre première machine virtuelle Hikube en **5 minutes** chrono !
 
 ---
 
-## 🎯 Objectif
+## Objectif
 
 À la fin de ce guide, vous aurez :
 - Une machine virtuelle Ubuntu fonctionnelle
@@ -19,7 +19,7 @@ Ce guide vous accompagne dans la création de votre première machine virtuelle 
 
 ---
 
-## 📋 Prérequis
+## Prérequis
 
 Avant de commencer, assurez-vous d'avoir :
 - **kubectl** configuré avec votre kubeconfig Hikube
@@ -65,7 +65,7 @@ disk-example  Ready    20Gi   replicated     90s
 
 ---
 
-## 🖥️ Étape 2 : Créer la Machine Virtuelle (2 minutes)
+## Étape 2 : Créer la Machine Virtuelle (2 minutes)
 
 ### **Générez votre clé SSH**
 
@@ -124,25 +124,25 @@ kubectl get vminstance vm-example -w
 
 ---
 
-## 🌐 Comprendre les Méthodes d'Exposition
+## Comprendre les Méthodes d'Exposition
 
 ### **PortList vs WholeIP : Quelle différence ?**
 
 Hikube propose deux méthodes d'exposition externe, chacune avec ses spécificités :
 
-#### **🔒 PortList (Recommandé)**
+#### **PortList (Recommandé)**
 - **Firewall contrôlé** : Seuls les ports spécifiés dans `externalPorts` sont accessibles
 - **Sécurité renforcée** : Protection automatique contre les accès non autorisés
 - **Usage** : Production, environnements sécurisés
 - **Configuration** : `externalMethod: PortList` + `externalPorts: [22, 80, 443]`
 
-#### **🌍 WholeIP**
+#### **WholeIP**
 - **Accès complet** : Tous les ports de la VM sont directement accessibles
 - **Pas de firewall** : Aucune protection au niveau réseau configurée via le service
 - **Usage** : Développement, accès administratif complet
 - **Configuration** : `externalMethod: WholeIP` (pas besoin d'`externalPorts`)
 
-:::tip Choix de la Méthode 🎯
+:::tip Choix de la Méthode
 - **Production/Sécurisé** → `PortList` avec ports spécifiques
 - **Développement/Debug** → `WholeIP` pour un accès complet
 :::
@@ -191,18 +191,18 @@ virtctl vnc vm-example
 
 ## 🎉 Félicitations ! 
 
-Votre machine virtuelle Hikube est **opérationnelle** ! 🎊
+Votre machine virtuelle Hikube est **opérationnelle** !
 
 ### **Ce que vous avez accompli :**
-- ✅ **VM Ubuntu** déployée avec 4 vCPU / 16 GB RAM
-- ✅ **Stockage persistant** de 20 GB répliqué
-- ✅ **Accès SSH** sécurisé configuré
-- ✅ **Connectivité externe** activée
-- ✅ **Infrastructure résiliente** avec séparation compute/stockage
+- **VM Ubuntu** déployée avec 4 vCPU / 16 GB RAM
+- **Stockage persistant** de 20 GB répliqué
+- **Accès SSH** sécurisé configuré
+- **Connectivité externe** activée
+- **Infrastructure résiliente** avec séparation compute/stockage
 
 ---
 
-## 🗑️ Nettoyage (Optionnel)
+## Nettoyage (Optionnel)
 
 Si vous voulez supprimer les ressources créées :
 

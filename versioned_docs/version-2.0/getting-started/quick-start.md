@@ -9,12 +9,10 @@ Bienvenue ! Ce guide vous accompagne pas à pas pour créer votre premier projet
 
 ---
 
-## ⚡ Prérequis (2 minutes)
+## Prérequis (2 minutes)
 
-### **📧 Accès à la plateforme**
+### **Accès à la plateforme**
 Si vous n'avez pas encore de compte Hikube, contactez notre équipe à **sales@hidora.io** pour obtenir vos accès.
-
-### **🛠️ Outils recommandés**
 ```bash
 # Installation rapide des outils essentiels
 curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
@@ -22,11 +20,14 @@ chmod +x kubectl && sudo mv kubectl /usr/local/bin/
 
 # Optionnel : Interface graphique Lens
 # https://k8slens.dev/
+
+# Optionnel : K9s (interface terminal interactive)
+# https://k9scli.io/
 ```
 
 ---
 
-## 🎯 Étape 1 : Accéder à votre Tenant (1 minute)
+## Étape 1 : Accéder à votre Tenant (1 minute)
 
 ### **Configuration kubectl**
 1. **Récupérez votre kubeconfig** auprès de votre administrateur Hikube
@@ -57,7 +58,7 @@ kubectl get namespaces
 
 ---
 
-## 🏗️ Étape 2 : Créer votre premier Cluster Kubernetes (3 minutes)
+## Étape 2 : Créer votre premier Cluster Kubernetes (3 minutes)
 
 ### **Déploiement via kubectl**
 1. **Créez un fichier YAML** pour votre cluster Kubernetes
@@ -137,7 +138,7 @@ spec:
 
 ---
 
-## 🔑 Étape 3 : Récupérer le Kubeconfig (1 minute)
+## Étape 3 : Récupérer le Kubeconfig (1 minute)
 
 ### **Extraction du kubeconfig du cluster**
 Une fois votre cluster déployé et prêt, récupérez ses credentials avec cette commande :
@@ -180,34 +181,16 @@ Votre cluster Kubernetes est maintenant opérationnel avec **haute disponibilit�
 
 ## ✅ Résultat : Vous avez créé...
 
-🎯 **Un cluster Kubernetes haute disponibilité** (3 nœuds)  
-🔒 **Un environnement totalement sécurisé** (isolation réseau)  
-📊 **Un monitoring intégré** (métriques et logs)  
-💾 **Un stockage résilient** (réplication automatique)
+**Un cluster Kubernetes haute disponibilité** (3 nœuds)  
+**Un environnement totalement sécurisé** (isolation réseau)  
+**Un monitoring intégré** (métriques et logs)  
+**Un stockage résilient** (réplication automatique)
 
-**Le tout en moins de 10 minutes !** ⏱️
-
----
-
-## 🔄 Prochaines étapes recommandées
-
-### **📚 Approfondissement**
-1. **[Concepts clés](./concepts.md)** → Comprenez l'architecture Hikube
-2. **[Kubernetes](../services/kubernetes/)** → Maîtrisez tous les paramètres
-3. **[Virtual Machines](../services/compute/virtual-machines/)** → Ajoutez des VMs à votre infrastructure
-
-### **🛠️ Cas d'usage avancés**
-- **[Storage](../services/storage/)** → Gestion des données persistantes
-- **[Networking](../services/networking/)** → Connectivité avancée
-- **[Monitoring](../resources/troubleshooting.md)** → Observabilité complète
-
-### **⚡ Automatisation**
-- **[Terraform](../tools/terraform.md)** → Infrastructure as Code
-- **[CLI](../tools/cli.md)** → Automatisation des tâches
+**Le tout en moins de 10 minutes !**
 
 ---
 
-## 🆘 Besoin d'aide ?
+## Besoin d'aide ?
 
 ### **Documentation**
 - **[FAQ](../resources/faq.md)** → Réponses aux questions courantes
