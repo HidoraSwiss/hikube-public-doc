@@ -1,5 +1,5 @@
 ---
-sidebar_position: 2
+sidebar_position: 3
 title: Démarrage rapide
 ---
 
@@ -17,6 +17,11 @@ Si vous n'avez pas encore de compte Hikube, contactez notre équipe à **sales@h
 # Installation rapide des outils essentiels
 curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
 chmod +x kubectl && sudo mv kubectl /usr/local/bin/
+
+# Plugin kubelogin (requis pour l'authentification OIDC)
+curl -LO "https://github.com/Azure/kubelogin/releases/latest/download/kubelogin-linux-amd64.zip"
+unzip kubelogin-linux-amd64.zip && sudo mv bin/linux_amd64/kubelogin /usr/local/bin/
+rm -rf kubelogin-linux-amd64.zip bin/
 
 # Optionnel : Interface graphique Lens
 # https://k8slens.dev/
@@ -81,7 +86,7 @@ spec:
     ingressNginx:
       enabled: true
       hosts:
-      - #mon-nginx.kube.testmonitoring.hikube.cloud <-- A modifer
+      - mon-app.example.com
       valuesOverride: {}
     monitoringAgents:
       enabled: false
@@ -90,7 +95,7 @@ spec:
       valuesOverride: {}
   controlPlane:
     replicas: 3
-  host: #kube.testmonitoring.hikube.cloud <-- A modifer
+  host: k8s-api.example.com
   kamajiControlPlane:
     addons:
       konnectivity:
@@ -135,6 +140,29 @@ spec:
   kubectl describe kubernetes kube
   ```
 - Status "Ready" = Cluster opérationnel ✅
+
+---
+
+## Configuration DNS (1 minute)
+
+### **Enregistrements DNS requis**
+
+Pour que votre cluster soit accessible, vous devez créer les enregistrements DNS suivants chez votre fournisseur DNS :
+
+```bash
+# Récupérez l'IP publique de votre cluster
+kubectl get kubernetes kube -o jsonpath='{.status.controlPlaneEndpoint}' 
+
+# Créez les enregistrements DNS (chez votre fournisseur) :
+# Type A : k8s-api.example.com → <IP_CLUSTER>
+# Type A : mon-app.example.com → <IP_CLUSTER>
+```
+
+:::tip Configuration DNS
+- **k8s-api.example.com** : Point d'accès à l'API Kubernetes
+- **mon-app.example.com** : Domaine pour vos applications via Ingress
+- Remplacez `example.com` par votre vraie zone DNS
+:::
 
 ---
 

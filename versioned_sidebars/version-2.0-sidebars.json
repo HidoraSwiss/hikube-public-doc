@@ -9,8 +9,8 @@
       "label": "🚀 Démarrer",
       "items": [
         "getting-started/introduction",
-        "getting-started/quick-start",
-        "getting-started/concepts"
+        "getting-started/concepts",
+        "getting-started/quick-start"
       ]
     },
     {

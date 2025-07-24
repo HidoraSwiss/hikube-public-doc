@@ -72,8 +72,8 @@ disk-example  Ready    20Gi   replicated     90s
 Si vous n'avez pas encore de clé SSH :
 
 ```bash
-# Générer une clé SSH (optionnel)
-ssh-keygen -t rsa -b 4096 -f ~/.ssh/hikube-vm
+# Générer une clé SSH Ed25519 (moderne et sécurisée)
+ssh-keygen -t ed25519 -f ~/.ssh/hikube-vm
 
 # Afficher la clé publique
 cat ~/.ssh/hikube-vm.pub
