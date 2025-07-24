@@ -135,7 +135,7 @@ kind: Kubernetes
 spec:
   nodeGroups:
     gpu-workers:
-      instanceType: "g1.xlarge"
+      instanceType: "u1.xlarge"
       gpus:
         - name: "nvidia.com/L40S"
 ```
@@ -176,20 +176,5 @@ spec:
 
 ### **Pour Kubernetes**
 - [Clusters GPU](../kubernetes/overview.md) → Workers avec GPU
-- [Configuration avancée](../kubernetes/api-reference.md) → NodeGroups GPU
-
----
-
-## 💡 Recommandations
-
-### **Choisir VM GPU si :**
-- Besoin d'un contrôle total du GPU
-- Application legacy non containerisée  
-- Développement/debug nécessitant un accès direct
-- Workload mono-application intensive
-
-### **Choisir Kubernetes GPU si :**
-- Applications containerisées
-- Besoin de scaling automatique
-- Partage de ressources entre applications
-- Orchestration complexe de jobs parallèles 
+  - [Configuration avancée](../kubernetes/api-reference.md) → NodeGroups GPU
+ 

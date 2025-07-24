@@ -1,6 +1,6 @@
 ---
 sidebar_position: 3
-title: Référence API - GPU
+title: API Reference
 ---
 
 # API Reference - GPU

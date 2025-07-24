@@ -1,6 +1,6 @@
 ---
 sidebar_position: 2
-title: Démarrage Rapide - GPU
+title: Démarrage rapide
 ---
 
 # Utiliser les GPU sur Hikube

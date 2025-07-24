@@ -1,6 +1,6 @@
 ---
 sidebar_position: 2
-title: Démarrage Rapide - VM
+title: Démarrage rapide
 ---
 
 # Créer votre première Machine Virtuelle

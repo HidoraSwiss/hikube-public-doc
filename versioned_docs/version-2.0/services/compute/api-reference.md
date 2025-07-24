@@ -1,6 +1,6 @@
 ---
 sidebar_position: 3
-title: Référence API - Virtual Machines
+title: API Reference
 ---
 
 # API Reference - Machines Virtuelles

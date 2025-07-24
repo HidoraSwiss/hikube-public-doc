@@ -602,7 +602,7 @@ spec:
     gpu:
       minReplicas: 0      # Scaling à zéro possible
       maxReplicas: 10
-      instanceType: "g1.2xlarge"  # Instance avec GPU
+      instanceType: "u1.2xlarge"  # Instance avec GPU
       ephemeralStorage: 500Gi      # Stockage important pour datasets
       roles: []
   

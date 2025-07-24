@@ -1,6 +1,6 @@
 ---
 sidebar_position: 1
-title: Vue d'ensemble des Machines Virtuelles
+title: Vue d'ensemble
 ---
 
 # Machines Virtuelles sur Hikube
