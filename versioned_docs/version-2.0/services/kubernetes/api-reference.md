@@ -40,7 +40,7 @@ spec:
 ```yaml
 spec:
   host: "k8s-production.company.com"
-  storageClass: "replicated"  # ou "local"
+  storageClass: "replicated"
 ```
 
 ### **Plan de Contrôle**
@@ -83,7 +83,7 @@ spec:
 |---------------|----------|-----------------|------------|------------|
 | `minReplicas` | `int` | Nombre minimum de nœuds | `0` | ✅ |
 | `maxReplicas` | `int` | Nombre maximum de nœuds | `10` | ✅ |
-| `instanceType` | `string` | Type d'instance VM (voir types disponibles) | `"s1.medium"` | ✅ |
+| `instanceType` | `string` | Type d'instance VM (S1/U1/M1 - voir types disponibles) | `"s1.medium"` | ✅ |
 | `ephemeralStorage` | `string` | Taille du stockage éphémère | `"20Gi"` | ❌ |
 | `roles` | `[]string` | Rôles spéciaux assignés aux nœuds | `[]` | ❌ |
 | `resources.cpu` | `string` | Override CPU personnalisé | `""` | ❌ |
@@ -107,6 +107,39 @@ instanceType: "s1.4xlarge"   # 32 vCPU, 64 GB RAM
 instanceType: "s1.8xlarge"   # 64 vCPU, 128 GB RAM
 ```
 
+##### **Série U (Universal) - Ratio 1:4**
+Optimisée pour workloads équilibrés avec plus de mémoire.
+
+```yaml
+# Instances disponibles
+instanceType: "u1.medium"    # 1 vCPU, 4 GB RAM
+instanceType: "u1.large"     # 2 vCPU, 8 GB RAM  
+instanceType: "u1.xlarge"    # 4 vCPU, 16 GB RAM
+instanceType: "u1.2xlarge"   # 8 vCPU, 32 GB RAM
+instanceType: "u1.4xlarge"   # 16 vCPU, 64 GB RAM
+instanceType: "u1.8xlarge"   # 32 vCPU, 128 GB RAM
+```
+
+##### **Série M (Memory Optimized) - Ratio 1:8**
+Optimisée pour applications nécessitant beaucoup de mémoire.
+
+```yaml
+# Instances disponibles
+instanceType: "m1.large"     # 2 vCPU, 16 GB RAM
+instanceType: "m1.xlarge"    # 4 vCPU, 32 GB RAM
+instanceType: "m1.2xlarge"   # 8 vCPU, 64 GB RAM
+instanceType: "m1.4xlarge"   # 16 vCPU, 128 GB RAM
+instanceType: "m1.8xlarge"   # 32 vCPU, 256 GB RAM
+```
+
+#### **Guide de Sélection des Types d'Instances**
+
+| **Série** | **Cas d'Usage Recommandé** | **Exemples** |
+|-----------|---------------------------|--------------|
+| **S1** | Applications web, APIs, charges légères | Ingress controllers, applications stateless |
+| **U1** | Workloads équilibrés, calcul général | Microservices, applications business, CI/CD |
+| **M1** | Applications gourmandes en mémoire | Bases de données, cache, analytics, monitoring |
+
 #### **Rôles de Nœuds Disponibles**
 
 | **Rôle** | **Description** | **Usage** |
@@ -129,28 +162,28 @@ nodeGroups:
       - ingress-nginx
 ```
 
-#### **Node Group Compute**
+#### **Node Group Compute Intensif**
 ```yaml
 nodeGroups:
   compute:
     minReplicas: 0
     maxReplicas: 5
-    instanceType: "s1.4xlarge"  # 32 vCPU, 64 GB RAM
+    instanceType: "u1.4xlarge"  # 16 vCPU, 64 GB RAM
     ephemeralStorage: 100Gi
     roles: []
 ```
 
-#### **Node Group avec Ressources Personnalisées**
+#### **Node Group Memory Optimized**
 ```yaml
 nodeGroups:
-  custom:
+  memory-intensive:
     minReplicas: 1
     maxReplicas: 3
-    instanceType: "s1.medium"
+    instanceType: "m1.xlarge"   # 4 vCPU, 32 GB RAM
     ephemeralStorage: 30Gi
     resources:
-      cpu: "6"      # Override: 6 vCPU au lieu de 2
-      memory: "12Gi" # Override: 12 GB au lieu de 4
+      cpu: "6"       # Override: 6 vCPU au lieu de 4
+      memory: "48Gi" # Override: 48 GB au lieu de 32
 ```
 
 ---
@@ -440,7 +473,7 @@ spec:
     compute:
       minReplicas: 1
       maxReplicas: 5
-      instanceType: "s1.4xlarge"
+      instanceType: "u1.4xlarge"  # 16 vCPU, 64 GB RAM
       ephemeralStorage: 100Gi
       roles: []
     
@@ -448,7 +481,7 @@ spec:
     monitoring:
       minReplicas: 2
       maxReplicas: 4
-      instanceType: "s1.2xlarge"
+      instanceType: "m1.xlarge"   # 4 vCPU, 32 GB RAM
       ephemeralStorage: 200Gi
       roles:
         - monitoring
@@ -507,7 +540,7 @@ metadata:
 spec:
   # Configuration basique
   host: "k8s-dev.company.local"
-  storageClass: "local"  # Performance locale pour dev
+  storageClass: "replicated"
   
   # Plan de contrôle minimal
   controlPlane:

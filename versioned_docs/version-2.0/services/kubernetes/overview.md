@@ -15,7 +15,7 @@ Hikube propose des clusters Kubernetes managés où le plan de contrôle est gé
 
 - **Plan de contrôle** : Géré par Hikube (API Server, etcd, Scheduler, Controller Manager)
 - **Nœuds workers** : Machines virtuelles dans votre tenant
-- **Stockage** : Volumes persistants avec classes de stockage `local` et `replicated`
+- **Stockage** : Volumes persistants avec classe de stockage `replicated`
 - **Réseau** : CNI avec support LoadBalancer et Ingress
 
 ### **Multi-Datacenter**
@@ -69,9 +69,9 @@ flowchart TD
 - **Roles spécialisés** : `ingress-nginx`, `monitoring`, etc.
 
 ### **Stockage Persistant**
-- **Classes disponibles** : `local` (nœud unique), `replicated` (3 datacenters)
+- **Classe de stockage** : `replicated` (réplication sur 3 datacenters)
 - **Provisioning dynamique** : Création automatique des volumes
-- **Réplication multi-datacenter** : PVC répliqués sur les 3 sites
+- **Haute disponibilité** : PVC répliqués automatiquement sur les 3 sites
 
 ### **Réseau et Exposition**
 - **Services LoadBalancer** : Exposition externe automatique via IP dédiée
@@ -134,7 +134,6 @@ nodeGroups:
     minReplicas: 3
     maxReplicas: 20
     instanceType: "m1.large"
-    storageClass: "replicated"
 ```
 
 ---
