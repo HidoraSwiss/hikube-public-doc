@@ -1,4 +1,5 @@
 # 🖥️ DOCUMENTATION VM VERSION 2.0 - RÉSUMÉ COMPLET
+upgrade
 
 **Date :** Janvier 2025  
 **Objectif :** Créer une documentation complète des machines virtuelles pour Hikube v2.0  
