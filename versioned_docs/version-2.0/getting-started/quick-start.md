@@ -5,34 +5,87 @@ title: Démarrage rapide
 
 # 🚀 Démarrage rapide avec Hikube
 
-Bienvenue ! Ce guide vous accompagne pas à pas pour créer votre premier projet sur Hikube en **moins de 10 minutes**. À la fin de ce tutoriel, vous aurez déployé votre première application dans un environnement complètement sécurisé.
+Bienvenue ! Ce guide vous accompagne pas à pas pour créer votre premier projet sur Hikube. À la fin de ce tutoriel, vous aurez déployé votre première application dans un environnement complètement sécurisé.
 
 ---
 
-## Prérequis (2 minutes)
+## Prérequis
 
 ### **Accès à la plateforme**
 Si vous n'avez pas encore de compte Hikube, contactez notre équipe à **sales@hidora.io** pour obtenir vos accès.
-```bash
-# Installation rapide des outils essentiels
-curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-chmod +x kubectl && sudo mv kubectl /usr/local/bin/
 
-# Plugin kubelogin (requis pour l'authentification OIDC)
+### **Installation des outils requis**
+
+#### **kubectl** (obligatoire)
+
+**macOS**
+```bash
+# Homebrew
+brew install kubectl
+```
+
+**Linux**
+```bash
+# Ubuntu/Debian
+sudo apt-get update && sudo apt-get install -y kubectl
+
+# RHEL/CentOS/Fedora
+sudo dnf install kubectl
+# ou pour les versions plus anciennes
+sudo yum install kubectl
+
+# Alpine Linux
+sudo apk add kubectl
+```
+
+**Windows**
+```powershell
+# Chocolatey
+choco install kubernetes-cli
+
+# winget
+winget install Kubernetes.kubectl
+```
+
+📖 **Documentation officielle** : [Install kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)
+
+#### **kubelogin** (requis pour l'authentification OIDC)
+
+**macOS**
+```bash
+# Homebrew
+brew install Azure/kubelogin/kubelogin
+```
+
+**Linux**
+```bash
+# Installation manuelle (toutes distributions)
 curl -LO "https://github.com/Azure/kubelogin/releases/latest/download/kubelogin-linux-amd64.zip"
 unzip kubelogin-linux-amd64.zip && sudo mv bin/linux_amd64/kubelogin /usr/local/bin/
 rm -rf kubelogin-linux-amd64.zip bin/
-
-# Optionnel : Interface graphique Lens
-# https://k8slens.dev/
-
-# Optionnel : K9s (interface terminal interactive)
-# https://k9scli.io/
 ```
+
+**Windows**
+```powershell
+# Chocolatey
+choco install kubelogin
+
+# winget
+winget install Microsoft.Azure.Kubelogin
+```
+
+### **Outils optionnels recommandés**
+
+Pour une meilleure expérience de gestion Kubernetes :
+
+- **[Lens](https://k8slens.dev/)** - Interface graphique moderne pour Kubernetes
+- **[K9s](https://k9scli.io/)** - Interface terminal interactive pour Kubernetes  
+- **[Helm](https://helm.sh/)** - Gestionnaire de paquets pour Kubernetes
+- **[kubectx + kubens](https://github.com/ahmetb/kubectx)** - Outils pour changer rapidement de contexte et namespace
 
 ---
 
-## Étape 1 : Accéder à votre Tenant (1 minute)
+## Étape 1 : Accéder à votre Tenant
 
 ### **Configuration kubectl**
 1. **Récupérez votre kubeconfig** auprès de votre administrateur Hikube
@@ -63,7 +116,7 @@ kubectl get namespaces
 
 ---
 
-## Étape 2 : Créer votre premier Cluster Kubernetes (3 minutes)
+## Étape 2 : Créer votre premier Cluster Kubernetes
 
 ### **Déploiement via kubectl**
 1. **Créez un fichier YAML** pour votre cluster Kubernetes
@@ -143,7 +196,7 @@ spec:
 
 ---
 
-## Configuration DNS (1 minute)
+## Configuration DNS
 
 ### **Enregistrements DNS requis**
 
@@ -166,7 +219,7 @@ kubectl get kubernetes kube -o jsonpath='{.status.controlPlaneEndpoint}'
 
 ---
 
-## Étape 3 : Récupérer le Kubeconfig (1 minute)
+## Étape 3 : Récupérer le Kubeconfig
 
 ### **Extraction du kubeconfig du cluster**
 Une fois votre cluster déployé et prêt, récupérez ses credentials avec cette commande :
@@ -209,12 +262,9 @@ Votre cluster Kubernetes est maintenant opérationnel avec **haute disponibilit�
 
 ## ✅ Résultat : Vous avez créé...
 
-**Un cluster Kubernetes haute disponibilité** (3 nœuds)  
+**Un cluster Kubernetes haute disponibilité**
 **Un environnement totalement sécurisé** (isolation réseau)  
 **Un stockage résilient** (réplication automatique)
-
-**Le tout en moins de 10 minutes !**
-
 ---
 
 ## Besoin d'aide ?

@@ -15,19 +15,19 @@ Les **Machines Virtuelles (VMs)** d'Hikube offrent une virtualisation complète 
 
 Hikube utilise une architecture **découplée** entre le calcul et le stockage qui garantit une résilience optimale :
 
-**💻 Couche Compute (Volatile)**
-- Les VMs s'exécutent sur des **serveurs physiques** sur un des 3 datacenters
+**💻 Couche Compute**
+- La VM s'exécute sur des **serveurs physiques** sur un des 3 datacenters
 - Si un nœud tombe en panne, la VM est **automatiquement redémarrée** sur un autre nœud
-- Si un datacenter tombe en panne, la VM est **automatiquement redémarrée** sur un autre noeud dans un des 2 datacenters restant.
+- Si un datacenter tombe en panne, la VM est **automatiquement redémarrée** sur un autre noeud dans un des 2 datacenters restant
 - Le temps d'indisponibilité se limite au redémarrage (généralement < 2 minutes)
 
 **💾 Couche Stockage (Persistante)**
-- Les disques des VMs sont **répliqués automatiquement** sur plusieurs nœuds physiques
+- Les disques des VMs sont **répliqués automatiquement** sur plusieurs nœuds physiques avec le stockage "replicated"
 - **Aucune perte de données** même en cas de panne matérielle multiple
 - Les disques survivent aux pannes et restent attachables à la VM relocalisée
 
 Cette séparation garantit que **vos données sont toujours sûres**, même si le serveur physique hébergeant votre VM devient indisponible où qu'un datacenter devienne indisponible.
-Nous garantissons les ressources!
+Nous garantissons les ressources !
 
 ### **Architecture Multi-Datacenter**
 

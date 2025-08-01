@@ -81,9 +81,7 @@ flowchart TD
         VM[VictoriaMetrics]
         VL[VictoriaLogs]
     end
-    
-    TENANT --> SPACER[ ]
-    
+
     subgraph SOUS["SOUS-TENANT"]
         K8S[Kubernetes]
         VMS[VMs]
@@ -106,8 +104,6 @@ flowchart TD
     VM --> D2[Dashboard VMs] 
     VM --> D3[Dashboard Apps]
     VL --> D4[Dashboard Logs]
-    
-    style SPACER fill:transparent,stroke:transparent
 ```
 
 ### **Architecture Multi-Tenant du Monitoring**
