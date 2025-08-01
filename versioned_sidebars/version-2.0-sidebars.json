@@ -67,7 +67,7 @@
         },
         {
           "type": "category",
-          "label": "Compute",
+                      "label": "Ressources de calcul",
           "items": [
             "services/compute/overview",
             "services/compute/quick-start",

@@ -6,7 +6,7 @@ sidebar_position: 1
 
 ## Bienvenue sur Hikube
 
-Hikube est une plateforme cloud basée sur Kubernetes qui simplifie le déploiement et la gestion d'applications conteneurisées et de machines virtuelles.
+Hikube offre une solution cloud moderne qui facilite le déploiement et l'orchestration d'applications conteneurisées ainsi que de machines virtuelles.
 
 ## Versions de la documentation
 
@@ -21,13 +21,13 @@ Cette documentation est maintenant versionnée ! Vous pouvez consulter :
 - Déploiement via `kubectl apply`
 - Infrastructure as Code (IaC) avec YAML
 
-### 📦 **Applications supportées**
+### 📦 **Services**
 - **Bases de données** : PostgreSQL, MySQL, Redis, ClickHouse
 - **Services de messagerie** : Kafka, RabbitMQ, NATS
-- **Stockage**: Chiffré, repliqué sur 3 datacenter
+- **Stockage**: Chiffré, repliqué sur 3 datacenters
 - **Stockage S3** : Buckets S3 compatibles
 - **Réseaux** : Load balancers TCP, caches HTTP, VPN
-- **Compute** : Machines virtuelles, GPU
+- **Ressources de calcul** : Machines virtuelles, GPU
 
 ### 🔧 **Infrastructure as Code**
 - Gestion déclarative des ressources
@@ -35,6 +35,7 @@ Cette documentation est maintenant versionnée ! Vous pouvez consulter :
 
 ### 🏗️ **Architecture multi-tenant**
 - Isolation complète entre les tenants
+- Création de sous-tenant possible
 - Gestion des quotas et des ressources
 - Sécurité renforcée
 
