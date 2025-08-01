@@ -24,7 +24,7 @@ Cette documentation est maintenant versionnée ! Vous pouvez consulter :
 ### 📦 **Services**
 - **Bases de données** : PostgreSQL, MySQL, Redis, ClickHouse
 - **Services de messagerie** : Kafka, RabbitMQ, NATS
-- **Stockage**: Chiffré, repliqué sur 3 datacenters
+- **Stockage**: Chiffré, répliqué sur 3 datacenters
 - **Stockage S3** : Buckets S3 compatibles
 - **Réseaux** : Load balancers TCP, caches HTTP, VPN
 - **Ressources de calcul** : Machines virtuelles, GPU
@@ -41,9 +41,23 @@ Cette documentation est maintenant versionnée ! Vous pouvez consulter :
 
 ## Prochaines étapes
 
-1. **Consultez l'[API](/api)** pour comprendre les ressources disponibles
-2. **Explorez les templates Terraform** pour l'Infrastructure as Code
-3. **Découvrez les applications** supportées par Hikube
+Pour bien démarrer avec Hikube, nous vous recommandons de suivre ce parcours d'apprentissage :
+
+### 1. 📚 **Comprendre les concepts clés**
+Familiarisez-vous avec l'architecture et les concepts fondamentaux d'Hikube :
+- **[Concepts Hikube](getting-started/concepts)** - Architecture, tenants, ressources et sécurité
+
+### 2. 🚀 **Votre premier déploiement**  
+Suivez notre guide pratique pour déployer votre première application :
+- **[Démarrage rapide](getting-started/quick-start)** - Déployez une application en 10 minutes
+
+### 3. 🔧 **Maîtriser les APIs** 
+Explorez les APIs de chaque service pour des déploiements avancés :
+- **[Bases de données](services/databases/postgresql/overview)** - PostgreSQL, MySQL, Redis
+- **[Ressources de calcul](services/compute/overview)** - Machines virtuelles et GPU  
+- **[Kubernetes](services/kubernetes/overview)** - Clusters managés
+- **[Stockage](services/storage/buckets/overview)** - Buckets S3 compatibles
+- **[Infrastructure as Code](tools/terraform)** - Templates Terraform
 
 ## Support
 

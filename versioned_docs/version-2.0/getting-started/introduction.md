@@ -25,16 +25,16 @@ title: Introduction à Hikube
 **Kubernetes as a Service**
 - Déployez et gérez vos applications conteneurisées facilement grâce à notre service Kubernetes, qui offre une orchestration automatisée, une évolutivité et une gestion simplifiée.
 
-**Support des Machines Virtuelles Windows et Linux**
-- Hébergez vos applications sur des machines virtuelles Windows ou Linux, adaptées à vos besoins spécifiques et optimisées pour une performance maximale.
+**Instances VM Linux et Windows**
+- Hébergez vos applications sur des instances Linux ou Windows, adaptées à vos besoins spécifiques et optimisées pour une performance maximale.
 
 **GPU as a Service**
 - Exploitez la puissance du calcul haute performance avec notre offre GPU as a Service, idéale pour les charges de travail exigeantes comme l'intelligence artificielle, le machine learning et les simulations complexes.
 
 ### **Sécurité et Isolation**
 
-**Encryption des Données**
-- Toutes les données stockées sont cryptées si besoin, garantissant que vos informations sensibles sont protégées même lorsqu'elles sont inactives.
+**Chiffrement des Données**
+- Toutes les données stockées sont chiffrées si besoin, garantissant que vos informations sensibles sont protégées même lorsqu'elles sont inactives.
 
 ### **Automatisation et Intégration**
 
@@ -46,19 +46,15 @@ title: Introduction à Hikube
 
 ---
 
-## **Parcours d'apprentissage recommandé**
+## **Documentation disponible**
 
-### **Démarrage Express (15 minutes)**
-1. **[Quick Start](./quick-start.md)** → Déployez votre première application
-2. **Test pratique** → Validez votre compréhension
+**Pour commencer**
+- **[Démarrage rapide](./quick-start.md)** → Déployez votre première application
+- **[Concepts](./concepts.md)** → Architecture et fonctionnalités détaillées
 
-### **Compréhension Approfondie (30 minutes)** 
-1. **[Concepts](./concepts.md)** → Architecture et fonctionnalités détaillées
-2. **Choix des services** → Selon vos besoins spécifiques
-
-### **Maîtrise Complète (selon besoins)**
-1. **[Services](../services/)** → Catalogue exhaustif des fonctionnalités
-2. **Intégrations avancées** → APIs et automatisation
+**Services et intégrations**
+- **[Catalogue des services](../services/)** → Fonctionnalités disponibles
+- **APIs et automatisation** → Intégrations avancées
 
 ---
 
@@ -75,30 +71,8 @@ title: Introduction à Hikube
 - **Droits appropriés** selon votre rôle (dev/admin/viewer)
 
 :::tip Première connexion ?
-Si vous n'avez pas encore d'accès, contactez votre administrateur ou l'équipe Hikube à **support@hidora.io**
+Si vous n'avez pas encore d'accès, contactez l'équipe Hikube à **support@hidora.io**
 :::
-
----
-
-## **Commencer maintenant**
-
-Hikube est conçu pour être **simple** au démarrage, mais **puissant** quand vous maîtrisez.
-
-### **Choix rapide :**
-
-<div style={{display: 'flex', gap: '20px', marginBottom: '20px'}}>
-
-**Je veux tester rapidement**  
-→ [Quick Start](./quick-start.md)
-
-**Je veux tout comprendre**  
-→ [Concepts](./concepts.md)
-
-**Je cherche une fonctionnalité**  
-→ [Services](../services/)
-
-</div>
-
 ---
 
 :::info **Prochaine étape recommandée**
