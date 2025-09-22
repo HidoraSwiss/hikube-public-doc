@@ -1,0 +1,14 @@
+version: 2
+updates:
+  # 1. Dépendances NPM (Docusaurus et plugins)
+  - package-ecosystem: "npm"
+    directory: "/" # la racine où se trouve package.json
+    schedule:
+      interval: "weekly" # daily | weekly | monthly
+    open-pull-requests-limit: 10
+
+  # 2. Actions GitHub (optionnel mais recommandé)
+  - package-ecosystem: "github-actions"
+    directory: "/" # les workflows sont dans .github/workflows
+    schedule:
+      interval: "weekly"
