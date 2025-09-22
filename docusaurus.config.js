@@ -11,7 +11,7 @@ import {themes as prismThemes} from 'prism-react-renderer';
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'Documentation | Hikube',
-  favicon: 'img/hikube-favicon.svg',
+  favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
   url: 'https://docs.hikube.cloud',
