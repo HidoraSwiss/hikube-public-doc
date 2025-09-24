@@ -38,6 +38,15 @@
           "items": [
             {
               "type": "category",
+              "label": "ClickHouse",
+              "items": [
+                "services/databases/clickhouse/overview",
+                "services/databases/clickhouse/quick-start",
+                "services/databases/clickhouse/api-reference"
+              ]
+            },            
+            {
+              "type": "category",
               "label": "PostgreSQL",
               "items": [
                 "services/databases/postgresql/overview",
