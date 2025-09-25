@@ -8,7 +8,7 @@ title: Démarrage rapide
 Ce guide vous accompagne dans le déploiement de votre première base de données **PostgreSQL** sur Hikube, depuis l’installation jusqu’à la première connexion.
 
 ---
-## Objectif
+## Objectifs
 
 À la fin de ce guide, vous aurez :  
 - Une base de données **PostgreSQL** déployée sur Hikube  
@@ -111,7 +111,7 @@ Une fois l'application déployé, vérifier que tout fonctionne :
 # Vérifier le statut (peut prendre 1-2 minutes)
 ➜  ~ kubectl get postgreses
 NAME      READY   AGE     VERSION
-example   True    9m16s   0.18.0
+example   True    1m36s   0.18.0
 
 
 # Vérifier si les pods applicatifs sont running

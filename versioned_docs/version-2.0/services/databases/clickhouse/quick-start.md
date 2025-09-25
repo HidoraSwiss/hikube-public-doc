@@ -9,7 +9,7 @@ Ce guide vous accompagne dans le déploiement de votre première base de donnée
 
 ---
 
-## Objectif
+## Objectifs
 
 À la fin de ce guide, vous aurez :  
 - Une base de données **ClickHouse** déployée sur Hikube  
@@ -89,7 +89,7 @@ Une fois l'application déployé, vérifier que tout fonctionne :
 # Vérifier le statut (peut prendre 1-2 minutes)
 ➜  ~ kubectl get clickhouse
 NAME      READY   AGE     VERSION
-example   True    4m48s   0.13.0
+example   True    2m48s   0.13.0
 
 # Vérifier si les pods applicatifs sont running
 ➜  ~ kubectl get po | grep clickhouse
