@@ -12,7 +12,7 @@ Cette référence détaille l’utilisation de **ClickHouse** sur Hikube, que ce
 ## Structure de Base
 
 ### **Ressource Clickhouse**
-
+#### Exemple de configuration YAML
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
 appVersion: 0.13.0
@@ -38,7 +38,8 @@ spec:
 | `size`               | `quantity` | Persistent Volume Claim size, available for application data                    | `10Gi`     | Oui        |
 | `storageClass`       | `string`   | StorageClass used to store the data                                             | `""`       | Non        |
 
-```yaml
+#### Exemple de configuration YAML
+```yaml title="clickhouse.yaml"
 replicas: 2
 shards: 1
 resources:
@@ -59,8 +60,9 @@ storageClass: replicated
 | `users[name].password`   | `string`             | Password for the user                                       | `null`     | Oui        |
 | `users[name].readonly`   | `bool`               | User is readonly, default is false                          | `null`     | Non        |
 
+#### Exemple de configuration YAML
 
-```yaml
+```yaml title="clickhouse.yaml"
 logStorageSize: 5Gi
 logTTL: 30
 users:
@@ -85,7 +87,8 @@ users:
 | `backup.s3SecretKey`     | `string`   | Secret key for S3, used for authentication     | `<your-secret-key>`                           | Oui        |
 | `backup.resticPassword`  | `string`   | Password for Restic backup encryption          | `<password>`                                  | Oui        |
 
-```yaml
+#### Exemple de configuration YAML
+```yaml title="clickhouse.yaml"
 backup:
   enabled: true
   s3Region: eu-central-1
@@ -107,7 +110,9 @@ backup:
 | `clickhouseKeeper.resourcesPreset` | `string` | Default sizing preset (`nano`, `micro`, `small`, `medium`, `large`, `xlarge`, `2xlarge`) | `micro` | Oui        |
 | `clickhouseKeeper.replicas`     | `int`      | Number of Keeper replicas                                                       | `3`        | Oui        |
 
-```yaml
+#### Exemple de configuration YAML
+
+```yaml title="clickhouse.yaml"
 clickhouseKeeper:
   enabled: true
   replicas: 3
@@ -115,13 +120,13 @@ clickhouseKeeper:
   size: 5Gi  
 ```  
 
-### resources and resourcesPreset
+### resources et resourcesPreset
 
 Le champ `resources` permet de définir explicitement la configuration CPU et mémoire de chaque réplique ClickHouse.  
 Si ce champ est laissé vide, la valeur du paramètre `resourcesPreset` est utilisée.  
 
-#### Exemple : configuration explicite
-```yaml
+#### Exemple de configuration YAML
+```yaml title="clickhouse.yaml"
 resources:
   cpu: 4000m
   memory: 4Gi

@@ -100,15 +100,13 @@ chk-clickhouse-example-keeper-cluster1-0-1-0      1/1     Running     0         
 chk-clickhouse-example-keeper-cluster1-0-2-0      1/1     Running     0             2m28s
 
 # Vous pouvez récupérer le username, password de votre BDD
-  ~ kubectl get secret clickhouse-example-credentials \
-  -n tenant-jeanluc \
-  -o jsonpath="{.data}" | jq .
+  ~ kubectl get secret clickhouse-example-credentials -o json | jq -r '.data | to_entries[] | "\(.key): \(.value|@base64d)"'
 
-{
-  "backup": "dklkWlVOaWFMS2FWYkl2bA==",
-  "user1": "c3Ryb25ncGFzc3dvcmQ=",
-  "user2": "aGFja21l"
-}
+backup: vIdZUNiaLKaVbIvl
+user1: strongpassword
+user2: hackme
+
+
 
 # Faire un port-forward du service pour y accéder en local, ou modifier le service en tant que LoadBalancer
 kubectl port-forward svc/chendpoint-clickhouse-example 9000:9000
