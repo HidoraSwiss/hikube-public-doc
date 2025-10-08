@@ -12,7 +12,9 @@ Cette référence détaille l’utilisation de **ClickHouse** sur Hikube, que ce
 ## Structure de Base
 
 ### **Ressource Clickhouse**
+
 #### Exemple de configuration YAML
+
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
 appVersion: 0.13.0
@@ -39,6 +41,7 @@ spec:
 | `storageClass`       | `string`   | StorageClass used to store the data                                             | `""`       | Non        |
 
 #### Exemple de configuration YAML
+
 ```yaml title="clickhouse.yaml"
 replicas: 2
 shards: 1
@@ -71,7 +74,7 @@ users:
     readonly: true
   admin:
     password: adminStrongPwd
-```   
+```
 
 ### **Paramètres de backup**
 
@@ -88,6 +91,7 @@ users:
 | `backup.resticPassword`  | `string`   | Password for Restic backup encryption          | `<password>`                                  | Oui        |
 
 #### Exemple de configuration YAML
+
 ```yaml title="clickhouse.yaml"
 backup:
   enabled: true
@@ -126,6 +130,7 @@ Le champ `resources` permet de définir explicitement la configuration CPU et m�
 Si ce champ est laissé vide, la valeur du paramètre `resourcesPreset` est utilisée.  
 
 #### Exemple de configuration YAML
+
 ```yaml title="clickhouse.yaml"
 resources:
   cpu: 4000m
@@ -133,6 +138,7 @@ resources:
 ```  
 
 ⚠️ Attention : si resources est défini, la valeur de resourcesPreset est ignorée.
+
 | **Preset name** | **CPU** | **Mémoire** |
 |-----------------|---------|-------------|
 | `nano`          | 250m    | 128Mi       |

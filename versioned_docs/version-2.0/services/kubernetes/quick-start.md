@@ -93,6 +93,7 @@ kubectl get nodes
 ```
 
 **Résultat attendu :**
+
 ```console
 NAME                         STATUS   ROLES    AGE   VERSION
 my-first-cluster-md0-xxxxx   Ready    <none>   2m    v1.29.0
@@ -203,6 +204,7 @@ kubectl get pods -l app=hello-hikube
 ```
 
 **Résultat attendu :**
+
 ```console
 NAME                           READY   STATUS    RESTARTS   AGE
 hello-hikube-xxxxx-xxxx        1/1     Running   0          1m
@@ -357,6 +359,7 @@ kubectl delete kubernetes my-first-cluster
 ## 📋 Résumé
 
 Vous avez créé :
+
 - Un cluster Kubernetes avec plan de contrôle managé
 - Des nœuds workers avec scaling automatique (1-5 nœuds)
 - Une application d'exemple avec Ingress
@@ -370,4 +373,4 @@ Vous avez créé :
 
 ---
 
-**💡 Conseil Pro :** Gardez votre fichier `kubeconfig` en sécurité et pensez à configurer RBAC pour contrôler l'accès à votre cluster selon vos équipes et environnements. 
+**💡 Conseil Pro :** Gardez votre fichier `kubeconfig` en sécurité et pensez à configurer RBAC pour contrôler l'accès à votre cluster selon vos équipes et environnements.

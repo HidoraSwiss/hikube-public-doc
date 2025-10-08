@@ -16,12 +16,14 @@ Les **Machines Virtuelles (VMs)** d'Hikube offrent une virtualisation complète 
 Hikube utilise une architecture **découplée** entre le calcul et le stockage qui garantit une résilience optimale :
 
 **💻 Couche Compute**
+
 - La VM s'exécute sur des **serveurs physiques** sur un des 3 datacenters
 - Si un nœud tombe en panne, la VM est **automatiquement redémarrée** sur un autre nœud
 - Si un datacenter tombe en panne, la VM est **automatiquement redémarrée** sur un autre noeud dans un des 2 datacenters restant
 - Le temps d'indisponibilité se limite au redémarrage (généralement < 2 minutes)
 
 **💾 Couche Stockage (Persistante)**
+
 - Les disques des VMs sont **répliqués automatiquement** sur plusieurs nœuds physiques avec le stockage "replicated"
 - **Aucune perte de données** même en cas de panne matérielle multiple
 - Les disques survivent aux pannes et restent attachables à la VM relocalisée
@@ -111,6 +113,7 @@ Instances **haute mémoire** avec un ratio CPU/mémoire de 1:8 pour les applicat
 | `m1.8xlarge` | 32       | 256 GB  | Data warehouses |
 
 :::tip **Guide de Sélection**
+
 - **Calcul intensif, CI/CD** → Série **S** (ratio 1:2, CPU optimisé)
 - **Applications web classiques** → Série **U** (ratio 1:4, équilibrée)  
 - **Bases de données, Analytics** → Série **M** (ratio 1:8, mémoire optimisée)

@@ -15,11 +15,13 @@ Il assure le déploiement d’un cluster répliqué et auto-réparant, garantiss
 Le service **MySQL managé** sur Hikube repose sur l’opérateur **MariaDB-Operator**, qui automatise la gestion complète du cycle de vie de la base de données : déploiement, mise à jour, réplication et reprise après incident.  
 
 L’architecture repose sur un **cluster répliqué** :  
+
 - Un **nœud primaire** (primary) gère toutes les opérations d’écriture et assure la cohérence des données.  
 - Un ou plusieurs **réplicas** (standby) reçoivent en temps réel les transactions via la réplication asynchrone ou semi-synchrone.  
 - Un mécanisme d’**auto-failover** promeut automatiquement un réplica en tant que nouveau primaire en cas de défaillance, garantissant une **haute disponibilité**.  
 
 Cette approche offre :  
+
 - **Résilience** en cas de panne matérielle ou logicielle  
 - **Scalabilité en lecture** grâce à la distribution des requêtes entre les réplicas  
 - **Simplicité de gestion**, car la plateforme prend en charge la coordination et la maintenance du cluster  
@@ -41,6 +43,7 @@ graph TD
     P1 -->|Réplication| P2
     P1 -->|Réplication| P3
 ```
+
 ---
 
 ## 💡 Cas d’usage

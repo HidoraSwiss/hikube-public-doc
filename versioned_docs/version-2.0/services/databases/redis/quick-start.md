@@ -12,6 +12,7 @@ Ce guide vous guide pas à pas dans le déploiement de votre premier cluster **R
 ## Objectifs
 
 À la fin de ce guide, vous aurez :  
+
 - Un cluster **Redis** déployé sur Hikube  
 - Une architecture composée d’un **master** et de **réplicas** pour garantir la haute disponibilité  
 - Un accès Redis sécurisé avec vos identifiants d’authentification  
@@ -22,6 +23,7 @@ Ce guide vous guide pas à pas dans le déploiement de votre premier cluster **R
 ## Prérequis
 
 Avant de démarrer, assurez-vous d’avoir :  
+
 - **kubectl** configuré avec votre kubeconfig Hikube  
 - Des **droits administrateur** sur votre tenant  
 - Un **namespace** dédié pour héberger votre cluster Redis  
@@ -32,7 +34,7 @@ Avant de démarrer, assurez-vous d’avoir :
 
 ### **Préparez le fichier manifest**
 
-Créez un fichier `redis.yaml` comme ci-dessous: 
+Créez un fichier `redis.yaml` comme ci-dessous:
 
 ```yaml title="redis.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
