@@ -14,7 +14,7 @@ Cette page vous explique les **concepts fondamentaux** qui font d'Hikube une pla
 ### **Qu'est-ce qu'un Tenant ?**
 Un **tenant** est votre environnement isolé et sécurisé au sein de Hikube. C'est comme avoir votre propre "datacenter virtuel" avec :
 - **Réseau isolé**
-- **Utilisateurs et permissions** séparés 
+- **Utilisateurs et permissions** séparés
 - **Politiques de sécurité** personnalisées
 - **Sous-tenants** à disposition
 
@@ -22,15 +22,15 @@ Un **tenant** est votre environnement isolé et sécurisé au sein de Hikube. C'
 ```mermaid
 graph TB
     A[Entreprise] --> B[Tenant Production]
-    A --> C[Tenant Développement] 
+    A --> C[Tenant Développement]
     A --> D[Tenant Staging]
-    
+
     B --> E[App critique 1]
     B --> F[App critique 2]
-    
+
     C --> G[Tests Dev]
     C --> H[Expérimentations]
-    
+
     D --> I[Tests QA]
     D --> J[Validation]
 ```
@@ -89,19 +89,19 @@ flowchart TD
         M[Métriques]
         L[Logs]
     end
-    
+
     G -.-> VM
     G -.-> VL
     K8S --> M
     VMS --> M
     APP --> M
     APP --> L
-    
+
     M --> VM
     L --> VL
-    
+
     VM --> D1[Dashboard K8s]
-    VM --> D2[Dashboard VMs] 
+    VM --> D2[Dashboard VMs]
     VM --> D3[Dashboard Apps]
     VL --> D4[Dashboard Logs]
 ```
@@ -140,7 +140,7 @@ Maintenant que vous maîtrisez les concepts d'Hikube, vous pouvez :
 
 ### **Automatiser**
 - **[Terraform](../tools/terraform.md)** → Infrastructure as Code
-- **[CLI](../tools/cli.md)** → Scripts et automatisation
+<!--- **[CLI](../tools/cli.md)** → Scripts et automatisation-->
 
 ### **Approfondir**
 - **[FAQ](../resources/faq.md)** → Questions fréquentes
@@ -148,4 +148,4 @@ Maintenant que vous maîtrisez les concepts d'Hikube, vous pouvez :
 
 ---
 
-**Recommandation :** Commencez par explorer les **[Services](../services/)** pour voir comment ces concepts s'appliquent concrètement à chaque composant d'Hikube. 
+**Recommandation :** Commencez par explorer les **[Services](../services/)** pour voir comment ces concepts s'appliquent concrètement à chaque composant d'Hikube.
