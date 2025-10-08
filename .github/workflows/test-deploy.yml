@@ -1,20 +1,19 @@
-name: Test deployment
+name: Deploy Preview
 
 on:
   pull_request:
-    branches:
-      - main
-    # Review gh actions docs if you want to further define triggers, paths, etc
-    # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#on
+    types: [opened, synchronize, reopened]
 
 jobs:
-  test-deploy:
-    name: Test deployment
+  build:
+    name: Build preview
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0
+
       - uses: actions/setup-node@v5
         with:
           node-version: 22
@@ -22,5 +21,31 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-      - name: Test build website
+
+      - name: Build website
         run: npm run build
+
+      - name: Upload Build Artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: build
+
+  deploy:
+    name: Deploy Preview
+    needs: build
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: preview
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages (Preview)
+        id: deployment
+        uses: actions/deploy-pages@v4
+        with:
+          preview: true
