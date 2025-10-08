@@ -226,7 +226,7 @@ restic -r s3:s3.example.org/mariadb-backups/database_name restore latest --targe
 ## Problèmes connus
 
 - Replication can't be finished with various errors
-- Replication can't be finished in case if binlog purged Until mariadbbackup is not used to bootstrap a node by mariadb-operator (this feature is not inmplemented yet), follow these manual steps to fix it: <https://github.com/mariadb-operator/mariadb-operator/issues/141#issuecomment-1804760231>
+- Replication can't be finished in case if binlog purged Until mariadbbackup is not used to bootstrap a node by mariadb-operator (this feature is not inmplemented yet), follow these manual steps to fix it: https://github.com/mariadb-operator/mariadb-operator/issues/141#issuecomment-1804760231
 - Corrupted indicies Sometimes some indecies can be corrupted on master replica, you can recover them from slave
 
 ```bash
