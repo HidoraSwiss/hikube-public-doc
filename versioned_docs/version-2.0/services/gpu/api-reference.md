@@ -209,6 +209,7 @@ spec:
 ### **Quand utiliser chaque approche**
 
 #### **VM GPU recommandée pour :**
+
 - Applications legacy non-containerisées
 - Besoin d'accès direct et complet au GPU
 - Développement et prototypage
@@ -216,6 +217,7 @@ spec:
 - Applications graphiques (rendu, CAO)
 
 #### **Kubernetes GPU recommandé pour :**
+
 - Applications containerisées
 - Workloads nécessitant du scaling automatique
 - Jobs parallèles et distribués
@@ -325,19 +327,22 @@ kubectl exec -it <pod-name> -- nvidia-smi --query-gpu=utilization.gpu,memory.use
 ## 💡 Bonnes Pratiques
 
 ### **Pour VM GPU :**
+
 - Utilisez `replicated` storage class pour la production
 - Dimensionnez le CPU/RAM selon le GPU (ratio 8-16 vCPU par GPU)
 - Installez les pilotes NVIDIA via cloud-init
 - Arrêtez les VMs quand inutilisées pour optimiser les coûts
 
 ### **Pour Kubernetes GPU :**
+
 - Configurez des resource limits appropriées
 - Utilisez nodeSelector ou nodeAffinity pour cibler des GPU spécifiques
 - Implémentez des PodDisruptionBudgets pour les workloads critiques
 - Surveillez l'utilisation GPU avec des métriques personnalisées
 
 ### **Générale :**
+
 - L40S pour inférence/développement
 - A100 pour entraînement ML standard  
 - H100 pour LLM et calcul exascale
-- Testez avec L40S avant de passer aux GPU plus coûteux 
+- Testez avec L40S avant de passer aux GPU plus coûteux

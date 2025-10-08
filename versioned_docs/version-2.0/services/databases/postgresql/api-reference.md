@@ -7,12 +7,14 @@ title: Référence API
 
 Cette référence détaille l’utilisation de **PostgreSQL** sur Hikube, en mettant en avant son fonctionnement en cluster répliqué avec un primary et des standby pour la haute disponibilité, ainsi que la possibilité d’activer des sauvegardes automatiques vers un stockage compatible S3.
 
---- 
+---
 
 ## Structure de Base
 
 ### **Ressource Postgres**
+
 #### Exemple de configuration YAML
+
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
 kind: Postgres
@@ -85,7 +87,6 @@ spec:
 | `databases[name].roles.readonly`      | `[]string`           | List of users with read-only privileges                                         | `[]`       | Non        |
 | `databases[name].extensions`          | `[]string`           | Extensions enabled for the database                                             | `[]`       | Non        |
 
-
 #### Exemple de configuration YAML
 
 ```yaml title="postgresql.yaml"
@@ -154,14 +155,13 @@ spec:
 | `backup.s3AccessKey`        | `string`  | Access key for S3, used for authentication              | `<your-access-key>`               | Oui        |
 | `backup.s3SecretKey`        | `string`  | Secret key for S3, used for authentication              | `<your-secret-key>`               | Oui        |
 
-
 Pour sauvegarder une base de données **PostgreSQL**, un stockage externe **compatible S3** est requis.  
 
 Pour activer les sauvegardes régulières :  
+
 1. Mettez à jour la configuration de votre application PostgreSQL.  
 2. Passez le paramètre `backup.enabled` à `true`.  
-3. Renseignez le chemin de destination ainsi que les identifiants dans les champs `backup.*`. 
-
+3. Renseignez le chemin de destination ainsi que les identifiants dans les champs `backup.*`.
 
 #### Exemple de configuration YAML
 
@@ -195,7 +195,8 @@ backup:
 Hikube en charge la **restauration à un instant donné (Point-In-Time Recovery - PITR)**.  
 La récupération s’effectue en créant une **nouvelle instance PostgreSQL** avec un nom différent, mais une configuration identique à celle de l’instance d’origine.  
 
-#### Étapes :  
+#### Étapes  
+
 1. Créez une nouvelle application PostgreSQL.  
 2. Donnez-lui un nom différent de l’instance d’origine.  
 3. Activez le paramètre `bootstrap.enabled`.  
@@ -220,6 +221,7 @@ Le champ `resources` permet de définir explicitement la configuration CPU et m�
 Si ce champ est laissé vide, la valeur du paramètre `resourcesPreset` est utilisée.  
 
 #### Exemple de configuration YAML
+
 ```yaml title="postgresql.yaml"
 resources:
   cpu: 4000m

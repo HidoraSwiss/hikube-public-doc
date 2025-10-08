@@ -63,17 +63,20 @@ flowchart TD
 ## ⚙️ Fonctionnalités
 
 ### **Node Groups**
+
 - **Types d'instances flexibles** : S1 (standard), U1 (universal), M1 (memory-optimized)
 - **Scaling automatique** : `minReplicas` et `maxReplicas` configurables
 - **Support GPU** : Attachment de GPU NVIDIA aux workers
 - **Roles spécialisés** : `ingress-nginx`, `monitoring`, etc.
 
 ### **Stockage Persistant**
+
 - **Classe de stockage** : `replicated` (réplication sur 3 datacenters)
 - **Provisioning dynamique** : Création automatique des volumes
 - **Haute disponibilité** : PVC répliqués automatiquement sur les 3 sites
 
 ### **Réseau et Exposition**
+
 - **Services LoadBalancer** : Exposition externe automatique via IP dédiée
 - **Ingress Controller** : NGINX intégré avec certificats automatiques
 - **Network Policies** : Micro-segmentation du trafic
@@ -83,21 +86,25 @@ flowchart TD
 ## 🔧 Add-ons Disponibles
 
 ### **Cert-Manager**
+
 - Gestion automatisée des certificats SSL/TLS
 - Support Let's Encrypt et autres CA
 - Renouvellement automatique
 
 ### **Ingress NGINX**
+
 - Contrôleur d'ingress haute performance
 - Support wildcard et SNI
 - Métriques Prometheus intégrées
 
 ### **Flux CD**
+
 - Déploiement GitOps
 - Synchronisation avec dépôts Git
 - Rollback automatique
 
 ### **Monitoring Agents**
+
 - FluentBit pour les logs
 - Node Exporter pour les métriques
 - Intégration avec stack monitoring du tenant
@@ -107,6 +114,7 @@ flowchart TD
 ## 📋 Cas d'Usage
 
 ### **Applications Web**
+
 ```yaml
 nodeGroups:
   web:
@@ -117,6 +125,7 @@ nodeGroups:
 ```
 
 ### **Workloads ML/AI**
+
 ```yaml
 nodeGroups:
   ml:
@@ -128,6 +137,7 @@ nodeGroups:
 ```
 
 ### **Applications Critiques**
+
 ```yaml
 nodeGroups:
   production:
@@ -152,4 +162,4 @@ nodeGroups:
 - **Workers dans votre tenant** : Contrôle complet des nœuds
 - **Scaling automatique** : Ajustement selon la demande
 - **Multi-datacenter** : Haute disponibilité native
-- **API Kubernetes standard** : Compatibilité complète 
+- **API Kubernetes standard** : Compatibilité complète

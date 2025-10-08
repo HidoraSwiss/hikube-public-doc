@@ -5,4 +5,4 @@ title: Référence API
 
 # Référence API Buckets
 
-<!-- TODO: Contenu à rédiger --> 
+<!-- TODO: Contenu à rédiger -->

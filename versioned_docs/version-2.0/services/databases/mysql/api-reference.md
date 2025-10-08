@@ -12,7 +12,9 @@ Cette référence détaille l’utilisation de **MySQL** sur Hikube, en mettant 
 ## Structure de Base
 
 ### **Ressource MySQL**
+
 #### Exemple de configuration YAML
+
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
 kind: MySQL
@@ -21,6 +23,7 @@ metadata:
   namespace: default
 spec:
 ```
+
 ---
 
 ## Paramètres
@@ -72,6 +75,7 @@ spec:
 | `databases[name].roles.readonly`  | `[]string`           | Liste des utilisateurs avec droits en lecture     | `[]`       | Non        |
 
 #### Exemple de configuration YAML
+
 ```yaml title="mysql.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
 kind: MySQL
@@ -119,8 +123,8 @@ spec:
 | `backup.s3SecretKey`     | `string`  | Clé secrète S3 (authentification)                      | `"<your-secret-key>"`                    | Oui        |
 | `backup.resticPassword`  | `string`  | Mot de passe utilisé pour le chiffrement Restic        | `"<password>"`                           | Oui        |
 
-
 #### Exemple de configuration YAML
+
 ```yaml title="mysql.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
 kind: MySQL
@@ -144,13 +148,13 @@ spec:
     resticPassword: "SuperStrongResticPassword!"
 ```
 
-
 ### resources et resourcesPreset  
 
 Le champ `resources` permet de définir explicitement la configuration CPU et mémoire de chaque réplique MySQL.  
 Si ce champ est laissé vide, la valeur du paramètre `resourcesPreset` est utilisée.  
 
 #### Exemple de configuration YAML
+
 ```yaml title="mysql.yaml"
 resources:
 cpu: 4000m
@@ -170,6 +174,7 @@ memory: 4Gi
 | `2xlarge`       | 8       | 8Gi         |
 
 ## Comment faire ?
+
 ### Basculer le rôle Primary dans un cluster MySQL/MariaDB
 
 Dans un cluster **MySQL/MariaDB managé**, un nœud est défini comme **primary** (gérant les écritures) et les autres comme **réplicas** (lecture).  
@@ -179,7 +184,8 @@ Il est parfois nécessaire de changer le rôle du primary, par exemple lors d’
 
 ```bash
 kubectl edit mariadb  mysql-example
-```   
+```
+
 Modifiez la section suivante pour désigner un nouveau primary :
 
 ```yaml
@@ -187,15 +193,16 @@ spec:
   replication:
     primary:
       podIndex: 1   # Indique l’index du pod à promouvoir en primary
-```      
+```
 
 2. **Vérifier l'état du cluster**  
+
 ```bash
 ➜  ~ kubectl get mariadb
 NAME            READY   STATUS    PRIMARY           UPDATES                    AGE
 mysql-example   True    Running   mysql-example-1   ReplicasFirstPrimaryLast   84m
 ➜  ~ 
-```   
+```
 
 ### ♻️ Restaurer une sauvegarde MariaDB/MySQL
 
@@ -203,12 +210,15 @@ Les sauvegardes sont gérées avec **Restic** et stockées dans un bucket S3-com
 La restauration permet de retrouver une base de données à partir d’un snapshot existant.
 
 ##### 1. Lister les snapshots disponibles
+
 Pour afficher toutes les sauvegardes stockées :  
+
 ```bash
 restic -r s3:s3.example.org/mariadb-backups/database_name snapshots
 ```
 
 ##### 2. Restaurer le dernier snapshot
+
 ```bash
 restic -r s3:s3.example.org/mariadb-backups/database_name restore latest --target /tmp/
 ```
@@ -216,7 +226,7 @@ restic -r s3:s3.example.org/mariadb-backups/database_name restore latest --targe
 ## Problèmes connus
 
 - Replication can't be finished with various errors
-- Replication can't be finished in case if binlog purged Until mariadbbackup is not used to bootstrap a node by mariadb-operator (this feature is not inmplemented yet), follow these manual steps to fix it: https://github.com/mariadb-operator/mariadb-operator/issues/141#issuecomment-1804760231
+- Replication can't be finished in case if binlog purged Until mariadbbackup is not used to bootstrap a node by mariadb-operator (this feature is not inmplemented yet), follow these manual steps to fix it: <https://github.com/mariadb-operator/mariadb-operator/issues/141#issuecomment-1804760231>
 - Corrupted indicies Sometimes some indecies can be corrupted on master replica, you can recover them from slave
 
 ```bash

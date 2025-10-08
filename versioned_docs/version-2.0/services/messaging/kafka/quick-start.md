@@ -5,4 +5,4 @@ title: Démarrage rapide
 
 # Déployer Kafka en 5 minutes
 
-<!-- TODO: Contenu à rédiger --> 
+<!-- TODO: Contenu à rédiger -->

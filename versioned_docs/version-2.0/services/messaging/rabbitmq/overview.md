@@ -5,4 +5,4 @@ title: Vue d'ensemble
 
 # RabbitMQ sur Hikube
 
-<!-- TODO: Contenu à rédiger --> 
+<!-- TODO: Contenu à rédiger -->

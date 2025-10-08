@@ -12,6 +12,7 @@ Ce guide vous accompagne dans le déploiement de votre première base de donnée
 ## Objectifs
 
 À la fin de ce guide, vous aurez :  
+
 - Une base de données **ClickHouse** déployée sur Hikube  
 - Une configuration initiale avec **shards** et **réplicas** adaptée à vos besoins  
 - Un utilisateur et un mot de passe pour vous connecter  
@@ -22,6 +23,7 @@ Ce guide vous accompagne dans le déploiement de votre première base de donnée
 ## Prérequis
 
 Avant de commencer, assurez-vous d'avoir :  
+
 - **kubectl** configuré avec votre kubeconfig Hikube  
 - **Droits administrateur** sur votre tenant  
 - Un **namespace** disponible pour héberger votre base de données  
@@ -33,7 +35,7 @@ Avant de commencer, assurez-vous d'avoir :
 
 ### **Préparez le fichier manifest**
 
-Créez un fichier `clickhouse.yaml` comme ci-dessous: 
+Créez un fichier `clickhouse.yaml` comme ci-dessous:
 
 ```yaml title="clickhouse.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
