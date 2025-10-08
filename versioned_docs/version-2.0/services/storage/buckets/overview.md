@@ -17,13 +17,13 @@ La plateforme fournit une alternative souveraine et performante à Amazon S3, av
 Les buckets Hikube reposent sur une architecture S3 **100 % distribuée et répliquée** sur plusieurs datacenters.  
 Contrairement aux volumes block utilisés pour les VMs, le stockage objet n’est pas attaché à une machine : il est accessible via des **APIs S3 standardisées** depuis n’importe quelle application ou service autorisé.
 
-**📦 Couche Stockage**
+#### 📦 Couche Stockage
 
 - Chaque bucket est hébergé sur une **infrastructure multi-nœuds** répartie entre plusieurs datacenters suisses  
 - Les objets sont **répliqués automatiquement** sur 3 zones physiques distinctes pour garantir une durabilité maximale  
 - Le système est conçu pour tolérer la panne d’un datacenter complet sans perte de données ni indisponibilité
 
-**🌐 Couche Accès**
+#### 🌐 Couche Accès
 
 - Les buckets sont accessibles via un **endpoint HTTPS unique** compatible avec la signature S3 v4  
 - L’accès est authentifié par des **Access Keys S3** générées automatiquement lors de la création du bucket  
