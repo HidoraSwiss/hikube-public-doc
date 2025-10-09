@@ -12,18 +12,22 @@ Hikube propose l'accès aux accélérateurs **NVIDIA** via GPU Passthrough, perm
 ## 🎯 Types d'Utilisation
 
 ### **GPU avec Machines Virtuelles**
+
 Les GPU peuvent être attachés directement aux machines virtuelles via GPU passthrough VFIO-PCI, offrant un accès complet et exclusif à l'accélérateur.
 
 **Cas d'usage :**
+
 - Applications nécessitant un contrôle complet du GPU
 - Workloads legacy ou spécialisés
 - Environnements de développement isolés
 - Applications graphiques (rendu, CAO)
 
 ### **GPU avec Kubernetes**
+
 Les GPU peuvent être alloués aux workers Kubernetes et ensuite assignés aux pods via les resource requests/limits.
 
 **Cas d'usage :**
+
 - Workloads containerisés d'IA/ML
 - Scaling automatique des applications GPU
 - Partage de ressources GPU entre applications
@@ -36,18 +40,21 @@ Les GPU peuvent être alloués aux workers Kubernetes et ensuite assignés aux p
 Hikube propose trois types de GPU NVIDIA :
 
 ### **NVIDIA L40S**
+
 - **Architecture** : Ada Lovelace
 - **Mémoire** : 48 GB GDDR6 avec ECC
 - **Performance** : 362 TOPS (INT8), 91.6 TFLOPs (FP32)
 - **Usage typique** : IA générative, inférence, rendu temps réel
 
 ### **NVIDIA A100**
+
 - **Architecture** : Ampere
 - **Mémoire** : 80 GB HBM2e avec ECC
 - **Performance** : 312 TOPS (INT8), 624 TFLOPs (Tensor)
 - **Usage typique** : Entraînement ML, calcul haute performance
 
 ### **NVIDIA H100**
+
 - **Architecture** : Hopper
 - **Mémoire** : 80 GB HBM3 avec ECC
 - **Performance** : 1979 TOPS (INT8), 989 TFLOPs (Tensor)
@@ -119,6 +126,7 @@ flowchart TD
 ## ⚙️ Configuration
 
 ### **GPU sur VM**
+
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
 kind: VirtualMachine
@@ -129,6 +137,7 @@ spec:
 ```
 
 ### **GPU sur Kubernetes Worker**
+
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
 kind: Kubernetes
@@ -141,6 +150,7 @@ spec:
 ```
 
 ### **GPU dans Pod Kubernetes**
+
 ```yaml
 apiVersion: v1
 kind: Pod
@@ -171,10 +181,11 @@ spec:
 ## 🚀 Prochaines Étapes
 
 ### **Pour les Machines Virtuelles**
+
 - [Créer une VM GPU](./quick-start.md) → Guide pratique
 - [API Reference](./api-reference.md) → Configuration complète
 
 ### **Pour Kubernetes**
+
 - [Clusters GPU](../kubernetes/overview.md) → Workers avec GPU
   - [Configuration avancée](../kubernetes/api-reference.md) → NodeGroups GPU
- 

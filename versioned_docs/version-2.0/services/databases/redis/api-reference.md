@@ -15,7 +15,9 @@ Le service s’appuie sur l’opérateur **[Spotahome Redis Operator](https://gi
 ## Structure de Base
 
 ### **Ressource Redis**
+
 #### Exemple de configuration YAML
+
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
 kind: Redis
@@ -30,6 +32,7 @@ spec:
 ## Paramètres
 
 ### **Paramètres Communs**
+
 | **Paramètre**     | **Type**   | **Description**                                                                 | **Valeur par défaut** | **Requis** |
 |--------------------|------------|---------------------------------------------------------------------------------|------------------------|------------|
 | `replicas`         | `int`      | Nombre de réplicas Redis (instances dans le cluster)                            | `2`                    | Oui        |
@@ -41,7 +44,6 @@ spec:
 | `storageClass`     | `string`   | Classe de stockage utilisée                                                     | `""`                   | Non        |
 | `external`         | `bool`     | Activer l’accès externe au cluster (LoadBalancer)                               | `false`                | Non        |
 | `authEnabled`      | `bool`     | Activer l’authentification par mot de passe (stockée dans un Secret Kubernetes) | `true`                 | Non        |
-
 
 #### Exemple de configuration YAML
 
@@ -80,7 +82,6 @@ spec:
 |------------------|----------|----------------------------------|------------------------|------------|
 | `authEnabled`    | `bool`   | Active la génération d’un mot de passe (stocké dans un Secret Kubernetes) | `true` | Non |
 
-
 #### Exemple de configuration YAML
 
 ```yaml title="redis.yaml"
@@ -109,6 +110,7 @@ Le champ `resources` permet de définir explicitement la configuration CPU et m�
 Si ce champ est laissé vide, la valeur du paramètre `resourcesPreset` est utilisée.  
 
 #### Exemple de configuration YAML
+
 ```yaml title="redis.yaml"
 resources:
   cpu: 4000m

@@ -8,9 +8,11 @@ title: Démarrage rapide
 Ce guide vous accompagne dans le déploiement de votre première base de données **PostgreSQL** sur Hikube, depuis l’installation jusqu’à la première connexion.
 
 ---
+
 ## Objectifs
 
 À la fin de ce guide, vous aurez :  
+
 - Une base de données **PostgreSQL** déployée sur Hikube  
 - Un cluster répliqué avec un **primary** et des **réplicas** pour assurer la haute disponibilité  
 - Un utilisateur et un mot de passe pour vous connecter  
@@ -21,6 +23,7 @@ Ce guide vous accompagne dans le déploiement de votre première base de donnée
 ## Prérequis
 
 Avant de commencer, assurez-vous d'avoir :  
+
 - **kubectl** configuré avec votre kubeconfig Hikube  
 - **Droits administrateur** sur votre tenant  
 - Un **namespace** disponible pour héberger votre base de données  
@@ -32,7 +35,7 @@ Avant de commencer, assurez-vous d'avoir :
 
 ### **Préparez le fichier manifest**
 
-Créez un fichier `postgresql.yaml` comme ci-dessous: 
+Créez un fichier `postgresql.yaml` comme ci-dessous:
 
 ```yaml title="postgresql.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -170,6 +173,7 @@ myapp=> \du
 
 myapp=> 
 ```
+
 ---
 
 ## 📋 Résumé

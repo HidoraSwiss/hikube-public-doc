@@ -8,6 +8,7 @@ title: Vue d'ensemble
 Les **bases de données ClickHouse** d’Hikube offrent un système de gestion SQL open source, haute performance et orienté colonnes, conçu pour le traitement analytique en ligne (OLAP). Elles garantissent l’ingestion rapide de données massives, l’exécution de requêtes complexes en temps quasi réel et la fiabilité nécessaire aux applications analytiques critiques des entreprises.
 
 ---
+
 ## 🏗️ Architecture et Fonctionnement
 
 L’architecture de ClickHouse repose sur deux paramètres essentiels qui permettent d’adapter le déploiement aux besoins réels :  
@@ -16,6 +17,7 @@ L’architecture de ClickHouse repose sur deux paramètres essentiels qui permet
 - **Réplicas** → ils créent des **copies redondantes** des shards. Cela augmente la résilience et la tolérance aux pannes, tout en permettant de répartir la charge de lecture entre plusieurs nœuds.  
 
 ### 🔎 Exemple illustratif
+
 Imaginons une base de **1 milliard d’enregistrements clients** :  
 
 - **1 shard – 1 réplica**  

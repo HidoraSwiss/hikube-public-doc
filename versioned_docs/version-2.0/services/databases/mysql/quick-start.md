@@ -8,9 +8,11 @@ title: Démarrage rapide
 Ce guide vous accompagne dans le déploiement de votre première base de données **MySQL** sur Hikube, depuis l’installation jusqu’à la première connexion.
 
 ---
+
 ## Objectifs
 
 À la fin de ce guide, vous aurez :  
+
 - Une base de données **MySQL** opérationnelle sur Hikube  
 - Un cluster répliqué avec un **primary** et des **réplicas** pour assurer la haute disponibilité  
 - Des **utilisateurs et mots de passe** pour accéder à vos applications  
@@ -18,9 +20,11 @@ Ce guide vous accompagne dans le déploiement de votre première base de donnée
 - (Optionnel) La possibilité d’activer des **sauvegardes automatiques** vers un stockage compatible S3  
 
 ---
+
 ## Prérequis
 
 Avant de commencer, assurez-vous d'avoir :  
+
 - **kubectl** configuré avec votre kubeconfig Hikube  
 - **Droits administrateur** sur votre tenant  
 - Un **namespace** disponible pour héberger votre base de données  
@@ -32,7 +36,7 @@ Avant de commencer, assurez-vous d'avoir :
 
 ### **Préparez le fichier manifest**
 
-Créez un fichier `mysql.yaml` comme ci-dessous: 
+Créez un fichier `mysql.yaml` comme ci-dessous:
 
 ```yaml title="mysql.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -139,6 +143,7 @@ mysql> show databases;
 
 mysql> 
 ```
+
 ## 📋 Résumé
 
 Vous avez déployé :  
@@ -149,4 +154,3 @@ Vous avez déployé :
 - Un stockage persistant (PVC) dédié à chaque pod MySQL pour garantir la durabilité des données  
 - Un accès sécurisé via le client `mysql` (port-forward ou LoadBalancer)  
 - La possibilité de configurer des **sauvegardes S3** et de restaurer en cas de besoin  
-

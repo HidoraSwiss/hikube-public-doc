@@ -223,6 +223,7 @@ gpus:
 ## ✅ Vérifications Post-Déploiement
 
 ### **VM GPU**
+
 ```bash
 # Vérifier le GPU
 virtctl ssh ubuntu@vm-gpu-example -- nvidia-smi
@@ -232,6 +233,7 @@ virtctl ssh ubuntu@vm-gpu-example -- nvcc --version
 ```
 
 ### **Kubernetes GPU**
+
 ```bash
 # Voir les ressources GPU disponibles
 kubectl describe nodes
@@ -245,10 +247,12 @@ kubectl top nodes
 ## 🚀 Prochaines Étapes
 
 ### **Pour approfondir VM GPU :**
+
 - [Configuration avancée VM](./api-reference.md)
 - [Types d'instances optimisées](../compute/api-reference.md)
 
 ### **Pour approfondir Kubernetes GPU :**
+
 - [Clusters avec GPU](../kubernetes/api-reference.md)
 - [Scaling automatique](../kubernetes/overview.md)
 
@@ -259,4 +263,4 @@ kubectl top nodes
 - **VM GPU** : Idéal pour prototypage et applications legacy
 - **Kubernetes GPU** : Recommandé pour workloads de production scalables
 - Commencez par **L40S** pour tester avant d'utiliser A100/H100
-- Utilisez `replicated` storage class pour la production 
+- Utilisez `replicated` storage class pour la production

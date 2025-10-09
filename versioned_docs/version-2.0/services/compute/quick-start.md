@@ -12,6 +12,7 @@ Ce guide vous accompagne dans la création de votre première machine virtuelle 
 ## Objectif
 
 À la fin de ce guide, vous aurez :
+
 - Une machine virtuelle Ubuntu fonctionnelle
 - Accès SSH configuré
 - Connectivité réseau opérationnelle
@@ -22,6 +23,7 @@ Ce guide vous accompagne dans la création de votre première machine virtuelle 
 ## Prérequis
 
 Avant de commencer, assurez-vous d'avoir :
+
 - **kubectl** configuré avec votre kubeconfig Hikube
 - **Droits administrateur** sur votre tenant
 
@@ -58,6 +60,7 @@ kubectl get vmdisk disk-example -w
 ```
 
 **Résultat attendu :**
+
 ```
 NAME          STATUS   SIZE   STORAGECLASS   AGE
 disk-example  Ready    20Gi   replicated     90s
@@ -131,18 +134,21 @@ kubectl get vminstance vm-example -w
 Hikube propose deux méthodes d'exposition externe, chacune avec ses spécificités :
 
 #### **PortList (Recommandé)**
+
 - **Firewall contrôlé** : Seuls les ports spécifiés dans `externalPorts` sont accessibles
 - **Sécurité renforcée** : Protection automatique contre les accès non autorisés
 - **Usage** : Production, environnements sécurisés
 - **Configuration** : `externalMethod: PortList` + `externalPorts: [22, 80, 443]`
 
 #### **WholeIP**
+
 - **Accès complet** : Tous les ports de la VM sont directement accessibles
 - **Pas de firewall** : Aucune protection au niveau réseau configurée via le service
 - **Usage** : Développement, accès administratif complet
 - **Configuration** : `externalMethod: WholeIP` (pas besoin d'`externalPorts`)
 
 :::tip Choix de la Méthode
+
 - **Production/Sécurisé** → `PortList` avec ports spécifiques
 - **Développement/Debug** → `WholeIP` pour un accès complet
 :::
@@ -169,6 +175,7 @@ virtctl version
 ### **Méthodes d'accès**
 
 #### **Option 1 : SSH Direct**
+
 ```bash
 # SSH via virtctl (avec clé personnalisée)
 virtctl ssh -i ~/.ssh/hikube-vm ubuntu@vm-example
@@ -177,23 +184,27 @@ ssh -i ~/.ssh/hikube-vm ubuntu@public-ip
 ```
 
 #### **Option 2 : Console Série (toujours disponible)**
+
 ```bash
 # Accès console directe
 virtctl console vm-example
 ```
 
 #### **Option 3 : Interface VNC**
+
 ```bash
 # Accès graphique
 virtctl vnc vm-example
 ```
+
 ---
 
-## 🎉 Félicitations ! 
+## 🎉 Félicitations
 
 Votre machine virtuelle Hikube est **opérationnelle** !
 
 ### **Ce que vous avez accompli :**
+
 - **VM Ubuntu** déployée avec 4 vCPU / 16 GB RAM
 - **Stockage persistant** de 20 GB répliqué
 - **Accès SSH** sécurisé configuré
@@ -235,6 +246,7 @@ La suppression des VMs et disques est **irréversible**. Assurez-vous d'avoir sa
 ---
 
 **💡 Points Clés à Retenir :**
+
 - Vos **données sont toujours sûres** grâce à la réplication 3 datacenters
 - Votre VM peut être **relocalisée automatiquement** en cas de panne nœud
-- L'**isolation totale** garantit la sécurité entre tenants 
+- L'**isolation totale** garantit la sécurité entre tenants

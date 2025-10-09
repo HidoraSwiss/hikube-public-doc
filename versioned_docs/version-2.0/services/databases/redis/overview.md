@@ -9,11 +9,14 @@ Hikube propose un service **Redis managé**, basé sur l’opérateur **[Spotaho
 La plateforme prend en charge le déploiement et la gestion d’un cluster Redis **répliqué et auto-réparant**, s’appuyant sur **Redis Sentinel** pour assurer la détection des pannes et l’auto-failover.  
 Ce service garantit rapidité, faible latence et haute disponibilité, sans effort côté utilisateur.  
 
---- 
+---
+
 ## Structure de Base
 
 ### **Ressource Redis**
+
 #### Exemple de configuration YAML
+
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
 kind: Redis
@@ -34,6 +37,7 @@ Le service Redis managé sur Hikube est conçu pour offrir **haute disponibilit�
 - **Redis Sentinel** surveille en permanence l’état du cluster, détecte les pannes et peut promouvoir automatiquement un replica en nouveau master (**auto-failover**).  
 
 Cette combinaison garantit :  
+
 - **Disponibilité continue** même en cas de panne du master  
 - **Performances élevées** avec la répartition des lectures entre replicas  
 - **Simplicité opérationnelle**, la gestion étant automatisée par la plateforme et l’opérateur Spotahome  
@@ -64,7 +68,6 @@ graph TD
     S2 -.->|Surveillance + Auto-failover| R1
     S3 -.->|Surveillance + Auto-failover| R2
 ```
-
 
 ## 🎯 Cas d’usage
 

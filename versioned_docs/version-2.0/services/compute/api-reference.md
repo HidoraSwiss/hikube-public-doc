@@ -13,7 +13,7 @@ Cette référence complète détaille les APIs **VMInstance** et **VMDisk** d'Hi
 
 ### **Vue d'ensemble**
 
-L'API `VMInstance` permet de créer et gérer des machines virtuelles dans Hikube. 
+L'API `VMInstance` permet de créer et gérer des machines virtuelles dans Hikube.
 
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
@@ -57,6 +57,7 @@ spec:
 #### **Types d'Instances**
 
 ##### **Série S (Standard) - Ratio 1:2**
+
 Optimisée pour workloads généraux avec CPU partagé et burstable.
 
 ```yaml
@@ -73,6 +74,7 @@ instanceType: "s1.8xlarge"   # 64 vCPU, 128 GB RAM
 ```
 
 ##### **Série U (Universal) - Ratio 1:4**
+
 Optimisée pour workloads généraux avec CPU partagé et burstable.
 
 ```yaml
@@ -86,6 +88,7 @@ instanceType: "u1.8xlarge"  # 32 vCPU, 128 GB RAM
 ```
 
 ##### **Série M (Memory Optimized) - Ratio 1:8**
+
 Optimisée pour applications nécessitant beaucoup de mémoire.
 
 ```yaml
@@ -242,6 +245,7 @@ spec:
 #### **Sources d'Images**
 
 ##### **Source HTTP/HTTPS**
+
 ```yaml
 spec:
   source:
@@ -250,6 +254,7 @@ spec:
 ```
 
 ##### **Disque Vide**
+
 ```yaml
 spec:
   source: {}  # Crée un disque vide
@@ -258,6 +263,7 @@ spec:
 ### **Exemples VMDisk**
 
 #### **Disque Système Ubuntu**
+
 ```yaml title="ubuntu-disk.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
 kind: VMDisk
@@ -273,6 +279,7 @@ spec:
 ```
 
 #### **Disque de Données**
+
 ```yaml title="data-disk.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
 kind: VMDisk
@@ -286,6 +293,7 @@ spec:
 ```
 
 #### **ISO d'Installation**
+
 ```yaml title="ubuntu-iso.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
 kind: VMDisk
@@ -300,15 +308,13 @@ spec:
   storageClass: "replicated"
 ```
 
-
-
 ---
 
 ## Gestion des Ressources
 
 ### **Classes de Stockage**
 
-| **Classe** | **Description** | **Réplication** | 
+| **Classe** | **Description** | **Réplication** |
 |------------|-----------------|-----------------|
 | `local` | Stockage local sur le nœud | ❌ |
 | `replicated` | Stockage répliqué 3x | ✅ |
@@ -322,13 +328,15 @@ spec:
 
 #### **Détails des Méthodes**
 
-**PortList**
+##### PortList
+
 - **Sécurité** : Firewall automatique - seuls les ports dans `externalPorts` sont accessibles
 - **Configuration** : Requiert `externalPorts` pour spécifier les ports autorisés
 - **Usage recommandé** : Production, environnements sécurisés, applications web
 - **Exemple** : `externalMethod: PortList` + `externalPorts: [22, 80, 443]`
 
-**WholeIP**  
+##### WholeIP
+
 - **Sécurité** : Aucune protection - tous les ports TCP/UDP sont accessibles depuis Internet
 - **Configuration** : `externalPorts` ignoré et inutile (tous les ports sont ouverts)
 - **Usage recommandé** : Développement, debug, accès administratif complet
@@ -413,25 +421,30 @@ spec:
       - ufw allow https
       - ufw --force enable
 ```
+
 ---
 
 ## ⚠️ Bonnes Pratiques
 
 ### **Sécurité**
+
 - Utilisez toujours des **clés SSH** plutôt que des mots de passe
 - Activez le **firewall UFW** avec règles restrictives par défaut
 
 ### **Stockage**
+
 - Utilisez `replicated` pour les **environnements de production**
 - Prévoyez de l'espace supplémentaire pour les **logs et données temporaires**
 - Configurez des **snapshots réguliers** pour les sauvegardes
 
 ### **Performance**
+
 - Choisissez le **type d'instance approprié** selon votre workload
 - Surveillez l'utilisation via `kubectl top pod`
 - Adaptez les ressources selon les besoins réels
 
 ### **Monitoring**
+
 - Surveillez les métriques des VMs via Kubernetes
 - Gardez un historique des performances pour l'optimisation
 
@@ -440,6 +453,3 @@ spec:
 :::tip Architecture Recommandée
 Pour la production, utilisez au minimum 2 disques séparés (système + données) avec la classe `replicated` pour garantir la haute disponibilité.
 :::
-
-
-

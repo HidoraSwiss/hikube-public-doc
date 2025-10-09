@@ -92,6 +92,7 @@ spec:
 #### **Types d'Instances Disponibles**
 
 ##### **Série S (Standard) - Ratio 1:2**
+
 Optimisée pour workloads généraux avec CPU partagé et burstable.
 
 ```yaml
@@ -108,6 +109,7 @@ instanceType: "s1.8xlarge"   # 64 vCPU, 128 GB RAM
 ```
 
 ##### **Série U (Universal) - Ratio 1:4**
+
 Optimisée pour workloads équilibrés avec plus de mémoire.
 
 ```yaml
@@ -121,6 +123,7 @@ instanceType: "u1.8xlarge"   # 32 vCPU, 128 GB RAM
 ```
 
 ##### **Série M (Memory Optimized) - Ratio 1:8**
+
 Optimisée pour applications nécessitant beaucoup de mémoire.
 
 ```yaml
@@ -151,6 +154,7 @@ instanceType: "m1.8xlarge"   # 32 vCPU, 256 GB RAM
 ### **Exemples de Node Groups**
 
 #### **Node Group Général**
+
 ```yaml
 nodeGroups:
   general:
@@ -163,6 +167,7 @@ nodeGroups:
 ```
 
 #### **Node Group Compute Intensif**
+
 ```yaml
 nodeGroups:
   compute:
@@ -174,6 +179,7 @@ nodeGroups:
 ```
 
 #### **Node Group Memory Optimized**
+
 ```yaml
 nodeGroups:
   memory-intensive:
@@ -750,6 +756,7 @@ kubectl logs -n kubevirt -l kubevirt.io=virt-controller
 ---
 
 :::tip 💡 Bonnes Pratiques
+
 - **Utilisez des labels** pour organiser vos clusters par environnement
 - **Configurez RBAC** dès la création pour sécuriser l'accès
 - **Activez le monitoring** pour une observabilité complète
@@ -758,6 +765,7 @@ kubectl logs -n kubevirt -l kubevirt.io=virt-controller
 :::
 
 :::warning ⚠️ Attention
+
 - **Les suppressions sont irréversibles** - pensez aux sauvegardes
 - **Les mises à jour** peuvent avoir un impact sur les workloads
 - **Vérifiez la compatibilité** des add-ons avec les versions Kubernetes
@@ -766,6 +774,7 @@ kubectl logs -n kubevirt -l kubevirt.io=virt-controller
 ---
 
 **📚 Ressources Additionnelles :**
+
 - [Documentation Kubernetes officielle](https://kubernetes.io/docs/)
 - [Cluster API Book](https://cluster-api.sigs.k8s.io/)
-- [Kamaji Documentation](https://github.com/clastix/kamaji) 
+- [Kamaji Documentation](https://github.com/clastix/kamaji)
