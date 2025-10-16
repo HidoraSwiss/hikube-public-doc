@@ -45,6 +45,12 @@ const config = {
         docs: {
           routeBasePath: '/', // Set this value to '/'.
           sidebarPath: './sidebars.js',
+          redirects: [
+            {
+              from: ['/'],
+              to: '/get-started/',
+            },
+          ],
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
