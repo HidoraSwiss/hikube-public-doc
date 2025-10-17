@@ -1,5 +1,5 @@
 ---
-sidebar_position: 2
+sidebar_position: 5
 title: Démarrage rapide
 ---
 
@@ -35,7 +35,7 @@ spec:
   # Configuration du plan de contrôle
   controlPlane:
     replicas: 2  # Haute disponibilité
-  
+
   # Configuration des nœuds workers
   nodeGroups:
     general:
@@ -45,10 +45,10 @@ spec:
       ephemeralStorage: 50Gi
       roles:
         - ingress-nginx           # Support Ingress
-  
+
   # Classe de stockage par défaut
   storageClass: "replicated"
-  
+
   # Add-ons essentiels activés
   addons:
     certManager:
@@ -370,4 +370,4 @@ Vous avez créé :
 
 ---
 
-**💡 Conseil Pro :** Gardez votre fichier `kubeconfig` en sécurité et pensez à configurer RBAC pour contrôler l'accès à votre cluster selon vos équipes et environnements. 
+**💡 Conseil Pro :** Gardez votre fichier `kubeconfig` en sécurité et pensez à configurer RBAC pour contrôler l'accès à votre cluster selon vos équipes et environnements.

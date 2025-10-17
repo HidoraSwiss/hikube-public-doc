@@ -113,7 +113,7 @@ Optimisée pour workloads équilibrés avec plus de mémoire.
 ```yaml
 # Instances disponibles
 instanceType: "u1.medium"    # 1 vCPU, 4 GB RAM
-instanceType: "u1.large"     # 2 vCPU, 8 GB RAM  
+instanceType: "u1.large"     # 2 vCPU, 8 GB RAM
 instanceType: "u1.xlarge"    # 4 vCPU, 16 GB RAM
 instanceType: "u1.2xlarge"   # 8 vCPU, 32 GB RAM
 instanceType: "u1.4xlarge"   # 16 vCPU, 64 GB RAM
@@ -262,7 +262,7 @@ spec:
         controller:
           # Réplication pour haute disponibilité
           replicaCount: 3
-          
+
           # Configuration des ressources
           resources:
             requests:
@@ -271,24 +271,24 @@ spec:
             limits:
               cpu: 500m
               memory: 500Mi
-          
+
           # Configuration du service LoadBalancer
           service:
             type: LoadBalancer
             annotations:
               service.beta.kubernetes.io/aws-load-balancer-type: nlb
-          
+
           # Métriques
           metrics:
             enabled: true
             serviceMonitor:
               enabled: true
-          
+
           # Configuration SSL
           config:
             ssl-protocols: "TLSv1.2 TLSv1.3"
             ssl-ciphers: "ECDHE-ECDSA-AES128-GCM-SHA256,ECDHE-RSA-AES128-GCM-SHA256"
-            
+
           # Logging
           enableSnippets: true
 ```
@@ -327,8 +327,8 @@ spec:
             limits:
               cpu: 1000m
               memory: 1Gi
-        
-        # Kustomize Controller  
+
+        # Kustomize Controller
         kustomizeController:
           resources:
             requests:
@@ -337,7 +337,7 @@ spec:
             limits:
               cpu: 1000m
               memory: 1Gi
-        
+
         # Helm Controller
         helmController:
           resources:
@@ -347,7 +347,7 @@ spec:
             limits:
               cpu: 1000m
               memory: 1Gi
-        
+
         # Notification Controller
         notificationController:
           resources:
@@ -420,7 +420,7 @@ spec:
                   Match *
                   Host  logs.company.com
                   Port  24224
-        
+
         # Node Exporter pour les métriques système
         nodeExporter:
           enabled: true
@@ -453,11 +453,11 @@ spec:
   # Configuration cluster
   host: "k8s-prod.company.com"
   storageClass: "replicated"
-  
+
   # Plan de contrôle haute disponibilité
   controlPlane:
     replicas: 3
-  
+
   # Node groups spécialisés
   nodeGroups:
     # Nœuds généraux avec Ingress
@@ -468,7 +468,7 @@ spec:
       ephemeralStorage: 50Gi
       roles:
         - ingress-nginx
-    
+
     # Nœuds compute pour workloads intensifs
     compute:
       minReplicas: 1
@@ -476,7 +476,7 @@ spec:
       instanceType: "u1.4xlarge"  # 16 vCPU, 64 GB RAM
       ephemeralStorage: 100Gi
       roles: []
-    
+
     # Nœuds monitoring dédiés
     monitoring:
       minReplicas: 2
@@ -485,7 +485,7 @@ spec:
       ephemeralStorage: 200Gi
       roles:
         - monitoring
-  
+
   # Add-ons complets
   addons:
     # Certificats SSL automatiques
@@ -494,7 +494,7 @@ spec:
       valuesOverride:
         prometheus:
           enabled: true
-    
+
     # Exposition HTTP/HTTPS
     ingressNginx:
       enabled: true
@@ -509,7 +509,7 @@ spec:
             requests:
               cpu: 200m
               memory: 256Mi
-    
+
     # GitOps pour déploiements
     fluxcd:
       enabled: true
@@ -517,7 +517,7 @@ spec:
         gitRepository:
           url: "https://github.com/company/k8s-production"
           branch: "main"
-    
+
     # Monitoring complet
     monitoringAgents:
       enabled: true
@@ -541,11 +541,11 @@ spec:
   # Configuration basique
   host: "k8s-dev.company.local"
   storageClass: "replicated"
-  
+
   # Plan de contrôle minimal
   controlPlane:
     replicas: 1  # Économie de ressources
-  
+
   # Node group unique polyvalent
   nodeGroups:
     general:
@@ -555,12 +555,12 @@ spec:
       ephemeralStorage: 30Gi
       roles:
         - ingress-nginx
-  
+
   # Add-ons essentiels uniquement
   addons:
     certManager:
       enabled: true
-    
+
     ingressNginx:
       enabled: true
       hosts:
@@ -584,10 +584,10 @@ metadata:
 spec:
   host: "k8s-ai.company.com"
   storageClass: "fast-ssd"  # Stockage haute performance
-  
+
   controlPlane:
     replicas: 2
-  
+
   nodeGroups:
     # Nœuds standard pour orchestration
     system:
@@ -597,7 +597,7 @@ spec:
       ephemeralStorage: 50Gi
       roles:
         - ingress-nginx
-    
+
     # Nœuds GPU pour ML workloads
     gpu:
       minReplicas: 0      # Scaling à zéro possible
@@ -605,11 +605,11 @@ spec:
       instanceType: "u1.2xlarge"  # Instance avec GPU
       ephemeralStorage: 500Gi      # Stockage important pour datasets
       roles: []
-  
+
   addons:
     certManager:
       enabled: true
-    
+
     monitoringAgents:
       enabled: true
       valuesOverride:
@@ -768,4 +768,4 @@ kubectl logs -n kubevirt -l kubevirt.io=virt-controller
 **📚 Ressources Additionnelles :**
 - [Documentation Kubernetes officielle](https://kubernetes.io/docs/)
 - [Cluster API Book](https://cluster-api.sigs.k8s.io/)
-- [Kamaji Documentation](https://github.com/clastix/kamaji) 
+- [Kamaji Documentation](https://github.com/clastix/kamaji)

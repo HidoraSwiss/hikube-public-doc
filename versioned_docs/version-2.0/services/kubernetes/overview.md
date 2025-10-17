@@ -3,9 +3,51 @@ sidebar_position: 1
 title: Vue d'ensemble
 ---
 
+<!--- Présentation du Kubernetes Managé sur Hikube
+- Schéma architecture (parlé de la réplication, des controls plane, workers, infra, addons, versionning k8s)
+- Composition des différents éléments de configuration du k8s géré
+- Explication du fonctionnement :
+  - control plane
+  - worker/nodeGroup
+    - Exemple
+  - storageclass
+  - versionning
+  - addons
+- Addons
+  cilium      <Object> -required-
+    valuesOverride    <Object> -required-
+  coredns     <Object> -required-
+    valuesOverride    <Object> -required-
+  gatewayAPI  <Object> -required-
+    enabled   <boolean> -required-
+  verticalPodAutoscaler       <Object> -required-
+    valuesOverride    <Object> -required-
+  ingressNginx        <Object> -required-
+    enabled   <boolean> -required-
+    exposeMethod      <string> -required-
+    enum: Proxied, LoadBalancer
+    hosts     <[]string>
+    valuesOverride    <Object> -required-
+  certManager <Object> -required-
+    enabled   <boolean> -required-
+    valuesOverride    <Object> -required-
+  gpuOperator <Object> -required-
+    enabled   <boolean> -required-
+    valuesOverride    <Object> -required-
+  fluxcd      <Object> -required-
+    enabled   <boolean> -required-
+    valuesOverride    <Object> -required-
+  velero      <Object> -required-
+    enabled   <boolean> -required-
+    valuesOverride    <Object> -required-
+  monitoringAgents    <Object> -required-
+    enabled   <boolean> -required-
+    valuesOverride    <Object> -required--->
+
 # Kubernetes Managé sur Hikube
 
-Hikube propose des clusters Kubernetes managés où le plan de contrôle est géré par la plateforme et les nœuds workers sont des machines virtuelles dans votre tenant.
+Hikube propose des clusters Kubernetes managés où le plan de contrôle est
+géré par la plateforme et les nœuds workers sont des machines virtuelles dans votre tenant.
 
 ---
 
@@ -30,29 +72,29 @@ flowchart TD
         PVC1["PVC Replicas"]
         WN1["Worker Nodes"]
     end
-    
+
     subgraph DC2["🏢 Lucerne"]
         CP2["Control Plane 2"]
         ETCD2["etcd Cluster"]
         PVC2["PVC Replicas"]
         WN2["Worker Nodes"]
     end
-    
+
     subgraph DC3["🏢 Gland"]
         CP3["Control Plane 3"]
         ETCD3["etcd Cluster"]
         PVC3["PVC Replicas"]
         WN3["Worker Nodes"]
     end
-    
+
     ETCD1 <-.-> ETCD2
     ETCD2 <-.-> ETCD3
     ETCD3 <-.-> ETCD1
-    
+
     PVC1 <-.-> PVC2
     PVC2 <-.-> PVC3
     PVC3 <-.-> PVC1
-    
+
     style DC1 fill:#e3f2fd
     style DC2 fill:#f3e5f5
     style DC3 fill:#e8f5e8
@@ -152,4 +194,4 @@ nodeGroups:
 - **Workers dans votre tenant** : Contrôle complet des nœuds
 - **Scaling automatique** : Ajustement selon la demande
 - **Multi-datacenter** : Haute disponibilité native
-- **API Kubernetes standard** : Compatibilité complète 
+- **API Kubernetes standard** : Compatibilité complète
