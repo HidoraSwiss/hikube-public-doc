@@ -54,12 +54,12 @@ const config = {
           lastVersion: '2.0',
           versions: {
             '1.0': {
-              label: '1.0.0 (Legacy)',
+              label: '1.0.0',
               path: '/1.0',
               banner: 'unmaintained',
             },
             '2.0': {
-              label: '2.0.0 (Stable)',
+              label: '2.0.1',
               path: '/',
               banner: 'none',
             },
