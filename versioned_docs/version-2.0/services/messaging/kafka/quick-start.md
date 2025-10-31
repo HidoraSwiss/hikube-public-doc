@@ -115,12 +115,12 @@ Puis testez la communication :
 
 ```bash
 # Envoyer un message
-kafkacat -b localhost:9092 -t default -P
+kafkacat -b localhost:9092 -t my-topic -P
 Hello Hikube!
 Ctrl+D
 
 # Consommer le message
-kafkacat -b localhost:9092 -t default -C -o beginning
+kafkacat -b localhost:9092 -t my-topic -C -o beginning
 Hello Hikube!
 ```
 
