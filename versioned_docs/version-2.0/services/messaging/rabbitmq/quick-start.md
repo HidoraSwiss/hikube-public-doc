@@ -45,7 +45,7 @@ metadata:
   namespace: tenant-damien
 spec:
   replicas: 3
-  resourcesPreset: small
+  resourcesPreset: large
   size: 10Gi
   storageClass: replicated
   users:
@@ -100,11 +100,11 @@ kubectl port-forward svc/rabbitmq-rabbitmq 15672:15672
 Puis accédez à l’interface via votre navigateur :
 👉 [http://localhost:15672](http://localhost:15672)
 
-Connectez-vous avec :
+Connectez-vous avec en recuperant le default user:
 
-* **Utilisateur :** `admin`
-* **Mot de passe :** `strongpassword`
-
+```bash
+kubectl get secret rabbitmq-rabbitmq-default-user -o jsonpath='{.data}' | jq -r 'to_entries[] | "\(.key): \(.value | @base64d)"'
+```
 ---
 
 ## Étape 4 : Tester la messagerie
@@ -130,18 +130,29 @@ Créez un fichier `test_rabbitmq.py` :
 ```python
 import pika
 
-connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+# Identifiants définis dans ta CR RabbitMQ
+credentials = pika.PlainCredentials('admin', 'strongpassword')
+
+# Connexion au service RabbitMQ du cluster CozyStack
+parameters = pika.ConnectionParameters(
+    host='localhost',  # Nom DNS Kubernetes
+    port=5672,
+    virtual_host='default',  # correspond à ton vhost
+    credentials=credentials
+)
+
+# Connexion
+connection = pika.BlockingConnection(parameters)
 channel = connection.channel()
 
+# Création d’une queue "test"
 channel.queue_declare(queue='test')
-channel.basic_publish(exchange='', routing_key='test', body='Hello Hikube!')
-print("Message envoyé : Hello Hikube!")
 
-method_frame, header_frame, body = channel.basic_get('test')
-if method_frame:
-    print(f"Message reçu : {body.decode()}")
-    channel.basic_ack(method_frame.delivery_tag)
+# Envoi d’un message simple
+channel.basic_publish(exchange='', routing_key='test', body='Hello from CozyStack!')
+print(" [x] Message envoyé à RabbitMQ 🎉")
 
+# Fermeture propre
 connection.close()
 ```
 
@@ -154,8 +165,7 @@ python test_rabbitmq.py
 ✅ Vous devriez voir :
 
 ```
-Message envoyé : Hello Hikube!
-Message reçu : Hello Hikube!
+Message envoyé :  [x] Message envoyé à RabbitMQ 🎉
 ```
 
 ---
@@ -195,7 +205,3 @@ Vous avez déployé :
 * Un **utilisateur administrateur** et un **vhost par défaut**
 * Une **interface web de gestion** accessible localement
 * Une **connexion AMQP** testée avec un producteur/consommateur
-
----
-
-Souhaitez-tu que je fasse aussi la **page “Vue d’ensemble” RabbitMQ** en anglais (pour docs.hikube.cloud/en), en gardant le même ton professionnel et structuré ?
