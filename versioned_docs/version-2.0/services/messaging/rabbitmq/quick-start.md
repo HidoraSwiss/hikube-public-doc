@@ -42,7 +42,7 @@ apiVersion: apps.cozystack.io/v1alpha1
 kind: RabbitMQ
 metadata:
   name: default
-  namespace: tenant-damien
+  namespace: tenant-x
 spec:
   replicas: 3
   resourcesPreset: large

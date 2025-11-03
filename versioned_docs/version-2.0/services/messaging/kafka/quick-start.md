@@ -42,7 +42,7 @@ apiVersion: apps.cozystack.io/v1alpha1
 kind: Kafka
 metadata:
   name: default
-  namespace: tenant-damien
+  namespace: tenant-x
 spec:
   kafka:
     replicas: 3
