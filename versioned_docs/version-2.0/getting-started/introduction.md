@@ -53,7 +53,7 @@ title: Introduction à Hikube
 - **[Concepts](./concepts.md)** → Architecture et fonctionnalités détaillées
 
 **Services et intégrations**
-- **[Catalogue des services](../services/)** → Fonctionnalités disponibles
+- **[Catalogue des services](../services/kubernetes/overview.md)** → Fonctionnalités disponibles
 - **APIs et automatisation** → Intégrations avancées
 
 ---

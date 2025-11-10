@@ -134,9 +134,9 @@ Hikube fournit des **dashboards préconfigurés** pour chaque type de ressource 
 Maintenant que vous maîtrisez les concepts d'Hikube, vous pouvez :
 
 ### **Mettre en Pratique**
-- **[Déployer Kubernetes](../services/kubernetes/)** → Créez votre premier cluster
-- **[Configurer des VMs](../services/compute/virtual-machines/)** → Infrastructure hybride
-- **[Gérer le stockage](../services/storage/)** → Données persistantes
+- **[Déployer Kubernetes](../services/kubernetes/overview.md)** → Créez votre premier cluster
+- **[Configurer des VMs](../services/compute/overview.md)** → Infrastructure hybride
+- **[Gérer le stockage](../services/storage/buckets/overview.md)** → Données persistantes
 
 ### **Automatiser**
 - **[Terraform](../tools/terraform.md)** → Infrastructure as Code
@@ -148,4 +148,4 @@ Maintenant que vous maîtrisez les concepts d'Hikube, vous pouvez :
 
 ---
 
-**Recommandation :** Commencez par explorer les **[Services](../services/)** pour voir comment ces concepts s'appliquent concrètement à chaque composant d'Hikube.
+**Recommandation :** Commencez par explorer les **[Services Kubernetes](../services/kubernetes/overview.md)** ou **[Services Compute](../services/compute/overview.md)** pour voir comment ces concepts s'appliquent concrètement à chaque composant d'Hikube.

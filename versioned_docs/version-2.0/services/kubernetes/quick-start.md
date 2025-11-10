@@ -368,8 +368,8 @@ Vous avez créé :
 ## 🚀 Prochaines Étapes
 
 - **[API Reference](./api-reference.md)** → Configuration complète des clusters
-- **[Services](../databases/)** → Bases de données et autres services
-- **[GPU](../gpu/)** → Utiliser des GPU avec Kubernetes
+- **[Bases de données](../databases/postgresql/overview.md)** → PostgreSQL, MySQL, Redis et autres services
+- **[GPU](../gpu/overview.md)** → Utiliser des GPU avec Kubernetes
 
 ---
 

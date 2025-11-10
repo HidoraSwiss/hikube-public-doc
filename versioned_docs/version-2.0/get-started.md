@@ -45,19 +45,19 @@ Pour bien démarrer avec Hikube, nous vous recommandons de suivre ce parcours d'
 
 ### 1. 📚 **Comprendre les concepts clés**
 Familiarisez-vous avec l'architecture et les concepts fondamentaux d'Hikube :
-- **[Concepts Hikube](getting-started/concepts)** - Architecture, tenants, ressources et sécurité
+- **[Concepts Hikube](getting-started/concepts.md)** - Architecture, tenants, ressources et sécurité
 
 ### 2. 🚀 **Votre premier déploiement**  
 Suivez notre guide pratique pour déployer votre première application :
-- **[Démarrage rapide](getting-started/quick-start)** - Déployez une application en 10 minutes
+- **[Démarrage rapide](getting-started/quick-start.md)** - Déployez une application en 10 minutes
 
 ### 3. 🔧 **Maîtriser les APIs** 
 Explorez les APIs de chaque service pour des déploiements avancés :
-- **[Bases de données](services/databases/postgresql/overview)** - PostgreSQL, MySQL, Redis
-- **[Ressources de calcul](services/compute/overview)** - Machines virtuelles et GPU  
-- **[Kubernetes](services/kubernetes/overview)** - Clusters managés
-- **[Stockage](services/storage/buckets/overview)** - Buckets S3 compatibles
-- **[Infrastructure as Code](tools/terraform)** - Templates Terraform
+- **[Bases de données](services/databases/postgresql/overview.md)** - PostgreSQL, MySQL, Redis
+- **[Ressources de calcul](services/compute/overview.md)** - Machines virtuelles et GPU  
+- **[Kubernetes](services/kubernetes/overview.md)** - Clusters managés
+- **[Stockage](services/storage/buckets/overview.md)** - Buckets S3 compatibles
+- **[Infrastructure as Code](tools/terraform.md)** - Templates Terraform
 
 ## Support
 
