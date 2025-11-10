@@ -59,7 +59,7 @@ const config = {
               banner: 'unmaintained',
             },
             '2.0': {
-              label: '2.0.1',
+              label: '2.0.2',
               path: '/',
               banner: 'none',
             },

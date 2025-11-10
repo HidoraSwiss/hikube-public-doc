@@ -12,7 +12,7 @@ Hikube offre une solution cloud moderne qui facilite le déploiement et l'orches
 
 Cette documentation est maintenant versionnée ! Vous pouvez consulter :
 - **Version 1.0** : Documentation simpliste
-- **Version actuelle (Version 2.0.1)** : Documentation en développement avec les dernières fonctionnalités
+- **Version actuelle (Version 2.0.2)** : Documentation en développement avec les dernières fonctionnalités
 
 ## Fonctionnalités principales
 
