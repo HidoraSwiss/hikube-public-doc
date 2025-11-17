@@ -1,29 +1,29 @@
 ---
 sidebar_position: 2
-title: Démarrage rapide
+title: Quick Start
 ---
 
-# 🚀 Déployer Kubernetes en 5 minutes
+# 🚀 Deploy Kubernetes in 5 minutes
 
-Ce guide vous accompagne dans la création de votre premier cluster Kubernetes sur Hikube, de la configuration de base au déploiement d'une application de test.
-
----
-
-## Prérequis
-
-Avant de commencer, assurez-vous d'avoir :
-
-- **Accès à un tenant Hikube** avec permissions appropriées
-- **CLI kubectl configuré** pour interagir avec l'API Hikube
-- **Notions de base Kubernetes** (pods, services, deployments)
+This guide walks you through creating your first Kubernetes cluster on Hikube, from basic configuration to deploying a test application.
 
 ---
 
-## Étape 1 : Configuration du Cluster
+## Prerequisites
 
-### **Cluster Kubernetes Basique**
+Before starting, make sure you have:
 
-Créez un fichier `my-first-cluster.yaml` avec la configuration suivante :
+- **Access to a Hikube tenant** with appropriate permissions
+- **kubectl CLI configured** to interact with the Hikube API
+- **Basic Kubernetes knowledge** (pods, services, deployments)
+
+---
+
+## Step 1: Cluster Configuration
+
+### **Basic Kubernetes Cluster**
+
+Create a `my-first-cluster.yaml` file with the following configuration:
 
 ```yaml title="my-first-cluster.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -32,11 +32,11 @@ metadata:
   name: my-first-cluster
   namespace: default
 spec:
-  # Configuration du plan de contrôle
+  # Control plane configuration
   controlPlane:
-    replicas: 2  # Haute disponibilité
+    replicas: 2  # High availability
   
-  # Configuration des nœuds workers
+  # Worker nodes configuration
   nodeGroups:
     general:
       minReplicas: 1
@@ -44,12 +44,12 @@ spec:
       instanceType: "s1.large"     # 4 vCPU, 8 GB RAM
       ephemeralStorage: 50Gi
       roles:
-        - ingress-nginx           # Support Ingress
+        - ingress-nginx           # Ingress support
   
-  # Classe de stockage par défaut
+  # Default storage class
   storageClass: "replicated"
   
-  # Add-ons essentiels activés
+  # Essential add-ons enabled
   addons:
     certManager:
       enabled: true
@@ -59,40 +59,40 @@ spec:
         - my-app.example.com
 ```
 
-### **Déployer le Cluster**
+### **Deploy the Cluster**
 
 ```bash
-# Appliquer la configuration
+# Apply the configuration
 kubectl apply -f my-first-cluster.yaml
 
-# Vérifier le statut de déploiement
+# Check deployment status
 kubectl get kubernetes my-first-cluster -w
 ```
 
-**Temps d'attente :** Le cluster sera prêt en 3-5 minutes
+**Wait time:** The cluster will be ready in 3-5 minutes
 
 ---
 
-## 🔐 Étape 2 : Accès au Cluster
+## 🔐 Step 2: Cluster Access
 
-### **Récupérer le Kubeconfig**
+### **Retrieve the Kubeconfig**
 
-Une fois le cluster déployé, récupérez les informations d'accès :
+Once the cluster is deployed, retrieve the access information:
 
 ```bash
-# Récupérer le kubeconfig du cluster
+# Retrieve the cluster kubeconfig
 kubectl get secret my-first-cluster-admin-kubeconfig \
   -o go-template='{{ printf "%s\n" (index .data "super-admin.conf" | base64decode) }}' \
   > my-cluster-kubeconfig.yaml
 
-# Configurer kubectl pour le nouveau cluster
+# Configure kubectl for the new cluster
 export KUBECONFIG=my-cluster-kubeconfig.yaml
 
-# Tester la connexion
+# Test the connection
 kubectl get nodes
 ```
 
-**Résultat attendu :**
+**Expected result:**
 
 ```console
 NAME                         STATUS   ROLES    AGE   VERSION
@@ -101,11 +101,11 @@ my-first-cluster-md0-xxxxx   Ready    <none>   2m    v1.29.0
 
 ---
 
-## 🚀 Étape 3 : Déploiement d'une Application
+## 🚀 Step 3: Application Deployment
 
-### **Application de Démonstration**
+### **Demo Application**
 
-Déployons une application web simple pour tester notre cluster :
+Let's deploy a simple web application to test our cluster:
 
 ```yaml title="demo-app.yaml"
 ---
@@ -179,13 +179,13 @@ spec:
               number: 80
 ```
 
-### **Déployer l'Application**
+### **Deploy the Application**
 
 ```bash
-# Déployer l'application
+# Deploy the application
 kubectl apply -f demo-app.yaml
 
-# Vérifier le déploiement
+# Verify the deployment
 kubectl get deployments
 kubectl get pods
 kubectl get services
@@ -194,16 +194,16 @@ kubectl get ingress
 
 ---
 
-## ✅ Étape 4 : Vérification et Tests
+## ✅ Step 4: Verification and Tests
 
-### **Vérifier que tout fonctionne**
+### **Verify Everything Works**
 
 ```bash
-# Status des pods
+# Pod status
 kubectl get pods -l app=hello-hikube
 ```
 
-**Résultat attendu :**
+**Expected result:**
 
 ```console
 NAME                           READY   STATUS    RESTARTS   AGE
@@ -212,101 +212,101 @@ hello-hikube-xxxxx-yyyy        1/1     Running   0          1m
 hello-hikube-xxxxx-zzzz        1/1     Running   0          1m
 ```
 
-### **Accès à l'Application**
+### **Application Access**
 
 ```bash
-# Obtenir l'IP externe de l'Ingress Controller
+# Get the external IP of the Ingress Controller
 kubectl get svc -n ingress-nginx ingress-nginx-controller
 
-# Test local (en attendant la configuration DNS)
+# Local test (while waiting for DNS configuration)
 kubectl port-forward svc/hello-hikube-service 8080:80 &
 curl http://localhost:8080
 ```
 
 ---
 
-## 📊 Étape 5 : Monitoring et Observabilité
+## 📊 Step 5: Monitoring and Observability
 
-### **Dashboards Intégrés**
+### **Integrated Dashboards**
 
-Si vous avez activé le monitoring lors de la configuration du tenant :
+If you enabled monitoring when configuring the tenant:
 
 ```bash
-# Vérifier les services de monitoring
+# Check monitoring services
 kubectl get pods -n monitoring
 
-# Accéder à Grafana (selon configuration du tenant)
+# Access Grafana (according to tenant configuration)
 kubectl get ingress -n monitoring
 ```
 
-### **Métriques Cluster**
+### **Cluster Metrics**
 
 ```bash
-# Métriques des nœuds
+# Node metrics
 kubectl top nodes
 
-# Métriques des pods
+# Pod metrics
 kubectl top pods
 
-# Events du cluster
+# Cluster events
 kubectl get events --sort-by=.metadata.creationTimestamp
 ```
 
 ---
 
-## 🎛️ Étape 6 : Gestion et Scaling
+## 🎛️ Step 6: Management and Scaling
 
-### **Scaling du Cluster**
+### **Cluster Scaling**
 
-Le cluster Hikube peut ajuster automatiquement le nombre de nœuds selon la demande :
+The Hikube cluster can automatically adjust the number of nodes based on demand:
 
 ```bash
-# Vérifier le nombre de nœuds actuel
+# Check current number of nodes
 kubectl get nodes
 
-# Voir la configuration du nodeGroup
+# View nodeGroup configuration
 kubectl get kubernetes my-first-cluster -o yaml | grep -A 10 nodeGroups
 
-# Le scaling automatique se déclenche selon les ressources demandées
-# Exemple : déployer plus de pods nécessitera plus de nœuds
+# Automatic scaling triggers based on requested resources
+# Example: deploying more pods will require more nodes
 kubectl scale deployment hello-hikube --replicas=6
 ```
 
-### **Observer le Scaling**
+### **Observe Scaling**
 
 ```bash
-# Voir l'ajout automatique de nœuds
+# Watch automatic node addition
 kubectl get nodes -w
 
-# Vérifier les métriques de scaling
-kubectl describe hpa  # Si HPA est configuré
+# Check scaling metrics
+kubectl describe hpa  # If HPA is configured
 ```
 
 ---
 
-## 🔧 Étape 7 : Prochaines Actions
+## 🔧 Step 7: Next Actions
 
-### **Configuration Avancée**
+### **Advanced Configuration**
 
-Maintenant que votre cluster fonctionne, explorez les fonctionnalités avancées :
+Now that your cluster is working, explore advanced features:
 
 ```bash
-# Pour ajouter des node groups, modifiez le fichier YAML et ré-appliquez
-# Exemple dans my-first-cluster.yaml :
+# To add node groups, modify the YAML file and re-apply
+# Example in my-first-cluster.yaml:
 # nodeGroups:
 #   general:
-#     # ... configuration existante
+#     # ... existing configuration
 #   compute:
 #     minReplicas: 0
 #     maxReplicas: 3
 #     instanceType: "s1.2xlarge"
 #     ephemeralStorage: 100Gi
 
-# Puis appliquer les changements
+# Then apply the changes
 kubectl apply -f my-first-cluster.yaml
 ```
 
-### **Stockage Persistant**
+### **Persistent Storage**
 
 ```yaml title="persistent-app.yaml"
 apiVersion: v1
@@ -316,7 +316,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: replicated  # Stockage hautement disponible
+  storageClassName: replicated  # Highly available storage
   resources:
     requests:
       storage: 10Gi
@@ -324,53 +324,54 @@ spec:
 
 ---
 
-## 🚨 Dépannage Rapide
+## 🚨 Quick Troubleshooting
 
-### **Problèmes Courants**
+### **Common Issues**
 
 ```bash
-# Cluster en création trop long
+# Cluster creation taking too long
 kubectl describe kubernetes my-first-cluster
 
-# Nœuds pas Ready
+# Nodes not Ready
 kubectl describe nodes
 
-# Pods en erreur
+# Pods in error
 kubectl logs -l app=hello-hikube
 kubectl describe pod <pod-name>
 
-# Ingress non fonctionnel
+# Ingress not working
 kubectl describe ingress hello-hikube-ingress
 kubectl logs -n ingress-nginx deploy/ingress-nginx-controller
 ```
 
-### **Nettoyage**
+### **Cleanup**
 
 ```bash
-# Supprimer l'application de test
+# Delete the test application
 kubectl delete -f demo-app.yaml
 
-# Supprimer le cluster (ATTENTION: action irréversible)
+# Delete the cluster (WARNING: irreversible action)
 kubectl delete kubernetes my-first-cluster
 ```
 
 ---
 
-## 📋 Résumé
+## 📋 Summary
 
-Vous avez créé :
+You have created:
 
-- Un cluster Kubernetes avec plan de contrôle managé
-- Des nœuds workers avec scaling automatique (1-5 nœuds)
-- Une application d'exemple avec Ingress
-- Un certificat SSL automatique via cert-manager
+- A Kubernetes cluster with managed control plane
+- Worker nodes with automatic scaling (1-5 nodes)
+- A sample application with Ingress
+- Automatic SSL certificate via cert-manager
 
-## 🚀 Prochaines Étapes
+## 🚀 Next Steps
 
-- **[API Reference](./api-reference.md)** → Configuration complète des clusters
-- **[Bases de données](../databases/postgresql/overview.md)** → PostgreSQL, MySQL, Redis et autres services
-- **[GPU](../gpu/overview.md)** → Utiliser des GPU avec Kubernetes
+- **[API Reference](./api-reference.md)** → Complete cluster configuration
+- **[Databases](../databases/postgresql/overview.md)** → PostgreSQL, MySQL, Redis and other services
+- **[GPU](../gpu/overview.md)** → Use GPUs with Kubernetes
 
 ---
 
-**💡 Conseil Pro :** Gardez votre fichier `kubeconfig` en sécurité et pensez à configurer RBAC pour contrôler l'accès à votre cluster selon vos équipes et environnements.
+**💡 Pro Tip:** Keep your `kubeconfig` file secure and consider configuring RBAC to control access to your cluster according to your teams and environments.
+

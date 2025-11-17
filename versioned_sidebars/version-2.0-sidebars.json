@@ -6,7 +6,7 @@
     },
     {
       "type": "category",
-      "label": "🚀 Démarrer",
+      "label": "🚀 Getting Started",
       "items": [
         "getting-started/introduction",
         "getting-started/concepts",
