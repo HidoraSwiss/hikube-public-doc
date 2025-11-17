@@ -25,9 +25,7 @@ Ce guide vous accompagne dans le déploiement de votre premier **cluster NATS** 
 Avant de commencer, assurez-vous d’avoir :
 
 * **kubectl** configuré avec votre kubeconfig Hikube  
-* Les **droits administrateur** sur votre tenant  
-* Un **namespace** disponible (ex. `tenant-x`)  
-* (Optionnel) Un outil de test comme **nats-cli** installé localement  
+* Les **droits administrateur** sur votre tenant
 
 ---
 
@@ -135,7 +133,7 @@ nats stream report
 
 Vous devriez voir un état similaire à :
 
-```
+```txt
 Streams: 1  Consumers: 1  Messages: 1  Bytes: 250
 ```
 
@@ -148,7 +146,6 @@ Vous avez déployé :
 * Un **cluster NATS** en haute disponibilité sur votre tenant Hikube
 * Le **JetStream** activé pour la persistance des messages
 * Un **utilisateur** prêt à publier et consommer des messages
-* Un **stockage répliqué** et fiable grâce à la StorageClass `replicated`
 
 ---
 

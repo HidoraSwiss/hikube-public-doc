@@ -160,4 +160,3 @@ resources:
 | `large`         | 2       | 2Gi         |
 | `xlarge`        | 4       | 4Gi         |
 | `2xlarge`       | 8       | 8Gi         |
-

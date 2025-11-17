@@ -22,8 +22,6 @@ Un déploiement Kafka sur Hikube repose sur deux composants clés :
   Il gère la **configuration des brokers**, le **suivi des partitions et des leaders**, ainsi que la **synchronisation entre les nœuds**.
   En cas de défaillance d’un broker, ZooKeeper élit automatiquement un nouveau leader pour maintenir la continuité du service.
 
-> ⚙️ Les futurs déploiements Kafka sur Hikube évolueront vers la nouvelle génération **KRaft (Kafka Raft Metadata Mode)**, qui remplace progressivement ZooKeeper tout en conservant la compatibilité ascendante.
-
 ---
 
 ## 🚀 Cas d’usage typiques

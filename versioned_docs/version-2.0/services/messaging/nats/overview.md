@@ -19,8 +19,6 @@ NATS adopte une architecture **pub/sub** (publish–subscribe) sans broker compl
 * **Subjects** → définissent les canaux logiques de communication, hiérarchisés et dynamiques  
 * **JetStream** → ajoute la **persistance**, la **relecture (replay)** et les **garanties de livraison**
 
-> ⚙️ Sur Hikube, les clusters NATS sont déployés avec **JetStream activé par défaut**, une **haute disponibilité native** et une **sécurisation TLS complète** entre tous les nœuds.
-
 ---
 
 ## 🌿 Légèreté et performance
@@ -28,6 +26,7 @@ NATS adopte une architecture **pub/sub** (publish–subscribe) sans broker compl
 NATS est reconnu pour sa **vitesse exceptionnelle** et son **empreinte minimale**, ce qui en fait un composant idéal pour les architectures distribuées.
 
 **Caractéristiques clés :**
+
 * Temps de démarrage inférieur à la seconde  
 * Moins de **10 Mo de mémoire** consommée par instance  
 * Gestion de **millions de messages par seconde**  
@@ -43,6 +42,7 @@ NATS est reconnu pour sa **vitesse exceptionnelle** et son **empreinte minimale*
 Chaque service peut publier ou consommer des événements sans dépendre du reste du système, favorisant un **découplage fort** et une **meilleure résilience**.
 
 **Exemples d’utilisation :**
+
 * Diffusion d’événements applicatifs en temps réel  
 * Communication entre microservices distribués  
 * Requêtes légères entre services (pattern **request/reply**)  
@@ -61,8 +61,6 @@ NATS est un protocole **binaire optimisé** mais reste compatible avec de nombre
 * **NATS gRPC** → interopérabilité avec des API modernes  
 * **Clients** disponibles dans plus de **40 langages** : Go, Python, Node.js, Java, Rust, C#, etc.
 
-> Tous les déploiements Hikube NATS incluent le **support multi-protocole** et la **sécurité TLS/mTLS** par défaut.
-
 ---
 
 ## 🚀 Cas d’usage typiques
@@ -72,6 +70,7 @@ NATS est un protocole **binaire optimisé** mais reste compatible avec de nombre
 NATS excelle dans la **transmission instantanée d’événements** entre applications distribuées.
 
 **Exemples :**
+
 * Notifications en direct et mises à jour d’état  
 * Monitoring applicatif et collecte de métriques  
 * Synchronisation de données entre microservices
@@ -81,6 +80,7 @@ NATS excelle dans la **transmission instantanée d’événements** entre applic
 ### 📦 Streaming d’événements et persistance
 
 Avec **JetStream**, NATS devient un **système de streaming durable** :
+
 * Stockage temporaire ou persistant des messages  
 * Relecture des événements pour l’audit ou la reprise après incident  
 * Contrôle de flux pour ne jamais surcharger les consommateurs
@@ -104,6 +104,7 @@ Cela garantit une **communication fiable, sécurisée et isolée** entre service
 Grâce à son **design minimaliste** et à ses **outils intégrés (CLI, dashboards, métriques Prometheus)**, NATS est simple à exploiter et à superviser, même à grande échelle.
 
 **Exemples :**
+
 * Bus d’événements internes pour plateformes distribuées  
 * Orchestration d’automatisations internes  
 * Système de messagerie centralisé et léger pour Kubernetes

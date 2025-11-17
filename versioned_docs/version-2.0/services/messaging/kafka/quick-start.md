@@ -26,8 +26,6 @@ Avant de commencer, assurez-vous d’avoir :
 
 * **kubectl** configuré avec votre kubeconfig Hikube
 * Les **droits administrateur** sur votre tenant
-* Un **namespace** disponible pour héberger votre cluster Kafka
-* (Optionnel) Un **service externe** si vous souhaitez exposer Kafka à l’extérieur du cluster
 
 ---
 
@@ -41,7 +39,7 @@ Créez un fichier `kafka.yaml` comme ci-dessous :
 apiVersion: apps.cozystack.io/v1alpha1
 kind: Kafka
 metadata:
-  name: default
+  name: example
   namespace: tenant-x
 spec:
   kafka:

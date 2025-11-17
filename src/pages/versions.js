@@ -46,7 +46,7 @@ function VersionsPage() {
                       )}
                     </td>
                     <td>
-                      <Link to={version === '1.0' ? '/' : `/${version}/get-started`}>
+                      <Link to={version === '1.0' ? '/1.0/' : `/${version}/`}>
                         Documentation
                       </Link>
                     </td>

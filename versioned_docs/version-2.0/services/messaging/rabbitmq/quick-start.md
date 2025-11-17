@@ -26,8 +26,6 @@ Avant de commencer, assurez-vous d’avoir :
 
 * **kubectl** configuré avec votre kubeconfig Hikube
 * Les **droits administrateur** sur votre tenant
-* Un **namespace** prêt pour héberger le cluster RabbitMQ
-* (Optionnel) Une **connexion externe** si vous souhaitez exposer RabbitMQ à l’extérieur du cluster
 
 ---
 
@@ -105,6 +103,7 @@ Connectez-vous avec en recuperant le default user:
 ```bash
 kubectl get secret rabbitmq-rabbitmq-default-user -o jsonpath='{.data}' | jq -r 'to_entries[] | "\(.key): \(.value | @base64d)"'
 ```
+
 ---
 
 ## Étape 4 : Tester la messagerie
