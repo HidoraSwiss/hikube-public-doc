@@ -1,11 +1,10 @@
-import React from 'react';
+
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
 import Link from '@docusaurus/Link';
 import versions from '../../versions.json';
 
 function VersionsPage() {
-  const { siteConfig } = useDocusaurusContext();
   
   return (
     <Layout
@@ -34,27 +33,27 @@ function VersionsPage() {
                   <tr key={version}>
                     <td>
                       <strong>{version}</strong>
-                      {version === '1.0' && (
+                      {version === 'current' && (
                         <span className="badge badge--primary margin-left--sm">
                           Actuelle
                         </span>
                       )}
-                      {version === '2.0' && (
+                      {version === '1.0' && (
                         <span className="badge badge--warning margin-left--sm">
-                          Future
+                          Ancienne
                         </span>
                       )}
                     </td>
                     <td>
-                      <Link to={version === '1.0' ? '/1.0/' : `/${version}/`}>
+                      <Link to={version === 'current' ? '/' : `/${version}/`}>
                         Documentation
                       </Link>
                     </td>
                     <td>
-                      {version === '1.0' 
+                      {version === 'current' 
                         ? 'Version stable actuelle (par défaut)' 
-                        : version === '2.0' 
-                        ? 'Version future avec nouvelles fonctionnalités'
+                        : version === '1.0' 
+                        ? 'Ancienne version plus simpliste'
                         : `Version ${version}`}
                     </td>
                   </tr>
@@ -63,9 +62,8 @@ function VersionsPage() {
             </table>
 
             <div className="alert alert--info">
-              <strong>Note :</strong> La version 1.0 est la version stable actuelle recommandée 
-              pour la production. La version 2.0 contient les fonctionnalités futures et peut 
-              être instable.
+              <strong>Note :</strong> La version 2.0 est la version stable actuelle recommandée 
+              pour la production. La version 1.0 contient les fonctionnalités plus simplistes et n'est pas complète.
             </div>
           </div>
         </div>

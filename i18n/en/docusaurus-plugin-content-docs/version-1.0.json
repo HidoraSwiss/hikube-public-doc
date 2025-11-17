@@ -1,0 +1,14 @@
+{
+  "version.label": {
+    "message": "1.0.0",
+    "description": "The label for version 1.0"
+  },
+  "sidebar.docsSidebar.category.API": {
+    "message": "API",
+    "description": "The label for category 'API' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Applications Available in the API": {
+    "message": "Applications Available in the API",
+    "description": "The label for category 'Applications Available in the API' in sidebar 'docsSidebar'"
+  }
+}

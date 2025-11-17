@@ -1,64 +1,65 @@
 ---
 sidebar_position: 1
+title: Bien démarrer
+slug: /
 ---
 
 # Commencer avec Hikube
 
 ## Bienvenue sur Hikube
 
-Hikube est une plateforme cloud basée sur Kubernetes qui simplifie le déploiement et la gestion d'applications conteneurisées et de machines virtuelles.
+Hikube offre une solution cloud moderne qui facilite le déploiement et l'orchestration d'applications conteneurisées ainsi que de machines virtuelles.
 
 ## Versions de la documentation
 
 Cette documentation est maintenant versionnée ! Vous pouvez consulter :
-- **Version 1.0** : Documentation stable actuelle
-- **Version actuelle (Next)** : Documentation en développement avec les dernières fonctionnalités
+- **Version 1.0** : Documentation simpliste
+- **Version actuelle (Version 2.0.2)** : Documentation en développement avec les dernières fonctionnalités
 
 ## Fonctionnalités principales
 
 ### 🚀 **Déploiement simplifié**
-- Interface web intuitive
-- Déploiement en un clic
-- Gestion automatisée des ressources
+- API Kubernetes native et compatible
+- Déploiement via `kubectl apply`
+- Infrastructure as Code (IaC) avec YAML
 
-### 📦 **Applications supportées**
+### 📦 **Services**
 - **Bases de données** : PostgreSQL, MySQL, Redis, ClickHouse
 - **Services de messagerie** : Kafka, RabbitMQ, NATS
-- **Stockage** : Buckets S3 compatibles
+- **Stockage**: Chiffré, répliqué sur 3 datacenters
+- **Stockage S3** : Buckets S3 compatibles
 - **Réseaux** : Load balancers TCP, caches HTTP, VPN
-- **Compute** : Machines virtuelles, GPU
+- **Ressources de calcul** : Machines virtuelles, GPU
 
 ### 🔧 **Infrastructure as Code**
-- Templates Terraform intégrés
 - Gestion déclarative des ressources
 - Déploiement reproductible
 
 ### 🏗️ **Architecture multi-tenant**
 - Isolation complète entre les tenants
+- Création de sous-tenant possible
 - Gestion des quotas et des ressources
 - Sécurité renforcée
 
-## Choisissez votre parcours
+## Prochaines étapes
 
-### **🚀 Je veux déployer rapidement**
-- **[Machines Virtuelles](./api/applications/virtualmachines.md)** → VM Ubuntu en 3 minutes
-- **[Base de données](./api/applications/postgreses.md)** → PostgreSQL prêt en production
-- **[Cluster Kubernetes](./api/applications/kuberneteses.md)** → K8s managé en 5 minutes
+Pour bien démarrer avec Hikube, nous vous recommandons de suivre ce parcours d'apprentissage :
 
-### **💻 Je développe des applications**
-- **[Redis Cache](./api/applications/redises.md)** → Cache haute performance
-- **[Stockage S3](./api/applications/buckets.md)** → Stockage objet compatible AWS
-- **[Load Balancer](./api/applications/tcpbalancers.md)** → Équilibrage de charge
+### 1. 📚 **Comprendre les concepts clés**
+Familiarisez-vous avec l'architecture et les concepts fondamentaux d'Hikube :
+- **[Concepts Hikube](getting-started/concepts.md)** - Architecture, tenants, ressources et sécurité
 
-### **🏗️ Je gère l'infrastructure**
-- **[Terraform avec Hikube](./terraform.md)** → Infrastructure as Code
-- **[Templates prêts à l'emploi](./terraform.md#exemples-complets)** → Architectures complètes
-- **[API Reference](./api/)** → Documentation technique complète
+### 2. 🚀 **Votre premier déploiement**  
+Suivez notre guide pratique pour déployer votre première application :
+- **[Démarrage rapide](getting-started/quick-start.md)** - Déployez une application en 10 minutes
 
-### **🎯 Cas d'usage spécialisés**
-- **[GPU Computing](./api/applications/virtualmachines.md#gpu)** → IA et Machine Learning  
-- **[Messagerie](./api/applications/kafkas.md)** → Kafka, RabbitMQ, NATS
-- **[Monitoring](./api/applications/kuberneteses.md#monitoring)** → Observabilité intégrée
+### 3. 🔧 **Maîtriser les APIs** 
+Explorez les APIs de chaque service pour des déploiements avancés :
+- **[Bases de données](services/databases/postgresql/overview.md)** - PostgreSQL, MySQL, Redis
+- **[Ressources de calcul](services/compute/overview.md)** - Machines virtuelles et GPU  
+- **[Kubernetes](services/kubernetes/overview.md)** - Clusters managés
+- **[Stockage](services/storage/buckets/overview.md)** - Buckets S3 compatibles
+- **[Infrastructure as Code](tools/terraform.md)** - Templates Terraform
 
 ## Support
 

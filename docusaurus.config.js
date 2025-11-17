@@ -27,7 +27,6 @@ const config = {
   trailingSlash: true,
 
   onBrokenLinks: 'warn',
-  onBrokenMarkdownLinks: 'warn',
 
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
@@ -50,19 +49,18 @@ const config = {
           editUrl:
             'https://github.com/HidoraSwiss/hikube-public-doc/edit/main/',
           // Configuration du versioning
-          includeCurrentVersion: false,
-          lastVersion: '2.0',
+          includeCurrentVersion: true,
+          editLocalizedFiles: true,
+          lastVersion: 'current',
           versions: {
             '1.0': {
               label: '1.0.0',
               path: '/1.0',
               banner: 'unmaintained',
             },
-            '2.0': {
+            current: {
               label: '2.0.2',
-              path: '/',
-              banner: 'none',
-            },
+            }
           },
         },
         blog: false,
@@ -79,6 +77,9 @@ const config = {
   themes: ['@docusaurus/theme-mermaid'],
   markdown: {
     mermaid: true,
+    hooks: {
+      onBrokenMarkdownLinks: 'warn',
+    }
   },
 
   themeConfig:
@@ -124,15 +125,6 @@ const config = {
       footer: {
         style: 'dark',
         links: [
-          {
-            title: 'Docs',
-            items: [
-              {
-                label: 'API',
-                to: '/api',
-              },
-            ],
-          },
           {
             title: 'Community',
             items: [

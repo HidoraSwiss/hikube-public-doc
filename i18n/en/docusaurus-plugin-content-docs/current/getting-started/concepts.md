@@ -12,13 +12,16 @@ This page explains the **fundamental concepts** that make Hikube a unique cloud 
 ## Tenants: Your Private Space
 
 ### **What is a Tenant?**
+
 A **tenant** is your isolated and secure environment within Hikube. It's like having your own "virtual datacenter" with:
+
 - **Isolated network**
 - **Separate users and permissions**
 - **Custom security policies**
 - **Sub-tenants** available
 
 ### **Why This Approach?**
+
 ```mermaid
 graph TB
     A[Enterprise] --> B[Production Tenant]
@@ -36,12 +39,14 @@ graph TB
 ```
 
 **Concrete Advantages:**
+
 - **Complete isolation** : No impact between environments
 - **Team management** : Granular permissions per tenant
 - **Differentiated policies** : Production vs development
 - **Separate billing** : Cost tracking per project
 
 ### **Typical Use Cases**
+
 | Tenant | Usage |
 |--------|-------|
 | **Production** | Critical applications |
@@ -54,6 +59,7 @@ graph TB
 ## Infrastructure as Code (IaC)
 
 ### **Designed for Industrialization**
+
 Hikube is designed for automation and industrialization of your infrastructure. All features are accessible via:
 
 - **Complete API** : Native integration into your CI/CD pipelines
@@ -61,6 +67,7 @@ Hikube is designed for automation and industrialization of your infrastructure. 
 - **Declarative** : Describe the desired state, Hikube handles the rest
 
 ### **Advantages of the Industrial Approach**
+
 - **Reproducibility** : Identical deployments every time
 - **Versioning** : Complete tracking of infrastructure changes
 - **Collaboration** : Code shared between development and ops teams
@@ -109,6 +116,7 @@ flowchart TD
 ### **Multi-Tenant Monitoring Architecture**
 
 #### **Intelligent Centralization**
+
 - **Main tenant** : Hosts the Grafana + VictoriaMetrics + VictoriaLogs stack
 - **Sub-tenants** : Automatically generate metrics and logs
 - **Secure aggregation** : Centralized aggregation with data isolation
@@ -134,19 +142,21 @@ Hikube provides **preconfigured dashboards** for each resource type:
 Now that you master Hikube concepts, you can:
 
 ### **Put into Practice**
+
 - **[Deploy Kubernetes](../services/kubernetes/overview.md)** → Create your first cluster
 - **[Configure VMs](../services/compute/overview.md)** → Hybrid infrastructure
 - **[Manage Storage](../services/storage/buckets/overview.md)** → Persistent data
 
 ### **Automate**
+
 - **[Terraform](../tools/terraform.md)** → Infrastructure as Code
 <!--- **[CLI](../tools/cli.md)** → Scripts and automation-->
 
 ### **Go Deeper**
+
 - **[FAQ](../resources/faq.md)** → Frequently asked questions
 - **[Troubleshooting](../resources/troubleshooting.md)** → Problem resolution
 
 ---
 
 **Recommendation:** Start by exploring **[Kubernetes Services](../services/kubernetes/overview.md)** or **[Compute Services](../services/compute/overview.md)** to see how these concepts apply concretely to each Hikube component.
-

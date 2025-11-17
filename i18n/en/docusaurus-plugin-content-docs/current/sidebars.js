@@ -1,4 +1,21 @@
-{
+// @ts-check
+
+// This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
+
+/**
+ * Creating a sidebar enables you to:
+ - create an ordered group of docs
+ - render a sidebar for each doc of that group
+ - provide next/previous navigation
+
+ The sidebars can be generated from the filesystem, or explicitly defined here.
+
+ Create as many sidebars as you want.
+
+ @type {import('@docusaurus/plugin-content-docs').SidebarsConfig}
+ */
+const sidebars = {
+  // By default, Docusaurus generates a sidebar from the docs folder structure
   "docsSidebar": [
     {
       "type": "doc",
@@ -6,7 +23,7 @@
     },
     {
       "type": "category",
-      "label": "🚀 Getting Started",
+      "label": "🚀 Get Started",
       "items": [
         "getting-started/introduction",
         "getting-started/concepts",
@@ -44,7 +61,7 @@
                 "services/databases/clickhouse/quick-start",
                 "services/databases/clickhouse/api-reference"
               ]
-            },            
+            },
             {
               "type": "category",
               "label": "PostgreSQL",
@@ -76,7 +93,7 @@
         },
         {
           "type": "category",
-                      "label": "Ressources de calcul",
+          "label": "Compute",
           "items": [
             "services/compute/overview",
             "services/compute/quick-start",
@@ -121,7 +138,6 @@
                 "services/messaging/rabbitmq/overview",
                 "services/messaging/rabbitmq/quick-start",
                 "services/messaging/rabbitmq/api-reference"
-
               ]
             },
             {
@@ -131,7 +147,6 @@
                 "services/messaging/nats/overview",
                 "services/messaging/nats/quick-start",
                 "services/messaging/nats/api-reference"
-
               ]
             }
           ]
@@ -155,4 +170,6 @@
       ]
     }
   ]
-}
+};
+
+export default sidebars;

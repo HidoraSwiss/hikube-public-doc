@@ -12,7 +12,7 @@
 ## 📁 Structure de dossiers à créer
 
 ```
-i18n/en/docusaurus-plugin-content-docs/version-2.0/
+i18n/en/docusaurus-plugin-content-docs/current/
 ├── get-started.md
 ├── getting-started/
 │   ├── introduction.md
@@ -75,15 +75,18 @@ i18n/en/docusaurus-plugin-content-docs/version-2.0/
 ## 🎯 Plan de travail par phases
 
 ### Phase 1 : Structure de base (Priorité HAUTE)
+
 **Objectif** : Créer les fichiers essentiels pour la navigation
 
 #### 1.1 Page d'accueil
+
 - [ ] `get-started.md` - Page principale d'introduction
   - **Fichier source** : `versioned_docs/version-2.0/get-started.md`
   - **Complexité** : Moyenne
   - **Temps estimé** : 30 min
 
 #### 1.2 Section Getting Started
+
 - [ ] `getting-started/introduction.md` - Introduction à Hikube
   - **Fichier source** : `versioned_docs/version-2.0/getting-started/introduction.md`
   - **Complexité** : Moyenne
@@ -104,9 +107,11 @@ i18n/en/docusaurus-plugin-content-docs/version-2.0/
 ---
 
 ### Phase 2 : Services principaux (Priorité HAUTE)
+
 **Objectif** : Traduire les services les plus utilisés
 
 #### 2.1 Kubernetes (Service principal)
+
 - [ ] `services/kubernetes/overview.md`
   - **Complexité** : Élevée (architecture, diagrammes)
   - **Temps estimé** : 1h30
@@ -120,6 +125,7 @@ i18n/en/docusaurus-plugin-content-docs/version-2.0/
   - **Temps estimé** : 2h
 
 #### 2.2 Compute (Machines virtuelles)
+
 - [ ] `services/compute/overview.md`
   - **Complexité** : Élevée (architecture, types d'instances)
   - **Temps estimé** : 1h30
@@ -133,6 +139,7 @@ i18n/en/docusaurus-plugin-content-docs/version-2.0/
   - **Temps estimé** : 1h30
 
 #### 2.3 Storage (Buckets S3)
+
 - [ ] `services/storage/buckets/overview.md`
   - **Complexité** : Moyenne
   - **Temps estimé** : 1h
@@ -150,24 +157,29 @@ i18n/en/docusaurus-plugin-content-docs/version-2.0/
 ---
 
 ### Phase 3 : Bases de données (Priorité MOYENNE)
+
 **Objectif** : Traduire les 4 services de bases de données
 
 #### 3.1 PostgreSQL
+
 - [ ] `services/databases/postgresql/overview.md` (1h)
 - [ ] `services/databases/postgresql/quick-start.md` (1h30)
 - [ ] `services/databases/postgresql/api-reference.md` (1h30)
 
 #### 3.2 MySQL
+
 - [ ] `services/databases/mysql/overview.md` (1h)
 - [ ] `services/databases/mysql/quick-start.md` (1h30)
 - [ ] `services/databases/mysql/api-reference.md` (1h30)
 
 #### 3.3 Redis
+
 - [ ] `services/databases/redis/overview.md` (1h)
 - [ ] `services/databases/redis/quick-start.md` (1h30)
 - [ ] `services/databases/redis/api-reference.md` (1h30)
 
 #### 3.4 ClickHouse
+
 - [ ] `services/databases/clickhouse/overview.md` (1h)
 - [ ] `services/databases/clickhouse/quick-start.md` (1h30)
 - [ ] `services/databases/clickhouse/api-reference.md` (1h30)
@@ -177,18 +189,22 @@ i18n/en/docusaurus-plugin-content-docs/version-2.0/
 ---
 
 ### Phase 4 : Services avancés (Priorité MOYENNE)
+
 **Objectif** : GPU et Messaging
 
 #### 4.1 GPU
+
 - [ ] `services/gpu/overview.md` (1h30)
 - [ ] `services/gpu/quick-start.md` (2h)
 - [ ] `services/gpu/api-reference.md` (1h30)
 
 #### 4.2 Messaging - Kafka
+
 - [ ] `services/messaging/kafka/overview.md` (1h)
 - [ ] `services/messaging/kafka/quick-start.md` (1h30)
 
 #### 4.3 Messaging - RabbitMQ
+
 - [ ] `services/messaging/rabbitmq/overview.md` (1h)
 - [ ] `services/messaging/rabbitmq/quick-start.md` (1h30)
 
@@ -197,14 +213,17 @@ i18n/en/docusaurus-plugin-content-docs/version-2.0/
 ---
 
 ### Phase 5 : Ressources et outils (Priorité BASSE)
+
 **Objectif** : Compléter la documentation
 
 #### 5.1 Resources
+
 - [ ] `resources/faq.md` (1h30)
 - [ ] `resources/glossary.md` (1h)
 - [ ] `resources/troubleshooting.md` (2h)
 
 #### 5.2 Tools
+
 - [ ] `tools/terraform.md` (2h)
 
 **Total Phase 5** : ~6h30
@@ -227,11 +246,13 @@ i18n/en/docusaurus-plugin-content-docs/version-2.0/
 ## 🔧 Consignes de traduction
 
 ### 1. Structure des fichiers
+
 - **Conserver** la structure frontmatter YAML (sidebar_position, title, etc.)
 - **Traduire** les valeurs de `title` en anglais
 - **Conserver** les slugs si présents
 
 ### 2. Contenu technique
+
 - **Conserver** :
   - Les noms de commandes (`kubectl`, `virtctl`, etc.)
   - Les noms de fichiers et chemins
@@ -247,11 +268,13 @@ i18n/en/docusaurus-plugin-content-docs/version-2.0/
   - Les messages d'erreur et exemples de sortie
 
 ### 3. Liens internes
+
 - **Adapter** tous les liens internes pour pointer vers les fichiers anglais
 - **Vérifier** que les chemins relatifs sont corrects
 - **Utiliser** l'extension `.md` pour tous les liens
 
 ### 4. Terminologie
+
 - **Standardiser** la terminologie technique :
   - "Tenant" → "Tenant" (garder tel quel)
   - "Machine virtuelle" → "Virtual Machine" ou "VM"
@@ -262,6 +285,7 @@ i18n/en/docusaurus-plugin-content-docs/version-2.0/
   - "Haute disponibilité" → "High availability"
 
 ### 5. Formatage
+
 - **Conserver** :
   - Les emojis (🚀, 📦, etc.)
   - La structure des tableaux
@@ -294,18 +318,22 @@ Pour chaque fichier traduit, vérifier :
 ## 🚀 Ordre d'exécution recommandé
 
 ### Sprint 1 (Semaine 1) - Fondations
+
 1. Phase 1 complète (Getting Started)
 2. Phase 2.1 (Kubernetes overview + quick-start)
 
 ### Sprint 2 (Semaine 2) - Services principaux
+
 1. Phase 2.1 complète (Kubernetes API reference)
 2. Phase 2.2 (Compute)
 3. Phase 2.3 (Storage)
 
 ### Sprint 3 (Semaine 3) - Bases de données
+
 1. Phase 3 complète (toutes les bases de données)
 
 ### Sprint 4 (Semaine 4) - Finalisation
+
 1. Phase 4 (GPU + Messaging)
 2. Phase 5 (Resources + Tools)
 3. Vérification globale et corrections
@@ -335,4 +363,3 @@ Pour chaque fichier traduit, vérifier :
 
 *Plan créé le : $(date)*
 *Dernière mise à jour : $(date)*
-
