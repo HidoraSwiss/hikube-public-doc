@@ -1,5 +1,7 @@
 ---
 sidebar_position: 1
+title: Bien démarrer
+slug: /
 ---
 
 # Commencer avec Hikube

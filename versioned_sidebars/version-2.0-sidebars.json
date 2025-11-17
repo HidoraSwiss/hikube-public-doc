@@ -110,14 +110,28 @@
               "label": "Kafka",
               "items": [
                 "services/messaging/kafka/overview",
-                "services/messaging/kafka/quick-start"
+                "services/messaging/kafka/quick-start",
+                "services/messaging/kafka/api-reference"
               ]
             },
             {
               "type": "category",
               "label": "RabbitMQ",
               "items": [
-                "services/messaging/rabbitmq/overview"
+                "services/messaging/rabbitmq/overview",
+                "services/messaging/rabbitmq/quick-start",
+                "services/messaging/rabbitmq/api-reference"
+
+              ]
+            },
+            {
+              "type": "category",
+              "label": "NATS",
+              "items": [
+                "services/messaging/nats/overview",
+                "services/messaging/nats/quick-start",
+                "services/messaging/nats/api-reference"
+
               ]
             }
           ]

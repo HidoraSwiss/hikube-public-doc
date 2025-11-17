@@ -17,7 +17,6 @@ Cette référence détaille l’utilisation de **ClickHouse** sur Hikube, que ce
 
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
-appVersion: 0.13.0
 kind: ClickHouse
 metadata:
   name: clickhouse-name

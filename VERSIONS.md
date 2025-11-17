@@ -14,8 +14,8 @@ Votre documentation Hikube utilise maintenant un système de versioning simplifi
 ### 🌐 **URLs d'accès**
 
 - **Page d'accueil (v1.0)** : `http://localhost:3000/`
-- **Version 1.0** : `http://localhost:3000/get-started`
-- **Version 2.0** : `http://localhost:3000/2.0/get-started`
+- **Version 1.0** : `http://localhost:3000/1.0/`
+- **Version 2.0** : `http://localhost:3000/get-started`
 - **Page des versions** : `http://localhost:3000/versions`
 
 ## 📁 **Structure des Fichiers**

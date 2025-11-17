@@ -39,7 +39,6 @@ Créez un fichier `clickhouse.yaml` comme ci-dessous:
 
 ```yaml title="clickhouse.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
-appVersion: 0.13.0
 kind: ClickHouse
 metadata:
   name: example
