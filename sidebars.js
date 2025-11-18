@@ -113,9 +113,28 @@ const sidebars = {
           "type": "category",
           "label": "Kubernetes",
           "items": [
-            "services/kubernetes/overview",
+            "services/kubernetes/architecture",
+            "services/kubernetes/control-plane",
+            "services/kubernetes/node-group",
+            {
+              "type": "category",
+              "label": "Plugins",
+              "items": [
+                "services/kubernetes/plugins/cilium",
+                "services/kubernetes/plugins/coredns",
+                "services/kubernetes/plugins/gateway-api",
+                "services/kubernetes/plugins/verticalpodautoscaler",
+                "services/kubernetes/plugins/ingress-nginx",
+                "services/kubernetes/plugins/cert-manager",
+                "services/kubernetes/plugins/gpu-operator",
+                "services/kubernetes/plugins/fluxcd",
+                "services/kubernetes/plugins/velero",
+                "services/kubernetes/plugins/monitoring-agents"
+              ]
+            },
             "services/kubernetes/quick-start",
-            "services/kubernetes/api-reference"
+            "services/kubernetes/api-reference",
+            "services/kubernetes/toolbox"
           ]
         },
         {

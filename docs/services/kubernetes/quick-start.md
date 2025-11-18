@@ -1,5 +1,5 @@
 ---
-sidebar_position: 2
+sidebar_position: 5
 title: Démarrage rapide
 ---
 
@@ -35,20 +35,20 @@ spec:
   # Configuration du plan de contrôle
   controlPlane:
     replicas: 2  # Haute disponibilité
-  
+
   # Configuration des nœuds workers
   nodeGroups:
     general:
       minReplicas: 1
       maxReplicas: 5
       instanceType: "s1.large"     # 4 vCPU, 8 GB RAM
-      ephemeralStorage: 50Gi
+      ephemeralStorage: 50Gi       # Stockage partition système
       roles:
         - ingress-nginx           # Support Ingress
-  
-  # Classe de stockage par défaut
+
+  # Active la réplication sur le stockage
   storageClass: "replicated"
-  
+
   # Add-ons essentiels activés
   addons:
     certManager:
@@ -103,7 +103,7 @@ my-first-cluster-md0-xxxxx   Ready    <none>   2m    v1.29.0
 
 ## 🚀 Étape 3 : Déploiement d'une Application
 
-### **Application de Démonstration**
+### **Application de démonstration**
 
 Déployons une application web simple pour tester notre cluster :
 
@@ -199,7 +199,7 @@ kubectl get ingress
 ### **Vérifier que tout fonctionne**
 
 ```bash
-# Status des pods
+# Statut des pods
 kubectl get pods -l app=hello-hikube
 ```
 
@@ -212,7 +212,7 @@ hello-hikube-xxxxx-yyyy        1/1     Running   0          1m
 hello-hikube-xxxxx-zzzz        1/1     Running   0          1m
 ```
 
-### **Accès à l'Application**
+### **Accès à l'application**
 
 ```bash
 # Obtenir l'IP externe de l'Ingress Controller
@@ -368,9 +368,8 @@ Vous avez créé :
 ## 🚀 Prochaines Étapes
 
 - **[API Reference](./api-reference.md)** → Configuration complète des clusters
-- **[Bases de données](../databases/postgresql/overview.md)** → PostgreSQL, MySQL, Redis et autres services
 - **[GPU](../gpu/overview.md)** → Utiliser des GPU avec Kubernetes
 
 ---
 
-**💡 Conseil Pro :** Gardez votre fichier `kubeconfig` en sécurité et pensez à configurer RBAC pour contrôler l'accès à votre cluster selon vos équipes et environnements.
+**💡 Conseil :** Gardez votre fichier `kubeconfig` en sécurité et pensez à configurer RBAC pour contrôler l'accès à votre cluster selon vos équipes et environnements.
