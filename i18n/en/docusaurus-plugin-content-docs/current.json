@@ -74,5 +74,9 @@
   "sidebar.docsSidebar.category.🛠️ Outils": {
     "message": "🛠️ Tools",
     "description": "The label for category '🛠️ Outils' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Plugins": {
+    "message": "Plugins",
+    "description": "The label for category 'Plugins' in sidebar 'docsSidebar'"
   }
 }
