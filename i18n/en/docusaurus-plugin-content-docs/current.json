@@ -39,7 +39,7 @@
     "message": "Redis",
     "description": "The label for category 'Redis' in sidebar 'docsSidebar'"
   },
-  "sidebar.docsSidebar.category.Compute": {
+  "sidebar.docsSidebar.category.Ressources de calcul": {
     "message": "Compute",
     "description": "The label for category 'Compute' in sidebar 'docsSidebar'"
   },
