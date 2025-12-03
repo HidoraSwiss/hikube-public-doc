@@ -40,7 +40,7 @@
     "description": "The label for category 'Redis' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.Ressources de calcul": {
-    "message": "Compute Resources",
+    "message": "Compute",
     "description": "The label for category 'Ressources de calcul' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.GPU": {
