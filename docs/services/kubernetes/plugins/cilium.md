@@ -48,7 +48,7 @@ cilium:
 Le champ `valuesOverride` permet de **surcharger les valeurs par défaut** utilisées lors du déploiement de Cilium.
 Il sert à ajuster le comportement du CNI sans modifier le chart principal.
 Ces valeurs peuvent inclure la configuration de **Hubble**, du chiffrement, des politiques réseau, ou encore des ressources allouées.
-Pour plus de valeurs à définir : <https://docs.cilium.io/en/stable/helm-reference/>
+Pour plus de valeurs à définir : https://docs.cilium.io/en/stable/helm-reference/
 
 ### Exemple
 

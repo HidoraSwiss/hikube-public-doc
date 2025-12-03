@@ -70,7 +70,7 @@ coredns:
 
 Le champ `valuesOverride` permet de **surcharger les valeurs par défaut** du déploiement CoreDNS, généralement via Helm.
 Il est utilisé pour personnaliser les ressources, le nombre de réplicas, ou encore la configuration du service DNS (ex : plugins, zones, caches).
-Voir les autres options : <https://github.com/coredns/helm/blob/master/charts/coredns/values.yaml>
+Voir les autres options : https://github.com/coredns/helm/blob/master/charts/coredns/values.yaml
 
 ### Exemple
 
