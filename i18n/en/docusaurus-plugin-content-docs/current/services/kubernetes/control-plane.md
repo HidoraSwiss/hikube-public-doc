@@ -1,12 +1,13 @@
 ---
+
 sidebar_position: 3
 title: Control Plane
----
+--------------------
 
-# 🧩 Détails du champ `controlPlane`
+# 🧩 Details of the `controlPlane` Field
 
-Le champ `controlPlane` définit la configuration du plan de contrôle du cluster Kubernetes géré.
-Il spécifie les ressources allouées à chaque composant clé (API Server, Scheduler, Controller Manager, Konnectivity) et le nombre de réplicas pour la haute disponibilité.
+The `controlPlane` field defines the configuration of the managed Kubernetes cluster's control plane.
+It specifies the resources allocated to each key component (API Server, Scheduler, Controller Manager, Konnectivity) and the number of replicas for high availability.
 
 ```yaml
 controlPlane:
@@ -36,22 +37,25 @@ controlPlane:
 
 ---
 
-## `apiServer` (Object) — **Obligatoire**
+## `apiServer` (Object) — **Required**
 
 ### Description
-Le `apiServer` est le composant central du plan de contrôle Kubernetes.
-Il gère toutes les requêtes vers l’API Kubernetes et assure la communication entre les composants internes du cluster.
 
-### Champs internes
-| Champ | Type | Obligatoire | Description |
-|-------|------|-------------|--------------|
-| `resources` | Object | ✅ | Définit les ressources CPU et mémoire allouées à l’API Server |
-| `resources.cpu` | string | ❌ | Nombre de vCPU attribués (ex: `2`) |
-| `resources.memory` | string | ❌ | Quantité de mémoire allouée (ex: `4Gi`) |
-| `resourcesPreset` | string | ✅ | Profil de ressources prédéfini pour simplifier la configuration |
-| | | | Valeurs possibles : `nano`, `micro`, `small`, `medium`, `large`, ... |
+The `apiServer` is the central component of the Kubernetes control plane.
+It manages all requests to the Kubernetes API and ensures communication between internal cluster components.
 
-### Exemple
+### Internal fields
+
+| Field              | Type   | Required | Description                                                       |
+| ------------------ | ------ | -------- | ----------------------------------------------------------------- |
+| `resources`        | Object | ✅        | Defines CPU and memory resources allocated to the API Server      |
+| `resources.cpu`    | string | ❌        | Number of vCPUs assigned (ex: `2`)                                |
+| `resources.memory` | string | ❌        | Amount of memory allocated (ex: `4Gi`)                            |
+| `resourcesPreset`  | string | ✅        | Predefined resource profile to simplify configuration             |
+|                    |        |          | Possible values: `nano`, `micro`, `small`, `medium`, `large`, ... |
+
+### Example
+
 ```yaml
 apiServer:
   resources:
@@ -62,21 +66,24 @@ apiServer:
 
 ---
 
-## `controllerManager` (Object) — **Obligatoire**
+## `controllerManager` (Object) — **Required**
 
 ### Description
-Le `controllerManager` exécute les **boucles de contrôle** Kubernetes (reconciliation loops).
-Il assure la création, la mise à jour et la suppression des ressources (pods, services, etc.) en fonction de l’état désiré du cluster.
 
-### Champs internes
-| Champ | Type | Obligatoire | Description |
-|-------|------|-------------|--------------|
-| `resources` | Object | ✅ | Spécifie les ressources CPU/mémoire pour le Controller Manager |
-| `resources.cpu` | Object | ❌ | Nombre de vCPU réservés |
-| `resources.memory` | Object | ❌ | Quantité de mémoire allouée |
-| `resourcesPreset` | string | ✅ | Taille prédéfinie (`nano`, `micro`, `small`, `medium`, etc.) |
+The `controllerManager` runs Kubernetes **control loops** (reconciliation loops).
+It ensures the creation, update, and deletion of resources (pods, services, etc.) based on the desired cluster state.
 
-### Exemple
+### Internal fields
+
+| Field              | Type   | Required | Description                                                |
+| ------------------ | ------ | -------- | ---------------------------------------------------------- |
+| `resources`        | Object | ✅        | Specifies CPU/memory resources for the Controller Manager  |
+| `resources.cpu`    | string | ❌        | Number of vCPUs reserved                                   |
+| `resources.memory` | string | ❌        | Amount of memory allocated                                 |
+| `resourcesPreset`  | string | ✅        | Predefined size (`nano`, `micro`, `small`, `medium`, etc.) |
+
+### Example
+
 ```yaml
 controllerManager:
   resources:
@@ -87,24 +94,28 @@ controllerManager:
 
 ---
 
-## `konnectivity` (Object) — **Obligatoire**
+## `konnectivity` (Object) — **Required**
 
 ### Description
-Le service **Konnectivity** gère la communication sécurisée entre le plan de contrôle et les nœuds (agents).
-Il remplace l’ancien `kube-proxy` pour les connexions sortantes des nœuds et optimise la connectivité réseau.
 
-### Sous-champ : `server`
-Définit la configuration du serveur Konnectivity responsable des connexions multiplexées entre control plane et nodes.
+The **Konnectivity** service manages secure communication between the control plane and nodes.
+It replaces the old `kube-proxy` for outbound node connections and optimizes network connectivity.
 
-#### Champs internes
-| Champ | Type | Obligatoire | Description |
-|-------|------|-------------|--------------|
-| `resources` | Object | ✅ | Spécifie les ressources CPU/mémoire du serveur Konnectivity |
-| `resources.cpu` | Object | ❌ | Nombre de vCPU |
-| `resources.memory` | Object | ❌ | Quantité de mémoire |
-| `resourcesPreset` | string | ✅ | Profil prédéfini (`nano`, `micro`, `small`, `medium`, etc.) |
+### Sub-field: `server`
 
-### Exemple
+Defines the configuration of the Konnectivity server responsible for multiplexed connections between the control plane and nodes.
+
+#### Internal fields
+
+| Field              | Type   | Required | Description                                                   |
+| ------------------ | ------ | -------- | ------------------------------------------------------------- |
+| `resources`        | Object | ✅        | Specifies CPU/memory resources for the Konnectivity server    |
+| `resources.cpu`    | string | ❌        | Number of vCPUs                                               |
+| `resources.memory` | string | ❌        | Amount of memory                                              |
+| `resourcesPreset`  | string | ✅        | Predefined profile (`nano`, `micro`, `small`, `medium`, etc.) |
+
+### Example
+
 ```yaml
 konnectivity:
   server:
@@ -116,21 +127,24 @@ konnectivity:
 
 ---
 
-## `scheduler` (Object) — **Obligatoire**
+## `scheduler` (Object) — **Required**
 
 ### Description
-Le `scheduler` détermine sur quel nœud chaque pod doit être exécuté en fonction des contraintes de ressources, affinités, et topologies.
-Il est essentiel pour la performance et l’équilibrage du cluster.
 
-### Champs internes
-| Champ | Type | Obligatoire | Description |
-|-------|------|-------------|--------------|
-| `resources` | Object | ✅ | Définit les ressources allouées au Scheduler |
-| `resources.cpu` | Object | ❌ | Nombre de vCPU |
-| `resources.memory` | Object | ❌ | Quantité de mémoire |
-| `resourcesPreset` | string | ✅ | Taille prédéfinie (`nano`, `micro`, `small`, `medium`, etc.) |
+The `scheduler` determines on which node each pod should run based on resource constraints, affinity rules, and topology.
+It is essential for cluster performance and workload balancing.
 
-### Exemple
+### Internal fields
+
+| Field              | Type   | Required | Description                                                |
+| ------------------ | ------ | -------- | ---------------------------------------------------------- |
+| `resources`        | Object | ✅        | Defines resources allocated to the Scheduler               |
+| `resources.cpu`    | string | ❌        | Number of vCPUs                                            |
+| `resources.memory` | string | ❌        | Amount of memory                                           |
+| `resourcesPreset`  | string | ✅        | Predefined size (`nano`, `micro`, `small`, `medium`, etc.) |
+
+### Example
+
 ```yaml
 scheduler:
   resources:
@@ -141,23 +155,25 @@ scheduler:
 
 ---
 
-## `replicas` (integer) — **Obligatoire**
+## `replicas` (integer) — **Required**
 
 ### Description
-Le champ `replicas` définit le **nombre d’instances du plan de contrôle**.
-Un nombre impair de réplicas (généralement `3`) est recommandé pour garantir la haute disponibilité et le quorum dans `etcd`.
 
-### Exemple
+The `replicas` field defines the **number of control plane instances**.
+An odd number of replicas (usually `3`) is recommended to ensure high availability and quorum for `etcd`.
+
+### Example
+
 ```yaml
 replicas: 3
 ```
 
 ---
 
-## **Types de resourcesPreset**
+## **Types of resourcesPreset**
 
 ```yaml
-# Instances disponibles
+# Available presets
 resourcesPreset: "nano"     # 0.1 CPU, 128 MiB RAM
 resourcesPreset: "micro"    # 0.25 CPU, 256 MiB RAM
 resourcesPreset: "small"    # 0.5 CPU, 512 MiB RAM
@@ -169,9 +185,11 @@ resourcesPreset: "2xlarge"  # 4 CPU, 8 GiB RAM
 
 ---
 
-## 💡 Bonnes pratiques
+## 💡 Best Practices
 
-- Toujours définir `replicas: 3` pour la redondance.
-- Utiliser des `resourcesPreset` cohérents entre les composants.
-- Adapter les ressources en fonction de la charge (clusters de production → `medium` ou `large`).
-- Ne pas sous-dimensionner `apiServer`, c’est le composant le plus sollicité.
+* Always set `replicas: 3` for redundancy.
+* Use consistent `resourcesPreset` values across components.
+* Adjust resources based on workload (production clusters → `medium` or `large`).
+* Do not under-size the `apiServer`, as it is the most heavily used component.
+
+---

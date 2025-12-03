@@ -1,12 +1,13 @@
 ---
+
 sidebar_position: 5
 title: Ingress Nginx
----
+--------------------
 
-# 🧩 Détails du champ `addons.ingressNginx`
+# 🧩 Details of the `addons.ingressNginx` Field
 
-Le champ `addons.ingressNginx` définit la configuration de l’add-on **Ingress NGINX**, utilisé pour gérer les points d’entrée HTTP(S) du cluster Kubernetes.
-Il déploie un contrôleur NGINX qui expose les applications internes via des routes Ingress, avec un support complet du TLS, du load balancing et des annotations Kubernetes.
+The `addons.ingressNginx` field defines the configuration of the **Ingress NGINX** add-on, used to manage the HTTP(S) entry points of the Kubernetes cluster.
+It deploys an NGINX controller that exposes internal applications through Ingress routes, with full support for TLS, load balancing, and Kubernetes annotations.
 
 ```yaml
 addons:
@@ -17,21 +18,24 @@ addons:
       - app.example.com
       - api.example.com
     valuesOverride:
-      controller:
-        replicaCount: 2
-        service:
-          type: LoadBalancer
+      ingressNginx:
+        controller:
+          replicaCount: 2
+          service:
+            type: LoadBalancer
 ```
 
 ---
 
-## `ingressNginx` (Object) — **Obligatoire**
+## `ingressNginx` (Object) — **Required**
 
 ### Description
-Le champ `ingressNginx` regroupe la configuration principale du contrôleur Ingress basé sur NGINX.
-Il permet d’activer le déploiement du contrôleur, de choisir la méthode d’exposition et de définir les hôtes publics associés.
 
-### Exemple
+The `ingressNginx` field contains the main configuration of the NGINX-based Ingress controller.
+It allows enabling the controller deployment, choosing the exposure method, and defining associated public hosts.
+
+### Example
+
 ```yaml
 ingressNginx:
   enabled: true
@@ -42,31 +46,35 @@ ingressNginx:
 
 ---
 
-## `enabled` (boolean) — **Obligatoire**
+## `enabled` (boolean) — **Required**
 
 ### Description
-Indique si le contrôleur **Ingress NGINX** est activé (`true`) ou désactivé (`false`).
-Lorsqu’il est activé, un ou plusieurs pods NGINX sont déployés pour gérer les règles d’entrée du cluster.
 
-### Exemple
+Indicates whether the **Ingress NGINX** controller is enabled (`true`) or disabled (`false`).
+When enabled, one or more NGINX pods are deployed to manage the cluster’s ingress rules.
+
+### Example
+
 ```yaml
 enabled: true
 ```
 
 ---
 
-## `exposeMethod` (string) — **Obligatoire**
+## `exposeMethod` (string) — **Required**
 
 ### Description
-Détermine la **méthode d’exposition** du contrôleur Ingress NGINX.
-Ce champ accepte les valeurs suivantes :
 
-| Valeur | Description |
-|--------|--------------|
-| `Proxied` | Le contrôleur est exposé via un proxy interne ou un ingress existant. |
-| `LoadBalancer` | Le service NGINX est exposé via un `Service` de type `LoadBalancer`. |
+Determines the **exposure method** for the Ingress NGINX controller.
+This field accepts the following values:
 
-### Exemple
+| Value          | Description                                                                 |
+| -------------- | --------------------------------------------------------------------------- |
+| `Proxied`      | The controller is exposed through an internal proxy or an existing ingress. |
+| `LoadBalancer` | The NGINX service is exposed using a `LoadBalancer` Service.                |
+
+### Example
+
 ```yaml
 exposeMethod: LoadBalancer
 ```
@@ -76,10 +84,12 @@ exposeMethod: LoadBalancer
 ## `hosts` (Array)
 
 ### Description
-Liste les **noms de domaine** associés au contrôleur Ingress NGINX.
-Ces hôtes définissent les routes publiques accessibles depuis l’extérieur du cluster.
 
-### Exemple
+Lists the **domain names** associated with the Ingress NGINX controller.
+These hosts define the public routes accessible from outside the cluster.
+
+### Example
+
 ```yaml
 hosts:
   - app.example.com
@@ -88,15 +98,16 @@ hosts:
 
 ---
 
-## `valuesOverride` (Object) — **Obligatoire**
+## `valuesOverride` (Object) — **Required**
 
 ### Description
-Le champ `valuesOverride` permet de **surcharger les valeurs Helm** du déploiement Ingress NGINX.
-Il est utilisé pour personnaliser la configuration du contrôleur (nombre de réplicas, type de service, ressources, annotations, etc.).
+
+The `valuesOverride` field allows **overriding the Helm values** of the Ingress NGINX deployment.
+It is used to customize controller configuration (replica count, service type, resources, annotations, etc.).
 
 #### **Ingress NGINX**
 
-Contrôleur d'ingress pour l'exposition HTTP/HTTPS.
+Ingress controller for HTTP/HTTPS exposure.
 
 ```yaml
 spec:
@@ -110,7 +121,7 @@ spec:
       valuesOverride: {}
 ```
 
-#### **Configuration Avancée Ingress NGINX**
+#### **Advanced Ingress NGINX Configuration**
 
 ```yaml
 spec:
@@ -121,45 +132,48 @@ spec:
         - "production.company.com"
         - "*.apps.company.com"
       valuesOverride:
-        controller:
-          # Réplication pour haute disponibilité
-          replicaCount: 3
+        ingressNginx:
+          controller:
+            # Replication for high availability
+            replicaCount: 3
 
-          # Configuration des ressources
-          resources:
-            requests:
-              cpu: 100m
-              memory: 90Mi
-            limits:
-              cpu: 500m
-              memory: 500Mi
+            # Resources configuration
+            resources:
+              requests:
+                cpu: 100m
+                memory: 90Mi
+              limits:
+                cpu: 500m
+                memory: 500Mi
 
-          # Configuration du service LoadBalancer
-          service:
-            type: LoadBalancer
-            annotations:
-              service.beta.kubernetes.io/aws-load-balancer-type: nlb
+            # LoadBalancer service configuration
+            service:
+              type: LoadBalancer
+              annotations:
+                service.beta.kubernetes.io/aws-load-balancer-type: nlb
 
-          # Métriques
-          metrics:
-            enabled: true
-            serviceMonitor:
+            # Metrics
+            metrics:
               enabled: true
+              serviceMonitor:
+                enabled: true
 
-          # Configuration SSL
-          config:
-            ssl-protocols: "TLSv1.2 TLSv1.3"
-            ssl-ciphers: "ECDHE-ECDSA-AES128-GCM-SHA256,ECDHE-RSA-AES128-GCM-SHA256"
+            # SSL configuration
+            config:
+              ssl-protocols: "TLSv1.2 TLSv1.3"
+              ssl-ciphers: "ECDHE-ECDSA-AES128-GCM-SHA256,ECDHE-RSA-AES128-GCM-SHA256"
 
-          # Logging
-          enableSnippets: true
+            # Logging
+            enableSnippets: true
 ```
 
 ---
 
-## 💡 Bonnes pratiques
+## 💡 Best Practices
 
-- Préférer `Proxied` pour les environnements on-premises où l’accès est géré via un reverse proxy externe.
-- Définir plusieurs `hosts` pour les applications multi-domaines.
-- Utiliser `valuesOverride` pour ajuster les ressources, le nombre de réplicas et la configuration TLS.
-- Configurer les annotations (`nginx.ingress.kubernetes.io/*`) directement via les manifestes `Ingress` pour un meilleur contrôle applicatif.
+* Prefer `Proxied` for on-premises environments where access is managed through an external reverse proxy.
+* Define multiple `hosts` for multi-domain applications.
+* Use `valuesOverride` to adjust resources, replica count, and TLS configuration.
+* Configure annotations (`nginx.ingress.kubernetes.io/*`) directly in `Ingress` manifests for better application-level control.
+
+---

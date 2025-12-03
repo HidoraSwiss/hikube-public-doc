@@ -1,70 +1,79 @@
 ---
+
 sidebar_position: 10
 title: Monitoring Agents
----
+------------------------
 
-# 🧩 Détails du champ `addons.monitoringAgents`
+# 🧩 Details of the `addons.monitoringAgents` Field
 
-Le champ `addons.monitoringAgents` définit la configuration de l’add-on **Monitoring Agents**, responsable de la collecte des métriques et des logs au sein du cluster Kubernetes.
-Cet add-on regroupe les agents de monitoring (Prometheus Node Exporter, kube-state-metrics, ou autres collecteurs) déployés sur les nœuds du cluster.
+The `addons.monitoringAgents` field defines the configuration of the **Monitoring Agents** add-on, responsible for collecting metrics and logs within the Kubernetes cluster.
+This add-on bundles monitoring agents (Prometheus Node Exporter, kube-state-metrics, or other collectors) deployed on the cluster nodes.
 
 ```yaml
 addons:
   monitoringAgents:
     enabled: true
     valuesOverride:
-      nodeExporter:
-        enabled: true
-      kubeStateMetrics:
-        enabled: true
+      monitoringAgents:
+        nodeExporter:
+          enabled: true
+        kubeStateMetrics:
+          enabled: true
 ```
 
 ---
 
-## `monitoringAgents` (Object) — **Obligatoire**
+## `monitoringAgents` (Object) — **Required**
 
 ### Description
-Le champ `monitoringAgents` regroupe la configuration principale des agents de monitoring déployés dans le cluster.
-Il permet d’activer le composant et de personnaliser son comportement via des valeurs Helm.
 
-### Exemple
+The `monitoringAgents` field contains the main configuration for the monitoring agents deployed across the cluster.
+It allows enabling the component and customizing its behavior through Helm values.
+
+### Example
+
 ```yaml
 monitoringAgents:
   enabled: true
   valuesOverride:
-    nodeExporter:
-      enabled: true
+    monitoringAgents:
+      nodeExporter:
+        enabled: true
 ```
 
 ---
 
-## `enabled` (boolean) — **Obligatoire**
+## `enabled` (boolean) — **Required**
 
 ### Description
-Indique si les **agents de monitoring** sont activés (`true`) ou désactivés (`false`).
-Lorsqu’ils sont activés, les agents collectent automatiquement les métriques système et Kubernetes pour les exporter vers un serveur de supervision (ex. Prometheus, Grafana Agent, OpenTelemetry Collector, etc.).
 
-### Exemple
+Indicates whether **monitoring agents** are enabled (`true`) or disabled (`false`).
+When enabled, the agents automatically collect system and Kubernetes metrics and export them to a monitoring backend (e.g., Prometheus, Grafana Agent, OpenTelemetry Collector, etc.).
+
+### Example
+
 ```yaml
 enabled: true
 ```
 
 ---
 
-## `valuesOverride` (Object) — **Obligatoire**
+## `valuesOverride` (Object) — **Required**
 
 ### Description
-Le champ `valuesOverride` permet de **surcharger les valeurs Helm** utilisées pour déployer les agents de monitoring.
-Il est utilisé pour ajuster la configuration (activation des modules, ressources, ports d’écoute, labels, etc.).
 
-### Exemple
-### **Agents de Monitoring**
+The `valuesOverride` field allows **overriding the Helm values** used to deploy monitoring agents.
+It is used to adjust configuration (module activation, resources, listening ports, labels, etc.).
 
-Collecte de logs et métriques avec FluentBit et autres agents.
+### Example
+
+### **Monitoring Agents**
+
+Log and metrics collection using FluentBit and other agents.
 
 ```yaml
 valuesOverride:
-  # Configuration FluentBit
+  # FluentBit configuration
   fluentbit:
     enabled: true
     config:
@@ -76,58 +85,61 @@ valuesOverride:
             Port 24224
 ```
 
-#### **Configuration Avancée Monitoring**
+#### **Advanced Monitoring Configuration**
 
 ```yaml
 valuesOverride:
-# FluentBit pour les logs
-fluentbit:
-  enabled: true
-  resources:
-    requests:
-      cpu: 5m
-      memory: 10Mi
-    limits:
-      cpu: 50m
-      memory: 60Mi
-  config:
-    service: |
-      [SERVICE]
-          Flush         1
-          Log_Level     info
-          Daemon        off
-          Parsers_File  parsers.conf
-    inputs: |
-      [INPUT]
-          Name              tail
-          Path              /var/log/containers/*.log
-          Parser            cri
-          Tag               kube.*
-          Refresh_Interval  5
-          Mem_Buf_Limit     50MB
-    outputs: |
-      [OUTPUT]
-          Name  forward
-          Match *
-          Host  logs.company.com
-          Port  24224
+  monitoringAgents:
+    # FluentBit for logs
+    fluentbit:
+      enabled: true
+      resources:
+        requests:
+          cpu: 5m
+          memory: 10Mi
+        limits:
+          cpu: 50m
+          memory: 60Mi
+      config:
+        service: |
+          [SERVICE]
+              Flush         1
+              Log_Level     info
+              Daemon        off
+              Parsers_File  parsers.conf
+        inputs: |
+          [INPUT]
+              Name              tail
+              Path              /var/log/containers/*.log
+              Parser            cri
+              Tag               kube.*
+              Refresh_Interval  5
+              Mem_Buf_Limit     50MB
+        outputs: |
+          [OUTPUT]
+              Name  forward
+              Match *
+              Host  logs.company.com
+              Port  24224
 
-# Node Exporter pour les métriques système
-nodeExporter:
-  enabled: true
-  resources:
-    requests:
-      cpu: 10m
-      memory: 32Mi
-    limits:
-      cpu: 200m
-      memory: 128Mi
+    # Node Exporter for system metrics
+    nodeExporter:
+      enabled: true
+      resources:
+        requests:
+          cpu: 10m
+          memory: 32Mi
+        limits:
+          cpu: 200m
+          memory: 128Mi
 ```
 
 ---
 
-## 💡 Bonnes pratiques
+## 💡 Best Practices
 
-- Activer `enabled: true` pour garantir la collecte continue des métriques système et applicatives.
-- Utiliser `valuesOverride` pour ajuster la configuration des agents selon les besoins (ex. limiter la collecte sur certains nœuds).
-- Configurer des `resource limits` appropriés pour éviter que les agents n’impactent la charge du cluster.
+* Enable `enabled: true` to ensure continuous collection of system and application metrics.
+* Use `valuesOverride` to fine-tune agent configuration depending on the environment (e.g., limit collection on specific nodes).
+* Configure appropriate `resource limits` to prevent agents from impacting cluster load.
+
+---

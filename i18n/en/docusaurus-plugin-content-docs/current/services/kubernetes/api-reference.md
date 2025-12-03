@@ -1,11 +1,12 @@
 ---
+
 sidebar_position: 6
 title: API Reference
----
+--------------------
 
-# Exemples Complets
+# Complete Examples
 
-## **Cluster de Production**
+## **Production Cluster**
 
 ```yaml title="production-cluster.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -18,17 +19,17 @@ metadata:
     criticality: high
     team: platform
 spec:
-  # Configuration cluster
+  # Cluster configuration
   host: "k8s-prod.company.com"
   storageClass: "replicated"
 
-  # Plan de contrôle haute disponibilité
+  # High-availability control plane
   controlPlane:
     replicas: 3
 
-  # Node groups spécialisés
+  # Specialized node groups
   nodeGroups:
-    # Nœuds généraux avec Ingress
+    # General nodes with Ingress
     web:
       minReplicas: 3
       maxReplicas: 10
@@ -37,7 +38,7 @@ spec:
       roles:
         - ingress-nginx
 
-    # Nœuds compute pour workloads intensifs
+    # Compute nodes for intensive workloads
     compute:
       minReplicas: 1
       maxReplicas: 5
@@ -45,7 +46,7 @@ spec:
       ephemeralStorage: 100Gi
       roles: []
 
-    # Nœuds monitoring dédiés
+    # Dedicated monitoring nodes
     monitoring:
       minReplicas: 2
       maxReplicas: 4
@@ -54,16 +55,16 @@ spec:
       roles:
         - monitoring
 
-  # Add-ons complets
+  # Complete add-ons
   addons:
-    # Certificats SSL automatiques
+    # Automatic SSL certificates
     certManager:
       enabled: true
       valuesOverride:
         prometheus:
           enabled: true
 
-    # Exposition HTTP/HTTPS
+    # HTTP/HTTPS exposure
     ingressNginx:
       enabled: true
       hosts:
@@ -78,7 +79,7 @@ spec:
               cpu: 200m
               memory: 256Mi
 
-    # GitOps pour déploiements
+    # GitOps for deployments
     fluxcd:
       enabled: true
       valuesOverride:
@@ -86,7 +87,7 @@ spec:
           url: "https://github.com/company/k8s-production"
           branch: "main"
 
-    # Monitoring complet
+    # Full monitoring
     monitoringAgents:
       enabled: true
       valuesOverride:
@@ -94,7 +95,7 @@ spec:
           enabled: true
 ```
 
-## **Cluster de Développement**
+## **Development Cluster**
 
 ```yaml title="development-cluster.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -106,15 +107,15 @@ metadata:
     environment: development
     auto-cleanup: "7d"
 spec:
-  # Configuration basique
+  # Basic configuration
   host: "k8s-dev.company.local"
   storageClass: "replicated"
 
-  # Plan de contrôle minimal
+  # Minimal control plane
   controlPlane:
-    replicas: 1  # Économie de ressources
+    replicas: 1  # Resource saving
 
-  # Node group unique polyvalent
+  # Single multipurpose node group
   nodeGroups:
     general:
       minReplicas: 1
@@ -124,7 +125,7 @@ spec:
       roles:
         - ingress-nginx
 
-  # Add-ons essentiels uniquement
+  # Essential add-ons only
   addons:
     certManager:
       enabled: true
@@ -135,10 +136,10 @@ spec:
         - "*.dev.company.local"
       valuesOverride:
         controller:
-          replicaCount: 1  # Réplication minimale
+          replicaCount: 1  # Minimal replication
 ```
 
-## **Cluster ML/AI avec GPU**
+## **ML/AI Cluster with GPU**
 
 ```yaml title="ml-cluster.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -151,13 +152,13 @@ metadata:
     workload: gpu
 spec:
   host: "k8s-ai.company.com"
-  storageClass: "fast-ssd"  # Stockage haute performance
+  storageClass: "fast-ssd"  # High-performance storage
 
   controlPlane:
     replicas: 2
 
   nodeGroups:
-    # Nœuds standard pour orchestration
+    # Standard nodes for orchestration
     system:
       minReplicas: 2
       maxReplicas: 4
@@ -166,14 +167,14 @@ spec:
       roles:
         - ingress-nginx
 
-    # Nœuds GPU pour ML workloads
+    # GPU nodes for ML workloads
     gpu:
-      minReplicas: 0      # Scaling à zéro possible
+      minReplicas: 0      # Zero-scaling allowed
       maxReplicas: 10
       instanceType: "u1.2xlarge"
-      gpus: # Instance avec GPU
+      gpus: # Instance with GPU
         - name: nvidia.com/AD102GL_L40S # Nvidia L40S
-      ephemeralStorage: 500Gi      # Stockage important pour datasets
+      ephemeralStorage: 500Gi      # Large storage for datasets
       roles: []
 
   addons:
@@ -183,25 +184,25 @@ spec:
     monitoringAgents:
       enabled: true
       valuesOverride:
-        # Monitoring spécialisé GPU
+        # GPU-specific monitoring
         dcgmExporter:
           enabled: true
 ```
 
 ---
 
-:::tip 💡 Bonnes Pratiques
+:::tip 💡 Best Practices
 
-- **Utilisez des labels** pour organiser vos clusters par environnement
-- **Configurez RBAC** dès la création pour sécuriser l'accès
-- **Activez le monitoring** pour une observabilité complète
-- **Planifiez la capacité** avec des node groups appropriés
-- **Testez les sauvegardes** régulièrement
-:::
+* **Use labels** to organize clusters by environment
+* **Configure RBAC** from the start to secure access
+* **Enable monitoring** for full observability
+* **Plan capacity** using appropriate node groups
+* **Test backups** regularly
+  :::
 
-:::warning ⚠️ Attention
+:::warning ⚠️ Warning
 
-- **Les suppressions sont irréversibles** - pensez aux sauvegardes
-- **Les mises à jour** peuvent avoir un impact sur les workloads
-- **Vérifiez la compatibilité** des add-ons avec les versions Kubernetes
-:::
+* **Deletions are irreversible** — ensure backups exist
+* **Updates** may impact workloads
+* **Check compatibility** of add-ons with Kubernetes versions
+  :::

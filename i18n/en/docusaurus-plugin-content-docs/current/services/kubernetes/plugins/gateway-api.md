@@ -1,12 +1,13 @@
 ---
+
 sidebar_position: 3
 title: GatewayAPI
----
+-----------------
 
-# 🧩 Détails du champ `addons.gatewayAPI`
+# 🧩 Details of the `addons.gatewayAPI` Field
 
-Le champ `addons.gatewayAPI` définit la configuration de l’add-on **Gateway API**, une extension moderne de Kubernetes pour la gestion des **entrées réseau** (ingress, routes, gateways).
-Elle remplace progressivement les objets `Ingress` traditionnels en offrant un modèle plus flexible et extensible.
+The `addons.gatewayAPI` field defines the configuration of the **Gateway API** add-on, a modern Kubernetes extension for managing **network ingress** (ingress, routes, gateways).
+It is progressively replacing traditional `Ingress` objects by offering a more flexible and extensible model.
 
 ```yaml
 addons:
@@ -16,22 +17,24 @@ addons:
 
 ---
 
-## `enabled` (boolean) — **Obligatoire**
+## `enabled` (boolean) — **Required**
 
 ### Description
-Indique si le module **Gateway API** est activé (`true`) ou désactivé (`false`).
-Lorsqu’il est activé, les **Custom Resource Definitions (CRDs)** associées à Gateway API (telles que `GatewayClass`, `Gateway`, `HTTPRoute`, etc.) sont installées et disponibles dans le cluster.
 
-### Exemple
+Indicates whether the **Gateway API** module is enabled (`true`) or disabled (`false`).
+When enabled, the associated **Custom Resource Definitions (CRDs)** (such as `GatewayClass`, `Gateway`, `HTTPRoute`, etc.) are installed and available in the cluster.
+
+### Example
+
 ```yaml
 enabled: true
 ```
 
 ---
 
-## 💡 Bonnes pratiques
+## 💡 Best Practices
 
-- Activer `enabled: true` pour utiliser la nouvelle API réseau standardisée par la CNCF.
-- Tester la compatibilité des ressources (`HTTPRoute`, `TCPRoute`, `ReferencePolicy`, etc.) avant de migrer depuis `Ingress`.
+* Enable `enabled: true` to use the new CNCF-standardized network API.
+* Test the compatibility of resources (`HTTPRoute`, `TCPRoute`, `ReferencePolicy`, etc.) before migrating from `Ingress`.
 
 ---

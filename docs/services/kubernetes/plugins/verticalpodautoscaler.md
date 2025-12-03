@@ -12,12 +12,13 @@ Il analyse en continu la consommation réelle des workloads et recommande ou app
 addons:
   verticalPodAutoscaler:
     valuesOverride:
-      recommender:
-        enabled: true
-      updater:
-        enabled: true
-      admissionController:
-        enabled: true
+      verticalPodAutoscaler:
+        recommender:
+          enabled: true
+        updater:
+          enabled: true
+        admissionController:
+          enabled: true
 ```
 
 ---
@@ -25,15 +26,18 @@ addons:
 ## `verticalPodAutoscaler` (Object) — **Obligatoire**
 
 ### Description
+
 Le champ `verticalPodAutoscaler` regroupe la configuration principale de l’add-on VPA.
 Il permet de déployer et personnaliser les composants du Vertical Pod Autoscaler afin d’automatiser la gestion des ressources des Pods.
 
 ### Exemple
+
 ```yaml
 verticalPodAutoscaler:
   valuesOverride:
-    recommender:
-      enabled: true
+    verticalPodAutoscaler:
+      recommender:
+        enabled: true
 ```
 
 ---
@@ -41,6 +45,7 @@ verticalPodAutoscaler:
 ## `valuesOverride` (Object) — **Obligatoire**
 
 ### Description
+
 Le champ `valuesOverride` permet de **surcharger les valeurs Helm** du déploiement du Vertical Pod Autoscaler.
 Il est utilisé pour activer ou désactiver les différents sous-composants :
 
@@ -51,14 +56,16 @@ Il est utilisé pour activer ou désactiver les différents sous-composants :
 | `admissionController` | Intercepte les requêtes de création/modification de Pods pour ajuster les ressources à la volée. |
 
 ### Exemple
+
 ```yaml
 valuesOverride:
-  recommender:
-    enabled: true
-  updater:
-    enabled: true
-  admissionController:
-    enabled: true
+  verticalPodAutoscaler:
+    recommender:
+      enabled: true
+    updater:
+      enabled: true
+    admissionController:
+      enabled: true
 ```
 
 ---

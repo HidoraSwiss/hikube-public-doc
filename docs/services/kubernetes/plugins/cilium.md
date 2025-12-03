@@ -13,10 +13,11 @@ Ce champ permet de personnaliser le déploiement du composant via des valeurs sp
 addons:
   cilium:
     valuesOverride:
-      hubble:
-        enabled: true
-      encryption:
-        enabled: true
+      cilium:
+        hubble:
+          enabled: true
+        encryption:
+          enabled: true
 ```
 
 ---
@@ -24,15 +25,18 @@ addons:
 ## `cilium` (Object) — **Obligatoire**
 
 ### Description
+
 Le champ `cilium` représente la configuration principale de l’add-on réseau.
 Il regroupe les paramètres nécessaires à l’installation et à la personnalisation de Cilium dans le cluster.
 
 ### Exemple
+
 ```yaml
 cilium:
   valuesOverride:
-    hubble:
-      enabled: true
+    cilium:
+      hubble:
+        enabled: true
 ```
 
 ---
@@ -40,18 +44,21 @@ cilium:
 ## `valuesOverride` (Object) — **Obligatoire**
 
 ### Description
+
 Le champ `valuesOverride` permet de **surcharger les valeurs par défaut** utilisées lors du déploiement de Cilium.
 Il sert à ajuster le comportement du CNI sans modifier le chart principal.
 Ces valeurs peuvent inclure la configuration de **Hubble**, du chiffrement, des politiques réseau, ou encore des ressources allouées.
-Pour plus de valeurs à définir : https://docs.cilium.io/en/stable/helm-reference/
+Pour plus de valeurs à définir : <https://docs.cilium.io/en/stable/helm-reference/>
 
 ### Exemple
+
 ```yaml
 valuesOverride:
-  hubble:
-    enabled: true
-  encryption:
-    enabled: true
+  cilium:
+    hubble:
+      enabled: true
+    encryption:
+      enabled: true
 ```
 
 ---

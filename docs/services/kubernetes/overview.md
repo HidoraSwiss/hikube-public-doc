@@ -124,19 +124,23 @@ version: "1.30.3"
 ## 🧩 Add-ons Intégrés
 
 ### **Cert-Manager**
+
 - Gestion automatisée des certificats SSL/TLS
 - Support Let's Encrypt et autorités privées
 - Renouvellement automatique
 
 ### **Ingress NGINX**
+
 - Contrôleur d’ingress intégré
 - Support wildcard, SNI et Prometheus metrics
 
 ### **Flux CD (GitOps)**
+
 - Synchronisation continue avec vos dépôts Git
 - Déploiement automatisé et rollback
 
 ### **Monitoring Stack**
+
 - **Node Exporter**, **FluentBit**, **Kube-State-Metrics**
 - Intégration complète avec Grafana et Prometheus du tenant
 

@@ -13,12 +13,13 @@ addons:
   gpuOperator:
     enabled: true
     valuesOverride:
-      driver:
-        enabled: true
-      toolkit:
-        enabled: true
-      devicePlugin:
-        enabled: true
+      gpuOperator:
+        driver:
+          enabled: true
+        toolkit:
+          enabled: true
+        devicePlugin:
+          enabled: true
 ```
 
 ---
@@ -26,16 +27,19 @@ addons:
 ## `gpuOperator` (Object) — **Obligatoire**
 
 ### Description
+
 Le champ `gpuOperator` regroupe la configuration principale de l’add-on NVIDIA GPU Operator.
 Il permet d’activer le déploiement du composant et d’ajuster sa configuration.
 
 ### Exemple
+
 ```yaml
 gpuOperator:
   enabled: true
   valuesOverride:
-    driver:
-      enabled: true
+    gpuOperator:
+      driver:
+        enabled: true
 ```
 
 ---
@@ -43,10 +47,12 @@ gpuOperator:
 ## `enabled` (boolean) — **Obligatoire**
 
 ### Description
+
 Indique si le **GPU Operator** est activé (`true`) ou désactivé (`false`) dans le cluster.
 Lorsqu’il est activé, l’opérateur déploie automatiquement les composants nécessaires à la gestion des GPU NVIDIA.
 
 ### Exemple
+
 ```yaml
 enabled: true
 ```
@@ -56,18 +62,21 @@ enabled: true
 ## `valuesOverride` (Object) — **Obligatoire**
 
 ### Description
+
 Le champ `valuesOverride` permet de **surcharger les valeurs par défaut** du GPU Operator.
 Il est utilisé pour personnaliser le comportement du déploiement (activation du driver, du toolkit, des plugins, ou configuration des ressources).
 
 ### Exemple
+
 ```yaml
 valuesOverride:
-  driver:
-    enabled: true
-  toolkit:
-    enabled: true
-  devicePlugin:
-    enabled: true
+  gpuOperator:
+    driver:
+      enabled: true
+    toolkit:
+      enabled: true
+    devicePlugin:
+      enabled: true
 ```
 
 ---

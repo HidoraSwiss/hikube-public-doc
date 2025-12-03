@@ -39,10 +39,12 @@ controlPlane:
 ## `apiServer` (Object) — **Obligatoire**
 
 ### Description
+
 Le `apiServer` est le composant central du plan de contrôle Kubernetes.
 Il gère toutes les requêtes vers l’API Kubernetes et assure la communication entre les composants internes du cluster.
 
 ### Champs internes
+
 | Champ | Type | Obligatoire | Description |
 |-------|------|-------------|--------------|
 | `resources` | Object | ✅ | Définit les ressources CPU et mémoire allouées à l’API Server |
@@ -52,6 +54,7 @@ Il gère toutes les requêtes vers l’API Kubernetes et assure la communication
 | | | | Valeurs possibles : `nano`, `micro`, `small`, `medium`, `large`, ... |
 
 ### Exemple
+
 ```yaml
 apiServer:
   resources:
@@ -65,10 +68,12 @@ apiServer:
 ## `controllerManager` (Object) — **Obligatoire**
 
 ### Description
+
 Le `controllerManager` exécute les **boucles de contrôle** Kubernetes (reconciliation loops).
 Il assure la création, la mise à jour et la suppression des ressources (pods, services, etc.) en fonction de l’état désiré du cluster.
 
 ### Champs internes
+
 | Champ | Type | Obligatoire | Description |
 |-------|------|-------------|--------------|
 | `resources` | Object | ✅ | Spécifie les ressources CPU/mémoire pour le Controller Manager |
@@ -77,6 +82,7 @@ Il assure la création, la mise à jour et la suppression des ressources (pods, 
 | `resourcesPreset` | string | ✅ | Taille prédéfinie (`nano`, `micro`, `small`, `medium`, etc.) |
 
 ### Exemple
+
 ```yaml
 controllerManager:
   resources:
@@ -90,13 +96,16 @@ controllerManager:
 ## `konnectivity` (Object) — **Obligatoire**
 
 ### Description
+
 Le service **Konnectivity** gère la communication sécurisée entre le plan de contrôle et les nœuds (agents).
 Il remplace l’ancien `kube-proxy` pour les connexions sortantes des nœuds et optimise la connectivité réseau.
 
 ### Sous-champ : `server`
+
 Définit la configuration du serveur Konnectivity responsable des connexions multiplexées entre control plane et nodes.
 
 #### Champs internes
+
 | Champ | Type | Obligatoire | Description |
 |-------|------|-------------|--------------|
 | `resources` | Object | ✅ | Spécifie les ressources CPU/mémoire du serveur Konnectivity |
@@ -105,6 +114,7 @@ Définit la configuration du serveur Konnectivity responsable des connexions mul
 | `resourcesPreset` | string | ✅ | Profil prédéfini (`nano`, `micro`, `small`, `medium`, etc.) |
 
 ### Exemple
+
 ```yaml
 konnectivity:
   server:
@@ -119,10 +129,12 @@ konnectivity:
 ## `scheduler` (Object) — **Obligatoire**
 
 ### Description
+
 Le `scheduler` détermine sur quel nœud chaque pod doit être exécuté en fonction des contraintes de ressources, affinités, et topologies.
 Il est essentiel pour la performance et l’équilibrage du cluster.
 
 ### Champs internes
+
 | Champ | Type | Obligatoire | Description |
 |-------|------|-------------|--------------|
 | `resources` | Object | ✅ | Définit les ressources allouées au Scheduler |
@@ -131,6 +143,7 @@ Il est essentiel pour la performance et l’équilibrage du cluster.
 | `resourcesPreset` | string | ✅ | Taille prédéfinie (`nano`, `micro`, `small`, `medium`, etc.) |
 
 ### Exemple
+
 ```yaml
 scheduler:
   resources:
@@ -144,10 +157,12 @@ scheduler:
 ## `replicas` (integer) — **Obligatoire**
 
 ### Description
+
 Le champ `replicas` définit le **nombre d’instances du plan de contrôle**.
 Un nombre impair de réplicas (généralement `3`) est recommandé pour garantir la haute disponibilité et le quorum dans `etcd`.
 
 ### Exemple
+
 ```yaml
 replicas: 3
 ```

@@ -18,23 +18,27 @@ Le schéma, ci-après, illustre la structure et les interactions principales du 
 ## 🧩 1. Composants principaux du cluster
 
 ### 🔹 Etcd Cluster
+
 - Contient plusieurs instances d’**etcd** répliquées entre elles.
 - Assure la **cohérence du stockage d’état du cluster Kubernetes** (informations sur les pods, services, configurations, etc.).
 - La réplication interne entre les nœuds `etcd` garantit la **tolérance aux pannes**.
 
 ### 🔹 Control Plane
+
 - Composé de l’API Server, du Scheduler et du Controller Manager.
 - Rôle :
   - **Planifie les workloads** (pods, déploiements, etc.) sur les nœuds disponibles.
   - **Interagit avec etcd** pour lire/écrire l’état du cluster.
 
 ### 🔹 Node Groups
+
 - Chaque groupe contient plusieurs **nœuds de travail (worker nodes)**.
 - Les workloads (pods) sont déployés sur ces nœuds.
 - Les nœuds communiquent avec le Control Plane pour recevoir leurs tâches.
 - Ils lisent et écrivent leurs données dans les **Persistent Volume (PV)** Kubernetes.
 
 ### 🔹 Kubernetes PV Data
+
 - Représente le **stockage persistant** utilisé par les pods.
 - Les données des workloads sont **écrites et lues depuis ce stockage**.
 - Cette couche est intégrée à la réplication Hikube pour garantir la disponibilité des données.
@@ -44,6 +48,7 @@ Le schéma, ci-après, illustre la structure et les interactions principales du 
 ## 🗄️ 2. Couche de réplication Hikube
 
 ### Hikube Replication Data Layer
+
 - Sert d’interface entre Kubernetes et les **systèmes de stockage régionaux**.
 - Réplique automatiquement les données des PV vers plusieurs régions pour :
   - la **haute disponibilité**,
@@ -51,6 +56,7 @@ Le schéma, ci-après, illustre la structure et les interactions principales du 
   - et la **continuité de service**.
 
 ### Stockages régionaux
+
 - **Region 1** → Geneva Data Storage
 - **Region 2** → Gland Data Storage
 - **Region 3** → Lucerne Data Storage
@@ -85,6 +91,7 @@ Chaque région dispose de son propre backend de stockage, tous synchronisés via
 ## 🌍 5. Objectif global
 
 Cette architecture assure :
+
 - **Haute disponibilité** du cluster Kubernetes.
 - **Résilience géographique** grâce à la réplication inter-régions.
 - **Intégrité des données** via etcd et le stockage persistant.

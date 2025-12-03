@@ -1,98 +1,112 @@
 ---
+
 sidebar_position: 8
 title: FluxCD
----
+-------------
 
 <!--Lien vers valuesoverride-->
 
-# 🧩 Détails du champ `addons.fluxcd`
+# 🧩 Details of the `addons.fluxcd` Field
 
-Le champ `addons.fluxcd` définit la configuration de l’add-on **FluxCD**, utilisé pour la **gestion GitOps** du cluster Kubernetes.
-FluxCD synchronise automatiquement l’état du cluster avec des dépôts Git, garantissant que la configuration déclarée dans le code est toujours appliquée.
+The `addons.fluxcd` field defines the configuration of the **FluxCD** add-on, used for **GitOps management** of the Kubernetes cluster.
+FluxCD automatically synchronizes the cluster state with Git repositories, ensuring that the configuration declared in code is always applied.
 
 ```yaml
 addons:
   fluxcd:
     enabled: true
     valuesOverride:
-      installCRDs: true
-      resources:
-        limits:
-          cpu: 500m
-          memory: 512Mi
-        requests:
-          cpu: 200m
-          memory: 256Mi
+      fluxcd:
+        installCRDs: true
+        resources:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+          requests:
+            cpu: 200m
+            memory: 256Mi
 ```
 
 ---
 
-## `fluxcd` (Object) — **Obligatoire**
+## `fluxcd` (Object) — **Required**
 
 ### Description
-Le champ `fluxcd` regroupe la configuration principale du gestionnaire GitOps du cluster.
-Il permet d’activer le déploiement de FluxCD et d’ajuster sa configuration via Helm.
 
-### Exemple
+The `fluxcd` field contains the main configuration of the cluster’s GitOps manager.
+It allows enabling the deployment of FluxCD and adjusting its configuration via Helm.
+
+### Example
+
 ```yaml
 fluxcd:
   enabled: true
   valuesOverride:
-    installCRDs: true
+    fluxcd:
+      installCRDs: true
 ```
 
 ---
 
-## `enabled` (boolean) — **Obligatoire**
+## `enabled` (boolean) — **Required**
 
 ### Description
-Indique si **FluxCD** est activé (`true`) ou désactivé (`false`) dans le cluster.
-Lorsqu’il est activé, FluxCD déploie ses contrôleurs et démarre la synchronisation GitOps.
 
-### Exemple
+Indicates whether **FluxCD** is enabled (`true`) or disabled (`false`) in the cluster.
+When enabled, FluxCD deploys its controllers and begins GitOps synchronization.
+
+### Example
+
 ```yaml
 enabled: true
 ```
 
 ---
 
-## `valuesOverride` (Object) — **Obligatoire**
+## `valuesOverride` (Object) — **Required**
 
 ### Description
-Le champ `valuesOverride` permet de **surcharger les valeurs Helm par défaut** utilisées pour le déploiement de FluxCD.
-Il est notamment utilisé pour configurer les ressources, les CRDs, ou les options avancées comme la fréquence de synchronisation, les sources Git et les stratégies de mise à jour automatique.
 
-### Exemples
+The `valuesOverride` field allows **overriding the default Helm values** used for deploying FluxCD.
+It is commonly used to configure resources, CRDs, or advanced options such as synchronization frequency, Git sources, and automatic update strategies.
 
-#### Configuration basique
+### Examples
+
+#### Basic configuration
+
 ```yaml
 valuesOverride:
-  installCRDs: true
-  resources:
-    limits:
-      cpu: 500m
-      memory: 512Mi
-    requests:
-      cpu: 200m
-      memory: 256Mi
+  fluxcd:
+    installCRDs: true
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 200m
+        memory: 256Mi
 ```
 
-#### Configuration avec un gitrepo de fluxcd
+#### Configuration with a FluxCD GitRepository
+
 ```yaml
 valuesOverride:
-  installCRDs: true
-  # Configuration du Git repository
-  gitRepository:
-    url: "https://github.com/company/k8s-manifests"
-    branch: "main"
-    path: "./clusters/production"
+  fluxcd:
+    installCRDs: true
+    # Git repository configuration
+    gitRepository:
+      url: "https://github.com/company/k8s-manifests"
+      branch: "main"
+      path: "./clusters/production"
 ```
 
 ---
 
-## 💡 Bonnes pratiques
+## 💡 Best Practices
 
-- Activer `enabled: true` pour bénéficier du déploiement continu basé sur GitOps.
-- Utiliser `valuesOverride` pour personnaliser les ressources et ajuster la fréquence de synchronisation selon les besoins.
-- Sécuriser l’accès Git avec des **secrets Kubernetes** ou des **tokens personnels**.
-- Vérifier la compatibilité de la version de FluxCD avec celle de Kubernetes avant chaque mise à jour.
+* Enable `enabled: true` to benefit from continuous GitOps-based deployment.
+* Use `valuesOverride` to customize resources and adjust synchronization frequency as needed.
+* Secure Git access using **Kubernetes Secrets** or **personal access tokens**.
+* Verify compatibility between FluxCD and Kubernetes versions before each upgrade.
+
+---

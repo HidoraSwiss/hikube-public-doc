@@ -1,79 +1,91 @@
 ---
+
 sidebar_position: 7
 title: GPU Operator
----
+-------------------
 
-# 🧩 Détails du champ `addons.gpuOperator`
+# 🧩 Details of the `addons.gpuOperator` Field
 
-Le champ `addons.gpuOperator` définit la configuration de l’add-on **NVIDIA GPU Operator**, utilisé pour gérer automatiquement les **GPU** dans un cluster Kubernetes.
-Ce composant installe et maintient les pilotes NVIDIA, les plugins d’exécution, le `device plugin`, ainsi que les outils de monitoring nécessaires à l’exploitation des GPU.
+The `addons.gpuOperator` field defines the configuration of the **NVIDIA GPU Operator** add-on, used to automatically manage **GPUs** in a Kubernetes cluster.
+This component installs and maintains the NVIDIA drivers, runtime plugins, the device plugin, and the monitoring tools required for GPU operations.
 
 ```yaml
 addons:
   gpuOperator:
     enabled: true
     valuesOverride:
-      driver:
-        enabled: true
-      toolkit:
-        enabled: true
-      devicePlugin:
-        enabled: true
+      gpuOperator:
+        driver:
+          enabled: true
+        toolkit:
+          enabled: true
+        devicePlugin:
+          enabled: true
 ```
 
 ---
 
-## `gpuOperator` (Object) — **Obligatoire**
+## `gpuOperator` (Object) — **Required**
 
 ### Description
-Le champ `gpuOperator` regroupe la configuration principale de l’add-on NVIDIA GPU Operator.
-Il permet d’activer le déploiement du composant et d’ajuster sa configuration.
 
-### Exemple
+The `gpuOperator` field contains the main configuration of the NVIDIA GPU Operator add-on.
+It allows enabling the component deployment and adjusting its configuration.
+
+### Example
+
 ```yaml
 gpuOperator:
   enabled: true
   valuesOverride:
-    driver:
-      enabled: true
+    gpuOperator:
+      driver:
+        enabled: true
 ```
 
 ---
 
-## `enabled` (boolean) — **Obligatoire**
+## `enabled` (boolean) — **Required**
 
 ### Description
-Indique si le **GPU Operator** est activé (`true`) ou désactivé (`false`) dans le cluster.
-Lorsqu’il est activé, l’opérateur déploie automatiquement les composants nécessaires à la gestion des GPU NVIDIA.
 
-### Exemple
+Indicates whether the **GPU Operator** is enabled (`true`) or disabled (`false`) in the cluster.
+When enabled, the operator automatically deploys the components necessary for managing NVIDIA GPUs.
+
+### Example
+
 ```yaml
 enabled: true
 ```
 
 ---
 
-## `valuesOverride` (Object) — **Obligatoire**
+## `valuesOverride` (Object) — **Required**
 
 ### Description
-Le champ `valuesOverride` permet de **surcharger les valeurs par défaut** du GPU Operator.
-Il est utilisé pour personnaliser le comportement du déploiement (activation du driver, du toolkit, des plugins, ou configuration des ressources).
 
-### Exemple
+The `valuesOverride` field allows **overriding the default values** of the GPU Operator.
+It is used to customize deployment behavior (enabling the driver, toolkit, plugins, or configuring resources).
+
+### Example
+
 ```yaml
 valuesOverride:
-  driver:
-    enabled: true
-  toolkit:
-    enabled: true
-  devicePlugin:
-    enabled: true
+  gpuOperator:
+    driver:
+      enabled: true
+    toolkit:
+      enabled: true
+    devicePlugin:
+      enabled: true
 ```
 
 ---
 
-## 💡 Bonnes pratiques
+## 💡 Best Practices
 
-- Activer `enabled: true` sur les nœuds dotés de GPU pour que l’opérateur gère automatiquement les composants NVIDIA.
-- Utiliser `valuesOverride` pour adapter la configuration aux besoins spécifiques (ex. activer ou désactiver le `driver` si déjà installé manuellement).
-- Déployer le GPU Operator uniquement sur les environnements où des workloads GPU (IA, ML, calcul scientifique) sont nécessaires.
+* Enable `enabled: true` on nodes equipped with GPUs so the operator can automatically manage NVIDIA components.
+* Use `valuesOverride` to adapt the configuration to specific needs (e.g., enabling or disabling the `driver` if already installed manually).
+* Deploy the GPU Operator only in environments where GPU workloads (AI, ML, scientific computing) are required.
+
+---

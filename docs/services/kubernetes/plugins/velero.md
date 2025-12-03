@@ -13,18 +13,19 @@ addons:
   velero:
     enabled: true
     valuesOverride:
-      configuration:
-        backupStorageLocation:
-          name: default
-          provider: aws
-          bucket: velero-backups
-          config:
-            region: eu-west-3
-      schedules:
-        daily:
-          schedule: "0 2 * * *"
-          template:
-            ttl: 240h
+      velero:
+        configuration:
+          backupStorageLocation:
+            name: default
+            provider: aws
+            bucket: velero-backups
+            config:
+              region: eu-west-3
+        schedules:
+          daily:
+            schedule: "0 2 * * *"
+            template:
+              ttl: 240h
 ```
 
 ---
@@ -32,17 +33,20 @@ addons:
 ## `velero` (Object) — **Obligatoire**
 
 ### Description
+
 Le champ `velero` regroupe la configuration principale du système de sauvegarde et de restauration du cluster Kubernetes.
 Il permet d’activer Velero et de définir ses paramètres de déploiement.
 
 ### Exemple
+
 ```yaml
 velero:
   enabled: true
   valuesOverride:
-    configuration:
-      backupStorageLocation:
-        provider: aws
+    velero:
+      configuration:
+        backupStorageLocation:
+          provider: aws
 ```
 
 ---
@@ -50,10 +54,12 @@ velero:
 ## `enabled` (boolean) — **Obligatoire**
 
 ### Description
+
 Indique si **Velero** est activé (`true`) ou désactivé (`false`).
 Lorsqu’il est activé, Velero déploie ses composants (serveur, contrôleurs et CRDs) permettant la gestion des sauvegardes et des restaurations.
 
 ### Exemple
+
 ```yaml
 enabled: true
 ```
@@ -63,23 +69,26 @@ enabled: true
 ## `valuesOverride` (Object) — **Obligatoire**
 
 ### Description
+
 Le champ `valuesOverride` permet de **surcharger les valeurs** du déploiement Velero.
 Il sert à définir les paramètres de stockage, les planifications automatiques, les fournisseurs cloud, ou encore les options de sécurité et de ressources.
 
 ### Exemple
+
 ```yaml
 valuesOverride:
-  configuration:
-    backupStorageLocation:
-      provider: aws
-      bucket: velero-backups
-      config:
-        region: eu-west-3
-  schedules:
-    daily:
-      schedule: "0 2 * * *"
-      template:
-        ttl: 240h
+  velero:
+    configuration:
+      backupStorageLocation:
+        provider: aws
+        bucket: velero-backups
+        config:
+          region: eu-west-3
+    schedules:
+      daily:
+        schedule: "0 2 * * *"
+        template:
+          ttl: 240h
 ```
 
 ---

@@ -1,93 +1,103 @@
 ---
+
 sidebar_position: 2
 title: Architecture
----
+-------------------
 
-# Architecture Hikube Kubernetes
+# Hikube Kubernetes Architecture
 
-Le schéma, ci-après, illustre la structure et les interactions principales du **cluster Kubernetes Hikube**, incluant la haute disponibilité du plan de contrôle, la gestion des nœuds, la persistance des données, et la réplication inter-régions.
+The diagram below illustrates the structure and main interactions of the **Hikube Kubernetes cluster**, including high availability of the control plane, node management, data persistence, and inter-region replication.
 
 <div class="only-light">
-  <img src="/img/hikube-kubernetes-architecture.svg" alt="Logo clair"/>
+  <img src="/img/hikube-kubernetes-architecture.svg" alt="Light logo"/>
 </div>
 <div class="only-dark">
-  <img src="/img/hikube-kubernetes-architecture-dark.svg" alt="Logo sombre"/>
+  <img src="/img/hikube-kubernetes-architecture-dark.svg" alt="Dark logo"/>
 </div>
 ---
 
-## 🧩 1. Composants principaux du cluster
+## 🧩 1. Main Components of the Cluster
 
 ### 🔹 Etcd Cluster
-- Contient plusieurs instances d’**etcd** répliquées entre elles.
-- Assure la **cohérence du stockage d’état du cluster Kubernetes** (informations sur les pods, services, configurations, etc.).
-- La réplication interne entre les nœuds `etcd` garantit la **tolérance aux pannes**.
+
+* Contains multiple replicated **etcd** instances.
+* Ensures **consistent storage of the Kubernetes cluster state** (information about pods, services, configurations, etc.).
+* Internal replication between `etcd` nodes guarantees **fault tolerance**.
 
 ### 🔹 Control Plane
-- Composé de l’API Server, du Scheduler et du Controller Manager.
-- Rôle :
-  - **Planifie les workloads** (pods, déploiements, etc.) sur les nœuds disponibles.
-  - **Interagit avec etcd** pour lire/écrire l’état du cluster.
+
+* Composed of the API Server, Scheduler, and Controller Manager.
+* Responsibilities:
+
+  * **Schedules workloads** (pods, deployments, etc.) across available nodes.
+  * **Interacts with etcd** to read/write the cluster state.
 
 ### 🔹 Node Groups
-- Chaque groupe contient plusieurs **nœuds de travail (worker nodes)**.
-- Les workloads (pods) sont déployés sur ces nœuds.
-- Les nœuds communiquent avec le Control Plane pour recevoir leurs tâches.
-- Ils lisent et écrivent leurs données dans les **Persistent Volume (PV)** Kubernetes.
+
+* Each group contains several **worker nodes**.
+* Workloads (pods) are deployed on these nodes.
+* Nodes communicate with the Control Plane to receive their tasks.
+* They read and write their data into **Kubernetes Persistent Volumes (PV)**.
 
 ### 🔹 Kubernetes PV Data
-- Représente le **stockage persistant** utilisé par les pods.
-- Les données des workloads sont **écrites et lues depuis ce stockage**.
-- Cette couche est intégrée à la réplication Hikube pour garantir la disponibilité des données.
+
+* Represents the **persistent storage** used by pods.
+* Workload data is **written to and read from this storage**.
+* This layer is integrated with Hikube replication to ensure data availability.
 
 ---
 
-## 🗄️ 2. Couche de réplication Hikube
+## 🗄️ 2. Hikube Replication Layer
 
 ### Hikube Replication Data Layer
-- Sert d’interface entre Kubernetes et les **systèmes de stockage régionaux**.
-- Réplique automatiquement les données des PV vers plusieurs régions pour :
-  - la **haute disponibilité**,
-  - la **résilience aux pannes régionales**,
-  - et la **continuité de service**.
 
-### Stockages régionaux
-- **Region 1** → Geneva Data Storage
-- **Region 2** → Gland Data Storage
-- **Region 3** → Lucerne Data Storage
+* Serves as an interface between Kubernetes and **regional storage systems**.
+* Automatically replicates PV data to multiple regions to provide:
 
-Chaque région dispose de son propre backend de stockage, tous synchronisés via la couche Hikube.
+  * **High availability**,
+  * **Regional fault tolerance**,
+  * and **service continuity**.
 
----
+### Regional Storage
 
-## 🔁 3. Flux de communication
+* **Region 1** → Geneva Data Storage
+* **Region 2** → Gland Data Storage
+* **Region 3** → Lucerne Data Storage
 
-1. Les **nœuds etcd** se synchronisent entre eux pour maintenir un état global cohérent.
-2. Le **Control Plane** lit/écrit dans etcd pour stocker l’état du cluster.
-3. Le **Control Plane** planifie les workloads sur les **Node Groups**.
-4. Les **Node Groups** interagissent avec les **PV Kubernetes** pour stocker ou récupérer des données.
-5. Les **PV Data** sont répliquées à travers la **Hikube Replication Data Layer** vers les **3 régions**.
+Each region has its own storage backend, all synchronized through the Hikube layer.
 
 ---
 
-## ⚙️ 4. Résumé fonctionnel
+## 🔁 3. Communication Flow
 
-| Couche | Fonction principale | Technologie |
-|--------|---------------------|-------------|
-| Etcd Cluster | Stockage de l’état du cluster | etcd |
-| Control Plane | Gestion et planification des workloads | Kubernetes |
-| Node Groups | Exécution des workloads | kubelet, container runtime |
-| PV Data | Stockage persistant | Kubernetes Persistent Volumes |
-| Hikube Data Layer | Réplication et synchronisation multi-régions | Hikube |
-| Data Storage | Stockage physique régional | Geneva / Gland / Lucerne |
+1. **Etcd nodes** synchronize with one another to maintain a consistent global state.
+2. The **Control Plane** reads/writes to etcd to store cluster state.
+3. The **Control Plane** schedules workloads on the **Node Groups**.
+4. **Node Groups** interact with **Kubernetes PVs** to store or retrieve data.
+5. **PV Data** is replicated through the **Hikube Replication Data Layer** across the **3 regions**.
 
 ---
 
-## 🌍 5. Objectif global
+## ⚙️ 4. Functional Summary
 
-Cette architecture assure :
-- **Haute disponibilité** du cluster Kubernetes.
-- **Résilience géographique** grâce à la réplication inter-régions.
-- **Intégrité des données** via etcd et le stockage persistant.
-- **Scalabilité** horizontale avec les Node Groups.
+| Layer             | Main Function                                | Technology                    |
+| ----------------- | -------------------------------------------- | ----------------------------- |
+| Etcd Cluster      | Cluster state storage                        | etcd                          |
+| Control Plane     | Workload management and scheduling           | Kubernetes                    |
+| Node Groups       | Workload execution                           | kubelet, container runtime    |
+| PV Data           | Persistent storage                           | Kubernetes Persistent Volumes |
+| Hikube Data Layer | Multi-region replication and synchronization | Hikube                        |
+| Data Storage      | Physical regional storage                    | Geneva / Gland / Lucerne      |
+
+---
+
+## 🌍 5. Overall Objective
+
+This architecture ensures:
+
+* **High availability** of the Kubernetes cluster
+* **Geographic resilience** through inter-region replication
+* **Data integrity** via etcd and persistent storage
+* **Horizontal scalability** with Node Groups
 
 ---

@@ -1,66 +1,74 @@
 ---
+
 sidebar_position: 1
 title: Cilium
----
+-------------
 
-# 🧩 Détails du champ `addons.cilium`
+# 🧩 Details of the `addons.cilium` Field
 
-Le champ `addons.cilium` définit la configuration de l’add-on **Cilium**, utilisé comme **CNI (Container Network Interface)** pour le cluster Kubernetes.
-Cilium gère le réseau, la sécurité et l’observabilité des Pods à l’aide de **BPF (Berkeley Packet Filter)**.
-Ce champ permet de personnaliser le déploiement du composant via des valeurs spécifiques.
+The `addons.cilium` field defines the configuration of the **Cilium** add-on, used as the cluster’s **CNI (Container Network Interface)**.
+Cilium manages networking, security, and observability for Pods using **BPF (Berkeley Packet Filter)**.
+This field allows customizing the component deployment through specific values.
 
 ```yaml
 addons:
   cilium:
     valuesOverride:
+      cilium:
+        hubble:
+          enabled: true
+        encryption:
+          enabled: true
+```
+
+---
+
+## `cilium` (Object) — **Required**
+
+### Description
+
+The `cilium` field represents the main configuration of the network add-on.
+It contains the parameters required for installing and customizing Cilium within the cluster.
+
+### Example
+
+```yaml
+cilium:
+  valuesOverride:
+    cilium:
       hubble:
-        enabled: true
-      encryption:
         enabled: true
 ```
 
 ---
 
-## `cilium` (Object) — **Obligatoire**
+## `valuesOverride` (Object) — **Required**
 
 ### Description
-Le champ `cilium` représente la configuration principale de l’add-on réseau.
-Il regroupe les paramètres nécessaires à l’installation et à la personnalisation de Cilium dans le cluster.
 
-### Exemple
+The `valuesOverride` field allows **overriding the default values** used when deploying Cilium.
+It adjusts the behavior of the CNI without modifying the main chart.
+These values may include configuration for **Hubble**, encryption, network policies, or allocated resources.
+For more configuration options: [https://docs.cilium.io/en/stable/helm-reference/](https://docs.cilium.io/en/stable/helm-reference/)
+
+### Example
+
 ```yaml
-cilium:
-  valuesOverride:
+valuesOverride:
+  cilium:
     hubble:
+      enabled: true
+    encryption:
       enabled: true
 ```
 
 ---
 
-## `valuesOverride` (Object) — **Obligatoire**
+## 💡 Best Practices
 
-### Description
-Le champ `valuesOverride` permet de **surcharger les valeurs par défaut** utilisées lors du déploiement de Cilium.
-Il sert à ajuster le comportement du CNI sans modifier le chart principal.
-Ces valeurs peuvent inclure la configuration de **Hubble**, du chiffrement, des politiques réseau, ou encore des ressources allouées.
-Pour plus de valeurs à définir : https://docs.cilium.io/en/stable/helm-reference/
-
-### Exemple
-```yaml
-valuesOverride:
-  hubble:
-    enabled: true
-  encryption:
-    enabled: true
-```
-
----
-
-## 💡 Bonnes pratiques
-
-- Toujours définir `valuesOverride` pour garder la maîtrise de la configuration réseau.
-- Activer **Hubble** (`hubble.enabled: true`) pour bénéficier de la visibilité réseau et du suivi des flux.
-- Utiliser `encryption.enabled: true` pour chiffrer le trafic inter-Pod dans les environnements sensibles.
-- Vérifier la compatibilité de la version de Cilium avec la version du cluster Kubernetes.
+* Always define `valuesOverride` to maintain full control over network configuration.
+* Enable **Hubble** (`hubble.enabled: true`) to gain network visibility and traffic flow tracking.
+* Use `encryption.enabled: true` to encrypt inter-Pod traffic in sensitive environments.
+* Verify version compatibility between Cilium and the Kubernetes cluster version.
 
 ---

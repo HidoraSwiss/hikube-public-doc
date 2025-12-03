@@ -1,17 +1,19 @@
 ---
+
 sidebar_position: 4
 title: Node Group
----
+-----------------
 
 ---
+
 sidebar_position: 4
 title: Node Group
----
+-----------------
 
-# 🧩 Détails du champ `nodeGroup`
+# 🧩 Details of the `nodeGroup` Field
 
-Le champ `nodeGroup` définit la configuration d’un groupe de nœuds (workers) au sein du cluster Kubernetes.
-Il permet de spécifier le type d’instance, les ressources, le nombre de réplicas, ainsi que les rôles et les GPU associés.
+The `nodeGroup` field defines the configuration of a group of nodes (workers) within the Kubernetes cluster.
+It allows specifying the instance type, resources, number of replicas, roles, and associated GPUs.
 
 ```yaml
 nodeGroup:
@@ -32,13 +34,15 @@ nodeGroup:
 
 ---
 
-## `ephemeralStorage` (Object) — **Obligatoire**
+## `ephemeralStorage` (Object) — **Required**
 
 ### Description
-Définit la configuration du **stockage éphémère** associé aux nœuds du groupe.
-Ce stockage est utilisé pour les données temporaires, les caches ou les fichiers de logs.
 
-### Exemple
+Defines the configuration of **ephemeral storage** assigned to the nodes in the group.
+This storage is used for temporary data, caches, or log files.
+
+### Example
+
 ```yaml
 ephemeralStorage:
   size: 100Gi
@@ -49,14 +53,17 @@ ephemeralStorage:
 ## `gpus` (Array)
 
 ### Description
-Liste les **GPU** disponibles sur les nœuds du groupe, utilisés pour des charges de travail nécessitant de la puissance de calcul (IA, ML, etc.).
 
-### Champs internes
-| Champ | Type | Obligatoire | Description |
-|-------|------|-------------|--------------|
-| `name` | string | ✅ | Nom du GPU ou type de carte (nvidia.com/AD102GL_L40S ou nvidia.com/GA100_A100_PCIE_80GB) |
+Lists the **GPUs** available on the nodes in the group, used for workloads requiring compute acceleration (AI, ML, etc.).
 
-### Exemple
+### Internal fields
+
+| Field  | Type   | Required | Description                                                                             |
+| ------ | ------ | -------- | --------------------------------------------------------------------------------------- |
+| `name` | string | ✅        | GPU name or card type (e.g. nvidia.com/AD102GL_L40S or nvidia.com/GA100_A100_PCIE_80GB) |
+
+### Example
+
 ```yaml
 gpus:
   - name: nvidia.com/AD102GL_L40S
@@ -64,25 +71,27 @@ gpus:
 
 ---
 
-## `instanceType` (string) — **Obligatoire**
+## `instanceType` (string) — **Required**
 
 ### Description
-Spécifie le **type d’instance** utilisé pour les nœuds.
-Ce paramètre détermine les ressources de base disponibles (CPU, mémoire, stockage, etc.).
 
-### Exemple
+Specifies the **instance type** used for the nodes.
+This parameter determines the base resources available (CPU, memory, storage, etc.).
+
+### Example
+
 ```yaml
 instanceType: s1.small
 ```
 
-### **Types d'Instances Disponibles**
+### **Available Instance Types**
 
-#### **Série S (Standard) - Ratio 1:2**
+#### **S Series (Standard) – Ratio 1:2**
 
-Optimisée pour workloads généraux avec CPU partagé et burstable.
+Optimized for general workloads with shared and burstable CPU.
 
 ```yaml
-# Instances disponibles
+# Available instances
 instanceType: "s1.small"     # 1 vCPU, 2 GB RAM
 instanceType: "s1.medium"    # 2 vCPU, 4 GB RAM
 instanceType: "s1.large"     # 4 vCPU, 8 GB RAM
@@ -94,12 +103,12 @@ instanceType: "s1.4xlarge"   # 32 vCPU, 64 GB RAM
 instanceType: "s1.8xlarge"   # 64 vCPU, 128 GB RAM
 ```
 
-#### **Série U (Universal) - Ratio 1:4**
+#### **U Series (Universal) – Ratio 1:4**
 
-Optimisée pour workloads équilibrés avec plus de mémoire.
+Optimized for balanced workloads with more memory.
 
 ```yaml
-# Instances disponibles
+# Available instances
 instanceType: "u1.medium"    # 1 vCPU, 4 GB RAM
 instanceType: "u1.large"     # 2 vCPU, 8 GB RAM
 instanceType: "u1.xlarge"    # 4 vCPU, 16 GB RAM
@@ -108,12 +117,12 @@ instanceType: "u1.4xlarge"   # 16 vCPU, 64 GB RAM
 instanceType: "u1.8xlarge"   # 32 vCPU, 128 GB RAM
 ```
 
-#### **Série M (Memory Optimized) - Ratio 1:8**
+#### **M Series (Memory Optimized) – Ratio 1:8**
 
-Optimisée pour applications nécessitant beaucoup de mémoire.
+Optimized for applications requiring high memory.
 
 ```yaml
-# Instances disponibles
+# Available instances
 instanceType: "m1.large"     # 2 vCPU, 16 GB RAM
 instanceType: "m1.xlarge"    # 4 vCPU, 32 GB RAM
 instanceType: "m1.2xlarge"   # 8 vCPU, 64 GB RAM
@@ -123,45 +132,52 @@ instanceType: "m1.8xlarge"   # 32 vCPU, 256 GB RAM
 
 ---
 
-## `maxReplicas` (integer) — **Obligatoire**
+## `maxReplicas` (integer) — **Required**
 
 ### Description
-Nombre **maximal** de nœuds pouvant être déployés dans ce groupe.
-Ce champ permet de **limiter l’autoscaling** du cluster.
 
-### Exemple
+Maximum number of nodes that can be deployed in this group.
+This field limits the **autoscaling capacity** of the cluster.
+
+### Example
+
 ```yaml
 maxReplicas: 5
 ```
 
 ---
 
-## `minReplicas` (integer) — **Obligatoire**
+## `minReplicas` (integer) — **Required**
 
 ### Description
-Nombre **minimal** de nœuds garantis dans ce groupe.
-Ce paramètre assure une capacité minimale même lorsque la charge est faible.
 
-### Exemple
+Minimum number of nodes guaranteed in this group.
+This parameter ensures a baseline capacity even when the load is low.
+
+### Example
+
 ```yaml
 minReplicas: 2
 ```
 
 ---
 
-## `resources` (Object) — **Obligatoire**
+## `resources` (Object) — **Required**
 
 ### Description
-Définit les **ressources allouées** à chaque nœud du groupe (CPU et mémoire).
-Ces valeurs peuvent être utilisées pour ajuster la taille et la performance des nœuds.
 
-### Champs internes
-| Champ | Type | Obligatoire | Description |
-|-------|------|-------------|--------------|
-| `cpu` | Object | ❌ | Nombre de vCPU attribués par nœud (ex : `4`) |
-| `memory` | Object | ❌ | Quantité de mémoire allouée par nœud (ex : `16Gi`) |
+Defines the **resources allocated** to each node in the group (CPU and memory).
+These values are used to adjust node size and performance.
 
-### Exemple
+### Internal fields
+
+| Field    | Type   | Required | Description                                       |
+| -------- | ------ | -------- | ------------------------------------------------- |
+| `cpu`    | string | ❌        | Number of vCPUs assigned per node (e.g. `4`)      |
+| `memory` | string | ❌        | Amount of memory allocated per node (e.g. `16Gi`) |
+
+### Example
+
 ```yaml
 resources:
   cpu: 4
@@ -173,10 +189,12 @@ resources:
 ## `roles` (Array)
 
 ### Description
-Liste les **rôles** assignés aux nœuds du groupe.
-Ces rôles peuvent être utilisés pour organiser les responsabilités au sein du cluster.
 
-### Exemple
+Lists the **roles** assigned to the nodes in this group.
+These roles can be used to structure responsibilities within the cluster.
+
+### Example
+
 ```yaml
 roles:
   - ingress-nginx
@@ -184,9 +202,9 @@ roles:
 
 ---
 
-# **Exemples de Node Groups**
+# **Node Group Examples**
 
-## **Node Group Général**
+## **General Node Group**
 
 ```yaml
 nodeGroups:
@@ -199,7 +217,7 @@ nodeGroups:
       - ingress-nginx
 ```
 
-## **Node Group Compute Intensif**
+## **Compute-Intensive Node Group**
 
 ```yaml
 nodeGroups:
@@ -211,7 +229,7 @@ nodeGroups:
     roles: []
 ```
 
-## **Node Group Memory Optimized**
+## **Memory-Optimized Node Group**
 
 ```yaml
 nodeGroups:
@@ -221,18 +239,18 @@ nodeGroups:
     instanceType: "m1.xlarge"   # 4 vCPU, 32 GB RAM
     ephemeralStorage: 30Gi
     resources:
-      cpu: "6"       # Override: 6 vCPU au lieu de 4
-      memory: "48Gi" # Override: 48 GB au lieu de 32
+      cpu: "6"       # Override: 6 vCPU instead of 4
+      memory: "48Gi" # Override: 48 GB instead of 32
 ```
 
 ---
 
-# 💡 Bonnes pratiques
+# 💡 Best Practices
 
-- Ajuster `minReplicas` et `maxReplicas` en fonction des besoins de montée en charge.
-- Utiliser des `instanceType` cohérents avec la charge de travail (ex : GPU → `p3`, CPU intensif → `c5`).
-- Définir un stockage éphémère suffisant pour les charges temporaires (logs, caches).
-- Spécifier clairement les rôles pour segmenter les fonctions des nœuds (ex : séparation `worker` / `ingress`).
-- Surveiller l’utilisation des ressources pour ajuster `cpu` et `memory` au fil du temps.
+* Adjust `minReplicas` and `maxReplicas` according to scaling needs.
+* Use `instanceType` values consistent with workload type (e.g. GPU → `p3`, CPU intensive → `c5`).
+* Define sufficient ephemeral storage for temporary workloads (logs, caches).
+* Clearly specify roles to segment node responsibilities (e.g. separating `worker` / `ingress`).
+* Monitor resource usage to adjust `cpu` and `memory` over time.
 
 ---

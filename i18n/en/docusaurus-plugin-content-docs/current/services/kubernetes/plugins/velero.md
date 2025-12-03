@@ -1,95 +1,105 @@
 ---
+
 sidebar_position: 9
 title: Velero
----
+-------------
 
-# 🧩 Détails du champ `addons.velero`
+# 🧩 Details of the `addons.velero` Field
 
-Le champ `addons.velero` définit la configuration de l’add-on **Velero**, utilisé pour la **sauvegarde et la restauration** des ressources Kubernetes ainsi que des volumes persistants.
-Velero permet d’assurer la résilience du cluster en cas de perte de données ou de migration entre environnements.
+The `addons.velero` field defines the configuration of the **Velero** add-on, used for **backup and restoration** of Kubernetes resources and persistent volumes.
+Velero ensures cluster resiliency in case of data loss or migration between environments.
 
 ```yaml
 addons:
   velero:
     enabled: true
     valuesOverride:
-      configuration:
-        backupStorageLocation:
-          name: default
-          provider: aws
-          bucket: velero-backups
-          config:
-            region: eu-west-3
-      schedules:
-        daily:
-          schedule: "0 2 * * *"
-          template:
-            ttl: 240h
+      velero:
+        configuration:
+          backupStorageLocation:
+            name: default
+            provider: aws
+            bucket: velero-backups
+            config:
+              region: eu-west-3
+        schedules:
+          daily:
+            schedule: "0 2 * * *"
+            template:
+              ttl: 240h
 ```
 
 ---
 
-## `velero` (Object) — **Obligatoire**
+## `velero` (Object) — **Required**
 
 ### Description
-Le champ `velero` regroupe la configuration principale du système de sauvegarde et de restauration du cluster Kubernetes.
-Il permet d’activer Velero et de définir ses paramètres de déploiement.
 
-### Exemple
+The `velero` field contains the main configuration of the cluster’s backup and restoration system.
+It allows enabling Velero and defining its deployment parameters.
+
+### Example
+
 ```yaml
 velero:
   enabled: true
   valuesOverride:
-    configuration:
-      backupStorageLocation:
-        provider: aws
+    velero:
+      configuration:
+        backupStorageLocation:
+          provider: aws
 ```
 
 ---
 
-## `enabled` (boolean) — **Obligatoire**
+## `enabled` (boolean) — **Required**
 
 ### Description
-Indique si **Velero** est activé (`true`) ou désactivé (`false`).
-Lorsqu’il est activé, Velero déploie ses composants (serveur, contrôleurs et CRDs) permettant la gestion des sauvegardes et des restaurations.
 
-### Exemple
+Indicates whether **Velero** is enabled (`true`) or disabled (`false`).
+When enabled, Velero deploys its components (server, controllers, and CRDs) to manage backups and restores.
+
+### Example
+
 ```yaml
 enabled: true
 ```
 
 ---
 
-## `valuesOverride` (Object) — **Obligatoire**
+## `valuesOverride` (Object) — **Required**
 
 ### Description
-Le champ `valuesOverride` permet de **surcharger les valeurs** du déploiement Velero.
-Il sert à définir les paramètres de stockage, les planifications automatiques, les fournisseurs cloud, ou encore les options de sécurité et de ressources.
 
-### Exemple
+The `valuesOverride` field allows **overriding the default values** of the Velero deployment.
+It is used to configure storage parameters, automated schedules, cloud providers, and security or resource options.
+
+### Example
+
 ```yaml
 valuesOverride:
-  configuration:
-    backupStorageLocation:
-      provider: aws
-      bucket: velero-backups
-      config:
-        region: eu-west-3
-  schedules:
-    daily:
-      schedule: "0 2 * * *"
-      template:
-        ttl: 240h
+  velero:
+    configuration:
+      backupStorageLocation:
+        provider: aws
+        bucket: velero-backups
+        config:
+          region: eu-west-3
+    schedules:
+      daily:
+        schedule: "0 2 * * *"
+        template:
+          ttl: 240h
 ```
 
 ---
 
-## 💡 Bonnes pratiques
+## 💡 Best Practices
 
-- Activer `enabled: true` pour assurer la sauvegarde régulière des ressources critiques du cluster.
-- Utiliser `valuesOverride` pour adapter la configuration au fournisseur cloud ou au stockage choisi (AWS, GCP, Azure, MinIO, etc.).
-- Configurer des **schedules** (planifications) automatiques pour les sauvegardes récurrentes.
-- Vérifier régulièrement l’intégrité des sauvegardes et la possibilité de restauration.
-- Restreindre les accès aux clés de stockage pour sécuriser les données de sauvegarde.
+* Enable `enabled: true` to ensure regular backups of critical cluster resources.
+* Use `valuesOverride` to adapt the configuration to your cloud provider or storage backend (AWS, GCP, Azure, MinIO, etc.).
+* Configure automatic **schedules** for recurring backups.
+* Regularly verify backup integrity and test restore procedures.
+* Restrict access to storage credentials to secure backup data.
 
 ---

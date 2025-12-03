@@ -3,60 +3,67 @@ sidebar_position: 6
 title: Cert-manager
 ---
 
-# 🧩 Détails du champ `certManager`
+# 🧩 Details of the `certManager` Field
 
-Le champ `certManager` définit la configuration du gestionnaire de certificats intégré au cluster Kubernetes.
-Il permet d’activer ou de désactiver le composant et de personnaliser son comportement via des valeurs spécifiques.
+The `certManager` field defines the configuration of the certificate manager integrated into the Kubernetes cluster.
+It allows enabling or disabling the component and customizing its behavior through specific values.
 
 ```yaml
 certManager:
   enabled: true
   valuesOverride:
-    installCRDs: true
-    prometheus:
-      enabled: false
+    certManager:
+      installCRDs: true
+      prometheus:
+        enabled: false
 ```
 
 ---
 
-## `enabled` (boolean) — **Obligatoire**
+## `enabled` (boolean) — **Required**
 
 ### Description
-Indique si le **cert-manager** est activé (`true`) ou désactivé (`false`) dans la configuration du cluster.
-Lorsqu’il est désactivé, aucun composant lié au cert-manager n’est déployé.
 
-### Exemple
+Indicates whether **cert-manager** is enabled (`true`) or disabled (`false`) in the cluster configuration.
+When disabled, no cert-manager-related components are deployed.
+
+### Example
+
 ```yaml
 enabled: true
 ```
 
 ---
 
-## `valuesOverride` (Object) — **Obligatoire**
+## `valuesOverride` (Object) — **Required**
 
 ### Description
-Permet de **surcharger les valeurs par défaut** utilisées pour le déploiement du cert-manager.
-Ce champ est généralement utilisé pour injecter des paramètres Helm personnalisés (comme les images, les ressources, ou les configurations ACME).
 
-### Champs internes
-| Champ | Type | Obligatoire | Description |
-|-------|------|-------------|--------------|
-| `installCRDs` | boolean | ❌ | Installe les Custom Resource Definitions nécessaires au cert-manager |
-| `prometheus.enabled` | boolean | ❌ | Active ou désactive l’export des métriques Prometheus |
+Allows **overriding the default values** used for deploying cert-manager.
+This field is generally used to inject custom Helm parameters (such as images, resources, or ACME configurations).
 
-### Exemple
+### Internal Fields
+
+| Field                | Type    | Required | Description                                                       |
+| -------------------- | ------- | -------- | ----------------------------------------------------------------- |
+| `installCRDs`        | boolean | ❌        | Installs the Custom Resource Definitions required by cert-manager |
+| `prometheus.enabled` | boolean | ❌        | Enables or disables Prometheus metrics export                     |
+
+### Example
+
 ```yaml
 valuesOverride:
-  installCRDs: true
+  certManager:
+    installCRDs: true
 ```
 
 ---
 
-## Exemples complets
+## Complete Examples
 
 ### **Cert-Manager**
 
-Gestion automatisée des certificats SSL/TLS.
+Automated management of SSL/TLS certificates.
 
 ```yaml
 spec:
@@ -64,12 +71,13 @@ spec:
     certManager:
       enabled: true
       valuesOverride:
-        installCRDs: true
-        prometheus:
-          enabled: true
+        certManager:
+          installCRDs: true
+          prometheus:
+            enabled: true
 ```
 
-#### **Configuration Avancée Cert-Manager**
+#### **Advanced Cert-Manager Configuration**
 
 ```yaml
 spec:
@@ -77,31 +85,32 @@ spec:
     certManager:
       enabled: true
       valuesOverride:
-        # Configuration des issuers par défaut
-        global:
-          leaderElection:
-            namespace: cert-manager
-        # Métriques Prometheus
-        prometheus:
-          enabled: true
-          servicemonitor:
+        certManager:
+          # Default issuer configuration
+          global:
+            leaderElection:
+              namespace: cert-manager
+          # Prometheus metrics
+          prometheus:
             enabled: true
-        # Resources des pods
-        resources:
-          requests:
-            cpu: 10m
-            memory: 32Mi
-          limits:
-            cpu: 100m
-            memory: 128Mi
+            servicemonitor:
+              enabled: true
+          # Pod resources
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 100m
+              memory: 128Mi
 ```
 
 ---
 
-## 💡 Bonnes pratiques
+## 💡 Best Practices
 
-- Laisser `enabled: true` pour assurer la gestion automatique des certificats TLS.
-- Utiliser `valuesOverride` pour ajuster les paramètres Helm sans modifier les valeurs par défaut globales.
-- Vérifier la compatibilité des versions de `cert-manager` avec la version de Kubernetes utilisée.
-- Activer `installCRDs` uniquement lors de la première installation pour éviter les conflits de ressources.
-- Désactiver `prometheus.enabled` si la surveillance n’est pas requise, afin de réduire la charge sur le cluster.
+* Keep `enabled: true` to ensure automatic TLS certificate management.
+* Use `valuesOverride` to adjust Helm parameters without modifying global default values.
+* Verify version compatibility between `cert-manager` and the Kubernetes version in use.
+* Enable `installCRDs` only during the first installation to avoid resource conflicts.
+* Disable `prometheus.enabled` if monitoring is not required to reduce cluster load.

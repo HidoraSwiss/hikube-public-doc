@@ -19,10 +19,12 @@ addons:
 ## `enabled` (boolean) — **Obligatoire**
 
 ### Description
+
 Indique si le module **Gateway API** est activé (`true`) ou désactivé (`false`).
 Lorsqu’il est activé, les **Custom Resource Definitions (CRDs)** associées à Gateway API (telles que `GatewayClass`, `Gateway`, `HTTPRoute`, etc.) sont installées et disponibles dans le cluster.
 
 ### Exemple
+
 ```yaml
 enabled: true
 ```

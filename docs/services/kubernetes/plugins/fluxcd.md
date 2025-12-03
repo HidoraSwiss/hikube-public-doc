@@ -15,14 +15,15 @@ addons:
   fluxcd:
     enabled: true
     valuesOverride:
-      installCRDs: true
-      resources:
-        limits:
-          cpu: 500m
-          memory: 512Mi
-        requests:
-          cpu: 200m
-          memory: 256Mi
+      fluxcd:
+        installCRDs: true
+        resources:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+          requests:
+            cpu: 200m
+            memory: 256Mi
 ```
 
 ---
@@ -30,15 +31,18 @@ addons:
 ## `fluxcd` (Object) — **Obligatoire**
 
 ### Description
+
 Le champ `fluxcd` regroupe la configuration principale du gestionnaire GitOps du cluster.
 Il permet d’activer le déploiement de FluxCD et d’ajuster sa configuration via Helm.
 
 ### Exemple
+
 ```yaml
 fluxcd:
   enabled: true
   valuesOverride:
-    installCRDs: true
+    fluxcd:
+      installCRDs: true
 ```
 
 ---
@@ -46,10 +50,12 @@ fluxcd:
 ## `enabled` (boolean) — **Obligatoire**
 
 ### Description
+
 Indique si **FluxCD** est activé (`true`) ou désactivé (`false`) dans le cluster.
 Lorsqu’il est activé, FluxCD déploie ses contrôleurs et démarre la synchronisation GitOps.
 
 ### Exemple
+
 ```yaml
 enabled: true
 ```
@@ -59,33 +65,38 @@ enabled: true
 ## `valuesOverride` (Object) — **Obligatoire**
 
 ### Description
+
 Le champ `valuesOverride` permet de **surcharger les valeurs Helm par défaut** utilisées pour le déploiement de FluxCD.
 Il est notamment utilisé pour configurer les ressources, les CRDs, ou les options avancées comme la fréquence de synchronisation, les sources Git et les stratégies de mise à jour automatique.
 
 ### Exemples
 
 #### Configuration basique
+
 ```yaml
 valuesOverride:
-  installCRDs: true
-  resources:
-    limits:
-      cpu: 500m
-      memory: 512Mi
-    requests:
-      cpu: 200m
-      memory: 256Mi
+  fluxcd:
+    installCRDs: true
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 200m
+        memory: 256Mi
 ```
 
 #### Configuration avec un gitrepo de fluxcd
+
 ```yaml
 valuesOverride:
-  installCRDs: true
-  # Configuration du Git repository
-  gitRepository:
-    url: "https://github.com/company/k8s-manifests"
-    branch: "main"
-    path: "./clusters/production"
+  fluxcd:
+    installCRDs: true
+    # Configuration du Git repository
+    gitRepository:
+      url: "https://github.com/company/k8s-manifests"
+      branch: "main"
+      path: "./clusters/production"
 ```
 
 ---

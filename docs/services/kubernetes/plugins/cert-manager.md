@@ -12,9 +12,10 @@ Il permet d’activer ou de désactiver le composant et de personnaliser son com
 certManager:
   enabled: true
   valuesOverride:
-    installCRDs: true
-    prometheus:
-      enabled: false
+    certManager:
+      installCRDs: true
+      prometheus:
+        enabled: false
 ```
 
 ---
@@ -22,10 +23,12 @@ certManager:
 ## `enabled` (boolean) — **Obligatoire**
 
 ### Description
+
 Indique si le **cert-manager** est activé (`true`) ou désactivé (`false`) dans la configuration du cluster.
 Lorsqu’il est désactivé, aucun composant lié au cert-manager n’est déployé.
 
 ### Exemple
+
 ```yaml
 enabled: true
 ```
@@ -35,19 +38,23 @@ enabled: true
 ## `valuesOverride` (Object) — **Obligatoire**
 
 ### Description
+
 Permet de **surcharger les valeurs par défaut** utilisées pour le déploiement du cert-manager.
 Ce champ est généralement utilisé pour injecter des paramètres Helm personnalisés (comme les images, les ressources, ou les configurations ACME).
 
 ### Champs internes
+
 | Champ | Type | Obligatoire | Description |
 |-------|------|-------------|--------------|
 | `installCRDs` | boolean | ❌ | Installe les Custom Resource Definitions nécessaires au cert-manager |
 | `prometheus.enabled` | boolean | ❌ | Active ou désactive l’export des métriques Prometheus |
 
 ### Exemple
+
 ```yaml
 valuesOverride:
-  installCRDs: true
+  certManager:
+    installCRDs: true
 ```
 
 ---
@@ -64,9 +71,10 @@ spec:
     certManager:
       enabled: true
       valuesOverride:
-        installCRDs: true
-        prometheus:
-          enabled: true
+        certManager:
+          installCRDs: true
+          prometheus:
+            enabled: true
 ```
 
 #### **Configuration Avancée Cert-Manager**
@@ -77,23 +85,24 @@ spec:
     certManager:
       enabled: true
       valuesOverride:
-        # Configuration des issuers par défaut
-        global:
-          leaderElection:
-            namespace: cert-manager
-        # Métriques Prometheus
-        prometheus:
-          enabled: true
-          servicemonitor:
+        certManager:
+          # Configuration des issuers par défaut
+          global:
+            leaderElection:
+              namespace: cert-manager
+          # Métriques Prometheus
+          prometheus:
             enabled: true
-        # Resources des pods
-        resources:
-          requests:
-            cpu: 10m
-            memory: 32Mi
-          limits:
-            cpu: 100m
-            memory: 128Mi
+            servicemonitor:
+              enabled: true
+          # Resources des pods
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 100m
+              memory: 128Mi
 ```
 
 ---

@@ -4,6 +4,7 @@ title: Node Group
 ---
 
 ---
+
 sidebar_position: 4
 title: Node Group
 ---
@@ -35,10 +36,12 @@ nodeGroup:
 ## `ephemeralStorage` (Object) — **Obligatoire**
 
 ### Description
+
 Définit la configuration du **stockage éphémère** associé aux nœuds du groupe.
 Ce stockage est utilisé pour les données temporaires, les caches ou les fichiers de logs.
 
 ### Exemple
+
 ```yaml
 ephemeralStorage:
   size: 100Gi
@@ -49,14 +52,17 @@ ephemeralStorage:
 ## `gpus` (Array)
 
 ### Description
+
 Liste les **GPU** disponibles sur les nœuds du groupe, utilisés pour des charges de travail nécessitant de la puissance de calcul (IA, ML, etc.).
 
 ### Champs internes
+
 | Champ | Type | Obligatoire | Description |
 |-------|------|-------------|--------------|
 | `name` | string | ✅ | Nom du GPU ou type de carte (nvidia.com/AD102GL_L40S ou nvidia.com/GA100_A100_PCIE_80GB) |
 
 ### Exemple
+
 ```yaml
 gpus:
   - name: nvidia.com/AD102GL_L40S
@@ -67,10 +73,12 @@ gpus:
 ## `instanceType` (string) — **Obligatoire**
 
 ### Description
+
 Spécifie le **type d’instance** utilisé pour les nœuds.
 Ce paramètre détermine les ressources de base disponibles (CPU, mémoire, stockage, etc.).
 
 ### Exemple
+
 ```yaml
 instanceType: s1.small
 ```
@@ -126,10 +134,12 @@ instanceType: "m1.8xlarge"   # 32 vCPU, 256 GB RAM
 ## `maxReplicas` (integer) — **Obligatoire**
 
 ### Description
+
 Nombre **maximal** de nœuds pouvant être déployés dans ce groupe.
 Ce champ permet de **limiter l’autoscaling** du cluster.
 
 ### Exemple
+
 ```yaml
 maxReplicas: 5
 ```
@@ -139,10 +149,12 @@ maxReplicas: 5
 ## `minReplicas` (integer) — **Obligatoire**
 
 ### Description
+
 Nombre **minimal** de nœuds garantis dans ce groupe.
 Ce paramètre assure une capacité minimale même lorsque la charge est faible.
 
 ### Exemple
+
 ```yaml
 minReplicas: 2
 ```
@@ -152,16 +164,19 @@ minReplicas: 2
 ## `resources` (Object) — **Obligatoire**
 
 ### Description
+
 Définit les **ressources allouées** à chaque nœud du groupe (CPU et mémoire).
 Ces valeurs peuvent être utilisées pour ajuster la taille et la performance des nœuds.
 
 ### Champs internes
+
 | Champ | Type | Obligatoire | Description |
 |-------|------|-------------|--------------|
 | `cpu` | Object | ❌ | Nombre de vCPU attribués par nœud (ex : `4`) |
 | `memory` | Object | ❌ | Quantité de mémoire allouée par nœud (ex : `16Gi`) |
 
 ### Exemple
+
 ```yaml
 resources:
   cpu: 4
@@ -173,10 +188,12 @@ resources:
 ## `roles` (Array)
 
 ### Description
+
 Liste les **rôles** assignés aux nœuds du groupe.
 Ces rôles peuvent être utilisés pour organiser les responsabilités au sein du cluster.
 
 ### Exemple
+
 ```yaml
 roles:
   - ingress-nginx

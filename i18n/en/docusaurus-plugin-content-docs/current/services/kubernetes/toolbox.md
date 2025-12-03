@@ -1,99 +1,100 @@
 ---
+
 sidebar_position: 7
-title: Boite à outils
----
+title: Toolbox
+--------------
 
-# 🔐 Accès et Sécurité
+# 🔐 Access & Security
 
-## **Récupération du Kubeconfig**
+## **Retrieve the Kubeconfig**
 
-Une fois le cluster déployé, récupérez les credentials d'accès :
+Once the cluster is deployed, retrieve the access credentials:
 
 ```bash
-# Kubeconfig admin complet
+# Full admin kubeconfig
 kubectl get secret <cluster-name>-admin-kubeconfig \
   -o go-template='{{ printf "%s\n" (index .data "super-admin.conf" | base64decode) }}' \
   > cluster-admin.yaml
 
-# Kubeconfig lecture seule (si configuré)
+# Read-only kubeconfig (if configured)
 kubectl get secret <cluster-name>-readonly-kubeconfig \
   -o go-template='{{ printf "%s\n" (index .data "readonly.conf" | base64decode) }}' \
   > cluster-readonly.yaml
 ```
 
-## **Configuration RBAC**
+## **RBAC Configuration**
 
-Après déploiement, configurez les accès utilisateurs :
+After deployment, configure user access:
 
 ```bash
-# Se connecter au cluster
+# Connect to the cluster
 export KUBECONFIG=cluster-admin.yaml
 
-# Créer des rôles et bindings
+# Create roles and bindings
 kubectl apply -f rbac-config.yaml
 ```
 
 ---
 
-# 📊 Monitoring et Observabilité
+# 📊 Monitoring & Observability
 
-## **Métriques du Cluster**
+## **Cluster Metrics**
 
 ```bash
-# Status général du cluster Hikube
+# General Hikube cluster status
 kubectl get kubernetes <cluster-name> -o yaml
 
-# Nœuds du cluster Kubernetes
+# Kubernetes cluster nodes
 kubectl --kubeconfig=cluster-admin.yaml get nodes
 
-# Métriques de ressources
+# Resource metrics
 kubectl --kubeconfig=cluster-admin.yaml top nodes
 kubectl --kubeconfig=cluster-admin.yaml top pods
 ```
 
-## **Logs et Debugging**
+## **Logs & Debugging**
 
 ```bash
-# Events du cluster
+# Cluster events
 kubectl describe kubernetes <cluster-name>
 
-# Logs des components
+# Component logs
 kubectl logs -n kamaji -l app.kubernetes.io/instance=<cluster-name>
 
-# Status détaillé des machines
+# Detailed machine status
 kubectl get machines -l cluster.x-k8s.io/cluster-name=<cluster-name>
 ```
 
 ---
 
-# 🛠️ Gestion du Cycle de Vie
+# 🛠️ Lifecycle Management
 
-## **Mise à Jour**
+## **Upgrade**
 
 ```bash
-# Mise à jour du cluster
+# Cluster upgrade
 kubectl patch kubernetes <cluster-name> --type='merge' -p='
 spec:
-  version: "v1.29.0"  # Nouvelle version Kubernetes
+  version: "v1.29.0"  # New Kubernetes version
 '
 ```
 
 ## **Scaling**
 
 ```bash
-# Scaling d'un node group
+# Scale a node group
 kubectl patch kubernetes <cluster-name> --type='merge' -p='
 spec:
   nodeGroups:
     compute:
-      maxReplicas: 20  # Augmenter la limite
+      maxReplicas: 20  # Increase limit
 '
 ```
 
-## **Suppression**
+## **Deletion**
 
 ```bash
-# ATTENTION: Suppression irréversible du cluster
+# WARNING: Irreversible cluster deletion
 kubectl delete kubernetes <cluster-name>
 ```
 
@@ -101,31 +102,31 @@ kubectl delete kubernetes <cluster-name>
 
 # 🚨 Troubleshooting
 
-## **Problèmes Courants**
+## **Common Issues**
 
 ```bash
-# Cluster bloqué en création
+# Cluster stuck during creation
 kubectl describe kubernetes <cluster-name>
 kubectl get events --field-selector involvedObject.name=<cluster-name>
 
-# Nœuds non prêts
+# Nodes not ready
 kubectl --kubeconfig=cluster-admin.yaml describe nodes
 kubectl get machines -l cluster.x-k8s.io/cluster-name=<cluster-name>
 
-# Add-ons en erreur
+# Add-ons failing
 kubectl --kubeconfig=cluster-admin.yaml get pods -A
 kubectl --kubeconfig=cluster-admin.yaml describe helmreleases -A
 ```
 
-## **Logs Détaillés**
+## **Detailed Logs**
 
 ```bash
-# Logs Cluster API
+# Cluster API logs
 kubectl logs -n capi-system -l control-plane=controller-manager
 
-# Logs Kamaji (control plane)
+# Kamaji logs (control plane)
 kubectl logs -n kamaji-system -l app.kubernetes.io/name=kamaji
 
-# Logs KubeVirt (workers)
+# KubeVirt logs (workers)
 kubectl logs -n kubevirt -l kubevirt.io=virt-controller
 ```
