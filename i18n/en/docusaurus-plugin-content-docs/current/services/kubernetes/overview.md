@@ -1,117 +1,144 @@
 ---
+
 sidebar_position: 1
 title: Overview
+---------------
+
+# Presentation of Managed Kubernetes on Hikube
+
+Hikube provides a **managed Kubernetes service** designed to offer a highly available, secure, and high-performance infrastructure.
+The control plane is fully managed by the platform, while **worker nodes** are deployed inside your tenant as virtual machines.
+
 ---
 
-# Managed Kubernetes on Hikube
+## 🏗️ Architecture Diagram
 
-Hikube offers managed Kubernetes clusters where the control plane is managed by the platform and worker nodes are virtual machines in your tenant.
+### **High-Level Overview**
+
+Hikube Kubernetes clusters rely on a **multi-datacenter infrastructure** (3 Swiss locations), ensuring replication, fault tolerance, and service continuity.
+
+* **Control Plane**: hosted and operated by Hikube
+  Components:
+
+  * `kube-apiserver`
+  * `etcd`
+  * `kube-scheduler`
+  * `kube-controller-manager`
+* **Worker Nodes**: virtual machines inside your tenant
+* **Networking**: CNI with support for `LoadBalancer`, `Ingress`, and `NetworkPolicy`
+* **Storage**: persistent volumes replicated across the 3 datacenters
+* **Add-ons**: cert-manager, FluxCD, monitoring stack, etc.
+* **Kubernetes Versioning**: multi-version support with controlled upgrades
 
 ---
 
-## Architecture
+## ⚙️ Cluster Composition and Configuration
 
-### **Components**
+Clusters are fully declarative and configurable via API or YAML manifests.
+The main configuration elements include:
 
-- **Control plane** : Managed by Hikube (API Server, etcd, Scheduler, Controller Manager)
-- **Worker nodes** : Virtual machines in your tenant
-- **Storage** : Persistent volumes with `replicated` storage class
-- **Network** : CNI with LoadBalancer and Ingress support
+| Element          | Description                                         |
+| ---------------- | --------------------------------------------------- |
+| **nodeGroups**   | Homogeneous groups of nodes (size, role, GPU, etc.) |
+| **storageClass** | Defines persistence and replication behavior        |
+| **addons**       | Optional features that can be enabled               |
+| **version**      | Kubernetes server version                           |
+| **network**      | CNI configuration, LoadBalancer, Ingress            |
 
-### **Multi-Datacenter**
+---
 
-Hikube clusters are deployed across 3 Swiss datacenters with automatic replication:
+## ⚙️ How the Platform Works
 
-```mermaid
-flowchart TD
-    subgraph DC1["🏢 Geneva"]
-        CP1["Control Plane 1"]
-        ETCD1["etcd Cluster"]
-        PVC1["PVC Replicas"]
-        WN1["Worker Nodes"]
-    end
-    
-    subgraph DC2["🏢 Lucerne"]
-        CP2["Control Plane 2"]
-        ETCD2["etcd Cluster"]
-        PVC2["PVC Replicas"]
-        WN2["Worker Nodes"]
-    end
-    
-    subgraph DC3["🏢 Gland"]
-        CP3["Control Plane 3"]
-        ETCD3["etcd Cluster"]
-        PVC3["PVC Replicas"]
-        WN3["Worker Nodes"]
-    end
-    
-    ETCD1 <-.-> ETCD2
-    ETCD2 <-.-> ETCD3
-    ETCD3 <-.-> ETCD1
-    
-    PVC1 <-.-> PVC2
-    PVC2 <-.-> PVC3
-    PVC3 <-.-> PVC1
-    
-    style DC1 fill:#e3f2fd
-    style DC2 fill:#f3e5f5
-    style DC3 fill:#e8f5e8
+### 🧠 **Control Plane**
+
+* Managed entirely by Hikube — no customer maintenance required
+* Critical components replicated across multiple sites
+* High availability, monitoring, and automated patching included
+* Access via the standard Kubernetes API (`kubectl`, SDK clients, etc.)
+
+### 🧩 **Worker Nodes / NodeGroups**
+
+NodeGroups allow you to adapt compute resources to your needs.
+Each group can define instance type, roles, and autoscaling parameters.
+
+#### Example NodeGroup
+
+```yaml
+nodeGroups:
+  web:
+    minReplicas: 2
+    maxReplicas: 10
+    instanceType: "s1.large"
+    roles: ["ingress-nginx"]
+```
+
+#### Key Characteristics
+
+* **Autoscaling** via `minReplicas` / `maxReplicas`
+* **GPU support** with dynamically attached NVIDIA GPUs
+* **Instance types**: `S1` (standard), `U1` (universal), `M1` (memory-optimized)
+
+---
+
+## 💾 Persistent Storage
+
+### **Storage Class: `replicated`**
+
+* Automatic replication across **all 3 Swiss datacenters**
+* Dynamic provisioning of Persistent Volumes (PVC)
+* Built-in fault tolerance and high availability
+
+Example usage:
+
+```yaml
+storageClassName: replicated
+resources:
+  requests:
+    storage: 20Gi
 ```
 
 ---
 
-## ⚙️ Features
+## 🔢 Kubernetes Versioning
 
-### **Node Groups**
+* Clusters can be created with a **specific Kubernetes version**
+* Hikube handles minor and patch upgrades in a controlled manner
+* Customers may plan major upgrades when needed
 
-- **Flexible instance types** : S1 (standard), U1 (universal), M1 (memory-optimized)
-- **Automatic scaling** : Configurable `minReplicas` and `maxReplicas`
-- **GPU support** : NVIDIA GPU attachment to workers
-- **Specialized roles** : `ingress-nginx`, `monitoring`, etc.
+Example:
 
-### **Persistent Storage**
-
-- **Storage class** : `replicated` (replication across 3 datacenters)
-- **Dynamic provisioning** : Automatic volume creation
-- **High availability** : PVCs automatically replicated across the 3 sites
-
-### **Network and Exposure**
-
-- **LoadBalancer services** : Automatic external exposure via dedicated IP
-- **Ingress Controller** : Integrated NGINX with automatic certificates
-- **Network Policies** : Traffic micro-segmentation
+```yaml
+version: "1.30.3"
+```
 
 ---
 
-## 🔧 Available Add-ons
+## 🧩 Integrated Add-ons
 
 ### **Cert-Manager**
 
-- Automated SSL/TLS certificate management
-- Let's Encrypt and other CA support
-- Automatic renewal
+* Automated SSL/TLS certificate management
+* Supports Let’s Encrypt and private authorities
+* Automatic renewal
 
 ### **Ingress NGINX**
 
-- High-performance ingress controller
-- Wildcard and SNI support
-- Integrated Prometheus metrics
+* Built-in ingress controller
+* Wildcard support, SNI, and Prometheus metrics
 
-### **Flux CD**
+### **Flux CD (GitOps)**
 
-- GitOps deployment
-- Synchronization with Git repositories
-- Automatic rollback
+* Continuous sync with your Git repositories
+* Automated deployments and rollback
 
-### **Monitoring Agents**
+### **Monitoring Stack**
 
-- FluentBit for logs
-- Node Exporter for metrics
-- Integration with tenant monitoring stack
+* **Node Exporter**, **FluentBit**, **Kube-State-Metrics**
+* Full integration with your tenant’s Grafana and Prometheus
 
 ---
 
-## 📋 Use Cases
+## 🚀 Example Use Cases
 
 ### **Web Applications**
 
@@ -148,19 +175,20 @@ nodeGroups:
 
 ---
 
-## 🚀 Next Steps
+## 📚 Resources
 
-- **[Quick Start](./quick-start.md)** → Create your first cluster
-- **[API Reference](./api-reference.md)** → Complete cluster configuration
-- **[GPU](../gpu/overview.md)** → Use GPUs with Kubernetes
+* **[Architecture](./architecture.md)** → Learn how a Hikube Kubernetes cluster is built
+* **[Quick Start](./quick-start.md)** → Create your first Hikube cluster
+* **[API Reference](./api-reference.md)** → Full configuration documentation
 
 ---
 
-## 💡 Key Points
+## 💡 Key Takeaways
 
-- **Managed control plane** : No master maintenance
-- **Workers in your tenant** : Complete node control
-- **Automatic scaling** : Adjustment based on demand
-- **Multi-datacenter** : Native high availability
-- **Standard Kubernetes API** : Full compatibility
+* **Managed control plane** – no master maintenance required
+* **Workers in your tenant** – full control over compute resources
+* **Autoscaling** – dynamic adjustment based on load
+* **Multi-datacenter replication** – built-in high availability
+* **Full compatibility** – standard Kubernetes API support
 
+---
