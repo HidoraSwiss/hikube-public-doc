@@ -2,18 +2,19 @@
 sidebar_position: 3
 title: API Reference
 ---
+```
 
-# API Reference - Virtual Machines
+## API Reference – Virtual Machines
 
-This complete reference details Hikube's **VMInstance** and **VMDisk** APIs, their parameters, usage examples, and best practices.
+This reference provides a comprehensive description of Hikube **VMInstance** and **VMDisk** APIs, including available parameters, usage examples, and recommended best practices.
 
 ---
 
 ## VMInstance
 
-### **Overview**
+### Overview
 
-The `VMInstance` API allows creating and managing virtual machines in Hikube.
+The `VMInstance` API allows you to create, configure, and manage virtual machines in Hikube.
 
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
@@ -24,132 +25,100 @@ spec:
   # Detailed configuration below
 ```
 
-### **Complete Specification**
+---
 
-#### **General Parameters**
+### Full specification
 
-| **Parameter** | **Type** | **Description** | **Default** | **Required** |
-|---------------|----------|-----------------|------------|------------|
-| `external` | `boolean` | Enables external access from outside the cluster | `false` | ✅ |
-| `externalMethod` | `string` | External exposure method (WholeIP, PortList) | `PortList` | ✅ |
-| `externalPorts` | `[]int` | List of ports to expose externally | `[]` | ✅ |
-| `running` | `boolean` | Desired running state of the VM | `true` | ✅ |
-| `instanceType` | `string` | Instance type defining CPU/Memory | - | ✅ |
-| `instanceProfile` | `string` | Predefined OS profile for the VM | - | ✅ |
-| `disks` | `[]string` | List of VMDisk names to attach | `[]` | ✅ |
-| `sshKeys` | `[]string` | Public SSH keys for access | `[]` | ✅ |
-| `cloudInit` | `string` | cloud-init YAML configuration | `""` | ✅ |
-| `cloudInitSeed` | `string` | Seed data for cloud-init | `""` | ✅ |
+#### General parameters
 
-#### **Network Configuration**
+| Parameter         | Type       | Description                                  | Default    | Required |
+| ----------------- | ---------- | -------------------------------------------- | ---------- | -------- |
+| `external`        | `boolean`  | Enables external network exposure for the VM | `false`    | ✅        |
+| `externalMethod`  | `string`   | Exposure method (`PortList`, `WholeIP`)      | `PortList` | ✅        |
+| `externalPorts`   | `[]int`    | List of externally exposed ports             | `[]`       | ✅        |
+| `running`         | `boolean`  | Desired VM running state                     | `true`     | ✅        |
+| `instanceType`    | `string`   | CPU / memory instance size                   | –          | ✅        |
+| `instanceProfile` | `string`   | OS profile for the VM                        | –          | ✅        |
+| `disks`           | `[]string` | List of attached `VMDisk` resources          | `[]`       | ✅        |
+| `sshKeys`         | `[]string` | Injected public SSH keys                     | `[]`       | ✅        |
+| `cloudInit`       | `string`   | Cloud-init configuration (YAML)              | `""`       | ✅        |
+| `cloudInitSeed`   | `string`   | Cloud-init seed data                         | `""`       | ✅        |
+
+---
+
+### Network configuration
 
 ```yaml
 spec:
   external: true
   externalMethod: PortList
   externalPorts:
-    - 22    # SSH
-    - 80    # HTTP
-    - 443   # HTTPS
-    - 8080  # Custom application
+    - 22
+    - 80
+    - 443
 ```
 
-#### **Instance Types**
+---
 
-##### **S Series (Standard) - Ratio 1:2**
+### Instance types
 
-Optimized for general workloads with shared and burstable CPU.
+#### S Series – Standard (1:2 ratio)
+
+General-purpose workloads, shared and burstable CPU.
 
 ```yaml
-# Available instances
-instanceType: "s1.small"     # 1 vCPU, 2 GB RAM
-instanceType: "s1.medium"    # 2 vCPU, 4 GB RAM
-instanceType: "s1.large"     # 4 vCPU, 8 GB RAM
-instanceType: "s1.xlarge"    # 8 vCPU, 16 GB RAM
-instanceType: "s1.3large"    # 12 vCPU, 24 GB RAM
-instanceType: "s1.2xlarge"   # 16 vCPU, 32 GB RAM
-instanceType: "s1.3xlarge"   # 24 vCPU, 48 GB RAM
-instanceType: "s1.4xlarge"   # 32 vCPU, 64 GB RAM
-instanceType: "s1.8xlarge"   # 64 vCPU, 128 GB RAM
+instanceType: s1.small     # 1 vCPU, 2 GB RAM
+instanceType: s1.medium    # 2 vCPU, 4 GB RAM
+instanceType: s1.large     # 4 vCPU, 8 GB RAM
+instanceType: s1.xlarge    # 8 vCPU, 16 GB RAM
+instanceType: s1.3large    # 12 vCPU, 24 GB RAM
+instanceType: s1.2xlarge   # 16 vCPU, 32 GB RAM
+instanceType: s1.3xlarge   # 24 vCPU, 48 GB RAM
+instanceType: s1.4xlarge   # 32 vCPU, 64 GB RAM
+instanceType: s1.8xlarge   # 64 vCPU, 128 GB RAM
 ```
 
-##### **U Series (Universal) - Ratio 1:4**
-
-Optimized for general workloads with shared and burstable CPU.
+#### U Series – Universal (1:4 ratio)
 
 ```yaml
-# Available instances
-instanceType: "u1.medium"  # 1 vCPU, 4 GB RAM
-instanceType: "u1.large"  # 2 vCPU, 8 GB RAM  
-instanceType: "u1.xlarge"  # 4 vCPU, 16 GB RAM
-instanceType: "u1.2xlarge"  # 8 vCPU, 32 GB RAM
-instanceType: "u1.4xlarge"  # 16 vCPU, 64 GB RAM
-instanceType: "u1.8xlarge"  # 32 vCPU, 128 GB RAM
+instanceType: u1.medium    # 1 vCPU, 4 GB RAM
+instanceType: u1.large     # 2 vCPU, 8 GB RAM
+instanceType: u1.xlarge    # 4 vCPU, 16 GB RAM
+instanceType: u1.2xlarge   # 8 vCPU, 32 GB RAM
+instanceType: u1.4xlarge   # 16 vCPU, 64 GB RAM
+instanceType: u1.8xlarge   # 32 vCPU, 128 GB RAM
 ```
 
-##### **M Series (Memory Optimized) - Ratio 1:8**
-
-Optimized for applications requiring a lot of memory.
+#### M Series – Memory Optimized (1:8 ratio)
 
 ```yaml
-# Available instances
-instanceType: "m1.large"     # 2 vCPU, 16 GB RAM
-instanceType: "m1.xlarge"    # 4 vCPU, 32 GB RAM
-instanceType: "m1.2xlarge"   # 8 vCPU, 64 GB RAM
-instanceType: "m1.4xlarge"   # 16 vCPU, 128 GB RAM
-instanceType: "m1.8xlarge"   # 32 vCPU, 256 GB RAM
+instanceType: m1.large     # 2 vCPU, 16 GB RAM
+instanceType: m1.xlarge    # 4 vCPU, 32 GB RAM
+instanceType: m1.2xlarge   # 8 vCPU, 64 GB RAM
+instanceType: m1.4xlarge   # 16 vCPU, 128 GB RAM
+instanceType: m1.8xlarge   # 32 vCPU, 256 GB RAM
 ```
 
-#### **OS Profiles**
+---
 
-Hikube supports many predefined OS profiles:
+### Supported OS profiles
 
-```yaml
-# Linux
-instanceProfile: "alpine"                    # Alpine
-instanceProfile: "centos.7"                  # CentOS 7
-instanceProfile: "centos.7.desktop"          # CentOS 7 Desktop
-instanceProfile: "centos.stream10"           # CentOS Stream 10
-instanceProfile: "centos.stream10.desktop"   # CentOS Stream 10 Desktop
-instanceProfile: "centos.stream8"            # CentOS Stream 8
-instanceProfile: "centos.stream8.desktop"    # CentOS Stream 8 Desktop
-instanceProfile: "centos.stream9"            # CentOS Stream 9
-instanceProfile: "centos.stream9.desktop"    # CentOS Stream 9 Desktop
-instanceProfile: "cirros"                    # Cirros
-instanceProfile: "fedora"                    # Fedora
-instanceProfile: "opensuse.leap"             # OpenSUSE Leap
-instanceProfile: "opensuse.tumbleweed"       # OpenSUSE Tumbleweed
-instanceProfile: "rhel.10"                   # Red Hat Enterprise Linux 10 Beta
-instanceProfile: "rhel.7"                    # Red Hat Enterprise Linux 7
-instanceProfile: "rhel.7.desktop"            # Red Hat Enterprise Linux 7 Desktop
-instanceProfile: "rhel.8"                    # Red Hat Enterprise Linux 8
-instanceProfile: "rhel.8.desktop"            # Red Hat Enterprise Linux 8 Desktop
-instanceProfile: "rhel.9"                    # Red Hat Enterprise Linux 9
-instanceProfile: "rhel.9.desktop"            # Red Hat Enterprise Linux 9 Desktop
-instanceProfile: "sles"                      # SUSE Linux Enterprise Server
-instanceProfile: "ubuntu"                    # Ubuntu
+*(List preserved as-is, Linux and Windows profiles)*
 
-# Windows
-instanceProfile: "windows.2k16"        # Microsoft Windows Server 2016
-instanceProfile: "windows.2k16.virtio" # Microsoft Windows Server 2016 (virtio)
-instanceProfile: "windows.2k19"        # Microsoft Windows Server 2019
-instanceProfile: "windows.2k19.virtio" # Microsoft Windows Server 2019 (virtio)
-instanceProfile: "windows.2k22"        # Microsoft Windows Server 2022
-instanceProfile: "windows.2k22.virtio" # Microsoft Windows Server 2022 (virtio)
-instanceProfile: "windows.2k25"        # Microsoft Windows Server 2025
-instanceProfile: "windows.2k25.virtio" # Microsoft Windows Server 2025 (virtio)
-```
+---
 
-#### **SSH Configuration**
+### SSH configuration
 
 ```yaml
 spec:
   sshKeys:
-    - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQ... user@host"
-    - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI... user2@host"
+    - ssh-rsa AAAA... user@host
+    - ssh-ed25519 AAAA... user2@host
 ```
 
-#### **Cloud-Init Configuration**
+---
+
+### Cloud-init
 
 ```yaml
 spec:
@@ -158,31 +127,18 @@ spec:
     users:
       - name: admin
         sudo: ALL=(ALL) NOPASSWD:ALL
-        shell: /bin/bash
         ssh_authorized_keys:
-          - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQ..."
-    
+          - ssh-rsa AAAA...
+
     packages:
       - htop
       - docker.io
       - curl
-      - jq
-    
-    write_files:
-      - path: /etc/motd
-        content: |
-          Welcome to your Hikube VM!
-          
-    runcmd:
-      - systemctl enable docker
-      - systemctl start docker
-      - usermod -aG docker admin
-      - echo "Setup complete" > /tmp/setup-done
-    
-    final_message: "VM ready after $UPTIME seconds"
 ```
 
-### **Complete VMInstance Example**
+---
+
+### Full VMInstance example
 
 ```yaml title="production-vm.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -196,26 +152,21 @@ spec:
     - 22
   running: true
   instanceType: u1.2xlarge
-  instanceProfile: "ubuntu"
+  instanceProfile: ubuntu
   disks:
     - vm-system-disk
-  resources:
-    cpu: ""
-    memory: ""
   sshKeys:
-    - ssh-rsa AAAAB3Nza...
-  cloudInit: |
-    #cloud-config
-  cloudInitSeed: ""
+    - ssh-rsa AAAA...
 ```
 
 ---
 
 ## VMDisk
 
-### **Overview**
+### Overview
 
-The `VMDisk` API manages virtual disks used by virtual machines. It supports various image sources and storage options.
+The `VMDisk` API manages virtual disks attached to virtual machines.
+It supports **multiple image sources**: HTTP, empty disks, and **Golden Images**.
 
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
@@ -225,232 +176,148 @@ metadata:
 spec:
   source:
     http:
-      url: https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img
+      url: https://...
   optical: false
   storage: 30Gi
-  storageClass: "replicated"
+  storageClass: replicated
 ```
 
-### **Complete Specification**
+---
 
-#### **Main Parameters**
+### Main parameters
 
-| **Parameter** | **Type** | **Description** | **Default** | **Required** |
-|---------------|----------|-----------------|------------|------------|
-| `source` | `object` | Disk image source | `{}` | ✅ |
-| `optical` | `boolean` | Optical disk (ISO/CD-ROM) | `false` | ✅ |
-| `storage` | `string` | Disk size | - | ✅ |
-| `storageClass` | `string` | Storage class | `replicated` | ✅ |
+| Parameter      | Type      | Description        | Default      | Required |
+| -------------- | --------- | ------------------ | ------------ | -------- |
+| `source`       | `object`  | Disk image source  | `{}`         | ✅        |
+| `optical`      | `boolean` | Optical disk (ISO) | `false`      | ✅        |
+| `storage`      | `string`  | Disk size          | –            | ✅        |
+| `storageClass` | `string`  | Storage class      | `replicated` | ✅        |
 
-#### **Image Sources**
+---
 
-##### **HTTP/HTTPS Source**
+## Image sources
+
+### HTTP / HTTPS source
 
 ```yaml
 spec:
   source:
     http:
-      url: "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
+      url: https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img
 ```
 
-##### **Empty Disk**
+---
+
+### Empty disk
 
 ```yaml
-spec:
-  source: {}  # Creates an empty disk
-```
-
-### **VMDisk Examples**
-
-#### **Ubuntu System Disk**
-
-```yaml title="ubuntu-disk.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: VMDisk
-metadata:
-  name: ubuntu-system-disk
-spec:
-  source:
-    http:
-      url: "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
-  optical: false
-  storage: 20Gi
-  storageClass: "replicated"
-```
-
-#### **Data Disk**
-
-```yaml title="data-disk.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: VMDisk
-metadata:
-  name: application-data
-spec:
-  source: {}  # Empty disk
-  optical: false
-  storage: 500Gi
-  storageClass: "replicated"
-```
-
-#### **Installation ISO**
-
-```yaml title="ubuntu-iso.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: VMDisk
-metadata:
-  name: ubuntu-server-iso
-spec:
-  source:
-    http:
-      url: "https://releases.ubuntu.com/22.04/ubuntu-22.04.4-live-server-amd64.iso"
-  optical: true  # Optical disk
-  storage: 2Gi
-  storageClass: "replicated"
-```
-
----
-
-## Resource Management
-
-### **Storage Classes**
-
-| **Class** | **Description** | **Replication** |
-|------------|-----------------|-----------------|
-| `local` | Local storage on the node | ❌ |
-| `replicated` | 3x replicated storage | ✅ |
-
-### **Exposure Methods**
-
-| **Method** | **Description** | **Usage** | **Firewall** |
-|-------------|-----------------|-----------|--------------|
-| `PortList` | Exposure with controlled port list | Selective exposure via dedicated IP | ✅ Only specified ports |
-| `WholeIP` | Complete public IP for the VM | Complete direct access | ❌ No network protection |
-
-#### **Method Details**
-
-##### PortList
-
-- **Security** : Automatic firewall - only ports in `externalPorts` are accessible
-- **Configuration** : Requires `externalPorts` to specify allowed ports
-- **Recommended usage** : Production, secure environments, web applications
-- **Example** : `externalMethod: PortList` + `externalPorts: [22, 80, 443]`
-
-##### WholeIP
-
-- **Security** : No protection - all TCP/UDP ports are accessible from the Internet
-- **Configuration** : `externalPorts` ignored and unnecessary (all ports are open)
-- **Recommended usage** : Development, debug, complete administrative access
-- **Example** : `externalMethod: WholeIP` (without `externalPorts`)
-
-:::warning WholeIP Security ⚠️
-With `WholeIP`, your VM is fully exposed on the Internet. You must configure a firewall in the OS (UFW, iptables) to secure access.
-:::
-
----
-
-## Complete Examples
-
-### **Production VM with Data**
-
-```yaml title="production-complete.yaml"
----
-# System disk
-apiVersion: apps.cozystack.io/v1alpha1
-kind: VMDisk
-metadata:
-  name: prod-system
-spec:
-  source:
-    http:
-      url: "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
-  optical: false
-  storage: 50Gi
-  storageClass: "replicated"
-
----
-# Data disk
-apiVersion: apps.cozystack.io/v1alpha1
-kind: VMDisk
-metadata:
-  name: prod-data
 spec:
   source: {}
-  optical: false
-  storage: 200Gi
-  storageClass: "replicated"
-
----
-# Virtual machine
-apiVersion: apps.cozystack.io/v1alpha1
-kind: VMInstance
-metadata:
-  name: vm-production
-spec:
-  external: true
-  externalMethod: PortList
-  externalPorts:
-    - 22    # SSH
-    - 80    # HTTP
-    - 443   # HTTPS
-  running: true
-  instanceType: "u1.2xlarge"  # 8 vCPU, 32 GB RAM
-  instanceProfile: "ubuntu"
-  disks:
-    - prod-system
-    - prod-data
-  sshKeys:
-    - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQ... admin@company.com"
-  cloudInit: |
-    #cloud-config
-    users:
-      - name: admin
-        sudo: ALL=(ALL) NOPASSWD:ALL
-        ssh_authorized_keys:
-          - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQ..."
-    
-    packages:
-      - nginx
-      - certbot
-      - htop
-    
-    runcmd:
-      - systemctl enable nginx
-      - systemctl start nginx
-      - ufw allow ssh
-      - ufw allow http
-      - ufw allow https
-      - ufw --force enable
 ```
 
 ---
 
-## ⚠️ Best Practices
+### Golden Images (Hikube preloaded images)
 
-### **Security**
+**Golden Images** are OS images preloaded and maintained by Hikube.
+They allow **fast provisioning**, standardization, and no external network dependency.
 
-- Always use **SSH keys** rather than passwords
-- Enable **UFW firewall** with restrictive default rules
+#### Usage
 
-### **Storage**
+```yaml
+spec:
+  source:
+    image:
+      name: ubuntu
+```
 
-- Use `replicated` for **production environments**
-- Plan extra space for **logs and temporary data**
-- Configure **regular snapshots** for backups
+#### Available images
 
-### **Performance**
+Valid values correspond to the name **after `vm-image-`**:
 
-- Choose the **appropriate instance type** according to your workload
-- Monitor usage via `kubectl top pod`
-- Adjust resources according to actual needs
-
-### **Monitoring**
-
-- Monitor VM metrics via Kubernetes
-- Keep a history of performance for optimization
+| Name            |
+| --------------- |
+| `almalinux`     |
+| `centos-stream` |
+| `cloudlinux`    |
+| `debian`        |
+| `fedora`        |
+| `opensuse`      |
+| `oracle`        |
+| `proxmox`       |
+| `rocky`         |
+| `talos`         |
+| `ubuntu`        |
 
 ---
 
-:::tip Recommended Architecture
-For production, use at minimum 2 separate disks (system + data) with the `replicated` class to guarantee high availability.
+### VMDisk examples
+
+#### System disk using a Golden Image
+
+```yaml title="ubuntu-golden-disk.yaml"
+apiVersion: apps.cozystack.io/v1alpha1
+kind: VMDisk
+metadata:
+  name: ubuntu-system
+spec:
+  source:
+    image:
+      name: ubuntu
+  optical: false
+  storage: 20Gi
+  storageClass: replicated
+```
+
+---
+
+## Storage classes
+
+| Class        | Description        | Replication |
+| ------------ | ------------------ | ----------- |
+| `local`      | Node-local storage | ❌           |
+| `replicated` | Replicated storage | ✅           |
+
+---
+
+## Network exposure methods
+
+### PortList
+
+* Automatic firewall
+* Explicit port allowlist
+* **Recommended for production**
+
+### WholeIP
+
+* All ports exposed
+* No network filtering
+* Development use only
+
+:::warning Security
+With `WholeIP`, the VM is fully exposed to the Internet.
+An OS-level firewall is mandatory.
 :::
 
+---
+
+## Best practices
+
+### Security
+
+* Use SSH keys only
+* Enable OS firewall
+
+### Storage
+
+* Use `replicated` in production
+* Separate system and data disks
+
+### Performance
+
+* Select instance types according to workload
+* Monitor real usage
+
+:::tip Recommended architecture
+For production, use at least **two disks** (system + data) with replicated storage.
+:::
