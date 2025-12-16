@@ -249,19 +249,6 @@ Les valeurs possibles correspondent au nom **après `vm-image-`** :
 | `talos`         |
 | `ubuntu`        |
 
-Ces images sont visibles via :
-
-```bash
-kubectl get datavolumes -n cozy-public
-```
-
-#### Cas d’usage recommandés
-
-* Déploiements rapides
-* Environnements standardisés
-* Plateformes internes / golden OS
-* Réduction des dépendances réseau externes
-
 ---
 
 ### Exemples VMDisk
