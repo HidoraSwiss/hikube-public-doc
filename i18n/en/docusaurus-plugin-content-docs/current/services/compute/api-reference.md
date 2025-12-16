@@ -2,7 +2,6 @@
 sidebar_position: 3
 title: API Reference
 ---
-```
 
 ## API Reference – Virtual Machines
 
@@ -232,8 +231,6 @@ spec:
 ```
 
 #### Available images
-
-Valid values correspond to the name **after `vm-image-`**:
 
 | Name            |
 | --------------- |
