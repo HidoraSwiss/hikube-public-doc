@@ -23,7 +23,6 @@ apiVersion: apps.cozystack.io/v1alpha1
 kind: Redis
 metadata:
   name: example
-  namespace: default
 spec:
 ```
 
@@ -52,7 +51,6 @@ apiVersion: apps.cozystack.io/v1alpha1
 kind: Redis
 metadata:
   name: example
-  namespace: default
 spec:
   # Nombre de réplicas Redis (haute dispo si >1)
   replicas: 3
@@ -72,9 +70,9 @@ spec:
 
   # Exposer le service Redis à l’extérieur du cluster
   external: true
-  ```
+```
 
-  ---
+---
 
 ### **Paramètres d'application spécifique**
 
@@ -89,12 +87,11 @@ apiVersion: apps.cozystack.io/v1alpha1
 kind: Redis
 metadata:
   name: example
-  namespace: default
 spec:
   replicas: 3
   resources:
-    cpu: 1000m 
-    memory: 1Gi 
+    cpu: 1000m
+    memory: 1Gi
   size: 2Gi
   storageClass: replicated
   # Activer l’authentification Redis
@@ -106,7 +103,7 @@ spec:
 
 ### resources et resourcesPreset  
 
-Le champ `resources` permet de définir explicitement la configuration CPU et mémoire de chaque réplique PostgreSQL.  
+Le champ `resources` permet de définir explicitement la configuration CPU et mémoire de chaque réplique Redis.  
 Si ce champ est laissé vide, la valeur du paramètre `resourcesPreset` est utilisée.  
 
 #### Exemple de configuration YAML
