@@ -21,7 +21,6 @@ apiVersion: apps.cozystack.io/v1alpha1
 kind: RabbitMQ
 metadata:
   name: rabbitmq
-  namespace: tenant-x
 spec:
   replicas: 3
   resourcesPreset: small
@@ -136,7 +135,86 @@ resources:
 
 ---
 
-### 🔗 Références externes
+## Exemples Complets
+
+### Cluster de Production
+
+```yaml title="rabbitmq-production.yaml"
+apiVersion: apps.cozystack.io/v1alpha1
+kind: RabbitMQ
+metadata:
+  name: production
+spec:
+  replicas: 3
+  resources:
+    cpu: 2000m
+    memory: 4Gi
+  size: 20Gi
+  storageClass: replicated
+  external: false
+
+  users:
+    admin:
+      password: SecureAdminPassword
+    appuser:
+      password: SecureAppPassword
+    monitoring:
+      password: SecureMonitoringPassword
+
+  vhosts:
+    production:
+      roles:
+        admin: ["admin"]
+        readonly: ["monitoring"]
+    analytics:
+      roles:
+        admin: ["admin"]
+        readonly: ["appuser"]
+```
+
+### Cluster de Développement
+
+```yaml title="rabbitmq-development.yaml"
+apiVersion: apps.cozystack.io/v1alpha1
+kind: RabbitMQ
+metadata:
+  name: development
+spec:
+  replicas: 1
+  resourcesPreset: nano
+  size: 5Gi
+  external: true
+
+  users:
+    dev:
+      password: devpassword
+
+  vhosts:
+    default:
+      roles:
+        admin: ["dev"]
+```
+
+---
+
+:::tip Bonnes Pratiques
+
+- **3 réplicas pour les quorum queues** : avec 3 noeuds, RabbitMQ utilise les quorum queues pour garantir la durabilité des messages en cas de panne
+- **Vhosts par application** : isolez chaque application dans un vhost dédié pour limiter l'impact en cas de surcharge
+- **Rôles distincts** : séparez les utilisateurs admin, applicatifs et de monitoring avec des permissions adaptées
+- **Stockage répliqué** : utilisez `storageClass: replicated` pour protéger les données contre la perte d'un noeud
+:::
+
+:::warning Attention
+
+- **Les suppressions sont irréversibles** : la suppression d'une ressource RabbitMQ entraîne la perte définitive de toutes les queues et messages
+- **Réplicas sous 3** : avec moins de 3 réplicas, les quorum queues ne peuvent pas garantir la durabilité des messages en cas de panne
+- **Ports exposés** : si `external: true`, les ports AMQP (5672) et Management UI (15672) sont accessibles depuis l'extérieur — sécurisez les identifiants
+:::
+
+---
+
+### Références externes
 
 * **Opérateur officiel RabbitMQ :** [GitHub – rabbitmq/cluster-operator](https://github.com/rabbitmq/cluster-operator/)
 * **Documentation RabbitMQ Operator :** [operator-overview.html](https://www.rabbitmq.com/kubernetes/operator/operator-overview.html)

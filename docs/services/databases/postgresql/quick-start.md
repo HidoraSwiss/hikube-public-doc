@@ -236,6 +236,56 @@ myapp=>
 
 ---
 
+## Étape 6 : Dépannage rapide
+
+### Pods en CrashLoopBackOff
+
+```bash
+# Vérifier les logs du pod en erreur
+kubectl logs postgres-example-1
+
+# Vérifier les events du pod
+kubectl describe pod postgres-example-1
+```
+
+**Causes fréquentes :** mémoire insuffisante (`resources.memory` trop faible), volume de stockage plein, erreur de configuration PostgreSQL dans `postgresql.parameters`.
+
+### PostgreSQL non accessible
+
+```bash
+# Vérifier que les services existent
+kubectl get svc | grep postgres
+
+# Vérifier que le LoadBalancer a bien une IP externe
+kubectl describe svc postgres-example-external-write
+```
+
+**Causes fréquentes :** `external: false` dans le manifeste, LoadBalancer en attente d'attribution d'IP, mauvais nom de service dans la chaîne de connexion.
+
+### Réplication en échec
+
+```bash
+# Vérifier l'état du cluster CloudNativePG
+kubectl describe postgres example
+
+# Vérifier les logs du primary
+kubectl logs postgres-example-1 -c postgres
+```
+
+**Causes fréquentes :** stockage insuffisant sur un réplica, problème réseau entre les nœuds, paramètres `quorum` mal configurés.
+
+### Commandes de diagnostic générales
+
+```bash
+# Events récents sur le namespace
+kubectl get events --sort-by=.metadata.creationTimestamp
+
+# État détaillé du cluster PostgreSQL
+kubectl describe postgres example
+```
+
+---
+
 ## 📋 Résumé
 
 Vous avez déployé :

@@ -173,6 +173,56 @@ system
 
 ---
 
+## Étape 6 : Dépannage rapide
+
+### Pods en CrashLoopBackOff
+
+```bash
+# Vérifier les logs du pod ClickHouse en erreur
+kubectl logs chi-clickhouse-example-clickhouse-0-0-0
+
+# Vérifier les events du pod
+kubectl describe pod chi-clickhouse-example-clickhouse-0-0-0
+```
+
+**Causes fréquentes :** mémoire insuffisante (`resources.memory` trop faible), volume de stockage plein, erreur dans la configuration des shards ou réplicas.
+
+### ClickHouse non accessible
+
+```bash
+# Vérifier que les services existent
+kubectl get svc | grep clickhouse
+
+# Vérifier le service endpoint
+kubectl describe svc chendpoint-clickhouse-example
+```
+
+**Causes fréquentes :** port-forward non actif, mauvais port (9000 pour le protocole natif, 8123 pour HTTP), service non prêt.
+
+### ClickHouse Keeper non fonctionnel
+
+```bash
+# Vérifier les logs du Keeper
+kubectl logs chk-clickhouse-example-keeper-cluster1-0-0-0
+
+# Vérifier l'état des pods Keeper
+kubectl get pods | grep keeper
+```
+
+**Causes fréquentes :** le quorum Keeper nécessite un nombre impair de réplicas (3 minimum recommandé), espace disque Keeper insuffisant (`clickhouseKeeper.size` trop faible).
+
+### Commandes de diagnostic générales
+
+```bash
+# Events récents sur le namespace
+kubectl get events --sort-by=.metadata.creationTimestamp
+
+# État détaillé du cluster ClickHouse
+kubectl describe clickhouse example
+```
+
+---
+
 ## 📋 Résumé
 
 Vous avez déployé :

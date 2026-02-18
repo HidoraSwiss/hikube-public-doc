@@ -20,7 +20,6 @@ apiVersion: apps.cozystack.io/v1alpha1
 kind: Kafka
 metadata:
   name: kafka
-  namespace: tenant-x
 spec:
   external: false
   kafka:
@@ -160,3 +159,84 @@ resources:
 | `large`         | 2       | 2Gi         |
 | `xlarge`        | 4       | 4Gi         |
 | `2xlarge`       | 8       | 8Gi         |
+
+---
+
+## Exemples Complets
+
+### Cluster de Production
+
+```yaml title="kafka-production.yaml"
+apiVersion: apps.cozystack.io/v1alpha1
+kind: Kafka
+metadata:
+  name: production
+spec:
+  external: false
+  kafka:
+    replicas: 3
+    resources:
+      cpu: 4000m
+      memory: 8Gi
+    size: 100Gi
+    storageClass: replicated
+  zookeeper:
+    replicas: 3
+    resourcesPreset: small
+    size: 10Gi
+    storageClass: replicated
+  topics:
+    - name: events
+      partitions: 6
+      replicas: 3
+      config:
+        retention.ms: "604800000"
+        cleanup.policy: "delete"
+        min.insync.replicas: "2"
+    - name: commands
+      partitions: 3
+      replicas: 3
+      config:
+        cleanup.policy: "compact"
+        min.insync.replicas: "2"
+```
+
+### Cluster de Développement
+
+```yaml title="kafka-development.yaml"
+apiVersion: apps.cozystack.io/v1alpha1
+kind: Kafka
+metadata:
+  name: development
+spec:
+  external: false
+  kafka:
+    replicas: 1
+    resourcesPreset: nano
+    size: 5Gi
+  zookeeper:
+    replicas: 1
+    resourcesPreset: nano
+    size: 2Gi
+  topics:
+    - name: test-topic
+      partitions: 1
+      replicas: 1
+```
+
+---
+
+:::tip Bonnes Pratiques
+
+- **`min.insync.replicas: 2`** : configurez ce paramètre sur vos topics de production pour garantir qu'au moins 2 réplicas confirment chaque écriture
+- **Stockage répliqué** : utilisez `storageClass: replicated` pour protéger les données contre la perte d'un nœud physique
+- **Dimensionnement du stockage** : prévoyez suffisamment d'espace disque pour la rétention des messages (`retention.ms`) et la compaction
+- **ZooKeeper : 3 réplicas minimum** en production pour garantir le quorum et la tolérance aux pannes
+:::
+
+:::warning Attention
+
+- **Les suppressions sont irréversibles** : la suppression d'une ressource Kafka entraîne la perte définitive de tous les messages et topics
+- **Réplicas topic vs brokers** : le nombre de réplicas d'un topic ne peut pas dépasser le nombre de brokers disponibles
+- **Réduction du nombre de brokers** : réduire le nombre de brokers sur un cluster existant peut entraîner une perte de données si des partitions ne sont pas redistribuées au préalable
+:::

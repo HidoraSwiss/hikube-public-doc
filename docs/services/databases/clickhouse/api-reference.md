@@ -146,3 +146,94 @@ resources:
 | `large`         | 2       | 2Gi         |
 | `xlarge`        | 4       | 4Gi         |
 | `2xlarge`       | 8       | 8Gi         |
+
+---
+
+## Exemples Complets
+
+### Cluster de Production
+
+```yaml title="clickhouse-production.yaml"
+apiVersion: apps.cozystack.io/v1alpha1
+kind: ClickHouse
+metadata:
+  name: production
+spec:
+  replicas: 3
+  shards: 2
+  resources:
+    cpu: 4000m
+    memory: 8Gi
+  size: 100Gi
+  storageClass: replicated
+
+  logStorageSize: 10Gi
+  logTTL: 30
+
+  clickhouseKeeper:
+    enabled: true
+    replicas: 3
+    resourcesPreset: small
+    size: 5Gi
+
+  users:
+    admin:
+      password: SecureAdminPassword
+    analyst:
+      password: SecureAnalystPassword
+      readonly: true
+
+  backup:
+    enabled: true
+    schedule: "0 3 * * *"
+    cleanupStrategy: "--keep-last=7 --keep-daily=7 --keep-weekly=4"
+    s3Region: eu-central-1
+    s3Bucket: s3.hikube.cloud/clickhouse-backups
+    s3AccessKey: your-access-key
+    s3SecretKey: your-secret-key
+    resticPassword: SecureResticPassword
+```
+
+### Cluster de Développement
+
+```yaml title="clickhouse-development.yaml"
+apiVersion: apps.cozystack.io/v1alpha1
+kind: ClickHouse
+metadata:
+  name: development
+spec:
+  replicas: 1
+  shards: 1
+  resourcesPreset: nano
+  size: 10Gi
+
+  logStorageSize: 2Gi
+  logTTL: 7
+
+  clickhouseKeeper:
+    enabled: true
+    replicas: 1
+    resourcesPreset: nano
+    size: 1Gi
+
+  users:
+    dev:
+      password: devpassword
+```
+
+---
+
+:::tip Bonnes Pratiques
+
+- **Keeper en nombre impair** : déployez toujours 3 ou 5 réplicas Keeper pour garantir le quorum (majorité nécessaire pour l'élection du leader)
+- **`logTTL`** : ajustez la durée de rétention des logs système (`query_log`, `query_thread_log`) pour éviter l'accumulation de données inutiles
+- **Shards vs réplicas** : utilisez les shards pour distribuer les données horizontalement (plus de capacité) et les réplicas pour la redondance (plus de disponibilité)
+- **Utilisateur `readonly`** : créez un utilisateur en lecture seule pour les outils d'analyse et de reporting
+:::
+
+:::warning Attention
+
+- **Les suppressions sont irréversibles** : la suppression d'une ressource ClickHouse entraîne la perte définitive des données si aucune sauvegarde n'est configurée
+- **Changement de shards** : modifier le nombre de shards sur un cluster existant peut entraîner une redistribution complexe des données
+- **Keeper et quorum** : avec moins de 3 Keeper, le cluster ne peut pas maintenir le quorum en cas de panne d'un nœud
+:::

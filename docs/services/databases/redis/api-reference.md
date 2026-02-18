@@ -125,3 +125,20 @@ resources:
 | `large`         | 2       | 2Gi         |
 | `xlarge`        | 4       | 4Gi         |
 | `2xlarge`       | 8       | 8Gi         |
+
+---
+
+:::tip Bonnes Pratiques
+
+- **`authEnabled: true`** : activez toujours l'authentification en production pour sécuriser l'accès à vos données Redis
+- **3 réplicas minimum** en production pour garantir la haute disponibilité avec Redis Sentinel
+- **Stockage répliqué** : utilisez `storageClass: replicated` pour protéger les données contre la perte d'un noeud physique
+- **Dimensionnement mémoire** : la mémoire allouée (`resources.memory`) doit être suffisante pour contenir l'ensemble de votre dataset Redis
+:::
+
+:::warning Attention
+
+- **Les suppressions sont irréversibles** : la suppression d'une ressource Redis entraîne la perte définitive des données si aucune persistance externe n'est configurée
+- **`resources` vs `resourcesPreset`** : si `resources` est défini, `resourcesPreset` est entièrement ignoré
+- **Accès externe** : activer `external: true` expose Redis sur Internet — assurez-vous que `authEnabled: true` est configuré
+:::

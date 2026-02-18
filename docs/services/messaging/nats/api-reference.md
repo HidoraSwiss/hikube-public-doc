@@ -20,7 +20,6 @@ apiVersion: apps.cozystack.io/v1alpha1
 kind: NATS
 metadata:
   name: nats
-  namespace: tenant-x
 spec:
   replicas: 2
   resourcesPreset: nano
@@ -123,42 +122,77 @@ resources:
 
 ---
 
-## Exemple complet
+## Exemples Complets
 
-```yaml title="nats.yaml"
+### Cluster de Production
+
+```yaml title="nats-production.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
 kind: NATS
 metadata:
-  name: nats
-  namespace: tenant-x
+  name: production
 spec:
   external: false
-
-  replicas: 2
-  resourcesPreset: large
-  storageClass: "replicated"
+  replicas: 3
+  resources:
+    cpu: 2000m
+    memory: 4Gi
+  storageClass: replicated
 
   jetstream:
     enabled: true
-    size: 10Gi
+    size: 50Gi
 
   users:
-    user1:
-      password: mypassword
+    admin:
+      password: SecureAdminPassword
+    appuser:
+      password: SecureAppPassword
+    monitoring:
+      password: SecureMonitoringPassword
 
   config:
     merge:
-      # Exemple de configuration additionnelle NATS
-      max_payload: 16MB
+      max_payload: 8MB
       write_deadline: 2s
       debug: false
       trace: false
-    resolver:
-      # Configuration du resolver (optionnelle, pour JWTs, accounts, etc.)
-      type: full
-      dir: /data/resolver
+```
+
+### Cluster de Développement
+
+```yaml title="nats-development.yaml"
+apiVersion: apps.cozystack.io/v1alpha1
+kind: NATS
+metadata:
+  name: development
+spec:
+  external: true
+  replicas: 1
+  resourcesPreset: nano
+
+  jetstream:
+    enabled: true
+    size: 5Gi
+
+  users:
+    dev:
+      password: devpassword
 ```
 
 ---
 
-Cette ressource permet de déployer un **cluster NATS hautement disponible**, avec **JetStream activé** pour la persistance des messages et des **utilisateurs authentifiés** pour un contrôle d’accès granulaire.
+:::tip Bonnes Pratiques
+
+- **JetStream en production** : activez toujours JetStream (`jetstream.enabled: true`) pour bénéficier de la persistance des messages et du streaming
+- **3 réplicas minimum** en production pour garantir la haute disponibilité et le consensus Raft pour JetStream
+- **`max_payload`** : ajustez la taille maximale des messages selon votre cas d'usage (défaut : 1MB, maximum recommandé : 8MB)
+- **Utilisateurs dédiés** : créez des utilisateurs distincts par application pour un contrôle d'accès granulaire
+:::
+
+:::warning Attention
+
+- **Les suppressions sont irréversibles** : la suppression d'une ressource NATS entraîne la perte définitive des streams JetStream et de tous les messages
+- **Modification de `jetstream.size`** : réduire la taille du volume JetStream sur un cluster existant peut entraîner une perte de données
+- **Accès externe** : activer `external: true` expose le cluster NATS sur Internet — assurez-vous que l'authentification est bien configurée
+:::

@@ -211,6 +211,56 @@ mysql>
 
 ---
 
+## Étape 6 : Dépannage rapide
+
+### Pods en CrashLoopBackOff
+
+```bash
+# Vérifier les logs du pod en erreur
+kubectl logs mysql-example-0
+
+# Vérifier les events du pod
+kubectl describe pod mysql-example-0
+```
+
+**Causes fréquentes :** mémoire insuffisante (`resources.memory` trop faible), volume de stockage plein, erreur de configuration MariaDB.
+
+### MySQL non accessible
+
+```bash
+# Vérifier que les services existent
+kubectl get svc | grep mysql
+
+# Vérifier que le LoadBalancer a bien une IP externe
+kubectl describe svc mysql-example-primary
+```
+
+**Causes fréquentes :** `external: false` dans le manifeste, LoadBalancer en attente d'attribution d'IP, mauvais port ou nom d'hôte dans la chaîne de connexion.
+
+### Réplication en échec
+
+```bash
+# Vérifier l'état du cluster MariaDB
+kubectl get mariadb
+
+# Inspecter les détails de la ressource MariaDB
+kubectl describe mariadb mysql-example
+```
+
+**Causes fréquentes :** binlog purgé avant la synchronisation d'un réplica, espace disque insuffisant, problème réseau entre les nœuds.
+
+### Commandes de diagnostic générales
+
+```bash
+# Events récents sur le namespace
+kubectl get events --sort-by=.metadata.creationTimestamp
+
+# État détaillé du cluster MySQL
+kubectl describe mysql example
+```
+
+---
+
 ## 📋 Résumé
 
 Vous avez déployé :
