@@ -244,6 +244,27 @@ kubectl top nodes
 
 ---
 
+## Nettoyage
+
+### Supprimer une VM GPU
+
+```bash
+kubectl delete -f vm-gpu.yaml
+kubectl delete -f vm-disk.yaml
+```
+
+### Supprimer un cluster Kubernetes GPU
+
+```bash
+kubectl delete -f cluster-gpu.yaml
+```
+
+:::warning
+Ces actions suppriment les ressources GPU et toutes les données associées. Ces opérations sont **irréversibles**.
+:::
+
+---
+
 ## 🚀 Prochaines Étapes
 
 ### **Pour approfondir VM GPU :**

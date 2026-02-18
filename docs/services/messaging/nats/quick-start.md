@@ -65,7 +65,7 @@ spec:
     resolver:
       type: full
       dir: /data/resolver
-````
+```
 
 ---
 
@@ -149,4 +149,23 @@ Vous avez déployé :
 
 ---
 
-✨ Vous êtes maintenant prêt à intégrer NATS dans vos applications hébergées sur **Hikube** !
+---
+
+## Nettoyage
+
+Pour supprimer les ressources de test :
+
+```bash
+kubectl delete -f nats.yaml
+```
+
+:::warning
+Cette action supprime le cluster NATS et toutes les données associées. Cette opération est **irréversible**.
+:::
+
+---
+
+## Prochaines étapes
+
+- **[Référence API](./api-reference.md)** : Configuration complète de toutes les options NATS
+- **[Vue d'ensemble](./overview.md)** : Architecture détaillée et cas d'usage NATS sur Hikube

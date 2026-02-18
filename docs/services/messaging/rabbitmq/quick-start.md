@@ -204,3 +204,24 @@ Vous avez déployé :
 * Un **utilisateur administrateur** et un **vhost par défaut**
 * Une **interface web de gestion** accessible localement
 * Une **connexion AMQP** testée avec un producteur/consommateur
+
+---
+
+## Nettoyage
+
+Pour supprimer les ressources de test :
+
+```bash
+kubectl delete -f rabbitmq.yaml
+```
+
+:::warning
+Cette action supprime le cluster RabbitMQ et toutes les données associées. Cette opération est **irréversible**.
+:::
+
+---
+
+## Prochaines étapes
+
+- **[Référence API](./api-reference.md)** : Configuration complète de toutes les options RabbitMQ
+- **[Vue d'ensemble](./overview.md)** : Architecture détaillée et cas d'usage RabbitMQ sur Hikube

@@ -11,27 +11,27 @@ Ce guide vous accompagne dans le déploiement de votre première base de donnée
 
 ## Objectifs
 
-À la fin de ce guide, vous aurez :  
+À la fin de ce guide, vous aurez :
 
-- Une base de données **ClickHouse** déployée sur Hikube  
-- Une configuration initiale avec **shards** et **réplicas** adaptée à vos besoins  
-- Un utilisateur et un mot de passe pour vous connecter  
-- Un stockage persistant pour conserver vos données  
+- Une base de données **ClickHouse** déployée sur Hikube
+- Une configuration initiale avec **shards** et **réplicas** adaptée à vos besoins
+- Un utilisateur et un mot de passe pour vous connecter
+- Un stockage persistant pour conserver vos données
 
 ---
 
 ## Prérequis
 
-Avant de commencer, assurez-vous d'avoir :  
+Avant de commencer, assurez-vous d'avoir :
 
-- **kubectl** configuré avec votre kubeconfig Hikube  
-- **Droits administrateur** sur votre tenant  
-- Un **namespace** disponible pour héberger votre base de données  
-- (Optionnel) Un bucket **S3-compatible** si vous souhaitez activer les sauvegardes automatiques  
+- **kubectl** configuré avec votre kubeconfig Hikube
+- **Droits administrateur** sur votre tenant
+- Un **namespace** disponible pour héberger votre base de données
+- (Optionnel) Un bucket **S3-compatible** si vous souhaitez activer les sauvegardes automatiques
 
 ---
 
-## Étape 1 : Création yaml Clickhouse
+## Étape 1 : Créer le manifeste ClickHouse
 
 ### **Préparez le fichier manifest**
 
@@ -71,54 +71,100 @@ spec:
     user1:
       password: strongpassword
     user2:
-        readonly: true
-        password: hackme      
+      readonly: true
+      password: hackme
 ```
 
-### **Déployez le yaml clickhouse**
+### **Déployez le yaml ClickHouse**
 
 ```bash
 # Appliquer le yaml
 kubectl apply -f clickhouse.yaml
 ```
 
-## Étape 2 : Vérification et Tests
+---
 
-Une fois l'application déployé, vérifier que tout fonctionne :
+## Étape 2 : Vérification du déploiement
+
+Vérifiez le statut de votre cluster ClickHouse (peut prendre 1-2 minutes) :
 
 ```bash
-# Vérifier le statut (peut prendre 1-2 minutes)
-➜  ~ kubectl get clickhouse
+kubectl get clickhouse
+```
+
+**Résultat attendu :**
+
+```console
 NAME      READY   AGE     VERSION
 example   True    2m48s   0.13.0
+```
 
-# Vérifier si les pods applicatifs sont running
-➜  ~ kubectl get po | grep clickhouse
+---
+
+## Étape 3 : Vérification des pods
+
+Vérifiez que les pods applicatifs sont en état `Running` :
+
+```bash
+kubectl get po | grep clickhouse
+```
+
+**Résultat attendu :**
+
+```console
 chi-clickhouse-example-clickhouse-0-0-0           1/1     Running     0             3m43s
 chi-clickhouse-example-clickhouse-0-1-0           1/1     Running     0             2m28s
 chk-clickhouse-example-keeper-cluster1-0-0-0      1/1     Running     0             3m17s
 chk-clickhouse-example-keeper-cluster1-0-1-0      1/1     Running     0             2m50s
 chk-clickhouse-example-keeper-cluster1-0-2-0      1/1     Running     0             2m28s
+```
 
-# Vous pouvez récupérer le username, password de votre BDD
-  ~ kubectl get secret clickhouse-example-credentials -o json | jq -r '.data | to_entries[] | "\(.key): \(.value|@base64d)"'
+Avec `replicas: 2` et `shards: 1`, vous obtenez **2 pods ClickHouse** (réplicas du shard) et **3 pods ClickHouse Keeper** pour la coordination du cluster.
 
+---
+
+## Étape 4 : Récupérer les identifiants
+
+Les mots de passe sont stockés dans un Secret Kubernetes :
+
+```bash
+kubectl get secret clickhouse-example-credentials -o json | jq -r '.data | to_entries[] | "\(.key): \(.value|@base64d)"'
+```
+
+**Résultat attendu :**
+
+```console
 backup: vIdZUNiaLKaVbIvl
 user1: strongpassword
 user2: hackme
+```
 
+---
 
+## Étape 5 : Connexion et tests
 
-# Faire un port-forward du service pour y accéder en local, ou modifier le service en tant que LoadBalancer
+### Port-forward du service ClickHouse
+
+```bash
 kubectl port-forward svc/chendpoint-clickhouse-example 9000:9000
+```
 
-# Dans un autre terminal se connecter et vérifier la version de clickhouse
-➜  ~ clickhouse-client \
+### Test de connexion avec clickhouse-client
+
+Dans un autre terminal, connectez-vous et vérifiez la version de ClickHouse :
+
+```bash
+clickhouse-client \
   --host 127.0.0.1 \
   --port 9000 \
   --user user1 \
   --password 'strongpassword' \
-  --query "SHOW DATABASES; "
+  --query "SHOW DATABASES;"
+```
+
+**Résultat attendu :**
+
+```console
 INFORMATION_SCHEMA
 default
 information_schema
@@ -129,12 +175,33 @@ system
 
 ## 📋 Résumé
 
-Vous avez déployé :  
+Vous avez déployé :
 
-- Une base de données **ClickHouse** sur votre tenant Hikube  
-- Une configuration initiale avec **shards** et **réplicas**  
-- Un composant **ClickHouse Keeper** pour la coordination du cluster  
-- Un stockage persistant attaché pour vos données et logs  
-- Des utilisateurs avec mots de passe générés et stockés dans un Secret Kubernetes  
+- Une base de données **ClickHouse** sur votre tenant Hikube
+- Une configuration initiale avec **shards** et **réplicas**
+- Un composant **ClickHouse Keeper** pour la coordination du cluster
+- Un stockage persistant attaché pour vos données et logs
+- Des utilisateurs avec mots de passe générés et stockés dans un Secret Kubernetes
 - Un accès à votre base via `clickhouse-client`
-- La possibilité de configurer des **sauvegardes S3** automatiques  
+- La possibilité de configurer des **sauvegardes S3** automatiques
+
+---
+
+## Nettoyage
+
+Pour supprimer les ressources de test :
+
+```bash
+kubectl delete -f clickhouse.yaml
+```
+
+:::warning
+Cette action supprime le cluster ClickHouse et toutes les données associées. Cette opération est **irréversible**.
+:::
+
+---
+
+## Prochaines étapes
+
+- **[Référence API](./api-reference.md)** : Configuration complète de toutes les options ClickHouse
+- **[Vue d'ensemble](./overview.md)** : Architecture détaillée et cas d'usage ClickHouse sur Hikube

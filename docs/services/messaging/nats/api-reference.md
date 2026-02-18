@@ -17,7 +17,7 @@ Cette référence détaille la configuration et le fonctionnement des **clusters
 
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
-kind: Nats
+kind: NATS
 metadata:
   name: nats
   namespace: tenant-x
@@ -31,7 +31,7 @@ spec:
   users:
     user1:
       password: "mypassword"
-````
+```
 
 ---
 

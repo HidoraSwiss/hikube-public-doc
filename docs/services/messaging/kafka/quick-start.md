@@ -97,7 +97,7 @@ kafka-example-zookeeper-2    1/1     Running   0   2m
 ### **Port-forward du service Kafka**
 
 ```bash
-kubectl port-forward svc/kafka-default-kafka-bootstrap 9092:9092
+kubectl port-forward svc/kafka-example-kafka-bootstrap 9092:9092
 ```
 
 ### **Publier et consommer un message en local**
@@ -160,3 +160,24 @@ Vous avez déployé :
 * Un **topic par défaut** prêt à recevoir des messages
 * Un **stockage persistant** pour Kafka et ZooKeeper
 * Un **accès local** via port-forward pour tester la production et la consommation de messages
+
+---
+
+## Nettoyage
+
+Pour supprimer les ressources de test :
+
+```bash
+kubectl delete -f kafka.yaml
+```
+
+:::warning
+Cette action supprime le cluster Kafka et toutes les données associées. Cette opération est **irréversible**.
+:::
+
+---
+
+## Prochaines étapes
+
+- **[Référence API](./api-reference.md)** : Configuration complète de toutes les options Kafka
+- **[Vue d'ensemble](./overview.md)** : Architecture détaillée et cas d'usage Kafka sur Hikube

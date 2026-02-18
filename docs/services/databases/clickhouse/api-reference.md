@@ -20,7 +20,6 @@ apiVersion: apps.cozystack.io/v1alpha1
 kind: ClickHouse
 metadata:
   name: clickhouse-name
-  namespace: default
 spec:
 ```
 

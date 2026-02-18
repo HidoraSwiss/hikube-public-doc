@@ -102,7 +102,15 @@ instanceType: m1.8xlarge   # 32 vCPU, 256 GB RAM
 
 ### Profils d’OS supportés
 
-*(liste conservée telle quelle, Linux + Windows, inchangée)*
+Les profils suivants sont disponibles pour configurer le système d'exploitation de la VM :
+
+| Profil | Description |
+|--------|-------------|
+| `ubuntu` | Ubuntu Server (recommandé) |
+| `centos` | CentOS Stream |
+| `debian` | Debian |
+| `fedora` | Fedora Server |
+| `windows` | Windows Server |
 
 ---
 

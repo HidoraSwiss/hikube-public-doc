@@ -20,7 +20,6 @@ apiVersion: apps.cozystack.io/v1alpha1
 kind: Postgres
 metadata:
   name: example
-  namespace: default
 spec:
 ```
 
@@ -48,7 +47,6 @@ apiVersion: apps.cozystack.io/v1alpha1
 kind: Postgres
 metadata:
   name: postgres-example
-  namespace: default
 spec:
   # Nombre de réplicas PostgreSQL (instances dans le cluster)
   replicas: 3
