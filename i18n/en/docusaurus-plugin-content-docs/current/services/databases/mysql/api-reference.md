@@ -20,7 +20,6 @@ apiVersion: apps.cozystack.io/v1alpha1
 kind: MySQL
 metadata:
   name: example
-  namespace: default
 spec:
 ```
 
@@ -48,7 +47,6 @@ apiVersion: apps.cozystack.io/v1alpha1
 kind: MySQL
 metadata:
   name: example              # Instance name
-  namespace: default         # Target namespace
 spec:
   replicas: 3                # Number of replicas (1 primary + 2 replicas)
 
@@ -81,7 +79,6 @@ apiVersion: apps.cozystack.io/v1alpha1
 kind: MySQL
 metadata:
   name: example
-  namespace: default
 spec:
   replicas: 2
   size: 10Gi
@@ -130,7 +127,6 @@ apiVersion: apps.cozystack.io/v1alpha1
 kind: MySQL
 metadata:
   name: example
-  namespace: default
 spec:
   replicas: 2
   size: 10Gi
@@ -233,4 +229,102 @@ restic -r s3:s3.example.org/mariadb-backups/database_name restore latest --targe
 mysqldump -h <slave> -P 3306 -u<user> -p<password> --column-statistics=0 <database> <table> ~/tmp/fix-table.sql
 mysql -h <master> -P 3306 -u<user> -p<password> <database> < ~/tmp/fix-table.sql
 ```
+
+---
+
+## Complete Examples
+
+### Production Cluster
+
+```yaml title="mysql-production.yaml"
+apiVersion: apps.cozystack.io/v1alpha1
+kind: MySQL
+metadata:
+  name: production
+spec:
+  replicas: 3
+  resources:
+    cpu: 4000m
+    memory: 8Gi
+  size: 50Gi
+  storageClass: replicated
+  external: false
+
+  users:
+    admin:
+      password: SecureAdminPassword
+      maxUserConnections: 100
+    appuser:
+      password: SecureAppPassword
+      maxUserConnections: 500
+    readonly:
+      password: SecureReadOnlyPassword
+      maxUserConnections: 50
+
+  databases:
+    production:
+      roles:
+        admin:
+          - admin
+        readonly:
+          - readonly
+    analytics:
+      roles:
+        admin:
+          - admin
+        readonly:
+          - appuser
+
+  backup:
+    enabled: true
+    schedule: "0 3 * * *"
+    cleanupStrategy: "--keep-last=7 --keep-daily=7 --keep-weekly=4"
+    s3Region: eu-central-1
+    s3Bucket: s3.hikube.cloud/mysql-backups
+    s3AccessKey: your-access-key
+    s3SecretKey: your-secret-key
+    resticPassword: SecureResticPassword
+```
+
+### Development Cluster
+
+```yaml title="mysql-development.yaml"
+apiVersion: apps.cozystack.io/v1alpha1
+kind: MySQL
+metadata:
+  name: development
+spec:
+  replicas: 1
+  resourcesPreset: nano
+  size: 5Gi
+  external: true
+
+  users:
+    dev:
+      password: devpassword
+      maxUserConnections: 100
+
+  databases:
+    devdb:
+      roles:
+        admin:
+          - dev
+```
+
+---
+
+:::tip Best Practices
+
+- **3 replicas minimum** in production to ensure high availability (1 primary + 2 replicas)
+- **`maxUserConnections`**: limit connections per user to prevent resource exhaustion
+- **Restic backups**: enable automatic backups with `backup.enabled: true` and keep the `resticPassword` in a safe place
+- **Database separation**: create one database per application with distinct roles (admin, readonly)
+:::
+
+:::warning Warning
+
+- **Deletions are irreversible**: deleting a MySQL resource results in permanent data loss if no backup is configured
+- **Primary switchover**: changing the primary via `spec.replication.primary.podIndex` may cause a brief interruption of writes
+- **Corrupted indexes**: indexes can sometimes be corrupted on the primary replica -- restore them from a secondary replica using `mysqldump`
+:::
 

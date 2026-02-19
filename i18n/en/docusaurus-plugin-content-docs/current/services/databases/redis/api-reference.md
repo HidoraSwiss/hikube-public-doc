@@ -5,10 +5,10 @@ title: API Reference
 
 # Redis API Reference
 
-This reference details the use of **Redis** on Hikube, highlighting its speed and versatility as an **in-memory data store** and **distributed cache** system.  
-The managed service simplifies Redis cluster deployment and management, guaranteeing **high availability**, **low latency**, and optimal performance for your applications.  
+This reference details the use of **Redis** on Hikube, highlighting its speed and versatility as an **in-memory data store** and **distributed cache** system.
+The managed service simplifies Redis cluster deployment and management, guaranteeing **high availability**, **low latency**, and optimal performance for your applications.
 
-The service is based on the **[Spotahome Redis Operator](https://github.com/spotahome/redis-operator)**, which ensures orchestration, replication, and supervision of Redis clusters.  
+The service is based on the **[Spotahome Redis Operator](https://github.com/spotahome/redis-operator)**, which ensures orchestration, replication, and supervision of Redis clusters.
 
 ---
 
@@ -23,7 +23,6 @@ apiVersion: apps.cozystack.io/v1alpha1
 kind: Redis
 metadata:
   name: example
-  namespace: default
 spec:
 ```
 
@@ -52,7 +51,6 @@ apiVersion: apps.cozystack.io/v1alpha1
 kind: Redis
 metadata:
   name: example
-  namespace: default
 spec:
   # Number of Redis replicas (high availability if >1)
   replicas: 3
@@ -72,9 +70,9 @@ spec:
 
   # Expose Redis service outside the cluster
   external: true
-  ```
+```
 
-  ---
+---
 
 ### **Application-Specific Parameters**
 
@@ -89,12 +87,11 @@ apiVersion: apps.cozystack.io/v1alpha1
 kind: Redis
 metadata:
   name: example
-  namespace: default
 spec:
   replicas: 3
   resources:
-    cpu: 1000m 
-    memory: 1Gi 
+    cpu: 1000m
+    memory: 1Gi
   size: 2Gi
   storageClass: replicated
   # Enable Redis authentication
@@ -104,10 +101,10 @@ spec:
   external: false
 ```
 
-### resources and resourcesPreset  
+### resources and resourcesPreset
 
-The `resources` field allows explicitly defining the CPU and memory configuration of each Redis replica.  
-If this field is left empty, the value of the `resourcesPreset` parameter is used.  
+The `resources` field allows explicitly defining the CPU and memory configuration of each Redis replica.
+If this field is left empty, the value of the `resourcesPreset` parameter is used.
 
 #### YAML Configuration Example
 
@@ -115,9 +112,9 @@ If this field is left empty, the value of the `resourcesPreset` parameter is use
 resources:
   cpu: 4000m
   memory: 4Gi
-```  
+```
 
-⚠️ Attention: if resources is defined, the resourcesPreset value is ignored.
+Warning: if resources is defined, the resourcesPreset value is ignored.
 
 | **Preset name** | **CPU** | **Memory** |
 |-----------------|---------|-------------|
@@ -129,3 +126,19 @@ resources:
 | `xlarge`        | 4       | 4Gi         |
 | `2xlarge`       | 8       | 8Gi         |
 
+---
+
+:::tip Best Practices
+
+- **`authEnabled: true`**: always enable authentication in production to secure access to your Redis data
+- **3 replicas minimum** in production to ensure high availability with Redis Sentinel
+- **Replicated storage**: use `storageClass: replicated` to protect data against physical node loss
+- **Memory sizing**: the allocated memory (`resources.memory`) must be sufficient to hold your entire Redis dataset
+:::
+
+:::warning Warning
+
+- **Deletions are irreversible**: deleting a Redis resource results in permanent data loss if no external persistence is configured
+- **`resources` vs `resourcesPreset`**: if `resources` is defined, `resourcesPreset` is entirely ignored
+- **External access**: enabling `external: true` exposes Redis to the Internet -- make sure `authEnabled: true` is configured
+:::

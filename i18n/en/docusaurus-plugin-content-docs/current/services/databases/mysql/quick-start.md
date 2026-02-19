@@ -5,45 +5,44 @@ title: Quick Start
 
 # Deploy MySQL in 5 minutes
 
-This guide walks you through deploying your first **MySQL** database on Hikube, from installation to first connection.
+This guide walks you through deploying your first **MySQL** database on Hikube, from setup to your first connection.
 
 ---
 
 ## Objectives
 
-By the end of this guide, you will have:  
+By the end of this guide, you will have:
 
-- An operational **MySQL** database on Hikube  
-- A replicated cluster with a **primary** and **replicas** to ensure high availability  
-- **Users and passwords** to access your applications  
-- **Persistent storage** attached to each instance to guarantee data durability  
-- (Optional) The ability to enable **automatic backups** to S3-compatible storage  
+- An operational **MySQL** database on Hikube
+- A replicated cluster with a **primary** and **replicas** for high availability
+- **Users and passwords** to access your applications
+- **Persistent storage** attached to each instance to ensure data durability
+- (Optional) The option to enable **automatic backups** to S3-compatible storage
 
 ---
 
 ## Prerequisites
 
-Before starting, make sure you have:  
+Before starting, make sure you have:
 
-- **kubectl** configured with your Hikube kubeconfig  
-- **Administrator rights** on your tenant  
-- A **namespace** available to host your database  
-- (Optional) An **S3-compatible** bucket if you want to enable automatic backups via MariaDB-Operator  
+- **kubectl** configured with your Hikube kubeconfig
+- **Administrator rights** on your tenant
+- A **namespace** available to host your database
+- (Optional) An **S3-compatible** bucket if you want to enable automatic backups via MariaDB-Operator
 
 ---
 
-## Step 1: Create YAML to Deploy MySQL
+## Step 1: Create the MySQL manifest
 
 ### **Prepare the manifest file**
 
-Create a `mysql.yaml` file as below:
+Create a `mysql.yaml` file as shown below:
 
 ```yaml title="mysql.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
 kind: MySQL
 metadata:
   name: example
-  namespace: default
 spec:
   backup:
     cleanupStrategy: --keep-last=3 --keep-daily=3 --keep-within-weekly=1m
@@ -78,54 +77,120 @@ spec:
       password: hackme
 ```
 
-### **Deploy the MySQL YAML**
+### **Deploy the MySQL yaml**
 
 ```bash
-# Apply the YAML
+# Apply the yaml
 kubectl apply -f mysql.yaml
 ```
 
-Once the application is deployed, verify that everything works:
+---
+
+## Step 2: Deployment verification
+
+Check the status of your MySQL cluster (may take 1-2 minutes):
 
 ```bash
-# Check status (may take 1-2 minutes)
-➜  ~ kubectl get mysql 
-NAME      READY   AGE   VERSION
-example   True    1m16s   0.10.0
+kubectl get mysql
+```
 
-# Check if application pods are running
-# With my example you should have 3 "example" pods on different datacenters
-➜  ~ kubectl get po -o wide  | grep mysql
+**Expected output:**
+
+```console
+NAME      READY   AGE     VERSION
+example   True    1m16s   0.10.0
+```
+
+---
+
+## Step 3: Pod verification
+
+Verify that the application pods are in `Running` state:
+
+```bash
+kubectl get po -o wide | grep mysql
+```
+
+**Expected output:**
+
+```console
 mysql-example-0                                   1/1     Running     0             24m   10.244.123.64    gld-csxhk-006   <none>           <none>
 mysql-example-1                                   1/1     Running     0             24m   10.244.123.65    luc-csxhk-005   <none>           <none>
 mysql-example-2                                   1/1     Running     0             24m   10.244.123.66    plo-csxhk-001   <none>           <none>
 mysql-example-metrics-747cf456c9-6vnq9            1/1     Running     0             23m   10.244.123.73    plo-csxhk-004   <none>           <none>
+```
 
-# Verify we have 3 PVCs (1 PVC per MySQL)
-➜  ~ kubectl get pvc | grep mysql
+With `replicas: 3`, you get **3 MySQL instances** (1 primary + 2 replicas) distributed across different datacenters, plus a metrics pod.
+
+Verify that each instance has a persistent volume (PVC):
+
+```bash
+kubectl get pvc | grep mysql
+```
+
+**Expected output:**
+
+```console
 storage-mysql-example-0                    Bound     pvc-3622a61d-7432-4a36-9812-953e30f85fbe   10Gi       RWO            local          <unset>                 24m
 storage-mysql-example-1                    Bound     pvc-b9933029-c9c6-40c2-a67d-69dcb224a9bb   10Gi       RWO            local          <unset>                 24m
 storage-mysql-example-2                    Bound     pvc-597da2f3-1604-416c-a480-2dae7aae75e1   10Gi       RWO            local          <unset>                 24m
+```
 
-# You can retrieve the username, password of your MySQL if needed
-➜  ~ kubectl get secret mysql-example-credentials -o json | jq -r '.data | to_entries[] | "\(.key): \(.value|@base64d)"'
+---
 
+## Step 4: Retrieve credentials
+
+Passwords are stored in a Kubernetes Secret:
+
+```bash
+kubectl get secret mysql-example-credentials -o json | jq -r '.data | to_entries[] | "\(.key): \(.value|@base64d)"'
+```
+
+**Expected output:**
+
+```console
 root: cr42msoxKhnEajfo
 user1: hackme
 user2: hackme
+```
 
-# Port-forward the service to access it from your workstation, or modify the external parameter like this "external: true"
-# It is recommended not to open the DB to the outside if you don't need it
-➜  ~ kubectl get svc | grep mysql    
+---
+
+## Step 5: Connection and testing
+
+### External access (if `external: true`)
+
+Check available services:
+
+```bash
+kubectl get svc | grep mysql
+```
+
+```console
 mysql-example                        ClusterIP      10.96.149.25    <none>          3306/TCP                     27m
 mysql-example-internal               ClusterIP      None            <none>          3306/TCP                     27m
 mysql-example-metrics                ClusterIP      10.96.101.154   <none>          9104/TCP                     26m
 mysql-example-primary                LoadBalancer   10.96.161.170   91.223.132.64   3306:32537/TCP               27m
 mysql-example-secondary              ClusterIP      10.96.105.28    <none>          3306/TCP                     27m
+```
 
-# Connection test from my terminal
-➜  ~ mysql -h 91.223.132.64 -u user1 -p myapp1
-Enter password: 
+### Access via port-forward (if `external: false`)
+
+```bash
+kubectl port-forward svc/mysql-example 3306:3306
+```
+
+:::note
+It is recommended not to expose the database externally if you do not need to.
+:::
+
+### Connection test with mysql
+
+```bash
+mysql -h 91.223.132.64 -u user1 -p myapp1
+```
+
+```console
 Welcome to the MySQL monitor.  Commands end with ; or \g.
 Your MySQL connection id is 1214
 Server version: 11.0.2-MariaDB-1:11.0.2+maria~ubu2204-log mariadb.org binary distribution
@@ -141,17 +206,89 @@ mysql> show databases;
 +--------------------+
 2 rows in set (0.00 sec)
 
-mysql> 
+mysql>
 ```
 
-## 📋 Summary
+---
 
-You have deployed:  
+## Step 6: Quick troubleshooting
 
-- A **MySQL** database on your Hikube tenant  
-- A replicated cluster with a **primary** and **replicas** to ensure service continuity  
-- Automatically created users, with their credentials stored in Kubernetes Secrets  
-- Persistent storage (PVC) dedicated to each MySQL pod to guarantee data durability  
-- Secure access via the `mysql` client (port-forward or LoadBalancer)  
-- The ability to configure **S3 backups** and restore if needed  
+### Pods in CrashLoopBackOff
 
+```bash
+# Check the logs of the failing pod
+kubectl logs mysql-example-0
+
+# Check the pod events
+kubectl describe pod mysql-example-0
+```
+
+**Common causes:** insufficient memory (`resources.memory` too low), full storage volume, MariaDB configuration error.
+
+### MySQL not accessible
+
+```bash
+# Check that services exist
+kubectl get svc | grep mysql
+
+# Check that the LoadBalancer has an external IP
+kubectl describe svc mysql-example-primary
+```
+
+**Common causes:** `external: false` in the manifest, LoadBalancer waiting for IP assignment, wrong port or hostname in the connection string.
+
+### Replication failure
+
+```bash
+# Check the MariaDB cluster status
+kubectl get mariadb
+
+# Inspect the MariaDB resource details
+kubectl describe mariadb mysql-example
+```
+
+**Common causes:** binlog purged before a replica could synchronize, insufficient disk space, network issue between nodes.
+
+### General diagnostic commands
+
+```bash
+# Recent events on the namespace
+kubectl get events --sort-by=.metadata.creationTimestamp
+
+# Detailed MySQL cluster status
+kubectl describe mysql example
+```
+
+---
+
+## Summary
+
+You have deployed:
+
+- A **MySQL** database on your Hikube tenant
+- A replicated cluster with a **primary** and **replicas** to ensure service continuity
+- Automatically created users, with their credentials stored in Kubernetes Secrets
+- Persistent storage (PVC) dedicated to each MySQL pod to ensure data durability
+- Secure access via the `mysql` client (port-forward or LoadBalancer)
+- The option to configure **S3 backups** and restore when needed
+
+---
+
+## Cleanup
+
+To delete the test resources:
+
+```bash
+kubectl delete -f mysql.yaml
+```
+
+:::warning
+This action deletes the MySQL cluster and all associated data. This operation is **irreversible**.
+:::
+
+---
+
+## Next steps
+
+- **[API Reference](./api-reference.md)**: Complete configuration of all MySQL options
+- **[Overview](./overview.md)**: Detailed architecture and MySQL use cases on Hikube

@@ -17,11 +17,9 @@ This reference details the use of **ClickHouse** on Hikube, whether in simple or
 
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
-appVersion: 0.13.0
 kind: ClickHouse
 metadata:
   name: clickhouse-name
-  namespace: default
 spec:
 ```
 
@@ -148,4 +146,95 @@ resources:
 | `large`         | 2       | 2Gi         |
 | `xlarge`        | 4       | 4Gi         |
 | `2xlarge`       | 8       | 8Gi         |
+
+---
+
+## Complete Examples
+
+### Production Cluster
+
+```yaml title="clickhouse-production.yaml"
+apiVersion: apps.cozystack.io/v1alpha1
+kind: ClickHouse
+metadata:
+  name: production
+spec:
+  replicas: 3
+  shards: 2
+  resources:
+    cpu: 4000m
+    memory: 8Gi
+  size: 100Gi
+  storageClass: replicated
+
+  logStorageSize: 10Gi
+  logTTL: 30
+
+  clickhouseKeeper:
+    enabled: true
+    replicas: 3
+    resourcesPreset: small
+    size: 5Gi
+
+  users:
+    admin:
+      password: SecureAdminPassword
+    analyst:
+      password: SecureAnalystPassword
+      readonly: true
+
+  backup:
+    enabled: true
+    schedule: "0 3 * * *"
+    cleanupStrategy: "--keep-last=7 --keep-daily=7 --keep-weekly=4"
+    s3Region: eu-central-1
+    s3Bucket: s3.hikube.cloud/clickhouse-backups
+    s3AccessKey: your-access-key
+    s3SecretKey: your-secret-key
+    resticPassword: SecureResticPassword
+```
+
+### Development Cluster
+
+```yaml title="clickhouse-development.yaml"
+apiVersion: apps.cozystack.io/v1alpha1
+kind: ClickHouse
+metadata:
+  name: development
+spec:
+  replicas: 1
+  shards: 1
+  resourcesPreset: nano
+  size: 10Gi
+
+  logStorageSize: 2Gi
+  logTTL: 7
+
+  clickhouseKeeper:
+    enabled: true
+    replicas: 1
+    resourcesPreset: nano
+    size: 1Gi
+
+  users:
+    dev:
+      password: devpassword
+```
+
+---
+
+:::tip Best Practices
+
+- **Odd number of Keepers**: always deploy 3 or 5 Keeper replicas to ensure quorum (majority required for leader election)
+- **`logTTL`**: adjust the retention period for system logs (`query_log`, `query_thread_log`) to avoid unnecessary data accumulation
+- **Shards vs replicas**: use shards to distribute data horizontally (more capacity) and replicas for redundancy (more availability)
+- **`readonly` user**: create a read-only user for analytics and reporting tools
+:::
+
+:::warning Warning
+
+- **Deletions are irreversible**: deleting a ClickHouse resource results in permanent data loss if no backup is configured
+- **Changing shards**: modifying the number of shards on an existing cluster can lead to complex data redistribution
+- **Keeper and quorum**: with fewer than 3 Keepers, the cluster cannot maintain quorum in case of a node failure
+:::
 

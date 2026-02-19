@@ -20,7 +20,6 @@ apiVersion: apps.cozystack.io/v1alpha1
 kind: Postgres
 metadata:
   name: example
-  namespace: default
 spec:
 ```
 
@@ -48,7 +47,6 @@ apiVersion: apps.cozystack.io/v1alpha1
 kind: Postgres
 metadata:
   name: postgres-example
-  namespace: default
 spec:
   # Number of PostgreSQL replicas (instances in the cluster)
   replicas: 3
@@ -239,4 +237,107 @@ resources:
 | `large`         | 2       | 2Gi         |
 | `xlarge`        | 4       | 4Gi         |
 | `2xlarge`       | 8       | 8Gi         |
+
+---
+
+## Complete Examples
+
+### Production Cluster
+
+```yaml title="postgresql-production.yaml"
+apiVersion: apps.cozystack.io/v1alpha1
+kind: Postgres
+metadata:
+  name: production
+spec:
+  replicas: 3
+  resources:
+    cpu: 4000m
+    memory: 8Gi
+  size: 50Gi
+  storageClass: replicated
+  external: false
+
+  postgresql:
+    parameters:
+      max_connections: 300
+      shared_buffers: 2GB
+      work_mem: 64MB
+      effective_cache_size: 6GB
+
+  quorum:
+    minSyncReplicas: 1
+    maxSyncReplicas: 2
+
+  users:
+    admin:
+      password: SecureAdminPassword
+      replication: true
+    appuser:
+      password: SecureAppPassword
+    readonly:
+      password: SecureReadOnlyPassword
+
+  databases:
+    production:
+      roles:
+        admin:
+          - admin
+        readonly:
+          - readonly
+          - appuser
+      extensions:
+        - uuid-ossp
+        - pgcrypto
+
+  backup:
+    enabled: true
+    schedule: "0 2 * * *"
+    retentionPolicy: 30d
+    destinationPath: s3://backups/postgresql/production/
+    endpointURL: http://minio-gateway-service:9000
+    s3AccessKey: your-access-key
+    s3SecretKey: your-secret-key
+```
+
+### Development Cluster
+
+```yaml title="postgresql-development.yaml"
+apiVersion: apps.cozystack.io/v1alpha1
+kind: Postgres
+metadata:
+  name: development
+spec:
+  replicas: 1
+  resourcesPreset: nano
+  size: 5Gi
+  external: true
+
+  users:
+    dev:
+      password: devpassword
+
+  databases:
+    devdb:
+      roles:
+        admin:
+          - dev
+```
+
+---
+
+:::tip Best Practices
+
+- **Synchronous replication**: configure `quorum.minSyncReplicas: 1` in production to ensure at least one replica acknowledges each transaction
+- **S3 backups**: enable automatic backups with `backup.enabled: true` and regularly test restoration
+- **Role separation**: create distinct users for administration, application, and read-only access
+- **PostgreSQL parameters**: adjust `shared_buffers` (~25% of RAM), `work_mem`, and `max_connections` according to your workload
+:::
+
+:::warning Warning
+
+- **Deletions are irreversible**: deleting a Postgres resource results in permanent data loss if no backup is configured
+- **`resources` vs `resourcesPreset`**: if `resources` is defined, `resourcesPreset` is entirely ignored
+- **PITR restoration**: restoration creates a **new instance** with a different name -- it does not restore the existing instance
+:::
 
