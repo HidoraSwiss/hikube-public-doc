@@ -70,6 +70,10 @@ choco install kubelogin
 
 📖 **Official documentation**: [int128/kubelogin](https://github.com/int128/kubelogin)
 
+:::warning Warning
+Do **not** use the Azure kubelogin (`Azure/kubelogin`). Hikube uses standard OIDC authentication and requires the [int128/kubelogin](https://github.com/int128/kubelogin) plugin.
+:::
+
 ### **Recommended Optional Tools**
 
 For a better Kubernetes management experience:
@@ -95,7 +99,6 @@ For a better Kubernetes management experience:
    ```
 3. **Verify the connection**:
    ```bash
-   kubectl cluster-info
    kubectl get pods
    ```
 
