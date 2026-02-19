@@ -51,28 +51,24 @@ winget install Kubernetes.kubectl
 
 #### **kubelogin** (required for OIDC authentication)
 
-**macOS**
+[kubelogin](https://github.com/int128/kubelogin) is a kubectl plugin for OpenID Connect (OIDC) authentication.
+
+**macOS / Linux (Homebrew)**
 ```bash
-# Homebrew
-brew install Azure/kubelogin/kubelogin
+brew install kubelogin
 ```
 
-**Linux**
+**Krew (macOS, Linux, Windows)**
 ```bash
-# Manual installation (all distributions)
-curl -LO "https://github.com/Azure/kubelogin/releases/latest/download/kubelogin-linux-amd64.zip"
-unzip kubelogin-linux-amd64.zip && sudo mv bin/linux_amd64/kubelogin /usr/local/bin/
-rm -rf kubelogin-linux-amd64.zip bin/
+kubectl krew install oidc-login
 ```
 
-**Windows**
+**Windows (Chocolatey)**
 ```powershell
-# Chocolatey
 choco install kubelogin
-
-# winget
-winget install Microsoft.Azure.Kubelogin
 ```
+
+📖 **Official documentation**: [int128/kubelogin](https://github.com/int128/kubelogin)
 
 ### **Recommended Optional Tools**
 
@@ -260,11 +256,13 @@ Your Kubernetes cluster is now operational with **native high availability**!
 
 ---
 
-## ✅ Result: You Have Created...
+## Summary
 
-**A high-availability Kubernetes cluster**
-**A completely secure environment** (network isolation)  
-**Resilient storage** (automatic replication)
+You have created:
+
+- A **high-availability Kubernetes cluster**
+- A **completely secure environment** (network isolation)
+- **Resilient storage** (automatic replication)
 ---
 
 ## Need Help?
