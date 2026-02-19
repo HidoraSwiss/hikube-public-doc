@@ -112,6 +112,10 @@ Your tenant is your **isolated workspace**. Verify that you are in the correct c
 kubectl config current-context
 ```
 
+:::warning Do not use -A / --all-namespaces
+The `-A` (`--all-namespaces`) flag performs a cluster-scoped request, which is forbidden for tenant users. Always run commands without `-A`: your kubeconfig already targets your namespace.
+:::
+
 ---
 
 ## Step 2: Create Your First Kubernetes Cluster
@@ -168,13 +172,9 @@ spec:
       instanceType: u1.large
       maxReplicas: 6
       minReplicas: 3
-      resources:
-        cpu: ""
-        memory: ""
       roles:
       - ingress-nginx
   storageClass: replicated
-
 ```
 
 4. **Deploy the cluster**:
@@ -201,12 +201,23 @@ spec:
 For your cluster to be accessible, you must create the following DNS records with your DNS provider:
 
 ```bash
-# Retrieve the public IP of your cluster
-kubectl get kubernetes kube -o jsonpath='{.status.controlPlaneEndpoint}' 
+# Retrieve the public IP of your cluster via Ingresses
+kubectl get ingress
+```
 
-# Create DNS records (with your provider):
-# Type A: k8s-api.example.com → <CLUSTER_IP>
-# Type A: my-app.example.com → <CLUSTER_IP>
+**Expected output:**
+
+```console
+NAME                            CLASS           HOSTS                 ADDRESS        PORTS   AGE
+kubernetes-kube                 tenant-myco     k8s-api.example.com   91.x.x.x      80      2m
+kubernetes-kube-ingress-nginx   tenant-myco     my-app.example.com    91.x.x.x      80      2m
+```
+
+Create the DNS records with your DNS provider:
+
+```
+Type A: k8s-api.example.com → <ADDRESS>
+Type A: my-app.example.com → <ADDRESS>
 ```
 
 :::tip DNS Configuration
@@ -223,18 +234,17 @@ kubectl get kubernetes kube -o jsonpath='{.status.controlPlaneEndpoint}'
 Once your cluster is deployed and ready, retrieve its credentials with this command:
 
 ```bash
-# Retrieve the kubeconfig of the created cluster (adjust the names)
-kubectl get secret -n tenant-<name> kubernetes-<clusterName>-admin-kubeconfig \
+# Retrieve the kubeconfig of the created cluster (adjust the cluster name)
+kubectl get secret kubernetes-<clusterName>-admin-kubeconfig \
   -o go-template='{{ printf "%s\n" (index .data "admin.conf" | base64decode) }}' > admin.conf
 
-# Concrete example:
-kubectl get secret -n tenant-mycompany kubernetes-kube-admin-kubeconfig \
+# Concrete example with the "kube" cluster:
+kubectl get secret kubernetes-kube-admin-kubeconfig \
   -o go-template='{{ printf "%s\n" (index .data "admin.conf" | base64decode) }}' > admin.conf
 ```
 
-:::info Variables to Customize
-- `<name>` : Replace with your tenant name (e.g., `mycompany`)
-- `<clusterName>` : Replace with your cluster name (e.g., `kube` according to the YAML config)
+:::info Variable to Customize
+- `<clusterName>` : Replace with your cluster name (e.g., `kube` according to the YAML manifest)
 :::
 
 ### **Local Configuration**
@@ -244,13 +254,11 @@ export KUBECONFIG=./admin.conf
 
 # Verify connection to the created cluster
 kubectl get nodes
-
-# Expected result:
-# NAME                STATUS   ROLES           AGE   VERSION
-# cluster-node-1      Ready    control-plane   2m    v1.28.x
-# cluster-node-2      Ready    worker          2m    v1.28.x
-# cluster-node-3      Ready    worker          2m    v1.28.x
 ```
+
+:::note
+This command will only work after you have configured the DNS records (previous section). Worker nodes may take a few additional minutes to appear.
+:::
 
 :::success Congratulations!
 Your Kubernetes cluster is now operational with **native high availability**!

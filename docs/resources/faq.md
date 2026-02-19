@@ -213,3 +213,28 @@ Chaque service de base de données managé dispose d'un mécanisme d'auto-failov
 L'auto-failover est **activé par défaut** lorsque `replicas > 1`. Aucune configuration supplémentaire n'est nécessaire.
 
 Voir : [Redis - Vue d'ensemble](../services/databases/redis/overview.md), [PostgreSQL - Vue d'ensemble](../services/databases/postgresql/overview.md)
+
+---
+
+## 11. Pourquoi `kubectl get ... -A` retourne "Forbidden" ?
+
+Le flag `-A` (`--all-namespaces`) effectue une requête au **niveau cluster** (cluster scope). Or, les utilisateurs tenant disposent uniquement de **rôles limités à leur namespace**. Kubernetes ne filtre pas automatiquement les namespaces autorisés : la requête cluster-scope est refusée intégralement.
+
+**Solution :** ne pas utiliser `-A`. Votre kubeconfig définit déjà votre namespace cible, les commandes fonctionnent directement :
+
+```bash
+# Correct
+kubectl get pods
+kubectl get kubernetes
+
+# Incorrect (Forbidden)
+kubectl get pods -A
+kubectl get kubernetes -A
+```
+
+Les commandes `kubectl config` (locales) ne sont pas concernées :
+```bash
+# Fonctionne toujours
+kubectl config current-context
+kubectl config get-contexts
+```
