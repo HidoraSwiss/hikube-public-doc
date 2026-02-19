@@ -107,10 +107,9 @@ You can manage multiple clusters with `kubectl config get-contexts` and `kubectl
 :::
 
 ### **Tenant Verification**
-Your tenant is your **isolated workspace**. Verify that you are in the correct namespace:
+Your tenant is your **isolated workspace**. Verify that you are in the correct context:
 ```bash
 kubectl config current-context
-kubectl get namespaces
 ```
 
 ---
