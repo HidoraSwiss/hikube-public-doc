@@ -261,7 +261,7 @@ spec:
 | `cloudlinux-9` | CloudLinux 9 | Cloud | 9 Gi |
 | `proxmox-8` | Proxmox VE 8 | ISO | 2 Gi |
 | `proxmox-9` | Proxmox VE 9 | ISO | 2 Gi |
-| `talos-112` | Talos Linux 1.12 | Cloud | 4 Gi |
+| `talos-112` | Talos Linux 1.12 | Cloud | 8 Gi |
 
 :::warning ISO images
 **ISO** type images (Proxmox) are installers, not ready-to-use cloud images.
