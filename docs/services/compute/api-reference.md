@@ -229,30 +229,52 @@ spec:
 Les **Golden Images** sont des images système maintenues et préchargées dans Hikube.
 Elles permettent un **provisionnement rapide**, standardisé et sans dépendance externe.
 
+:::tip Convention de nommage
+Les images suivent le format `{os}-{version}` (ex : `ubuntu-2404`, `rocky-9`).
+Spécifiez toujours la version pour garantir la compatibilité de vos workloads.
+:::
+
 #### Utilisation
 
 ```yaml
 spec:
   source:
     image:
-      name: ubuntu
+      name: ubuntu-2404
 ```
 
 #### Images disponibles
 
-| Nom             |
-| --------------- |
-| `almalinux`     |
-| `centos-stream` |
-| `cloudlinux`    |
-| `debian`        |
-| `fedora`        |
-| `opensuse`      |
-| `oracle`        |
-| `proxmox`       |
-| `rocky`         |
-| `talos`         |
-| `ubuntu`        |
+| Nom | Système d'exploitation | Type |
+| --- | ---------------------- | ---- |
+| `almalinux-8` | AlmaLinux 8 | Cloud |
+| `almalinux-9` | AlmaLinux 9 | Cloud |
+| `almalinux-10` | AlmaLinux 10 | Cloud |
+| `rocky-8` | Rocky Linux 8 | Cloud |
+| `rocky-9` | Rocky Linux 9 | Cloud |
+| `rocky-10` | Rocky Linux 10 | Cloud |
+| `debian-11` | Debian 11 (Bullseye) | Cloud |
+| `debian-12` | Debian 12 (Bookworm) | Cloud |
+| `debian-13` | Debian 13 (Trixie) | Cloud |
+| `ubuntu-2204` | Ubuntu 22.04 LTS (Jammy) | Cloud |
+| `ubuntu-2404` | Ubuntu 24.04 LTS (Noble) | Cloud |
+| `centos-stream-9` | CentOS Stream 9 | Cloud |
+| `centos-stream-10` | CentOS Stream 10 | Cloud |
+| `oracle-8` | Oracle Linux 8 | Cloud |
+| `oracle-9` | Oracle Linux 9 | Cloud |
+| `oracle-10` | Oracle Linux 10 | Cloud |
+| `opensuse-156` | openSUSE Leap 15.6 | Cloud |
+| `opensuse-160` | openSUSE Leap 16.0 | Cloud |
+| `cloudlinux-8` | CloudLinux 8 | Cloud |
+| `cloudlinux-9` | CloudLinux 9 | Cloud |
+| `proxmox-8` | Proxmox VE 8 | ISO |
+| `proxmox-9` | Proxmox VE 9 | ISO |
+| `talos-112` | Talos Linux 1.12 | Cloud |
+
+:::warning Images ISO
+Les images de type **ISO** (Proxmox) sont des installeurs, pas des images cloud prêtes à l'emploi.
+Elles nécessitent une installation manuelle via la console VNC.
+:::
 
 ---
 
@@ -268,7 +290,7 @@ metadata:
 spec:
   source:
     image:
-      name: ubuntu
+      name: ubuntu-2404
   optical: false
   storage: 20Gi
   storageClass: replicated
