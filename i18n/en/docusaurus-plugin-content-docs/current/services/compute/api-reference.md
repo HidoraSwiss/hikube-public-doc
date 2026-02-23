@@ -237,31 +237,31 @@ spec:
 
 #### Available images
 
-| Name | Operating System | Type |
-| --- | ---------------- | ---- |
-| `almalinux-8` | AlmaLinux 8 | Cloud |
-| `almalinux-9` | AlmaLinux 9 | Cloud |
-| `almalinux-10` | AlmaLinux 10 | Cloud |
-| `rocky-8` | Rocky Linux 8 | Cloud |
-| `rocky-9` | Rocky Linux 9 | Cloud |
-| `rocky-10` | Rocky Linux 10 | Cloud |
-| `debian-11` | Debian 11 (Bullseye) | Cloud |
-| `debian-12` | Debian 12 (Bookworm) | Cloud |
-| `debian-13` | Debian 13 (Trixie) | Cloud |
-| `ubuntu-2204` | Ubuntu 22.04 LTS (Jammy) | Cloud |
-| `ubuntu-2404` | Ubuntu 24.04 LTS (Noble) | Cloud |
-| `centos-stream-9` | CentOS Stream 9 | Cloud |
-| `centos-stream-10` | CentOS Stream 10 | Cloud |
-| `oracle-8` | Oracle Linux 8 | Cloud |
-| `oracle-9` | Oracle Linux 9 | Cloud |
-| `oracle-10` | Oracle Linux 10 | Cloud |
-| `opensuse-156` | openSUSE Leap 15.6 | Cloud |
-| `opensuse-160` | openSUSE Leap 16.0 | Cloud |
-| `cloudlinux-8` | CloudLinux 8 | Cloud |
-| `cloudlinux-9` | CloudLinux 9 | Cloud |
-| `proxmox-8` | Proxmox VE 8 | ISO |
-| `proxmox-9` | Proxmox VE 9 | ISO |
-| `talos-112` | Talos Linux 1.12 | Cloud |
+| Name | Operating System | Type | Min. storage |
+| --- | ---------------- | ---- | :----------: |
+| `almalinux-8` | AlmaLinux 8 | Cloud | 11 Gi |
+| `almalinux-9` | AlmaLinux 9 | Cloud | 11 Gi |
+| `almalinux-10` | AlmaLinux 10 | Cloud | 11 Gi |
+| `rocky-8` | Rocky Linux 8 | Cloud | 11 Gi |
+| `rocky-9` | Rocky Linux 9 | Cloud | 11 Gi |
+| `rocky-10` | Rocky Linux 10 | Cloud | 11 Gi |
+| `debian-11` | Debian 11 (Bullseye) | Cloud | 4 Gi |
+| `debian-12` | Debian 12 (Bookworm) | Cloud | 4 Gi |
+| `debian-13` | Debian 13 (Trixie) | Cloud | 4 Gi |
+| `ubuntu-2204` | Ubuntu 22.04 LTS (Jammy) | Cloud | 4 Gi |
+| `ubuntu-2404` | Ubuntu 24.04 LTS (Noble) | Cloud | 4 Gi |
+| `centos-stream-9` | CentOS Stream 9 | Cloud | 11 Gi |
+| `centos-stream-10` | CentOS Stream 10 | Cloud | 11 Gi |
+| `oracle-8` | Oracle Linux 8 | Cloud | 40 Gi |
+| `oracle-9` | Oracle Linux 9 | Cloud | 40 Gi |
+| `oracle-10` | Oracle Linux 10 | Cloud | 40 Gi |
+| `opensuse-156` | openSUSE Leap 15.6 | Cloud | 1 Gi |
+| `opensuse-160` | openSUSE Leap 16.0 | Cloud | 2 Gi |
+| `cloudlinux-8` | CloudLinux 8 | Cloud | 8 Gi |
+| `cloudlinux-9` | CloudLinux 9 | Cloud | 9 Gi |
+| `proxmox-8` | Proxmox VE 8 | ISO | 2 Gi |
+| `proxmox-9` | Proxmox VE 9 | ISO | 2 Gi |
+| `talos-112` | Talos Linux 1.12 | Cloud | 4 Gi |
 
 :::warning ISO images
 **ISO** type images (Proxmox) are installers, not ready-to-use cloud images.
