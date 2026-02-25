@@ -185,7 +185,7 @@ nodeGroups:
 
 ## 📚 Ressources
 
-- **[Architecture](./architecture.md)** → Comprendre comment est déployé un cluster Kubernetes Hikube
+- **[Concepts et Architecture](./concepts.md)** → Comprendre comment est déployé un cluster Kubernetes Hikube
 - **[Démarrage rapide](./quick-start.md)** → Créez votre premier cluster Hikube
 - **[API Reference](./api-reference.md)** → Documentation complète de la configuration
 

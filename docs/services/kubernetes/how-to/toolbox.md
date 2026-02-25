@@ -1,11 +1,10 @@
 ---
-sidebar_position: 7
-title: Boite à outils
+title: Accès et outils
 ---
 
-# 🔐 Accès et Sécurité
+# Accès et outils
 
-## **Récupération du Kubeconfig**
+## Récupération du Kubeconfig
 
 Une fois le cluster déployé, récupérez les credentials d'accès :
 
@@ -21,7 +20,7 @@ kubectl get secret <cluster-name>-readonly-kubeconfig \
   > cluster-readonly.yaml
 ```
 
-## **Configuration RBAC**
+## Configuration RBAC
 
 Après déploiement, configurez les accès utilisateurs :
 
@@ -35,9 +34,9 @@ kubectl apply -f rbac-config.yaml
 
 ---
 
-# 📊 Monitoring et Observabilité
+## Monitoring et Observabilité
 
-## **Métriques du Cluster**
+### Métriques du Cluster
 
 ```bash
 # Status général du cluster Hikube
@@ -51,7 +50,7 @@ kubectl --kubeconfig=cluster-admin.yaml top nodes
 kubectl --kubeconfig=cluster-admin.yaml top pods
 ```
 
-## **Logs et Debugging**
+### Logs et Debugging
 
 ```bash
 # Events du cluster
@@ -66,9 +65,9 @@ kubectl get machines -l cluster.x-k8s.io/cluster-name=<cluster-name>
 
 ---
 
-# 🛠️ Gestion du Cycle de Vie
+## Gestion du Cycle de Vie
 
-## **Mise à Jour**
+### Mise à Jour
 
 ```bash
 # Mise à jour du cluster
@@ -78,7 +77,7 @@ spec:
 '
 ```
 
-## **Scaling**
+### Scaling
 
 ```bash
 # Scaling d'un node group
@@ -90,7 +89,7 @@ spec:
 '
 ```
 
-## **Suppression**
+### Suppression
 
 ```bash
 # ATTENTION: Suppression irréversible du cluster
@@ -99,9 +98,9 @@ kubectl delete kubernetes <cluster-name>
 
 ---
 
-# 🚨 Troubleshooting
+## Troubleshooting
 
-## **Problèmes Courants**
+### Problèmes Courants
 
 ```bash
 # Cluster bloqué en création
@@ -117,7 +116,7 @@ kubectl --kubeconfig=cluster-admin.yaml get pods -A
 kubectl --kubeconfig=cluster-admin.yaml describe helmreleases -A
 ```
 
-## **Logs Détaillés**
+### Logs Détaillés
 
 ```bash
 # Logs Cluster API

@@ -177,7 +177,7 @@ nodeGroups:
 
 ## 📚 Resources
 
-* **[Architecture](./architecture.md)** → Learn how a Hikube Kubernetes cluster is built
+* **[Concepts & Architecture](/services/kubernetes/concepts)** → Learn how a Hikube Kubernetes cluster is built
 * **[Quick Start](./quick-start.md)** → Create your first Hikube cluster
 * **[API Reference](./api-reference.md)** → Full configuration documentation
 
