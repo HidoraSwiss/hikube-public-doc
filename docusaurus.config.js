@@ -51,16 +51,21 @@ const config = {
           // Configuration du versioning
           includeCurrentVersion: true,
           editLocalizedFiles: true,
-          lastVersion: 'current',
+          lastVersion: '2.0',
           versions: {
             '1.0': {
               label: '1.0.0',
               path: '/1.0',
               banner: 'unmaintained',
             },
-            current: {
+            '2.0': {
               label: '2.0.2',
-            }
+            },
+            current: {
+              label: '3.0.0-alpha (Diátaxis)',
+              path: '/next',
+              banner: 'unreleased',
+            },
           },
         },
         blog: false,

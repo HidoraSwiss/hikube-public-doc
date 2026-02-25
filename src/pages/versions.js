@@ -1,11 +1,35 @@
 
-import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
 import Link from '@docusaurus/Link';
-import versions from '../../versions.json';
+
+const versionData = [
+  {
+    version: '3.0.0-alpha',
+    label: 'Diátaxis',
+    badge: 'En développement',
+    badgeClass: 'badge--secondary',
+    path: '/next/',
+    description: 'Prochaine version majeure — structure Diátaxis (concepts, how-to, FAQ, troubleshooting)',
+  },
+  {
+    version: '2.0',
+    label: '2.0.2',
+    badge: 'Actuelle',
+    badgeClass: 'badge--primary',
+    path: '/',
+    description: 'Version stable actuelle recommandée pour la production',
+  },
+  {
+    version: '1.0',
+    label: '1.0.0',
+    badge: 'Ancienne',
+    badgeClass: 'badge--warning',
+    path: '/1.0/',
+    description: 'Ancienne version simpliste — non maintenue',
+  },
+];
 
 function VersionsPage() {
-  
   return (
     <Layout
       title="Versions"
@@ -18,7 +42,7 @@ function VersionsPage() {
             <p>
               Cette page présente toutes les versions disponibles de la documentation Hikube.
             </p>
-            
+
             <h2>Versions Disponibles</h2>
             <table className="table">
               <thead>
@@ -29,41 +53,26 @@ function VersionsPage() {
                 </tr>
               </thead>
               <tbody>
-                {versions.map((version) => (
+                {versionData.map(({ version, label, badge, badgeClass, path, description }) => (
                   <tr key={version}>
                     <td>
-                      <strong>{version}</strong>
-                      {version === 'current' && (
-                        <span className="badge badge--primary margin-left--sm">
-                          Actuelle
-                        </span>
-                      )}
-                      {version === '1.0' && (
-                        <span className="badge badge--warning margin-left--sm">
-                          Ancienne
-                        </span>
-                      )}
+                      <strong>{label}</strong>
+                      <span className={`badge ${badgeClass} margin-left--sm`}>
+                        {badge}
+                      </span>
                     </td>
                     <td>
-                      <Link to={version === 'current' ? '/' : `/${version}/`}>
-                        Documentation
-                      </Link>
+                      <Link to={path}>Documentation</Link>
                     </td>
-                    <td>
-                      {version === 'current' 
-                        ? 'Version stable actuelle (par défaut)' 
-                        : version === '1.0' 
-                        ? 'Ancienne version plus simpliste'
-                        : `Version ${version}`}
-                    </td>
+                    <td>{description}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
 
             <div className="alert alert--info">
-              <strong>Note :</strong> La version 2.0 est la version stable actuelle recommandée 
-              pour la production. La version 1.0 contient les fonctionnalités plus simplistes et n'est pas complète.
+              <strong>Note :</strong> La version 2.0 est la version stable actuelle recommandée
+              pour la production. La version 3.0 (Diátaxis) est en cours de développement.
             </div>
           </div>
         </div>
@@ -72,4 +81,4 @@ function VersionsPage() {
   );
 }
 
-export default VersionsPage; 
+export default VersionsPage;
