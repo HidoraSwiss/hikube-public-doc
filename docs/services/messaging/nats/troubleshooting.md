@@ -1,0 +1,10 @@
+---
+sidebar_position: 7
+title: Dépannage
+---
+
+# Dépannage — NATS
+
+:::note
+Cette page est en cours de rédaction. Contribuez via [GitHub](https://github.com/HidoraSwiss/hikube-public-doc).
+:::

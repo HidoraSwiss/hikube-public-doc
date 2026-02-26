@@ -1,0 +1,82 @@
+{
+  "version.label": {
+    "message": "2.0.2",
+    "description": "The label for version current"
+  },
+  "sidebar.docsSidebar.category.🚀 Démarrer": {
+    "message": "🚀 Get Started",
+    "description": "The label for category '🚀 Démarrer' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.💾 Services": {
+    "message": "💾 Services",
+    "description": "The label for category '💾 Services' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Storage": {
+    "message": "Storage",
+    "description": "The label for category 'Storage' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Buckets": {
+    "message": "Buckets",
+    "description": "The label for category 'Buckets' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Databases": {
+    "message": "Databases",
+    "description": "The label for category 'Databases' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.ClickHouse": {
+    "message": "ClickHouse",
+    "description": "The label for category 'ClickHouse' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.PostgreSQL": {
+    "message": "PostgreSQL",
+    "description": "The label for category 'PostgreSQL' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.MySQL": {
+    "message": "MySQL",
+    "description": "The label for category 'MySQL' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Redis": {
+    "message": "Redis",
+    "description": "The label for category 'Redis' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Ressources de calcul": {
+    "message": "Compute",
+    "description": "The label for category 'Ressources de calcul' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.GPU": {
+    "message": "GPU",
+    "description": "The label for category 'GPU' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Kubernetes": {
+    "message": "Kubernetes",
+    "description": "The label for category 'Kubernetes' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Messaging": {
+    "message": "Messaging",
+    "description": "The label for category 'Messaging' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Kafka": {
+    "message": "Kafka",
+    "description": "The label for category 'Kafka' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.RabbitMQ": {
+    "message": "RabbitMQ",
+    "description": "The label for category 'RabbitMQ' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.NATS": {
+    "message": "NATS",
+    "description": "The label for category 'NATS' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.📚 Ressources": {
+    "message": "📚 Resources",
+    "description": "The label for category '📚 Ressources' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.🛠️ Outils": {
+    "message": "🛠️ Tools",
+    "description": "The label for category '🛠️ Outils' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Plugins": {
+    "message": "Plugins",
+    "description": "The label for category 'Plugins' in sidebar 'docsSidebar'"
+  }
+}
