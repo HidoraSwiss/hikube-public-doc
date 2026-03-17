@@ -44,6 +44,9 @@ spec:
       maxReplicas: 5
       instanceType: "s1.large"     # 4 vCPU, 8 GB RAM
       ephemeralStorage: 50Gi       # System partition storage
+      resources:
+        cpu: 4
+        memory: 8Gi
       roles:
         - ingress-nginx           # Ingress support
 
