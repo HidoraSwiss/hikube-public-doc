@@ -84,8 +84,8 @@ Une fois le cluster déployé, récupérez les informations d'accès :
 
 ```bash
 # Récupérer le kubeconfig du cluster
-kubectl get secret my-first-cluster-admin-kubeconfig \
-  -o go-template='{{ printf "%s\n" (index .data "super-admin.conf" | base64decode) }}' \
+kubectl get tenantsecret my-first-cluster-admin-kubeconfig \
+  -o go-template='{{ index .data "super-admin.conf" | base64decode }}' \
   > my-cluster-kubeconfig.yaml
 
 # Configurer kubectl pour le nouveau cluster
