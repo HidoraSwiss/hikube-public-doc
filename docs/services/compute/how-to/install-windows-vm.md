@@ -109,6 +109,7 @@ metadata:
   name: windows-server
 spec:
   runStrategy: Always
+  instanceProfile: windows.2k25.virtio
   instanceType: u1.xlarge
   external: true
   externalMethod: PortList
@@ -173,6 +174,7 @@ metadata:
   name: windows-server
 spec:
   runStrategy: Always
+  instanceProfile: windows.2k25.virtio
   instanceType: u1.xlarge
   external: true
   externalMethod: PortList
