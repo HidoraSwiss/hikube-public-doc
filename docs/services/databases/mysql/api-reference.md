@@ -169,55 +169,14 @@ resources:
 | `xlarge`        | 4       | 4Gi         |
 | `2xlarge`       | 8       | 8Gi         |
 
-## Comment faire ?
+## Guides pratiques
 
-### Basculer le rôle Primary dans un cluster MySQL/MariaDB
+Pour les procédures détaillées, consultez les guides dédiés :
 
-Dans un cluster **MySQL/MariaDB managé**, un nœud est défini comme **primary** (gérant les écritures) et les autres comme **réplicas** (lecture).  
-Il est parfois nécessaire de changer le rôle du primary, par exemple lors d’une maintenance ou pour répartir la charge.
-
-1. **Éditer la ressource MariaDB**  
-
-```bash
-kubectl edit mariadb  mysql-example
-```
-
-Modifiez la section suivante pour désigner un nouveau primary :
-
-```yaml
-spec:
-  replication:
-    primary:
-      podIndex: 1   # Indique l’index du pod à promouvoir en primary
-```
-
-2. **Vérifier l'état du cluster**  
-
-```bash
-➜  ~ kubectl get mariadb
-NAME            READY   STATUS    PRIMARY           UPDATES                    AGE
-mysql-example   True    Running   mysql-example-1   ReplicasFirstPrimaryLast   84m
-➜  ~ 
-```
-
-### ♻️ Restaurer une sauvegarde MariaDB/MySQL
-
-Les sauvegardes sont gérées avec **Restic** et stockées dans un bucket S3-compatible.  
-La restauration permet de retrouver une base de données à partir d’un snapshot existant.
-
-##### 1. Lister les snapshots disponibles
-
-Pour afficher toutes les sauvegardes stockées :  
-
-```bash
-restic -r s3:s3.example.org/mariadb-backups/database_name snapshots
-```
-
-##### 2. Restaurer le dernier snapshot
-
-```bash
-restic -r s3:s3.example.org/mariadb-backups/database_name restore latest --target /tmp/
-```
+- [Comment configurer les sauvegardes automatiques](./how-to/configure-backups.md)
+- [Comment restaurer une sauvegarde](./how-to/restore-backup.md)
+- [Comment scaler verticalement](./how-to/scale-resources.md)
+- [Comment gérer les utilisateurs et bases de données](./how-to/manage-users-databases.md)
 
 ## Problèmes connus
 
