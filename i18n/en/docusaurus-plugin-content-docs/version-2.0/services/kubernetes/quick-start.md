@@ -31,7 +31,6 @@ apiVersion: apps.cozystack.io/v1alpha1
 kind: Kubernetes
 metadata:
   name: my-first-cluster
-  namespace: default
 spec:
   # Control plane configuration
   controlPlane:
@@ -44,9 +43,7 @@ spec:
       maxReplicas: 5
       instanceType: "s1.large"     # 4 vCPU, 8 GB RAM
       ephemeralStorage: 50Gi       # System partition storage
-      resources:
-        cpu: 4
-        memory: 8Gi
+      resources: {}               # Required — instanceType sets the values
       roles:
         - ingress-nginx           # Ingress support
 
@@ -62,6 +59,10 @@ spec:
       hosts:
         - my-app.example.com
 ```
+
+:::warning `resources` field is mandatory
+The `resources` field is required in each node group, even when using `instanceType`. With `resources: {}`, CPU/memory values are determined by `instanceType`. If you specify explicit values (e.g., `cpu: 4, memory: 8Gi`), they **override** `instanceType`.
+:::
 
 ### **Deploy the Cluster**
 
