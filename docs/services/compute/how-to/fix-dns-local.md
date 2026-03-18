@@ -19,7 +19,7 @@ Les VMs Hikube basées sur Debian ou Ubuntu utilisent `systemd-resolved` pour la
 Connectez-vous à la VM :
 
 ```bash
-virtctl ssh ubuntu@my-vm
+virtctl ssh -i ~/.ssh/id_ed25519 ubuntu@my-vm
 ```
 
 Vérifiez la configuration DNS actuelle :

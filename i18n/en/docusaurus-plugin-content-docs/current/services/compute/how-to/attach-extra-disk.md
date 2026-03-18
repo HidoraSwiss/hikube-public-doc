@@ -59,7 +59,7 @@ kind: VMInstance
 metadata:
   name: my-vm
 spec:
-  running: true
+  runStrategy: Always
   instanceType: u1.xlarge
   instanceProfile: ubuntu
   external: true
@@ -79,8 +79,19 @@ spec:
 kubectl apply -f vm-instance.yaml
 ```
 
-:::note
-The VM may automatically restart to take the new disk into account. Wait until the VM is back in `Running` state before continuing.
+:::warning
+The VM does not automatically restart after adding a disk. You must restart it manually:
+
+```bash
+# Option 1: via virtctl
+virtctl restart my-vm
+
+# Option 2: via runStrategy
+kubectl patch vminstance my-vm --type='merge' -p '{"spec":{"runStrategy":"Halted"}}'
+kubectl patch vminstance my-vm --type='merge' -p '{"spec":{"runStrategy":"Always"}}'
+```
+
+Wait until the VM is back in `Running` state before continuing.
 :::
 
 ### 4. Format and mount the disk in the VM
@@ -88,7 +99,7 @@ The VM may automatically restart to take the new disk into account. Wait until t
 Connect to the VM:
 
 ```bash
-virtctl ssh ubuntu@my-vm
+virtctl ssh -i ~/.ssh/id_ed25519 ubuntu@my-vm
 ```
 
 Identify the new disk with `lsblk`:

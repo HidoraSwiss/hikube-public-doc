@@ -22,7 +22,7 @@ Les golden images Hikube ne contiennent pas les drivers GPU NVIDIA. Vous devez l
 ### 1. Se connecter à la VM
 
 ```bash
-virtctl ssh ubuntu@my-gpu-vm
+virtctl ssh -i ~/.ssh/id_ed25519 ubuntu@my-gpu-vm
 ```
 
 Ou via SSH direct si la VM est exposée :
@@ -76,7 +76,7 @@ sudo reboot
 Reconnectez-vous après le redémarrage (attendez environ 1 minute) :
 
 ```bash
-virtctl ssh ubuntu@my-gpu-vm
+virtctl ssh -i ~/.ssh/id_ed25519 ubuntu@my-gpu-vm
 ```
 
 ### 4. Vérifier l'installation des drivers

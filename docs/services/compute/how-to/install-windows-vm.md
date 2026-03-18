@@ -108,9 +108,8 @@ kind: VMInstance
 metadata:
   name: windows-server
 spec:
-  running: true
+  runStrategy: Always
   instanceType: u1.xlarge
-  instanceProfile: windows
   external: true
   externalMethod: PortList
   externalPorts:
@@ -120,10 +119,6 @@ spec:
     - win2k25-iso
     - virtio-drivers
 ```
-
-:::tip Profil Windows
-Le profil `instanceProfile: windows` active les optimisations KubeVirt spécifiques à Windows (horloge, hypervctl, etc.). Utilisez toujours ce profil pour les VMs Windows.
-:::
 
 ```bash
 kubectl apply -f windows-vm.yaml
@@ -177,9 +172,8 @@ kind: VMInstance
 metadata:
   name: windows-server
 spec:
-  running: true
+  runStrategy: Always
   instanceType: u1.xlarge
-  instanceProfile: windows
   external: true
   externalMethod: PortList
   externalPorts:

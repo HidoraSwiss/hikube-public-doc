@@ -36,7 +36,7 @@ kind: VMInstance
 metadata:
   name: vm-configured
 spec:
-  running: true
+  runStrategy: Always
   instanceType: u1.xlarge
   instanceProfile: ubuntu
   external: true
@@ -78,7 +78,7 @@ kind: VMInstance
 metadata:
   name: vm-with-user
 spec:
-  running: true
+  runStrategy: Always
   instanceType: s1.medium
   instanceProfile: ubuntu
   disks:
@@ -102,7 +102,7 @@ kind: VMInstance
 metadata:
   name: vm-with-packages
 spec:
-  running: true
+  runStrategy: Always
   instanceType: u1.xlarge
   instanceProfile: ubuntu
   disks:
@@ -128,7 +128,7 @@ kind: VMInstance
 metadata:
   name: vm-with-commands
 spec:
-  running: true
+  runStrategy: Always
   instanceType: u1.xlarge
   instanceProfile: ubuntu
   disks:
@@ -150,7 +150,7 @@ kind: VMInstance
 metadata:
   name: vm-webserver
 spec:
-  running: true
+  runStrategy: Always
   instanceType: u1.xlarge
   instanceProfile: ubuntu
   external: true
@@ -202,7 +202,7 @@ kubectl get vminstance vm-configured -w
 Connectez-vous à la VM et vérifiez que cloud-init s'est exécuté correctement :
 
 ```bash
-virtctl ssh ubuntu@vm-configured
+virtctl ssh -i ~/.ssh/id_ed25519 ubuntu@vm-configured
 ```
 
 Vérifiez le statut de cloud-init :

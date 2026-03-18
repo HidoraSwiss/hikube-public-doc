@@ -21,7 +21,7 @@ Hikube supporte deux méthodes via le paramètre `externalMethod` :
 | Méthode | Description | Cas d'usage |
 |---------|-------------|-------------|
 | **PortList** | Seuls les ports listés dans `externalPorts` sont exposés. Firewall automatique. | Production, environnements sécurisés |
-| **WholeIP** | Tous les ports de la VM sont exposés. Aucun filtrage réseau. | Développement, tests, accès administratif complet |
+| **WholeIP** | Tous les ports de la VM sont exposés. Aucun filtrage réseau. | Développement, tests, VPN/Gateway, accès administratif complet |
 
 :::tip Recommandation
 Utilisez **PortList** en production. Cette méthode applique un firewall automatique qui n'expose que les ports explicitement déclarés.
@@ -37,7 +37,7 @@ kind: VMInstance
 metadata:
   name: vm-web-server
 spec:
-  running: true
+  runStrategy: Always
   instanceType: u1.xlarge
   instanceProfile: ubuntu
   external: true
@@ -64,7 +64,7 @@ kind: VMInstance
 metadata:
   name: vm-dev
 spec:
-  running: true
+  runStrategy: Always
   instanceType: u1.xlarge
   instanceProfile: ubuntu
   external: true

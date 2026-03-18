@@ -57,7 +57,7 @@ graph TB
 | **Golden Image** | Pre-configured and optimized OS image for KubeVirt (AlmaLinux, Rocky, Debian, Ubuntu, etc.). |
 | **Instance Type** | CPU/RAM resource profile defined by a series (S, U, M) and a size. |
 | **cloud-init** | Automatic VM initialization mechanism at first boot (users, packages, scripts). |
-| **PortList** | Network exposure method that opens specific ports on a shared IP (recommended). |
+| **PortList** | Network exposure method that exposes specific ports with automatic firewalling on the dedicated IP (recommended). |
 | **WholeIP** | Network exposure method that assigns a dedicated public IP to the VM. |
 
 ---
@@ -95,9 +95,9 @@ Use `storageClass: replicated` for system disks in production. `local` storage o
 
 ### PortList (recommended)
 
-The **PortList** mode exposes only the specified ports via a shared IP. This is the recommended method because it:
+The **PortList** mode exposes only the specified ports via a dedicated IP for the VM with automatic firewalling on the Service. This is the recommended method because it:
 - Limits the attack surface
-- Shares public IPs across multiple VMs
+- Assigns a dedicated IP to the VM
 - Supports standard TCP ports (22, 80, 443, etc.)
 
 ### WholeIP
@@ -105,6 +105,7 @@ The **PortList** mode exposes only the specified ports via a shared IP. This is 
 The **WholeIP** mode assigns a dedicated public IP with all ports open. Useful when:
 - The VM needs to be accessible on dynamic ports
 - A protocol requires a dedicated IP (VPN, SIP, etc.)
+- The VM serves as a gateway or VPN
 
 ---
 
@@ -114,15 +115,15 @@ The **WholeIP** mode assigns a dedicated public IP with all ports open. Useful w
 stateDiagram-v2
     [*] --> Provisioning: kubectl apply
     Provisioning --> Running: Disks ready + VM started
-    Running --> Stopped: spec.running = false
-    Stopped --> Running: spec.running = true
+    Running --> Stopped: runStrategy: Halted
+    Stopped --> Running: runStrategy: Always
     Running --> LiveMigration: Node maintenance
     LiveMigration --> Running: Migration complete
     Running --> [*]: kubectl delete
 ```
 
 Hikube VMs support:
-- **Start/stop** via the `spec.running` field
+- **Start/stop** via the `spec.runStrategy` field
 - **Live migration** seamlessly during maintenance
 - **Auto-restart** in case of host node failure
 - **Snapshots** for point-in-time backup

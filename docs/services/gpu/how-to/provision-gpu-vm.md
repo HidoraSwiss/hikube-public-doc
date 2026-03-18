@@ -46,7 +46,7 @@ kind: VMInstance
 metadata:
   name: gpu-workstation
 spec:
-  running: true
+  runStrategy: Always
   instanceProfile: ubuntu
   instanceType: u1.2xlarge
   gpus:
@@ -97,7 +97,7 @@ Le provisionnement d'une VM avec GPU peut prendre quelques minutes supplementair
 Connectez-vous a la VM via SSH :
 
 ```bash
-virtctl ssh ubuntu@gpu-workstation
+virtctl ssh -i ~/.ssh/id_ed25519 ubuntu@gpu-workstation
 ```
 
 Verifiez que le GPU est detecte :
@@ -136,7 +136,7 @@ kind: VMInstance
 metadata:
   name: multi-gpu-workstation
 spec:
-  running: true
+  runStrategy: Always
   instanceProfile: ubuntu
   instanceType: u1.8xlarge
   gpus:
@@ -173,13 +173,13 @@ kubectl get vminstance gpu-workstation
 2. **Verifiez le GPU dans la VM** :
 
 ```bash
-virtctl ssh ubuntu@gpu-workstation -- nvidia-smi
+virtctl ssh -i ~/.ssh/id_ed25519 ubuntu@gpu-workstation -- nvidia-smi
 ```
 
 3. **Testez CUDA** (si les pilotes sont installes) :
 
 ```bash
-virtctl ssh ubuntu@gpu-workstation -- nvidia-smi --query-gpu=name,memory.total,driver_version,cuda_version --format=csv,noheader
+virtctl ssh -i ~/.ssh/id_ed25519 ubuntu@gpu-workstation -- nvidia-smi --query-gpu=name,memory.total,driver_version,cuda_version --format=csv,noheader
 ```
 
 ## Pour aller plus loin
