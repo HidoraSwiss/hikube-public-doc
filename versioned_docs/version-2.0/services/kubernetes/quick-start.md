@@ -30,7 +30,6 @@ apiVersion: apps.cozystack.io/v1alpha1
 kind: Kubernetes
 metadata:
   name: my-first-cluster
-  namespace: default
 spec:
   # Configuration du plan de contrôle
   controlPlane:
@@ -43,6 +42,7 @@ spec:
       maxReplicas: 5
       instanceType: "s1.large"     # 4 vCPU, 8 GB RAM
       ephemeralStorage: 50Gi       # Stockage partition système
+      resources: {}               # Requis — instanceType définit les valeurs
       roles:
         - ingress-nginx           # Support Ingress
 
@@ -58,6 +58,10 @@ spec:
       hosts:
         - my-app.example.com
 ```
+
+:::warning Champ `resources` obligatoire
+Le champ `resources` est requis dans chaque node group, même si vous utilisez `instanceType`. Avec `resources: {}`, les valeurs CPU/mémoire sont déterminées par `instanceType`. Si vous spécifiez des valeurs explicites (ex. `cpu: 4, memory: 8Gi`), elles **overrident** `instanceType`.
+:::
 
 ### **Déployer le Cluster**
 
@@ -81,8 +85,8 @@ Une fois le cluster déployé, récupérez les informations d'accès :
 
 ```bash
 # Récupérer le kubeconfig du cluster
-kubectl get secret my-first-cluster-admin-kubeconfig \
-  -o go-template='{{ printf "%s\n" (index .data "super-admin.conf" | base64decode) }}' \
+kubectl get tenantsecret my-first-cluster-admin-kubeconfig \
+  -o go-template='{{ index .data "super-admin.conf" | base64decode }}' \
   > my-cluster-kubeconfig.yaml
 
 # Configurer kubectl pour le nouveau cluster
