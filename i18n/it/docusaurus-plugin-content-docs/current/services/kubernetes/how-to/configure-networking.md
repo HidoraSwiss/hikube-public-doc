@@ -1,35 +1,35 @@
 ---
-title: Come configurare il networking
+title: "Come configurare il networking"
 ---
 
-# Comment configurer le networking
+# Come configurare il networking
 
-Ce guide explique comment gerer la configuration reseau de votre cluster Kubernetes Hikube, en utilisant les NetworkPolicies Kubernetes et les outils d'observabilite Cilium/Hubble.
+Questa guida spiega come gestire la configurazione di rete del vostro cluster Kubernetes Hikube, utilizzando le NetworkPolicy Kubernetes e gli strumenti di osservabilita Cilium/Hubble.
 
-## Prerequisitiiti
+## Prerequisiti
 
-- Un cluster Kubernetes Hikube deploye (voir le [demarrage rapide](../quick-start.md))
-- Le kubeconfig du cluster enfant configure (`export KUBECONFIG=cluster-admin.yaml`)
-- Notions de base sur le networking Kubernetes (Services, Pods, namespaces)
+- Un cluster Kubernetes Hikube distribuito (vedere l'[avvio rapido](../quick-start.md))
+- Il kubeconfig del cluster figlio configurato (`export KUBECONFIG=cluster-admin.yaml`)
+- Nozioni di base sul networking Kubernetes (Services, Pod, namespace)
 
-## Passi
+## Fasi
 
-### 1. Comprendre le reseau Hikube
+### 1. Comprendere la rete Hikube
 
 :::note
-Cilium est le CNI (Container Network Interface) par defaut sur les clusters Kubernetes Hikube. Il fournit le networking, la securite reseau et l'observabilite.
+Cilium e il CNI (Container Network Interface) predefinito sui cluster Kubernetes Hikube. Fornisce il networking, la sicurezza di rete e l'osservabilita.
 :::
 
-Les clusters Hikube integrent :
+I cluster Hikube integrano:
 
-- **Cilium** comme CNI : gestion du reseau pod-to-pod, des services et de l'application des NetworkPolicies
-- **Hubble** pour l'observabilite : visualisation des flux reseau en temps reel et debugging
+- **Cilium** come CNI: gestione della rete pod-to-pod, dei servizi e dell'applicazione delle NetworkPolicy
+- **Hubble** per l'osservabilita: visualizzazione dei flussi di rete in tempo reale e debugging
 
-Par defaut, tous les pods peuvent communiquer entre eux sans restriction. Les NetworkPolicies permettent de restreindre ces communications.
+Per impostazione predefinita, tutti i pod possono comunicare tra loro senza restrizioni. Le NetworkPolicy permettono di limitare queste comunicazioni.
 
-### 2. Creer une NetworkPolicy
+### 2. Creare una NetworkPolicy
 
-Definissez des regles pour controler le trafic entrant (Ingress) et sortant (Egress) de vos pods :
+Definite delle regole per controllare il traffico in entrata (Ingress) e in uscita (Egress) dei vostri pod:
 
 ```yaml title="network-policy.yaml"
 apiVersion: networking.k8s.io/v1
@@ -61,32 +61,32 @@ spec:
           port: 5432
 ```
 
-Cette politique :
-- **Autorise le trafic entrant** vers les pods `app: web` uniquement depuis les pods `app: frontend` sur le port 80
-- **Autorise le trafic sortant** des pods `app: web` uniquement vers les pods `app: database` sur le port 5432
-- **Bloque tout autre trafic** entrant et sortant pour les pods `app: web`
+Questa policy:
+- **Autorizza il traffico in entrata** verso i pod `app: web` solo dai pod `app: frontend` sulla porta 80
+- **Autorizza il traffico in uscita** dei pod `app: web` solo verso i pod `app: database` sulla porta 5432
+- **Blocca tutto il resto del traffico** in entrata e in uscita per i pod `app: web`
 
-### 3. Appliquer et tester
+### 3. Applicare e testare
 
 ```bash
-# Appliquer la NetworkPolicy
+# Applicare la NetworkPolicy
 kubectl apply -f network-policy.yaml
 
-# Verifier que la politique est creee
+# Verificare che la policy sia stata creata
 kubectl get networkpolicies
 
-# Tester la connectivite autorisee
+# Testare la connettivita autorizzata
 kubectl exec -it deploy/frontend -- curl -s http://web-service:80
 
-# Tester la connectivite bloquee (devrait echouer)
+# Testare la connettivita bloccata (dovrebbe fallire)
 kubectl exec -it deploy/other-app -- curl -s --connect-timeout 3 http://web-service:80
 ```
 
 :::tip
-Commencez par des politiques permissives en mode observation, puis restreignez progressivement. Une politique trop restrictive peut casser la communication entre vos services.
+Iniziate con policy permissive in modalita osservazione, poi restringete progressivamente. Una policy troppo restrittiva puo interrompere la comunicazione tra i vostri servizi.
 :::
 
-**Exemple de politique par defaut pour isoler un namespace :**
+**Esempio di policy predefinita per isolare un namespace:**
 
 ```yaml title="default-deny.yaml"
 apiVersion: networking.k8s.io/v1
@@ -101,50 +101,50 @@ spec:
 ```
 
 :::warning
-La politique `default-deny-all` bloque **tout le trafic** dans le namespace, y compris l'acces DNS. Si vous l'appliquez, ajoutez immediatement une politique autorisant le trafic DNS (port 53) en sortie, sinon la resolution de noms sera cassee.
+La policy `default-deny-all` blocca **tutto il traffico** nel namespace, incluso l'accesso DNS. Se la applicate, aggiungete immediatamente una policy che autorizzi il traffico DNS (porta 53) in uscita, altrimenti la risoluzione dei nomi sara interrotta.
 :::
 
-### 4. Utiliser Hubble pour le debugging reseau
+### 4. Utilizzare Hubble per il debugging di rete
 
-Hubble fournit une visibilite complete sur les flux reseau du cluster. Utilisez-le pour diagnostiquer les problemes de connectivite :
+Hubble fornisce una visibilita completa sui flussi di rete del cluster. Utilizzatelo per diagnosticare i problemi di connettivita:
 
 ```bash
-# Verifier le statut de Hubble
+# Verificare lo stato di Hubble
 kubectl exec -n kube-system -it ds/cilium -- hubble status
 
-# Observer les flux reseau en temps reel
+# Osservare i flussi di rete in tempo reale
 kubectl exec -n kube-system -it ds/cilium -- hubble observe
 
-# Filtrer les flux pour un pod specifique
+# Filtrare i flussi per un pod specifico
 kubectl exec -n kube-system -it ds/cilium -- hubble observe --pod web-xxxxx
 
-# Voir les flux refuses par les NetworkPolicies
+# Vedere i flussi rifiutati dalle NetworkPolicy
 kubectl exec -n kube-system -it ds/cilium -- hubble observe --verdict DROPPED
 
-# Filtrer par namespace
+# Filtrare per namespace
 kubectl exec -n kube-system -it ds/cilium -- hubble observe --namespace production
 ```
 
 :::tip
-La commande `hubble observe --verdict DROPPED` est particulierement utile pour identifier les flux bloques par une NetworkPolicy et ajuster vos regles.
+Il comando `hubble observe --verdict DROPPED` e particolarmente utile per identificare i flussi bloccati da una NetworkPolicy e regolare le vostre regole.
 :::
 
 ## Verifica
 
-Verifiez que vos politiques reseau sont correctement appliquees :
+Verificate che le vostre policy di rete siano correttamente applicate:
 
 ```bash
-# Lister toutes les NetworkPolicies
+# Elencare tutte le NetworkPolicy
 kubectl get networkpolicies -A
 
-# Details d'une politique
+# Dettagli di una policy
 kubectl describe networkpolicy allow-web
 
-# Verifier l'etat de Cilium
+# Verificare lo stato di Cilium
 kubectl exec -n kube-system -it ds/cilium -- cilium status
 ```
 
-**Risultato atteso pour `kubectl get networkpolicies` :**
+**Risultato atteso per `kubectl get networkpolicies`:**
 
 ```console
 NAME        POD-SELECTOR   AGE
@@ -153,6 +153,6 @@ allow-web   app=web        5m
 
 ## Per approfondire
 
-- [Reference API](../api-reference.md) -- Configuration complete du cluster
-- [Concepts](../concepts.md) -- Architecture reseau et flux de communication
-- [Comment deployer un Ingress avec TLS](./deploy-ingress-tls.md) -- Exposition HTTPS de vos applications
+- [Riferimento API](../api-reference.md) -- Configurazione completa del cluster
+- [Concetti](../concepts.md) -- Architettura di rete e flussi di comunicazione
+- [Come distribuire un Ingress con TLS](./deploy-ingress-tls.md) -- Esposizione HTTPS delle vostre applicazioni

@@ -1,22 +1,22 @@
 ---
-title: Come gestire i vhost e gli utenti
+title: "Come gestire i vhost e gli utenti"
 ---
 
-# Comment gérer les vhosts et utilisateurs
+# Come gestire i vhost e gli utenti
 
-Ce guide explique comment créer et gérer les utilisateurs, virtual hosts (vhosts) et permissions RabbitMQ sur Hikube de manière déclarative via les manifestes Kubernetes.
+Questa guida spiega come creare e gestire gli utenti, i virtual host (vhost) e i permessi RabbitMQ su Hikube in modo dichiarativo tramite i manifesti Kubernetes.
 
-## Prerequisitiiti
+## Prerequisiti
 
-- **kubectl** configuré avec votre kubeconfig Hikube
-- Un cluster **RabbitMQ** déployé sur Hikube (ou un manifeste prêt à déployer)
-- (Optionnel) **rabbitmqadmin** ou un navigateur pour accéder à la Management UI
+- **kubectl** configurato con il vostro kubeconfig Hikube
+- Un cluster **RabbitMQ** distribuito su Hikube (o un manifesto pronto per la distribuzione)
+- (Opzionale) **rabbitmqadmin** o un browser per accedere alla Management UI
 
 ## Passi
 
-### 1. Créer des utilisateurs
+### 1. Creare degli utenti
 
-Les utilisateurs sont déclarés dans la section `users` du manifeste. Chaque utilisateur est identifié par un nom et possède un mot de passe.
+Gli utenti sono dichiarati nella sezione `users` del manifesto. Ogni utente è identificato da un nome e possiede una password.
 
 ```yaml title="rabbitmq-users.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -38,12 +38,12 @@ spec:
 ```
 
 :::tip
-Séparez les utilisateurs par rôle fonctionnel : un compte **admin** pour l'administration, des comptes **applicatifs** pour chaque service, et un compte **monitoring** dédié à la supervision. Cela facilite l'audit et limite l'impact en cas de compromission.
+Separate gli utenti per ruolo funzionale: un account **admin** per l'amministrazione, account **applicativi** per ogni servizio, e un account **monitoring** dedicato alla supervisione. Questo facilita l'audit e limita l'impatto in caso di compromissione.
 :::
 
-### 2. Créer des vhosts avec permissions
+### 2. Creare dei vhost con permessi
 
-Les virtual hosts isolent les files, échanges et bindings entre différentes applications ou environnements. Chaque vhost définit des rôles `admin` (lecture/écriture complète) et `readonly` (lecture seule).
+I virtual host isolano le code, gli exchange e i binding tra diverse applicazioni o ambienti. Ogni vhost definisce dei ruoli `admin` (lettura/scrittura completa) e `readonly` (sola lettura).
 
 ```yaml title="rabbitmq-vhosts.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -80,20 +80,20 @@ spec:
           - monitoring
 ```
 
-**Rôles disponibles :**
+**Ruoli disponibili:**
 
-| Rôle | Description |
-|------|-------------|
-| `admin` | Accès complet : créer/supprimer des queues, publier et consommer des messages |
-| `readonly` | Accès en lecture seule : consommer des messages, consulter les métriques |
+| Ruolo | Descrizione |
+|-------|-------------|
+| `admin` | Accesso completo: creare/eliminare code, pubblicare e consumare messaggi |
+| `readonly` | Accesso in sola lettura: consumare messaggi, consultare le metriche |
 
 :::tip
-Isolez chaque application dans un vhost dédié. Cela limite l'impact en cas de surcharge d'une application et facilite la gestion des permissions.
+Isolate ogni applicazione in un vhost dedicato. Questo limita l'impatto in caso di sovraccarico di un'applicazione e facilita la gestione dei permessi.
 :::
 
-### 3. Appliquer les changements
+### 3. Applicare le modifiche
 
-Combinez la configuration complète dans un seul manifeste :
+Combinate la configurazione completa in un unico manifesto:
 
 ```yaml title="rabbitmq-complete.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -134,21 +134,21 @@ spec:
 kubectl apply -f rabbitmq-complete.yaml
 ```
 
-### 4. Vérifier les utilisateurs et vhosts
+### 4. Verificare gli utenti e i vhost
 
-Vérifiez que la ressource RabbitMQ a bien été mise à jour :
+Verificate che la risorsa RabbitMQ sia stata aggiornata correttamente:
 
 ```bash
 kubectl get rabbitmq my-rabbitmq -o yaml | grep -A 20 "users:\|vhosts:"
 ```
 
-Pour une vérification plus poussée, connectez-vous à un pod RabbitMQ :
+Per una verifica più approfondita, connettetevi a un pod RabbitMQ:
 
 ```bash
 kubectl exec -it my-rabbitmq-server-0 -- rabbitmqctl list_users
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```console
 Listing users ...
@@ -158,13 +158,13 @@ appuser	[]
 monitoring	[]
 ```
 
-Listez les vhosts :
+Elencate i vhost:
 
 ```bash
 kubectl exec -it my-rabbitmq-server-0 -- rabbitmqctl list_vhosts
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```console
 Listing vhosts ...
@@ -173,13 +173,13 @@ production
 analytics
 ```
 
-Vérifiez les permissions d'un vhost :
+Verificate i permessi di un vhost:
 
 ```bash
 kubectl exec -it my-rabbitmq-server-0 -- rabbitmqctl list_permissions -p production
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```console
 Listing permissions for vhost "production" ...
@@ -189,15 +189,15 @@ appuser	.*	.*	.*
 monitoring		    	.*
 ```
 
-### 5. Tester la connexion AMQP
+### 5. Testare la connessione AMQP
 
-Ouvrez un port-forward vers le service RabbitMQ :
+Aprite un port-forward verso il servizio RabbitMQ:
 
 ```bash
 kubectl port-forward svc/my-rabbitmq 5672:5672
 ```
 
-Testez la connexion avec un client AMQP (exemple avec Python `pika`) :
+Testate la connessione con un client AMQP (esempio con Python `pika`):
 
 ```python
 import pika
@@ -209,29 +209,29 @@ connection = pika.BlockingConnection(
 channel = connection.channel()
 channel.queue_declare(queue='test-queue')
 channel.basic_publish(exchange='', routing_key='test-queue', body='Hello Hikube!')
-print("Message envoyé avec succès")
+print("Messaggio inviato con successo")
 connection.close()
 ```
 
-Vous pouvez aussi accéder à la Management UI via port-forward :
+Potete anche accedere alla Management UI tramite port-forward:
 
 ```bash
 kubectl port-forward svc/my-rabbitmq 15672:15672
 ```
 
-Puis ouvrez `http://127.0.0.1:15672` dans votre navigateur et connectez-vous avec le compte `admin`.
+Poi aprite `http://127.0.0.1:15672` nel vostro browser e connettetevi con l'account `admin`.
 
 ## Verifica
 
-La configuration est réussie si :
+La configurazione è riuscita se:
 
-- Les utilisateurs apparaissent dans `rabbitmqctl list_users`
-- Les vhosts sont listés dans `rabbitmqctl list_vhosts`
-- Les permissions correspondent au manifeste (`rabbitmqctl list_permissions`)
-- Les utilisateurs peuvent se connecter via AMQP sur leur vhost respectif
-- Les utilisateurs `readonly` ne peuvent pas publier de messages
+- Gli utenti appaiono in `rabbitmqctl list_users`
+- I vhost sono elencati in `rabbitmqctl list_vhosts`
+- I permessi corrispondono al manifesto (`rabbitmqctl list_permissions`)
+- Gli utenti possono connettersi tramite AMQP sul proprio vhost rispettivo
+- Gli utenti `readonly` non possono pubblicare messaggi
 
 ## Per approfondire
 
-- **[Référence API RabbitMQ](../api-reference.md)** : documentation complète des paramètres `users` et `vhosts`
-- **[Comment scaler le cluster RabbitMQ](./scale-resources.md)** : ajuster les ressources et le nombre de réplicas
+- **[Riferimento API RabbitMQ](../api-reference.md)**: documentazione completa dei parametri `users` e `vhosts`
+- **[Come scalare il cluster RabbitMQ](./scale-resources.md)**: regolare le risorse e il numero di repliche

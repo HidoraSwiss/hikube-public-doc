@@ -3,18 +3,18 @@ sidebar_position: 6
 title: FAQ
 ---
 
-# FAQ — Machines virtuelles
+# FAQ — Macchine virtuali
 
-### Quelle est la différence entre PortList et WholeIP ?
+### Qual è la differenza tra PortList e WholeIP?
 
-| Caractéristique | `PortList` | `WholeIP` |
+| Caratteristica | `PortList` | `WholeIP` |
 |----------------|-----------|-----------|
-| **Fonctionnement** | Seuls les ports listés dans `externalPorts` sont exposés | Tous les ports de la VM sont exposés |
-| **Sécurité** | Contrôle fin, surface d'attaque réduite | Nécessite un firewall au niveau de l'OS |
-| **Cas d'usage** | Production, services ciblés | Développement, tests rapides |
+| **Funzionamento** | Solo le porte elencate in `externalPorts` sono esposte | Tutte le porte della VM sono esposte |
+| **Sicurezza** | Controllo fine, superficie d'attacco ridotta | Necessita un firewall a livello dell'OS |
+| **Caso d'uso** | Produzione, servizi mirati | Sviluppo, test rapidi |
 
 :::warning
-Avec `WholeIP`, vous devez impérativement configurer un firewall dans la VM (iptables, nftables, ufw) pour protéger les services non exposés.
+Con `WholeIP`, dovete obbligatoriamente configurare un firewall nella VM (iptables, nftables, ufw) per proteggere i servizi non esposti.
 :::
 
 ```yaml title="vm-portlist.yaml"
@@ -28,11 +28,11 @@ spec:
 
 ---
 
-### Quelles images sont disponibles ?
+### Quali immagini sono disponibili?
 
-Hikube propose des **Golden Images** pré-configurées :
+Hikube propone delle **Golden Image** preconfigurate:
 
-| Système d'exploitation | Versions disponibles |
+| Sistema operativo | Versioni disponibili |
 |----------------------|---------------------|
 | **Ubuntu** | 22.04, 24.04 |
 | **Debian** | 11, 12, 13 |
@@ -40,27 +40,27 @@ Hikube propose des **Golden Images** pré-configurées :
 | **Rocky Linux** | 8, 9, 10 |
 | **AlmaLinux** | 8, 9, 10 |
 
-Les images sont spécifiées dans le champ `source.image.name` de la ressource **VMDisk**, au format `{os}-{version}`. Par exemple : `ubuntu-2404`, `debian-12`, `rocky-9`.
+Le immagini sono specificate nel campo `source.image.name` della risorsa **VMDisk**, nel formato `{os}-{version}`. Ad esempio: `ubuntu-2404`, `debian-12`, `rocky-9`.
 
 ---
 
-### Comment choisir mon instanceType ?
+### Come scegliere il mio instanceType?
 
-Les instances suivent trois gammes avec des ratios vCPU:RAM différents :
+Le istanze seguono tre gamme con rapporti vCPU:RAM differenti:
 
-| Gamme | Préfixe | Ratio | Exemple d'usage |
+| Gamma | Prefisso | Rapporto | Esempio d'uso |
 |-------|---------|-------|-----------------|
-| **Standard** | `s1` | 1:2 | Serveurs web, applications légères |
-| **Universal** | `u1` | 1:4 | Applications métier, bases de données |
-| **Memory** | `m1` | 1:8 | Cache, traitements en mémoire |
+| **Standard** | `s1` | 1:2 | Server web, applicazioni leggere |
+| **Universal** | `u1` | 1:4 | Applicazioni aziendali, database |
+| **Memory** | `m1` | 1:8 | Cache, elaborazioni in memoria |
 
-Les tailles disponibles vont de `small` à `8xlarge`. Par exemple : `u1.xlarge` offre 4 vCPU et 16 Go de RAM.
+Le dimensioni disponibili vanno da `small` a `8xlarge`. Ad esempio: `u1.xlarge` offre 4 vCPU e 16 GB di RAM.
 
 ---
 
-### Comment ajouter un disque supplémentaire ?
+### Come aggiungere un disco supplementare?
 
-Créez d'abord une ressource `VMDisk`, puis référencez-la dans votre `VMInstance` :
+Create prima una risorsa `VMDisk`, poi referenziatela nella vostra `VMInstance`:
 
 ```yaml title="data-disk.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -86,16 +86,16 @@ spec:
 
 ---
 
-### Comment accéder à ma VM en SSH ?
+### Come accedere alla mia VM in SSH?
 
-1. Injectez votre clé SSH publique dans le manifeste de la VM :
+1. Iniettate la vostra chiave SSH pubblica nel manifest della VM:
    ```yaml title="vm-ssh.yaml"
    spec:
      sshKeys:
        - "ssh-ed25519 AAAAC3... user@laptop"
    ```
 
-2. Exposez le port 22 via `PortList` :
+2. Esponete la porta 22 tramite `PortList`:
    ```yaml title="vm-ssh.yaml"
    spec:
      external: true
@@ -104,25 +104,25 @@ spec:
        - 22
    ```
 
-3. Récupérez l'adresse IP externe :
+3. Recuperate l'indirizzo IP esterno:
    ```bash
    kubectl get svc
    ```
 
-4. Connectez-vous :
+4. Connettetevi:
    ```bash
    ssh user@<external-ip>
    ```
 
 :::note
-Le nom d'utilisateur par défaut dépend de l'image : `ubuntu` pour Ubuntu, `debian` pour Debian, `cloud-user` pour CentOS/Rocky/AlmaLinux.
+Il nome utente predefinito dipende dall'immagine: `ubuntu` per Ubuntu, `debian` per Debian, `cloud-user` per CentOS/Rocky/AlmaLinux.
 :::
 
 ---
 
-### Comment personnaliser la VM au démarrage ?
+### Come personalizzare la VM all'avvio?
 
-Utilisez le champ `cloudInit` pour injecter une configuration cloud-init au format YAML :
+Utilizzate il campo `cloudInit` per iniettare una configurazione cloud-init in formato YAML:
 
 ```yaml title="vm-cloudinit.yaml"
 spec:
@@ -141,15 +141,15 @@ spec:
       - systemctl start nginx
 ```
 
-Cloud-init s'exécute au premier démarrage de la VM et permet d'installer des paquets, créer des utilisateurs, exécuter des commandes, etc.
+Cloud-init viene eseguito al primo avvio della VM e permette di installare pacchetti, creare utenti, eseguire comandi, ecc.
 
 ---
 
-### Quelle est la différence entre `instanceProfile` et `instanceType` ?
+### Qual è la differenza tra `instanceProfile` e `instanceType`?
 
-| Paramètre | Rôle | Exemples |
+| Parametro | Ruolo | Esempi |
 |-----------|------|----------|
-| `instanceProfile` | Charge les **drivers et kernels** adaptés à l'OS | `ubuntu`, `centos`, `windows.2k25.virtio` |
-| `instanceType` | Définit la **taille** de la VM (CPU/RAM) | `s1.small`, `u1.large`, `m1.2xlarge` |
+| `instanceProfile` | Carica i **driver e i kernel** adatti all'OS | `ubuntu`, `centos`, `windows.2k25.virtio` |
+| `instanceType` | Definisce la **dimensione** della VM (CPU/RAM) | `s1.small`, `u1.large`, `m1.2xlarge` |
 
-`instanceProfile` ne détermine pas l'image OS — celle-ci est définie dans la ressource **VMDisk** via `source.image.name`. Le profil sert à charger les drivers et kernels optimisés pour le système d'exploitation. C'est principalement utile pour **Windows** (drivers virtio). `instanceType` dimensionne les ressources CPU et mémoire allouées à la VM.
+`instanceProfile` non determina l'immagine OS — questa è definita nella risorsa **VMDisk** tramite `source.image.name`. Il profilo serve a caricare i driver e i kernel ottimizzati per il sistema operativo. È principalmente utile per **Windows** (driver virtio). `instanceType` dimensiona le risorse CPU e memoria allocate alla VM.

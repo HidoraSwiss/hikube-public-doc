@@ -1,35 +1,35 @@
 ---
-title: Come configurare la rete esterna
+title: "Come configurare la rete esterna"
 ---
 
-# Comment configurer le réseau externe
+# Come configurare la rete esterna
 
-Hikube propose deux méthodes d'exposition réseau pour rendre une VM accessible depuis l'extérieur : **PortList** (recommandé) et **WholeIP**. Ce guide explique comment choisir et configurer chaque méthode.
+Hikube propone due metodi di esposizione di rete per rendere una VM accessibile dall'esterno: **PortList** (raccomandato) e **WholeIP**. Questa guida spiega come scegliere e configurare ciascun metodo.
 
-## Prerequisitiiti
+## Prerequisiti
 
-- **kubectl** configuré avec votre kubeconfig Hikube
-- Une **VMInstance** existante ou un manifeste prêt à déployer
-- Connaissance des ports nécessaires pour votre application
+- **kubectl** configurato con il vostro kubeconfig Hikube
+- Una **VMInstance** esistente o un manifest pronto per il deployment
+- Conoscenza delle porte necessarie per la vostra applicazione
 
 ## Passi
 
-### 1. Choisir la méthode d'exposition
+### 1. Scegliere il metodo di esposizione
 
-Hikube supporte deux méthodes via le paramètre `externalMethod` :
+Hikube supporta due metodi tramite il parametro `externalMethod`:
 
-| Méthode | Description | Cas d'usage |
+| Metodo | Descrizione | Caso d'uso |
 |---------|-------------|-------------|
-| **PortList** | Seuls les ports listés dans `externalPorts` sont exposés. Firewall automatique. | Production, environnements sécurisés |
-| **WholeIP** | Tous les ports de la VM sont exposés. Aucun filtrage réseau. | Développement, tests, VPN/Gateway, accès administratif complet |
+| **PortList** | Solo le porte elencate in `externalPorts` sono esposte. Firewall automatico. | Produzione, ambienti sicuri |
+| **WholeIP** | Tutte le porte della VM sono esposte. Nessun filtraggio di rete. | Sviluppo, test, VPN/Gateway, accesso amministrativo completo |
 
-:::tip Recommandation
-Utilisez **PortList** en production. Cette méthode applique un firewall automatique qui n'expose que les ports explicitement déclarés.
+:::tip Raccomandazione
+Utilizzate **PortList** in produzione. Questo metodo applica un firewall automatico che espone solo le porte esplicitamente dichiarate.
 :::
 
-### 2. Configurer avec PortList (recommandé)
+### 2. Configurare con PortList (raccomandato)
 
-Avec `PortList`, vous déclarez explicitement les ports à exposer via `externalPorts`. Tout le reste est bloqué au niveau réseau :
+Con `PortList`, dichiarate esplicitamente le porte da esporre tramite `externalPorts`. Tutto il resto è bloccato a livello di rete:
 
 ```yaml title="vm-portlist.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -52,11 +52,11 @@ spec:
     - ssh-ed25519 AAAA... user@host
 ```
 
-Dans cet exemple, seuls les ports SSH (22), HTTP (80) et HTTPS (443) sont accessibles depuis l'extérieur.
+In questo esempio, solo le porte SSH (22), HTTP (80) e HTTPS (443) sono accessibili dall'esterno.
 
-### 3. Configurer avec WholeIP (alternative)
+### 3. Configurare con WholeIP (alternativa)
 
-Avec `WholeIP`, la VM reçoit une IP publique avec tous les ports ouverts. Le paramètre `externalPorts` n'est pas nécessaire :
+Con `WholeIP`, la VM riceve un IP pubblico con tutte le porte aperte. Il parametro `externalPorts` non è necessario:
 
 ```yaml title="vm-wholeip.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -75,19 +75,19 @@ spec:
     - ssh-ed25519 AAAA... user@host
 ```
 
-:::warning Sécurité
-Avec `WholeIP`, la VM est entièrement exposée sur Internet. Tous les ports sont accessibles. Configurez impérativement un **firewall au niveau du système d'exploitation** (ufw, firewalld, iptables) pour restreindre les accès.
+:::warning Sicurezza
+Con `WholeIP`, la VM è interamente esposta su Internet. Tutte le porte sono accessibili. Configurate obbligatoriamente un **firewall a livello del sistema operativo** (ufw, firewalld, iptables) per restringere gli accessi.
 :::
 
-### 4. Appliquer et vérifier l'accès
+### 4. Applicare e verificare l'accesso
 
-Appliquez le manifeste :
+Applicate il manifest:
 
 ```bash
 kubectl apply -f vm-portlist.yaml
 ```
 
-Attendez que la VM soit en état `Running` :
+Attendete che la VM sia in stato `Running`:
 
 ```bash
 kubectl get vminstance vm-web-server -w
@@ -95,34 +95,34 @@ kubectl get vminstance vm-web-server -w
 
 ## Verifica
 
-Récupérez l'adresse IP externe de la VM :
+Recuperate l'indirizzo IP esterno della VM:
 
 ```bash
 kubectl get vminstance vm-web-server -o yaml
 ```
 
-Testez la connectivité sur les ports exposés :
+Testate la connettività sulle porte esposte:
 
 ```bash
 # Test SSH
-ssh -i ~/.ssh/hikube-vm ubuntu@<IP-EXTERNE>
+ssh -i ~/.ssh/hikube-vm ubuntu@<IP-ESTERNO>
 
-# Test HTTP (si un serveur web est installé)
-curl http://<IP-EXTERNE>
+# Test HTTP (se un server web è installato)
+curl http://<IP-ESTERNO>
 ```
 
-Pour vérifier qu'un port non exposé est bien bloqué (avec PortList) :
+Per verificare che una porta non esposta sia ben bloccata (con PortList):
 
 ```bash
-# Ce port devrait être inaccessible avec PortList
-nc -zv <IP-EXTERNE> 8080
+# Questa porta dovrebbe essere inaccessibile con PortList
+nc -zv <IP-ESTERNO> 8080
 ```
 
-:::note Modification des ports
-Pour ajouter ou retirer des ports exposés avec `PortList`, modifiez la liste `externalPorts` dans le manifeste et réappliquez avec `kubectl apply`.
+:::note Modifica delle porte
+Per aggiungere o rimuovere porte esposte con `PortList`, modificate la lista `externalPorts` nel manifest e riapplicate con `kubectl apply`.
 :::
 
 ## Per approfondire
 
-- [Référence API](../api-reference.md) -- section Configuration réseau
-- [Démarrage rapide](../quick-start.md)
+- [Riferimento API](../api-reference.md) -- sezione Configurazione di rete
+- [Avvio rapido](../quick-start.md)

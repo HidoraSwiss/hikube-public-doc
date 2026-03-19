@@ -3,10 +3,10 @@ sidebar_position: 9
 title: Velero
 ---
 
-# 🧩 Détails du champ `addons.velero`
+# 🧩 Dettagli del campo `addons.velero`
 
-Le champ `addons.velero` définit la configuration de l’add-on **Velero**, utilisé pour la **sauvegarde et la restauration** des ressources Kubernetes ainsi que des volumes persistants.
-Velero permet d’assurer la résilience du cluster en cas de perte de données ou de migration entre environnements.
+Il campo `addons.velero` definisce la configurazione dell'add-on **Velero**, utilizzato per il **backup e il ripristino** delle risorse Kubernetes e dei volumi persistenti.
+Velero permette di garantire la resilienza del cluster in caso di perdita di dati o di migrazione tra ambienti.
 
 ```yaml
 addons:
@@ -30,14 +30,14 @@ addons:
 
 ---
 
-## `velero` (Object) — **Obligatoire**
+## `velero` (Object) — **Obbligatorio**
 
-### Description
+### Descrizione
 
-Le champ `velero` regroupe la configuration principale du système de sauvegarde et de restauration du cluster Kubernetes.
-Il permet d’activer Velero et de définir ses paramètres de déploiement.
+Il campo `velero` raggruppa la configurazione principale del sistema di backup e ripristino del cluster Kubernetes.
+Permette di attivare Velero e di definirne i parametri di distribuzione.
 
-### Exemple
+### Esempio
 
 ```yaml
 velero:
@@ -51,14 +51,14 @@ velero:
 
 ---
 
-## `enabled` (boolean) — **Obligatoire**
+## `enabled` (boolean) — **Obbligatorio**
 
-### Description
+### Descrizione
 
-Indique si **Velero** est activé (`true`) ou désactivé (`false`).
-Lorsqu’il est activé, Velero déploie ses composants (serveur, contrôleurs et CRDs) permettant la gestion des sauvegardes et des restaurations.
+Indica se **Velero** e attivato (`true`) o disattivato (`false`).
+Quando e attivato, Velero distribuisce i suoi componenti (server, controller e CRD) permettendo la gestione dei backup e dei ripristini.
 
-### Exemple
+### Esempio
 
 ```yaml
 enabled: true
@@ -66,14 +66,14 @@ enabled: true
 
 ---
 
-## `valuesOverride` (Object) — **Obligatoire**
+## `valuesOverride` (Object) — **Obbligatorio**
 
-### Description
+### Descrizione
 
-Le champ `valuesOverride` permet de **surcharger les valeurs** du déploiement Velero.
-Il sert à définir les paramètres de stockage, les planifications automatiques, les fournisseurs cloud, ou encore les options de sécurité et de ressources.
+Il campo `valuesOverride` permette di **sovrascrivere i valori** della distribuzione Velero.
+Serve a definire i parametri di archiviazione, le pianificazioni automatiche, i provider cloud o le opzioni di sicurezza e risorse.
 
-### Exemple
+### Esempio
 
 ```yaml
 valuesOverride:
@@ -95,10 +95,10 @@ valuesOverride:
 
 ## 💡 Buone pratiche
 
-- Activer `enabled: true` pour assurer la sauvegarde régulière des ressources critiques du cluster.
-- Utiliser `valuesOverride` pour adapter la configuration au fournisseur cloud ou au stockage choisi (AWS, GCP, Azure, MinIO, etc.).
-- Configurer des **schedules** (planifications) automatiques pour les sauvegardes récurrentes.
-- Vérifier régulièrement l’intégrité des sauvegardes et la possibilité de restauration.
-- Restreindre les accès aux clés de stockage pour sécuriser les données de sauvegarde.
+- Attivare `enabled: true` per garantire il backup regolare delle risorse critiche del cluster.
+- Utilizzare `valuesOverride` per adattare la configurazione al provider cloud o all'archiviazione scelta (AWS, GCP, Azure, MinIO, ecc.).
+- Configurare delle **schedule** (pianificazioni) automatiche per i backup ricorrenti.
+- Verificare regolarmente l'integrita dei backup e la possibilita di ripristino.
+- Limitare gli accessi alle chiavi di archiviazione per proteggere i dati di backup.
 
 ---

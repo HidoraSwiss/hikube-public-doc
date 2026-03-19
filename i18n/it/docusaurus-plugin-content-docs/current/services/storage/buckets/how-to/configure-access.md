@@ -1,81 +1,81 @@
 ---
-title: "Comment configurer l'acces S3"
+title: "Come configurare l'accesso S3"
 ---
 
-# Comment configurer l'acces S3
+# Come configurare l'accesso S3
 
-Chaque bucket cree sur Hikube genere automatiquement un couple de cles d'acces S3 unique. Ce guide explique comment recuperer ces identifiants, configurer differents clients S3 (AWS CLI, MinIO Client, rclone) et injecter les cles dans vos pods Kubernetes de maniere securisee.
+Ogni bucket creato su Hikube genera automaticamente una coppia di chiavi di accesso S3 unica. Questa guida spiega come recuperare queste credenziali, configurare diversi client S3 (AWS CLI, MinIO Client, rclone) e iniettare le chiavi nei vostri pod Kubernetes in modo sicuro.
 
-## Prerequisitiiti
+## Prerequisiti
 
-- **kubectl** configure avec votre kubeconfig Hikube
-- Un **bucket** cree sur Hikube
-- **jq** installe localement
-- Un ou plusieurs clients S3 installes : **AWS CLI**, **mc** (MinIO Client) ou **rclone**
+- **kubectl** configurato con il vostro kubeconfig Hikube
+- Un **bucket** creato su Hikube
+- **jq** installato localmente
+- Uno o più client S3 installati: **AWS CLI**, **mc** (MinIO Client) o **rclone**
 
 ## Passi
 
-### 1. Comprendre le modele d'acces
+### 1. Comprendere il modello di accesso
 
-Sur Hikube, chaque bucket dispose de son propre couple de cles d'acces :
+Su Hikube, ogni bucket dispone della propria coppia di chiavi di accesso:
 
-- **1 bucket = 1 couple de cles** (accessKeyID + accessSecretKey)
-- Les cles sont generees automatiquement a la creation du bucket
-- Les identifiants sont stockes dans un Secret Kubernetes nomme `bucket-<nom-du-bucket>`
-- L'endpoint S3 est commun a tous les buckets : `https://prod.s3.hikube.cloud`
+- **1 bucket = 1 coppia di chiavi** (accessKeyID + accessSecretKey)
+- Le chiavi vengono generate automaticamente alla creazione del bucket
+- Le credenziali sono archiviate in un Secret Kubernetes denominato `bucket-<nome-del-bucket>`
+- L'endpoint S3 è comune a tutti i bucket: `https://prod.s3.hikube.cloud`
 
 :::tip
-Chaque bucket beneficie d'un stockage **triple-replique** haute disponibilite. Vos donnees sont automatiquement reparties pour garantir la durabilite.
+Ogni bucket beneficia di un'archiviazione **triple-replicata** ad alta disponibilità. I vostri dati sono automaticamente distribuiti per garantire la durabilità.
 :::
 
-### 2. Recuperer les identifiants
+### 2. Recuperare le credenziali
 
-Extrayez les informations de connexion depuis le Secret Kubernetes :
+Estraete le informazioni di connessione dal Secret Kubernetes:
 
 ```bash
-kubectl get secret bucket-<nom-du-bucket> -o jsonpath='{.data.BucketInfo}' | base64 -d | jq
+kubectl get secret bucket-<nome-del-bucket> -o jsonpath='{.data.BucketInfo}' | base64 -d | jq
 ```
 
-Pour extraire les valeurs individuellement :
+Per estrarre i valori individualmente:
 
 ```bash
 # Endpoint S3
-kubectl get secret bucket-<nom-du-bucket> -o jsonpath='{.data.BucketInfo}' | base64 -d | jq -r '.spec.secretS3.endpoint'
+kubectl get secret bucket-<nome-del-bucket> -o jsonpath='{.data.BucketInfo}' | base64 -d | jq -r '.spec.secretS3.endpoint'
 
 # Access Key
-kubectl get secret bucket-<nom-du-bucket> -o jsonpath='{.data.BucketInfo}' | base64 -d | jq -r '.spec.secretS3.accessKeyID'
+kubectl get secret bucket-<nome-del-bucket> -o jsonpath='{.data.BucketInfo}' | base64 -d | jq -r '.spec.secretS3.accessKeyID'
 
 # Secret Key
-kubectl get secret bucket-<nom-du-bucket> -o jsonpath='{.data.BucketInfo}' | base64 -d | jq -r '.spec.secretS3.accessSecretKey'
+kubectl get secret bucket-<nome-del-bucket> -o jsonpath='{.data.BucketInfo}' | base64 -d | jq -r '.spec.secretS3.accessSecretKey'
 
-# Nom reel du bucket
-kubectl get secret bucket-<nom-du-bucket> -o jsonpath='{.data.BucketInfo}' | base64 -d | jq -r '.spec.bucketName'
+# Nome reale del bucket
+kubectl get secret bucket-<nome-del-bucket> -o jsonpath='{.data.BucketInfo}' | base64 -d | jq -r '.spec.bucketName'
 ```
 
 :::note
-Le `bucketName` retourne par le Secret est un identifiant interne (ex: `bucket-1df67984-321d-492d-bb06-2f4527bb0f5b`). Il differe du nom `metadata.name` de votre manifeste. Utilisez toujours cette valeur pour les operations S3.
+Il `bucketName` restituito dal Secret è un identificativo interno (es: `bucket-1df67984-321d-492d-bb06-2f4527bb0f5b`). Differisce dal nome `metadata.name` del vostro manifesto. Utilizzate sempre questo valore per le operazioni S3.
 :::
 
-### 3. Configurer les clients S3
+### 3. Configurare i client S3
 
 #### AWS CLI
 
-Configurez un profil dedie pour Hikube :
+Configurate un profilo dedicato per Hikube:
 
 ```bash
 aws configure --profile hikube
 ```
 
-Renseignez les valeurs suivantes :
+Inserite i seguenti valori:
 
 ```
 AWS Access Key ID: <accessKeyID>
 AWS Secret Access Key: <accessSecretKey>
-Default region name: (laisser vide)
+Default region name: (lasciare vuoto)
 Default output format: json
 ```
 
-Utilisez le profil avec l'endpoint Hikube :
+Utilizzate il profilo con l'endpoint Hikube:
 
 ```bash
 aws s3 ls s3://$BUCKET_NAME --endpoint-url https://prod.s3.hikube.cloud --profile hikube
@@ -83,28 +83,28 @@ aws s3 ls s3://$BUCKET_NAME --endpoint-url https://prod.s3.hikube.cloud --profil
 
 #### MinIO Client (mc)
 
-Creez un alias pour l'endpoint Hikube :
+Create un alias per l'endpoint Hikube:
 
 ```bash
 mc alias set hikube https://prod.s3.hikube.cloud ACCESS_KEY SECRET_KEY
 ```
 
-Testez la connexion :
+Testate la connessione:
 
 ```bash
-# Lister les objets
+# Elencare gli oggetti
 mc ls hikube/$BUCKET_NAME
 
-# Uploader un fichier
+# Caricare un file
 mc cp fichier.txt hikube/$BUCKET_NAME/
 
-# Telecharger un fichier
+# Scaricare un file
 mc cp hikube/$BUCKET_NAME/fichier.txt ./
 ```
 
 #### rclone
 
-Ajoutez une configuration rclone pour Hikube. Creez ou editez le fichier `~/.config/rclone/rclone.conf` :
+Aggiungete una configurazione rclone per Hikube. Create o modificate il file `~/.config/rclone/rclone.conf`:
 
 ```ini title="rclone.conf"
 [hikube]
@@ -116,22 +116,22 @@ secret_access_key = SECRET_KEY
 acl = private
 ```
 
-Testez la connexion :
+Testate la connessione:
 
 ```bash
-# Lister les objets
+# Elencare gli oggetti
 rclone ls hikube:$BUCKET_NAME
 
-# Synchroniser un repertoire local
-rclone sync ./mon-dossier hikube:$BUCKET_NAME/mon-dossier
+# Sincronizzare una directory locale
+rclone sync ./mia-cartella hikube:$BUCKET_NAME/mia-cartella
 
-# Copier un fichier
+# Copiare un file
 rclone copy fichier.txt hikube:$BUCKET_NAME/
 ```
 
-### 4. Utiliser le bucket dans un pod Kubernetes
+### 4. Utilizzare il bucket in un pod Kubernetes
 
-Pour injecter les identifiants S3 dans un pod, utilisez un `initContainer` qui lit le Secret et expose les valeurs comme variables d'environnement, ou montez directement le Secret :
+Per iniettare le credenziali S3 in un pod, utilizzate un `initContainer` che legge il Secret ed espone i valori come variabili d'ambiente, oppure montate direttamente il Secret:
 
 ```yaml title="app-with-bucket.yaml"
 apiVersion: apps/v1
@@ -186,47 +186,47 @@ spec:
 ```
 
 :::tip
-Pour une approche plus simple, vous pouvez aussi monter le Secret complet et lire le JSON directement dans votre application au demarrage.
+Per un approccio più semplice, potete anche montare il Secret completo e leggere il JSON direttamente nella vostra applicazione all'avvio.
 :::
 
-### 5. Buone pratiche de securite
+### 5. Buone pratiche di sicurezza
 
 :::warning
-Ne stockez jamais vos cles S3 en clair dans vos manifestes ou depots Git. Utilisez toujours les Secrets Kubernetes pour gerer les identifiants.
+Non archiviate mai le vostre chiavi S3 in chiaro nei manifesti o nei repository Git. Utilizzate sempre i Secret Kubernetes per gestire le credenziali.
 :::
 
-Recommandations :
+Raccomandazioni:
 
-- **Utilisez les Secrets Kubernetes** : les identifiants sont deja stockes dans un Secret genere automatiquement. Referez-le plutot que de copier les cles en clair.
-- **Ne commitez jamais les cles** : ajoutez les fichiers contenant des identifiants a votre `.gitignore`.
-- **Limitez l'acces aux Secrets** : configurez des RBAC Kubernetes pour restreindre les namespaces et les utilisateurs qui peuvent lire les Secrets de buckets.
-- **Rotation des cles** : si vous suspectez une compromission, supprimez et recreez le bucket pour obtenir de nouvelles cles.
+- **Utilizzate i Secret Kubernetes**: le credenziali sono già archiviate in un Secret generato automaticamente. Fate riferimento ad esso piuttosto che copiare le chiavi in chiaro.
+- **Non committate mai le chiavi**: aggiungete i file contenenti credenziali al vostro `.gitignore`.
+- **Limitate l'accesso ai Secret**: configurate RBAC Kubernetes per restringere i namespace e gli utenti che possono leggere i Secret dei bucket.
+- **Rotazione delle chiavi**: se sospettate una compromissione, eliminate e ricreate il bucket per ottenere nuove chiavi.
 
 ## Verifica
 
-Confirmez que votre configuration est fonctionnelle avec chaque client :
+Confermate che la vostra configurazione sia funzionante con ogni client:
 
-1. **AWS CLI** :
+1. **AWS CLI**:
 
 ```bash
 aws s3 ls s3://$BUCKET_NAME --endpoint-url https://prod.s3.hikube.cloud
 ```
 
-2. **MinIO Client** :
+2. **MinIO Client**:
 
 ```bash
 mc ls hikube/$BUCKET_NAME
 ```
 
-3. **rclone** :
+3. **rclone**:
 
 ```bash
 rclone ls hikube:$BUCKET_NAME
 ```
 
-Si la commande retourne une liste vide (bucket vide) ou la liste des objets existants sans erreur, la configuration est correcte.
+Se il comando restituisce una lista vuota (bucket vuoto) o la lista degli oggetti esistenti senza errore, la configurazione è corretta.
 
 ## Per approfondire
 
-- [Reference API Buckets](../api-reference.md)
-- [Comment connecter un bucket depuis une application](./connect-from-app.md)
+- [Riferimento API Bucket](../api-reference.md)
+- [Come connettere un bucket da un'applicazione](./connect-from-app.md)

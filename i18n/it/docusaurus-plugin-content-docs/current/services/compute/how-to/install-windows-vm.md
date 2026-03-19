@@ -1,23 +1,23 @@
 ---
-title: Come installare una VM Windows
+title: "Come installare una VM Windows"
 ---
 
-# Comment installer une VM Windows
+# Come installare una VM Windows
 
-L'installation d'une VM Windows Server sur Hikube nécessite plusieurs étapes manuelles : préparer les disques ISO, créer la VM, installer Windows via VNC puis charger les drivers virtio. Ce guide détaille l'ensemble du processus.
+L'installazione di una VM Windows Server su Hikube richiede diversi passaggi manuali: preparare i dischi ISO, creare la VM, installare Windows tramite VNC poi caricare i driver virtio. Questa guida dettaglia l'intero processo.
 
-## Prerequisitiiti
+## Prerequisiti
 
-- **kubectl** configuré avec votre kubeconfig Hikube
-- **virtctl** installé pour l'accès VNC
-- Licence ou évaluation **Windows Server 2025** (l'ISO d'évaluation est utilisée dans ce guide)
-- Espace de stockage suffisant (environ 70 Gi au total)
+- **kubectl** configurato con il vostro kubeconfig Hikube
+- **virtctl** installato per l'accesso VNC
+- Licenza o valutazione **Windows Server 2025** (l'ISO di valutazione viene utilizzato in questa guida)
+- Spazio di storage sufficiente (circa 70 Gi in totale)
 
 ## Passi
 
-### 1. Créer le disque ISO Windows Server 2025
+### 1. Creare il disco ISO Windows Server 2025
 
-Créez un VMDisk de type optique contenant l'ISO d'installation Windows Server :
+Create un VMDisk di tipo ottico contenente l'ISO di installazione Windows Server:
 
 ```yaml title="win-iso-disk.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -37,9 +37,9 @@ spec:
 kubectl apply -f win-iso-disk.yaml
 ```
 
-### 2. Créer le disque ISO des drivers virtio
+### 2. Creare il disco ISO dei driver virtio
 
-Les drivers virtio sont indispensables pour que Windows reconnaisse les disques et le réseau dans un environnement KubeVirt :
+I driver virtio sono indispensabili affinché Windows riconosca i dischi e la rete in un ambiente KubeVirt:
 
 ```yaml title="virtio-drivers-disk.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -59,9 +59,9 @@ spec:
 kubectl apply -f virtio-drivers-disk.yaml
 ```
 
-### 3. Créer le disque système
+### 3. Creare il disco di sistema
 
-Créez un disque vide qui servira de disque système pour Windows :
+Create un disco vuoto che servirà come disco di sistema per Windows:
 
 ```yaml title="win-system-disk.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -79,13 +79,13 @@ spec:
 kubectl apply -f win-system-disk.yaml
 ```
 
-### 4. Vérifier que les trois disques sont prêts
+### 4. Verificare che i tre dischi siano pronti
 
 ```bash
 kubectl get vmdisk win2k25-iso virtio-drivers win-system
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```
 NAME              STATUS   SIZE   STORAGECLASS   AGE
@@ -94,13 +94,13 @@ virtio-drivers    Ready    1Gi    replicated     2m
 win-system        Ready    60Gi   replicated     1m
 ```
 
-:::note Temps de téléchargement
-Le téléchargement de l'ISO Windows (~5 Go) peut prendre plusieurs minutes selon la bande passante. Attendez que tous les disques soient en statut `Ready`.
+:::note Tempo di download
+Il download dell'ISO Windows (~5 GB) può richiedere diversi minuti a seconda della larghezza di banda. Attendete che tutti i dischi siano in stato `Ready`.
 :::
 
-### 5. Créer la VMInstance
+### 5. Creare la VMInstance
 
-Créez la VM avec les trois disques attachés. Le disque système doit être en première position :
+Create la VM con i tre dischi collegati. Il disco di sistema deve essere in prima posizione:
 
 ```yaml title="windows-vm.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -125,47 +125,47 @@ spec:
 kubectl apply -f windows-vm.yaml
 ```
 
-Attendez que la VM démarre :
+Attendete che la VM si avvii:
 
 ```bash
 kubectl get vminstance windows-server -w
 ```
 
-### 6. Accéder via VNC pour l'installation
+### 6. Accedere tramite VNC per l'installazione
 
-Ouvrez une session VNC vers la VM :
+Aprite una sessione VNC verso la VM:
 
 ```bash
 virtctl vnc windows-server
 ```
 
-L'installeur Windows devrait démarrer automatiquement depuis l'ISO. Suivez les étapes classiques de l'installation :
+L'installer Windows dovrebbe avviarsi automaticamente dall'ISO. Seguite i passaggi classici dell'installazione:
 
-1. Choisissez la langue et le clavier
-2. Cliquez sur **Installer maintenant**
-3. Sélectionnez l'édition Windows Server souhaitée
-4. Acceptez le contrat de licence
-5. Choisissez **Installation personnalisée**
+1. Scegliete la lingua e la tastiera
+2. Cliccate su **Installa ora**
+3. Selezionate l'edizione Windows Server desiderata
+4. Accettate il contratto di licenza
+5. Scegliete **Installazione personalizzata**
 
-### 7. Charger les drivers virtio pendant l'installation
+### 7. Caricare i driver virtio durante l'installazione
 
-Lors de l'étape de sélection du disque d'installation, Windows ne détectera aucun disque. Vous devez charger les drivers virtio :
+Durante il passaggio di selezione del disco di installazione, Windows non rileverà nessun disco. Dovete caricare i driver virtio:
 
-1. Cliquez sur **Charger un pilote** (Load driver)
-2. Cliquez sur **Parcourir** (Browse)
-3. Naviguez vers le lecteur CD des drivers virtio (généralement `E:\`)
-4. Sélectionnez le dossier `vioscsi\2k25\amd64` (storage controller)
-5. Cliquez sur **OK** puis **Suivant**
+1. Cliccate su **Carica un driver** (Load driver)
+2. Cliccate su **Sfoglia** (Browse)
+3. Navigate verso il lettore CD dei driver virtio (generalmente `E:\`)
+4. Selezionate la cartella `vioscsi\2k25\amd64` (storage controller)
+5. Cliccate su **OK** poi **Avanti**
 
-Le disque de 60 Go devrait maintenant apparaitre. Sélectionnez-le et poursuivez l'installation.
+Il disco da 60 GB dovrebbe ora apparire. Selezionatelo e proseguite l'installazione.
 
-:::warning Drivers réseau
-Après l'installation, installez également les drivers réseau (NetKVM) et ballon mémoire (Balloon) depuis le CD virtio pour des performances optimales. Naviguez dans les dossiers `NetKVM\2k25\amd64` et `Balloon\2k25\amd64`.
+:::warning Driver di rete
+Dopo l'installazione, installate anche i driver di rete (NetKVM) e balloon di memoria (Balloon) dal CD virtio per prestazioni ottimali. Navigate nelle cartelle `NetKVM\2k25\amd64` e `Balloon\2k25\amd64`.
 :::
 
-### 8. Post-installation : retirer les disques ISO
+### 8. Post-installazione: rimuovere i dischi ISO
 
-Une fois Windows installé et fonctionnel, retirez les disques ISO du manifeste pour libérer les ressources et éviter de démarrer sur l'ISO :
+Una volta che Windows è installato e funzionale, rimuovete i dischi ISO dal manifest per liberare le risorse e evitare di avviare dall'ISO:
 
 ```yaml title="windows-vm.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -188,52 +188,52 @@ spec:
 kubectl apply -f windows-vm.yaml
 ```
 
-Vous pouvez ensuite supprimer les VMDisk ISO si vous n'en avez plus besoin :
+Potete poi eliminare i VMDisk ISO se non ne avete più bisogno:
 
 ```bash
 kubectl delete vmdisk win2k25-iso virtio-drivers
 ```
 
-### 9. Configurer l'accès RDP (optionnel)
+### 9. Configurare l'accesso RDP (opzionale)
 
-La VM expose déjà le port 3389 (RDP). Récupérez l'adresse IP externe :
+La VM espone già la porta 3389 (RDP). Recuperate l'indirizzo IP esterno:
 
 ```bash
 kubectl get vminstance windows-server -o yaml
 ```
 
-Connectez-vous avec votre client RDP :
+Connettetevi con il vostro client RDP:
 
 ```bash
-# Depuis Linux
-xfreerdp /v:<IP-EXTERNE> /u:Administrator
+# Da Linux
+xfreerdp /v:<IP-ESTERNO> /u:Administrator
 
-# Depuis macOS (Microsoft Remote Desktop)
-# Ajoutez un PC avec l'adresse <IP-EXTERNE>
+# Da macOS (Microsoft Remote Desktop)
+# Aggiungete un PC con l'indirizzo <IP-ESTERNO>
 ```
 
 ## Verifica
 
-Vérifiez que la VM Windows fonctionne correctement :
+Verificate che la VM Windows funzioni correttamente:
 
 ```bash
 kubectl get vminstance windows-server
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```
 NAME              STATUS    AGE
 windows-server    Running   15m
 ```
 
-Testez l'accès RDP sur le port 3389 :
+Testate l'accesso RDP sulla porta 3389:
 
 ```bash
-nc -zv <IP-EXTERNE> 3389
+nc -zv <IP-ESTERNO> 3389
 ```
 
 ## Per approfondire
 
-- [Référence API](../api-reference.md)
-- [Comment configurer le réseau externe](./configure-network.md)
+- [Riferimento API](../api-reference.md)
+- [Come configurare la rete esterna](./configure-network.md)

@@ -3,12 +3,12 @@ sidebar_position: 8
 title: FluxCD
 ---
 
-<!--Lien vers valuesoverride-->
+<!--Link verso valuesoverride-->
 
-# 🧩 Détails du champ `addons.fluxcd`
+# 🧩 Dettagli del campo `addons.fluxcd`
 
-Le champ `addons.fluxcd` définit la configuration de l’add-on **FluxCD**, utilisé pour la **gestion GitOps** du cluster Kubernetes.
-FluxCD synchronise automatiquement l’état du cluster avec des dépôts Git, garantissant que la configuration déclarée dans le code est toujours appliquée.
+Il campo `addons.fluxcd` definisce la configurazione dell'add-on **FluxCD**, utilizzato per la **gestione GitOps** del cluster Kubernetes.
+FluxCD sincronizza automaticamente lo stato del cluster con i repository Git, garantendo che la configurazione dichiarata nel codice sia sempre applicata.
 
 ```yaml
 addons:
@@ -28,14 +28,14 @@ addons:
 
 ---
 
-## `fluxcd` (Object) — **Obligatoire**
+## `fluxcd` (Object) — **Obbligatorio**
 
-### Description
+### Descrizione
 
-Le champ `fluxcd` regroupe la configuration principale du gestionnaire GitOps du cluster.
-Il permet d’activer le déploiement de FluxCD et d’ajuster sa configuration via Helm.
+Il campo `fluxcd` raggruppa la configurazione principale del gestore GitOps del cluster.
+Permette di attivare la distribuzione di FluxCD e di regolarne la configurazione tramite Helm.
 
-### Exemple
+### Esempio
 
 ```yaml
 fluxcd:
@@ -47,14 +47,14 @@ fluxcd:
 
 ---
 
-## `enabled` (boolean) — **Obligatoire**
+## `enabled` (boolean) — **Obbligatorio**
 
-### Description
+### Descrizione
 
-Indique si **FluxCD** est activé (`true`) ou désactivé (`false`) dans le cluster.
-Lorsqu’il est activé, FluxCD déploie ses contrôleurs et démarre la synchronisation GitOps.
+Indica se **FluxCD** e attivato (`true`) o disattivato (`false`) nel cluster.
+Quando e attivato, FluxCD distribuisce i suoi controller e avvia la sincronizzazione GitOps.
 
-### Exemple
+### Esempio
 
 ```yaml
 enabled: true
@@ -62,16 +62,16 @@ enabled: true
 
 ---
 
-## `valuesOverride` (Object) — **Obligatoire**
+## `valuesOverride` (Object) — **Obbligatorio**
 
-### Description
+### Descrizione
 
-Le champ `valuesOverride` permet de **surcharger les valeurs Helm par défaut** utilisées pour le déploiement de FluxCD.
-Il est notamment utilisé pour configurer les ressources, les CRDs, ou les options avancées comme la fréquence de synchronisation, les sources Git et les stratégies de mise à jour automatique.
+Il campo `valuesOverride` permette di **sovrascrivere i valori Helm predefiniti** utilizzati per la distribuzione di FluxCD.
+E utilizzato in particolare per configurare le risorse, i CRD o le opzioni avanzate come la frequenza di sincronizzazione, le sorgenti Git e le strategie di aggiornamento automatico.
 
-### Exemples
+### Esempi
 
-#### Configuration basique
+#### Configurazione base
 
 ```yaml
 valuesOverride:
@@ -86,13 +86,13 @@ valuesOverride:
         memory: 256Mi
 ```
 
-#### Configuration avec un gitrepo de fluxcd
+#### Configurazione con un gitrepo di fluxcd
 
 ```yaml
 valuesOverride:
   fluxcd:
     installCRDs: true
-    # Configuration du Git repository
+    # Configurazione del repository Git
     gitRepository:
       url: "https://github.com/company/k8s-manifests"
       branch: "main"
@@ -103,7 +103,7 @@ valuesOverride:
 
 ## 💡 Buone pratiche
 
-- Activer `enabled: true` pour bénéficier du déploiement continu basé sur GitOps.
-- Utiliser `valuesOverride` pour personnaliser les ressources et ajuster la fréquence de synchronisation selon les besoins.
-- Sécuriser l’accès Git avec des **secrets Kubernetes** ou des **tokens personnels**.
-- Vérifier la compatibilité de la version de FluxCD avec celle de Kubernetes avant chaque mise à jour.
+- Attivare `enabled: true` per beneficiare della distribuzione continua basata su GitOps.
+- Utilizzare `valuesOverride` per personalizzare le risorse e regolare la frequenza di sincronizzazione in base alle esigenze.
+- Proteggere l'accesso Git con **secret Kubernetes** o **token personali**.
+- Verificare la compatibilita della versione di FluxCD con quella di Kubernetes prima di ogni aggiornamento.

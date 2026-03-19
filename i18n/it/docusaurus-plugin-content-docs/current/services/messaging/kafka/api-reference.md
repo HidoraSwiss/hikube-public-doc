@@ -3,17 +3,17 @@ sidebar_position: 3
 title: Riferimento API
 ---
 
-# Référence API Kafka
+# Riferimento API Kafka
 
-Cette référence détaille la configuration et le fonctionnement des **clusters Kafka** sur Hikube, incluant la gestion des **topics**, la configuration des **brokers Kafka**, et la coordination via **ZooKeeper**.
+Questo riferimento descrive in dettaglio la configurazione e il funzionamento dei **cluster Kafka** su Hikube, inclusa la gestione dei **topic**, la configurazione dei **broker Kafka** e il coordinamento tramite **ZooKeeper**.
 
 ---
 
-## Structure de Base
+## Struttura di Base
 
-### **Ressource Kafka**
+### **Risorsa Kafka**
 
-#### Exemple de configuration YAML
+#### Esempio di configurazione YAML
 
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
@@ -35,15 +35,15 @@ spec:
 
 ---
 
-## Paramètres
+## Parametri
 
-### **Paramètres Communs**
+### **Parametri Comuni**
 
-| **Paramètre** | **Type** | **Description**                                                                 | **Défaut** | **Requis** |
-| ------------- | -------- | ------------------------------------------------------------------------------- | ---------- | ---------- |
-| `external`    | `bool`   | Active l’accès externe au cluster Kafka (exposition hors du cluster Kubernetes) | `false`    | Non        |
+| **Parametro** | **Tipo** | **Descrizione**                                                                 | **Default** | **Richiesto** |
+| ------------- | -------- | ------------------------------------------------------------------------------- | ----------- | ------------- |
+| `external`    | `bool`   | Attiva l'accesso esterno al cluster Kafka (esposizione fuori dal cluster Kubernetes) | `false`    | No            |
 
-#### Exemple YAML
+#### Esempio YAML
 
 ```yaml title="kafka.yaml"
 external: true
@@ -51,20 +51,20 @@ external: true
 
 ---
 
-### **Paramètres Kafka**
+### **Parametri Kafka**
 
-| **Paramètre**            | **Type**   | **Description**                                                                                          | **Défaut** | **Requis** |
-| ------------------------ | ---------- | -------------------------------------------------------------------------------------------------------- | ---------- | ---------- |
-| `kafka`                  | `object`   | Configuration du cluster Kafka                                                                           | `{}`       | Oui        |
-| `kafka.replicas`         | `int`      | Nombre de réplicas Kafka (brokers)                                                                       | `3`        | Oui        |
-| `kafka.resources`        | `object`   | Configuration explicite CPU et mémoire pour chaque broker. Si vide, `kafka.resourcesPreset` est utilisé. | `{}`       | Non        |
-| `kafka.resources.cpu`    | `quantity` | CPU disponible par broker                                                                                | `null`     | Non        |
-| `kafka.resources.memory` | `quantity` | RAM disponible par broker                                                                                | `null`     | Non        |
-| `kafka.resourcesPreset`  | `string`   | Preset de ressources par défaut (`nano`, `micro`, `small`, `medium`, `large`, `xlarge`, `2xlarge`)       | `"small"`  | Oui        |
-| `kafka.size`             | `quantity` | Taille du volume persistant utilisé pour les données Kafka                                               | `10Gi`     | Oui        |
-| `kafka.storageClass`     | `string`   | StorageClass utilisé pour stocker les données Kafka                                                      | `""`       | Non        |
+| **Parametro**            | **Tipo**   | **Descrizione**                                                                                          | **Default** | **Richiesto** |
+| ------------------------ | ---------- | -------------------------------------------------------------------------------------------------------- | ----------- | ------------- |
+| `kafka`                  | `object`   | Configurazione del cluster Kafka                                                                         | `{}`        | Sì            |
+| `kafka.replicas`         | `int`      | Numero di repliche Kafka (broker)                                                                        | `3`         | Sì            |
+| `kafka.resources`        | `object`   | Configurazione esplicita di CPU e memoria per ogni broker. Se vuoto, viene utilizzato `kafka.resourcesPreset`. | `{}`   | No            |
+| `kafka.resources.cpu`    | `quantity` | CPU disponibile per broker                                                                               | `null`      | No            |
+| `kafka.resources.memory` | `quantity` | RAM disponibile per broker                                                                               | `null`      | No            |
+| `kafka.resourcesPreset`  | `string`   | Preset di risorse predefinito (`nano`, `micro`, `small`, `medium`, `large`, `xlarge`, `2xlarge`)         | `"small"`   | Sì            |
+| `kafka.size`             | `quantity` | Dimensione del volume persistente utilizzato per i dati Kafka                                            | `10Gi`      | Sì            |
+| `kafka.storageClass`     | `string`   | StorageClass utilizzata per archiviare i dati Kafka                                                      | `""`        | No            |
 
-#### Exemple YAML
+#### Esempio YAML
 
 ```yaml title="kafka.yaml"
 kafka:
@@ -79,20 +79,20 @@ kafka:
 
 ---
 
-### **Paramètres ZooKeeper**
+### **Parametri ZooKeeper**
 
-| **Paramètre**                | **Type**   | **Description**                                                                                                | **Défaut** | **Requis** |
-| ---------------------------- | ---------- | -------------------------------------------------------------------------------------------------------------- | ---------- | ---------- |
-| `zookeeper`                  | `object`   | Configuration du cluster ZooKeeper utilisé par Kafka                                                           | `{}`       | Oui        |
-| `zookeeper.replicas`         | `int`      | Nombre de réplicas ZooKeeper                                                                                   | `3`        | Oui        |
-| `zookeeper.resources`        | `object`   | Configuration explicite CPU et mémoire pour chaque réplique. Si vide, `zookeeper.resourcesPreset` est utilisé. | `{}`       | Non        |
-| `zookeeper.resources.cpu`    | `quantity` | CPU disponible par réplique ZooKeeper                                                                          | `null`     | Non        |
-| `zookeeper.resources.memory` | `quantity` | RAM disponible par réplique ZooKeeper                                                                          | `null`     | Non        |
-| `zookeeper.resourcesPreset`  | `string`   | Preset de ressources par défaut (`nano`, `micro`, `small`, `medium`, `large`, `xlarge`, `2xlarge`)             | `"small"`  | Oui        |
-| `zookeeper.size`             | `quantity` | Taille du volume persistant pour ZooKeeper                                                                     | `5Gi`      | Oui        |
-| `zookeeper.storageClass`     | `string`   | StorageClass utilisé pour stocker les données ZooKeeper                                                        | `""`       | Non        |
+| **Parametro**                | **Tipo**   | **Descrizione**                                                                                                | **Default** | **Richiesto** |
+| ---------------------------- | ---------- | -------------------------------------------------------------------------------------------------------------- | ----------- | ------------- |
+| `zookeeper`                  | `object`   | Configurazione del cluster ZooKeeper utilizzato da Kafka                                                       | `{}`        | Sì            |
+| `zookeeper.replicas`         | `int`      | Numero di repliche ZooKeeper                                                                                   | `3`         | Sì            |
+| `zookeeper.resources`        | `object`   | Configurazione esplicita di CPU e memoria per ogni replica. Se vuoto, viene utilizzato `zookeeper.resourcesPreset`. | `{}`   | No            |
+| `zookeeper.resources.cpu`    | `quantity` | CPU disponibile per replica ZooKeeper                                                                          | `null`      | No            |
+| `zookeeper.resources.memory` | `quantity` | RAM disponibile per replica ZooKeeper                                                                          | `null`      | No            |
+| `zookeeper.resourcesPreset`  | `string`   | Preset di risorse predefinito (`nano`, `micro`, `small`, `medium`, `large`, `xlarge`, `2xlarge`)               | `"small"`   | Sì            |
+| `zookeeper.size`             | `quantity` | Dimensione del volume persistente per ZooKeeper                                                                | `5Gi`       | Sì            |
+| `zookeeper.storageClass`     | `string`   | StorageClass utilizzata per archiviare i dati ZooKeeper                                                        | `""`        | No            |
 
-#### Exemple YAML
+#### Esempio YAML
 
 ```yaml title="kafka.yaml"
 zookeeper:
@@ -104,17 +104,17 @@ zookeeper:
 
 ---
 
-### **Paramètres Topics**
+### **Parametri Topics**
 
-| **Paramètre**          | **Type**   | **Description**                                             | **Défaut** | **Requis** |
-| ---------------------- | ---------- | ----------------------------------------------------------- | ---------- | ---------- |
-| `topics`               | `[]object` | Liste des topics à créer automatiquement                    | `[]`       | Non        |
-| `topics[i].name`       | `string`   | Nom du topic                                                | `""`       | Oui        |
-| `topics[i].partitions` | `int`      | Nombre de partitions du topic                               | `0`        | Oui        |
-| `topics[i].replicas`   | `int`      | Nombre de réplicas du topic                                 | `0`        | Oui        |
-| `topics[i].config`     | `object`   | Configuration avancée du topic (nettoyage, rétention, etc.) | `{}`       | Non        |
+| **Parametro**          | **Tipo**   | **Descrizione**                                             | **Default** | **Richiesto** |
+| ---------------------- | ---------- | ----------------------------------------------------------- | ----------- | ------------- |
+| `topics`               | `[]object` | Lista dei topic da creare automaticamente                   | `[]`        | No            |
+| `topics[i].name`       | `string`   | Nome del topic                                              | `""`        | Sì            |
+| `topics[i].partitions` | `int`      | Numero di partizioni del topic                              | `0`         | Sì            |
+| `topics[i].replicas`   | `int`      | Numero di repliche del topic                                | `0`         | Sì            |
+| `topics[i].config`     | `object`   | Configurazione avanzata del topic (pulizia, retention, ecc.) | `{}`       | No            |
 
-#### Exemple YAML
+#### Esempio YAML
 
 ```yaml title="kafka.yaml"
 topics:
@@ -135,12 +135,12 @@ topics:
 
 ---
 
-### **resources et resourcesPreset**
+### **resources e resourcesPreset**
 
-Le champ `resources` permet de définir explicitement la configuration CPU et mémoire de chaque broker ou nœud ZooKeeper.
-Si ce champ est laissé vide, la valeur du paramètre `resourcesPreset` est utilisée.
+Il campo `resources` consente di definire esplicitamente la configurazione CPU e memoria di ogni broker o nodo ZooKeeper.
+Se questo campo viene lasciato vuoto, viene utilizzato il valore del parametro `resourcesPreset`.
 
-#### Exemple YAML
+#### Esempio YAML
 
 ```yaml title="kafka.yaml"
 resources:
@@ -148,9 +148,9 @@ resources:
   memory: 4Gi
 ```
 
-⚠️ Attention : si `resources` est défini, la valeur de `resourcesPreset` est ignorée.
+⚠️ Attenzione: se `resources` è definito, il valore di `resourcesPreset` viene ignorato.
 
-| **Preset name** | **CPU** | **Mémoire** |
+| **Nome Preset** | **CPU** | **Memoria** |
 | --------------- | ------- | ----------- |
 | `nano`          | 250m    | 128Mi       |
 | `micro`         | 500m    | 256Mi       |
@@ -164,7 +164,7 @@ resources:
 
 ## Esempi Completi
 
-### Cluster de Production
+### Cluster di Produzione
 
 ```yaml title="kafka-production.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -201,7 +201,7 @@ spec:
         min.insync.replicas: "2"
 ```
 
-### Cluster de Développement
+### Cluster di Sviluppo
 
 ```yaml title="kafka-development.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -228,15 +228,15 @@ spec:
 
 :::tip Buone Pratiche
 
-- **`min.insync.replicas: 2`** : configurez ce paramètre sur vos topics de production pour garantir qu'au moins 2 réplicas confirment chaque écriture
-- **Stockage répliqué** : utilisez `storageClass: replicated` pour protéger les données contre la perte d'un nœud physique
-- **Dimensionnement du stockage** : prévoyez suffisamment d'espace disque pour la rétention des messages (`retention.ms`) et la compaction
-- **ZooKeeper : 3 réplicas minimum** en production pour garantir le quorum et la tolérance aux pannes
+- **`min.insync.replicas: 2`**: configurate questo parametro sui vostri topic di produzione per garantire che almeno 2 repliche confermino ogni scrittura
+- **Archiviazione replicata**: utilizzate `storageClass: replicated` per proteggere i dati dalla perdita di un nodo fisico
+- **Dimensionamento dell'archiviazione**: prevedete spazio su disco sufficiente per la retention dei messaggi (`retention.ms`) e la compaction
+- **ZooKeeper: minimo 3 repliche** in produzione per garantire il quorum e la tolleranza ai guasti
 :::
 
-:::warning Attention
+:::warning Attenzione
 
-- **Les suppressions sont irréversibles** : la suppression d'une ressource Kafka entraîne la perte définitive de tous les messages et topics
-- **Réplicas topic vs brokers** : le nombre de réplicas d'un topic ne peut pas dépasser le nombre de brokers disponibles
-- **Réduction du nombre de brokers** : réduire le nombre de brokers sur un cluster existant peut entraîner une perte de données si des partitions ne sont pas redistribuées au préalable
+- **Le eliminazioni sono irreversibili**: l'eliminazione di una risorsa Kafka comporta la perdita definitiva di tutti i messaggi e topic
+- **Repliche topic vs broker**: il numero di repliche di un topic non può superare il numero di broker disponibili
+- **Riduzione del numero di broker**: ridurre il numero di broker su un cluster esistente può comportare una perdita di dati se le partizioni non vengono redistribuite preventivamente
 :::

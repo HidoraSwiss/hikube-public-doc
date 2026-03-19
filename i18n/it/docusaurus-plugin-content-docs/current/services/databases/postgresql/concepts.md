@@ -3,11 +3,11 @@ sidebar_position: 2
 title: Concetti
 ---
 
-# Concepts — PostgreSQL
+# Concetti — PostgreSQL
 
 ## Architettura
 
-PostgreSQL sur Hikube est un service managé basé sur l'opérateur **CloudNativePG**. Chaque instance déployée via la ressource `Postgres` crée un cluster répliqué avec failover automatique, réplication streaming et sauvegarde intégrée.
+PostgreSQL su Hikube e un servizio gestito basato sull'operatore **CloudNativePG**. Ogni istanza distribuita tramite la risorsa `Postgres` crea un cluster replicato con failover automatico, replica streaming e backup integrato.
 
 ```mermaid
 graph TB
@@ -27,13 +27,13 @@ graph TB
             R2[Replica 2 - RO]
         end
 
-        subgraph "Stockage"
+        subgraph "Archiviazione"
             PV1[PV Primary]
             PV2[PV Replica 1]
             PV3[PV Replica 2]
         end
 
-        subgraph "Sauvegarde"
+        subgraph "Backup"
             S3[Bucket S3]
             WAL[WAL Archive]
         end
@@ -57,26 +57,26 @@ graph TB
 
 ## Terminologia
 
-| Terme | Description |
-|-------|-------------|
-| **Postgres** | Ressource Kubernetes (`apps.cozystack.io/v1alpha1`) représentant un cluster PostgreSQL managé. |
-| **Primary** | Instance principale qui accepte les lectures et écritures. |
-| **Replica** | Instance en lecture seule, synchronisée par streaming replication depuis le primary. |
-| **CloudNativePG** | Opérateur Kubernetes qui gère le cycle de vie des clusters PostgreSQL (déploiement, failover, backup). |
-| **PITR** | Point-In-Time Recovery — restauration à un instant précis grâce à l'archivage continu des WAL. |
-| **WAL** | Write-Ahead Log — journal des transactions PostgreSQL, base du PITR et de la réplication. |
-| **Quorum** | Nombre minimum de réplicas synchrones requis avant de confirmer une écriture. |
-| **resourcesPreset** | Profil de ressources prédéfini (nano à 2xlarge) pour simplifier le dimensionnement. |
+| Termine | Descrizione |
+|---------|-------------|
+| **Postgres** | Risorsa Kubernetes (`apps.cozystack.io/v1alpha1`) che rappresenta un cluster PostgreSQL gestito. |
+| **Primary** | Istanza principale che accetta letture e scritture. |
+| **Replica** | Istanza in sola lettura, sincronizzata tramite streaming replication dal primary. |
+| **CloudNativePG** | Operatore Kubernetes che gestisce il ciclo di vita dei cluster PostgreSQL (deployment, failover, backup). |
+| **PITR** | Point-In-Time Recovery — ripristino a un istante preciso grazie all'archiviazione continua dei WAL. |
+| **WAL** | Write-Ahead Log — registro delle transazioni PostgreSQL, base del PITR e della replica. |
+| **Quorum** | Numero minimo di repliche sincrone richieste prima di confermare una scrittura. |
+| **resourcesPreset** | Profilo di risorse predefinito (da nano a 2xlarge) per semplificare il dimensionamento. |
 
 ---
 
-## Réplication et haute disponibilité
+## Replica e alta disponibilita
 
-CloudNativePG assure la haute disponibilité via :
+CloudNativePG assicura l'alta disponibilita tramite:
 
-1. **Streaming replication** : les réplicas reçoivent les WAL en temps réel depuis le primary
-2. **Failover automatique** : si le primary tombe, un réplica est promu automatiquement
-3. **Réplication synchrone** (optionnel) : le primary attend la confirmation d'écriture des réplicas avant de valider une transaction
+1. **Streaming replication**: le repliche ricevono i WAL in tempo reale dal primary
+2. **Failover automatico**: se il primary cade, una replica viene promossa automaticamente
+3. **Replica sincrona** (opzionale): il primary attende la conferma di scrittura delle repliche prima di validare una transazione
 
 ```mermaid
 sequenceDiagram
@@ -86,58 +86,58 @@ sequenceDiagram
     participant Replica2
 
     Client->>Primary: INSERT INTO ...
-    Primary->>Primary: Écriture WAL
+    Primary->>Primary: Scrittura WAL
     Primary->>Replica1: WAL streaming
     Primary->>Replica2: WAL streaming
-    Replica1-->>Primary: ACK (si synchrone)
+    Replica1-->>Primary: ACK (se sincrono)
     Primary-->>Client: COMMIT OK
 ```
 
-Le champ `quorum` définit le nombre de réplicas synchrones :
-- `quorum: 0` (défaut) — réplication asynchrone, meilleures performances
-- `quorum: 1` — au moins 1 réplica synchrone, protection contre la perte de données
+Il campo `quorum` definisce il numero di repliche sincrone:
+- `quorum: 0` (predefinito) — replica asincrona, migliori prestazioni
+- `quorum: 1` — almeno 1 replica sincrona, protezione contro la perdita di dati
 
 :::tip
-Pour la production, configurez `replicas: 3` et `quorum: 1` pour un bon compromis entre performance et durabilité.
+Per la produzione, configurate `replicas: 3` e `quorum: 1` per un buon compromesso tra prestazioni e durabilita.
 :::
 
 ---
 
-## Sauvegarde et restauration
+## Backup e ripristino
 
-PostgreSQL sur Hikube supporte deux mécanismes de sauvegarde :
+PostgreSQL su Hikube supporta due meccanismi di backup:
 
-### Sauvegarde continue (WAL archiving)
+### Backup continuo (WAL archiving)
 
-Les WAL sont archivés en continu vers un bucket S3. Cela permet le **PITR** (Point-In-Time Recovery) — restaurer la base à n'importe quel instant dans le passé.
+I WAL vengono archiviati continuamente verso un bucket S3. Questo permette il **PITR** (Point-In-Time Recovery) — ripristinare il database a qualsiasi istante nel passato.
 
-### Sauvegarde planifiée
+### Backup pianificato
 
-Un cron schedule déclenche des sauvegardes complètes (base backup) à intervalles réguliers. La politique de rétention (`retentionPolicy`) détermine la durée de conservation.
+Un cron schedule attiva backup completi (base backup) a intervalli regolari. La politica di retention (`retentionPolicy`) determina la durata di conservazione.
 
-| Paramètre | Description |
+| Parametro | Descrizione |
 |-----------|-------------|
-| `backup.schedule` | Planification cron (ex: `0 2 * * *`) |
-| `backup.retentionPolicy` | Durée de rétention (ex: `30d`) |
-| `backup.s3*` | Identifiants et endpoint du bucket S3 |
+| `backup.schedule` | Pianificazione cron (es: `0 2 * * *`) |
+| `backup.retentionPolicy` | Durata di retention (es: `30d`) |
+| `backup.s3*` | Credenziali e endpoint del bucket S3 |
 
 ---
 
-## Gestion des utilisateurs et bases
+## Gestione di utenti e database
 
-Chaque cluster PostgreSQL permet de déclarer :
+Ogni cluster PostgreSQL permette di dichiarare:
 
-- **Utilisateurs** avec mot de passe
-- **Bases de données** avec owner
-- **Rôles** : `admin` (lecture/écriture), `readonly` (lecture seule)
+- **Utenti** con password
+- **Database** con owner
+- **Ruoli**: `admin` (lettura/scrittura), `readonly` (sola lettura)
 
-Les credentials sont stockés dans un **Secret Kubernetes** nommé `<instance>-credentials`.
+Le credenziali sono memorizzate in un **Secret Kubernetes** chiamato `<instance>-credentials`.
 
 ---
 
-## Presets de ressources
+## Preset di risorse
 
-| Preset | CPU | Mémoire |
+| Preset | CPU | Memoria |
 |--------|-----|---------|
 | `nano` | 250m | 128Mi |
 | `micro` | 500m | 256Mi |
@@ -148,22 +148,22 @@ Les credentials sont stockés dans un **Secret Kubernetes** nommé `<instance>-c
 | `2xlarge` | 8 | 8Gi |
 
 :::warning
-Si le champ `resources` (CPU/mémoire explicites) est défini, `resourcesPreset` est ignoré. Les deux approches sont mutuellement exclusives.
+Se il campo `resources` (CPU/memoria espliciti) e definito, `resourcesPreset` viene ignorato. I due approcci sono mutuamente esclusivi.
 :::
 
 ---
 
-## Limites et quotas
+## Limiti e quote
 
-| Paramètre | Valeur |
+| Parametro | Valore |
 |-----------|--------|
-| Réplicas max | Selon quota tenant |
-| Taille stockage | Variable (`size` en Gi) |
-| Connexions par utilisateur | Configurables par base |
+| Repliche max | Secondo la quota del tenant |
+| Dimensione archiviazione | Variabile (`size` in Gi) |
+| Connessioni per utente | Configurabili per database |
 
 ---
 
 ## Per approfondire
 
-- [Overview](./overview.md) : présentation du service
-- [Référence API](./api-reference.md) : tous les paramètres de la ressource Postgres
+- [Panoramica](./overview.md): presentazione del servizio
+- [Riferimento API](./api-reference.md): tutti i parametri della risorsa Postgres

@@ -31,7 +31,7 @@ sudo apt-get update && sudo apt-get install -y kubectl
 
 # RHEL/CentOS/Fedora
 sudo dnf install kubectl
-# ou pour les versions plus anciennes
+# o per le versioni più vecchie
 sudo yum install kubectl
 
 # Alpine Linux
@@ -91,10 +91,10 @@ Per una migliore esperienza di gestione Kubernetes:
 1. **Recuperate il vostro kubeconfig** dal vostro amministratore Hikube
 2. **Configurate kubectl** con il vostro file di configurazione:
    ```bash
-   # Option 1: Variable d'environnement
+   # Opzione 1: Variabile d'ambiente
    export KUBECONFIG=/path/to/your/hikube-kubeconfig.yaml
 
-   # Option 2: Copie dans le répertoire par défaut
+   # Opzione 2: Copia nella directory predefinita
    cp hikube-kubeconfig.yaml ~/.kube/config
    ```
 3. **Verificate la connessione**:
@@ -179,7 +179,7 @@ spec:
 
 4. **Distribuite il cluster**:
    ```bash
-   # Sauvegardez la configuration dans un fichier
+   # Salvate la configurazione in un file
    kubectl apply -f my-kubernetes-cluster.yaml
    ```
 
@@ -201,7 +201,7 @@ spec:
 Affinché il vostro cluster sia accessibile, dovete creare i seguenti record DNS presso il vostro provider DNS:
 
 ```bash
-# Récupérez l'IP publique de votre cluster via les Ingress
+# Recuperate l'IP pubblico del vostro cluster tramite gli Ingress
 kubectl get ingress
 ```
 
@@ -234,11 +234,11 @@ Type A : mon-app.example.com → <ADDRESS>
 Una volta che il vostro cluster è distribuito e pronto, recuperate le sue credenziali con questo comando:
 
 ```bash
-# Récupérez le kubeconfig du cluster créé (adaptez le nom du cluster)
+# Recuperate il kubeconfig del cluster creato (adattate il nome del cluster)
 kubectl get secret kubernetes-<clusterName>-admin-kubeconfig \
   -o go-template='{{ printf "%s\n" (index .data "admin.conf" | base64decode) }}' > admin.conf
 
-# Exemple concret avec le cluster "kube" :
+# Esempio concreto con il cluster "kube":
 kubectl get secret kubernetes-kube-admin-kubeconfig \
   -o go-template='{{ printf "%s\n" (index .data "admin.conf" | base64decode) }}' > admin.conf
 ```
@@ -249,10 +249,10 @@ kubectl get secret kubernetes-kube-admin-kubeconfig \
 
 ### **Configurazione locale**
 ```bash
-# Utilisez le kubeconfig du nouveau cluster
+# Utilizzate il kubeconfig del nuovo cluster
 export KUBECONFIG=./admin.conf
 
-# Vérifiez la connexion au cluster créé
+# Verificate la connessione al cluster creato
 kubectl get nodes
 ```
 
@@ -272,7 +272,7 @@ Avete creato:
 
 - Un **cluster Kubernetes ad alta disponibilità**
 - Un **ambiente totalmente sicuro** (isolamento di rete)
-- Uno **storage resiliente** (replica automatica)
+- Un'**archiviazione resiliente** (replica automatica)
 ---
 
 ## Serve aiuto?

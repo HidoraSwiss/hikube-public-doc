@@ -1,34 +1,34 @@
 ---
-title: Come configurare cloud-init
+title: "Come configurare cloud-init"
 ---
 
-# Comment configurer cloud-init
+# Come configurare cloud-init
 
-cloud-init est le standard de l'industrie pour l'initialisation automatique des VMs au premier démarrage. Hikube supporte cloud-init nativement via le paramètre `cloudInit` de la VMInstance. Ce guide montre comment l'utiliser pour automatiser la configuration de vos VMs.
+cloud-init è lo standard dell'industria per l'inizializzazione automatica delle VM al primo avvio. Hikube supporta cloud-init nativamente tramite il parametro `cloudInit` della VMInstance. Questa guida mostra come utilizzarlo per automatizzare la configurazione delle vostre VM.
 
-## Prerequisitiiti
+## Prerequisiti
 
-- **kubectl** configuré avec votre kubeconfig Hikube
-- Connaissance de base du format **YAML**
-- Un manifeste VMInstance prêt à configurer
+- **kubectl** configurato con il vostro kubeconfig Hikube
+- Conoscenza di base del formato **YAML**
+- Un manifest VMInstance pronto da configurare
 
 ## Passi
 
-### 1. Comprendre cloud-init
+### 1. Comprendere cloud-init
 
-cloud-init s'exécute automatiquement au premier démarrage de la VM. Il permet de :
+cloud-init viene eseguito automaticamente al primo avvio della VM. Permette di:
 
-- Créer des utilisateurs et configurer les accès SSH
-- Installer des paquets
-- Exécuter des commandes au démarrage
-- Écrire des fichiers de configuration
-- Configurer le réseau, le hostname, etc.
+- Creare utenti e configurare gli accessi SSH
+- Installare pacchetti
+- Eseguire comandi all'avvio
+- Scrivere file di configurazione
+- Configurare la rete, l'hostname, ecc.
 
-La configuration cloud-init est passée en YAML inline dans le champ `spec.cloudInit` de la VMInstance. Elle doit commencer par `#cloud-config`.
+La configurazione cloud-init viene passata in YAML inline nel campo `spec.cloudInit` della VMInstance. Deve iniziare con `#cloud-config`.
 
-### 2. Créer un manifeste avec cloud-init
+### 2. Creare un manifest con cloud-init
 
-Voici un exemple complet de VMInstance avec une configuration cloud-init qui crée un utilisateur, installe des paquets et exécute des commandes :
+Ecco un esempio completo di VMInstance con una configurazione cloud-init che crea un utente, installa pacchetti ed esegue comandi:
 
 ```yaml title="vm-cloud-init.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -68,9 +68,9 @@ spec:
       - systemctl enable --now nginx
 ```
 
-### 3. Exemples pratiques
+### 3. Esempi pratici
 
-#### Ajouter un utilisateur sudo
+#### Aggiungere un utente sudo
 
 ```yaml title="cloud-init-user.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -94,7 +94,7 @@ spec:
           - ssh-ed25519 AAAA... deployer@ci
 ```
 
-#### Installer des paquets au démarrage
+#### Installare pacchetti all'avvio
 
 ```yaml title="cloud-init-packages.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -120,7 +120,7 @@ spec:
       - build-essential
 ```
 
-#### Exécuter des commandes au démarrage
+#### Eseguire comandi all'avvio
 
 ```yaml title="cloud-init-runcmd.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -137,12 +137,12 @@ spec:
     #cloud-config
     runcmd:
       - mkdir -p /opt/app
-      - echo "VM initialisée le $(date)" > /opt/app/init.log
+      - echo "VM inizializzata il $(date)" > /opt/app/init.log
       - curl -fsSL https://get.docker.com | sh
       - usermod -aG docker ubuntu
 ```
 
-#### Configurer un serveur web
+#### Configurare un server web
 
 ```yaml title="cloud-init-webserver.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -176,22 +176,22 @@ spec:
           <!DOCTYPE html>
           <html>
           <head><title>Hikube VM</title></head>
-          <body><h1>VM opérationnelle</h1></body>
+          <body><h1>VM operativa</h1></body>
           </html>
 
     runcmd:
       - systemctl enable --now nginx
 ```
 
-### 4. Appliquer et vérifier
+### 4. Applicare e verificare
 
-Déployez la VM :
+Distribuite la VM:
 
 ```bash
 kubectl apply -f vm-cloud-init.yaml
 ```
 
-Attendez que la VM soit prête :
+Attendete che la VM sia pronta:
 
 ```bash
 kubectl get vminstance vm-configured -w
@@ -199,45 +199,45 @@ kubectl get vminstance vm-configured -w
 
 ## Verifica
 
-Connectez-vous à la VM et vérifiez que cloud-init s'est exécuté correctement :
+Connettetevi alla VM e verificate che cloud-init si sia eseguito correttamente:
 
 ```bash
 virtctl ssh -i ~/.ssh/id_ed25519 ubuntu@vm-configured
 ```
 
-Vérifiez le statut de cloud-init :
+Verificate lo stato di cloud-init:
 
 ```bash
 cloud-init status
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```
 status: done
 ```
 
-Vérifiez les paquets installés :
+Verificate i pacchetti installati:
 
 ```bash
 dpkg -l | grep -E "htop|docker|nginx"
 ```
 
-Consultez les logs cloud-init en cas de problème :
+Consultate i log di cloud-init in caso di problemi:
 
 ```bash
 sudo cat /var/log/cloud-init-output.log
 ```
 
-:::warning Exécution unique
-cloud-init s'exécute **uniquement au premier démarrage** de la VM. Les redémarrages suivants n'exécutent pas de nouveau la configuration. Pour forcer une ré-exécution, utilisez `sudo cloud-init clean` puis redémarrez.
+:::warning Esecuzione unica
+cloud-init viene eseguito **unicamente al primo avvio** della VM. I riavvii successivi non eseguono nuovamente la configurazione. Per forzare una riesecuzione, utilizzate `sudo cloud-init clean` poi riavviate.
 :::
 
 :::tip Seed cloud-init
-Le paramètre `cloudInitSeed` permet de passer des données seed supplémentaires. Modifiez cette valeur pour forcer cloud-init à se ré-exécuter lors du prochain démarrage.
+Il parametro `cloudInitSeed` permette di passare dati seed supplementari. Modificate questo valore per forzare cloud-init a rieseguirsi al prossimo avvio.
 :::
 
 ## Per approfondire
 
-- [Référence API](../api-reference.md) -- section Cloud-init
-- [Démarrage rapide](../quick-start.md)
+- [Riferimento API](../api-reference.md) -- sezione Cloud-init
+- [Avvio rapido](../quick-start.md)

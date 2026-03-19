@@ -1,21 +1,21 @@
 ---
-title: "Comment scaler le cluster"
+title: "Come scalare il cluster"
 ---
 
-# Comment scaler le cluster Kafka
+# Come scalare il cluster Kafka
 
-Ce guide explique comment ajuster les ressources d'un cluster Kafka sur Hikube : nombre de brokers, ressources CPU/mémoire, stockage, ainsi que la configuration ZooKeeper associée.
+Questa guida spiega come regolare le risorse di un cluster Kafka su Hikube: numero di broker, risorse CPU/memoria, archiviazione, nonché la configurazione ZooKeeper associata.
 
-## Prerequisitiiti
+## Prerequisiti
 
-- **kubectl** configuré avec votre kubeconfig Hikube
-- Un cluster **Kafka** déployé sur Hikube
+- **kubectl** configurato con il vostro kubeconfig Hikube
+- Un cluster **Kafka** distribuito su Hikube
 
-## Presets disponibles
+## Preset disponibili
 
-Hikube propose des presets de ressources prédéfinis, applicables aux brokers Kafka et aux nœuds ZooKeeper :
+Hikube propone dei preset di risorse predefiniti, applicabili ai broker Kafka e ai nodi ZooKeeper:
 
-| Preset | CPU | Mémoire |
+| Preset | CPU | Memoria |
 |--------|-----|---------|
 | `nano` | 250m | 128Mi |
 | `micro` | 500m | 256Mi |
@@ -26,20 +26,20 @@ Hikube propose des presets de ressources prédéfinis, applicables aux brokers K
 | `2xlarge` | 8 | 8Gi |
 
 :::warning
-Si le champ `resources` (CPU/mémoire explicites) est défini, la valeur de `resourcesPreset` est **entièrement ignorée**. Assurez-vous de vider le champ `resources` si vous souhaitez utiliser un preset.
+Se il campo `resources` (CPU/memoria espliciti) è definito, il valore di `resourcesPreset` viene **completamente ignorato**. Assicuratevi di svuotare il campo `resources` se desiderate utilizzare un preset.
 :::
 
 ## Passi
 
-### 1. Vérifier les ressources actuelles
+### 1. Verificare le risorse attuali
 
-Consultez la configuration actuelle du cluster :
+Consultate la configurazione attuale del cluster:
 
 ```bash
 kubectl get kafka my-kafka -o yaml | grep -A 8 -E "kafka:|zookeeper:"
 ```
 
-**Exemple de résultat :**
+**Esempio di risultato:**
 
 ```console
   kafka:
@@ -52,11 +52,11 @@ kubectl get kafka my-kafka -o yaml | grep -A 8 -E "kafka:|zookeeper:"
     size: 5Gi
 ```
 
-### 2. Scaler les brokers Kafka
+### 2. Scalare i broker Kafka
 
-Vous pouvez ajuster le nombre de brokers, les ressources et le stockage indépendamment.
+Potete regolare il numero di broker, le risorse e l'archiviazione indipendentemente.
 
-**Option A : changer le preset des brokers**
+**Opzione A: cambiare il preset dei broker**
 
 ```bash
 kubectl patch kafka my-kafka --type='merge' -p='
@@ -68,7 +68,7 @@ spec:
 '
 ```
 
-**Option B : définir des ressources explicites**
+**Opzione B: definire risorse esplicite**
 
 ```bash
 kubectl patch kafka my-kafka --type='merge' -p='
@@ -81,7 +81,7 @@ spec:
 '
 ```
 
-Vous pouvez aussi modifier le manifeste complet :
+Potete anche modificare il manifesto completo:
 
 ```yaml title="kafka-scaled.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -107,12 +107,12 @@ kubectl apply -f kafka-scaled.yaml
 ```
 
 :::warning
-Réduire le nombre de brokers sur un cluster existant peut entraîner une perte de données si des partitions ne sont pas redistribuées au préalable. Augmentez toujours le nombre de brokers plutôt que de le réduire.
+Ridurre il numero di broker su un cluster esistente può comportare una perdita di dati se le partizioni non vengono redistribuite preventivamente. Aumentate sempre il numero di broker piuttosto che ridurlo.
 :::
 
-### 3. Scaler ZooKeeper
+### 3. Scalare ZooKeeper
 
-ZooKeeper utilise un mécanisme de quorum : le nombre de réplicas doit être **impair** (1, 3, 5) pour garantir l'élection d'un leader.
+ZooKeeper utilizza un meccanismo di quorum: il numero di repliche deve essere **dispari** (1, 3, 5) per garantire l'elezione di un leader.
 
 ```bash
 kubectl patch kafka my-kafka --type='merge' -p='
@@ -124,7 +124,7 @@ spec:
 '
 ```
 
-Ou avec des ressources explicites :
+Oppure con risorse esplicite:
 
 ```yaml title="kafka-zookeeper-scaled.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -150,12 +150,12 @@ kubectl apply -f kafka-zookeeper-scaled.yaml
 ```
 
 :::tip
-En production, 3 réplicas ZooKeeper suffisent dans la majorité des cas. 5 réplicas sont recommandés uniquement pour les clusters très larges (10+ brokers).
+In produzione, 3 repliche ZooKeeper sono sufficienti nella maggior parte dei casi. 5 repliche sono raccomandate solo per cluster molto grandi (10+ broker).
 :::
 
-### 4. Augmenter le stockage si nécessaire
+### 4. Aumentare l'archiviazione se necessario
 
-Si les brokers manquent d'espace disque, augmentez la taille du volume persistant :
+Se i broker esauriscono lo spazio su disco, aumentate la dimensione del volume persistente:
 
 ```bash
 kubectl patch kafka my-kafka --type='merge' -p='
@@ -166,24 +166,24 @@ spec:
 ```
 
 :::warning
-Le nombre de réplicas d'un topic ne peut pas dépasser le nombre de brokers. Après un scale-up des brokers, vous pouvez augmenter le facteur de réplication de vos topics existants.
+Il numero di repliche di un topic non può superare il numero di broker. Dopo uno scale-up dei broker, potete aumentare il fattore di replica dei vostri topic esistenti.
 :::
 
-### 5. Appliquer et vérifier
+### 5. Applicare e verificare
 
-Si vous n'avez pas encore appliqué les changements :
+Se non avete ancora applicato le modifiche:
 
 ```bash
 kubectl apply -f kafka-scaled.yaml
 ```
 
-Surveillez le rolling update des pods :
+Monitorate il rolling update dei pod:
 
 ```bash
 kubectl get po -w | grep my-kafka
 ```
 
-**Risultato atteso (pendant le rolling update) :**
+**Risultato atteso (durante il rolling update):**
 
 ```console
 my-kafka-kafka-0       1/1     Running       0   45m
@@ -193,7 +193,7 @@ my-kafka-kafka-2       0/1     Pending       0   0s
 my-kafka-kafka-2       1/1     Running       0   30s
 ```
 
-Attendez que tous les pods soient en état `Running` :
+Attendete che tutti i pod siano nello stato `Running`:
 
 ```bash
 kubectl get po | grep my-kafka
@@ -212,13 +212,13 @@ my-kafka-zookeeper-2   1/1     Running   0   6m
 
 ## Verifica
 
-Confirmez que les nouvelles ressources sont appliquées :
+Confermate che le nuove risorse siano applicate:
 
 ```bash
 kubectl get kafka my-kafka -o yaml | grep -A 8 -E "kafka:|zookeeper:"
 ```
 
-Vérifiez que le cluster est fonctionnel en listant les topics :
+Verificate che il cluster sia funzionante elencando i topic:
 
 ```bash
 kubectl run kafka-debug --rm -it --image=bitnami/kafka:latest --restart=Never -- \
@@ -227,5 +227,5 @@ kubectl run kafka-debug --rm -it --image=bitnami/kafka:latest --restart=Never --
 
 ## Per approfondire
 
-- **[Référence API Kafka](../api-reference.md)** : documentation complète des paramètres `kafka`, `zookeeper` et du tableau des presets
-- **[Comment créer et gérer les topics](./manage-topics.md)** : configurer les topics après le scaling
+- **[Riferimento API Kafka](../api-reference.md)**: documentazione completa dei parametri `kafka`, `zookeeper` e della tabella dei preset
+- **[Come creare e gestire i topic](./manage-topics.md)**: configurare i topic dopo lo scaling

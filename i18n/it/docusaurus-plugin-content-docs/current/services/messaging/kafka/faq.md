@@ -5,37 +5,37 @@ title: FAQ
 
 # FAQ — Kafka
 
-### Quelle est la différence entre `partitions` et `replicationFactor` ?
+### Qual è la differenza tra `partitions` e `replicationFactor`?
 
-Ces deux paramètres servent des objectifs distincts :
+Questi due parametri servono obiettivi distinti:
 
-- **`partitions`** : détermine le **parallélisme et le débit** d'un topic. Plus il y a de partitions, plus le nombre de consumers pouvant lire en parallèle est élevé. Chaque partition est une séquence ordonnée de messages.
-- **`replicas`** (facteur de réplication) : détermine le nombre de **copies** de chaque partition réparties sur différents brokers, garantissant la **haute disponibilité**. Si un broker tombe, une réplique prend le relais.
+- **`partitions`**: determina il **parallelismo e il throughput** di un topic. Più partizioni ci sono, più consumatori possono leggere in parallelo. Ogni partizione è una sequenza ordinata di messaggi.
+- **`replicas`** (fattore di replica): determina il numero di **copie** di ogni partizione distribuite su diversi broker, garantendo l'**alta disponibilità**. Se un broker cade, una replica prende il suo posto.
 
 :::warning
-Le nombre de réplicas d'un topic **ne peut pas dépasser** le nombre de brokers disponibles. Par exemple, avec 3 brokers (`kafka.replicas: 3`), vous pouvez configurer au maximum `replicas: 3` sur un topic.
+Il numero di repliche di un topic **non può superare** il numero di broker disponibili. Ad esempio, con 3 broker (`kafka.replicas: 3`), potete configurare al massimo `replicas: 3` su un topic.
 :::
 
-### Pourquoi Kafka utilise-t-il ZooKeeper ?
+### Perché Kafka utilizza ZooKeeper?
 
-ZooKeeper assure la **coordination du cluster Kafka** :
+ZooKeeper garantisce il **coordinamento del cluster Kafka**:
 
-- **Élection du contrôleur** : désigne le broker leader responsable de la gestion des partitions
-- **Métadonnées des topics** : stocke la liste des topics, partitions et leur assignation aux brokers
-- **Détection des pannes** : surveille l'état des brokers et déclenche la réassignation en cas de défaillance
+- **Elezione del controller**: designa il broker leader responsabile della gestione delle partizioni
+- **Metadati dei topic**: archivia la lista dei topic, delle partizioni e la loro assegnazione ai broker
+- **Rilevamento dei guasti**: monitora lo stato dei broker e avvia la riassegnazione in caso di malfunzionamento
 
 :::tip
-ZooKeeper nécessite un **nombre impair de réplicas** (3, 5, 7...) pour maintenir le quorum. En production, utilisez au minimum `zookeeper.replicas: 3`.
+ZooKeeper richiede un **numero dispari di repliche** (3, 5, 7...) per mantenere il quorum. In produzione, utilizzate almeno `zookeeper.replicas: 3`.
 :::
 
-### À quoi sert `cleanup.policy` sur un topic ?
+### A cosa serve `cleanup.policy` su un topic?
 
-La politique de nettoyage définit comment Kafka gère les anciens messages :
+La politica di pulizia definisce come Kafka gestisce i vecchi messaggi:
 
-- **`delete`** (par défaut) : supprime les segments de log qui dépassent la durée de rétention définie par `retention.ms`. Adapté aux flux d'événements.
-- **`compact`** : conserve uniquement la **dernière valeur pour chaque clé**. Adapté aux tables de référence ou aux états (changelog).
+- **`delete`** (predefinito): elimina i segmenti di log che superano la durata di retention definita da `retention.ms`. Adatto ai flussi di eventi.
+- **`compact`**: conserva unicamente l'**ultimo valore per ogni chiave**. Adatto alle tabelle di riferimento o agli stati (changelog).
 
-Exemple de configuration :
+Esempio di configurazione:
 
 ```yaml title="kafka.yaml"
 topics:
@@ -46,21 +46,21 @@ topics:
       cleanup.policy: compact
 ```
 
-### Comment fonctionnent les consumer groups ?
+### Come funzionano i consumer group?
 
-Un **consumer group** est un ensemble de consumers qui se répartissent la lecture des partitions d'un topic :
+Un **consumer group** è un insieme di consumer che si ripartiscono la lettura delle partizioni di un topic:
 
-- Chaque partition est lue par **un seul consumer** du groupe à un instant donné
-- Si un consumer tombe, ses partitions sont redistribuées aux autres membres du groupe (**rebalancing**)
-- Plusieurs consumer groups peuvent lire le même topic indépendamment (chacun maintient son propre offset)
+- Ogni partizione è letta da **un solo consumer** del gruppo in un dato momento
+- Se un consumer cade, le sue partizioni vengono redistribuite agli altri membri del gruppo (**rebalancing**)
+- Più consumer group possono leggere lo stesso topic indipendentemente (ognuno mantiene il proprio offset)
 
-Cela permet une **consommation parallèle** tout en garantissant l'ordre des messages au sein de chaque partition.
+Questo consente un **consumo parallelo** garantendo al contempo l'ordine dei messaggi all'interno di ogni partizione.
 
-### Quelle est la différence entre `resourcesPreset` et `resources` ?
+### Qual è la differenza tra `resourcesPreset` e `resources`?
 
-Le champ `resourcesPreset` applique une configuration CPU/mémoire prédéfinie, tandis que `resources` permet de spécifier des valeurs explicites. Si `resources` est défini, `resourcesPreset` est **ignoré**.
+Il campo `resourcesPreset` applica una configurazione CPU/memoria predefinita, mentre `resources` permette di specificare valori espliciti. Se `resources` è definito, `resourcesPreset` viene **ignorato**.
 
-| **Preset** | **CPU** | **Mémoire** |
+| **Preset** | **CPU** | **Memoria** |
 | ---------- | ------- | ----------- |
 | `nano`     | 250m    | 128Mi       |
 | `micro`    | 500m    | 256Mi       |
@@ -70,7 +70,7 @@ Le champ `resourcesPreset` applique une configuration CPU/mémoire prédéfinie,
 | `xlarge`   | 4       | 4Gi         |
 | `2xlarge`  | 8       | 8Gi         |
 
-Exemple avec des ressources explicites :
+Esempio con risorse esplicite:
 
 ```yaml title="kafka.yaml"
 kafka:
@@ -81,9 +81,9 @@ kafka:
   size: 50Gi
 ```
 
-### Comment exposer Kafka à l'extérieur du cluster ?
+### Come esporre Kafka all'esterno del cluster?
 
-Activez le paramètre `external: true` dans votre manifeste :
+Attivate il parametro `external: true` nel vostro manifesto:
 
 ```yaml title="kafka.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -102,15 +102,15 @@ spec:
     size: 5Gi
 ```
 
-Cela crée un service de type **LoadBalancer** pour chaque broker, permettant l'accès depuis l'extérieur du cluster Kubernetes.
+Questo crea un servizio di tipo **LoadBalancer** per ogni broker, consentendo l'accesso dall'esterno del cluster Kubernetes.
 
 :::warning
-L'exposition externe rend vos brokers accessibles sur Internet. Assurez-vous que l'authentification et le chiffrement sont correctement configurés avant d'activer cette option.
+L'esposizione esterna rende i vostri broker accessibili su Internet. Assicuratevi che l'autenticazione e la crittografia siano correttamente configurate prima di attivare questa opzione.
 :::
 
-### Comment configurer `min.insync.replicas` ?
+### Come configurare `min.insync.replicas`?
 
-Le paramètre `min.insync.replicas` garantit qu'un nombre minimum de réplicas confirme chaque écriture avant qu'elle ne soit considérée comme réussie. C'est une configuration au niveau du **topic** :
+Il parametro `min.insync.replicas` garantisce che un numero minimo di repliche confermi ogni scrittura prima che venga considerata riuscita. Si tratta di una configurazione a livello di **topic**:
 
 ```yaml title="kafka.yaml"
 topics:
@@ -122,5 +122,5 @@ topics:
 ```
 
 :::tip
-Pour un cluster de production avec 3 réplicas, configurez `min.insync.replicas: 2`. Cela tolère la perte d'un broker tout en garantissant la durabilité des données.
+Per un cluster di produzione con 3 repliche, configurate `min.insync.replicas: 2`. Questo tollera la perdita di un broker garantendo al contempo la durabilità dei dati.
 :::

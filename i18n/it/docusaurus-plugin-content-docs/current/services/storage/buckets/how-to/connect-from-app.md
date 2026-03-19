@@ -1,23 +1,23 @@
 ---
-title: "Comment connecter un bucket depuis une application"
+title: "Come connettere un bucket da un'applicazione"
 ---
 
-# Comment connecter un bucket depuis une application
+# Come connettere un bucket da un'applicazione
 
-Lorsque vous creez un bucket sur Hikube, un Secret Kubernetes contenant les identifiants S3 est automatiquement genere. Ce guide explique comment recuperer ces identifiants et les utiliser depuis AWS CLI, Python (boto3) ou toute application compatible S3.
+Quando create un bucket su Hikube, un Secret Kubernetes contenente le credenziali S3 viene generato automaticamente. Questa guida spiega come recuperare queste credenziali e utilizzarle da AWS CLI, Python (boto3) o qualsiasi applicazione compatibile S3.
 
-## Prerequisitiiti
+## Prerequisiti
 
-- **kubectl** configure avec votre kubeconfig Hikube
-- Un **bucket** cree sur Hikube (ou un manifeste pret a deployer)
-- **jq** installe localement (pour l'extraction des identifiants)
-- **AWS CLI** ou **Python avec boto3** installe (selon votre cas d'usage)
+- **kubectl** configurato con il vostro kubeconfig Hikube
+- Un **bucket** creato su Hikube (o un manifesto pronto per la distribuzione)
+- **jq** installato localmente (per l'estrazione delle credenziali)
+- **AWS CLI** o **Python con boto3** installato (secondo il vostro caso d'uso)
 
 ## Passi
 
-### 1. Creer un bucket
+### 1. Creare un bucket
 
-Si vous n'avez pas encore de bucket, creez-en un :
+Se non avete ancora un bucket, createne uno:
 
 ```yaml title="my-bucket.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -26,20 +26,20 @@ metadata:
   name: app-data
 ```
 
-Appliquez le manifeste :
+Applicate il manifesto:
 
 ```bash
 kubectl apply -f my-bucket.yaml
 ```
 
-Verifiez que le bucket et son Secret sont crees :
+Verificate che il bucket e il suo Secret siano stati creati:
 
 ```bash
 kubectl get bucket app-data
 kubectl get secret bucket-app-data
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```
 NAME       AGE
@@ -49,15 +49,15 @@ NAME                 TYPE     DATA   AGE
 bucket-app-data      Opaque   1      10s
 ```
 
-### 2. Recuperer les identifiants S3
+### 2. Recuperare le credenziali S3
 
-Le Secret `bucket-app-data` contient une cle `BucketInfo` au format JSON avec toutes les informations de connexion. Extrayez-les :
+Il Secret `bucket-app-data` contiene una chiave `BucketInfo` in formato JSON con tutte le informazioni di connessione. Estraetele:
 
 ```bash
 kubectl get secret bucket-app-data -o jsonpath='{.data.BucketInfo}' | base64 -d | jq
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```json
 {
@@ -73,12 +73,12 @@ kubectl get secret bucket-app-data -o jsonpath='{.data.BucketInfo}' | base64 -d 
 ```
 
 :::note
-Le `bucketName` est un identifiant interne genere automatiquement. Il differe du nom que vous avez donne dans `metadata.name`. Utilisez toujours `bucketName` pour les operations S3.
+Il `bucketName` è un identificativo interno generato automaticamente. Differisce dal nome che avete dato in `metadata.name`. Utilizzate sempre `bucketName` per le operazioni S3.
 :::
 
-### 3. Utiliser le bucket avec AWS CLI
+### 3. Utilizzare il bucket con AWS CLI
 
-Exportez les identifiants comme variables d'environnement :
+Esportate le credenziali come variabili d'ambiente:
 
 ```bash
 export AWS_ACCESS_KEY_ID=$(kubectl get secret bucket-app-data -o jsonpath='{.data.BucketInfo}' | base64 -d | jq -r '.spec.secretS3.accessKeyID')
@@ -86,29 +86,29 @@ export AWS_SECRET_ACCESS_KEY=$(kubectl get secret bucket-app-data -o jsonpath='{
 export BUCKET_NAME=$(kubectl get secret bucket-app-data -o jsonpath='{.data.BucketInfo}' | base64 -d | jq -r '.spec.bucketName')
 ```
 
-Testez la connexion :
+Testate la connessione:
 
 ```bash
-# Lister les objets du bucket
+# Elencare gli oggetti del bucket
 aws s3 ls s3://$BUCKET_NAME --endpoint-url https://prod.s3.hikube.cloud
 
-# Uploader un fichier
+# Caricare un file
 aws s3 cp fichier.txt s3://$BUCKET_NAME/ --endpoint-url https://prod.s3.hikube.cloud
 
-# Telecharger un fichier
+# Scaricare un file
 aws s3 cp s3://$BUCKET_NAME/fichier.txt ./fichier-download.txt --endpoint-url https://prod.s3.hikube.cloud
 ```
 
-### 4. Utiliser le bucket avec Python (boto3)
+### 4. Utilizzare il bucket con Python (boto3)
 
-Voici un exemple complet d'utilisation avec la bibliotheque `boto3` :
+Ecco un esempio completo di utilizzo con la libreria `boto3`:
 
 ```python title="s3_example.py"
 import boto3
 import json
 import subprocess
 
-# Option 1 : Lire les identifiants depuis le Secret Kubernetes
+# Opzione 1: Leggere le credenziali dal Secret Kubernetes
 result = subprocess.run(
     ["kubectl", "get", "secret", "bucket-app-data",
      "-o", "jsonpath={.data.BucketInfo}"],
@@ -122,14 +122,14 @@ access_key = bucket_info["spec"]["secretS3"]["accessKeyID"]
 secret_key = bucket_info["spec"]["secretS3"]["accessSecretKey"]
 bucket_name = bucket_info["spec"]["bucketName"]
 
-# Option 2 : Utiliser des variables d'environnement (recommande en production)
+# Opzione 2: Utilizzare variabili d'ambiente (raccomandato in produzione)
 # import os
 # endpoint = "https://prod.s3.hikube.cloud"
 # access_key = os.environ["AWS_ACCESS_KEY_ID"]
 # secret_key = os.environ["AWS_SECRET_ACCESS_KEY"]
 # bucket_name = os.environ["BUCKET_NAME"]
 
-# Creer le client S3
+# Creare il client S3
 s3 = boto3.client(
     "s3",
     endpoint_url=endpoint,
@@ -137,35 +137,35 @@ s3 = boto3.client(
     aws_secret_access_key=secret_key,
 )
 
-# Upload d'un fichier
+# Upload di un file
 s3.upload_file("local-file.txt", bucket_name, "remote-file.txt")
-print("Upload termine")
+print("Upload completato")
 
-# Download d'un fichier
+# Download di un file
 s3.download_file(bucket_name, "remote-file.txt", "downloaded.txt")
-print("Download termine")
+print("Download completato")
 
-# Lister les objets
+# Elencare gli oggetti
 response = s3.list_objects_v2(Bucket=bucket_name)
 for obj in response.get("Contents", []):
-    print(f"  {obj['Key']} ({obj['Size']} octets)")
+    print(f"  {obj['Key']} ({obj['Size']} byte)")
 ```
 
 :::tip
-En production, privilegiez les variables d'environnement ou les Secrets Kubernetes montes en volumes plutot que d'appeler `kubectl` depuis votre code applicatif.
+In produzione, privilegiate le variabili d'ambiente o i Secret Kubernetes montati come volumi piuttosto che chiamare `kubectl` dal vostro codice applicativo.
 :::
 
 ## Verifica
 
-Confirmez que la connexion fonctionne correctement :
+Confermate che la connessione funzioni correttamente:
 
-1. **Verifiez le bucket** :
+1. **Verificate il bucket**:
 
 ```bash
 kubectl get bucket app-data
 ```
 
-2. **Testez un upload/download** :
+2. **Testate un upload/download**:
 
 ```bash
 echo "test" > /tmp/test-hikube.txt
@@ -173,13 +173,13 @@ aws s3 cp /tmp/test-hikube.txt s3://$BUCKET_NAME/test.txt --endpoint-url https:/
 aws s3 ls s3://$BUCKET_NAME --endpoint-url https://prod.s3.hikube.cloud
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```
 2024-01-15 10:30:00          5 test.txt
 ```
 
-3. **Nettoyez le fichier de test** :
+3. **Pulite il file di test**:
 
 ```bash
 aws s3 rm s3://$BUCKET_NAME/test.txt --endpoint-url https://prod.s3.hikube.cloud
@@ -187,5 +187,5 @@ aws s3 rm s3://$BUCKET_NAME/test.txt --endpoint-url https://prod.s3.hikube.cloud
 
 ## Per approfondire
 
-- [Reference API Buckets](../api-reference.md)
-- [Comment configurer l'acces S3](./configure-access.md)
+- [Riferimento API Bucket](../api-reference.md)
+- [Come configurare l'accesso S3](./configure-access.md)

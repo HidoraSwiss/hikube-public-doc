@@ -3,11 +3,11 @@ sidebar_position: 2
 title: Concetti
 ---
 
-# Concepts — MySQL
+# Concetti — MySQL
 
 ## Architettura
 
-MySQL sur Hikube est un service managé basé sur l'opérateur **MariaDB-Operator**. Bien que l'opérateur utilise MariaDB (un fork compatible de MySQL), le service est entièrement compatible avec les clients et protocoles MySQL. Chaque instance déployée via la ressource `MariaDB` crée un cluster répliqué avec un primary et des réplicas pour la haute disponibilité.
+MySQL su Hikube e un servizio gestito basato sull'operatore **MariaDB-Operator**. Sebbene l'operatore utilizzi MariaDB (un fork compatibile di MySQL), il servizio e completamente compatibile con i client e i protocolli MySQL. Ogni istanza distribuita tramite la risorsa `MariaDB` crea un cluster replicato con un primary e delle repliche per l'alta disponibilita.
 
 ```mermaid
 graph TB
@@ -27,13 +27,13 @@ graph TB
             R2[Replica 2 - RO]
         end
 
-        subgraph "Stockage"
+        subgraph "Archiviazione"
             PV1[PV Primary]
             PV2[PV Replica 1]
             PV3[PV Replica 2]
         end
 
-        subgraph "Sauvegarde"
+        subgraph "Backup"
             S3[Bucket S3]
             RES[Restic]
         end
@@ -48,7 +48,7 @@ graph TB
     P --> PV1
     R1 --> PV2
     R2 --> PV3
-    RES -->|backup chiffré| S3
+    RES -->|backup cifrato| S3
     P --> RES
     OP --> SEC
 ```
@@ -57,25 +57,25 @@ graph TB
 
 ## Terminologia
 
-| Terme | Description |
-|-------|-------------|
-| **MariaDB** | Ressource Kubernetes (`apps.cozystack.io/v1alpha1`) représentant un cluster MySQL managé. Le CRD s'appelle `MariaDB` car le service repose sur MariaDB-Operator. |
-| **Primary** | Nœud principal qui accepte les lectures et écritures. |
-| **Replica** | Nœud en lecture seule, synchronisé depuis le primary via la réplication binlog. |
-| **MariaDB-Operator** | Opérateur Kubernetes qui gère le déploiement, la réplication, le failover et les sauvegardes. |
-| **Restic** | Outil de sauvegarde utilisé pour créer des snapshots chiffrés vers un stockage S3. |
-| **Switchover** | Bascule planifiée du rôle primary vers un autre nœud du cluster. |
-| **resourcesPreset** | Profil de ressources prédéfini (nano à 2xlarge). |
+| Termine | Descrizione |
+|---------|-------------|
+| **MariaDB** | Risorsa Kubernetes (`apps.cozystack.io/v1alpha1`) che rappresenta un cluster MySQL gestito. Il CRD si chiama `MariaDB` perche il servizio si basa su MariaDB-Operator. |
+| **Primary** | Nodo principale che accetta letture e scritture. |
+| **Replica** | Nodo in sola lettura, sincronizzato dal primary tramite la replica binlog. |
+| **MariaDB-Operator** | Operatore Kubernetes che gestisce il deployment, la replica, il failover e i backup. |
+| **Restic** | Strumento di backup utilizzato per creare snapshot cifrati verso uno storage S3. |
+| **Switchover** | Commutazione pianificata del ruolo primary verso un altro nodo del cluster. |
+| **resourcesPreset** | Profilo di risorse predefinito (da nano a 2xlarge). |
 
 ---
 
-## Réplication et haute disponibilité
+## Replica e alta disponibilita
 
-Le cluster MySQL utilise la **réplication binlog** de MariaDB :
+Il cluster MySQL utilizza la **replica binlog** di MariaDB:
 
-1. **Le primary** écrit toutes les modifications dans le binary log
-2. **Les réplicas** consomment le binlog et appliquent les modifications
-3. **En cas de panne** du primary, l'opérateur promeut automatiquement un réplica
+1. **Il primary** scrive tutte le modifiche nel binary log
+2. **Le repliche** consumano il binlog e applicano le modifiche
+3. **In caso di guasto** del primary, l'operatore promuove automaticamente una replica
 
 ```mermaid
 sequenceDiagram
@@ -84,63 +84,63 @@ sequenceDiagram
     participant Replica
 
     Client->>Primary: INSERT INTO ...
-    Primary->>Primary: Écriture binlog
+    Primary->>Primary: Scrittura binlog
     Primary-->>Client: OK
     Primary->>Replica: Binlog event
-    Replica->>Replica: Applique la modification
+    Replica->>Replica: Applica la modifica
 ```
 
-### Switchover manuel
+### Switchover manuale
 
-Vous pouvez basculer le primary vers un autre nœud pour effectuer une maintenance :
+Potete commutare il primary verso un altro nodo per effettuare una manutenzione:
 
 ```bash
 kubectl edit mariadb <instance-name>
-# Modifier spec.replication.primary.podIndex
+# Modificare spec.replication.primary.podIndex
 ```
 
 :::warning
-La bascule du primary entraîne une brève interruption des écritures. Les lectures restent disponibles via les réplicas.
+La commutazione del primary comporta una breve interruzione delle scritture. Le letture restano disponibili tramite le repliche.
 :::
 
 ---
 
-## Sauvegarde
+## Backup
 
-MySQL sur Hikube utilise **Restic** pour les sauvegardes :
+MySQL su Hikube utilizza **Restic** per i backup:
 
-- Les snapshots sont **chiffrés** avec un mot de passe Restic
-- Stockés dans un **bucket S3-compatible** (Hikube Object Storage, AWS S3, MinIO)
-- La **stratégie de rétention** (`cleanupStrategy`) contrôle la durée de conservation
+- Gli snapshot sono **cifrati** con una password Restic
+- Archiviati in un **bucket S3-compatible** (Hikube Object Storage, AWS S3, MinIO)
+- La **strategia di retention** (`cleanupStrategy`) controlla la durata di conservazione
 
-| Paramètre | Description |
+| Parametro | Descrizione |
 |-----------|-------------|
-| `backup.schedule` | Planification cron (ex: `0 2 * * *`) |
-| `backup.cleanupStrategy` | Options Restic de rétention (ex: `--keep-last=3 --keep-daily=7`) |
-| `backup.resticPassword` | Mot de passe de chiffrement des sauvegardes |
-| `backup.s3*` | Identifiants et bucket S3 |
+| `backup.schedule` | Pianificazione cron (es: `0 2 * * *`) |
+| `backup.cleanupStrategy` | Opzioni Restic di retention (es: `--keep-last=3 --keep-daily=7`) |
+| `backup.resticPassword` | Password di cifratura dei backup |
+| `backup.s3*` | Credenziali e bucket S3 |
 
 :::tip
-Testez régulièrement la procédure de restauration. Une sauvegarde non testée ne garantit pas une restauration réussie.
+Testate regolarmente la procedura di ripristino. Un backup non testato non garantisce un ripristino riuscito.
 :::
 
 ---
 
-## Gestion des utilisateurs et bases
+## Gestione di utenti e database
 
-Le manifeste permet de déclarer :
+Il manifesto permette di dichiarare:
 
-- **Utilisateurs** : nom, mot de passe, limite de connexions (`maxUserConnections`)
-- **Bases de données** : nom et attribution de rôles
-- **Rôles** : `admin` (lecture/écriture complète), `readonly` (SELECT uniquement)
+- **Utenti**: nome, password, limite di connessioni (`maxUserConnections`)
+- **Database**: nome e assegnazione di ruoli
+- **Ruoli**: `admin` (lettura/scrittura completa), `readonly` (solo SELECT)
 
-Un mot de passe `root` est généré automatiquement par l'opérateur et stocké dans le Secret `<instance>-credentials`.
+Una password `root` viene generata automaticamente dall'operatore e memorizzata nel Secret `<instance>-credentials`.
 
 ---
 
-## Presets de ressources
+## Preset di risorse
 
-| Preset | CPU | Mémoire |
+| Preset | CPU | Memoria |
 |--------|-----|---------|
 | `nano` | 250m | 128Mi |
 | `micro` | 500m | 256Mi |
@@ -151,22 +151,22 @@ Un mot de passe `root` est généré automatiquement par l'opérateur et stocké
 | `2xlarge` | 8 | 8Gi |
 
 :::warning
-Si le champ `resources` (CPU/mémoire explicites) est défini, `resourcesPreset` est ignoré.
+Se il campo `resources` (CPU/memoria espliciti) e definito, `resourcesPreset` viene ignorato.
 :::
 
 ---
 
-## Limites et quotas
+## Limiti e quote
 
-| Paramètre | Valeur |
+| Parametro | Valore |
 |-----------|--------|
-| Réplicas max | Selon quota tenant |
-| Taille stockage (`size`) | Variable (en Gi) |
-| `maxUserConnections` | Configurable par utilisateur (0 = illimité) |
+| Repliche max | Secondo la quota del tenant |
+| Dimensione archiviazione (`size`) | Variabile (in Gi) |
+| `maxUserConnections` | Configurabile per utente (0 = illimitato) |
 
 ---
 
 ## Per approfondire
 
-- [Overview](./overview.md) : présentation du service
-- [Référence API](./api-reference.md) : tous les paramètres de la ressource MariaDB
+- [Panoramica](./overview.md): presentazione del servizio
+- [Riferimento API](./api-reference.md): tutti i parametri della risorsa MariaDB

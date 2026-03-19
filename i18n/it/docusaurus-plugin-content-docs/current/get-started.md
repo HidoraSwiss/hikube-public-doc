@@ -26,8 +26,8 @@ Questa documentazione è ora versionata! Puoi consultare:
 ### 📦 **Servizi**
 - **Database**: PostgreSQL, MySQL, Redis, ClickHouse
 - **Servizi di messaggistica**: Kafka, RabbitMQ, NATS
-- **Storage**: Crittografato, replicato su 3 datacenter
-- **Storage S3**: Bucket S3 compatibili
+- **Archiviazione**: Cifrata, replicata su 3 datacenter
+- **Archiviazione S3**: Bucket S3 compatibili
 - **Reti**: Load balancer TCP, cache HTTP, VPN
 - **Risorse di calcolo**: Macchine virtuali, GPU
 
@@ -58,7 +58,7 @@ Esplorate le API di ogni servizio per deployment avanzati:
 - **[Database](services/databases/postgresql/overview.md)** - PostgreSQL, MySQL, Redis
 - **[Risorse di calcolo](services/compute/overview.md)** - Macchine virtuali e GPU
 - **[Kubernetes](services/kubernetes/overview.md)** - Cluster gestiti
-- **[Storage](services/storage/buckets/overview.md)** - Bucket S3 compatibili
+- **[Archiviazione](services/storage/buckets/overview.md)** - Bucket S3 compatibili
 - **[Infrastructure as Code](tools/terraform.md)** - Template Terraform
 
 ## Supporto

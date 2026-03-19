@@ -5,50 +5,50 @@ title: Risoluzione dei problemi
 
 # Risoluzione dei problemi — ClickHouse
 
-### ClickHouse Keeper instable (nombre pair de réplicas)
+### ClickHouse Keeper instabile (numero pari di repliche)
 
-**Causa** : le nombre de réplicas ClickHouse Keeper est pair (2, 4, etc.), ce qui empêche le maintien du quorum. Le protocole Raft nécessite une majorité stricte pour élire un leader, et un nombre pair de nœuds ne garantit pas cette majorité en cas de partition réseau.
+**Causa**: il numero di repliche ClickHouse Keeper e pari (2, 4, ecc.), il che impedisce il mantenimento del quorum. Il protocollo Raft necessita di una maggioranza stretta per eleggere un leader, e un numero pari di nodi non garantisce questa maggioranza in caso di partizione di rete.
 
-**Soluzione** :
+**Soluzione**:
 
-1. Vérifiez le nombre actuel de réplicas Keeper :
+1. Verificate il numero attuale di repliche Keeper:
    ```bash
    kubectl get pods -l app=clickhouse-keeper-<name>
    ```
-2. Modifiez le nombre de réplicas pour utiliser un nombre **impair** (3 ou 5) :
+2. Modificate il numero di repliche per usare un numero **dispari** (3 o 5):
    ```yaml title="clickhouse.yaml"
    spec:
      clickhouseKeeper:
        enabled: true
-       replicas: 3    # Toujours impair
+       replicas: 3    # Sempre dispari
    ```
-3. Appliquez la modification :
+3. Applicate la modifica:
    ```bash
    kubectl apply -f clickhouse.yaml
    ```
-4. Vérifiez les logs Keeper pour confirmer que le quorum est rétabli :
+4. Verificate i log del Keeper per confermare che il quorum sia ristabilito:
    ```bash
    kubectl logs -l app=clickhouse-keeper-<name>
    ```
 
-### Requêtes lentes sur gros volumes
+### Query lente su grandi volumi
 
-**Causa** : la configuration de sharding n'est pas optimale, les tables n'utilisent pas les bons moteurs, ou les ressources allouées sont insuffisantes.
+**Causa**: la configurazione di sharding non e ottimale, le tabelle non usano i motori corretti, o le risorse allocate sono insufficienti.
 
-**Soluzione** :
+**Soluzione**:
 
-1. Vérifiez que vous utilisez des tables **Distributed** pour répartir les requêtes sur tous les shards.
-2. Assurez-vous que les tables locales utilisent le moteur `ReplicatedMergeTree` avec un `ORDER BY` adapté à vos requêtes les plus fréquentes.
-3. Augmentez le nombre de shards pour distribuer la charge :
+1. Verificate che usiate tabelle **Distributed** per distribuire le query su tutti gli shard.
+2. Assicuratevi che le tabelle locali usino il motore `ReplicatedMergeTree` con un `ORDER BY` adatto alle vostre query piu frequenti.
+3. Aumentate il numero di shard per distribuire il carico:
    ```yaml title="clickhouse.yaml"
    spec:
-     shards: 4    # Augmenter le nombre de shards
+     shards: 4    # Aumentare il numero di shard
    ```
-4. Vérifiez les ressources allouées et augmentez si nécessaire :
+4. Verificate le risorse allocate e aumentatele se necessario:
    ```bash
    kubectl top pod -l app=clickhouse-<name>
    ```
-5. Analysez les requêtes lentes via le `query_log` système :
+5. Analizzate le query lente tramite il `query_log` di sistema:
    ```sql
    SELECT query, elapsed, read_rows, memory_usage
    FROM system.query_log
@@ -57,75 +57,75 @@ title: Risoluzione dei problemi
    LIMIT 10;
    ```
 
-### Espace disque insuffisant
+### Spazio disco insufficiente
 
-**Causa** : le volume de données dépasse la taille du PVC, ou les logs système (`query_log`, `query_thread_log`) accumulent trop de données.
+**Causa**: il volume di dati supera la dimensione del PVC, o i log di sistema (`query_log`, `query_thread_log`) accumulano troppi dati.
 
-**Soluzione** :
+**Soluzione**:
 
-1. Augmentez la taille du volume de données :
+1. Aumentate la dimensione del volume dati:
    ```yaml title="clickhouse.yaml"
    spec:
-     size: 50Gi    # Augmenter depuis la valeur actuelle
+     size: 50Gi    # Aumentare dal valore attuale
    ```
-2. Vérifiez également la taille du volume de logs et ajustez si nécessaire :
+2. Verificate anche la dimensione del volume log e regolatela se necessario:
    ```yaml title="clickhouse.yaml"
    spec:
-     logStorageSize: 5Gi    # Augmenter si les logs saturent
+     logStorageSize: 5Gi    # Aumentare se i log saturano
    ```
-3. Réduisez la rétention des logs système via `logTTL` :
+3. Riducete la retention dei log di sistema tramite `logTTL`:
    ```yaml title="clickhouse.yaml"
    spec:
-     logTTL: 7    # Réduire de 15 à 7 jours par exemple
+     logTTL: 7    # Ridurre da 15 a 7 giorni ad esempio
    ```
-4. Vérifiez les politiques de rétention de vos données applicatives et supprimez les partitions obsolètes.
+4. Verificate le politiche di retention dei vostri dati applicativi ed eliminate le partizioni obsolete.
 
-### Pod ClickHouse en état Pending
+### Pod ClickHouse in stato Pending
 
-**Causa** : le PersistentVolumeClaim (PVC) ne parvient pas à se lier à un volume, généralement à cause d'une `storageClass` inexistante ou d'un quota de ressources dépassé.
+**Causa**: il PersistentVolumeClaim (PVC) non riesce a legarsi a un volume, generalmente a causa di una `storageClass` inesistente o di una quota di risorse superata.
 
-**Soluzione** :
+**Soluzione**:
 
-1. Vérifiez l'état du pod et les événements associés :
+1. Verificate lo stato del pod e gli eventi associati:
    ```bash
    kubectl describe pod clickhouse-<name>-0-0
    ```
-2. Vérifiez l'état des PVC :
+2. Verificate lo stato dei PVC:
    ```bash
    kubectl get pvc -l app=clickhouse-<name>
    ```
-3. Vérifiez que la `storageClass` utilisée est bien l'une des classes disponibles : `local`, `replicated` ou `replicated-async`.
-4. Vérifiez que les quotas de ressources (CPU, mémoire, stockage) ne sont pas atteints.
-5. Corrigez la configuration dans votre manifeste et réappliquez :
+3. Verificate che la `storageClass` utilizzata sia una delle classi disponibili: `local`, `replicated` o `replicated-async`.
+4. Verificate che le quote di risorse (CPU, memoria, archiviazione) non siano state raggiunte.
+5. Correggete la configurazione nel vostro manifesto e riapplicate:
    ```bash
    kubectl apply -f clickhouse.yaml
    ```
 
-### Réplication inter-shards échouée
+### Replica inter-shard fallita
 
-**Causa** : ClickHouse Keeper n'est pas fonctionnel, le réseau entre les pods est instable, ou la configuration des réplicas par shard est incorrecte.
+**Causa**: ClickHouse Keeper non e funzionale, la rete tra i pod e instabile, o la configurazione delle repliche per shard e errata.
 
-**Soluzione** :
+**Soluzione**:
 
-1. Vérifiez que ClickHouse Keeper est opérationnel :
+1. Verificate che ClickHouse Keeper sia operativo:
    ```bash
    kubectl get pods -l app=clickhouse-keeper-<name>
    ```
-2. Consultez les logs Keeper pour identifier les erreurs :
+2. Consultate i log del Keeper per identificare gli errori:
    ```bash
    kubectl logs -l app=clickhouse-keeper-<name>
    ```
-3. Vérifiez la connectivité réseau entre les pods ClickHouse :
+3. Verificate la connettivita di rete tra i pod ClickHouse:
    ```bash
    kubectl exec clickhouse-<name>-0-0 -- clickhouse-client --query "SELECT * FROM system.clusters"
    ```
-4. Assurez-vous que la configuration des réplicas est cohérente :
+4. Assicuratevi che la configurazione delle repliche sia coerente:
    ```yaml title="clickhouse.yaml"
    spec:
      shards: 2
-     replicas: 3    # Chaque shard doit avoir le même nombre de réplicas
+     replicas: 3    # Ogni shard deve avere lo stesso numero di repliche
      clickhouseKeeper:
        enabled: true
        replicas: 3
    ```
-5. Si Keeper est instable, redémarrez les pods Keeper et attendez la stabilisation du quorum.
+5. Se il Keeper e instabile, riavviate i pod Keeper e attendete la stabilizzazione del quorum.

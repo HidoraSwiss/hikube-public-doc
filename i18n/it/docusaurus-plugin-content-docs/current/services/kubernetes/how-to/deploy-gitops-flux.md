@@ -1,23 +1,23 @@
 ---
-title: Come distribuire con Flux (GitOps)
+title: "Come distribuire con Flux (GitOps)"
 ---
 
-# Comment deployer avec Flux (GitOps)
+# Come distribuire con Flux (GitOps)
 
-Ce guide explique comment activer et configurer FluxCD sur un cluster Kubernetes Hikube pour deployer vos applications selon l'approche GitOps : un depot Git comme source de verite pour l'etat de votre cluster.
+Questa guida spiega come attivare e configurare FluxCD su un cluster Kubernetes Hikube per distribuire le vostre applicazioni secondo l'approccio GitOps: un repository Git come fonte di verita per lo stato del vostro cluster.
 
-## Prerequisitiiti
+## Prerequisiti
 
-- Un cluster Kubernetes Hikube deploye (voir le [demarrage rapide](../quick-start.md))
-- `kubectl` configure pour interagir avec l'API Hikube
-- Un depot Git accessible contenant vos manifestes Kubernetes
-- Le kubeconfig du cluster enfant recupere
+- Un cluster Kubernetes Hikube distribuito (vedere l'[avvio rapido](../quick-start.md))
+- `kubectl` configurato per interagire con l'API Hikube
+- Un repository Git accessibile contenente i vostri manifesti Kubernetes
+- Il kubeconfig del cluster figlio recuperato
 
-## Passi
+## Fasi
 
-### 1. Preparer le depot Git
+### 1. Preparare il repository Git
 
-Organisez votre depot Git avec une structure de repertoires contenant vos manifestes Kubernetes :
+Organizzate il vostro repository Git con una struttura di directory contenente i vostri manifesti Kubernetes:
 
 ```
 k8s-manifests/
@@ -36,12 +36,12 @@ k8s-manifests/
 ```
 
 :::tip
-Flux synchronise tous les manifestes YAML trouves dans le repertoire cible et ses sous-repertoires. Organisez vos fichiers de maniere logique pour faciliter la maintenance.
+Flux sincronizza tutti i manifesti YAML trovati nella directory di destinazione e nelle sue sottodirectory. Organizzate i vostri file in modo logico per facilitare la manutenzione.
 :::
 
-### 2. Activer l'addon FluxCD
+### 2. Attivare l'addon FluxCD
 
-Modifiez la configuration de votre cluster pour activer FluxCD avec l'URL de votre depot :
+Modificate la configurazione del vostro cluster per attivare FluxCD con l'URL del vostro repository:
 
 ```yaml title="cluster-gitops.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -77,39 +77,39 @@ spec:
 ```
 
 :::note
-Pour les depots Git prives, configurez l'authentification SSH ou par token dans le cluster enfant apres le deploiement de Flux.
+Per i repository Git privati, configurate l'autenticazione SSH o tramite token nel cluster figlio dopo la distribuzione di Flux.
 :::
 
-### 3. Appliquer la configuration du cluster
+### 3. Applicare la configurazione del cluster
 
 ```bash
 kubectl apply -f cluster-gitops.yaml
 
-# Attendre que le cluster et les addons soient prets
+# Attendere che il cluster e gli addon siano pronti
 kubectl get kubernetes my-cluster -w
 ```
 
-### 4. Observer la synchronisation
+### 4. Osservare la sincronizzazione
 
-Verifiez que Flux synchronise correctement votre depot Git :
+Verificate che Flux sincronizzi correttamente il vostro repository Git:
 
 ```bash
 export KUBECONFIG=cluster-admin.yaml
 
-# Verifier le GitRepository
+# Verificare il GitRepository
 kubectl get gitrepositories -A
 
-# Verifier les Kustomizations (reconciliation Flux)
+# Verificare le Kustomization (riconciliazione Flux)
 kubectl get kustomizations -A
 
-# Details de la synchronisation
+# Dettagli della sincronizzazione
 kubectl describe gitrepository -A
 
-# Verifier les pods Flux
+# Verificare i pod Flux
 kubectl get pods -n flux-system
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```console
 NAMESPACE     NAME            URL                                          READY   STATUS                  AGE
@@ -121,9 +121,9 @@ NAMESPACE     NAME            READY   STATUS                  AGE
 flux-system   flux-system     True    Applied revision: main   5m
 ```
 
-### 5. Deployer une application via Git
+### 5. Distribuire un'applicazione tramite Git
 
-Pour deployer ou mettre a jour une application, poussez simplement les manifestes dans votre depot Git :
+Per distribuire o aggiornare un'applicazione, inviate semplicemente i manifesti nel vostro repository Git:
 
 ```yaml title="apps/my-app/deployment.yaml"
 apiVersion: apps/v1
@@ -155,24 +155,24 @@ spec:
 ```
 
 ```bash
-# Depuis votre depot local
+# Dal vostro repository locale
 git add apps/my-app/deployment.yaml
 git commit -m "deploy: add my-app v1.0.0"
 git push origin main
 ```
 
-Flux detecte automatiquement les changements et applique les manifestes dans le cluster :
+Flux rileva automaticamente le modifiche e applica i manifesti nel cluster:
 
 ```bash
-# Observer la reconciliation
+# Osservare la riconciliazione
 kubectl get kustomizations -A -w
 
-# Verifier que l'application est deployee
+# Verificare che l'applicazione sia distribuita
 kubectl get pods -l app=my-app
 ```
 
 :::tip
-Par defaut, Flux synchronise le depot toutes les minutes. Pour forcer une reconciliation immediate :
+Per impostazione predefinita, Flux sincronizza il repository ogni minuto. Per forzare una riconciliazione immediata:
 ```bash
 kubectl annotate --overwrite gitrepository flux-system -n flux-system reconcile.fluxcd.io/requestedAt="$(date +%s)"
 ```
@@ -180,29 +180,29 @@ kubectl annotate --overwrite gitrepository flux-system -n flux-system reconcile.
 
 ## Verifica
 
-Validez que le pipeline GitOps fonctionne de bout en bout :
+Validate che il pipeline GitOps funzioni da un capo all'altro:
 
 ```bash
-# Statut global de Flux
+# Stato globale di Flux
 kubectl get gitrepositories,kustomizations -A
 
-# Logs de Flux en cas de probleme
+# Log di Flux in caso di problema
 kubectl logs -n flux-system deploy/source-controller --tail=30
 kubectl logs -n flux-system deploy/kustomize-controller --tail=30
 
-# Verifier les resources deployees par Flux
+# Verificare le risorse distribuite da Flux
 kubectl get all -l kustomize.toolkit.fluxcd.io/name=flux-system
 ```
 
 :::warning
-Si la synchronisation echoue, verifiez :
-- L'accessibilite du depot Git depuis le cluster
-- La validite des manifestes YAML dans le depot (un fichier invalide bloque la reconciliation)
-- Les logs des controlleurs Flux pour identifier l'erreur precise
+Se la sincronizzazione fallisce, verificate:
+- L'accessibilita del repository Git dal cluster
+- La validita dei manifesti YAML nel repository (un file non valido blocca la riconciliazione)
+- I log dei controller Flux per identificare l'errore preciso
 :::
 
 ## Per approfondire
 
-- [Reference API](../api-reference.md) -- Configuration de l'addon `fluxcd`
-- [Concepts](../concepts.md) -- Architecture du cluster et addons
-- [Comment deployer un Ingress avec TLS](./deploy-ingress-tls.md) -- Exposer vos applications deployees par Flux
+- [Riferimento API](../api-reference.md) -- Configurazione dell'addon `fluxcd`
+- [Concetti](../concepts.md) -- Architettura del cluster e addon
+- [Come distribuire un Ingress con TLS](./deploy-ingress-tls.md) -- Esporre le vostre applicazioni distribuite da Flux

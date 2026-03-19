@@ -62,7 +62,7 @@ title: Introduzione a Hikube
 
 ### **Conoscenze raccomandate:**
 - **Kubernetes**: Concetti di base (pod, servizi, deployment)
-- **Infrastruttura cloud**: VM, reti, storage
+- **Infrastruttura cloud**: VM, reti, archiviazione
 - **DevOps**: CI/CD, monitoring, log
 - **API REST**: Per l'automazione avanzata
 

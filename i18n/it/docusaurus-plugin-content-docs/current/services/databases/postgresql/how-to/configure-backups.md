@@ -1,38 +1,38 @@
 ---
-title: Come configurare i backup automatici
+title: "Come configurare i backup automatici"
 ---
 
-# Comment configurer les sauvegardes automatiques
+# Come configurare i backup automatici
 
-Ce guide explique comment activer et configurer les sauvegardes automatiques de votre base PostgreSQL vers un stockage compatible S3, via l'opérateur CloudNativePG.
+Questa guida spiega come attivare e configurare i backup automatici del vostro database PostgreSQL verso uno storage compatibile S3, tramite l'operatore CloudNativePG.
 
-## Prerequisitiiti
+## Prerequisiti
 
-- **kubectl** configuré avec votre kubeconfig Hikube
-- Une instance **PostgreSQL** déployée sur Hikube (ou un manifeste prêt à déployer)
-- Un **bucket S3-compatible** accessible (Minio, AWS S3, etc.)
-- Les **identifiants S3** : access key, secret key, URL du endpoint
+- **kubectl** configurato con il vostro kubeconfig Hikube
+- Un'istanza **PostgreSQL** distribuita su Hikube (o un manifesto pronto per il deployment)
+- Un **bucket S3-compatible** accessibile (Minio, AWS S3, ecc.)
+- Le **credenziali S3**: access key, secret key, URL dell'endpoint
 
-## Passi
+## Passaggi
 
-### 1. Préparer les identifiants S3
+### 1. Preparare le credenziali S3
 
-Avant d'activer les sauvegardes, rassemblez les informations suivantes :
+Prima di attivare i backup, raccogliete le seguenti informazioni:
 
-| Paramètre | Description | Exemple |
+| Parametro | Descrizione | Esempio |
 |-----------|-------------|---------|
-| `destinationPath` | Chemin S3 du bucket de destination | `s3://backups/postgresql/production/` |
-| `endpointURL` | URL du endpoint S3 | `http://minio-gateway-service:9000` |
-| `s3AccessKey` | Clé d'accès S3 | `oobaiRus9pah8PhohL1ThaeTa4UVa7gu` |
-| `s3SecretKey` | Clé secrète S3 | `ju3eum4dekeich9ahM1te8waeGai0oog` |
+| `destinationPath` | Percorso S3 del bucket di destinazione | `s3://backups/postgresql/production/` |
+| `endpointURL` | URL dell'endpoint S3 | `http://minio-gateway-service:9000` |
+| `s3AccessKey` | Chiave di accesso S3 | `oobaiRus9pah8PhohL1ThaeTa4UVa7gu` |
+| `s3SecretKey` | Chiave segreta S3 | `ju3eum4dekeich9ahM1te8waeGai0oog` |
 
 :::tip
-Si vous utilisez le stockage objet Hikube (Minio), l'endpoint par défaut est `http://minio-gateway-service:9000`. Pour un fournisseur externe (AWS S3, Scaleway, etc.), renseignez l'URL correspondante.
+Se utilizzate lo storage oggetti Hikube (Minio), l'endpoint predefinito e `http://minio-gateway-service:9000`. Per un fornitore esterno (AWS S3, Scaleway, ecc.), inserite l'URL corrispondente.
 :::
 
-### 2. Créer le manifeste PostgreSQL avec backup activé
+### 2. Creare il manifesto PostgreSQL con backup attivato
 
-Créez ou modifiez votre manifeste pour inclure la section `backup` :
+Create o modificate il vostro manifesto per includere la sezione `backup`:
 
 ```yaml title="postgresql-with-backup.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -64,40 +64,40 @@ spec:
     s3SecretKey: ju3eum4dekeich9ahM1te8waeGai0oog
 ```
 
-**Détail des paramètres de backup :**
+**Dettaglio dei parametri di backup:**
 
-| Paramètre | Description | Valeur par défaut |
+| Parametro | Descrizione | Valore predefinito |
 |-----------|-------------|-------------------|
-| `backup.enabled` | Active les sauvegardes automatiques | `false` |
-| `backup.schedule` | Planification cron (ici : tous les jours à 2h) | `"0 2 * * * *"` |
-| `backup.retentionPolicy` | Durée de rétention des sauvegardes | `"30d"` |
-| `backup.destinationPath` | Chemin S3 de destination | _(requis)_ |
-| `backup.endpointURL` | URL du endpoint S3 | _(requis)_ |
-| `backup.s3AccessKey` | Clé d'accès S3 | _(requis)_ |
-| `backup.s3SecretKey` | Clé secrète S3 | _(requis)_ |
+| `backup.enabled` | Attiva i backup automatici | `false` |
+| `backup.schedule` | Pianificazione cron (qui: ogni giorno alle 2) | `"0 2 * * * *"` |
+| `backup.retentionPolicy` | Durata di retention dei backup | `"30d"` |
+| `backup.destinationPath` | Percorso S3 di destinazione | _(richiesto)_ |
+| `backup.endpointURL` | URL dell'endpoint S3 | _(richiesto)_ |
+| `backup.s3AccessKey` | Chiave di accesso S3 | _(richiesto)_ |
+| `backup.s3SecretKey` | Chiave segreta S3 | _(richiesto)_ |
 
 :::note
-La planification `schedule` utilise la syntaxe cron standard. Exemples courants :
-- `"0 2 * * *"` : tous les jours à 2h00
-- `"0 */6 * * *"` : toutes les 6 heures
-- `"0 2 * * 0"` : tous les dimanches à 2h00
+La pianificazione `schedule` utilizza la sintassi cron standard. Esempi comuni:
+- `"0 2 * * *"`: ogni giorno alle 2:00
+- `"0 */6 * * *"`: ogni 6 ore
+- `"0 2 * * 0"`: ogni domenica alle 2:00
 :::
 
-### 3. Appliquer la configuration
+### 3. Applicare la configurazione
 
 ```bash
 kubectl apply -f postgresql-with-backup.yaml
 ```
 
-### 4. Vérifier que les sauvegardes sont configurées
+### 4. Verificare che i backup siano configurati
 
-Vérifiez que l'instance PostgreSQL est bien déployée avec le backup activé :
+Verificate che l'istanza PostgreSQL sia stata distribuita con il backup attivato:
 
 ```bash
 kubectl get postgres my-database -o yaml | grep -A 10 backup
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```console
   backup:
@@ -110,27 +110,27 @@ kubectl get postgres my-database -o yaml | grep -A 10 backup
 
 ## Verifica
 
-Pour confirmer que les sauvegardes fonctionnent correctement :
+Per confermare che i backup funzionino correttamente:
 
-1. **Vérifiez les logs** du pod PostgreSQL primary pour les messages relatifs aux sauvegardes :
+1. **Verificate i log** del pod PostgreSQL primary per i messaggi relativi ai backup:
 
 ```bash
 kubectl logs postgres-my-database-1 -c postgres | grep -i backup
 ```
 
-2. **Vérifiez le contenu du bucket S3** pour confirmer que les fichiers WAL et les sauvegardes base sont bien envoyés.
+2. **Verificate il contenuto del bucket S3** per confermare che i file WAL e i backup base vengano inviati.
 
-3. **Vérifiez les événements** liés à l'instance :
+3. **Verificate gli eventi** legati all'istanza:
 
 ```bash
 kubectl describe postgres my-database
 ```
 
 :::warning
-Testez régulièrement la restauration de vos sauvegardes. Une sauvegarde qui n'a jamais été testée n'est pas une sauvegarde fiable. Consultez le guide [Comment restaurer une sauvegarde (PITR)](./restore-backup.md).
+Testate regolarmente il ripristino dei vostri backup. Un backup che non e mai stato testato non e un backup affidabile. Consultate la guida [Come ripristinare un backup (PITR)](./restore-backup.md).
 :::
 
 ## Per approfondire
 
-- **[Référence API PostgreSQL](../api-reference.md)** : documentation complète de tous les paramètres de backup
-- **[Comment restaurer une sauvegarde (PITR)](./restore-backup.md)** : restaurer vos données à un instant précis
+- **[Riferimento API PostgreSQL](../api-reference.md)**: documentazione completa di tutti i parametri di backup
+- **[Come ripristinare un backup (PITR)](./restore-backup.md)**: ripristinare i vostri dati a un istante preciso

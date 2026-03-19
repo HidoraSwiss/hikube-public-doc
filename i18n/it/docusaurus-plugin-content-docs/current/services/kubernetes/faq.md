@@ -5,55 +5,55 @@ title: FAQ
 
 # FAQ — Kubernetes
 
-### Quels sont les types d'instances disponibles ?
+### Quali sono i tipi di istanze disponibili?
 
-Hikube propose trois gammes d'instances pour les nœuds Kubernetes :
+Hikube propone tre gamme di istanze per i nodi Kubernetes:
 
-| Gamme | Préfixe | Ratio vCPU:RAM | Usage recommandé |
-|-------|---------|----------------|------------------|
-| **Standard** | `s1` | 1:2 | Workloads généraux, serveurs web |
-| **Universal** | `u1` | 1:4 | Applications métier, bases de données |
-| **Memory** | `m1` | 1:8 | Cache, analytics, traitements en mémoire |
+| Gamma | Prefisso | Rapporto vCPU:RAM | Uso raccomandato |
+|-------|----------|-------------------|------------------|
+| **Standard** | `s1` | 1:2 | Workload generali, server web |
+| **Universal** | `u1` | 1:4 | Applicazioni aziendali, database |
+| **Memory** | `m1` | 1:8 | Cache, analytics, elaborazione in memoria |
 
-Chaque gamme est disponible en tailles allant de `small` à `8xlarge`. Par exemple : `s1.small`, `u1.large`, `m1.2xlarge`.
+Ogni gamma e disponibile in dimensioni che vanno da `small` a `8xlarge`. Ad esempio: `s1.small`, `u1.large`, `m1.2xlarge`.
 
 ---
 
-### Comment fonctionne la `storageClass` dans un cluster Kubernetes ?
+### Come funziona la `storageClass` in un cluster Kubernetes?
 
-La storageClass choisie dans le manifeste du cluster est **répliquée à l'intérieur du cluster tenant**. Lorsque vos workloads créent des PVC dans le cluster, le stockage est provisionné avec cette storageClass côté infrastructure.
+La storageClass scelta nel manifesto del cluster viene **replicata all'interno del cluster tenant**. Quando i vostri workload creano dei PVC nel cluster, l'archiviazione viene provisionata con questa storageClass lato infrastruttura.
 
-Les storageClasses disponibles sont : `local`, `replicated` et `replicated-async`.
+Le storageClass disponibili sono: `local`, `replicated` e `replicated-async`.
 
-| Caractéristique | `local` | `replicated` / `replicated-async` |
+| Caratteristica | `local` | `replicated` / `replicated-async` |
 |----------------|---------|-------------------------------------|
-| **Réplication** | Un seul datacenter | Multi-datacenter (synchrone ou asynchrone) |
-| **Performance** | Plus rapide (latence faible) | Légèrement plus lent |
-| **Haute disponibilité** | Non (niveau stockage) | Oui |
+| **Replica** | Un solo datacenter | Multi-datacenter (sincrona o asincrona) |
+| **Prestazioni** | Piu veloce (latenza bassa) | Leggermente piu lento |
+| **Alta disponibilita** | No (livello archiviazione) | Si |
 
 :::tip
-La recommandation par défaut pour Kubernetes est **`replicated`**, qui assure la durabilité des données au niveau stockage.
+La raccomandazione predefinita per Kubernetes e **`replicated`**, che garantisce la durabilita dei dati a livello di archiviazione.
 :::
 
 :::note
-**Limitation actuelle** : une seule storageClass peut être passée au cluster tenant. Une amélioration est en cours pour permettre de passer toutes les storageClasses et laisser le client choisir selon ses besoins.
+**Limitazione attuale**: una sola storageClass puo essere passata al cluster tenant. Un miglioramento e in corso per permettere di passare tutte le storageClass e lasciare al cliente la scelta in base alle proprie esigenze.
 :::
 
 ---
 
-### Quels addons sont disponibles ?
+### Quali addon sono disponibili?
 
-Les addons suivants peuvent être activés sur votre cluster :
+I seguenti addon possono essere attivati sul vostro cluster:
 
-| Addon | Description |
+| Addon | Descrizione |
 |-------|-------------|
-| `certManager` | Gestion automatique des certificats TLS (Let's Encrypt) |
-| `ingressNginx` | Contrôleur Ingress NGINX pour le routage HTTP/HTTPS |
-| `fluxcd` | Déploiement GitOps continu |
-| `monitoringAgents` | Agents de monitoring (métriques, logs) |
-| `gpuOperator` | Opérateur NVIDIA GPU pour workloads GPU |
+| `certManager` | Gestione automatica dei certificati TLS (Let's Encrypt) |
+| `ingressNginx` | Controller Ingress NGINX per il routing HTTP/HTTPS |
+| `fluxcd` | Distribuzione GitOps continua |
+| `monitoringAgents` | Agenti di monitoring (metriche, log) |
+| `gpuOperator` | Operatore NVIDIA GPU per workload GPU |
 
-Chaque addon s'active dans le manifeste du cluster :
+Ogni addon si attiva nel manifesto del cluster:
 
 ```yaml title="cluster.yaml"
 spec:
@@ -66,15 +66,15 @@ spec:
 
 ---
 
-### Comment récupérer mon kubeconfig ?
+### Come recuperare il mio kubeconfig?
 
-Le kubeconfig est stocké dans un Secret Kubernetes généré automatiquement lors de la création du cluster :
+Il kubeconfig e memorizzato in un Secret Kubernetes generato automaticamente durante la creazione del cluster:
 
 ```bash
 kubectl get tenantsecret <cluster-name>-admin-kubeconfig -o jsonpath='{.data.super-admin\.conf}' | base64 -d > kubeconfig.yaml
 ```
 
-Vous pouvez ensuite l'utiliser :
+Potete poi utilizzarlo:
 
 ```bash
 export KUBECONFIG=kubeconfig.yaml
@@ -83,11 +83,11 @@ kubectl get nodes
 
 ---
 
-### Comment scaler les nodeGroups ?
+### Come scalare i nodeGroup?
 
-Le scaling est contrôlé par les paramètres `minReplicas` et `maxReplicas` de chaque nodeGroup. L'autoscaler ajuste automatiquement le nombre de nœuds entre ces deux bornes en fonction de la charge.
+Lo scaling e controllato dai parametri `minReplicas` e `maxReplicas` di ogni nodeGroup. L'autoscaler regola automaticamente il numero di nodi tra questi due limiti in base al carico.
 
-Pour modifier les limites, mettez à jour votre manifeste et appliquez-le :
+Per modificare i limiti, aggiornate il vostro manifesto e applicatelo:
 
 ```yaml title="cluster.yaml"
 spec:
@@ -104,9 +104,9 @@ kubectl apply -f cluster.yaml
 
 ---
 
-### Comment ajouter des nœuds GPU à mon cluster ?
+### Come aggiungere nodi GPU al mio cluster?
 
-Ajoutez un nodeGroup dédié avec le champ `gpus` spécifiant le modèle de GPU souhaité :
+Aggiungete un nodeGroup dedicato con il campo `gpus` specificando il modello di GPU desiderato:
 
 ```yaml title="cluster-gpu.yaml"
 spec:
@@ -123,7 +123,6 @@ spec:
 ```
 
 :::warning
-- N'oubliez pas d'activer l'addon `gpuOperator` pour que les drivers NVIDIA soient automatiquement installés sur les nœuds GPU.
-- Chaque nœud du nodeGroup GPU consomme **1 GPU physique**. Un nodeGroup avec `minReplicas: 4` nécessite 4 GPUs disponibles, avec un impact direct sur la facturation.
+- Non dimenticate di attivare l'addon `gpuOperator` affinche i driver NVIDIA vengano installati automaticamente sui nodi GPU.
+- Ogni nodo del nodeGroup GPU consuma **1 GPU fisico**. Un nodeGroup con `minReplicas: 4` necessita di 4 GPU disponibili, con un impatto diretto sulla fatturazione.
 :::
-

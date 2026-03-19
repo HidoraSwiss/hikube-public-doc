@@ -120,12 +120,12 @@ Hikube fornisce **dashboard preconfigurate** per ogni tipo di risorsa:
 
 | **Tipo di Risorsa** | **Dashboard Inclusa** | **Metriche Chiave** |
 |---------------------------|-------------------------|------------------------|
-| **Kubernetes** | Cluster, Nodi, Pod, Servizi | CPU, RAM, rete, storage |
+| **Kubernetes** | Cluster, Nodi, Pod, Servizi | CPU, RAM, rete, archiviazione |
 | **Macchine Virtuali** | Host, VM, Prestazioni | Utilizzo, I/O, disponibilità |
 | **Database** | MySQL, PostgreSQL, Redis | Connessioni, query, cache |
 | **Applicazioni** | Prestazioni, Errori | Latenza, throughput, 5xx |
 | **Rete** | LoadBalancer, VPN | Traffico, latenza, connessioni |
-| **Storage** | Bucket, Volumi | Capacità, IOPS, trasferimenti |
+| **Archiviazione** | Bucket, Volumi | Capacità, IOPS, trasferimenti |
 
 ---
 
@@ -136,7 +136,7 @@ Ora che avete padroneggiato i concetti di Hikube, potete:
 ### **Mettere in Pratica**
 - **[Distribuire Kubernetes](../services/kubernetes/overview.md)** → Create il vostro primo cluster
 - **[Configurare delle VM](../services/compute/overview.md)** → Infrastruttura ibrida
-- **[Gestire lo storage](../services/storage/buckets/overview.md)** → Dati persistenti
+- **[Gestire l'archiviazione](../services/storage/buckets/overview.md)** → Dati persistenti
 
 ### **Automatizzare**
 - **[Terraform](../tools/terraform.md)** → Infrastructure as Code

@@ -4,20 +4,20 @@ title: Panoramica
 ---
 
 <!--- Presentazione del Kubernetes Gestito su Hikube
-- Schema architettura (replica, control plane, worker, infra, addon, versionamento k8s)
+- Schema architettura (replica, control plane, worker, infra, addon, versioning k8s)
 - Composizione dei diversi elementi di configurazione del k8s gestito
-- Spiegazione del funzionamento :
+- Spiegazione del funzionamento:
   - control plane
   - worker/nodeGroup
     - Esempio
   - storageclass
-  - versionamento
-  - addon-->
+  - versioning
+  - addons-->
 
 # Presentazione del Kubernetes Gestito su Hikube
 
-Hikube propone un servizio di **Kubernetes gestito** progettato per offrire un'infrastruttura altamente disponibile, sicura e performante.
-Il piano di controllo è interamente gestito dalla piattaforma, mentre i **nodi worker** sono distribuiti nel vostro tenant sotto forma di macchine virtuali.
+Hikube offre un servizio di **Kubernetes gestito** progettato per fornire un'infrastruttura altamente disponibile, sicura e performante.
+Il piano di controllo e interamente gestito dalla piattaforma, mentre i **nodi worker** vengono distribuiti nel vostro tenant sotto forma di macchine virtuali.
 
 ---
 
@@ -25,9 +25,9 @@ Il piano di controllo è interamente gestito dalla piattaforma, mentre i **nodi 
 
 ### **Panoramica**
 
-I cluster Kubernetes Hikube si basano su un'**infrastruttura multi-datacenter** (3 siti svizzeri) che garantisce la replica, la tolleranza ai guasti e la continuità di servizio.
+I cluster Kubernetes Hikube si basano su un'**infrastruttura multi-datacenter** (3 siti svizzeri) che garantisce la replica, la tolleranza ai guasti e la continuita del servizio.
 
-- **Piano di controllo (Control Plane)**: ospitato e operato da Hikube
+- **Piano di controllo (Control Plane)**: ospitato e gestito da Hikube
   Composto da:
   - `kube-apiserver`
   - `etcd`
@@ -35,9 +35,9 @@ I cluster Kubernetes Hikube si basano su un'**infrastruttura multi-datacenter** 
   - `kube-controller-manager`
 - **Nodi worker**: macchine virtuali nel vostro tenant
 - **Rete**: CNI con supporto `LoadBalancer`, `Ingress` e policy di rete (`NetworkPolicy`)
-- **Storage**: volumi persistenti replicati sui 3 datacenter
+- **Archiviazione**: volumi persistenti replicati sui 3 datacenter
 - **Add-on**: integrazione cert-manager, FluxCD, monitoring, ecc.
-- **Versionamento Kubernetes**: supporto multi-versione con aggiornamenti progressivi
+- **Versioning Kubernetes**: supporto multi-versione con aggiornamenti progressivi
 
 ---
 
@@ -50,7 +50,7 @@ I principali elementi di configurazione includono:
 |----------|-------------|
 | **nodeGroups** | Gruppi di nodi omogenei (dimensione, ruolo, GPU, ecc.) |
 | **storageClass** | Definisce il tipo di persistenza e la replica |
-| **addons** | Insieme delle funzionalità opzionali attivabili |
+| **addons** | Insieme delle funzionalita opzionali attivabili |
 | **version** | Versione del server Kubernetes utilizzata |
 | **network** | Gestione del CNI, LoadBalancer e Ingress |
 
@@ -61,13 +61,13 @@ I principali elementi di configurazione includono:
 ### 🧠 **Control Plane**
 
 - Gestito da Hikube, senza manutenzione necessaria lato cliente
-- Componenti critici replicati su più siti
-- Gestione dell'alta disponibilità, del monitoring e degli aggiornamenti automatici
+- Componenti critici replicati su piu siti
+- Gestione dell'alta disponibilita, del monitoring e degli aggiornamenti automatici
 - Accesso tramite l'API standard Kubernetes (`kubectl`, client SDK, ecc.)
 
 ### 🧩 **Worker Nodes / NodeGroups**
 
-I **NodeGroups** permettono di adattare le risorse alle vostre esigenze. Ogni gruppo può essere configurato con un tipo di istanza, dei ruoli e uno scaling automatico.
+I **NodeGroups** permettono di adattare le risorse alle vostre esigenze. Ogni gruppo puo essere configurato con un tipo di istanza, dei ruoli e uno scaling automatico.
 
 #### Esempio di NodeGroup
 
@@ -88,13 +88,13 @@ nodeGroups:
 
 ---
 
-## 💾 Storage Persistente
+## 💾 Archiviazione Persistente
 
-### **Classe di storage: `replicated`**
+### **Classe di archiviazione: `replicated`**
 
 - Replica automatica sui **3 datacenter svizzeri**
 - Provisioning dinamico dei volumi persistenti (PVC)
-- Tolleranza ai guasti e alta disponibilità nativa
+- Tolleranza ai guasti e alta disponibilita nativa
 
 Esempio di utilizzo:
 
@@ -107,11 +107,11 @@ resources:
 
 ---
 
-## 🔢 Versionamento Kubernetes
+## 🔢 Versioning Kubernetes
 
 - I cluster possono essere creati con una **versione Kubernetes specifica**
-- Hikube assicura gli aggiornamenti minori e correttivi in modo controllato
-- Il cliente mantiene la possibilità di pianificare gli upgrade maggiori
+- Hikube garantisce gli aggiornamenti minori e correttivi in modo controllato
+- Il cliente mantiene la possibilita di pianificare gli upgrade maggiori
 
 Esempio:
 
@@ -126,18 +126,18 @@ version: "1.30.3"
 ### **Cert-Manager**
 
 - Gestione automatizzata dei certificati SSL/TLS
-- Supporto Let's Encrypt e autorità private
+- Supporto Let's Encrypt e autorita private
 - Rinnovo automatico
 
 ### **Ingress NGINX**
 
-- Controller Ingress integrato
+- Controller di ingress integrato
 - Supporto wildcard, SNI e metriche Prometheus
 
 ### **Flux CD (GitOps)**
 
 - Sincronizzazione continua con i vostri repository Git
-- Deployment automatizzato e rollback
+- Distribuzione automatizzata e rollback
 
 ### **Monitoring Stack**
 
@@ -187,7 +187,7 @@ nodeGroups:
 
 - **[Concetti e Architettura](./concepts.md)** → Comprendere come viene distribuito un cluster Kubernetes Hikube
 - **[Avvio rapido](./quick-start.md)** → Create il vostro primo cluster Hikube
-- **[API Reference](./api-reference.md)** → Documentazione completa della configurazione
+- **[Riferimento API](./api-reference.md)** → Documentazione completa della configurazione
 
 ---
 
@@ -195,6 +195,6 @@ nodeGroups:
 
 - **Piano di controllo gestito**: nessuna manutenzione dei master necessaria
 - **Nodi nel vostro tenant**: controllo completo sui worker
-- **Scaling automatico**: adattamento dinamico secondo il carico
-- **Multi-datacenter**: alta disponibilità nativa e replica
-- **Compatibilità totale**: API Kubernetes standard supportata
+- **Scaling automatico**: adeguamento dinamico in base al carico
+- **Multi-datacenter**: alta disponibilita nativa e replica
+- **Compatibilita totale**: API Kubernetes standard supportata

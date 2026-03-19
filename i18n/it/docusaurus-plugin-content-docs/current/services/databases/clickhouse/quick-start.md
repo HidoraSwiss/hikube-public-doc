@@ -3,39 +3,39 @@ sidebar_position: 2
 title: Avvio rapido
 ---
 
-# Déployer ClickHouse en 5 minutes
+# Distribuire ClickHouse in 5 minuti
 
-Ce guide vous accompagne dans le déploiement de votre première base de données **ClickHouse** sur Hikube en **quelques minutes**!
-
----
-
-## Obiettivos
-
-À la fin de ce guide, vous aurez :
-
-- Une base de données **ClickHouse** déployée sur Hikube
-- Une configuration initiale avec **shards** et **réplicas** adaptée à vos besoins
-- Un utilisateur et un mot de passe pour vous connecter
-- Un stockage persistant pour conserver vos données
+Questa guida vi accompagna nel deployment del vostro primo database **ClickHouse** su Hikube in **pochi minuti**!
 
 ---
 
-## Prerequisitiiti
+## Obiettivi
 
-Avant de commencer, assurez-vous d'avoir :
+Alla fine di questa guida, avrete:
 
-- **kubectl** configuré avec votre kubeconfig Hikube
-- **Droits administrateur** sur votre tenant
-- Un **namespace** disponible pour héberger votre base de données
-- (Optionnel) Un bucket **S3-compatible** si vous souhaitez activer les sauvegardes automatiques
+- Un database **ClickHouse** distribuito su Hikube
+- Una configurazione iniziale con **shard** e **repliche** adattata alle vostre esigenze
+- Un utente e una password per connettervi
+- Un'archiviazione persistente per conservare i vostri dati
 
 ---
 
-## Étape 1 : Créer le manifeste ClickHouse
+## Prerequisiti
 
-### **Préparez le fichier manifest**
+Prima di iniziare, assicuratevi di avere:
 
-Créez un fichier `clickhouse.yaml` comme ci-dessous:
+- **kubectl** configurato con il vostro kubeconfig Hikube
+- **Diritti di amministratore** sul vostro tenant
+- Un **namespace** disponibile per ospitare il vostro database
+- (Opzionale) Un bucket **S3-compatible** se desiderate attivare i backup automatici
+
+---
+
+## Passo 1: Creare il manifesto ClickHouse
+
+### **Preparate il file manifest**
+
+Create un file `clickhouse.yaml` come segue:
 
 ```yaml title="clickhouse.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -75,24 +75,24 @@ spec:
       password: hackme
 ```
 
-### **Déployez le yaml ClickHouse**
+### **Distribuite il yaml ClickHouse**
 
 ```bash
-# Appliquer le yaml
+# Applicare il yaml
 kubectl apply -f clickhouse.yaml
 ```
 
 ---
 
-## Étape 2 : Verifica du déploiement
+## Passo 2: Verifica del deployment
 
-Vérifiez le statut de votre cluster ClickHouse (peut prendre 1-2 minutes) :
+Verificate lo stato del vostro cluster ClickHouse (puo richiedere 1-2 minuti):
 
 ```bash
 kubectl get clickhouse
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```console
 NAME      READY   AGE     VERSION
@@ -101,15 +101,15 @@ example   True    2m48s   0.13.0
 
 ---
 
-## Étape 3 : Verifica des pods
+## Passo 3: Verifica dei pod
 
-Vérifiez que les pods applicatifs sont en état `Running` :
+Verificate che i pod applicativi siano nello stato `Running`:
 
 ```bash
 kubectl get po | grep clickhouse
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```console
 chi-clickhouse-example-clickhouse-0-0-0           1/1     Running     0             3m43s
@@ -119,19 +119,19 @@ chk-clickhouse-example-keeper-cluster1-0-1-0      1/1     Running     0         
 chk-clickhouse-example-keeper-cluster1-0-2-0      1/1     Running     0             2m28s
 ```
 
-Avec `replicas: 2` et `shards: 1`, vous obtenez **2 pods ClickHouse** (réplicas du shard) et **3 pods ClickHouse Keeper** pour la coordination du cluster.
+Con `replicas: 2` e `shards: 1`, ottenete **2 pod ClickHouse** (repliche dello shard) e **3 pod ClickHouse Keeper** per il coordinamento del cluster.
 
 ---
 
-## Étape 4 : Récupérer les identifiants
+## Passo 4: Recuperare le credenziali
 
-Les mots de passe sont stockés dans un Secret Kubernetes :
+Le password sono memorizzate in un Secret Kubernetes:
 
 ```bash
 kubectl get secret clickhouse-example-credentials -o json | jq -r '.data | to_entries[] | "\(.key): \(.value|@base64d)"'
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```console
 backup: vIdZUNiaLKaVbIvl
@@ -141,17 +141,17 @@ user2: hackme
 
 ---
 
-## Étape 5 : Connexion et tests
+## Passo 5: Connessione e test
 
-### Port-forward du service ClickHouse
+### Port-forward del servizio ClickHouse
 
 ```bash
 kubectl port-forward svc/chendpoint-clickhouse-example 9000:9000
 ```
 
-### Test de connexion avec clickhouse-client
+### Test di connessione con clickhouse-client
 
-Dans un autre terminal, connectez-vous et vérifiez la version de ClickHouse :
+In un altro terminale, connettetevi e verificate la versione di ClickHouse:
 
 ```bash
 clickhouse-client \
@@ -162,7 +162,7 @@ clickhouse-client \
   --query "SHOW DATABASES;"
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```console
 INFORMATION_SCHEMA
@@ -173,85 +173,85 @@ system
 
 ---
 
-## Étape 6 : Dépannage rapide
+## Passo 6: Risoluzione rapida dei problemi
 
-### Pods en CrashLoopBackOff
+### Pod in CrashLoopBackOff
 
 ```bash
-# Vérifier les logs du pod ClickHouse en erreur
+# Verificare i log del pod ClickHouse in errore
 kubectl logs chi-clickhouse-example-clickhouse-0-0-0
 
-# Vérifier les events du pod
+# Verificare gli eventi del pod
 kubectl describe pod chi-clickhouse-example-clickhouse-0-0-0
 ```
 
-**Cause frequenti :** mémoire insuffisante (`resources.memory` trop faible), volume de stockage plein, erreur dans la configuration des shards ou réplicas.
+**Cause frequenti:** memoria insufficiente (`resources.memory` troppo bassa), volume di archiviazione pieno, errore nella configurazione degli shard o delle repliche.
 
-### ClickHouse non accessible
+### ClickHouse non accessibile
 
 ```bash
-# Vérifier que les services existent
+# Verificare che i servizi esistano
 kubectl get svc | grep clickhouse
 
-# Vérifier le service endpoint
+# Verificare il servizio endpoint
 kubectl describe svc chendpoint-clickhouse-example
 ```
 
-**Cause frequenti :** port-forward non actif, mauvais port (9000 pour le protocole natif, 8123 pour HTTP), service non prêt.
+**Cause frequenti:** port-forward non attivo, porta errata (9000 per il protocollo nativo, 8123 per HTTP), servizio non pronto.
 
-### ClickHouse Keeper non fonctionnel
+### ClickHouse Keeper non funzionale
 
 ```bash
-# Vérifier les logs du Keeper
+# Verificare i log del Keeper
 kubectl logs chk-clickhouse-example-keeper-cluster1-0-0-0
 
-# Vérifier l'état des pods Keeper
+# Verificare lo stato dei pod Keeper
 kubectl get pods | grep keeper
 ```
 
-**Cause frequenti :** le quorum Keeper nécessite un nombre impair de réplicas (3 minimum recommandé), espace disque Keeper insuffisant (`clickhouseKeeper.size` trop faible).
+**Cause frequenti:** il quorum Keeper necessita di un numero dispari di repliche (3 minimo raccomandato), spazio disco Keeper insufficiente (`clickhouseKeeper.size` troppo basso).
 
-### Commandes de diagnostic générales
+### Comandi di diagnostica generali
 
 ```bash
-# Events récents sur le namespace
+# Eventi recenti sul namespace
 kubectl get events --sort-by=.metadata.creationTimestamp
 
-# État détaillé du cluster ClickHouse
+# Stato dettagliato del cluster ClickHouse
 kubectl describe clickhouse example
 ```
 
 ---
 
-## 📋 Résumé
+## 📋 Riepilogo
 
-Vous avez déployé :
+Avete distribuito:
 
-- Une base de données **ClickHouse** sur votre tenant Hikube
-- Une configuration initiale avec **shards** et **réplicas**
-- Un composant **ClickHouse Keeper** pour la coordination du cluster
-- Un stockage persistant attaché pour vos données et logs
-- Des utilisateurs avec mots de passe générés et stockés dans un Secret Kubernetes
-- Un accès à votre base via `clickhouse-client`
-- La possibilité de configurer des **sauvegardes S3** automatiques
+- Un database **ClickHouse** sul vostro tenant Hikube
+- Una configurazione iniziale con **shard** e **repliche**
+- Un componente **ClickHouse Keeper** per il coordinamento del cluster
+- Un'archiviazione persistente collegata per i vostri dati e log
+- Utenti con password generate e memorizzate in un Secret Kubernetes
+- Un accesso al vostro database tramite `clickhouse-client`
+- La possibilita di configurare **backup S3** automatici
 
 ---
 
 ## Pulizia
 
-Pour supprimer les ressources de test :
+Per eliminare le risorse di test:
 
 ```bash
 kubectl delete -f clickhouse.yaml
 ```
 
 :::warning
-Cette action supprime le cluster ClickHouse et toutes les données associées. Cette opération est **irréversible**.
+Questa azione elimina il cluster ClickHouse e tutti i dati associati. Questa operazione e **irreversibile**.
 :::
 
 ---
 
 ## Prossimi passi
 
-- **[Référence API](./api-reference.md)** : Configuration complète de toutes les options ClickHouse
-- **[Vue d'ensemble](./overview.md)** : Architecture détaillée et cas d'usage ClickHouse sur Hikube
+- **[Riferimento API](./api-reference.md)**: Configurazione completa di tutte le opzioni ClickHouse
+- **[Panoramica](./overview.md)**: Architettura dettagliata e casi d'uso ClickHouse su Hikube

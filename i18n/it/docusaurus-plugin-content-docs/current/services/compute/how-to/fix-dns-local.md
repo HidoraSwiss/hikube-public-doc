@@ -1,66 +1,66 @@
 ---
-title: Come risolvere il DNS .local nelle VM
+title: "Come risolvere il DNS .local nelle VM"
 ---
 
-# Comment résoudre le DNS .local dans les VMs
+# Come risolvere il DNS .local nelle VM
 
-Les VMs Hikube basées sur Debian ou Ubuntu utilisent `systemd-resolved` pour la résolution DNS. Or, le domaine DNS interne du cluster est `cozy.local`, et `systemd-resolved` refuse par défaut toutes les requêtes `*.local` car ce TLD est réservé au protocole mDNS (RFC 6762). Ce guide explique comment corriger ce comportement pour permettre la résolution DNS des services Kubernetes depuis une VM.
+Le VM Hikube basate su Debian o Ubuntu utilizzano `systemd-resolved` per la risoluzione DNS. Tuttavia, il dominio DNS interno del cluster è `cozy.local`, e `systemd-resolved` rifiuta di default tutte le richieste `*.local` poiché questo TLD è riservato al protocollo mDNS (RFC 6762). Questa guida spiega come correggere questo comportamento per permettere la risoluzione DNS dei servizi Kubernetes da una VM.
 
-## Prerequisitiiti
+## Prerequisiti
 
-- Une **VMInstance** Hikube basée sur Debian ou Ubuntu
-- Un accès **SSH** ou **console** à la VM
-- Droits **root** ou **sudo** sur la VM
+- Una **VMInstance** Hikube basata su Debian o Ubuntu
+- Un accesso **SSH** o **console** alla VM
+- Diritti **root** o **sudo** sulla VM
 
 ## Passi
 
-### 1. Diagnostiquer le problème
+### 1. Diagnosticare il problema
 
-Connectez-vous à la VM :
+Connettetevi alla VM:
 
 ```bash
 virtctl ssh -i ~/.ssh/id_ed25519 ubuntu@my-vm
 ```
 
-Vérifiez la configuration DNS actuelle :
+Verificate la configurazione DNS attuale:
 
 ```bash
 resolvectl status
 ```
 
-Observez la section de votre interface réseau (généralement `enp1s0`). Vous constaterez l'absence de domaines de recherche (search domains) et de domaines de routage (routing domains).
+Osservate la sezione della vostra interfaccia di rete (generalmente `enp1s0`). Noterete l'assenza di domini di ricerca (search domains) e di domini di routing (routing domains).
 
-Testez la résolution d'un service Kubernetes :
+Testate la risoluzione di un servizio Kubernetes:
 
 ```bash
 dig my-service.my-namespace.svc.cozy.local
 ```
 
-**Résultat typique du problème :**
+**Risultato tipico del problema:**
 
 ```
 ;; ->>HEADER<<- opcode: QUERY, status: REFUSED, id: 12345
 ```
 
-Le statut `REFUSED` confirme que `systemd-resolved` envoie la requête `.local` vers mDNS (désactivé dans la VM) au lieu du serveur DNS unicast.
+Lo stato `REFUSED` conferma che `systemd-resolved` invia la richiesta `.local` verso mDNS (disabilitato nella VM) invece del server DNS unicast.
 
-**Cause racine** : le DHCP de KubeVirt (virt-launcher) fournit un serveur DNS mais ne transmet pas de domaines de recherche. Sans le domaine de routage `~local`, `systemd-resolved` applique le comportement par défaut du RFC 6762 et route `.local` vers mDNS.
+**Causa principale**: il DHCP di KubeVirt (virt-launcher) fornisce un server DNS ma non trasmette domini di ricerca. Senza il dominio di routing `~local`, `systemd-resolved` applica il comportamento predefinito dell'RFC 6762 e instrada `.local` verso mDNS.
 
-### 2. Créer le drop-in systemd-networkd
+### 2. Creare il drop-in systemd-networkd
 
-La solution consiste à créer un fichier drop-in pour `systemd-networkd` qui déclare les domaines de recherche et les domaines de routage appropriés.
+La soluzione consiste nel creare un file drop-in per `systemd-networkd` che dichiari i domini di ricerca e i domini di routing appropriati.
 
-:::warning Ne pas utiliser netplan
-Netplan ne supporte pas les domaines de routage (préfixe `~`). Utilisez directement un drop-in `systemd-networkd`.
+:::warning Non utilizzare netplan
+Netplan non supporta i domini di routing (prefisso `~`). Utilizzate direttamente un drop-in `systemd-networkd`.
 :::
 
-Créez le répertoire du drop-in :
+Create la directory del drop-in:
 
 ```bash
 sudo mkdir -p /etc/systemd/network/10-netplan-enp1s0.network.d/
 ```
 
-Créez le fichier de configuration :
+Create il file di configurazione:
 
 ```bash
 sudo tee /etc/systemd/network/10-netplan-enp1s0.network.d/dns-fix.conf << 'EOF'
@@ -69,37 +69,37 @@ Domains=<namespace>.svc.cozy.local svc.cozy.local cozy.local ~local ~.
 EOF
 ```
 
-:::note Remplacez le namespace
-Remplacez `<namespace>` par le nom réel de votre namespace (tenant) Hikube. Par exemple : `tenant-prod.svc.cozy.local`.
+:::note Sostituite il namespace
+Sostituite `<namespace>` con il nome reale del vostro namespace (tenant) Hikube. Ad esempio: `tenant-prod.svc.cozy.local`.
 :::
 
-**Explication des domaines configurés :**
+**Spiegazione dei domini configurati:**
 
-| Domaine | Rôle |
+| Dominio | Ruolo |
 |---------|------|
-| `<namespace>.svc.cozy.local` | Domaine de recherche : permet la résolution par nom court (ex : `my-service` au lieu de `my-service.my-namespace.svc.cozy.local`) |
-| `svc.cozy.local` | Domaine de recherche : résolution des services dans d'autres namespaces |
-| `cozy.local` | Domaine de recherche : résolution de tout nom dans le cluster |
-| `~local` | Domaine de routage : force `.local` vers le DNS unicast au lieu de mDNS |
-| `~.` | Domaine de routage : fait de cette interface la route DNS par défaut (sinon la résolution externe cesse de fonctionner) |
+| `<namespace>.svc.cozy.local` | Dominio di ricerca: permette la risoluzione per nome breve (es.: `my-service` invece di `my-service.my-namespace.svc.cozy.local`) |
+| `svc.cozy.local` | Dominio di ricerca: risoluzione dei servizi in altri namespace |
+| `cozy.local` | Dominio di ricerca: risoluzione di qualsiasi nome nel cluster |
+| `~local` | Dominio di routing: forza `.local` verso il DNS unicast invece di mDNS |
+| `~.` | Dominio di routing: rende questa interfaccia la rotta DNS predefinita (altrimenti la risoluzione esterna smette di funzionare) |
 
-### 3. Appliquer la configuration
+### 3. Applicare la configurazione
 
-Redémarrez les services réseau :
+Riavviate i servizi di rete:
 
 ```bash
 sudo systemctl restart systemd-networkd systemd-resolved
 ```
 
-### 4. Vérifier la configuration
+### 4. Verificare la configurazione
 
-Vérifiez que les domaines sont correctement appliqués :
+Verificate che i domini siano correttamente applicati:
 
 ```bash
 resolvectl status
 ```
 
-Vous devriez voir les domaines de recherche et de routage dans la section de l'interface `enp1s0` :
+Dovreste vedere i domini di ricerca e di routing nella sezione dell'interfaccia `enp1s0`:
 
 ```
 Link 2 (enp1s0)
@@ -116,35 +116,35 @@ Current DNS Server: 10.x.x.x
 
 ## Verifica
 
-Testez la résolution DNS d'un service Kubernetes par nom complet (FQDN) :
+Testate la risoluzione DNS di un servizio Kubernetes per nome completo (FQDN):
 
 ```bash
 dig my-service.my-namespace.svc.cozy.local
 ```
 
-**Risultato atteso :** statut `NOERROR` avec une réponse contenant l'adresse IP du service.
+**Risultato atteso:** stato `NOERROR` con una risposta contenente l'indirizzo IP del servizio.
 
-Testez la résolution par nom court (grâce aux domaines de recherche) :
+Testate la risoluzione per nome breve (grazie ai domini di ricerca):
 
 ```bash
 dig my-service
 ```
 
-Testez que la résolution DNS externe fonctionne toujours :
+Testate che la risoluzione DNS esterna funzioni ancora:
 
 ```bash
 dig google.com
 ```
 
-:::tip Persistance
-Cette configuration est **persistante** : elle survit aux redémarrages de la VM. Le fichier drop-in est lu automatiquement par `systemd-networkd` au démarrage.
+:::tip Persistenza
+Questa configurazione è **persistente**: sopravvive ai riavvii della VM. Il file drop-in viene letto automaticamente da `systemd-networkd` all'avvio.
 :::
 
-:::note Solution au niveau plateforme
-Ce problème sera résolu à terme au niveau de la plateforme Hikube en configurant le DHCP de KubeVirt (virt-launcher) pour transmettre les domaines de recherche aux VMs. En attendant, cette correction manuelle est nécessaire.
+:::note Soluzione a livello piattaforma
+Questo problema verrà risolto a termine a livello della piattaforma Hikube configurando il DHCP di KubeVirt (virt-launcher) per trasmettere i domini di ricerca alle VM. Nel frattempo, questa correzione manuale è necessaria.
 :::
 
 ## Per approfondire
 
-- [Référence API](../api-reference.md)
-- [Démarrage rapide](../quick-start.md)
+- [Riferimento API](../api-reference.md)
+- [Avvio rapido](../quick-start.md)

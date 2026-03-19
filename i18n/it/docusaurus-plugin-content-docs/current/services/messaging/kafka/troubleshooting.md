@@ -5,81 +5,81 @@ title: Risoluzione dei problemi
 
 # Risoluzione dei problemi — Kafka
 
-### ZooKeeper perd le quorum
+### ZooKeeper perde il quorum
 
-**Causa** : le nombre de réplicas ZooKeeper est insuffisant ou pair, empêchant la formation d'un quorum majoritaire. Un quorum nécessite une majorité stricte (ex. 2/3 nœuds).
+**Causa**: il numero di repliche ZooKeeper è insufficiente o pari, impedendo la formazione di un quorum maggioritario. Un quorum richiede una maggioranza stretta (es. 2/3 nodi).
 
-**Soluzione** :
+**Soluzione**:
 
-1. Vérifiez le nombre de réplicas ZooKeeper configuré :
+1. Verificate il numero di repliche ZooKeeper configurato:
    ```bash
    kubectl get kafka -o yaml | grep -A 5 zookeeper
    ```
-2. Assurez-vous que `zookeeper.replicas` est un **nombre impair** (3, 5 ou 7)
-3. Vérifiez l'état des pods ZooKeeper :
+2. Assicuratevi che `zookeeper.replicas` sia un **numero dispari** (3, 5 o 7)
+3. Verificate lo stato dei pod ZooKeeper:
    ```bash
    kubectl get pods -l app.kubernetes.io/component=zookeeper
    ```
-4. Contrôlez l'espace disque disponible sur les volumes ZooKeeper — un disque plein provoque la perte du quorum :
+4. Controllate lo spazio disco disponibile sui volumi ZooKeeper — un disco pieno provoca la perdita del quorum:
    ```bash
    kubectl exec <pod-zookeeper> -- df -h /data
    ```
-5. Si nécessaire, augmentez `zookeeper.size` dans votre manifeste et réappliquez-le
+5. Se necessario, aumentate `zookeeper.size` nel vostro manifesto e riapplicatelo
 
-### Topic inaccessible ou broker indisponible
+### Topic inaccessibile o broker non disponibile
 
-**Causa** : un ou plusieurs brokers Kafka ne fonctionnent pas correctement, ou le topic n'a pas suffisamment de réplicas synchronisées par rapport à `min.insync.replicas`.
+**Causa**: uno o più broker Kafka non funzionano correttamente, oppure il topic non ha un numero sufficiente di repliche sincronizzate rispetto a `min.insync.replicas`.
 
-**Soluzione** :
+**Soluzione**:
 
-1. Vérifiez l'état des pods Kafka :
+1. Verificate lo stato dei pod Kafka:
    ```bash
    kubectl get pods -l app.kubernetes.io/component=kafka
    ```
-2. Inspectez les événements d'un pod en erreur :
+2. Ispezionate gli eventi di un pod in errore:
    ```bash
    kubectl describe pod <pod-kafka>
    ```
-3. Vérifiez que le nombre de réplicas du topic est cohérent avec le nombre de brokers disponibles :
+3. Verificate che il numero di repliche del topic sia coerente con il numero di broker disponibili:
    ```bash
-   kubectl exec <pod-kafka> -- kafka-topics.sh --describe --topic <nom-topic> --bootstrap-server localhost:9092
+   kubectl exec <pod-kafka> -- kafka-topics.sh --describe --topic <nome-topic> --bootstrap-server localhost:9092
    ```
-4. Contrôlez l'espace de stockage — un volume plein empêche le broker de fonctionner :
+4. Controllate lo spazio di archiviazione — un volume pieno impedisce al broker di funzionare:
    ```bash
    kubectl exec <pod-kafka> -- df -h /bitnami/kafka
    ```
 
-### Consumer lag important
+### Consumer lag elevato
 
-**Causa** : les consumers ne traitent pas les messages assez rapidement par rapport au débit de production. Cela peut être dû à un nombre insuffisant de partitions, trop peu de consumers dans le groupe, ou des consumers sous-dimensionnés.
+**Causa**: i consumer non elaborano i messaggi abbastanza rapidamente rispetto al throughput di produzione. Questo può essere dovuto a un numero insufficiente di partizioni, troppo pochi consumer nel gruppo, o consumer sottodimensionati.
 
-**Soluzione** :
+**Soluzione**:
 
-1. Identifiez le lag du consumer group :
+1. Identificate il lag del consumer group:
    ```bash
    kubectl exec <pod-kafka> -- kafka-consumer-groups.sh --describe --group <group-id> --bootstrap-server localhost:9092
    ```
-2. Si le lag est réparti sur de nombreuses partitions, **augmentez le nombre de consumers** dans le group (sans dépasser le nombre de partitions)
-3. Si toutes les partitions ont du lag, envisagez d'**augmenter le nombre de partitions** du topic :
+2. Se il lag è distribuito su molte partizioni, **aumentate il numero di consumer** nel gruppo (senza superare il numero di partizioni)
+3. Se tutte le partizioni presentano lag, considerate di **aumentare il numero di partizioni** del topic:
    ```yaml title="kafka.yaml"
    topics:
      - name: events
        partitions: 12
        replicas: 3
    ```
-4. Vérifiez que les consumers ont des ressources suffisantes (CPU, mémoire) pour traiter les messages
+4. Verificate che i consumer abbiano risorse sufficienti (CPU, memoria) per elaborare i messaggi
 
-### Broker en OOMKilled
+### Broker in OOMKilled
 
-**Causa** : le broker Kafka consomme plus de mémoire que la limite allouée. Cela se produit fréquemment avec le preset `nano` ou `micro` sous charge.
+**Causa**: il broker Kafka consuma più memoria del limite allocato. Questo si verifica frequentemente con il preset `nano` o `micro` sotto carico.
 
-**Soluzione** :
+**Soluzione**:
 
-1. Vérifiez les événements du pod pour confirmer l'OOMKill :
+1. Verificate gli eventi del pod per confermare l'OOMKill:
    ```bash
    kubectl describe pod <pod-kafka> | grep -A 5 "Last State"
    ```
-2. Augmentez les ressources mémoire du broker en utilisant un preset supérieur ou des ressources explicites :
+2. Aumentate le risorse di memoria del broker utilizzando un preset superiore o risorse esplicite:
    ```yaml title="kafka.yaml"
    kafka:
      replicas: 3
@@ -88,25 +88,25 @@ title: Risoluzione dei problemi
        memory: 4Gi
      size: 20Gi
    ```
-3. Réappliquez le manifeste :
+3. Riapplicate il manifesto:
    ```bash
    kubectl apply -f kafka.yaml
    ```
 
-### Messages dupliqués
+### Messaggi duplicati
 
-**Causa** : par défaut, Kafka fonctionne en mode **at-least-once delivery**. En cas de retry du producteur ou de rebalancing des consumers, des messages peuvent être délivrés plusieurs fois.
+**Causa**: per impostazione predefinita, Kafka funziona in modalità **at-least-once delivery**. In caso di retry del produttore o di rebalancing dei consumer, i messaggi possono essere consegnati più volte.
 
-**Soluzione** :
+**Soluzione**:
 
-1. **Côté producteur** : activez l'idempotence pour éviter les doublons lors des retries :
+1. **Lato produttore**: attivate l'idempotenza per evitare duplicati durante i retry:
    ```
    enable.idempotence=true
    acks=all
    ```
-2. **Côté consumer** : implémentez un mécanisme de **déduplication** basé sur un identifiant unique du message (clé, UUID, etc.)
-3. Pour les cas critiques, combinez `acks=all`, `enable.idempotence=true` sur le producteur et un traitement idempotent côté consumer
+2. **Lato consumer**: implementate un meccanismo di **deduplicazione** basato su un identificativo univoco del messaggio (chiave, UUID, ecc.)
+3. Per i casi critici, combinate `acks=all`, `enable.idempotence=true` sul produttore e un'elaborazione idempotente lato consumer
 
 :::tip
-L'idempotence du producteur garantit qu'un message envoyé plusieurs fois (à cause de retries réseau) n'est écrit qu'une seule fois dans la partition. Le traitement idempotent côté consumer reste nécessaire pour couvrir les scénarios de rebalancing.
+L'idempotenza del produttore garantisce che un messaggio inviato più volte (a causa di retry di rete) venga scritto una sola volta nella partizione. L'elaborazione idempotente lato consumer resta necessaria per coprire gli scenari di rebalancing.
 :::

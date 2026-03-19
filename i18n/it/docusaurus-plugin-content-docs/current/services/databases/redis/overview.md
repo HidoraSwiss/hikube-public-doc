@@ -3,44 +3,43 @@ sidebar_position: 1
 title: Panoramica
 ---
 
-# Redis sur Hikube
+# Redis su Hikube
 
-Hikube propose un service **Redis managé**, basé sur l’opérateur **[Spotahome Redis Operator](https://github.com/spotahome/redis-operator)**, largement utilisé dans la communauté.  
-La plateforme prend en charge le déploiement et la gestion d’un cluster Redis **répliqué et auto-réparant**, s’appuyant sur **Redis Sentinel** pour assurer la détection des pannes et l’auto-failover.  
-Ce service garantit rapidité, faible latence et haute disponibilité, sans effort côté utilisateur.  
+Hikube offre un servizio **Redis gestito**, basato sull'operatore **[Spotahome Redis Operator](https://github.com/spotahome/redis-operator)**, ampiamente utilizzato nella comunita.
+La piattaforma supporta il deployment e la gestione di un cluster Redis **replicato e auto-riparante**, basandosi su **Redis Sentinel** per assicurare il rilevamento dei guasti e l'auto-failover.
+Questo servizio garantisce rapidita, bassa latenza e alta disponibilita, senza sforzo lato utente.
 
 ---
 
-## Structure de Base
+## Struttura di Base
 
-### **Ressource Redis**
+### **Risorsa Redis**
 
-#### Exemple de configuration YAML
+#### Esempio di configurazione YAML
 
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
 kind: Redis
 metadata:
   name: example
-  namespace: default
 spec:
 ```
 
 ---
 
-## 🏗️ Architecture et Fonctionnement
+## 🏗️ Architettura e Funzionamento
 
-Le service Redis managé sur Hikube est conçu pour offrir **haute disponibilité** et **résilience** grâce à une architecture répliquée.  
+Il servizio Redis gestito su Hikube e progettato per offrire **alta disponibilita** e **resilienza** grazie a un'architettura replicata.
 
-- Un **nœud master** gère toutes les écritures et sert de source de vérité pour les données.  
-- Un ou plusieurs **nœuds replicas** reçoivent les données en réplication pour assurer la scalabilité en lecture.  
-- **Redis Sentinel** surveille en permanence l’état du cluster, détecte les pannes et peut promouvoir automatiquement un replica en nouveau master (**auto-failover**).  
+- Un **nodo master** gestisce tutte le scritture e funge da fonte di verita per i dati.
+- Uno o piu **nodi replica** ricevono i dati in replica per assicurare la scalabilita in lettura.
+- **Redis Sentinel** sorveglia permanentemente lo stato del cluster, rileva i guasti e puo promuovere automaticamente una replica a nuovo master (**auto-failover**).
 
-Cette combinaison garantit :  
+Questa combinazione garantisce:
 
-- **Disponibilité continue** même en cas de panne du master  
-- **Performances élevées** avec la répartition des lectures entre replicas  
-- **Simplicité opérationnelle**, la gestion étant automatisée par la plateforme et l’opérateur Spotahome  
+- **Disponibilita continua** anche in caso di guasto del master
+- **Prestazioni elevate** con la distribuzione delle letture tra le repliche
+- **Semplicita operativa**, essendo la gestione automatizzata dalla piattaforma e dall'operatore Spotahome
 
 ```mermaid
 graph TD
@@ -61,20 +60,20 @@ graph TD
     S2[Sentinel] -.-> R1
     S3[Sentinel] -.-> R2
 
-    M1 -->|Réplication| R1
-    M1 -->|Réplication| R2
+    M1 -->|Replica| R1
+    M1 -->|Replica| R2
 
-    S1 -.->|Surveillance + Auto-failover| M1
-    S2 -.->|Surveillance + Auto-failover| R1
-    S3 -.->|Surveillance + Auto-failover| R2
+    S1 -.->|Sorveglianza + Auto-failover| M1
+    S2 -.->|Sorveglianza + Auto-failover| R1
+    S3 -.->|Sorveglianza + Auto-failover| R2
 ```
 
-## 🎯 Cas d’usage
+## 🎯 Casi d'uso
 
-Le service **Redis managé sur Hikube** est particulièrement adapté pour :  
+Il servizio **Redis gestito su Hikube** e particolarmente adatto per:
 
-- **Cache applicatif** : accélérer les applications web (e-commerce, SaaS, API) en réduisant le temps de réponse grâce au stockage en mémoire.  
-- **Sessions distribuées** : gérer les sessions utilisateurs de manière rapide et fiable dans des environnements multi-instances.  
-- **File d’attente et streaming léger** : utilisation de Redis comme message broker (pub/sub, queues) pour des communications temps réel.  
-- **Analytics temps réel** : traitement rapide de métriques, logs ou évènements en streaming.  
-- **Gaming et IoT** : gestion d’états temporaires, classements et données volatiles avec faible latence.  
+- **Cache applicativa**: accelerare le applicazioni web (e-commerce, SaaS, API) riducendo il tempo di risposta grazie allo storage in memoria.
+- **Sessioni distribuite**: gestire le sessioni utente in modo rapido e affidabile in ambienti multi-istanza.
+- **Code di attesa e streaming leggero**: utilizzo di Redis come message broker (pub/sub, queues) per comunicazioni in tempo reale.
+- **Analytics in tempo reale**: elaborazione rapida di metriche, log o eventi in streaming.
+- **Gaming e IoT**: gestione di stati temporanei, classifiche e dati volatili con bassa latenza.

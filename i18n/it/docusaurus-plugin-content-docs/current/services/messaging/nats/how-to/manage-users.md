@@ -1,22 +1,22 @@
 ---
-title: Come gestire gli utenti
+title: "Come gestire gli utenti"
 ---
 
-# Comment gérer les utilisateurs NATS
+# Come gestire gli utenti NATS
 
-Ce guide explique comment créer et gérer les utilisateurs d'un cluster NATS sur Hikube de manière déclarative via les manifestes Kubernetes.
+Questa guida spiega come creare e gestire gli utenti di un cluster NATS su Hikube in modo dichiarativo tramite i manifesti Kubernetes.
 
-## Prerequisitiiti
+## Prerequisiti
 
-- **kubectl** configuré avec votre kubeconfig Hikube
-- Un cluster **NATS** déployé sur Hikube (ou un manifeste prêt à déployer)
-- (Optionnel) le CLI **nats** installé localement pour tester les connexions
+- **kubectl** configurato con il vostro kubeconfig Hikube
+- Un cluster **NATS** distribuito su Hikube (o un manifesto pronto per la distribuzione)
+- (Opzionale) la CLI **nats** installata localmente per testare le connessioni
 
 ## Passi
 
-### 1. Ajouter des utilisateurs
+### 1. Aggiungere degli utenti
 
-Les utilisateurs sont déclarés dans la section `users` du manifeste. Chaque utilisateur est identifié par un nom et possède un mot de passe.
+Gli utenti sono dichiarati nella sezione `users` del manifesto. Ogni utente è identificato da un nome e possiede una password.
 
 ```yaml title="nats-users.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -40,35 +40,35 @@ spec:
       password: MonitoringPassword789
 ```
 
-**Paramètres utilisateur :**
+**Parametri utente:**
 
-| Paramètre | Type | Description |
+| Parametro | Tipo | Descrizione |
 |-----------|------|-------------|
-| `users[name].password` | `string` | Mot de passe associé à l'utilisateur |
+| `users[name].password` | `string` | Password associata all'utente |
 
 :::tip
-Créez des utilisateurs distincts par application pour un contrôle d'accès granulaire. Utilisez un compte **admin** pour l'administration, des comptes **applicatifs** par service, et un compte **monitoring** dédié à la supervision.
+Create utenti distinti per applicazione per un controllo degli accessi granulare. Utilizzate un account **admin** per l'amministrazione, account **applicativi** per servizio, e un account **monitoring** dedicato alla supervisione.
 :::
 
-### 2. Appliquer les changements
+### 2. Applicare le modifiche
 
 ```bash
 kubectl apply -f nats-users.yaml
 ```
 
-Surveillez le rolling update des pods :
+Monitorate il rolling update dei pod:
 
 ```bash
 kubectl get po -w | grep my-nats
 ```
 
-Attendez que tous les pods soient en état `Running` :
+Attendete che tutti i pod siano nello stato `Running`:
 
 ```bash
 kubectl get po | grep my-nats
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```console
 my-nats-0   1/1     Running   0   2m
@@ -76,69 +76,69 @@ my-nats-1   1/1     Running   0   4m
 my-nats-2   1/1     Running   0   6m
 ```
 
-### 3. Tester la connexion avec le CLI nats
+### 3. Testare la connessione con la CLI nats
 
-Ouvrez un port-forward vers le service NATS :
+Aprite un port-forward verso il servizio NATS:
 
 ```bash
 kubectl port-forward svc/my-nats 4222:4222
 ```
 
-Testez la connexion avec chaque utilisateur :
+Testate la connessione con ogni utente:
 
-**Connexion avec l'utilisateur admin :**
+**Connessione con l'utente admin:**
 
 ```bash
 nats pub test "Hello from admin" \
   --server nats://admin:SecureAdminPassword@127.0.0.1:4222
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```console
 Published 16 bytes to "test"
 ```
 
-**Connexion avec l'utilisateur appuser :**
+**Connessione con l'utente appuser:**
 
 ```bash
 nats pub app.events "Hello from appuser" \
   --server nats://appuser:AppUserPassword456@127.0.0.1:4222
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```console
 Published 18 bytes to "app.events"
 ```
 
-**Test d'un mot de passe incorrect :**
+**Test con una password errata:**
 
 ```bash
 nats pub test "This should fail" \
   --server nats://admin:wrongpassword@127.0.0.1:4222
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```console
 nats: error: Authorization Violation
 ```
 
 :::warning
-Si `external: true` est activé, le cluster NATS est accessible depuis l'extérieur du cluster Kubernetes. Assurez-vous que tous les utilisateurs disposent de mots de passe robustes.
+Se `external: true` è attivato, il cluster NATS è accessibile dall'esterno del cluster Kubernetes. Assicuratevi che tutti gli utenti dispongano di password robuste.
 :::
 
-### 4. Vérifier les connexions actives
+### 4. Verificare le connessioni attive
 
-Vous pouvez vérifier les connexions actives sur le cluster NATS :
+Potete verificare le connessioni attive sul cluster NATS:
 
 ```bash
 nats server report connections \
   --server nats://admin:SecureAdminPassword@127.0.0.1:4222
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```console
 ╭──────────────────────────────────────────────────────────╮
@@ -152,7 +152,7 @@ nats server report connections \
 ╰──────────┴──────────┴──────────┴──────────┴──────────────╯
 ```
 
-Pour voir le détail des connexions par utilisateur :
+Per vedere il dettaglio delle connessioni per utente:
 
 ```bash
 nats server report connz \
@@ -161,14 +161,14 @@ nats server report connz \
 
 ## Verifica
 
-La configuration est réussie si :
+La configurazione è riuscita se:
 
-- Les pods NATS sont tous en état `Running` après la mise à jour
-- Chaque utilisateur peut se connecter avec son mot de passe
-- Un mot de passe incorrect est rejeté (`Authorization Violation`)
-- Les connexions actives sont visibles dans le rapport du serveur
+- I pod NATS sono tutti nello stato `Running` dopo l'aggiornamento
+- Ogni utente può connettersi con la propria password
+- Una password errata viene rifiutata (`Authorization Violation`)
+- Le connessioni attive sono visibili nel report del server
 
 ## Per approfondire
 
-- **[Référence API NATS](../api-reference.md)** : documentation complète des paramètres `users`
-- **[Comment configurer JetStream](./configure-jetstream.md)** : activer la persistance des messages et le streaming
+- **[Riferimento API NATS](../api-reference.md)**: documentazione completa dei parametri `users`
+- **[Come configurare JetStream](./configure-jetstream.md)**: attivare la persistenza dei messaggi e lo streaming

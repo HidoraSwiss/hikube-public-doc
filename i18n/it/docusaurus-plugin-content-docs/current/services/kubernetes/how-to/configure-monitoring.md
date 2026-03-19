@@ -1,22 +1,22 @@
 ---
-title: Come configurare il monitoring
+title: "Come configurare il monitoring"
 ---
 
-# Comment configurer le monitoring
+# Come configurare il monitoring
 
-Ce guide explique comment activer et configurer le monitoring sur un cluster Kubernetes Hikube, incluant la collecte de metriques, les logs et les dashboards de visualisation.
+Questa guida spiega come attivare e configurare il monitoring su un cluster Kubernetes Hikube, inclusa la raccolta di metriche, i log e le dashboard di visualizzazione.
 
-## Prerequisitiiti
+## Prerequisiti
 
-- Un cluster Kubernetes Hikube deploye (voir le [demarrage rapide](../quick-start.md))
-- `kubectl` configure pour interagir avec l'API Hikube
-- Le fichier YAML de configuration de votre cluster
+- Un cluster Kubernetes Hikube distribuito (vedere l'[avvio rapido](../quick-start.md))
+- `kubectl` configurato per interagire con l'API Hikube
+- Il file YAML di configurazione del vostro cluster
 
-## Passi
+## Fasi
 
-### 1. Activer l'addon monitoringAgents
+### 1. Attivare l'addon monitoringAgents
 
-Modifiez la configuration de votre cluster pour activer l'addon de monitoring :
+Modificate la configurazione del vostro cluster per attivare l'addon di monitoring:
 
 ```yaml title="cluster-monitoring.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -53,12 +53,12 @@ spec:
 ```
 
 :::note
-L'activation de Fluent Bit (`fluentbit.enabled: true`) permet la collecte et le transfert des logs de vos applications vers la stack d'observabilite.
+L'attivazione di Fluent Bit (`fluentbit.enabled: true`) permette la raccolta e il trasferimento dei log delle vostre applicazioni verso lo stack di osservabilita.
 :::
 
-### 2. Creer un node group dedie au monitoring
+### 2. Creare un node group dedicato al monitoring
 
-Les composants de monitoring (VictoriaMetrics, Grafana, Fluent Bit) consomment des ressources significatives. Il est recommande de dedier un node group avec des instances optimisees en memoire :
+I componenti di monitoring (VictoriaMetrics, Grafana, Fluent Bit) consumano risorse significative. Si raccomanda di dedicare un node group con istanze ottimizzate per la memoria:
 
 ```yaml title="cluster-monitoring.yaml"
 nodeGroups:
@@ -66,64 +66,64 @@ nodeGroups:
     minReplicas: 2
     maxReplicas: 4
     instanceType: "m1.xlarge"    # 4 vCPU, 32 GB RAM
-    ephemeralStorage: 200Gi       # Stockage important pour les metriques et logs
+    ephemeralStorage: 200Gi       # Archiviazione importante per metriche e log
     roles:
       - monitoring
 ```
 
 :::tip
-La serie M (Memory Optimized) est ideale pour le monitoring car les bases de donnees de metriques (VictoriaMetrics) et les moteurs d'indexation de logs necessitent beaucoup de memoire.
+La serie M (Memory Optimized) e ideale per il monitoring perche i database di metriche (VictoriaMetrics) e i motori di indicizzazione dei log necessitano di molta memoria.
 :::
 
-### 3. Appliquer la configuration
+### 3. Applicare la configurazione
 
 ```bash
 kubectl apply -f cluster-monitoring.yaml
 
-# Attendre que le cluster soit pret
+# Attendere che il cluster sia pronto
 kubectl get kubernetes my-cluster -w
 ```
 
-### 4. Acceder aux outils de monitoring
+### 4. Accedere agli strumenti di monitoring
 
-Une fois le cluster mis a jour, verifiez que les composants de monitoring sont deployes dans le cluster enfant :
+Una volta aggiornato il cluster, verificate che i componenti di monitoring siano distribuiti nel cluster figlio:
 
 ```bash
 export KUBECONFIG=cluster-admin.yaml
 
-# Lister les pods de monitoring
+# Elencare i pod di monitoring
 kubectl get pods -n monitoring
 
-# Verifier les services disponibles
+# Verificare i servizi disponibili
 kubectl get svc -n monitoring
 
-# Acceder a Grafana (si disponible via Ingress)
+# Accedere a Grafana (se disponibile tramite Ingress)
 kubectl get ingress -n monitoring
 ```
 
-Pour acceder a Grafana en local :
+Per accedere a Grafana in locale:
 
 ```bash
 kubectl port-forward -n monitoring svc/grafana 3000:80 &
-# Ouvrir http://localhost:3000 dans le navigateur
+# Aprire http://localhost:3000 nel browser
 ```
 
-### 5. Verifier les metriques
+### 5. Verificare le metriche
 
-Confirmez que les metriques sont correctement collectees :
+Confermate che le metriche vengano raccolte correttamente:
 
 ```bash
-# Metriques des noeuds
+# Metriche dei nodi
 kubectl top nodes
 
-# Metriques des pods
+# Metriche dei pod
 kubectl top pods -A
 
-# Events du cluster
+# Eventi del cluster
 kubectl get events --sort-by=.metadata.creationTimestamp
 ```
 
-**Risultato atteso pour `kubectl top nodes` :**
+**Risultato atteso per `kubectl top nodes`:**
 
 ```console
 NAME                          CPU(cores)   CPU%   MEMORY(bytes)   MEMORY%
@@ -133,17 +133,17 @@ my-cluster-monitoring-yyyyy   800m         20%    4500Mi          14%
 
 ## Verifica
 
-Verifiez que l'ensemble de la stack de monitoring est operationnelle :
+Verificate che l'intero stack di monitoring sia operativo:
 
 ```bash
-# Verifier tous les composants de monitoring
+# Verificare tutti i componenti di monitoring
 kubectl get pods -n monitoring
 
-# Verifier les logs Fluent Bit
+# Verificare i log di Fluent Bit
 kubectl logs -n monitoring -l app.kubernetes.io/name=fluent-bit --tail=20
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```console
 NAME                                 READY   STATUS    RESTARTS   AGE
@@ -154,6 +154,6 @@ fluent-bit-xxxxx                     1/1     Running   0          10m
 
 ## Per approfondire
 
-- [Reference API](../api-reference.md) -- Configuration de l'addon `monitoringAgents`
-- [Concepts](../concepts.md) -- Architecture et observabilite
-- [Acces et outils](./toolbox.md) -- Commandes de debugging et metriques
+- [Riferimento API](../api-reference.md) -- Configurazione dell'addon `monitoringAgents`
+- [Concetti](../concepts.md) -- Architettura e osservabilita
+- [Accesso e strumenti](./toolbox.md) -- Comandi di debugging e metriche

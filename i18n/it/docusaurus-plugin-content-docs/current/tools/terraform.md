@@ -1,22 +1,22 @@
 ---
 sidebar_position: 1
-title: Terraform avec Hikube
+title: Terraform con Hikube
 ---
 
-# Infrastructure as Code avec Hikube
+# Infrastructure as Code con Hikube
 
-Hikube étant basé sur Kubernetes, vous pouvez utiliser **Terraform** pour gérer votre infrastructure de manière déclarative et reproductible. Cette approche vous permet de versionner, tester et déployer votre infrastructure Hikube de façon automatisée.
+Hikube essendo basato su Kubernetes, potete utilizzare **Terraform** per gestire la vostra infrastruttura in modo dichiarativo e riproducibile. Questo approccio vi permette di versionare, testare e distribuire la vostra infrastruttura Hikube in modo automatizzato.
 
 ---
 
-## Configuration
+## Configurazione
 
-### Prerequisitiiti
+### Prerequisiti
 
-- [Terraform](https://www.terraform.io/downloads) (version >= 1.0)
+- [Terraform](https://www.terraform.io/downloads) (versione >= 1.0)
 - [kubectl](https://kubernetes.io/docs/tasks/tools/)
-- Accès à un tenant Hikube
-- Kubeconfig configuré
+- Accesso a un tenant Hikube
+- Kubeconfig configurato
 
 ### Provider Kubernetes
 
@@ -43,7 +43,7 @@ provider "kubectl" {
 }
 ```
 
-### Variables
+### Variabili
 
 ```hcl title="variables.tf"
 variable "ssh_public_key" {
@@ -66,9 +66,9 @@ variable "vm_name" {
 
 ---
 
-## Exemples
+## Esempi
 
-### Déployer un Cluster Kubernetes
+### Distribuire un Cluster Kubernetes
 
 ```hcl title="kubernetes.tf"
 resource "kubectl_manifest" "kubernetes_cluster" {
@@ -83,7 +83,7 @@ resource "kubectl_manifest" "kubernetes_cluster" {
       controlPlane = {
         replicas = 2
       }
-      
+
       nodeGroups = {
         general = {
           minReplicas      = 1
@@ -93,9 +93,9 @@ resource "kubectl_manifest" "kubernetes_cluster" {
           roles = ["ingress-nginx"]
         }
       }
-      
+
       storageClass = "replicated"
-      
+
       addons = {
         certManager = {
           enabled = true
@@ -114,7 +114,7 @@ resource "kubectl_manifest" "kubernetes_cluster" {
 # Récupérer le kubeconfig
 data "kubernetes_secret" "cluster_kubeconfig" {
   depends_on = [kubectl_manifest.kubernetes_cluster]
-  
+
   metadata {
     name      = "${var.cluster_name}-admin-kubeconfig"
     namespace = "default"
@@ -131,7 +131,7 @@ resource "local_file" "kubeconfig" {
 }
 ```
 
-### Déployer une Machine Virtuelle
+### Distribuire una Macchina Virtuale
 
 ```hcl title="virtual-machine.tf"
 resource "kubectl_manifest" "virtual_machine" {
@@ -145,18 +145,18 @@ resource "kubectl_manifest" "virtual_machine" {
       running         = true
       instanceProfile = "ubuntu"
       instanceType    = "u1.xlarge"
-      
+
       systemDisk = {
         size         = "50Gi"
         storageClass = "replicated"
       }
-      
+
       external       = true
       externalMethod = "PortList"
       externalPorts  = [22, 80, 443]
-      
+
       sshKeys = [var.ssh_public_key]
-      
+
       cloudInit = <<-EOT
         #cloud-config
         users:
@@ -165,14 +165,14 @@ resource "kubectl_manifest" "virtual_machine" {
             shell: /bin/bash
             ssh_authorized_keys:
               - ${var.ssh_public_key}
-        
+
         package_update: true
         packages:
           - curl
           - wget
           - git
           - docker.io
-        
+
         runcmd:
           - systemctl enable docker
           - systemctl start docker
@@ -183,7 +183,7 @@ resource "kubectl_manifest" "virtual_machine" {
 }
 ```
 
-### Déployer une VM avec GPU
+### Distribuire una VM con GPU
 
 ```hcl title="vm-gpu.tf"
 resource "kubectl_manifest" "vm_gpu" {
@@ -197,37 +197,37 @@ resource "kubectl_manifest" "vm_gpu" {
       running         = true
       instanceProfile = "ubuntu"
       instanceType    = "u1.xlarge"
-      
+
       gpus = [
         {
           name = "nvidia.com/AD102GL_L40S"
         }
       ]
-      
+
       systemDisk = {
         size         = "100Gi"
         storageClass = "replicated"
       }
-      
+
       external       = true
       externalMethod = "PortList"
       externalPorts  = [22, 8888]
-      
+
       sshKeys = [var.ssh_public_key]
-      
+
       cloudInit = <<-EOT
         #cloud-config
         users:
           - name: ubuntu
             sudo: ALL=(ALL) NOPASSWD:ALL
             shell: /bin/bash
-        
+
         package_update: true
         packages:
           - curl
           - wget
           - build-essential
-        
+
         runcmd:
           # Installation pilotes NVIDIA
           - wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.0-1_all.deb
@@ -241,7 +241,7 @@ resource "kubectl_manifest" "vm_gpu" {
 }
 ```
 
-### Déployer PostgreSQL
+### Distribuire PostgreSQL
 
 ```hcl title="postgresql.tf"
 resource "kubectl_manifest" "postgres" {
@@ -256,13 +256,13 @@ resource "kubectl_manifest" "postgres" {
       size         = "20Gi"
       replicas     = 2
       storageClass = "replicated"
-      
+
       users = {
         admin = {
           password = var.postgres_password
         }
       }
-      
+
       databases = {
         myapp = {
           roles = {
@@ -283,9 +283,9 @@ variable "postgres_password" {
 
 ---
 
-## Outputs et Variables
+## Output e Variabili
 
-### Outputs utiles
+### Output utili
 
 ```hcl title="outputs.tf"
 output "cluster_kubeconfig" {
@@ -305,7 +305,7 @@ output "postgres_connection" {
 }
 ```
 
-### Fichier terraform.tfvars
+### File terraform.tfvars
 
 ```hcl title="terraform.tfvars"
 # Configuration de base
@@ -323,7 +323,7 @@ postgres_password = "your-secure-password-here"
 
 ## Buone Pratiche
 
-### Structure de projet
+### Struttura del progetto
 
 ```
 hikube-terraform/
@@ -340,29 +340,29 @@ hikube-terraform/
     └── outputs.tf
 ```
 
-### Commandes utiles
+### Comandi utili
 
 ```bash
-# Initialiser Terraform
+# Inizializzare Terraform
 terraform init
 
-# Planifier les changements
+# Pianificare le modifiche
 terraform plan
 
-# Appliquer la configuration
+# Applicare la configurazione
 terraform apply
 
-# Vérifier les ressources créées
+# Verificare le risorse create
 terraform show
 
-# Nettoyer les ressources
+# Pulire le risorse
 terraform destroy
 ```
 
 ---
 
-## Références
+## Riferimenti
 
 - [Provider Kubernetes](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs)
 - [Provider kubectl](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs)
-- [Documentation Terraform](https://developer.hashicorp.com/terraform/docs)
+- [Documentazione Terraform](https://developer.hashicorp.com/terraform/docs)

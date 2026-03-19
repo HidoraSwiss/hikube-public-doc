@@ -3,63 +3,63 @@ sidebar_position: 6
 title: FAQ
 ---
 
-# FAQ — Buckets S3
+# FAQ — Bucket S3
 
-### Quel est l'endpoint S3 Hikube ?
+### Qual è l'endpoint S3 Hikube?
 
-L'endpoint S3 public d'Hikube est :
+L'endpoint S3 pubblico di Hikube è:
 
 ```
 https://prod.s3.hikube.cloud
 ```
 
-Cet endpoint est compatible avec l'API AWS S3 standard. Vous pouvez l'utiliser avec n'importe quel outil ou SDK compatible S3.
+Questo endpoint è compatibile con l'API AWS S3 standard. Potete utilizzarlo con qualsiasi strumento o SDK compatibile S3.
 
 ---
 
-### Quels outils sont compatibles ?
+### Quali strumenti sono compatibili?
 
-Tous les outils compatibles avec l'API S3 fonctionnent avec les buckets Hikube :
+Tutti gli strumenti compatibili con l'API S3 funzionano con i bucket Hikube:
 
-| Outil | Configuration |
-|-------|--------------|
+| Strumento | Configurazione |
+|-----------|---------------|
 | **aws-cli** | `aws --endpoint-url https://prod.s3.hikube.cloud s3 ls` |
 | **mc** (MinIO Client) | `mc alias set hikube https://prod.s3.hikube.cloud ACCESS_KEY SECRET_KEY` |
-| **rclone** | Configurer un remote de type `s3` avec l'endpoint Hikube |
-| **s3cmd** | Configurer `host_base` et `host_bucket` vers l'endpoint Hikube |
-| **Velero** | Backup Kubernetes vers S3 Hikube |
-| **Restic** | Backup de fichiers vers S3 Hikube |
+| **rclone** | Configurare un remote di tipo `s3` con l'endpoint Hikube |
+| **s3cmd** | Configurare `host_base` e `host_bucket` verso l'endpoint Hikube |
+| **Velero** | Backup Kubernetes verso S3 Hikube |
+| **Restic** | Backup di file verso S3 Hikube |
 
-Toute bibliothèque compatible AWS S3 (boto3, aws-sdk-js, etc.) fonctionne également.
+Qualsiasi libreria compatibile AWS S3 (boto3, aws-sdk-js, ecc.) funziona altrettanto.
 
 ---
 
-### Comment fonctionnent les credentials ?
+### Come funzionano le credenziali?
 
-Lorsqu'un bucket est créé, Hikube génère automatiquement un Secret Kubernetes nommé `bucket-<name>`. Ce secret contient une clé `BucketInfo` au format JSON avec toutes les informations d'accès :
+Quando un bucket viene creato, Hikube genera automaticamente un Secret Kubernetes denominato `bucket-<name>`. Questo secret contiene una chiave `BucketInfo` in formato JSON con tutte le informazioni di accesso:
 
 ```bash
 kubectl get tenantsecret bucket-<name> -o jsonpath='{.data.BucketInfo}' | base64 -d | jq
 ```
 
-Le JSON contient :
+Il JSON contiene:
 
-| Champ | Description |
+| Campo | Descrizione |
 |-------|-------------|
-| `spec.bucketName` | Nom réel du bucket dans le backend S3 |
+| `spec.bucketName` | Nome reale del bucket nel backend S3 |
 | `spec.secretS3.endpoint` | Endpoint S3 (`https://prod.s3.hikube.cloud`) |
-| `spec.secretS3.accessKeyID` | Clé d'accès S3 |
-| `spec.secretS3.accessSecretKey` | Clé secrète S3 |
+| `spec.secretS3.accessKeyID` | Chiave di accesso S3 |
+| `spec.secretS3.accessSecretKey` | Chiave segreta S3 |
 
 :::warning
-Utilisez `spec.bucketName` (et non `metadata.name`) comme nom de bucket lors de l'accès S3. Le nom réel est généré automatiquement et diffère du nom Kubernetes.
+Utilizzate `spec.bucketName` (e non `metadata.name`) come nome del bucket durante l'accesso S3. Il nome reale viene generato automaticamente e differisce dal nome Kubernetes.
 :::
 
 ---
 
-### Peut-on avoir plusieurs buckets ?
+### Si possono avere più bucket?
 
-Oui, vous pouvez créer autant de buckets que nécessaire. Chaque ressource `Bucket` provisionne un bucket indépendant avec ses propres credentials :
+Sì, potete creare quanti bucket necessari. Ogni risorsa `Bucket` provisiona un bucket indipendente con le proprie credenziali:
 
 ```yaml title="bucket-logs.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -75,31 +75,31 @@ metadata:
   name: db-backups
 ```
 
-Chaque bucket génère son propre Secret (`bucket-app-logs`, `bucket-db-backups`) avec des credentials distinctes.
+Ogni bucket genera il proprio Secret (`bucket-app-logs`, `bucket-db-backups`) con credenziali distinte.
 
 ---
 
-### Quelle est la durabilité des données ?
+### Qual è la durabilità dei dati?
 
-Les données stockées dans les buckets Hikube bénéficient d'une **triple réplication** sur trois datacenters :
+I dati archiviati nei bucket Hikube beneficiano di una **tripla replica** su tre datacenter:
 
-- Genève
+- Ginevra
 - Gland
-- Lucerne
+- Lucerna
 
-Cette architecture garantit la haute disponibilité et la durabilité des données, même en cas de panne complète d'un datacenter.
+Questa architettura garantisce l'alta disponibilità e la durabilità dei dati, anche in caso di guasto completo di un datacenter.
 
 ---
 
-### La configuration est-elle vraiment juste metadata.name ?
+### La configurazione è davvero solo metadata.name?
 
-Oui, l'objet `Bucket` est volontairement minimal. Aucun champ `spec` n'est requis :
+Sì, l'oggetto `Bucket` è volutamente minimale. Nessun campo `spec` è richiesto:
 
 ```yaml title="bucket.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
 kind: Bucket
 metadata:
-  name: mon-bucket
+  name: mio-bucket
 ```
 
-C'est tout ce qu'il faut pour provisionner un bucket S3 fonctionnel. L'endpoint, les credentials et le nom réel du bucket sont automatiquement générés et mis à disposition dans le Secret associé.
+Questo è tutto ciò che serve per provisionare un bucket S3 funzionante. L'endpoint, le credenziali e il nome reale del bucket sono automaticamente generati e messi a disposizione nel Secret associato.

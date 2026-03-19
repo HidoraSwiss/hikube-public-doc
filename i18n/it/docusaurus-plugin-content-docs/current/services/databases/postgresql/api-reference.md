@@ -3,17 +3,17 @@ sidebar_position: 3
 title: Riferimento API
 ---
 
-# Référence API PostgreSQL
+# Riferimento API PostgreSQL
 
-Cette référence détaille l’utilisation de **PostgreSQL** sur Hikube, en mettant en avant son fonctionnement en cluster répliqué avec un primary et des standby pour la haute disponibilité, ainsi que la possibilité d’activer des sauvegardes automatiques vers un stockage compatible S3.
+Questo riferimento descrive in dettaglio l'utilizzo di **PostgreSQL** su Hikube, evidenziando il funzionamento in cluster replicato con un primary e degli standby per l'alta disponibilita, nonche la possibilita di attivare backup automatici verso uno storage compatibile S3.
 
 ---
 
-## Structure de Base
+## Struttura di Base
 
-### **Ressource Postgres**
+### **Risorsa Postgres**
 
-#### Exemple de configuration YAML
+#### Esempio di configurazione YAML
 
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
@@ -25,22 +25,22 @@ spec:
 
 ---
 
-## Paramètres
+## Parametri
 
-### **Paramètres Communs**
+### **Parametri Comuni**
 
-| **Paramètre**       | **Type**   | **Description**                                                                 | **Défaut** | **Requis** |
+| **Parametro**       | **Tipo**   | **Descrizione**                                                                 | **Predefinito** | **Richiesto** |
 |----------------------|------------|---------------------------------------------------------------------------------|------------|------------|
-| `replicas`           | `int`      | Number of PostgreSQL replicas (instances dans le cluster)                       | `2`        | Oui        |
-| `resources`          | `object`   | Explicit CPU and memory configuration for each PostgreSQL replica. Si vide, `resourcesPreset` est appliqué | `{}`       | Non        |
-| `resources.cpu`      | `quantity` | CPU available to each replica                                                   | `null`     | Non        |
-| `resources.memory`   | `quantity` | Memory (RAM) available to each replica                                          | `null`     | Non        |
-| `resourcesPreset`    | `string`   | Default sizing preset (`nano`, `micro`, `small`, `medium`, `large`, `xlarge`, `2xlarge`) | `"micro"` | Oui        |
-| `size`               | `quantity` | Persistent Volume Claim size, available for application data                    | `10Gi`     | Oui        |
-| `storageClass`       | `string`   | StorageClass used to store the data                                             | `""`       | Non        |
-| `external`           | `bool`     | Enable external access from outside the cluster                                 | `false`    | Non        |
+| `replicas`           | `int`      | Number of PostgreSQL replicas (istanze nel cluster)                       | `2`        | Si        |
+| `resources`          | `object`   | Explicit CPU and memory configuration for each PostgreSQL replica. Se vuoto, viene applicato `resourcesPreset` | `{}`       | No        |
+| `resources.cpu`      | `quantity` | CPU available to each replica                                                   | `null`     | No        |
+| `resources.memory`   | `quantity` | Memory (RAM) available to each replica                                          | `null`     | No        |
+| `resourcesPreset`    | `string`   | Default sizing preset (`nano`, `micro`, `small`, `medium`, `large`, `xlarge`, `2xlarge`) | `"micro"` | Si        |
+| `size`               | `quantity` | Persistent Volume Claim size, available for application data                    | `10Gi`     | Si        |
+| `storageClass`       | `string`   | StorageClass used to store the data                                             | `""`       | No        |
+| `external`           | `bool`     | Enable external access from outside the cluster                                 | `false`    | No        |
 
-#### Exemple de configuration YAML
+#### Esempio di configurazione YAML
 
 ```yaml title="postgresql.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -48,44 +48,44 @@ kind: Postgres
 metadata:
   name: postgres-example
 spec:
-  # Nombre de réplicas PostgreSQL (instances dans le cluster)
+  # Numero di repliche PostgreSQL (istanze nel cluster)
   replicas: 3
-  # Configuration explicite des ressources
+  # Configurazione esplicita delle risorse
   resources:
-    cpu: 2000m     # 2 vCPU par instance
-    memory: 2Gi    # 2 GiB de RAM par instance
-  # Utilisation d’un preset si resources est vide
+    cpu: 2000m     # 2 vCPU per istanza
+    memory: 2Gi    # 2 GiB di RAM per istanza
+  # Utilizzo di un preset se resources e vuoto
   resourcesPreset: micro
-  # Volume persistant pour chaque instance PostgreSQL
+  # Volume persistente per ogni istanza PostgreSQL
   size: 10Gi
-  # Classe de stockage (laisser vide pour utiliser celle par défaut du cluster)
+  # Classe di archiviazione (lasciare vuoto per usare quella predefinita del cluster)
   storageClass: "replicated"
-  # Exposer la base à l’extérieur du cluster (LoadBalancer si true)
+  # Esporre il database all'esterno del cluster (LoadBalancer se true)
   external: false
 ```
 
 ---
 
-### **Paramètres d'application spécifique**
+### **Parametri specifici dell'applicazione**
 
-| **Paramètre**                         | **Type**             | **Description**                                                                 | **Défaut** | **Requis** |
+| **Parametro**                         | **Tipo**             | **Descrizione**                                                                 | **Predefinito** | **Richiesto** |
 |---------------------------------------|----------------------|---------------------------------------------------------------------------------|------------|------------|
-| `postgresql`                          | `object`             | PostgreSQL server configuration                                                 | `{}`       | Non        |
-| `postgresql.parameters`               | `object`             | PostgreSQL server parameters                                                    | `{}`       | Non        |
-| `postgresql.parameters.max_connections` | `int`               | Maximum number of concurrent connections to the database server (par défaut : 100) | `100`   | Non        |
-| `quorum`                              | `object`             | Quorum configuration for synchronous replication                                | `{}`       | Non        |
-| `quorum.minSyncReplicas`              | `int`                | Minimum number of synchronous replicas that must acknowledge a transaction      | `0`        | Non        |
-| `quorum.maxSyncReplicas`              | `int`                | Maximum number of synchronous replicas that can acknowledge a transaction       | `0`        | Non        |
-| `users`                               | `map[string]object`  | Users configuration                                                             | `{...}`    | Non        |
-| `users[name].password`                | `string`             | Password for the user                                                           | `null`     | Oui        |
-| `users[name].replication`             | `bool`               | Whether the user has replication privileges                                     | `null`     | Non        |
-| `databases`                           | `map[string]object`  | Databases configuration                                                         | `{...}`    | Non        |
-| `databases[name].roles`               | `object`             | Roles for the database                                                          | `null`     | Non        |
-| `databases[name].roles.admin`         | `[]string`           | List of users with admin privileges                                             | `[]`       | Non        |
-| `databases[name].roles.readonly`      | `[]string`           | List of users with read-only privileges                                         | `[]`       | Non        |
-| `databases[name].extensions`          | `[]string`           | Extensions enabled for the database                                             | `[]`       | Non        |
+| `postgresql`                          | `object`             | PostgreSQL server configuration                                                 | `{}`       | No        |
+| `postgresql.parameters`               | `object`             | PostgreSQL server parameters                                                    | `{}`       | No        |
+| `postgresql.parameters.max_connections` | `int`               | Maximum number of concurrent connections to the database server (predefinito: 100) | `100`   | No        |
+| `quorum`                              | `object`             | Quorum configuration for synchronous replication                                | `{}`       | No        |
+| `quorum.minSyncReplicas`              | `int`                | Minimum number of synchronous replicas that must acknowledge a transaction      | `0`        | No        |
+| `quorum.maxSyncReplicas`              | `int`                | Maximum number of synchronous replicas that can acknowledge a transaction       | `0`        | No        |
+| `users`                               | `map[string]object`  | Users configuration                                                             | `{...}`    | No        |
+| `users[name].password`                | `string`             | Password for the user                                                           | `null`     | Si        |
+| `users[name].replication`             | `bool`               | Whether the user has replication privileges                                     | `null`     | No        |
+| `databases`                           | `map[string]object`  | Databases configuration                                                         | `{...}`    | No        |
+| `databases[name].roles`               | `object`             | Roles for the database                                                          | `null`     | No        |
+| `databases[name].roles.admin`         | `[]string`           | List of users with admin privileges                                             | `[]`       | No        |
+| `databases[name].roles.readonly`      | `[]string`           | List of users with read-only privileges                                         | `[]`       | No        |
+| `databases[name].extensions`          | `[]string`           | Extensions enabled for the database                                             | `[]`       | No        |
 
-#### Exemple de configuration YAML
+#### Esempio di configurazione YAML
 
 ```yaml title="postgresql.yaml"
 spec:
@@ -94,19 +94,19 @@ spec:
   storageClass: replicated
   resourcesPreset: medium
 
-  # Configuration serveur PostgreSQL
+  # Configurazione server PostgreSQL
   postgresql:
     parameters:
       max_connections: 200
       shared_buffers: 512MB
       work_mem: 64MB
 
-  # Configuration quorum pour la réplication synchrone
+  # Configurazione quorum per la replica sincrona
   quorum:
     minSyncReplicas: 1
     maxSyncReplicas: 2
 
-  # Utilisateurs
+  # Utenti
   users:
     admin:
       password: StrongAdminPwd123
@@ -116,7 +116,7 @@ spec:
     readonly:
       password: ReadOnlyPwd789
 
-  # Bases de données
+  # Database
   databases:
     myapp:
       roles:
@@ -140,28 +140,28 @@ spec:
 
 ---
 
-### **Paramètres de backup**
+### **Parametri di backup**
 
-| **Paramètre**              | **Type**   | **Description**                                         | **Défaut**                       | **Requis** |
+| **Parametro**              | **Tipo**   | **Descrizione**                                         | **Predefinito**                       | **Richiesto** |
 |-----------------------------|------------|---------------------------------------------------------|-----------------------------------|------------|
-| `backup`                    | `object`  | Backup configuration                                    | `{}`                              | Non        |
-| `backup.enabled`            | `bool`    | Enable regular backups                                  | `false`                           | Non        |
-| `backup.schedule`           | `string`  | Cron schedule for automated backups                     | `"0 2 * * * *"`                   | Non        |
-| `backup.retentionPolicy`    | `string`  | Retention policy                                        | `"30d"`                           | Non        |
-| `backup.destinationPath`    | `string`  | Path to store the backup (i.e. s3://bucket/path/)       | `"s3://bucket/path/to/folder/"`   | Oui        |
-| `backup.endpointURL`        | `string`  | S3 Endpoint used to upload data to the cloud            | `"http://minio-gateway-service:9000"` | Oui    |
-| `backup.s3AccessKey`        | `string`  | Access key for S3, used for authentication              | `<your-access-key>`               | Oui        |
-| `backup.s3SecretKey`        | `string`  | Secret key for S3, used for authentication              | `<your-secret-key>`               | Oui        |
+| `backup`                    | `object`  | Backup configuration                                    | `{}`                              | No        |
+| `backup.enabled`            | `bool`    | Enable regular backups                                  | `false`                           | No        |
+| `backup.schedule`           | `string`  | Cron schedule for automated backups                     | `"0 2 * * * *"`                   | No        |
+| `backup.retentionPolicy`    | `string`  | Retention policy                                        | `"30d"`                           | No        |
+| `backup.destinationPath`    | `string`  | Path to store the backup (i.e. s3://bucket/path/)       | `"s3://bucket/path/to/folder/"`   | Si        |
+| `backup.endpointURL`        | `string`  | S3 Endpoint used to upload data to the cloud            | `"http://minio-gateway-service:9000"` | Si    |
+| `backup.s3AccessKey`        | `string`  | Access key for S3, used for authentication              | `<your-access-key>`               | Si        |
+| `backup.s3SecretKey`        | `string`  | Secret key for S3, used for authentication              | `<your-secret-key>`               | Si        |
 
-Pour sauvegarder une base de données **PostgreSQL**, un stockage externe **compatible S3** est requis.  
+Per salvare un database **PostgreSQL**, e richiesto uno storage esterno **compatibile S3**.
 
-Pour activer les sauvegardes régulières :  
+Per attivare i backup regolari:
 
-1. Mettez à jour la configuration de votre application PostgreSQL.  
-2. Passez le paramètre `backup.enabled` à `true`.  
-3. Renseignez le chemin de destination ainsi que les identifiants dans les champs `backup.*`.
+1. Aggiornate la configurazione della vostra applicazione PostgreSQL.
+2. Impostate il parametro `backup.enabled` su `true`.
+3. Compilate il percorso di destinazione e le credenziali nei campi `backup.*`.
 
-#### Exemple de configuration YAML
+#### Esempio di configurazione YAML
 
 ```yaml title="postgresql.yaml"
 ## @param backup.enabled Enable regular backups
@@ -181,54 +181,54 @@ backup:
   s3SecretKey: ju3eum4dekeich9ahM1te8waeGai0oog
 ```
 
-### **Paramètres de restauration de backup**
+### **Parametri di ripristino del backup**
 
-| **Paramètre**             | **Type**   | **Description**                                                                                       | **Défaut** | **Requis** |
+| **Parametro**             | **Tipo**   | **Descrizione**                                                                                       | **Predefinito** | **Richiesto** |
 |----------------------------|------------|-------------------------------------------------------------------------------------------------------|------------|------------|
-| `bootstrap`                | `object`   | Bootstrap configuration                                                                               | `{}`       | Non        |
-| `bootstrap.enabled`        | `bool`     | Restore database cluster from a backup                                                                | `false`    | Non        |
-| `bootstrap.recoveryTime`   | `string`   | Timestamp (PITR) jusqu’auquel la restauration doit s’effectuer (format RFC 3339). Vide = dernière sauvegarde | `""`       | Non        |
-| `bootstrap.oldName`        | `string`   | Nom du cluster PostgreSQL avant suppression                                                           | `""`       | Oui        |
+| `bootstrap`                | `object`   | Bootstrap configuration                                                                               | `{}`       | No        |
+| `bootstrap.enabled`        | `bool`     | Restore database cluster from a backup                                                                | `false`    | No        |
+| `bootstrap.recoveryTime`   | `string`   | Timestamp (PITR) fino al quale effettuare il ripristino (formato RFC 3339). Vuoto = ultimo backup | `""`       | No        |
+| `bootstrap.oldName`        | `string`   | Nome del cluster PostgreSQL prima della cancellazione                                                           | `""`       | Si        |
 
-Hikube en charge la **restauration à un instant donné (Point-In-Time Recovery - PITR)**.  
-La récupération s’effectue en créant une **nouvelle instance PostgreSQL** avec un nom différent, mais une configuration identique à celle de l’instance d’origine.  
+Hikube supporta il **ripristino a un istante specifico (Point-In-Time Recovery - PITR)**.
+Il recupero avviene creando una **nuova istanza PostgreSQL** con un nome diverso, ma una configurazione identica a quella dell'istanza originale.
 
-#### Étapes  
+#### Passaggi
 
-1. Créez une nouvelle application PostgreSQL.  
-2. Donnez-lui un nom différent de l’instance d’origine.  
-3. Activez le paramètre `bootstrap.enabled`.  
-4. Renseignez :  
-   - `bootstrap.oldName` : le nom de l’ancienne instance PostgreSQL.  
-   - `bootstrap.recoveryTime` : l’instant jusqu’auquel restaurer, au format **RFC 3339**. Si laissé vide, la restauration se fera jusqu’au dernier état disponible.  
+1. Create una nuova applicazione PostgreSQL.
+2. Assegnatele un nome diverso dall'istanza originale.
+3. Attivate il parametro `bootstrap.enabled`.
+4. Compilate:
+   - `bootstrap.oldName`: il nome della vecchia istanza PostgreSQL.
+   - `bootstrap.recoveryTime`: l'istante fino al quale ripristinare, nel formato **RFC 3339**. Se lasciato vuoto, il ripristino verra effettuato fino all'ultimo stato disponibile.
 
 ---
 
-#### Exemple de configuration YAML
+#### Esempio di configurazione YAML
 
 ```yaml title="postgresql.yaml"
 bootstrap:
   enabled: true
-  oldName: "postgres-example"   # nom de l’ancienne instance
-  recoveryTime: "2025-01-15T10:30:00Z"  # restauration à un instant précis (RFC 3339)
+  oldName: "postgres-example"   # nome della vecchia istanza
+  recoveryTime: "2025-01-15T10:30:00Z"  # ripristino a un istante preciso (RFC 3339)
 ```
 
-### resources et resourcesPreset  
+### resources e resourcesPreset
 
-Le champ `resources` permet de définir explicitement la configuration CPU et mémoire de chaque réplique PostgreSQL.  
-Si ce champ est laissé vide, la valeur du paramètre `resourcesPreset` est utilisée.  
+Il campo `resources` permette di definire esplicitamente la configurazione CPU e memoria di ogni replica PostgreSQL.
+Se questo campo e lasciato vuoto, viene utilizzato il valore del parametro `resourcesPreset`.
 
-#### Exemple de configuration YAML
+#### Esempio di configurazione YAML
 
 ```yaml title="postgresql.yaml"
 resources:
   cpu: 4000m
   memory: 4Gi
-```  
+```
 
-⚠️ Attention : si resources est défini, la valeur de resourcesPreset est ignorée.
+⚠️ Attenzione: se resources e definito, il valore di resourcesPreset viene ignorato.
 
-| **Preset name** | **CPU** | **Mémoire** |
+| **Preset name** | **CPU** | **Memoria** |
 |-----------------|---------|-------------|
 | `nano`          | 250m    | 128Mi       |
 | `micro`         | 500m    | 256Mi       |
@@ -242,7 +242,7 @@ resources:
 
 ## Esempi Completi
 
-### Cluster de Production
+### Cluster di Produzione
 
 ```yaml title="postgresql-production.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -300,7 +300,7 @@ spec:
     s3SecretKey: your-secret-key
 ```
 
-### Cluster de Développement
+### Cluster di Sviluppo
 
 ```yaml title="postgresql-development.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -328,15 +328,15 @@ spec:
 
 :::tip Buone Pratiche
 
-- **Réplication synchrone** : configurez `quorum.minSyncReplicas: 1` en production pour garantir qu'au moins un réplica confirme chaque transaction
-- **Sauvegardes S3** : activez les sauvegardes automatiques avec `backup.enabled: true` et testez régulièrement la restauration
-- **Séparation des rôles** : créez des utilisateurs distincts pour l'administration, l'application et la lecture seule
-- **Paramètres PostgreSQL** : ajustez `shared_buffers` (~25% de la RAM), `work_mem` et `max_connections` selon votre charge de travail
+- **Replica sincrona**: configurate `quorum.minSyncReplicas: 1` in produzione per garantire che almeno una replica confermi ogni transazione
+- **Backup S3**: attivate i backup automatici con `backup.enabled: true` e testate regolarmente il ripristino
+- **Separazione dei ruoli**: create utenti distinti per l'amministrazione, l'applicazione e la sola lettura
+- **Parametri PostgreSQL**: regolate `shared_buffers` (~25% della RAM), `work_mem` e `max_connections` in base al vostro carico di lavoro
 :::
 
-:::warning Attention
+:::warning Attenzione
 
-- **Les suppressions sont irréversibles** : la suppression d'une ressource Postgres entraîne la perte définitive des données si aucune sauvegarde n'est configurée
-- **`resources` vs `resourcesPreset`** : si `resources` est défini, `resourcesPreset` est entièrement ignoré
-- **Restauration PITR** : la restauration crée une **nouvelle instance** avec un nom différent — elle ne restaure pas l'instance existante
+- **Le cancellazioni sono irreversibili**: la cancellazione di una risorsa Postgres comporta la perdita definitiva dei dati se nessun backup e configurato
+- **`resources` vs `resourcesPreset`**: se `resources` e definito, `resourcesPreset` viene completamente ignorato
+- **Ripristino PITR**: il ripristino crea una **nuova istanza** con un nome diverso — non ripristina l'istanza esistente
 :::

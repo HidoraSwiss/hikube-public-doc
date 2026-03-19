@@ -5,11 +5,11 @@ title: FAQ
 
 # FAQ — PostgreSQL
 
-### Quelle est la différence entre `resourcesPreset` et `resources` ?
+### Qual e la differenza tra `resourcesPreset` e `resources`?
 
-Le champ `resourcesPreset` permet de choisir un profil de ressources prédéterminé pour chaque réplica PostgreSQL. Si le champ `resources` (CPU/mémoire explicites) est défini, `resourcesPreset` est **entièrement ignoré**.
+Il campo `resourcesPreset` permette di scegliere un profilo di risorse predeterminato per ogni replica PostgreSQL. Se il campo `resources` (CPU/memoria espliciti) e definito, `resourcesPreset` viene **completamente ignorato**.
 
-| **Preset** | **CPU** | **Mémoire** |
+| **Preset** | **CPU** | **Memoria** |
 |------------|---------|-------------|
 | `nano`     | 250m    | 128Mi       |
 | `micro`    | 500m    | 256Mi       |
@@ -21,67 +21,67 @@ Le champ `resourcesPreset` permet de choisir un profil de ressources prédéterm
 
 ```yaml title="postgresql.yaml"
 spec:
-  # Utilisation d'un preset
+  # Utilizzo di un preset
   resourcesPreset: medium
 
-  # OU configuration explicite (le preset est alors ignoré)
+  # OPPURE configurazione esplicita (il preset viene allora ignorato)
   resources:
     cpu: 2000m
     memory: 2Gi
 ```
 
-### Comment choisir entre `storageClass` local et replicated ?
+### Come scegliere tra `storageClass` local e replicated?
 
-Hikube propose deux types de classes de stockage :
+Hikube propone due tipi di classi di archiviazione:
 
-- **`local`** : les données sont stockées sur le nœud physique où s'exécute le pod. Ce mode offre les **meilleures performances** (latence minimale) mais ne protège pas contre la panne d'un nœud.
-- **`replicated`** : les données sont répliquées sur plusieurs nœuds physiques. Ce mode assure la **haute disponibilité multi-DC** et protège contre la perte d'un nœud, au prix d'une latence légèrement supérieure.
+- **`local`**: i dati sono archiviati sul nodo fisico dove viene eseguito il pod. Questa modalita offre le **migliori prestazioni** (latenza minima) ma non protegge contro il guasto di un nodo.
+- **`replicated`**: i dati sono replicati su piu nodi fisici. Questa modalita assicura l'**alta disponibilita multi-DC** e protegge contro la perdita di un nodo, al prezzo di una latenza leggermente superiore.
 
 :::tip
-Utilisez `storageClass: local` si vous configurez plusieurs réplicas (`replicas` > 1) : la réplication applicative (standby PostgreSQL) assure déjà la haute disponibilité. Utilisez `storageClass: replicated` si vous n'avez qu'un seul réplica (`replicas` = 1) : le stockage répliqué compense l'absence de réplication applicative. En développement avec un seul réplica, `local` peut suffire si la perte de données est acceptable.
+Usate `storageClass: local` se configurate piu repliche (`replicas` > 1): la replica applicativa (standby PostgreSQL) assicura gia l'alta disponibilita. Usate `storageClass: replicated` se avete una sola replica (`replicas` = 1): lo storage replicato compensa l'assenza di replica applicativa. In sviluppo con una sola replica, `local` puo bastare se la perdita di dati e accettabile.
 :::
 
-### Comment se connecter à PostgreSQL depuis l'intérieur du cluster ?
+### Come connettersi a PostgreSQL dall'interno del cluster?
 
-Le service PostgreSQL est accessible via le nom de service Kubernetes suivant :
+Il servizio PostgreSQL e accessibile tramite il seguente nome di servizio Kubernetes:
 
-- **Service en lecture-écriture** : `pg-<name>-rw` sur le port `5432`
+- **Servizio in lettura-scrittura**: `pg-<name>-rw` sulla porta `5432`
 
-Les identifiants de connexion sont stockés dans un Secret Kubernetes nommé `pg-<name>-app`.
+Le credenziali di connessione sono memorizzate in un Secret Kubernetes chiamato `pg-<name>-app`.
 
 ```bash
-# Récupérer le mot de passe
+# Recuperare la password
 kubectl get tenantsecret pg-mydb-app -o jsonpath='{.data.password}' | base64 -d
 
-# Récupérer le nom d'utilisateur
+# Recuperare il nome utente
 kubectl get tenantsecret pg-mydb-app -o jsonpath='{.data.username}' | base64 -d
 
-# Se connecter depuis un pod
+# Connettersi da un pod
 psql -h pg-mydb-rw -p 5432 -U <username> -d <database>
 ```
 
-### Comment configurer la réplication synchrone ?
+### Come configurare la replica sincrona?
 
-La réplication synchrone garantit qu'une transaction n'est confirmée que lorsqu'elle a été écrite sur un nombre minimum de réplicas. Configurez les paramètres `quorum` dans votre manifeste :
+La replica sincrona garantisce che una transazione venga confermata solo quando e stata scritta su un numero minimo di repliche. Configurate i parametri `quorum` nel vostro manifesto:
 
 ```yaml title="postgresql.yaml"
 spec:
   replicas: 3
   quorum:
-    minSyncReplicas: 1    # Au moins 1 réplica doit confirmer
-    maxSyncReplicas: 2    # Au maximum 2 réplicas confirment
+    minSyncReplicas: 1    # Almeno 1 replica deve confermare
+    maxSyncReplicas: 2    # Al massimo 2 repliche confermano
 ```
 
-- **`minSyncReplicas`** : nombre minimum de réplicas synchrones qui doivent accuser réception d'une transaction.
-- **`maxSyncReplicas`** : nombre maximum de réplicas synchrones pouvant accuser réception.
+- **`minSyncReplicas`**: numero minimo di repliche sincrone che devono confermare la ricezione di una transazione.
+- **`maxSyncReplicas`**: numero massimo di repliche sincrone che possono confermare la ricezione.
 
 :::warning
-La réplication synchrone augmente la latence d'écriture. Assurez-vous d'avoir suffisamment de réplicas (`replicas` >= `maxSyncReplicas` + 1).
+La replica sincrona aumenta la latenza di scrittura. Assicuratevi di avere sufficienti repliche (`replicas` >= `maxSyncReplicas` + 1).
 :::
 
-### Comment activer le backup PITR ?
+### Come attivare il backup PITR?
 
-PostgreSQL sur Hikube utilise **CloudNativePG** avec l'archivage WAL pour permettre la restauration à un instant donné (PITR). Configurez la section `backup` avec un stockage S3 compatible :
+PostgreSQL su Hikube utilizza **CloudNativePG** con l'archiviazione WAL per permettere il ripristino a un istante specifico (PITR). Configurate la sezione `backup` con uno storage S3 compatibile:
 
 ```yaml title="postgresql.yaml"
 spec:
@@ -95,11 +95,11 @@ spec:
     s3SecretKey: your-secret-key
 ```
 
-Les sauvegardes incluent automatiquement les fichiers WAL, ce qui permet de restaurer la base à n'importe quel instant entre deux sauvegardes.
+I backup includono automaticamente i file WAL, il che permette di ripristinare il database a qualsiasi istante tra due backup.
 
-### Comment ajouter des extensions PostgreSQL ?
+### Come aggiungere estensioni PostgreSQL?
 
-Vous pouvez activer des extensions PostgreSQL pour chaque base de données via le champ `databases[name].extensions` :
+Potete attivare estensioni PostgreSQL per ogni database tramite il campo `databases[name].extensions`:
 
 ```yaml title="postgresql.yaml"
 spec:
@@ -114,11 +114,11 @@ spec:
           - admin
 ```
 
-Les extensions sont activées automatiquement lors de la création de la base. Les extensions disponibles dépendent de la version de PostgreSQL déployée.
+Le estensioni vengono attivate automaticamente alla creazione del database. Le estensioni disponibili dipendono dalla versione di PostgreSQL distribuita.
 
-### Peut-on créer plusieurs bases et utilisateurs ?
+### Si possono creare piu database e utenti?
 
-Oui. Utilisez les maps `users` et `databases` pour définir autant d'utilisateurs et de bases que nécessaire. Chaque base peut avoir des rôles `admin` et `readonly` distincts :
+Si. Usate le mappe `users` e `databases` per definire quanti utenti e database necessitate. Ogni database puo avere ruoli `admin` e `readonly` distinti:
 
 ```yaml title="postgresql.yaml"
 spec:

@@ -1,50 +1,50 @@
 ---
-title: "Comment restaurer une sauvegarde (PITR)"
+title: "Come ripristinare un backup (PITR)"
 ---
 
-# Comment restaurer une sauvegarde (PITR)
+# Come ripristinare un backup (PITR)
 
-Ce guide explique comment restaurer une base de données PostgreSQL à un instant précis grâce au mécanisme de **Point-In-Time Recovery (PITR)** intégré à Hikube.
+Questa guida spiega come ripristinare un database PostgreSQL a un istante preciso grazie al meccanismo di **Point-In-Time Recovery (PITR)** integrato in Hikube.
 
 :::warning
-La restauration PITR crée une **nouvelle instance** PostgreSQL avec un nom différent. Elle ne restaure pas l'instance existante en place. L'ancienne instance n'est pas modifiée.
+Il ripristino PITR crea una **nuova istanza** PostgreSQL con un nome diverso. Non ripristina l'istanza esistente sul posto. La vecchia istanza non viene modificata.
 :::
 
-## Prerequisitiiti
+## Prerequisiti
 
-- **kubectl** configuré avec votre kubeconfig Hikube
-- Une instance PostgreSQL d'origine avec les **sauvegardes activées** (`backup.enabled: true`)
-- Les sauvegardes doivent avoir été correctement envoyées vers le bucket S3
-- Le **nom de l'ancienne instance** PostgreSQL (`bootstrap.oldName`)
-- (Optionnel) Un **timestamp RFC 3339** pour la restauration à un instant précis
+- **kubectl** configurato con il vostro kubeconfig Hikube
+- Un'istanza PostgreSQL originale con i **backup attivati** (`backup.enabled: true`)
+- I backup devono essere stati correttamente inviati al bucket S3
+- Il **nome della vecchia istanza** PostgreSQL (`bootstrap.oldName`)
+- (Opzionale) Un **timestamp RFC 3339** per il ripristino a un istante preciso
 
-## Passi
+## Passaggi
 
-### 1. Identifier le point de restauration
+### 1. Identificare il punto di ripristino
 
-Déterminez l'instant auquel vous souhaitez restaurer vos données. Le timestamp doit être au format **RFC 3339** :
+Determinate l'istante al quale desiderate ripristinare i vostri dati. Il timestamp deve essere nel formato **RFC 3339**:
 
 ```
 YYYY-MM-DDTHH:MM:SSZ
 ```
 
-**Exemples :**
+**Esempi:**
 
-| Timestamp | Description |
+| Timestamp | Descrizione |
 |-----------|-------------|
-| `2025-06-15T10:30:00Z` | 15 juin 2025 à 10h30 UTC |
-| `2025-06-15T14:00:00+02:00` | 15 juin 2025 à 14h00 (heure de Paris) |
-| _(vide)_ | Restauration au dernier état disponible |
+| `2025-06-15T10:30:00Z` | 15 giugno 2025 alle 10:30 UTC |
+| `2025-06-15T14:00:00+02:00` | 15 giugno 2025 alle 14:00 (ora di Parigi) |
+| _(vuoto)_ | Ripristino all'ultimo stato disponibile |
 
 :::tip
-Si vous laissez `recoveryTime` vide, la restauration s'effectue jusqu'au dernier WAL disponible, c'est-à-dire l'état le plus récent possible.
+Se lasciate `recoveryTime` vuoto, il ripristino viene effettuato fino all'ultimo WAL disponibile, cioe lo stato piu recente possibile.
 :::
 
-### 2. Préparer le manifeste de la nouvelle instance
+### 2. Preparare il manifesto della nuova istanza
 
-Créez un manifeste pour la nouvelle instance PostgreSQL. Le nom doit être **différent** de l'instance d'origine. La configuration (replicas, resources, stockage) doit être **identique** à celle de l'instance d'origine.
+Create un manifesto per la nuova istanza PostgreSQL. Il nome deve essere **diverso** dall'istanza originale. La configurazione (replicas, resources, archiviazione) deve essere **identica** a quella dell'istanza originale.
 
-Ajoutez la section `bootstrap` pour activer la restauration :
+Aggiungete la sezione `bootstrap` per attivare il ripristino:
 
 ```yaml title="postgresql-restored.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -81,48 +81,48 @@ spec:
     recoveryTime: "2025-06-15T10:30:00Z"
 ```
 
-**Paramètres clés de la section `bootstrap` :**
+**Parametri chiave della sezione `bootstrap`:**
 
-| Paramètre | Description | Requis |
+| Parametro | Descrizione | Richiesto |
 |-----------|-------------|--------|
-| `bootstrap.enabled` | Active la restauration depuis une sauvegarde | Oui |
-| `bootstrap.oldName` | Nom de l'ancienne instance PostgreSQL | Oui |
-| `bootstrap.recoveryTime` | Timestamp RFC 3339 du point de restauration. Vide = dernier état disponible | Non |
+| `bootstrap.enabled` | Attiva il ripristino da un backup | Si |
+| `bootstrap.oldName` | Nome della vecchia istanza PostgreSQL | Si |
+| `bootstrap.recoveryTime` | Timestamp RFC 3339 del punto di ripristino. Vuoto = ultimo stato disponibile | No |
 
 :::note
-Le champ `bootstrap.oldName` correspond au `metadata.name` de l'instance d'origine. Dans cet exemple, l'ancienne instance s'appelait `my-database`.
+Il campo `bootstrap.oldName` corrisponde al `metadata.name` dell'istanza originale. In questo esempio, la vecchia istanza si chiamava `my-database`.
 :::
 
-### 3. Appliquer le manifeste
+### 3. Applicare il manifesto
 
 ```bash
 kubectl apply -f postgresql-restored.yaml
 ```
 
-La création de la nouvelle instance et la restauration peuvent prendre plusieurs minutes selon le volume de données.
+La creazione della nuova istanza e il ripristino possono richiedere diversi minuti a seconda del volume di dati.
 
-### 4. Vérifier la restauration
+### 4. Verificare il ripristino
 
-Surveillez l'état de la nouvelle instance :
+Monitorate lo stato della nuova istanza:
 
 ```bash
 kubectl get postgres my-database-restored
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```console
 NAME                      READY   AGE     VERSION
 my-database-restored      True    3m12s   0.18.0
 ```
 
-Vérifiez que les pods sont en état `Running` :
+Verificate che i pod siano nello stato `Running`:
 
 ```bash
 kubectl get po | grep postgres-my-database-restored
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```console
 postgres-my-database-restored-1   1/1     Running   0   3m
@@ -130,15 +130,15 @@ postgres-my-database-restored-2   1/1     Running   0   2m
 postgres-my-database-restored-3   1/1     Running   0   1m
 ```
 
-### 5. Valider les données restaurées
+### 5. Validare i dati ripristinati
 
-Récupérez les identifiants de connexion de la nouvelle instance :
+Recuperate le credenziali di connessione della nuova istanza:
 
 ```bash
 kubectl get secret postgres-my-database-restored-credentials -o json | jq -r '.data | to_entries[] | "\(.key): \(.value|@base64d)"'
 ```
 
-Connectez-vous à la base et vérifiez que les données sont présentes :
+Connettetevi al database e verificate che i dati siano presenti:
 
 ```bash
 kubectl port-forward svc/postgres-my-database-restored-rw 5432:5432
@@ -149,25 +149,25 @@ psql -h 127.0.0.1 -U admin myapp
 ```
 
 ```sql
--- Vérifier les tables et les données
+-- Verificare le tabelle e i dati
 \dt
 SELECT count(*) FROM votre_table;
 ```
 
 ## Verifica
 
-La restauration est réussie si :
+Il ripristino ha avuto successo se:
 
-- L'instance `my-database-restored` est en état `READY: True`
-- Les pods PostgreSQL sont tous en état `Running`
-- Les données sont présentes et cohérentes au timestamp demandé
-- La connexion `psql` fonctionne correctement
+- L'istanza `my-database-restored` e nello stato `READY: True`
+- I pod PostgreSQL sono tutti nello stato `Running`
+- I dati sono presenti e coerenti al timestamp richiesto
+- La connessione `psql` funziona correttamente
 
 :::tip
-Une fois la restauration validée, pensez à mettre à jour vos applications pour pointer vers la nouvelle instance (`postgres-my-database-restored-rw` au lieu de `postgres-my-database-rw`).
+Una volta validato il ripristino, ricordatevi di aggiornare le vostre applicazioni per puntare alla nuova istanza (`postgres-my-database-restored-rw` al posto di `postgres-my-database-rw`).
 :::
 
 ## Per approfondire
 
-- **[Référence API PostgreSQL](../api-reference.md)** : documentation complète des paramètres `bootstrap`
-- **[Comment configurer les sauvegardes automatiques](./configure-backups.md)** : activer les sauvegardes sur la nouvelle instance
+- **[Riferimento API PostgreSQL](../api-reference.md)**: documentazione completa dei parametri `bootstrap`
+- **[Come configurare i backup automatici](./configure-backups.md)**: attivare i backup sulla nuova istanza

@@ -3,10 +3,10 @@ sidebar_position: 7
 title: GPU Operator
 ---
 
-# 🧩 Détails du champ `addons.gpuOperator`
+# 🧩 Dettagli del campo `addons.gpuOperator`
 
-Le champ `addons.gpuOperator` définit la configuration de l’add-on **NVIDIA GPU Operator**, utilisé pour gérer automatiquement les **GPU** dans un cluster Kubernetes.
-Ce composant installe et maintient les pilotes NVIDIA, les plugins d’exécution, le `device plugin`, ainsi que les outils de monitoring nécessaires à l’exploitation des GPU.
+Il campo `addons.gpuOperator` definisce la configurazione dell'add-on **NVIDIA GPU Operator**, utilizzato per gestire automaticamente le **GPU** in un cluster Kubernetes.
+Questo componente installa e mantiene i driver NVIDIA, i plugin di esecuzione, il `device plugin`, nonche gli strumenti di monitoring necessari all'utilizzo delle GPU.
 
 ```yaml
 addons:
@@ -24,14 +24,14 @@ addons:
 
 ---
 
-## `gpuOperator` (Object) — **Obligatoire**
+## `gpuOperator` (Object) — **Obbligatorio**
 
-### Description
+### Descrizione
 
-Le champ `gpuOperator` regroupe la configuration principale de l’add-on NVIDIA GPU Operator.
-Il permet d’activer le déploiement du composant et d’ajuster sa configuration.
+Il campo `gpuOperator` raggruppa la configurazione principale dell'add-on NVIDIA GPU Operator.
+Permette di attivare la distribuzione del componente e di regolarne la configurazione.
 
-### Exemple
+### Esempio
 
 ```yaml
 gpuOperator:
@@ -44,14 +44,14 @@ gpuOperator:
 
 ---
 
-## `enabled` (boolean) — **Obligatoire**
+## `enabled` (boolean) — **Obbligatorio**
 
-### Description
+### Descrizione
 
-Indique si le **GPU Operator** est activé (`true`) ou désactivé (`false`) dans le cluster.
-Lorsqu’il est activé, l’opérateur déploie automatiquement les composants nécessaires à la gestion des GPU NVIDIA.
+Indica se il **GPU Operator** e attivato (`true`) o disattivato (`false`) nel cluster.
+Quando e attivato, l'operatore distribuisce automaticamente i componenti necessari alla gestione delle GPU NVIDIA.
 
-### Exemple
+### Esempio
 
 ```yaml
 enabled: true
@@ -59,14 +59,14 @@ enabled: true
 
 ---
 
-## `valuesOverride` (Object) — **Obligatoire**
+## `valuesOverride` (Object) — **Obbligatorio**
 
-### Description
+### Descrizione
 
-Le champ `valuesOverride` permet de **surcharger les valeurs par défaut** du GPU Operator.
-Il est utilisé pour personnaliser le comportement du déploiement (activation du driver, du toolkit, des plugins, ou configuration des ressources).
+Il campo `valuesOverride` permette di **sovrascrivere i valori predefiniti** del GPU Operator.
+E utilizzato per personalizzare il comportamento della distribuzione (attivazione del driver, del toolkit, dei plugin o configurazione delle risorse).
 
-### Exemple
+### Esempio
 
 ```yaml
 valuesOverride:
@@ -83,6 +83,6 @@ valuesOverride:
 
 ## 💡 Buone pratiche
 
-- Activer `enabled: true` sur les nœuds dotés de GPU pour que l’opérateur gère automatiquement les composants NVIDIA.
-- Utiliser `valuesOverride` pour adapter la configuration aux besoins spécifiques (ex. activer ou désactiver le `driver` si déjà installé manuellement).
-- Déployer le GPU Operator uniquement sur les environnements où des workloads GPU (IA, ML, calcul scientifique) sont nécessaires.
+- Attivare `enabled: true` sui nodi dotati di GPU affinche l'operatore gestisca automaticamente i componenti NVIDIA.
+- Utilizzare `valuesOverride` per adattare la configurazione alle esigenze specifiche (es. attivare o disattivare il `driver` se gia installato manualmente).
+- Distribuire il GPU Operator solo negli ambienti in cui sono necessari workload GPU (IA, ML, calcolo scientifico).

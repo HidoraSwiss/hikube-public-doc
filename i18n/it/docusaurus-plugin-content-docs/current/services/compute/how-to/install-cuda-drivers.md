@@ -1,91 +1,91 @@
 ---
-title: Come installare CUDA e i driver GPU
+title: "Come installare CUDA e i driver GPU"
 ---
 
-# Comment installer CUDA et les drivers GPU
+# Come installare CUDA e i driver GPU
 
-Les VMs Hikube avec un GPU attaché ne disposent pas de drivers NVIDIA pré-installés. Ce guide détaille l'installation des drivers NVIDIA et du toolkit CUDA sur une VM Ubuntu pour exploiter le GPU.
+Le VM Hikube con una GPU collegata non dispongono di driver NVIDIA preinstallati. Questa guida descrive l'installazione dei driver NVIDIA e del toolkit CUDA su una VM Ubuntu per sfruttare la GPU.
 
-## Prerequisitiiti
+## Prerequisiti
 
-- Une **VMInstance** Hikube avec un GPU attaché (voir la [référence API GPU](../../gpu/api-reference.md))
-- VM basée sur **Ubuntu 24.04** (les commandes sont adaptées pour cette version)
-- Un accès **SSH** ou **console** à la VM
-- Droits **root** ou **sudo**
+- Una **VMInstance** Hikube con una GPU collegata (vedere il [riferimento API GPU](../../gpu/api-reference.md))
+- VM basata su **Ubuntu 24.04** (i comandi sono adattati per questa versione)
+- Un accesso **SSH** o **console** alla VM
+- Diritti **root** o **sudo**
 
-:::warning Pas de drivers pré-installés
-Les golden images Hikube ne contiennent pas les drivers GPU NVIDIA. Vous devez les installer manuellement ou via cloud-init après la création de la VM.
+:::warning Nessun driver preinstallato
+Le golden image Hikube non contengono i driver GPU NVIDIA. Dovete installarli manualmente o tramite cloud-init dopo la creazione della VM.
 :::
 
 ## Passi
 
-### 1. Se connecter à la VM
+### 1. Connettersi alla VM
 
 ```bash
 virtctl ssh -i ~/.ssh/id_ed25519 ubuntu@my-gpu-vm
 ```
 
-Ou via SSH direct si la VM est exposée :
+O tramite SSH diretto se la VM è esposta:
 
 ```bash
-ssh -i ~/.ssh/hikube-vm ubuntu@<IP-EXTERNE>
+ssh -i ~/.ssh/hikube-vm ubuntu@<IP-ESTERNO>
 ```
 
-### 2. Vérifier la présence du GPU
+### 2. Verificare la presenza della GPU
 
-Avant d'installer les drivers, vérifiez que le GPU est bien détecté par le système :
+Prima di installare i driver, verificate che la GPU sia ben rilevata dal sistema:
 
 ```bash
 lspci | grep -i nvidia
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```
 06:00.0 3D controller: NVIDIA Corporation ...
 ```
 
-Si aucun GPU n'apparait, vérifiez que votre VMInstance dispose bien d'un GPU attaché dans sa configuration.
+Se nessuna GPU appare, verificate che la vostra VMInstance disponga di una GPU collegata nella sua configurazione.
 
-### 3. Installer les drivers NVIDIA et CUDA
+### 3. Installare i driver NVIDIA e CUDA
 
-Ajoutez le dépot NVIDIA et installez les drivers :
+Aggiungete il repository NVIDIA e installate i driver:
 
 ```bash
-# Télécharger et installer le keyring NVIDIA
+# Scaricare e installare il keyring NVIDIA
 wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/cuda-keyring_1.1-1_all.deb
 sudo dpkg -i cuda-keyring_1.1-1_all.deb
 
-# Mettre à jour les paquets
+# Aggiornare i pacchetti
 sudo apt-get update
 
-# Installer le toolkit CUDA et le driver
+# Installare il toolkit CUDA e il driver
 sudo apt-get install -y cuda-toolkit nvidia-driver-560
 ```
 
-:::tip Redémarrage requis
-Un redémarrage est nécessaire après l'installation des drivers pour charger les modules noyau NVIDIA.
+:::tip Riavvio necessario
+Un riavvio è necessario dopo l'installazione dei driver per caricare i moduli kernel NVIDIA.
 :::
 
-Redémarrez la VM :
+Riavviate la VM:
 
 ```bash
 sudo reboot
 ```
 
-Reconnectez-vous après le redémarrage (attendez environ 1 minute) :
+Riconnettetevi dopo il riavvio (attendete circa 1 minuto):
 
 ```bash
 virtctl ssh -i ~/.ssh/id_ed25519 ubuntu@my-gpu-vm
 ```
 
-### 4. Vérifier l'installation des drivers
+### 4. Verificare l'installazione dei driver
 
 ```bash
 nvidia-smi
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```
 +---------------------------------------------------------------------------------------+
@@ -99,15 +99,15 @@ nvidia-smi
 +-----------------------------------------+----------------------+----------------------+
 ```
 
-Vérifiez la version de CUDA :
+Verificate la versione di CUDA:
 
 ```bash
 nvcc --version
 ```
 
-### 5. Configurer les variables d'environnement (optionnel)
+### 5. Configurare le variabili d'ambiente (opzionale)
 
-Ajoutez CUDA au PATH pour un accès permanent :
+Aggiungete CUDA al PATH per un accesso permanente:
 
 ```bash
 echo 'export PATH=/usr/local/cuda/bin:$PATH' >> ~/.bashrc
@@ -115,60 +115,60 @@ echo 'export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH' >> ~/.bashr
 source ~/.bashrc
 ```
 
-### 6. Tester avec PyTorch
+### 6. Testare con PyTorch
 
-Installez PyTorch avec le support CUDA pour valider que le GPU est pleinement fonctionnel :
+Installate PyTorch con il supporto CUDA per validare che la GPU sia pienamente funzionale:
 
 ```bash
 pip3 install torch --index-url https://download.pytorch.org/whl/cu124
 ```
 
-Testez la détection du GPU :
+Testate il rilevamento della GPU:
 
 ```bash
 python3 -c "
 import torch
-print(f'CUDA disponible : {torch.cuda.is_available()}')
-print(f'GPU détecté : {torch.cuda.get_device_name(0)}')
-print(f'Mémoire GPU : {torch.cuda.get_device_properties(0).total_mem / 1e9:.1f} Go')
+print(f'CUDA disponibile: {torch.cuda.is_available()}')
+print(f'GPU rilevata: {torch.cuda.get_device_name(0)}')
+print(f'Memoria GPU: {torch.cuda.get_device_properties(0).total_mem / 1e9:.1f} GB')
 "
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```
-CUDA disponible : True
-GPU détecté : NVIDIA L40S
-Mémoire GPU : 46.1 Go
+CUDA disponibile: True
+GPU rilevata: NVIDIA L40S
+Memoria GPU: 46.1 GB
 ```
 
 ## Verifica
 
-Lancez un calcul simple sur le GPU pour confirmer le bon fonctionnement :
+Lanciate un calcolo semplice sulla GPU per confermare il buon funzionamento:
 
 ```bash
 python3 -c "
 import torch
-# Créer un tenseur sur le GPU
+# Creare un tensore sulla GPU
 x = torch.randn(1000, 1000, device='cuda')
 y = torch.randn(1000, 1000, device='cuda')
 z = torch.mm(x, y)
-print(f'Calcul GPU réussi, taille du résultat : {z.shape}')
+print(f'Calcolo GPU riuscito, dimensione del risultato: {z.shape}')
 "
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```
-Calcul GPU réussi, taille du résultat : torch.Size([1000, 1000])
+Calcolo GPU riuscito, dimensione del risultato: torch.Size([1000, 1000])
 ```
 
-:::tip Automatiser l'installation via cloud-init
-Pour automatiser l'installation des drivers GPU au démarrage, utilisez le paramètre `cloudInit` de la VMInstance. Consultez le guide [Comment configurer cloud-init](./configure-cloud-init.md) pour un exemple complet.
+:::tip Automatizzare l'installazione tramite cloud-init
+Per automatizzare l'installazione dei driver GPU all'avvio, utilizzate il parametro `cloudInit` della VMInstance. Consultate la guida [Come configurare cloud-init](./configure-cloud-init.md) per un esempio completo.
 :::
 
 ## Per approfondire
 
-- [Référence API](../api-reference.md)
-- [Référence API GPU](../../gpu/api-reference.md)
-- [Comment configurer cloud-init](./configure-cloud-init.md)
+- [Riferimento API](../api-reference.md)
+- [Riferimento API GPU](../../gpu/api-reference.md)
+- [Come configurare cloud-init](./configure-cloud-init.md)

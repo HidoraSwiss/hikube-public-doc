@@ -4,74 +4,74 @@ title: Panoramica
 ---
 
 
-# RabbitMQ sur Hikube
+# RabbitMQ su Hikube
 
-Les **clusters RabbitMQ** d’Hikube offrent une **infrastructure de messagerie fiable, distribuée et hautement disponible**, conçue pour la **communication asynchrone entre services et applications**.
-Basé sur le protocole **AMQP (Advanced Message Queuing Protocol)**, RabbitMQ garantit un **acheminement sûr et ordonné des messages**, adapté aussi bien aux architectures **microservices** qu’aux systèmes d’intégration métier complexes.
-
----
-
-## 🏗️ Architecture et Fonctionnement
-
-Un déploiement RabbitMQ sur Hikube repose sur plusieurs concepts fondamentaux :
-
-* **Producers** → envoient les messages à RabbitMQ via des **exchanges**, qui déterminent comment les messages sont routés vers les **queues**.
-* **Exchanges** → appliquent une logique de routage (direct, fanout, topic ou headers) pour distribuer les messages selon des clés de routage.
-* **Queues** → stockent les messages jusqu’à ce qu’ils soient consommés par les **consumers**.
-* **Consumers** → récupèrent et traitent les messages, garantissant un flux de travail **asynchrone, fiable et découplé**.
-
-Les clusters RabbitMQ sur Hikube sont configurés en **mode haute disponibilité (HA)**, avec une **réplication des files de messages** entre plusieurs nœuds pour assurer la continuité du service en cas de panne.
-
-> ⚙️ Les clusters Hikube utilisent la **fonctionnalité quorum queues** pour offrir un comportement similaire à celui des consensus distribués (basé sur Raft), garantissant **intégrité et tolérance aux pannes**.
+I **cluster RabbitMQ** di Hikube offrono un'**infrastruttura di messaggistica affidabile, distribuita e altamente disponibile**, progettata per la **comunicazione asincrona tra servizi e applicazioni**.
+Basato sul protocollo **AMQP (Advanced Message Queuing Protocol)**, RabbitMQ garantisce un **instradamento sicuro e ordinato dei messaggi**, adatto sia alle architetture **microservizi** che ai sistemi di integrazione aziendale complessi.
 
 ---
 
-## 🚀 Cas d’usage typiques
+## 🏗️ Architettura e Funzionamento
 
-### 💬 Communication inter-services
+Un deployment RabbitMQ su Hikube si basa su diversi concetti fondamentali:
 
-RabbitMQ est souvent utilisé comme **bus de messages interne** entre applications ou microservices.
-Il permet de **décorréler les traitements**, réduire la latence perçue et améliorer la **résilience globale**.
+* **Producer** → inviano i messaggi a RabbitMQ tramite degli **exchange**, che determinano come i messaggi vengono instradati verso le **code**.
+* **Exchange** → applicano una logica di routing (direct, fanout, topic o headers) per distribuire i messaggi secondo chiavi di routing.
+* **Code** → archiviano i messaggi fino a quando non vengono consumati dai **consumer**.
+* **Consumer** → recuperano ed elaborano i messaggi, garantendo un flusso di lavoro **asincrono, affidabile e disaccoppiato**.
 
-**Exemples :**
+I cluster RabbitMQ su Hikube sono configurati in **modalità alta disponibilità (HA)**, con una **replica delle code di messaggi** tra più nodi per garantire la continuità del servizio in caso di guasto.
 
-* File d’attente de traitement pour des tâches longues (emails, rapports, notifications)
-* Système d’événements métiers (commandes, paiements, inventaires)
-* Communication fiable entre microservices distribués
-
----
-
-### ⚙️ Gestion de flux asynchrones
-
-RabbitMQ simplifie la mise en place de **workflows asynchrones** où chaque composant travaille indépendamment des autres.
-
-**Exemples :**
-
-* Orchestration de jobs en arrière-plan
-* Traitement parallèle de lots de données
-* Coordination de pipelines CI/CD ou d’automatisations internes
+> ⚙️ I cluster Hikube utilizzano la **funzionalità quorum queue** per offrire un comportamento simile a quello dei consensi distribuiti (basato su Raft), garantendo **integrità e tolleranza ai guasti**.
 
 ---
 
-### 📡 Intégration d’applications et interconnexion de systèmes
+## 🚀 Casi d'uso tipici
 
-RabbitMQ agit comme **pont de communication universel** entre applications, langages ou environnements hétérogènes.
+### 💬 Comunicazione inter-servizi
 
-**Exemples :**
+RabbitMQ è spesso utilizzato come **bus di messaggi interno** tra applicazioni o microservizi.
+Consente di **disaccoppiare le elaborazioni**, ridurre la latenza percepita e migliorare la **resilienza globale**.
 
-* Intégration entre applications legacy et microservices modernes
-* Connexion entre systèmes internes et plateformes externes via AMQP ou MQTT
-* Centralisation des messages d’événements métiers dans un même bus
+**Esempi:**
+
+* Coda di elaborazione per task lunghi (email, report, notifiche)
+* Sistema di eventi di business (ordini, pagamenti, inventari)
+* Comunicazione affidabile tra microservizi distribuiti
 
 ---
 
-### 🔒 Fiabilité et persistance
+### ⚙️ Gestione di flussi asincroni
 
-RabbitMQ assure la **durabilité des messages** grâce à la persistance sur disque et à la gestion des **acknowledgements** (ACK/NACK).
-Cela garantit qu’aucun message n’est perdu, même en cas de défaillance temporaire d’un nœud ou d’un réseau.
+RabbitMQ semplifica l'implementazione di **workflow asincroni** in cui ogni componente lavora indipendentemente dagli altri.
 
-**Exemples :**
+**Esempi:**
 
-* File d’attente transactionnelle pour traitements critiques
-* Traitement garanti des messages financiers ou logistiques
-* Transfert de données entre services avec reprise automatique après erreur
+* Orchestrazione di job in background
+* Elaborazione parallela di lotti di dati
+* Coordinamento di pipeline CI/CD o automazioni interne
+
+---
+
+### 📡 Integrazione di applicazioni e interconnessione di sistemi
+
+RabbitMQ funge da **ponte di comunicazione universale** tra applicazioni, linguaggi o ambienti eterogenei.
+
+**Esempi:**
+
+* Integrazione tra applicazioni legacy e microservizi moderni
+* Connessione tra sistemi interni e piattaforme esterne tramite AMQP o MQTT
+* Centralizzazione dei messaggi di eventi di business in un unico bus
+
+---
+
+### 🔒 Affidabilità e persistenza
+
+RabbitMQ garantisce la **durabilità dei messaggi** grazie alla persistenza su disco e alla gestione degli **acknowledgement** (ACK/NACK).
+Questo garantisce che nessun messaggio venga perso, anche in caso di guasto temporaneo di un nodo o della rete.
+
+**Esempi:**
+
+* Coda transazionale per elaborazioni critiche
+* Elaborazione garantita dei messaggi finanziari o logistici
+* Trasferimento di dati tra servizi con ripresa automatica dopo un errore

@@ -1,35 +1,35 @@
 ---
-title: Come configurare l'autoscaling
+title: "Come configurare l'autoscaling"
 ---
 
-# Comment configurer l'autoscaling
+# Come configurare l'autoscaling
 
-L'autoscaling permet a votre cluster Hikube d'ajuster automatiquement le nombre de noeuds en fonction de la charge. Ce guide explique comment configurer et observer le scaling automatique de vos node groups.
+L'autoscaling permette al vostro cluster Hikube di regolare automaticamente il numero di nodi in base al carico. Questa guida spiega come configurare e osservare lo scaling automatico dei vostri node group.
 
-## Prerequisitiiti
+## Prerequisiti
 
-- Un cluster Kubernetes Hikube deploye (voir le [demarrage rapide](../quick-start.md))
-- `kubectl` configure pour interagir avec l'API Hikube
-- Le fichier YAML de configuration de votre cluster
+- Un cluster Kubernetes Hikube distribuito (vedere l'[avvio rapido](../quick-start.md))
+- `kubectl` configurato per interagire con l'API Hikube
+- Il file YAML di configurazione del vostro cluster
 
-## Passi
+## Fasi
 
-### 1. Comprendre le fonctionnement
+### 1. Comprendere il funzionamento
 
-L'autoscaling Hikube fonctionne au niveau des node groups. Chaque groupe de noeuds definit :
+L'autoscaling Hikube funziona a livello dei node group. Ogni gruppo di nodi definisce:
 
-- **`minReplicas`** : nombre minimal de noeuds toujours actifs
-- **`maxReplicas`** : nombre maximal de noeuds pouvant etre provisionnes
+- **`minReplicas`**: numero minimo di nodi sempre attivi
+- **`maxReplicas`**: numero massimo di nodi che possono essere provisionati
 
-Le cluster ajoute automatiquement des noeuds lorsque les pods ne peuvent pas etre planifies faute de ressources (CPU, memoire). Il supprime les noeuds sous-utilises lorsque la charge diminue, en respectant toujours le seuil `minReplicas`.
+Il cluster aggiunge automaticamente nodi quando i pod non possono essere pianificati per mancanza di risorse (CPU, memoria). Rimuove i nodi sottoutilizzati quando il carico diminuisce, rispettando sempre la soglia `minReplicas`.
 
 :::note
-Le scaling est declenche par la pression sur les ressources : lorsque des pods restent en etat `Pending` faute de capacite, de nouveaux noeuds sont provisionnes automatiquement.
+Lo scaling viene attivato dalla pressione sulle risorse: quando dei pod rimangono in stato `Pending` per mancanza di capacita, nuovi nodi vengono provisionati automaticamente.
 :::
 
-### 2. Configurer minReplicas et maxReplicas
+### 2. Configurare minReplicas e maxReplicas
 
-Definissez les bornes de scaling dans votre configuration cluster :
+Definite i limiti di scaling nella vostra configurazione cluster:
 
 ```yaml title="cluster-autoscaling.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -41,7 +41,7 @@ spec:
     replicas: 3
 
   nodeGroups:
-    # Node group avec autoscaling modere
+    # Node group con autoscaling moderato
     web:
       minReplicas: 2
       maxReplicas: 10
@@ -50,7 +50,7 @@ spec:
       roles:
         - ingress-nginx
 
-    # Node group compute avec large amplitude
+    # Node group compute con ampia ampiezza
     compute:
       minReplicas: 1
       maxReplicas: 20
@@ -60,12 +60,12 @@ spec:
 ```
 
 :::tip
-Pour un environnement de production, fixez `minReplicas` a au moins 2 pour garantir la haute disponibilite de vos workloads.
+Per un ambiente di produzione, fissate `minReplicas` ad almeno 2 per garantire l'alta disponibilita dei vostri workload.
 :::
 
-### 3. Configurer le scaling a zero
+### 3. Configurare lo scaling a zero
 
-Pour les environnements de developpement ou les workloads GPU, vous pouvez configurer un node group qui descend a zero noeuds lorsqu'il n'est pas utilise :
+Per gli ambienti di sviluppo o i workload GPU, potete configurare un node group che scende a zero nodi quando non e utilizzato:
 
 ```yaml title="cluster-scale-to-zero.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -77,7 +77,7 @@ spec:
     replicas: 2
 
   nodeGroups:
-    # Node group permanent
+    # Node group permanente
     system:
       minReplicas: 2
       maxReplicas: 5
@@ -86,7 +86,7 @@ spec:
       roles:
         - ingress-nginx
 
-    # Node group GPU avec scaling a zero
+    # Node group GPU con scaling a zero
     gpu:
       minReplicas: 0
       maxReplicas: 8
@@ -96,22 +96,22 @@ spec:
 ```
 
 :::warning
-Le scaling a zero implique un delai de demarrage (cold start) lors du provisionnement du premier noeud. Prevoyez quelques minutes avant que les pods puissent etre planifies sur le nouveau noeud.
+Lo scaling a zero implica un ritardo di avvio (cold start) durante il provisioning del primo nodo. Prevedete alcuni minuti prima che i pod possano essere pianificati sul nuovo nodo.
 :::
 
-### 4. Observer le scaling en action
+### 4. Osservare lo scaling in azione
 
-Appliquez la configuration et observez le comportement du scaling :
+Applicate la configurazione e osservate il comportamento dello scaling:
 
 ```bash
-# Appliquer la configuration
+# Applicare la configurazione
 kubectl apply -f cluster-autoscaling.yaml
 
-# Observer les noeuds en temps reel
+# Osservare i nodi in tempo reale
 kubectl --kubeconfig=cluster-admin.yaml get nodes -w
 ```
 
-Pour declencher un scaling, deployez un workload qui consomme des ressources :
+Per attivare uno scaling, distribuite un workload che consuma risorse:
 
 ```yaml title="load-test.yaml"
 apiVersion: apps/v1
@@ -139,19 +139,19 @@ spec:
 ```
 
 ```bash
-# Deployer le workload de test
+# Distribuire il workload di test
 kubectl --kubeconfig=cluster-admin.yaml apply -f load-test.yaml
 
-# Observer les pods en attente (Pending) puis planifies
+# Osservare i pod in attesa (Pending) poi pianificati
 kubectl --kubeconfig=cluster-admin.yaml get pods -w
 
-# Observer l'ajout de noeuds
+# Osservare l'aggiunta di nodi
 kubectl --kubeconfig=cluster-admin.yaml get nodes -w
 ```
 
-### 5. Ajuster les limites
+### 5. Regolare i limiti
 
-Vous pouvez ajuster les limites de scaling a tout moment avec un patch :
+Potete regolare i limiti di scaling in qualsiasi momento con un patch:
 
 ```bash
 kubectl patch kubernetes my-cluster --type='merge' -p='
@@ -162,7 +162,7 @@ spec:
 '
 ```
 
-Ou en modifiant le fichier YAML et en re-appliquant :
+Oppure modificando il file YAML e ri-applicando:
 
 ```bash
 kubectl apply -f cluster-autoscaling.yaml
@@ -170,20 +170,20 @@ kubectl apply -f cluster-autoscaling.yaml
 
 ## Verifica
 
-Verifiez que l'autoscaling est correctement configure :
+Verificate che l'autoscaling sia correttamente configurato:
 
 ```bash
-# Verifier la configuration actuelle du cluster
+# Verificare la configurazione attuale del cluster
 kubectl get kubernetes my-cluster -o yaml | grep -A 8 nodeGroups
 
-# Verifier l'etat des machines
+# Verificare lo stato delle macchine
 kubectl get machines -l cluster.x-k8s.io/cluster-name=my-cluster
 
-# Verifier les noeuds dans le cluster enfant
+# Verificare i nodi nel cluster figlio
 kubectl --kubeconfig=cluster-admin.yaml get nodes
 ```
 
-**Risultato atteso apres scaling :**
+**Risultato atteso dopo lo scaling:**
 
 ```console
 NAME                         STATUS   ROLES    AGE   VERSION
@@ -195,6 +195,6 @@ my-cluster-compute-wwwww     Ready    <none>   2m    v1.29.0
 
 ## Per approfondire
 
-- [Reference API](../api-reference.md) -- Parametres `minReplicas` et `maxReplicas`
-- [Concepts](../concepts.md) -- Architecture des node groups et scalabilite
-- [Comment ajouter et modifier un node group](./manage-node-groups.md) -- Gestion des node groups
+- [Riferimento API](../api-reference.md) -- Parametri `minReplicas` e `maxReplicas`
+- [Concetti](../concepts.md) -- Architettura dei node group e scalabilita
+- [Come aggiungere e modificare un node group](./manage-node-groups.md) -- Gestione dei node group

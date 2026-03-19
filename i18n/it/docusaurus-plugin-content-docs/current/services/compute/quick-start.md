@@ -3,37 +3,37 @@ sidebar_position: 2
 title: Avvio rapido
 ---
 
-# Créer votre première Machine Virtuelle
+# Creare la vostra prima Macchina Virtuale
 
-Ce guide vous accompagne dans la création de votre première machine virtuelle Hikube en **5 minutes** chrono !
+Questa guida vi accompagna nella creazione della vostra prima macchina virtuale Hikube in **5 minuti** cronometro!
 
 ---
 
 ## Obiettivo
 
-À la fin de ce guide, vous aurez :
+Alla fine di questa guida, avrete:
 
-- Une machine virtuelle Ubuntu fonctionnelle
-- Accès SSH configuré
-- Connectivité réseau opérationnelle
-- Stockage persistant attaché
-
----
-
-## Prerequisitiiti
-
-Avant de commencer, assurez-vous d'avoir :
-
-- **kubectl** configuré avec votre kubeconfig Hikube
-- **Droits administrateur** sur votre tenant
+- Una macchina virtuale Ubuntu funzionante
+- Accesso SSH configurato
+- Connettività di rete operativa
+- Storage persistente collegato
 
 ---
 
-## 🚀 Étape 1 : Créer le Disque VM (2 minutes)
+## Prerequisiti
 
-### **Préparez le fichier manifest**
+Prima di iniziare, assicuratevi di avere:
 
-Créez un fichier `vm-disk.yaml` avec une image Ubuntu Cloud :
+- **kubectl** configurato con il vostro kubeconfig Hikube
+- **Diritti amministratore** sul vostro tenant
+
+---
+
+## 🚀 Passo 1: Creare il Disco VM (2 minuti)
+
+### **Preparate il file manifest**
+
+Create un file `vm-disk.yaml` con un'immagine Ubuntu Cloud:
 
 ```yaml title="vm-disk.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -49,17 +49,17 @@ spec:
   storageClass: "replicated"
 ```
 
-### **Déployez le disque**
+### **Distribuite il disco**
 
 ```bash
-# Créer le disque VM
+# Creare il disco VM
 kubectl apply -f vm-disk.yaml
 
-# Vérifier le statut (peut prendre 1-2 minutes)
+# Verificare lo stato (può richiedere 1-2 minuti)
 kubectl get vmdisk disk-example -w
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```
 NAME          STATUS   SIZE   STORAGECLASS   AGE
@@ -68,23 +68,23 @@ disk-example  Ready    20Gi   replicated     90s
 
 ---
 
-## Étape 2 : Créer la Machine Virtuelle (2 minutes)
+## Passo 2: Creare la Macchina Virtuale (2 minuti)
 
-### **Générez votre clé SSH**
+### **Generate la vostra chiave SSH**
 
-Si vous n'avez pas encore de clé SSH :
+Se non avete ancora una chiave SSH:
 
 ```bash
-# Générer une clé SSH Ed25519 (moderne et sécurisée)
+# Generare una chiave SSH Ed25519 (moderna e sicura)
 ssh-keygen -t ed25519 -f ~/.ssh/hikube-vm
 
-# Afficher la clé publique
+# Visualizzare la chiave pubblica
 cat ~/.ssh/hikube-vm.pub
 ```
 
-### **Préparez le manifest VM**
+### **Preparate il manifest VM**
 
-Créez un fichier `vm-instance.yaml` :
+Create un file `vm-instance.yaml`:
 
 ```yaml title="vm-instance.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -100,153 +100,153 @@ spec:
   instanceType: u1.xlarge
   instanceProfile: "ubuntu"
   disks:
-    - name: disk-example #Spécifier le nom de votre disque
+    - name: disk-example #Specificare il nome del vostro disco
   resources:
     cpu: ""
     memory: ""
   sshKeys:
-    - votre-clé-publique-ici
+    - vostra-chiave-pubblica-qui
   cloudInit: |
     #cloud-config
   cloudInitSeed: ""
 ```
 
-:::warning Attention
-Remplacez `votre-clé-publique-ici` par votre vraie clé SSH publique !
+:::warning Attenzione
+Sostituite `vostra-chiave-pubblica-qui` con la vostra vera chiave SSH pubblica!
 :::
 
-### **Déployez la VM**
+### **Distribuite la VM**
 
 ```bash
-# Créer la machine virtuelle
+# Creare la macchina virtuale
 kubectl apply -f vm-instance.yaml
 
-# Suivre le démarrage
+# Seguire l'avvio
 kubectl get vminstance vm-example -w
 ```
 
 ---
 
-## Comprendre les Méthodes d'Exposition
+## Comprendere i Metodi di Esposizione
 
-### **PortList vs WholeIP : Quelle différence ?**
+### **PortList vs WholeIP: Quale differenza?**
 
-Hikube propose deux méthodes d'exposition externe, chacune avec ses spécificités :
+Hikube propone due metodi di esposizione esterna, ciascuno con le sue specificità:
 
-#### **PortList (Recommandé)**
+#### **PortList (Raccomandato)**
 
-- **Firewall contrôlé** : Seuls les ports spécifiés dans `externalPorts` sont accessibles
-- **Sécurité renforcée** : Protection automatique contre les accès non autorisés
-- **Usage** : Production, environnements sécurisés
-- **Configuration** : `externalMethod: PortList` + `externalPorts: [22, 80, 443]`
+- **Firewall controllato**: Solo le porte specificate in `externalPorts` sono accessibili
+- **Sicurezza rafforzata**: Protezione automatica contro gli accessi non autorizzati
+- **Uso**: Produzione, ambienti sicuri
+- **Configurazione**: `externalMethod: PortList` + `externalPorts: [22, 80, 443]`
 
 #### **WholeIP**
 
-- **Accès complet** : Tous les ports de la VM sont directement accessibles
-- **Pas de firewall** : Aucune protection au niveau réseau configurée via le service
-- **Usage** : Développement, accès administratif complet
-- **Configuration** : `externalMethod: WholeIP` (pas besoin d'`externalPorts`)
+- **Accesso completo**: Tutte le porte della VM sono direttamente accessibili
+- **Nessun firewall**: Nessuna protezione a livello di rete configurata tramite il servizio
+- **Uso**: Sviluppo, accesso amministrativo completo
+- **Configurazione**: `externalMethod: WholeIP` (non è necessario `externalPorts`)
 
-:::tip Choix de la Méthode
+:::tip Scelta del Metodo
 
-- **Production/Sécurisé** → `PortList` avec ports spécifiques
-- **Développement/Debug** → `WholeIP` pour un accès complet
+- **Produzione/Sicuro** → `PortList` con porte specifiche
+- **Sviluppo/Debug** → `WholeIP` per un accesso completo
 :::
 
 ---
 
-## 🔌 Étape 3 : Accéder à votre VM (1 minute)
+## 🔌 Passo 3: Accedere alla vostra VM (1 minuto)
 
-### **Installation de virtctl**
+### **Installazione di virtctl**
 
-Si vous n'avez pas encore `virtctl` installé :
+Se non avete ancora `virtctl` installato:
 
 ```bash
-# Installation de virtctl
+# Installazione di virtctl
 export VERSION=$(curl https://storage.googleapis.com/kubevirt-prow/release/kubevirt/kubevirt/stable.txt)
 wget https://github.com/kubevirt/kubevirt/releases/download/${VERSION}/virtctl-${VERSION}-linux-amd64
 chmod +x virtctl
 sudo mv virtctl /usr/local/bin/
 
-# Vérifier l'installation
+# Verificare l'installazione
 virtctl version
 ```
 
-### **Méthodes d'accès**
+### **Metodi di accesso**
 
-#### **Option 1 : SSH Direct**
+#### **Opzione 1: SSH Diretto**
 
 ```bash
-# SSH via virtctl (avec clé personnalisée)
+# SSH tramite virtctl (con chiave personalizzata)
 virtctl ssh -i ~/.ssh/hikube-vm ubuntu@vm-example
-# ou SSH via l'IP public ( avec clé personalisée)
+# o SSH tramite IP pubblico (con chiave personalizzata)
 ssh -i ~/.ssh/hikube-vm ubuntu@public-ip
 ```
 
-#### **Option 2 : Console Série (toujours disponible)**
+#### **Opzione 2: Console Seriale (sempre disponibile)**
 
 ```bash
-# Accès console directe
+# Accesso console diretto
 virtctl console vm-example
 ```
 
-#### **Option 3 : Interface VNC**
+#### **Opzione 3: Interfaccia VNC**
 
 ```bash
-# Accès graphique
+# Accesso grafico
 virtctl vnc vm-example
 ```
 
 ---
 
-## 🎉 Félicitations
+## 🎉 Congratulazioni
 
-Votre machine virtuelle Hikube est **opérationnelle** !
+La vostra macchina virtuale Hikube è **operativa**!
 
-### **Ce que vous avez accompli :**
+### **Quello che avete realizzato:**
 
-- **VM Ubuntu** déployée avec 4 vCPU / 16 GB RAM
-- **Stockage persistant** de 20 GB répliqué
-- **Accès SSH** sécurisé configuré
-- **Connectivité externe** activée
-- **Infrastructure résiliente** avec séparation compute/stockage
+- **VM Ubuntu** distribuita con 4 vCPU / 16 GB RAM
+- **Storage persistente** di 20 GB replicato
+- **Accesso SSH** sicuro configurato
+- **Connettività esterna** attivata
+- **Infrastruttura resiliente** con separazione compute/storage
 
 ---
 
-## Pulizia (Optionnel)
+## Pulizia (Opzionale)
 
-Si vous voulez supprimer les ressources créées :
+Se volete eliminare le risorse create:
 
 ```bash
-# Supprimer la VM (attention !)
+# Eliminare la VM (attenzione!)
 kubectl delete vminstance vm-example
 
-# Supprimer le disque (attention !)
+# Eliminare il disco (attenzione!)
 kubectl delete vmdisk disk-example
 ```
 
-:::warning Suppression Irréversible
-La suppression des VMs et disques est **irréversible**. Assurez-vous d'avoir sauvegardé toutes les données importantes avant de procéder.
+:::warning Eliminazione Irreversibile
+L'eliminazione delle VM e dei dischi è **irreversibile**. Assicuratevi di aver salvato tutti i dati importanti prima di procedere.
 :::
 
 ---
 
-## 🎯 Prochaines Étapes
+## 🎯 Prossimi Passi
 
 <div style={{display: 'flex', gap: '20px', flexWrap: 'wrap'}}>
 
-**📚 Configuration Avancée**  
-→ [API Reference complète](./api-reference.md)
+**📚 Configurazione Avanzata**
+→ [API Reference completa](./api-reference.md)
 
-**📖 Architecture Technique**  
-→ [Comprendre le fonctionnement](./overview.md)
+**📖 Architettura Tecnica**
+→ [Comprendere il funzionamento](./overview.md)
 
 </div>
 
 ---
 
-**💡 Points Clés à Retenir :**
+**💡 Punti Chiave da Ricordare:**
 
-- Vos **données sont toujours sûres** grâce à la réplication 3 datacenters
-- Votre VM peut être **relocalisée automatiquement** en cas de panne nœud
-- L'**isolation totale** garantit la sécurité entre tenants
+- I vostri **dati sono sempre al sicuro** grazie alla replica su 3 datacenter
+- La vostra VM può essere **rilocalizzata automaticamente** in caso di guasto del nodo
+- L'**isolamento totale** garantisce la sicurezza tra tenant

@@ -1,21 +1,21 @@
 ---
-title: "Comment scaler le cluster"
+title: "Come scalare il cluster"
 ---
 
-# Comment scaler le cluster RabbitMQ
+# Come scalare il cluster RabbitMQ
 
-Ce guide explique comment ajuster les ressources d'un cluster RabbitMQ sur Hikube : nombre de réplicas, ressources CPU/mémoire et stockage.
+Questa guida spiega come regolare le risorse di un cluster RabbitMQ su Hikube: numero di repliche, risorse CPU/memoria e archiviazione.
 
-## Prerequisitiiti
+## Prerequisiti
 
-- **kubectl** configuré avec votre kubeconfig Hikube
-- Un cluster **RabbitMQ** déployé sur Hikube
+- **kubectl** configurato con il vostro kubeconfig Hikube
+- Un cluster **RabbitMQ** distribuito su Hikube
 
-## Presets disponibles
+## Preset disponibili
 
-Hikube propose des presets de ressources prédéfinis pour RabbitMQ :
+Hikube propone dei preset di risorse predefiniti per RabbitMQ:
 
-| Preset | CPU | Mémoire |
+| Preset | CPU | Memoria |
 |--------|-----|---------|
 | `nano` | 100m | 128Mi |
 | `micro` | 250m | 256Mi |
@@ -26,24 +26,24 @@ Hikube propose des presets de ressources prédéfinis pour RabbitMQ :
 | `2xlarge` | 4 | 8Gi |
 
 :::warning
-Si le champ `resources` (CPU/mémoire explicites) est défini, la valeur de `resourcesPreset` est **entièrement ignorée**. Assurez-vous de vider le champ `resources` si vous souhaitez utiliser un preset.
+Se il campo `resources` (CPU/memoria espliciti) è definito, il valore di `resourcesPreset` viene **completamente ignorato**. Assicuratevi di svuotare il campo `resources` se desiderate utilizzare un preset.
 :::
 
 :::note
-Les presets RabbitMQ diffèrent légèrement des autres services (Kafka, NATS, bases de données). Consultez le tableau ci-dessus pour les valeurs exactes.
+I preset RabbitMQ differiscono leggermente dagli altri servizi (Kafka, NATS, database). Consultate la tabella sopra per i valori esatti.
 :::
 
 ## Passi
 
-### 1. Vérifier les ressources actuelles
+### 1. Verificare le risorse attuali
 
-Consultez la configuration actuelle du cluster :
+Consultate la configurazione attuale del cluster:
 
 ```bash
 kubectl get rabbitmq my-rabbitmq -o yaml | grep -A 5 -E "replicas:|resources:|resourcesPreset|size:"
 ```
 
-**Exemple de résultat :**
+**Esempio di risultato:**
 
 ```console
   replicas: 3
@@ -52,9 +52,9 @@ kubectl get rabbitmq my-rabbitmq -o yaml | grep -A 5 -E "replicas:|resources:|re
   size: 10Gi
 ```
 
-### 2. Modifier le nombre de réplicas
+### 2. Modificare il numero di repliche
 
-Le nombre de réplicas détermine le nombre de nœuds dans le cluster RabbitMQ.
+Il numero di repliche determina il numero di nodi nel cluster RabbitMQ.
 
 ```bash
 kubectl patch rabbitmq my-rabbitmq --type='merge' -p='
@@ -64,20 +64,20 @@ spec:
 ```
 
 :::warning
-Avec moins de 3 réplicas, les quorum queues ne peuvent pas garantir la durabilité des messages en cas de panne. Utilisez **3 réplicas minimum** en production.
+Con meno di 3 repliche, le quorum queue non possono garantire la durabilità dei messaggi in caso di guasto. Utilizzate **minimo 3 repliche** in produzione.
 :::
 
-**Recommandations par environnement :**
+**Raccomandazioni per ambiente:**
 
-| Environnement | Réplicas | Justification |
-|--------------|----------|---------------|
-| Développement | 1 | Suffisant pour les tests |
-| Staging | 3 | Simule la production |
-| Production | 3 ou 5 | Haute disponibilité et quorum queues |
+| Ambiente | Repliche | Giustificazione |
+|----------|----------|-----------------|
+| Sviluppo | 1 | Sufficiente per i test |
+| Staging | 3 | Simula la produzione |
+| Produzione | 3 o 5 | Alta disponibilità e quorum queue |
 
-### 3. Modifier le preset ou les ressources explicites
+### 3. Modificare il preset o le risorse esplicite
 
-**Option A : changer le preset**
+**Opzione A: cambiare il preset**
 
 ```bash
 kubectl patch rabbitmq my-rabbitmq --type='merge' -p='
@@ -88,12 +88,12 @@ spec:
 ```
 
 :::note
-Il est important de remettre `resources: {}` lors du passage à un preset, afin que le preset soit bien pris en compte.
+È importante reimpostare `resources: {}` quando si passa a un preset, affinché il preset venga correttamente preso in considerazione.
 :::
 
-**Option B : définir des ressources explicites**
+**Opzione B: definire risorse esplicite**
 
-Pour un contrôle fin, définissez directement les valeurs CPU et mémoire :
+Per un controllo fine, definite direttamente i valori CPU e memoria:
 
 ```bash
 kubectl patch rabbitmq my-rabbitmq --type='merge' -p='
@@ -104,7 +104,7 @@ spec:
 '
 ```
 
-Vous pouvez aussi modifier le manifeste complet :
+Potete anche modificare il manifesto completo:
 
 ```yaml title="rabbitmq-scaled.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -134,15 +134,15 @@ spec:
 kubectl apply -f rabbitmq-scaled.yaml
 ```
 
-### 4. Appliquer et vérifier
+### 4. Applicare e verificare
 
-Surveillez le rolling update des pods :
+Monitorate il rolling update dei pod:
 
 ```bash
 kubectl get po -w | grep my-rabbitmq
 ```
 
-**Risultato atteso (pendant le rolling update) :**
+**Risultato atteso (durante il rolling update):**
 
 ```console
 my-rabbitmq-server-0   1/1     Running       0   45m
@@ -151,7 +151,7 @@ my-rabbitmq-server-1   0/1     Pending       0   0s
 my-rabbitmq-server-1   1/1     Running       0   30s
 ```
 
-Attendez que tous les pods soient en état `Running` :
+Attendete che tutti i pod siano nello stato `Running`:
 
 ```bash
 kubectl get po | grep my-rabbitmq
@@ -163,7 +163,7 @@ my-rabbitmq-server-1   1/1     Running   0   8m
 my-rabbitmq-server-2   1/1     Running   0   6m
 ```
 
-Vérifiez l'état du cluster RabbitMQ :
+Verificate lo stato del cluster RabbitMQ:
 
 ```bash
 kubectl exec -it my-rabbitmq-server-0 -- rabbitmqctl cluster_status
@@ -171,19 +171,19 @@ kubectl exec -it my-rabbitmq-server-0 -- rabbitmqctl cluster_status
 
 ## Verifica
 
-Confirmez que les nouvelles ressources sont appliquées :
+Confermate che le nuove risorse siano applicate:
 
 ```bash
 kubectl get rabbitmq my-rabbitmq -o yaml | grep -A 5 -E "replicas:|resources:|resourcesPreset|size:"
 ```
 
-Vérifiez que le cluster est fonctionnel :
+Verificate che il cluster sia funzionante:
 
 ```bash
 kubectl exec -it my-rabbitmq-server-0 -- rabbitmqctl node_health_check
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```console
 Health check passed
@@ -191,5 +191,5 @@ Health check passed
 
 ## Per approfondire
 
-- **[Référence API RabbitMQ](../api-reference.md)** : documentation complète des paramètres `replicas`, `resources`, `resourcesPreset` et du tableau des presets
-- **[Comment gérer les vhosts et utilisateurs](./manage-vhosts-users.md)** : configurer les utilisateurs et les permissions
+- **[Riferimento API RabbitMQ](../api-reference.md)**: documentazione completa dei parametri `replicas`, `resources`, `resourcesPreset` e della tabella dei preset
+- **[Come gestire i vhost e gli utenti](./manage-vhosts-users.md)**: configurare gli utenti e i permessi

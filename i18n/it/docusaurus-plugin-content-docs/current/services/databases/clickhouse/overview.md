@@ -3,41 +3,41 @@ sidebar_position: 1
 title: Panoramica
 ---
 
-# ClickHouse sur Hikube
+# ClickHouse su Hikube
 
-Les **bases de données ClickHouse** d’Hikube offrent un système de gestion SQL open source, haute performance et orienté colonnes, conçu pour le traitement analytique en ligne (OLAP). Elles garantissent l’ingestion rapide de données massives, l’exécution de requêtes complexes en temps quasi réel et la fiabilité nécessaire aux applications analytiques critiques des entreprises.
+I **database ClickHouse** di Hikube offrono un sistema di gestione SQL open source, ad alte prestazioni e orientato per colonne, progettato per l'elaborazione analitica online (OLAP). Garantiscono l'ingestione rapida di dati massivi, l'esecuzione di query complesse in tempo quasi reale e l'affidabilita necessaria per le applicazioni analitiche critiche delle aziende.
 
 ---
 
-## 🏗️ Architecture et Fonctionnement
+## 🏗️ Architettura e Funzionamento
 
-L’architecture de ClickHouse repose sur deux paramètres essentiels qui permettent d’adapter le déploiement aux besoins réels :  
+L'architettura di ClickHouse si basa su due parametri essenziali che permettono di adattare il deployment alle esigenze reali:
 
-- **Shards** → ils permettent de **répartir les données en plusieurs morceaux** sur différents nœuds. Plus il y a de shards, plus la charge est distribuée, ce qui améliore la vitesse d’exécution des requêtes sur de très grands volumes.  
-- **Réplicas** → ils créent des **copies redondantes** des shards. Cela augmente la résilience et la tolérance aux pannes, tout en permettant de répartir la charge de lecture entre plusieurs nœuds.  
+- **Shard** --> permettono di **distribuire i dati in piu parti** su diversi nodi. Piu shard ci sono, piu il carico e distribuito, il che migliora la velocita di esecuzione delle query su volumi molto grandi.
+- **Repliche** --> creano **copie ridondanti** degli shard. Questo aumenta la resilienza e la tolleranza ai guasti, permettendo al contempo di distribuire il carico di lettura tra piu nodi.
 
-### 🔎 Exemple illustratif
+### 🔎 Esempio illustrativo
 
-Imaginons une base de **1 milliard d’enregistrements clients** :  
+Immaginiamo un database di **1 miliardo di record clienti**:
 
-- **1 shard – 1 réplica**  
-  Toutes les données sont stockées dans un seul espace.  
-  **Cas d’usage :**  
-  - Projets pilotes (POC)  
-  - Environnements de développement  
-  - Charges analytiques ponctuelles  
+- **1 shard -- 1 replica**
+  Tutti i dati sono archiviati in un unico spazio.
+  **Casi d'uso:**
+  - Progetti pilota (POC)
+  - Ambienti di sviluppo
+  - Carichi analitici occasionali
 
-- **2 shards – 1 réplica**  
-  Les données sont divisées en deux parties (par ex. clients A–M et N–Z). Les requêtes sont exécutées en parallèle, ce qui accélère considérablement l’analyse.  
-  **Cas d’usage :**  
-  - Analyses sur de grands volumes de données  
-  - Applications nécessitant de meilleures performances  
-  - Rapports réguliers sur de larges bases clients ou transactions  
+- **2 shard -- 1 replica**
+  I dati sono divisi in due parti (es. clienti A-M e N-Z). Le query vengono eseguite in parallelo, il che accelera considerevolmente l'analisi.
+  **Casi d'uso:**
+  - Analisi su grandi volumi di dati
+  - Applicazioni che necessitano di migliori prestazioni
+  - Report regolari su ampie basi clienti o transazioni
 
-- **2 shards – 2 réplicas**  
-  Chaque shard est dupliqué sur un autre nœud. On bénéficie à la fois de la rapidité (données distribuées) et de la sécurité (tolérance aux pannes).  
-  **Cas d’usage :**  
-  - Applications analytiques critiques en production  
-  - Besoins de haute disponibilité  
-  - Plateformes multi-utilisateurs avec forte concurrence de requêtes  
-  - Plans de reprise après sinistre (DRP)  
+- **2 shard -- 2 repliche**
+  Ogni shard e duplicato su un altro nodo. Si beneficia sia della rapidita (dati distribuiti) che della sicurezza (tolleranza ai guasti).
+  **Casi d'uso:**
+  - Applicazioni analitiche critiche in produzione
+  - Esigenze di alta disponibilita
+  - Piattaforme multi-utente con forte concorrenza di query
+  - Piani di ripristino in caso di disastro (DRP)

@@ -5,80 +5,80 @@ title: Risoluzione dei problemi
 
 # Risoluzione dei problemi — GPU
 
-### GPU non détecté dans la VM
+### GPU non rilevata nella VM
 
-**Causa** : le champ `gpus` n'est pas configuré dans le manifeste, ou le PCI passthrough n'a pas correctement attaché le GPU à la VM.
+**Causa**: il campo `gpus` non è configurato nel manifest, o il PCI passthrough non ha correttamente collegato la GPU alla VM.
 
-**Soluzione** :
+**Soluzione**:
 
-1. Vérifiez que le champ `gpus` est bien présent dans votre manifeste :
+1. Verificate che il campo `gpus` sia presente nel vostro manifest:
    ```yaml title="vm-gpu.yaml"
    spec:
      gpus:
        - name: "nvidia.com/AD102GL_L40S"
    ```
 
-2. Dans la VM, vérifiez la détection PCI :
+2. Nella VM, verificate il rilevamento PCI:
    ```bash
    lspci | grep -i nvidia
    ```
 
-3. Vérifiez que le module kernel NVIDIA est chargé :
+3. Verificate che il modulo kernel NVIDIA sia caricato:
    ```bash
    lsmod | grep nvidia
    ```
 
-4. Si aucun résultat, les drivers ne sont pas installés. Consultez la section suivante.
+4. Se nessun risultato, i driver non sono installati. Consultate la sezione seguente.
 
 ---
 
-### Drivers NVIDIA manquants
+### Driver NVIDIA mancanti
 
-**Causa** : les drivers NVIDIA ne sont pas installés dans la VM, ou les kernel headers ne correspondent pas à la version du noyau.
+**Causa**: i driver NVIDIA non sono installati nella VM, o i kernel header non corrispondono alla versione del kernel.
 
-**Soluzione** :
+**Soluzione**:
 
-1. Installez les prérequis et les drivers via cloud-init ou manuellement :
+1. Installate i prerequisiti e i driver tramite cloud-init o manualmente:
    ```bash
    sudo apt-get update
    sudo apt-get install -y linux-headers-$(uname -r)
    sudo apt-get install -y nvidia-driver-550 nvidia-utils-550
    ```
 
-2. Redémarrez la VM après l'installation :
+2. Riavviate la VM dopo l'installazione:
    ```bash
    sudo reboot
    ```
 
-3. Vérifiez l'installation :
+3. Verificate l'installazione:
    ```bash
    nvidia-smi
    ```
 
 :::tip
-Pour automatiser l'installation, utilisez le champ `cloudInit` dans votre manifeste VM afin que les drivers soient installés au premier démarrage.
+Per automatizzare l'installazione, utilizzate il campo `cloudInit` nel vostro manifest VM affinché i driver vengano installati al primo avvio.
 :::
 
 ---
 
-### Pod GPU en état Pending
+### Pod GPU in stato Pending
 
-**Causa** : aucun nœud avec GPU disponible, la configuration GPU du cluster est absente, ou le GPU Operator n'est pas actif.
+**Causa**: nessun nodo con GPU disponibile, la configurazione GPU del cluster è assente, o il GPU Operator non è attivo.
 
-**Soluzione** :
+**Soluzione**:
 
-1. Vérifiez les événements du pod :
+1. Verificate gli eventi del pod:
    ```bash
    kubectl describe pod <pod-name>
    ```
-   Recherchez le message `Insufficient nvidia.com/gpu`.
+   Cercate il messaggio `Insufficient nvidia.com/gpu`.
 
-2. Vérifiez que des nœuds GPU existent et ont des GPU allocables :
+2. Verificate che esistano nodi GPU con GPU allocabili:
    ```bash
    kubectl get nodes -o json | jq '.items[] | {name: .metadata.name, gpu: .status.allocatable["nvidia.com/gpu"]}'
    ```
 
-3. Vérifiez la configuration du nodeGroup GPU dans le manifeste du cluster :
+3. Verificate la configurazione del nodeGroup GPU nel manifest del cluster:
    ```yaml title="cluster.yaml"
    spec:
      nodeGroups:
@@ -90,7 +90,7 @@ Pour automatiser l'installation, utilisez le champ `cloudInit` dans votre manife
            - name: "nvidia.com/AD102GL_L40S"
    ```
 
-4. Assurez-vous que l'addon GPU Operator est activé :
+4. Assicuratevi che l'addon GPU Operator sia attivato:
    ```yaml title="cluster.yaml"
    spec:
      addons:
@@ -100,13 +100,13 @@ Pour automatiser l'installation, utilisez le champ `cloudInit` dans votre manife
 
 ---
 
-### `nvidia-smi` échoue dans un pod
+### `nvidia-smi` fallisce in un pod
 
-**Causa** : le GPU Operator n'est pas activé sur le cluster, ce qui empêche l'installation automatique des drivers et la mise à disposition du device plugin.
+**Causa**: il GPU Operator non è attivato sul cluster, il che impedisce l'installazione automatica dei driver e la messa a disposizione del device plugin.
 
-**Soluzione** :
+**Soluzione**:
 
-1. Activez l'addon GPU Operator sur le cluster :
+1. Attivate l'addon GPU Operator sul cluster:
    ```yaml title="cluster.yaml"
    spec:
      addons:
@@ -114,27 +114,27 @@ Pour automatiser l'installation, utilisez le champ `cloudInit` dans votre manife
          enabled: true
    ```
 
-2. Appliquez la modification :
+2. Applicate la modifica:
    ```bash
    kubectl apply -f cluster.yaml
    ```
 
-3. Vérifiez que les pods du GPU Operator sont en cours d'exécution :
+3. Verificate che i pod del GPU Operator siano in esecuzione:
    ```bash
    kubectl get pods -n gpu-operator
    ```
 
-4. Une fois le GPU Operator opérationnel, recréez votre pod GPU.
+4. Una volta che il GPU Operator è operativo, ricreate il vostro pod GPU.
 
 ---
 
-### GPU Operator non fonctionnel
+### GPU Operator non funzionante
 
-**Causa** : l'addon n'est pas activé, les pods de l'opérateur sont en erreur, ou les nœuds n'ont pas de GPU physique.
+**Causa**: l'addon non è attivato, i pod dell'operatore sono in errore, o i nodi non hanno GPU fisiche.
 
-**Soluzione** :
+**Soluzione**:
 
-1. Vérifiez que l'addon est activé dans le manifeste du cluster :
+1. Verificate che l'addon sia attivato nel manifest del cluster:
    ```yaml title="cluster.yaml"
    spec:
      addons:
@@ -142,18 +142,18 @@ Pour automatiser l'installation, utilisez le champ `cloudInit` dans votre manife
          enabled: true
    ```
 
-2. Vérifiez l'état des pods du GPU Operator :
+2. Verificate lo stato dei pod del GPU Operator:
    ```bash
    kubectl get pods -n gpu-operator
    kubectl describe pod -n gpu-operator <pod-name>
    ```
 
-3. Vérifiez que les nœuds possèdent bien du hardware GPU :
+3. Verificate che i nodi possiedano hardware GPU:
    ```bash
    kubectl get nodes -o json | jq '.items[] | {name: .metadata.name, gpu: .status.capacity["nvidia.com/gpu"]}'
    ```
 
-4. Si les pods sont en `CrashLoopBackOff`, consultez les logs :
+4. Se i pod sono in `CrashLoopBackOff`, consultate i log:
    ```bash
    kubectl logs -n gpu-operator <pod-name>
    ```

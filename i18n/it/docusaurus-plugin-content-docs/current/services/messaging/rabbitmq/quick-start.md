@@ -3,38 +3,38 @@ sidebar_position: 2
 title: Avvio rapido
 ---
 
-# Déployer RabbitMQ en 5 minutes
+# Distribuire RabbitMQ in 5 minuti
 
-Ce guide vous accompagne pas à pas dans le déploiement de votre premier **cluster RabbitMQ** sur Hikube, du manifeste YAML jusqu'aux premiers tests de messagerie.
-
----
-
-## Obiettivos
-
-À la fin de ce guide, vous aurez :
-
-- Un **cluster RabbitMQ** déployé et opérationnel sur Hikube
-- **3 nœuds RabbitMQ** répliqués pour la haute disponibilité
-- Un **vhost** et un **utilisateur admin** configurés
-- Un **stockage persistant** pour les données RabbitMQ
-- Un accès à l'**interface de gestion** (Management UI)
+Questa guida vi accompagna passo dopo passo nella distribuzione del vostro primo **cluster RabbitMQ** su Hikube, dal manifesto YAML fino ai primi test di messaggistica.
 
 ---
 
-## Prerequisitiiti
+## Obiettivi
 
-Avant de commencer, assurez-vous d'avoir :
+Al termine di questa guida, avrete:
 
-- **kubectl** configuré avec votre kubeconfig Hikube
-- **Droits administrateur** sur votre tenant
-- Un **namespace** dédié pour héberger votre cluster RabbitMQ
-- **Python** avec le module `pika` installé (optionnel, pour les tests)
+- Un **cluster RabbitMQ** distribuito e operativo su Hikube
+- **3 nodi RabbitMQ** replicati per l'alta disponibilità
+- Un **vhost** e un **utente admin** configurati
+- Un **archivio persistente** per i dati RabbitMQ
+- Un accesso all'**interfaccia di gestione** (Management UI)
 
 ---
 
-## Étape 1 : Créer le manifeste RabbitMQ
+## Prerequisiti
 
-Créez un fichier `rabbitmq.yaml` avec la configuration suivante :
+Prima di iniziare, assicuratevi di avere:
+
+- **kubectl** configurato con il vostro kubeconfig Hikube
+- **Diritti di amministratore** sul vostro tenant
+- Un **namespace** dedicato per ospitare il vostro cluster RabbitMQ
+- **Python** con il modulo `pika` installato (opzionale, per i test)
+
+---
+
+## Passo 1: Creare il manifesto RabbitMQ
+
+Create un file `rabbitmq.yaml` con la seguente configurazione:
 
 ```yaml title="rabbitmq.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -56,27 +56,27 @@ spec:
 ```
 
 :::tip
-Avec 3 réplicas, RabbitMQ utilise les **quorum queues** pour garantir la durabilité des messages. Consultez la [Référence API](./api-reference.md) pour la configuration complète.
+Con 3 repliche, RabbitMQ utilizza le **quorum queue** per garantire la durabilità dei messaggi. Consultate il [Riferimento API](./api-reference.md) per la configurazione completa.
 :::
 
 ---
 
-## Étape 2 : Déployer le cluster RabbitMQ
+## Passo 2: Distribuire il cluster RabbitMQ
 
-Appliquez le manifeste et vérifiez que le déploiement démarre :
+Applicate il manifesto e verificate che la distribuzione sia avviata:
 
 ```bash
-# Appliquer le manifeste
+# Applicare il manifesto
 kubectl apply -f rabbitmq.yaml
 ```
 
-Vérifiez le statut du cluster (peut prendre 2-3 minutes) :
+Verificate lo stato del cluster (può richiedere 2-3 minuti):
 
 ```bash
 kubectl get rabbitmq
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```console
 NAME      READY   AGE     VERSION
@@ -85,15 +85,15 @@ example   True    2m      0.10.0
 
 ---
 
-## Étape 3 : Verifica des pods
+## Passo 3: Verifica dei pod
 
-Vérifiez que tous les pods sont en état `Running` :
+Verificate che tutti i pod siano nello stato `Running`:
 
 ```bash
 kubectl get pods | grep rabbitmq
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```console
 rabbitmq-example-rabbitmq-server-0    1/1     Running   0   2m
@@ -101,51 +101,51 @@ rabbitmq-example-rabbitmq-server-1    1/1     Running   0   2m
 rabbitmq-example-rabbitmq-server-2    1/1     Running   0   2m
 ```
 
-Avec `replicas: 3`, vous obtenez **3 nœuds RabbitMQ** formant un cluster haute disponibilité.
+Con `replicas: 3`, ottenete **3 nodi RabbitMQ** che formano un cluster ad alta disponibilità.
 
-| Préfixe | Rôle | Nombre |
-|---------|------|--------|
-| `rabbitmq-example-rabbitmq-server-*` | **RabbitMQ Server** (broker de messages + Management UI) | 3 |
+| Prefisso | Ruolo | Numero |
+|----------|-------|--------|
+| `rabbitmq-example-rabbitmq-server-*` | **RabbitMQ Server** (broker di messaggi + Management UI) | 3 |
 
 ---
 
-## Étape 4 : Récupérer les identifiants
+## Passo 4: Recuperare le credenziali
 
-Les mots de passe sont stockés dans des Secrets Kubernetes :
+Le password sono archiviate in Secret Kubernetes:
 
 ```bash
-# Identifiants de l'utilisateur défini dans le manifeste
+# Credenziali dell'utente definito nel manifesto
 kubectl get secret rabbitmq-example-credentials -o json | jq -r '.data | to_entries[] | "\(.key): \(.value|@base64d)"'
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```console
 admin: strongpassword
 ```
 
-Un utilisateur par défaut est également créé automatiquement par l'opérateur :
+Un utente predefinito viene anche creato automaticamente dall'operatore:
 
 ```bash
-# Identifiants de l'utilisateur par défaut
+# Credenziali dell'utente predefinito
 kubectl get secret rabbitmq-example-rabbitmq-default-user -o json | jq -r '.data | to_entries[] | "\(.key): \(.value|@base64d)"'
 ```
 
 ---
 
-## Étape 5 : Connexion et tests
+## Passo 5: Connessione e test
 
-### Accès à l'interface de gestion (Management UI)
+### Accesso all'interfaccia di gestione (Management UI)
 
 ```bash
 kubectl port-forward svc/rabbitmq-example-rabbitmq 15672:15672 &
 ```
 
-Accédez à l'interface via votre navigateur : http://localhost:15672
+Accedete all'interfaccia tramite il vostro browser: http://localhost:15672
 
-Connectez-vous avec les identifiants de l'utilisateur par défaut récupérés à l'étape 4.
+Connettetevi con le credenziali dell'utente predefinito recuperate al passo 4.
 
-### Test de messagerie avec Python
+### Test di messaggistica con Python
 
 ```bash
 kubectl port-forward svc/rabbitmq-example-rabbitmq 5672:5672 &
@@ -165,12 +165,12 @@ parameters = pika.ConnectionParameters(
 connection = pika.BlockingConnection(parameters)
 channel = connection.channel()
 
-# Création d'une queue
+# Creazione di una coda
 channel.queue_declare(queue='test')
 
-# Envoi d'un message
+# Invio di un messaggio
 channel.basic_publish(exchange='', routing_key='test', body='Hello Hikube!')
-print("Message envoyé avec succès")
+print("Messaggio inviato con successo")
 
 connection.close()
 ```
@@ -179,94 +179,94 @@ connection.close()
 python test_rabbitmq.py
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```console
-Message envoyé avec succès
+Messaggio inviato con successo
 ```
 
 :::note
-Si vous n'avez pas `pika`, installez-le avec `pip install pika`.
+Se non avete `pika`, installatelo con `pip install pika`.
 :::
 
 ---
 
-## Étape 6 : Dépannage rapide
+## Passo 6: Risoluzione rapida dei problemi
 
-### Pods en CrashLoopBackOff
+### Pod in CrashLoopBackOff
 
 ```bash
-# Vérifier les logs du pod en erreur
+# Verificare i log del pod in errore
 kubectl logs rabbitmq-example-rabbitmq-server-0
 
-# Vérifier les events du pod
+# Verificare gli eventi del pod
 kubectl describe pod rabbitmq-example-rabbitmq-server-0
 ```
 
-**Cause frequenti :** mémoire insuffisante (`resources.memory` trop faible), volume de stockage plein, erreur de résolution DNS entre les nœuds.
+**Cause frequenti:** memoria insufficiente (`resources.memory` troppo bassa), volume di archiviazione pieno, errore di risoluzione DNS tra i nodi.
 
-### RabbitMQ non accessible
+### RabbitMQ non accessibile
 
 ```bash
-# Vérifier que les services existent
+# Verificare che i servizi esistano
 kubectl get svc | grep rabbitmq
 
-# Vérifier le service RabbitMQ
+# Verificare il servizio RabbitMQ
 kubectl describe svc rabbitmq-example-rabbitmq
 ```
 
-**Cause frequenti :** port-forward non actif, mauvais port (5672 pour AMQP, 15672 pour Management UI), identifiants incorrects.
+**Cause frequenti:** port-forward non attivo, porta errata (5672 per AMQP, 15672 per Management UI), credenziali errate.
 
-### Cluster non formé
+### Cluster non formato
 
 ```bash
-# Vérifier l'état du cluster RabbitMQ
+# Verificare lo stato del cluster RabbitMQ
 kubectl exec rabbitmq-example-rabbitmq-server-0 -- rabbitmqctl cluster_status
 
-# Vérifier les logs de formation du cluster
+# Verificare i log di formazione del cluster
 kubectl logs rabbitmq-example-rabbitmq-server-0 | grep -i cluster
 ```
 
-**Cause frequenti :** problème de résolution DNS entre les nœuds, cookie Erlang non synchronisé, ressources insuffisantes pour le processus de formation du cluster.
+**Cause frequenti:** problema di risoluzione DNS tra i nodi, cookie Erlang non sincronizzato, risorse insufficienti per il processo di formazione del cluster.
 
-### Commandes de diagnostic générales
+### Comandi di diagnostica generali
 
 ```bash
-# Events récents sur le namespace
+# Eventi recenti sul namespace
 kubectl get events --sort-by=.metadata.creationTimestamp
 
-# État détaillé du cluster RabbitMQ
+# Stato dettagliato del cluster RabbitMQ
 kubectl describe rabbitmq example
 ```
 
 ---
 
-## Étape 7 : Pulizia
+## Passo 7: Pulizia
 
-Pour supprimer les ressources de test :
+Per eliminare le risorse di test:
 
 ```bash
 kubectl delete -f rabbitmq.yaml
 ```
 
 :::warning
-Cette action supprime le cluster RabbitMQ et toutes les données associées. Cette opération est **irréversible**.
+Questa azione elimina il cluster RabbitMQ e tutti i dati associati. Questa operazione è **irreversibile**.
 :::
 
 ---
 
 ## Riepilogo
 
-Vous avez déployé :
+Avete distribuito:
 
-- Un cluster RabbitMQ avec **3 nœuds** en haute disponibilité
-- Un **utilisateur admin** et un **vhost** par défaut configurés
-- Une **interface de gestion** (Management UI) accessible localement
-- Un stockage persistant pour la durabilité des données
+- Un cluster RabbitMQ con **3 nodi** in alta disponibilità
+- Un **utente admin** e un **vhost** predefinito configurati
+- Un'**interfaccia di gestione** (Management UI) accessibile localmente
+- Un archivio persistente per la durabilità dei dati
 
 ---
 
 ## Prossimi passi
 
-- **[Référence API](./api-reference.md)** : Configuration complète de toutes les options RabbitMQ
-- **[Vue d'ensemble](./overview.md)** : Architecture détaillée et cas d'usage RabbitMQ sur Hikube
+- **[Riferimento API](./api-reference.md)**: Configurazione completa di tutte le opzioni RabbitMQ
+- **[Panoramica](./overview.md)**: Architettura dettagliata e casi d'uso RabbitMQ su Hikube

@@ -1,33 +1,33 @@
 ---
-title: Come aggiungere e modificare un node group
+title: "Come aggiungere e modificare un node group"
 ---
 
-# Comment ajouter et modifier un node group
+# Come aggiungere e modificare un node group
 
-Les node groups permettent de segmenter les noeuds de votre cluster Kubernetes selon les besoins de vos workloads. Ce guide explique comment ajouter, modifier et supprimer des node groups dans votre configuration Hikube.
+I node group permettono di segmentare i nodi del vostro cluster Kubernetes in base alle esigenze dei vostri workload. Questa guida spiega come aggiungere, modificare e rimuovere node group nella vostra configurazione Hikube.
 
-## Prerequisitiiti
+## Prerequisiti
 
-- Un cluster Kubernetes Hikube deploye (voir le [demarrage rapide](../quick-start.md))
-- `kubectl` configure pour interagir avec l'API Hikube
-- Le fichier YAML de configuration de votre cluster
+- Un cluster Kubernetes Hikube distribuito (vedere l'[avvio rapido](../quick-start.md))
+- `kubectl` configurato per interagire con l'API Hikube
+- Il file YAML di configurazione del vostro cluster
 
-## Passi
+## Fasi
 
-### 1. Comprendre les types d'instances
+### 1. Comprendere i tipi di istanze
 
-Hikube propose trois series d'instances adaptees a differents cas d'usage :
+Hikube propone tre serie di istanze adatte a diversi casi d'uso:
 
-| Serie | Ratio CPU:RAM | Cas d'usage |
-|-------|---------------|-------------|
-| **S (Standard)** | 1:2 | Workloads generaux, applications web |
-| **U (Universal)** | 1:4 | Workloads equilibres, bases de donnees |
-| **M (Memory Optimized)** | 1:8 | Applications memoire-intensive, caches |
+| Serie | Rapporto CPU:RAM | Caso d'uso |
+|-------|------------------|------------|
+| **S (Standard)** | 1:2 | Workload generali, applicazioni web |
+| **U (Universal)** | 1:4 | Workload bilanciati, database |
+| **M (Memory Optimized)** | 1:8 | Applicazioni ad alta intensita di memoria, cache |
 
-**Detail des instances disponibles :**
+**Dettaglio delle istanze disponibili:**
 
-| Instance | vCPU | RAM |
-|----------|------|-----|
+| Istanza | vCPU | RAM |
+|---------|------|-----|
 | `s1.small` | 1 | 2 GB |
 | `s1.medium` | 2 | 4 GB |
 | `s1.large` | 4 | 8 GB |
@@ -47,9 +47,9 @@ Hikube propose trois series d'instances adaptees a differents cas d'usage :
 | `m1.4xlarge` | 16 | 128 GB |
 | `m1.8xlarge` | 32 | 256 GB |
 
-### 2. Ajouter un node group
+### 2. Aggiungere un node group
 
-Pour ajouter un nouveau node group, ajoutez une entree sous `spec.nodeGroups` dans votre fichier de configuration cluster :
+Per aggiungere un nuovo node group, aggiungete una voce sotto `spec.nodeGroups` nel vostro file di configurazione del cluster:
 
 ```yaml title="cluster-with-compute.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -61,7 +61,7 @@ spec:
     replicas: 3
 
   nodeGroups:
-    # Node group existant
+    # Node group esistente
     general:
       minReplicas: 2
       maxReplicas: 5
@@ -70,7 +70,7 @@ spec:
       roles:
         - ingress-nginx
 
-    # Nouveau node group pour le compute intensif
+    # Nuovo node group per il compute intensivo
     compute:
       minReplicas: 1
       maxReplicas: 10
@@ -80,12 +80,12 @@ spec:
 ```
 
 :::tip
-Choisissez un nom descriptif pour vos node groups (`compute`, `web`, `monitoring`, `gpu`) afin de faciliter la gestion du cluster.
+Scegliete un nome descrittivo per i vostri node group (`compute`, `web`, `monitoring`, `gpu`) per facilitare la gestione del cluster.
 :::
 
-### 3. Modifier un node group existant
+### 3. Modificare un node group esistente
 
-Pour modifier un node group, mettez a jour les champs souhaites dans votre fichier YAML. Par exemple, pour changer le type d'instance et augmenter le stockage ephemere :
+Per modificare un node group, aggiornate i campi desiderati nel vostro file YAML. Ad esempio, per cambiare il tipo di istanza e aumentare l'archiviazione effimera:
 
 ```yaml title="cluster-updated.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -100,19 +100,19 @@ spec:
     general:
       minReplicas: 2
       maxReplicas: 5
-      instanceType: "u1.xlarge"       # Modifie : de s1.large a u1.xlarge
-      ephemeralStorage: 100Gi          # Modifie : de 50Gi a 100Gi
+      instanceType: "u1.xlarge"       # Modificato: da s1.large a u1.xlarge
+      ephemeralStorage: 100Gi          # Modificato: da 50Gi a 100Gi
       roles:
         - ingress-nginx
 ```
 
 :::warning
-Le changement d'`instanceType` provoque un rolling update des noeuds du groupe. Assurez-vous que votre cluster dispose de suffisamment de capacite pour absorber la charge pendant la mise a jour.
+Il cambio di `instanceType` provoca un rolling update dei nodi del gruppo. Assicuratevi che il vostro cluster disponga di capacita sufficiente per assorbire il carico durante l'aggiornamento.
 :::
 
-### 4. Supprimer un node group
+### 4. Rimuovere un node group
 
-Pour supprimer un node group, retirez simplement son bloc de la configuration et re-appliquez :
+Per rimuovere un node group, eliminate semplicemente il suo blocco dalla configurazione e ri-applicate:
 
 ```yaml title="cluster-simplified.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -131,16 +131,16 @@ spec:
       ephemeralStorage: 50Gi
       roles:
         - ingress-nginx
-    # Le node group "compute" a ete supprime
+    # Il node group "compute" e stato rimosso
 ```
 
 :::warning
-Avant de supprimer un node group, assurez-vous que les workloads qui y tournent peuvent etre replanifies sur d'autres groupes. Utilisez `kubectl drain` sur les noeuds concernes si necessaire.
+Prima di rimuovere un node group, assicuratevi che i workload in esecuzione su di esso possano essere ripianificati su altri gruppi. Utilizzate `kubectl drain` sui nodi interessati se necessario.
 :::
 
-### 5. Appliquer les modifications
+### 5. Applicare le modifiche
 
-Appliquez les changements avec `kubectl` :
+Applicate le modifiche con `kubectl`:
 
 ```bash
 kubectl apply -f cluster-updated.yaml
@@ -148,20 +148,20 @@ kubectl apply -f cluster-updated.yaml
 
 ## Verifica
 
-Verifiez que les modifications ont ete prises en compte :
+Verificate che le modifiche siano state prese in carico:
 
 ```bash
-# Verifier la configuration du cluster
+# Verificare la configurazione del cluster
 kubectl get kubernetes my-cluster -o yaml | grep -A 15 nodeGroups
 
-# Observer les noeuds du cluster enfant
+# Osservare i nodi del cluster figlio
 kubectl --kubeconfig=cluster-admin.yaml get nodes -w
 
-# Verifier les machines en cours de provisionnement
+# Verificare le macchine in corso di provisioning
 kubectl get machines -l cluster.x-k8s.io/cluster-name=my-cluster
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```console
 NAME                         STATUS   ROLES    AGE   VERSION
@@ -171,6 +171,6 @@ my-cluster-compute-yyyyy     Ready    <none>   2m    v1.29.0
 
 ## Per approfondire
 
-- [Reference API](../api-reference.md) -- Detail complet des champs `nodeGroups`
-- [Concepts](../concepts.md) -- Architecture des node groups Hikube
-- [Comment configurer l'autoscaling](./configure-autoscaling.md) -- Gerer le scaling automatique des node groups
+- [Riferimento API](../api-reference.md) -- Dettaglio completo dei campi `nodeGroups`
+- [Concetti](../concepts.md) -- Architettura dei node group Hikube
+- [Come configurare l'autoscaling](./configure-autoscaling.md) -- Gestire lo scaling automatico dei node group

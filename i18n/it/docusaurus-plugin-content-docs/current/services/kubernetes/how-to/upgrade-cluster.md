@@ -1,32 +1,32 @@
 ---
-title: Come aggiornare un cluster
+title: "Come aggiornare un cluster"
 ---
 
-# Comment mettre a jour un cluster
+# Come aggiornare un cluster
 
-Ce guide explique comment mettre a jour la version de Kubernetes sur un cluster Hikube. Les mises a jour se font par rolling update, sans interruption du plan de controle.
+Questa guida spiega come aggiornare la versione di Kubernetes su un cluster Hikube. Gli aggiornamenti avvengono tramite rolling update, senza interruzione del piano di controllo.
 
-## Prerequisitiiti
+## Prerequisiti
 
-- Un cluster Kubernetes Hikube deploye (voir le [demarrage rapide](../quick-start.md))
-- `kubectl` configure pour interagir avec l'API Hikube
-- Le kubeconfig du cluster enfant recupere
+- Un cluster Kubernetes Hikube distribuito (vedere l'[avvio rapido](../quick-start.md))
+- `kubectl` configurato per interagire con l'API Hikube
+- Il kubeconfig del cluster figlio recuperato
 
-## Passi
+## Fasi
 
-### 1. Verifier la version actuelle
+### 1. Verificare la versione attuale
 
-Identifiez la version Kubernetes actuellement deployee sur votre cluster :
+Identificate la versione Kubernetes attualmente distribuita sul vostro cluster:
 
 ```bash
-# Version dans la configuration Hikube
+# Versione nella configurazione Hikube
 kubectl get kubernetes my-cluster -o yaml | grep version
 
-# Version reportee par les noeuds
+# Versione riportata dai nodi
 kubectl --kubeconfig=cluster-admin.yaml get nodes
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```console
 NAME                         STATUS   ROLES    AGE   VERSION
@@ -34,26 +34,26 @@ my-cluster-general-xxxxx     Ready    <none>   30d   v1.29.0
 my-cluster-general-yyyyy     Ready    <none>   30d   v1.29.0
 ```
 
-### 2. Consulter les versions disponibles
+### 2. Consultare le versioni disponibili
 
-Avant de mettre a jour, verifiez les versions supportees par Hikube :
+Prima di aggiornare, verificate le versioni supportate da Hikube:
 
 ```bash
-# Verifier la configuration actuelle du cluster
+# Verificare la configurazione attuale del cluster
 kubectl get kubernetes my-cluster -o yaml
 ```
 
 :::warning
-Testez toujours la mise a jour en environnement de staging avant la production. Certaines applications peuvent ne pas etre compatibles avec les nouvelles versions de Kubernetes.
+Testate sempre l'aggiornamento in un ambiente di staging prima della produzione. Alcune applicazioni potrebbero non essere compatibili con le nuove versioni di Kubernetes.
 :::
 
 :::note
-Les mises a jour doivent se faire de maniere incrementale (par exemple, v1.29 vers v1.30). Ne sautez pas plusieurs versions mineures d'un coup.
+Gli aggiornamenti devono essere effettuati in modo incrementale (ad esempio, v1.29 verso v1.30). Non saltate diverse versioni minori in una volta.
 :::
 
-### 3. Mettre a jour la version
+### 3. Aggiornare la versione
 
-**Option A : Patch direct**
+**Opzione A: Patch diretto**
 
 ```bash
 kubectl patch kubernetes my-cluster --type='merge' -p='
@@ -62,7 +62,7 @@ spec:
 '
 ```
 
-**Option B : Modifier le fichier YAML**
+**Opzione B: Modificare il file YAML**
 
 ```yaml title="cluster-upgrade.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -89,53 +89,53 @@ spec:
 kubectl apply -f cluster-upgrade.yaml
 ```
 
-### 4. Suivre le rolling update
+### 4. Seguire il rolling update
 
-Observez le deroulement de la mise a jour :
+Osservate lo svolgimento dell'aggiornamento:
 
 ```bash
-# Suivre l'etat du cluster Hikube
+# Seguire lo stato del cluster Hikube
 kubectl get kubernetes my-cluster -w
 
-# Observer le remplacement des machines
+# Osservare la sostituzione delle macchine
 kubectl get machines -l cluster.x-k8s.io/cluster-name=my-cluster -w
 
-# Verifier les events
+# Verificare gli eventi
 kubectl describe kubernetes my-cluster
 ```
 
 :::tip
-Les mises a jour se font par rolling update : les noeuds sont remplaces un par un. Le plan de controle est mis a jour en premier, suivi des node groups. Vos workloads continuent de fonctionner pendant la mise a jour.
+Gli aggiornamenti avvengono tramite rolling update: i nodi vengono sostituiti uno per uno. Il piano di controllo viene aggiornato per primo, seguito dai node group. I vostri workload continuano a funzionare durante l'aggiornamento.
 :::
 
-### 5. Verifier la mise a jour
+### 5. Verificare l'aggiornamento
 
-Une fois le rolling update termine, confirmez la nouvelle version :
+Una volta completato il rolling update, confermate la nuova versione:
 
 ```bash
-# Verifier la version des noeuds
+# Verificare la versione dei nodi
 kubectl --kubeconfig=cluster-admin.yaml get nodes
 
-# Verifier la version de l'API server
+# Verificare la versione dell'API server
 kubectl --kubeconfig=cluster-admin.yaml version
 ```
 
 ## Verifica
 
-Validez que le cluster fonctionne correctement apres la mise a jour :
+Validate che il cluster funzioni correttamente dopo l'aggiornamento:
 
 ```bash
-# Noeuds en etat Ready avec la nouvelle version
+# Nodi in stato Ready con la nuova versione
 kubectl --kubeconfig=cluster-admin.yaml get nodes
 
-# Pods systeme operationnels
+# Pod di sistema operativi
 kubectl --kubeconfig=cluster-admin.yaml get pods -n kube-system
 
-# Vos workloads fonctionnent
+# I vostri workload funzionano
 kubectl --kubeconfig=cluster-admin.yaml get pods -A
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```console
 NAME                         STATUS   ROLES    AGE   VERSION
@@ -144,11 +144,11 @@ my-cluster-general-yyyyy     Ready    <none>   3m    v1.30.0
 ```
 
 :::warning
-Si des pods restent en erreur apres la mise a jour, verifiez la compatibilite de vos manifestes avec la nouvelle version Kubernetes. Certaines API deprecees peuvent avoir ete supprimees.
+Se dei pod rimangono in errore dopo l'aggiornamento, verificate la compatibilita dei vostri manifesti con la nuova versione Kubernetes. Alcune API deprecate potrebbero essere state rimosse.
 :::
 
 ## Per approfondire
 
-- [Reference API](../api-reference.md) -- Champ `version` et configuration complete
-- [Concepts](../concepts.md) -- Architecture du plan de controle et rolling updates
-- [Acces et outils](./toolbox.md) -- Commandes de debugging et monitoring
+- [Riferimento API](../api-reference.md) -- Campo `version` e configurazione completa
+- [Concetti](../concepts.md) -- Architettura del piano di controllo e rolling update
+- [Accesso e strumenti](./toolbox.md) -- Comandi di debugging e monitoring

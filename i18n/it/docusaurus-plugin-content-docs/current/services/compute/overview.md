@@ -3,60 +3,60 @@ sidebar_position: 1
 title: Panoramica
 ---
 
-# Machines Virtuelles sur Hikube
+# Macchine Virtuali su Hikube
 
-Les **Machines Virtuelles (VMs)** d'Hikube offrent une virtualisation complète de l'infrastructure matérielle, garantissant l'exécution de systèmes d'exploitation hétérogènes et d'applications métier dans des environnements cloisonnés et conformes aux exigences de sécurité d'entreprise.
+Le **Macchine Virtuali (VM)** di Hikube offrono una virtualizzazione completa dell'infrastruttura hardware, garantendo l'esecuzione di sistemi operativi eterogenei e di applicazioni aziendali in ambienti isolati e conformi ai requisiti di sicurezza enterprise.
 
 ---
 
-## 🏗️ Architecture et Fonctionnement
+## 🏗️ Architettura e Funzionamento
 
-### **Séparation Compute et Stockage**
+### **Separazione Compute e Storage**
 
-Hikube utilise une architecture **découplée** entre le calcul et le stockage qui garantit une résilience optimale :
+Hikube utilizza un'architettura **disaccoppiata** tra calcolo e archiviazione che garantisce una resilienza ottimale:
 
-**💻 Couche Compute**
+**💻 Livello Compute**
 
-- La VM s'exécute sur des **serveurs physiques** sur un des 3 datacenters
-- Si un nœud tombe en panne, la VM est **automatiquement redémarrée** sur un autre nœud
-- Si un datacenter tombe en panne, la VM est **automatiquement redémarrée** sur un autre noeud dans un des 2 datacenters restant
-- Le temps d'indisponibilité se limite au redémarrage (généralement < 2 minutes)
+- La VM viene eseguita su **server fisici** in uno dei 3 datacenter
+- Se un nodo si guasta, la VM viene **automaticamente riavviata** su un altro nodo
+- Se un datacenter si guasta, la VM viene **automaticamente riavviata** su un altro nodo in uno dei 2 datacenter rimanenti
+- Il tempo di indisponibilità si limita al riavvio (generalmente < 2 minuti)
 
-**💾 Couche Stockage (Persistante)**
+**💾 Livello Storage (Persistente)**
 
-- Les disques des VMs sont **répliqués automatiquement** sur plusieurs nœuds physiques avec le stockage "replicated"
-- **Aucune perte de données** même en cas de panne matérielle multiple
-- Les disques survivent aux pannes et restent attachables à la VM relocalisée
+- I dischi delle VM sono **replicati automaticamente** su più nodi fisici con lo storage "replicated"
+- **Nessuna perdita di dati** anche in caso di guasto hardware multiplo
+- I dischi sopravvivono ai guasti e rimangono collegabili alla VM rilocalizzata
 
-Cette séparation garantit que **vos données sont toujours sûres**, même si le serveur physique hébergeant votre VM devient indisponible où qu'un datacenter devienne indisponible.
-Nous garantissons les ressources !
+Questa separazione garantisce che **i vostri dati sono sempre al sicuro**, anche se il server fisico che ospita la vostra VM diventa indisponibile o un datacenter diventa indisponibile.
+Garantiamo le risorse!
 
-### **Architecture Multi-Datacenter**
+### **Architettura Multi-Datacenter**
 
 ```mermaid
 flowchart TD
-    subgraph DC1["🏢 Datacenter Genève"]
+    subgraph DC1["🏢 Datacenter Ginevra"]
         VM1["🖥️ VM-Production"]
         STORAGE1["💾 Storage"]
     end
-    
-    subgraph DC2["🏢 Datacenter Lucerne"]
+
+    subgraph DC2["🏢 Datacenter Lucerna"]
         STORAGE2["💾 Storage"]
     end
-    
+
     subgraph DC3["🏢 Datacenter Gland"]
         STORAGE3["💾 Storage"]
     end
-    
-    %% VM utilise le stockage local
+
+    %% La VM utilizza lo storage locale
     VM1 --> STORAGE1
-    
-    %% Réplication du stockage entre les 3 DC
-    STORAGE1 <-.->|"Réplication"| STORAGE2
-    STORAGE2 <-.->|"Réplication"| STORAGE3
-    STORAGE1 <-.->|"Réplication"| STORAGE3
-    
-    %% Styles
+
+    %% Replica dello storage tra i 3 DC
+    STORAGE1 <-.->|"Replica"| STORAGE2
+    STORAGE2 <-.->|"Replica"| STORAGE3
+    STORAGE1 <-.->|"Replica"| STORAGE3
+
+    %% Stili
     style DC1 fill:#e3f2fd
     style DC2 fill:#e8f5e8
     style DC3 fill:#fff2e1
@@ -65,108 +65,108 @@ flowchart TD
 
 ---
 
-## ⚙️ Types d'Instances
+## ⚙️ Tipi di Istanze
 
-### **Gamme Complète pour Tous les Besoins**
+### **Gamma Completa per Tutte le Esigenze**
 
-Hikube propose trois séries d'instances optimisées pour différents profils d'usage, garantissant des performances adaptées à chaque workload :
+Hikube propone tre serie di istanze ottimizzate per differenti profili d'uso, garantendo prestazioni adatte a ogni workload:
 
-### **Série S - Standard (Ratio 1:2)**
+### **Serie S - Standard (Rapporto 1:2)**
 
-Instances **orientées calcul** avec un ratio CPU/mémoire de 1:2, idéales pour les charges CPU-intensives.
+Istanze **orientate al calcolo** con un rapporto CPU/memoria di 1:2, ideali per i carichi CPU-intensivi.
 
-| **Instance** | **vCPU** | **RAM** | **Cas d'Usage Typiques** |
+| **Istanza** | **vCPU** | **RAM** | **Casi d'Uso Tipici** |
 |--------------|----------|---------|---------------------------|
-| `s1.small`   | 1        | 2 GB    | Services légers, proxies |
-| `s1.medium`  | 2        | 4 GB    | Workers, batch processing |
-| `s1.large`   | 4        | 8 GB    | Calcul scientifique |
-| `s1.xlarge`  | 8        | 16 GB   | Rendu, compilation |
-| `s1.3large`  | 12       | 24 GB   | Applications intensives |
-| `s1.2xlarge` | 16       | 32 GB   | HPC, simulations |
-| `s1.3xlarge` | 24       | 48 GB   | Calcul distribué |
-| `s1.4xlarge` | 32       | 64 GB   | Calcul massif |
-| `s1.8xlarge` | 64       | 128 GB  | Calcul exascale |
+| `s1.small`   | 1        | 2 GB    | Servizi leggeri, proxy |
+| `s1.medium`  | 2        | 4 GB    | Worker, batch processing |
+| `s1.large`   | 4        | 8 GB    | Calcolo scientifico |
+| `s1.xlarge`  | 8        | 16 GB   | Rendering, compilazione |
+| `s1.3large`  | 12       | 24 GB   | Applicazioni intensive |
+| `s1.2xlarge` | 16       | 32 GB   | HPC, simulazioni |
+| `s1.3xlarge` | 24       | 48 GB   | Calcolo distribuito |
+| `s1.4xlarge` | 32       | 64 GB   | Calcolo massivo |
+| `s1.8xlarge` | 64       | 128 GB  | Calcolo exascale |
 
-### **Série U - Universal (Ratio 1:4)**
+### **Serie U - Universal (Rapporto 1:4)**
 
-Instances **polyvalentes** offrant un équilibre optimal entre CPU et mémoire pour la majorité des applications d'entreprise.
+Istanze **polivalenti** che offrono un equilibrio ottimale tra CPU e memoria per la maggior parte delle applicazioni aziendali.
 
-| **Instance** | **vCPU** | **RAM** | **Cas d'Usage Typiques** |
+| **Istanza** | **vCPU** | **RAM** | **Casi d'Uso Tipici** |
 |--------------|----------|---------|---------------------------|
-| `u1.medium`  | 1        | 4 GB    | Dev, tests, micro-services |
-| `u1.large`   | 2        | 8 GB    | Applications web, APIs |
-| `u1.xlarge`  | 4        | 16 GB   | Applications métier |
-| `u1.2xlarge` | 8        | 32 GB   | Workloads intensifs |
-| `u1.4xlarge` | 16       | 64 GB   | Applications critiques |
-| `u1.8xlarge` | 32       | 128 GB  | Applications enterprise |
+| `u1.medium`  | 1        | 4 GB    | Dev, test, micro-servizi |
+| `u1.large`   | 2        | 8 GB    | Applicazioni web, API |
+| `u1.xlarge`  | 4        | 16 GB   | Applicazioni aziendali |
+| `u1.2xlarge` | 8        | 32 GB   | Workload intensivi |
+| `u1.4xlarge` | 16       | 64 GB   | Applicazioni critiche |
+| `u1.8xlarge` | 32       | 128 GB  | Applicazioni enterprise |
 
-### **Série M - Memory (Ratio 1:8)**
+### **Serie M - Memory (Rapporto 1:8)**
 
-Instances **haute mémoire** avec un ratio CPU/mémoire de 1:8 pour les applications gourmandes en RAM.
+Istanze **ad alta memoria** con un rapporto CPU/memoria di 1:8 per le applicazioni ad alto consumo di RAM.
 
-| **Instance** | **vCPU** | **RAM** | **Cas d'Usage Typiques** |
+| **Istanza** | **vCPU** | **RAM** | **Casi d'Uso Tipici** |
 |--------------|----------|---------|---------------------------|
-| `m1.large`   | 2        | 16 GB   | Caches Redis, Memcached |
-| `m1.xlarge`  | 4        | 32 GB   | Bases de données in-memory |
+| `m1.large`   | 2        | 16 GB   | Cache Redis, Memcached |
+| `m1.xlarge`  | 4        | 32 GB   | Database in-memory |
 | `m1.2xlarge` | 8        | 64 GB   | Analytics, Big Data |
 | `m1.4xlarge` | 16       | 128 GB  | SAP HANA, Oracle |
-| `m1.8xlarge` | 32       | 256 GB  | Data warehouses |
+| `m1.8xlarge` | 32       | 256 GB  | Data warehouse |
 
-:::tip **Guide de Sélection**
+:::tip **Guida alla Selezione**
 
-- **Calcul intensif, CI/CD** → Série **S** (ratio 1:2, CPU optimisé)
-- **Applications web classiques** → Série **U** (ratio 1:4, équilibrée)  
-- **Bases de données, Analytics** → Série **M** (ratio 1:8, mémoire optimisée)
+- **Calcolo intensivo, CI/CD** → Serie **S** (rapporto 1:2, CPU ottimizzato)
+- **Applicazioni web classiche** → Serie **U** (rapporto 1:4, bilanciata)
+- **Database, Analytics** → Serie **M** (rapporto 1:8, memoria ottimizzata)
 :::
 
 ---
 
-## 🔒 Isolation et Sécurité
+## 🔒 Isolamento e Sicurezza
 
-### **Multi-Tenant par Design**
+### **Multi-Tenant by Design**
 
-Chaque VM bénéficie d'une **isolation complète** grâce à une architecture sécurisée qui cloisonne strictement les ressources entre les différents tenants. Cette isolation s'appuie sur plusieurs couches de protection complémentaires :
+Ogni VM beneficia di un **isolamento completo** grazie a un'architettura sicura che isola rigorosamente le risorse tra i diversi tenant. Questo isolamento si basa su diversi livelli di protezione complementari:
 
-- **Tenant** : Séparation logique des ressources au niveau applicatif, chaque tenant disposant de son propre espace d'exécution
-- **Isolation kernel** : Isolation réseau et processus au niveau du noyau Linux, garantissant qu'aucune VM ne peut accéder aux ressources d'une autre
-- **Storage classes** : Chiffrement automatique et isolation des données, avec séparation cryptographique des volumes par tenant
-
----
-
-## 🌐 Connectivité et Accès
-
-### **Méthodes d'Accès Natives**
-
-L'accès aux machines virtuelles Hikube s'effectue via des mécanismes natifs intégrés à la plateforme, éliminant le besoin d'infrastructure réseau complexe. La **console série** fournit un accès direct de bas niveau indépendant du réseau, idéal pour le debugging et la maintenance système. Pour les environnements graphiques, **VNC** permet une connexion à l'interface utilisateur de la VM via des tunnels sécurisés. L'accès **SSH** traditionnel reste disponible soit via `virtctl ssh` qui gère automatiquement la connectivité, soit directement via l'IP externe assignée. Les services applicatifs peuvent être exposés sélectivement via des **listes de ports contrôlées** qui filtrent intelligemment le trafic sans compromettre la sécurité du tenant.
-
-### **Réseau Défini par Logiciel**
-
-L'architecture réseau d'Hikube repose sur une approche Software-Defined qui virtualise complètement la couche réseau. Chaque VM reçoit automatiquement une **IP privée** dans un segment réseau isolé par tenant, garantissant l'isolation tout en permettant la communication interne. Le système peut optionnellement assigner une **IP publique IPv4** pour l'exposition externe, avec un routage automatique qui maintient la segmentation sécurisée. Le **firewall distribué** applique des politiques de sécurité granulaires directement au niveau de chaque VM, avec des règles restrictives par défaut qui s'adaptent dynamiquement aux besoins de l'application.
+- **Tenant**: Separazione logica delle risorse a livello applicativo, ogni tenant dispone del proprio spazio di esecuzione
+- **Isolamento kernel**: Isolamento di rete e processi a livello del kernel Linux, che garantisce che nessuna VM possa accedere alle risorse di un'altra
+- **Storage class**: Crittografia automatica e isolamento dei dati, con separazione crittografica dei volumi per tenant
 
 ---
 
-## 📦 Migration et Portabilité
+## 🌐 Connettività e Accesso
 
-### **Import de Workloads Existants**
+### **Metodi di Accesso Nativi**
 
-La plateforme Hikube facilite la migration d'infrastructures existantes grâce à des mécanismes d'import universels qui préservent l'intégrité des workloads. Les **images cloud standardisées** (Ubuntu Cloud Images, CentOS Cloud) s'intègrent nativement pour un déploiement immédiat avec les optimisations cloud natives. Pour les installations personnalisées, l'import d'**images ISO** permet de recréer des environnements sur mesure en conservant toutes les configurations spécifiques. Les **snapshots VMware** sont convertis automatiquement du format VMDK vers RAW, assurant une transition transparente depuis les infrastructures de virtualisation traditionnelles. La compatibilité avec les **formats Proxmox et OpenStack** (QCOW2) garantit l'interopérabilité avec la majorité des solutions cloud existantes.
+L'accesso alle macchine virtuali Hikube avviene tramite meccanismi nativi integrati nella piattaforma, eliminando la necessità di un'infrastruttura di rete complessa. La **console seriale** fornisce un accesso diretto di basso livello indipendente dalla rete, ideale per il debugging e la manutenzione di sistema. Per gli ambienti grafici, **VNC** permette una connessione all'interfaccia utente della VM tramite tunnel sicuri. L'accesso **SSH** tradizionale resta disponibile sia tramite `virtctl ssh` che gestisce automaticamente la connettività, sia direttamente tramite l'IP esterno assegnato. I servizi applicativi possono essere esposti selettivamente tramite **liste di porte controllate** che filtrano intelligentemente il traffico senza compromettere la sicurezza del tenant.
 
-### **Gestion du Cycle de Vie**
+### **Rete Definita dal Software**
 
-Le système de gestion du cycle de vie intègre des mécanismes automatisés qui assurent la continuité opérationnelle des machines virtuelles. Les **snapshots** capturent instantanément l'état complet de la VM, incluant la mémoire et le stockage, pour permettre des retours arrière précis lors de maintenance ou d'incidents. Le **backup automatique** orchestre des sauvegardes programmées des disques avec rétention configurable, répliquées automatiquement sur les trois datacenters pour garantir la récupération en cas de sinistre. La **migration live** déplace les VMs entre nœuds physiques sans interruption de service, facilitant la maintenance matérielle et l'optimisation des charges sans impact sur les applications critiques.
+L'architettura di rete di Hikube si basa su un approccio Software-Defined che virtualizza completamente il livello di rete. Ogni VM riceve automaticamente un **IP privato** in un segmento di rete isolato per tenant, garantendo l'isolamento permettendo al contempo la comunicazione interna. Il sistema può opzionalmente assegnare un **IP pubblico IPv4** per l'esposizione esterna, con un routing automatico che mantiene la segmentazione sicura. Il **firewall distribuito** applica politiche di sicurezza granulari direttamente a livello di ogni VM, con regole restrittive di default che si adattano dinamicamente alle esigenze dell'applicazione.
 
 ---
 
-## 🚀 Prochaines Étapes
+## 📦 Migrazione e Portabilità
 
-Maintenant que vous comprenez l'architecture des VMs Hikube :
+### **Import di Workload Esistenti**
 
-**🏃‍♂️ Démarrage Immédiat**  
-→ [Créer votre première VM en 5 minutes](./quick-start.md)
+La piattaforma Hikube facilita la migrazione di infrastrutture esistenti grazie a meccanismi di import universali che preservano l'integrità dei workload. Le **immagini cloud standardizzate** (Ubuntu Cloud Images, CentOS Cloud) si integrano nativamente per un deployment immediato con le ottimizzazioni cloud native. Per le installazioni personalizzate, l'import di **immagini ISO** permette di ricreare ambienti su misura conservando tutte le configurazioni specifiche. Gli **snapshot VMware** vengono convertiti automaticamente dal formato VMDK a RAW, assicurando una transizione trasparente dalle infrastrutture di virtualizzazione tradizionali. La compatibilità con i **formati Proxmox e OpenStack** (QCOW2) garantisce l'interoperabilità con la maggior parte delle soluzioni cloud esistenti.
 
-**📖 Configuration Avancée**  
-→ [Référence API complète](./api-reference.md)
+### **Gestione del Ciclo di Vita**
 
-:::tip Architecture Recommandée
-Pour la production, utilisez toujours la classe de stockage `replicated` et dimensionnez vos VMs avec au moins 2 vCPU pour bénéficier de meilleures performances.
+Il sistema di gestione del ciclo di vita integra meccanismi automatizzati che assicurano la continuità operativa delle macchine virtuali. Gli **snapshot** catturano istantaneamente lo stato completo della VM, inclusa la memoria e lo storage, per permettere rollback precisi durante la manutenzione o gli incidenti. Il **backup automatico** orchestra salvataggi programmati dei dischi con retention configurabile, replicati automaticamente sui tre datacenter per garantire il recupero in caso di disastro. La **live migration** sposta le VM tra nodi fisici senza interruzione di servizio, facilitando la manutenzione hardware e l'ottimizzazione dei carichi senza impatto sulle applicazioni critiche.
+
+---
+
+## 🚀 Prossimi Passi
+
+Ora che comprendete l'architettura delle VM Hikube:
+
+**🏃‍♂️ Avvio Immediato**
+→ [Creare la vostra prima VM in 5 minuti](./quick-start.md)
+
+**📖 Configurazione Avanzata**
+→ [Riferimento API completo](./api-reference.md)
+
+:::tip Architettura Raccomandata
+Per la produzione, utilizzate sempre la classe di storage `replicated` e dimensionate le vostre VM con almeno 2 vCPU per beneficiare di migliori prestazioni.
 :::

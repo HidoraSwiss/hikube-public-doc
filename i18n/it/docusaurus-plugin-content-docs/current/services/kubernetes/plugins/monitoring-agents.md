@@ -3,10 +3,10 @@ sidebar_position: 10
 title: Monitoring Agents
 ---
 
-# 🧩 Détails du champ `addons.monitoringAgents`
+# 🧩 Dettagli del campo `addons.monitoringAgents`
 
-Le champ `addons.monitoringAgents` définit la configuration de l’add-on **Monitoring Agents**, responsable de la collecte des métriques et des logs au sein du cluster Kubernetes.
-Cet add-on regroupe les agents de monitoring (Prometheus Node Exporter, kube-state-metrics, ou autres collecteurs) déployés sur les nœuds du cluster.
+Il campo `addons.monitoringAgents` definisce la configurazione dell'add-on **Monitoring Agents**, responsabile della raccolta delle metriche e dei log all'interno del cluster Kubernetes.
+Questo add-on raggruppa gli agenti di monitoring (Prometheus Node Exporter, kube-state-metrics o altri collettori) distribuiti sui nodi del cluster.
 
 ```yaml
 addons:
@@ -22,14 +22,14 @@ addons:
 
 ---
 
-## `monitoringAgents` (Object) — **Obligatoire**
+## `monitoringAgents` (Object) — **Obbligatorio**
 
-### Description
+### Descrizione
 
-Le champ `monitoringAgents` regroupe la configuration principale des agents de monitoring déployés dans le cluster.
-Il permet d’activer le composant et de personnaliser son comportement via des valeurs Helm.
+Il campo `monitoringAgents` raggruppa la configurazione principale degli agenti di monitoring distribuiti nel cluster.
+Permette di attivare il componente e di personalizzarne il comportamento tramite valori Helm.
 
-### Exemple
+### Esempio
 
 ```yaml
 monitoringAgents:
@@ -42,14 +42,14 @@ monitoringAgents:
 
 ---
 
-## `enabled` (boolean) — **Obligatoire**
+## `enabled` (boolean) — **Obbligatorio**
 
-### Description
+### Descrizione
 
-Indique si les **agents de monitoring** sont activés (`true`) ou désactivés (`false`).
-Lorsqu’ils sont activés, les agents collectent automatiquement les métriques système et Kubernetes pour les exporter vers un serveur de supervision (ex. Prometheus, Grafana Agent, OpenTelemetry Collector, etc.).
+Indica se gli **agenti di monitoring** sono attivati (`true`) o disattivati (`false`).
+Quando sono attivati, gli agenti raccolgono automaticamente le metriche di sistema e Kubernetes per esportarle verso un server di supervisione (es. Prometheus, Grafana Agent, OpenTelemetry Collector, ecc.).
 
-### Exemple
+### Esempio
 
 ```yaml
 enabled: true
@@ -57,22 +57,22 @@ enabled: true
 
 ---
 
-## `valuesOverride` (Object) — **Obligatoire**
+## `valuesOverride` (Object) — **Obbligatorio**
 
-### Description
+### Descrizione
 
-Le champ `valuesOverride` permet de **surcharger les valeurs Helm** utilisées pour déployer les agents de monitoring.
-Il est utilisé pour ajuster la configuration (activation des modules, ressources, ports d’écoute, labels, etc.).
+Il campo `valuesOverride` permette di **sovrascrivere i valori Helm** utilizzati per distribuire gli agenti di monitoring.
+E utilizzato per regolare la configurazione (attivazione dei moduli, risorse, porte di ascolto, label, ecc.).
 
-### Exemple
+### Esempio
 
-### **Agents de Monitoring**
+### **Agenti di Monitoring**
 
-Collecte de logs et métriques avec FluentBit et autres agents.
+Raccolta di log e metriche con FluentBit e altri agenti.
 
 ```yaml
 valuesOverride:
-  # Configuration FluentBit
+  # Configurazione FluentBit
   fluentbit:
     enabled: true
     config:
@@ -84,12 +84,12 @@ valuesOverride:
             Port 24224
 ```
 
-#### **Configuration Avancée Monitoring**
+#### **Configurazione Avanzata Monitoring**
 
 ```yaml
 valuesOverride:
   monitoringAgents:
-    # FluentBit pour les logs
+    # FluentBit per i log
     fluentbit:
       enabled: true
       resources:
@@ -121,7 +121,7 @@ valuesOverride:
               Host  logs.company.com
               Port  24224
 
-    # Node Exporter pour les métriques système
+    # Node Exporter per le metriche di sistema
     nodeExporter:
       enabled: true
       resources:
@@ -137,6 +137,6 @@ valuesOverride:
 
 ## 💡 Buone pratiche
 
-- Activer `enabled: true` pour garantir la collecte continue des métriques système et applicatives.
-- Utiliser `valuesOverride` pour ajuster la configuration des agents selon les besoins (ex. limiter la collecte sur certains nœuds).
-- Configurer des `resource limits` appropriés pour éviter que les agents n’impactent la charge du cluster.
+- Attivare `enabled: true` per garantire la raccolta continua delle metriche di sistema e applicative.
+- Utilizzare `valuesOverride` per regolare la configurazione degli agenti in base alle esigenze (es. limitare la raccolta su determinati nodi).
+- Configurare `resource limits` appropriati per evitare che gli agenti impattino il carico del cluster.

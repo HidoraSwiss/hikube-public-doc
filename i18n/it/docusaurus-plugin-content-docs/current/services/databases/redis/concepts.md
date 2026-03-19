@@ -3,11 +3,11 @@ sidebar_position: 2
 title: Concetti
 ---
 
-# Concepts — Redis
+# Concetti — Redis
 
 ## Architettura
 
-Redis sur Hikube est un service managé basé sur l'opérateur **Spotahome Redis Operator**. Chaque instance déployée via la ressource `Redis` crée un cluster master-réplica avec **Redis Sentinel** pour le failover automatique.
+Redis su Hikube e un servizio gestito basato sull'operatore **Spotahome Redis Operator**. Ogni istanza distribuita tramite la risorsa `Redis` crea un cluster master-replica con **Redis Sentinel** per il failover automatico.
 
 ```mermaid
 graph TB
@@ -33,7 +33,7 @@ graph TB
             S3[Sentinel 3]
         end
 
-        subgraph "Stockage"
+        subgraph "Archiviazione"
             PV1[PV Master]
             PV2[PV Replica 1]
             PV3[PV Replica 2]
@@ -47,8 +47,8 @@ graph TB
     OP --> S1
     OP --> S2
     OP --> S3
-    M -->|réplication| R1
-    M -->|réplication| R2
+    M -->|replica| R1
+    M -->|replica| R2
     S1 -.->|monitoring| M
     S2 -.->|monitoring| M
     S3 -.->|monitoring| M
@@ -62,26 +62,26 @@ graph TB
 
 ## Terminologia
 
-| Terme | Description |
-|-------|-------------|
-| **Redis** | Ressource Kubernetes (`apps.cozystack.io/v1alpha1`) représentant un cluster Redis managé. |
-| **Master** | Instance principale qui accepte les lectures et écritures. |
-| **Replica** | Instance en lecture seule, synchronisée depuis le master. |
-| **Sentinel** | Processus de supervision qui détecte les pannes du master et orchestre le failover automatique. |
-| **Spotahome Redis Operator** | Opérateur Kubernetes qui gère le déploiement et le cycle de vie des clusters Redis. |
-| **authEnabled** | Active l'authentification par mot de passe (`requirepass`). |
-| **resourcesPreset** | Profil de ressources prédéfini (nano à 2xlarge). |
+| Termine | Descrizione |
+|---------|-------------|
+| **Redis** | Risorsa Kubernetes (`apps.cozystack.io/v1alpha1`) che rappresenta un cluster Redis gestito. |
+| **Master** | Istanza principale che accetta letture e scritture. |
+| **Replica** | Istanza in sola lettura, sincronizzata dal master. |
+| **Sentinel** | Processo di supervisione che rileva i guasti del master e orchestra il failover automatico. |
+| **Spotahome Redis Operator** | Operatore Kubernetes che gestisce il deployment e il ciclo di vita dei cluster Redis. |
+| **authEnabled** | Attiva l'autenticazione tramite password (`requirepass`). |
+| **resourcesPreset** | Profilo di risorse predefinito (da nano a 2xlarge). |
 
 ---
 
-## Haute disponibilité avec Sentinel
+## Alta disponibilita con Sentinel
 
-Redis Sentinel assure la haute disponibilité en :
+Redis Sentinel assicura l'alta disponibilita:
 
-1. **Surveillant** en permanence le master et les réplicas
-2. **Détectant** la panne du master par consensus (quorum entre Sentinels)
-3. **Promouvant** automatiquement un réplica en nouveau master
-4. **Reconfigurant** les autres réplicas pour suivre le nouveau master
+1. **Sorvegliando** permanentemente il master e le repliche
+2. **Rilevando** il guasto del master tramite consenso (quorum tra Sentinel)
+3. **Promuovendo** automaticamente una replica a nuovo master
+4. **Riconfigurando** le altre repliche per seguire il nuovo master
 
 ```mermaid
 sequenceDiagram
@@ -92,53 +92,53 @@ sequenceDiagram
     participant R1 as Replica
 
     S1->>M: PING
-    M--xS1: Timeout (panne)
+    M--xS1: Timeout (guasto)
     S1->>S2: Master down?
     S1->>S3: Master down?
-    S2-->>S1: Oui
-    S3-->>S1: Oui
-    Note over S1,S3: Quorum atteint
+    S2-->>S1: Si
+    S3-->>S1: Si
+    Note over S1,S3: Quorum raggiunto
     S1->>R1: SLAVEOF NO ONE
-    Note over R1: Promu Master
-    S1->>S2: Nouveau master: R1
-    S1->>S3: Nouveau master: R1
+    Note over R1: Promosso Master
+    S1->>S2: Nuovo master: R1
+    S1->>S3: Nuovo master: R1
 ```
 
 :::tip
-Configurez `replicas: 3` minimum pour garantir le quorum Sentinel et permettre le failover automatique.
+Configurate `replicas: 3` come minimo per garantire il quorum Sentinel e permettere il failover automatico.
 :::
 
 ---
 
-## Persistance
+## Persistenza
 
-Redis sur Hikube supporte le stockage persistant :
+Redis su Hikube supporta lo storage persistente:
 
-| Paramètre | Description |
+| Parametro | Descrizione |
 |-----------|-------------|
-| `size` | Taille du volume persistant (ex: `10Gi`) |
-| `storageClass` | `local` (performances) ou `replicated` (haute disponibilité) |
+| `size` | Dimensione del volume persistente (es: `10Gi`) |
+| `storageClass` | `local` (prestazioni) o `replicated` (alta disponibilita) |
 
-Les données Redis sont écrites sur disque via les mécanismes natifs Redis (RDB/AOF), garantissant la durabilité même en cas de redémarrage.
+I dati Redis vengono scritti su disco tramite i meccanismi nativi Redis (RDB/AOF), garantendo la durabilita anche in caso di riavvio.
 
 :::warning
-Pour la production, utilisez toujours `storageClass: replicated` pour protéger les données contre une panne de nœud.
+Per la produzione, usate sempre `storageClass: replicated` per proteggere i dati contro un guasto del nodo.
 :::
 
 ---
 
-## Authentification
+## Autenticazione
 
-Redis supporte l'authentification optionnelle :
+Redis supporta l'autenticazione opzionale:
 
-- `authEnabled: true` — un mot de passe est généré et stocké dans le Secret `<instance>-credentials`
-- `authEnabled: false` — accès sans mot de passe (à éviter en production)
+- `authEnabled: true` — una password viene generata e memorizzata nel Secret `<instance>-credentials`
+- `authEnabled: false` — accesso senza password (da evitare in produzione)
 
 ---
 
-## Presets de ressources
+## Preset di risorse
 
-| Preset | CPU | Mémoire |
+| Preset | CPU | Memoria |
 |--------|-----|---------|
 | `nano` | 250m | 128Mi |
 | `micro` | 500m | 256Mi |
@@ -149,22 +149,22 @@ Redis supporte l'authentification optionnelle :
 | `2xlarge` | 8 | 8Gi |
 
 :::warning
-Si le champ `resources` (CPU/mémoire explicites) est défini, `resourcesPreset` est ignoré.
+Se il campo `resources` (CPU/memoria espliciti) e definito, `resourcesPreset` viene ignorato.
 :::
 
 ---
 
-## Limites et quotas
+## Limiti e quote
 
-| Paramètre | Valeur |
+| Parametro | Valore |
 |-----------|--------|
-| Réplicas max | Selon quota tenant |
-| Taille stockage (`size`) | Variable (en Gi) |
-| Bases Redis | Base unique (db 0 par défaut) |
+| Repliche max | Secondo la quota del tenant |
+| Dimensione archiviazione (`size`) | Variabile (in Gi) |
+| Database Redis | Database unico (db 0 per impostazione predefinita) |
 
 ---
 
 ## Per approfondire
 
-- [Overview](./overview.md) : présentation du service
-- [Référence API](./api-reference.md) : tous les paramètres de la ressource Redis
+- [Panoramica](./overview.md): presentazione del servizio
+- [Riferimento API](./api-reference.md): tutti i parametri della risorsa Redis

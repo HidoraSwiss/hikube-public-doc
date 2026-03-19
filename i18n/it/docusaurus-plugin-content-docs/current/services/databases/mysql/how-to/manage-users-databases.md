@@ -1,22 +1,22 @@
 ---
-title: Come gestire utenti e database
+title: "Come gestire utenti e database"
 ---
 
-# Comment gérer les utilisateurs et bases de données
+# Come gestire utenti e database
 
-Ce guide vous explique comment créer et gérer les utilisateurs, les bases de données et les rôles d'accès de votre instance MySQL sur Hikube. Vous apprendrez également à basculer le noeud primary dans un cluster répliqué.
+Questa guida vi spiega come creare e gestire gli utenti, i database e i ruoli di accesso della vostra istanza MySQL su Hikube. Imparerete anche a commutare il nodo primary in un cluster replicato.
 
-## Prerequisitiiti
+## Prerequisiti
 
-- **kubectl** configuré avec votre kubeconfig Hikube
-- Une instance **MySQL** déployée sur votre tenant
-- Un client **mysql** pour tester les connexions
+- **kubectl** configurato con il vostro kubeconfig Hikube
+- Un'istanza **MySQL** distribuita sul vostro tenant
+- Un client **mysql** per testare le connessioni
 
-## Passi
+## Passaggi
 
-### 1. Ajouter un utilisateur
+### 1. Aggiungere un utente
 
-Les utilisateurs sont définis dans la section `users` du manifeste. Chaque utilisateur est identifié par un nom et peut avoir un mot de passe et une limite de connexions :
+Gli utenti sono definiti nella sezione `users` del manifesto. Ogni utente e identificato da un nome e puo avere una password e un limite di connessioni:
 
 ```yaml title="mysql-users.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -40,18 +40,18 @@ spec:
       maxUserConnections: 10
 ```
 
-| Paramètre | Description | Défaut |
+| Parametro | Descrizione | Predefinito |
 |---|---|---|
-| `users[name].password` | Mot de passe de l'utilisateur | `""` |
-| `users[name].maxUserConnections` | Nombre maximum de connexions simultanées pour cet utilisateur | `0` (illimité) |
+| `users[name].password` | Password dell'utente | `""` |
+| `users[name].maxUserConnections` | Numero massimo di connessioni simultanee per questo utente | `0` (illimitato) |
 
 :::tip
-Limitez le `maxUserConnections` par utilisateur pour éviter qu'une application ne consomme toutes les connexions disponibles du serveur.
+Limitate il `maxUserConnections` per utente per evitare che un'applicazione consumi tutte le connessioni disponibili del server.
 :::
 
-### 2. Créer une base de données avec des rôles
+### 2. Creare un database con ruoli
 
-Les bases de données sont définies dans la section `databases`. Chaque base peut attribuer des rôles **admin** (lecture/écriture) ou **readonly** (lecture seule) à des utilisateurs :
+I database sono definiti nella sezione `databases`. Ogni database puo assegnare ruoli **admin** (lettura/scrittura) o **readonly** (sola lettura) agli utenti:
 
 ```yaml title="mysql-databases.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -78,39 +78,39 @@ spec:
     production:
       roles:
         admin:
-          - appuser          # appuser a les droits complets sur "production"
+          - appuser          # appuser ha i diritti completi su "production"
         readonly:
-          - readonly         # readonly peut uniquement lire "production"
-          - analytics        # analytics peut aussi lire "production"
+          - readonly         # readonly puo solo leggere "production"
+          - analytics        # analytics puo anche leggere "production"
     analytics_db:
       roles:
         admin:
-          - analytics        # analytics a les droits complets sur "analytics_db"
+          - analytics        # analytics ha i diritti completi su "analytics_db"
         readonly:
-          - readonly         # readonly peut lire "analytics_db"
+          - readonly         # readonly puo leggere "analytics_db"
 ```
 
 :::note
-Un même utilisateur peut avoir des rôles différents sur des bases différentes. Par exemple, `analytics` est **admin** sur `analytics_db` mais **readonly** sur `production`.
+Uno stesso utente puo avere ruoli diversi su database diversi. Ad esempio, `analytics` e **admin** su `analytics_db` ma **readonly** su `production`.
 :::
 
-### 3. Appliquer les changements
+### 3. Applicare le modifiche
 
-Appliquez le manifeste pour créer ou mettre à jour les utilisateurs et bases de données :
+Applicate il manifesto per creare o aggiornare utenti e database:
 
 ```bash
 kubectl apply -f mysql-databases.yaml
 ```
 
-### 4. Récupérer les identifiants
+### 4. Recuperare le credenziali
 
-Les mots de passe sont stockés dans un Secret Kubernetes nommé `<instance>-credentials` :
+Le password sono memorizzate in un Secret Kubernetes chiamato `<instance>-credentials`:
 
 ```bash
 kubectl get secret example-credentials -o json | jq -r '.data | to_entries[] | "\(.key): \(.value|@base64d)"'
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```console
 root: cr42msoxKhnEajfo
@@ -120,12 +120,12 @@ readonly: SecureReadOnlyPassword
 ```
 
 :::tip
-Le mot de passe `root` est généré automatiquement par l'opérateur. Utilisez-le uniquement pour l'administration du cluster, jamais dans vos applications.
+La password `root` e generata automaticamente dall'operatore. Utilizzatela solo per l'amministrazione del cluster, mai nelle vostre applicazioni.
 :::
 
-### 5. Tester la connexion
+### 5. Testare la connessione
 
-#### Via port-forward (accès interne)
+#### Tramite port-forward (accesso interno)
 
 ```bash
 kubectl port-forward svc/mysql-example 3306:3306
@@ -135,56 +135,56 @@ kubectl port-forward svc/mysql-example 3306:3306
 mysql -h 127.0.0.1 -P 3306 -u appuser -p production
 ```
 
-#### Via LoadBalancer (si `external: true`)
+#### Tramite LoadBalancer (se `external: true`)
 
 ```bash
-# Récupérer l'IP externe
+# Recuperare l'IP esterno
 kubectl get svc mysql-example-primary -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
 ```
 
 ```bash
-mysql -h <IP_EXTERNE> -P 3306 -u appuser -p production
+mysql -h <IP_ESTERNO> -P 3306 -u appuser -p production
 ```
 
-Vérifiez les droits de l'utilisateur :
+Verificate i diritti dell'utente:
 
 ```sql
--- En tant que appuser (admin sur production)
+-- Come appuser (admin su production)
 SHOW DATABASES;
 CREATE TABLE test (id INT PRIMARY KEY);
 INSERT INTO test VALUES (1);
 
--- En tant que readonly (lecture seule sur production)
+-- Come readonly (sola lettura su production)
 SELECT * FROM test;       -- OK
-INSERT INTO test VALUES (2);  -- ERREUR : accès refusé
+INSERT INTO test VALUES (2);  -- ERRORE: accesso negato
 ```
 
-### 6. Basculer le noeud primary (optionnel)
+### 6. Commutare il nodo primary (opzionale)
 
-Dans un cluster MySQL répliqué, un noeud est désigné comme **primary** (écritures) et les autres comme **réplicas** (lecture). Vous pouvez basculer le rôle primary vers un autre noeud, par exemple lors d'une maintenance.
+In un cluster MySQL replicato, un nodo e designato come **primary** (scritture) e gli altri come **repliche** (lettura). Potete commutare il ruolo primary verso un altro nodo, ad esempio durante una manutenzione.
 
-#### Éditer la ressource MariaDB
+#### Modificare la risorsa MariaDB
 
 ```bash
 kubectl edit mariadb mysql-example
 ```
 
-Modifiez la section `replication` pour désigner le nouveau primary :
+Modificate la sezione `replication` per designare il nuovo primary:
 
 ```yaml title="switchover.yaml"
 spec:
   replication:
     primary:
-      podIndex: 1   # Promouvoir mysql-example-1 en primary
+      podIndex: 1   # Promuovere mysql-example-1 a primary
 ```
 
-#### Vérifier la bascule
+#### Verificare la commutazione
 
 ```bash
 kubectl get mariadb
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```console
 NAME            READY   STATUS    PRIMARY           UPDATES                    AGE
@@ -192,23 +192,23 @@ mysql-example   True    Running   mysql-example-1   ReplicasFirstPrimaryLast   8
 ```
 
 :::warning
-La bascule du primary peut entraîner une **brève interruption des écritures** pendant la promotion du nouveau noeud. Les lectures restent disponibles via les réplicas.
+La commutazione del primary puo comportare una **breve interruzione delle scritture** durante la promozione del nuovo nodo. Le letture restano disponibili tramite le repliche.
 :::
 
 ## Verifica
 
-Vérifiez la configuration complète de votre instance :
+Verificate la configurazione completa della vostra istanza:
 
 ```bash
 kubectl get mariadb example -o yaml
 ```
 
-Assurez-vous que :
-- Les utilisateurs sont présents dans la section `users`
-- Les bases de données sont listées dans la section `databases`
-- Les rôles sont correctement attribués
+Assicuratevi che:
+- Gli utenti siano presenti nella sezione `users`
+- I database siano elencati nella sezione `databases`
+- I ruoli siano correttamente assegnati
 
 ## Per approfondire
 
-- [Référence API](../api-reference.md) : liste complète des paramètres utilisateurs et bases de données
-- [Comment scaler verticalement](./scale-resources.md) : ajuster les ressources CPU et mémoire
+- [Riferimento API](../api-reference.md): lista completa dei parametri utenti e database
+- [Come scalare verticalmente](./scale-resources.md): regolare le risorse CPU e memoria

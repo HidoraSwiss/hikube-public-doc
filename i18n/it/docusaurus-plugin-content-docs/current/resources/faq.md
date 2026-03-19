@@ -3,15 +3,15 @@ sidebar_position: 2
 title: FAQ
 ---
 
-# Questions fréquentes
+# Domande frequenti
 
-Retrouvez ici les réponses aux questions les plus courantes sur l'utilisation d'Hikube.
+Trovate qui le risposte alle domande più comuni sull'utilizzo di Hikube.
 
 ---
 
-## 1. Comment récupérer mon kubeconfig ?
+## 1. Come recuperare il mio kubeconfig?
 
-Une fois votre cluster Kubernetes déployé, récupérez le kubeconfig avec :
+Una volta distribuito il vostro cluster Kubernetes, recuperate il kubeconfig con:
 
 ```bash
 kubectl get secret <nom-cluster>-admin-kubeconfig \
@@ -22,13 +22,13 @@ export KUBECONFIG=my-cluster-kubeconfig.yaml
 kubectl get nodes
 ```
 
-Voir : [Kubernetes - Démarrage rapide](../services/kubernetes/quick-start.md)
+Vedi: [Kubernetes - Avvio rapido](../services/kubernetes/quick-start.md)
 
 ---
 
-## 2. Comment récupérer les identifiants de ma base de données ?
+## 2. Come recuperare le credenziali del mio database?
 
-Les identifiants sont stockés dans un Secret Kubernetes. La commande varie selon le service :
+Le credenziali sono memorizzate in un Secret Kubernetes. Il comando varia a seconda del servizio:
 
 ```bash
 # Redis
@@ -41,43 +41,43 @@ kubectl get secret pg-<nom>-app -o json | jq -r '.data | to_entries[] | "\(.key)
 kubectl get secret mysql-<nom>-auth -o json | jq -r '.data | to_entries[] | "\(.key): \(.value|@base64d)"'
 ```
 
-Voir : [Redis - Démarrage rapide](../services/databases/redis/quick-start.md), [PostgreSQL - Démarrage rapide](../services/databases/postgresql/quick-start.md), [MySQL - Démarrage rapide](../services/databases/mysql/quick-start.md)
+Vedi: [Redis - Avvio rapido](../services/databases/redis/quick-start.md), [PostgreSQL - Avvio rapido](../services/databases/postgresql/quick-start.md), [MySQL - Avvio rapido](../services/databases/mysql/quick-start.md)
 
 ---
 
-## 3. Comment exposer un service à l'extérieur ?
+## 3. Come esporre un servizio all'esterno?
 
-Deux options sont disponibles :
+Sono disponibili due opzioni:
 
-**Option 1 : Accès externe via LoadBalancer** (recommandé pour la production)
+**Opzione 1: Accesso esterno tramite LoadBalancer** (consigliato per la produzione)
 
-Ajoutez `external: true` dans le manifeste YAML de votre service. Un LoadBalancer avec une IP publique sera créé automatiquement.
+Aggiungete `external: true` nel manifesto YAML del vostro servizio. Un LoadBalancer con un IP pubblico verrà creato automaticamente.
 
 ```yaml
 spec:
   external: true
 ```
 
-**Option 2 : Port-forward** (recommandé pour le développement)
+**Opzione 2: Port-forward** (consigliato per lo sviluppo)
 
 ```bash
 kubectl port-forward svc/<nom-du-service> <port-local>:<port-service>
 ```
 
 :::note
-Il est recommandé de ne pas exposer les bases de données à l'extérieur si vous n'en avez pas le besoin.
+Si consiglia di non esporre i database all'esterno se non ne avete la necessità.
 :::
 
 ---
 
-## 4. Quelle est la différence entre `resources` et `resourcesPreset` ?
+## 4. Qual è la differenza tra `resources` e `resourcesPreset`?
 
-- **`resourcesPreset`** : profil prédéfini (nano, micro, small, medium, large, xlarge, 2xlarge) qui alloue automatiquement CPU et mémoire.
-- **`resources`** : permet de définir **explicitement** les valeurs CPU et mémoire.
+- **`resourcesPreset`**: profilo predefinito (nano, micro, small, medium, large, xlarge, 2xlarge) che alloca automaticamente CPU e memoria.
+- **`resources`**: permette di definire **esplicitamente** i valori di CPU e memoria.
 
-Si `resources` est défini, `resourcesPreset` est **ignoré**.
+Se `resources` è definito, `resourcesPreset` viene **ignorato**.
 
-| Preset | CPU | Mémoire |
+| Preset | CPU | Memoria |
 |--------|-----|---------|
 | `nano` | 250m | 128Mi |
 | `micro` | 500m | 256Mi |
@@ -87,13 +87,13 @@ Si `resources` est défini, `resourcesPreset` est **ignoré**.
 | `xlarge` | 4 | 4Gi |
 | `2xlarge` | 8 | 8Gi |
 
-Voir : [Redis - Référence API](../services/databases/redis/api-reference.md)
+Vedi: [Redis - Riferimento API](../services/databases/redis/api-reference.md)
 
 ---
 
-## 5. Comment choisir mon instanceType pour Kubernetes ?
+## 5. Come scegliere il mio instanceType per Kubernetes?
 
-Le paramètre `instanceType` dans les `nodeGroups` détermine les ressources de chaque nœud worker :
+Il parametro `instanceType` nei `nodeGroups` determina le risorse di ogni nodo worker:
 
 | Instance Type | vCPU | RAM |
 |---------------|------|-----|
@@ -103,18 +103,18 @@ Le paramètre `instanceType` dans les `nodeGroups` détermine les ressources de 
 | `s1.xlarge` | 8 | 16 GB |
 | `s1.2xlarge` | 16 | 32 GB |
 
-Choisissez en fonction de vos workloads :
-- **Applications web classiques** : `s1.large` (bon équilibre coût/performance)
-- **Applications gourmandes en mémoire** : `s1.xlarge` ou `s1.2xlarge`
-- **Environnements de développement** : `s1.small` ou `s1.medium`
+Scegliete in base ai vostri workload:
+- **Applicazioni web classiche**: `s1.large` (buon equilibrio costo/prestazioni)
+- **Applicazioni con elevato consumo di memoria**: `s1.xlarge` o `s1.2xlarge`
+- **Ambienti di sviluppo**: `s1.small` o `s1.medium`
 
-Voir : [Kubernetes - Référence API](../services/kubernetes/api-reference.md)
+Vedi: [Kubernetes - Riferimento API](../services/kubernetes/api-reference.md)
 
 ---
 
-## 6. Comment activer les backups S3 ?
+## 6. Come attivare i backup S3?
 
-Pour les bases de données qui le supportent (PostgreSQL, ClickHouse), ajoutez la section `backup` dans votre manifeste :
+Per i database che lo supportano (PostgreSQL, ClickHouse), aggiungete la sezione `backup` nel vostro manifesto:
 
 ```yaml
 spec:
@@ -127,33 +127,33 @@ spec:
       secretKey: "SECRET_KEY"
 ```
 
-Voir : [PostgreSQL - Référence API](../services/databases/postgresql/api-reference.md)
+Vedi: [PostgreSQL - Riferimento API](../services/databases/postgresql/api-reference.md)
 
 ---
 
-## 7. Comment accéder à Grafana et mes dashboards ?
+## 7. Come accedere a Grafana e alle mie dashboard?
 
-Si le monitoring est activé sur votre tenant, Grafana est accessible via une URL dédiée. Pour la retrouver :
+Se il monitoring è attivato sul vostro tenant, Grafana è accessibile tramite un URL dedicato. Per trovarlo:
 
 ```bash
-# Vérifier les Ingress de monitoring
+# Verificare gli Ingress di monitoring
 kubectl get ingress -n monitoring
 
-# Ou vérifier les services
+# Oppure verificare i servizi
 kubectl get svc -n monitoring | grep grafana
 ```
 
-Les dashboards sont préconfigurés pour chaque type de ressource (Kubernetes, bases de données, VMs, etc.).
+Le dashboard sono preconfigurate per ogni tipo di risorsa (Kubernetes, database, VM, ecc.).
 
-Voir : [Concepts clés - Observabilité](../getting-started/concepts.md)
+Vedi: [Concetti chiave - Osservabilità](../getting-started/concepts.md)
 
 ---
 
-## 8. Comment scaler mon cluster ?
+## 8. Come scalare il mio cluster?
 
-### Scaler les réplicas d'une base de données
+### Scalare le repliche di un database
 
-Modifiez le champ `replicas` dans votre manifeste et réappliquez :
+Modificate il campo `replicas` nel vostro manifesto e riapplicate:
 
 ```yaml
 spec:
@@ -164,9 +164,9 @@ spec:
 kubectl apply -f <manifeste>.yaml
 ```
 
-### Scaler les nœuds Kubernetes
+### Scalare i nodi Kubernetes
 
-Les nœuds scalent automatiquement entre `minReplicas` et `maxReplicas` selon la charge. Pour modifier les limites, ajustez la configuration du `nodeGroup` :
+I nodi scalano automaticamente tra `minReplicas` e `maxReplicas` in base al carico. Per modificare i limiti, regolate la configurazione del `nodeGroup`:
 
 ```yaml
 spec:
@@ -176,65 +176,65 @@ spec:
       maxReplicas: 10
 ```
 
-Voir : [Kubernetes - Démarrage rapide](../services/kubernetes/quick-start.md)
+Vedi: [Kubernetes - Avvio rapido](../services/kubernetes/quick-start.md)
 
 ---
 
-## 9. Quels sont les storageClass disponibles ?
+## 9. Quali sono le storageClass disponibili?
 
-| StorageClass | Description |
+| StorageClass | Descrizione |
 |-------------|-------------|
-| `""` (défaut) | Stockage standard, données sur un seul datacenter |
-| `replicated` | Stockage répliqué sur plusieurs datacenters, haute disponibilité |
+| `""` (predefinita) | Archiviazione standard, dati su un singolo datacenter |
+| `replicated` | Archiviazione replicata su più datacenter, alta disponibilità |
 
-Utilisez `replicated` pour les workloads de production nécessitant une tolérance aux pannes matérielles.
+Utilizzate `replicated` per i workload di produzione che richiedono tolleranza ai guasti hardware.
 
 ```yaml
 spec:
   storageClass: replicated
 ```
 
-Voir : [Kubernetes - Référence API](../services/kubernetes/api-reference.md)
+Vedi: [Kubernetes - Riferimento API](../services/kubernetes/api-reference.md)
 
 ---
 
-## 10. Comment fonctionne l'auto-failover sur les bases de données ?
+## 10. Come funziona l'auto-failover sui database?
 
-Chaque service de base de données managé dispose d'un mécanisme d'auto-failover :
+Ogni servizio di database gestito dispone di un meccanismo di auto-failover:
 
-| Service | Mécanisme | Fonctionnement |
+| Servizio | Meccanismo | Funzionamento |
 |---------|-----------|----------------|
-| **Redis** | Redis Sentinel | Surveille le master, promeut automatiquement un réplica en cas de panne |
-| **PostgreSQL** | CloudNativePG | Détection de panne et promotion automatique d'un standby |
-| **MySQL** | MySQL Operator | Réplication semi-synchrone avec failover automatique |
-| **ClickHouse** | ClickHouse Keeper | Consensus distribué pour la coordination des shards et réplicas |
-| **RabbitMQ** | Quorum Queues | Réplication Raft pour la tolérance aux pannes des messages |
+| **Redis** | Redis Sentinel | Monitora il master, promuove automaticamente una replica in caso di guasto |
+| **PostgreSQL** | CloudNativePG | Rilevamento del guasto e promozione automatica di uno standby |
+| **MySQL** | MySQL Operator | Replica semi-sincrona con failover automatico |
+| **ClickHouse** | ClickHouse Keeper | Consenso distribuito per il coordinamento di shard e repliche |
+| **RabbitMQ** | Quorum Queues | Replica Raft per la tolleranza ai guasti dei messaggi |
 
-L'auto-failover est **activé par défaut** lorsque `replicas > 1`. Aucune configuration supplémentaire n'est nécessaire.
+L'auto-failover è **attivato per impostazione predefinita** quando `replicas > 1`. Nessuna configurazione aggiuntiva è necessaria.
 
-Voir : [Redis - Vue d'ensemble](../services/databases/redis/overview.md), [PostgreSQL - Vue d'ensemble](../services/databases/postgresql/overview.md)
+Vedi: [Redis - Panoramica](../services/databases/redis/overview.md), [PostgreSQL - Panoramica](../services/databases/postgresql/overview.md)
 
 ---
 
-## 11. Pourquoi `kubectl get ... -A` retourne "Forbidden" ?
+## 11. Perché `kubectl get ... -A` restituisce "Forbidden"?
 
-Le flag `-A` (`--all-namespaces`) effectue une requête au **niveau cluster** (cluster scope). Or, les utilisateurs tenant disposent uniquement de **rôles limités à leur namespace**. Kubernetes ne filtre pas automatiquement les namespaces autorisés : la requête cluster-scope est refusée intégralement.
+Il flag `-A` (`--all-namespaces`) effettua una richiesta a **livello cluster** (cluster scope). Tuttavia, gli utenti tenant dispongono unicamente di **ruoli limitati al loro namespace**. Kubernetes non filtra automaticamente i namespace autorizzati: la richiesta cluster-scope viene rifiutata integralmente.
 
-**Solution :** ne pas utiliser `-A`. Votre kubeconfig définit déjà votre namespace cible, les commandes fonctionnent directement :
+**Soluzione:** non utilizzare `-A`. Il vostro kubeconfig definisce già il vostro namespace di destinazione, i comandi funzionano direttamente:
 
 ```bash
-# Correct
+# Corretto
 kubectl get pods
 kubectl get kubernetes
 
-# Incorrect (Forbidden)
+# Errato (Forbidden)
 kubectl get pods -A
 kubectl get kubernetes -A
 ```
 
-Les commandes `kubectl config` (locales) ne sont pas concernées :
+I comandi `kubectl config` (locali) non sono interessati:
 ```bash
-# Fonctionne toujours
+# Funziona sempre
 kubectl config current-context
 kubectl config get-contexts
 ```

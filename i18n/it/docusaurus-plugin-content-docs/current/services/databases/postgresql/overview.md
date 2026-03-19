@@ -3,28 +3,28 @@ sidebar_position: 1
 title: Panoramica
 ---
 
-# PostgreSQL sur Hikube
+# PostgreSQL su Hikube
 
-Hikube propose un service PostgreSQL managé, basé sur l’opérateur **CloudNativePG**, reconnu et largement adopté par la communauté.  
-La plateforme prend en charge le déploiement et la gestion d’un cluster PostgreSQL **répliqué et auto-réparant**, garantissant robustesse, performance et haute disponibilité sans effort côté utilisateur.
+Hikube offre un servizio PostgreSQL gestito, basato sull'operatore **CloudNativePG**, riconosciuto e ampiamente adottato dalla comunita.
+La piattaforma supporta il deployment e la gestione di un cluster PostgreSQL **replicato e auto-riparante**, garantendo robustezza, prestazioni e alta disponibilita senza sforzo lato utente.
 
 ---
 
-## 🏗️ Architecture et Fonctionnement
+## 🏗️ Architettura e Funzionamento
 
-Le service PostgreSQL managé sur Hikube repose sur l’opérateur **CloudNativePG**, qui automatise la gestion complète du cycle de vie de la base de données : création, mise à jour, réplication et reprise après incident.  
+Il servizio PostgreSQL gestito su Hikube si basa sull'operatore **CloudNativePG**, che automatizza la gestione completa del ciclo di vita del database: creazione, aggiornamento, replica e ripristino dopo un incidente.
 
-L’architecture est construite autour d’un **cluster répliqué** :  
+L'architettura e costruita attorno a un **cluster replicato**:
 
-- Un **nœud primaire** (primary) qui traite les écritures et sert de référence pour la cohérence des données.  
-- Un ou plusieurs **réplicas** (standby) qui reçoivent en temps réel les modifications grâce à la réplication synchrone ou asynchrone.  
-- Un mécanisme d’**auto-failover**, qui permet de promouvoir automatiquement un réplica en tant que nouveau primaire en cas de panne, assurant ainsi une **haute disponibilité** sans intervention manuelle.  
+- Un **nodo primario** (primary) che gestisce le scritture e funge da riferimento per la coerenza dei dati.
+- Una o piu **repliche** (standby) che ricevono in tempo reale le modifiche grazie alla replica sincrona o asincrona.
+- Un meccanismo di **auto-failover**, che permette di promuovere automaticamente una replica come nuovo primario in caso di guasto, assicurando cosi un'**alta disponibilita** senza intervento manuale.
 
-Cette approche garantit :  
+Questo approccio garantisce:
 
-- **Résilience** face aux pannes matérielles ou logicielles  
-- **Scalabilité en lecture** grâce à la répartition des requêtes entre les réplicas  
-- **Simplicité opérationnelle**, car la plateforme gère la coordination et la maintenance du cluster  
+- **Resilienza** di fronte a guasti hardware o software
+- **Scalabilita in lettura** grazie alla distribuzione delle query tra le repliche
+- **Semplicita operativa**, poiche la piattaforma gestisce il coordinamento e la manutenzione del cluster
 
 ```mermaid
 graph TD
@@ -40,16 +40,16 @@ graph TD
         P3[Pod PostgreSQL Standby] --> PVC3[(PVC - Storage)]
     end
 
-    P1 -->|Réplication| P2
-    P1 -->|Réplication| P3
+    P1 -->|Replica| P2
+    P1 -->|Replica| P3
 ```
 
 ---
 
-## 💡 Cas d’usage
+## 💡 Casi d'uso
 
-- **Applications métiers critiques** nécessitant une base fiable et hautement disponible  
-- **E-commerce et ERP**, où la continuité de service est indispensable  
-- **SaaS multi-tenant**, permettant de répartir les charges entre primaire et réplicas  
-- **Business Intelligence et reporting**, grâce à la lecture optimisée sur les réplicas  
-- **Applications cloud natives**, intégrées dans des environnements Kubernetes  
+- **Applicazioni aziendali critiche** che necessitano di un database affidabile e ad alta disponibilita
+- **E-commerce ed ERP**, dove la continuita del servizio e indispensabile
+- **SaaS multi-tenant**, che permette di distribuire i carichi tra primario e repliche
+- **Business Intelligence e reporting**, grazie alla lettura ottimizzata sulle repliche
+- **Applicazioni cloud native**, integrate in ambienti Kubernetes

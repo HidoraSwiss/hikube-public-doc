@@ -3,27 +3,27 @@ sidebar_position: 2
 title: Concetti
 ---
 
-# Concepts — GPU
+# Concetti — GPU
 
 ## Architettura
 
-Hikube permet d'attacher des GPU NVIDIA directement aux machines virtuelles et aux clusters Kubernetes. L'allocation GPU est gérée par le **NVIDIA GPU Operator** côté Kubernetes, et par le **passthrough PCI** côté machines virtuelles (KubeVirt).
+Hikube permette di collegare GPU NVIDIA direttamente alle macchine virtuali e ai cluster Kubernetes. L'allocazione GPU è gestita dal **NVIDIA GPU Operator** lato Kubernetes, e dal **passthrough PCI** lato macchine virtuali (KubeVirt).
 
 ```mermaid
 graph TB
     subgraph "Hikube Platform"
-        subgraph "GPU physiques"
+        subgraph "GPU fisiche"
             G1[NVIDIA L40S]
             G2[NVIDIA A100]
             G3[NVIDIA H100]
         end
 
-        subgraph "Allocation VM"
+        subgraph "Allocazione VM"
             VMI[VMInstance]
             PT[PCI Passthrough]
         end
 
-        subgraph "Allocation Kubernetes"
+        subgraph "Allocazione Kubernetes"
             K8S[Cluster Kubernetes]
             DP[Device Plugin]
             GO[GPU Operator]
@@ -46,27 +46,27 @@ graph TB
 
 ## Terminologia
 
-| Terme | Description |
+| Termine | Descrizione |
 |-------|-------------|
-| **GPU Operator** | NVIDIA GPU Operator — gère automatiquement les pilotes, le device plugin et le runtime GPU sur les nœuds Kubernetes. |
-| **Device Plugin** | Plugin Kubernetes qui expose les GPU comme ressources planifiables (`nvidia.com/<model>`). |
-| **PCI Passthrough** | Technique qui attribue un GPU physique directement à une VM, offrant des performances natives. |
-| **CUDA** | Plateforme de calcul parallèle NVIDIA, utilisée pour l'accélération GPU (ML, HPC, rendu). |
-| **Instance Type** | Profil de ressources CPU/RAM de la VM. Dimensionné en fonction du nombre de GPU (8-16 vCPU par GPU recommandé). |
+| **GPU Operator** | NVIDIA GPU Operator — gestisce automaticamente i driver, il device plugin e il runtime GPU sui nodi Kubernetes. |
+| **Device Plugin** | Plugin Kubernetes che espone le GPU come risorse pianificabili (`nvidia.com/<model>`). |
+| **PCI Passthrough** | Tecnica che assegna una GPU fisica direttamente a una VM, offrendo prestazioni native. |
+| **CUDA** | Piattaforma di calcolo parallelo NVIDIA, utilizzata per l'accelerazione GPU (ML, HPC, rendering). |
+| **Instance Type** | Profilo di risorse CPU/RAM della VM. Dimensionato in funzione del numero di GPU (8-16 vCPU per GPU raccomandato). |
 
 ---
 
-## Types de GPU disponibles
+## Tipi di GPU disponibili
 
-| GPU | Architecture | Mémoire | Performance (INT8) | Cas d'usage |
+| GPU | Architettura | Memoria | Prestazioni (INT8) | Caso d'uso |
 |-----|-------------|---------|-------------------|-------------|
-| **L40S** | Ada Lovelace | 48 GB GDDR6 | 362 TOPS | Inférence, développement, prototypage |
-| **A100** | Ampere | 80 GB HBM2e | 312 TOPS | Entraînement ML, fine-tuning |
-| **H100** | Hopper | 80 GB HBM3 | 1979 TOPS | LLM, calcul exascale, entraînement distribué |
+| **L40S** | Ada Lovelace | 48 GB GDDR6 | 362 TOPS | Inferenza, sviluppo, prototipazione |
+| **A100** | Ampere | 80 GB HBM2e | 312 TOPS | Addestramento ML, fine-tuning |
+| **H100** | Hopper | 80 GB HBM3 | 1979 TOPS | LLM, calcolo exascale, addestramento distribuito |
 
-### Identifiants GPU dans les manifestes
+### Identificativi GPU nei manifest
 
-| GPU | Valeur `gpus[].name` / `nvidia.com/` |
+| GPU | Valore `gpus[].name` / `nvidia.com/` |
 |-----|---------------------------------------|
 | L40S | `nvidia.com/AD102GL_L40S` |
 | A100 | `nvidia.com/GA100_A100_PCIE_80GB` |
@@ -74,29 +74,29 @@ graph TB
 
 ---
 
-## GPU sur machines virtuelles
+## GPU su macchine virtuali
 
-Les GPU sont attachés aux VM via **PCI passthrough** :
+Le GPU sono collegate alle VM tramite **PCI passthrough**:
 
-- Le GPU physique est dédié à la VM (performances natives)
-- Déclaré dans `spec.gpus[]` du manifeste `VMInstance`
-- Multi-GPU possible (répéter les entrées dans `gpus[]`)
-- Les pilotes NVIDIA doivent être installés dans la VM
+- La GPU fisica è dedicata alla VM (prestazioni native)
+- Dichiarata in `spec.gpus[]` del manifest `VMInstance`
+- Multi-GPU possibile (ripetere le voci in `gpus[]`)
+- I driver NVIDIA devono essere installati nella VM
 
-:::tip Ratio CPU/GPU recommandé
-Prévoyez **8 à 16 vCPU par GPU**. Pour un seul GPU, un `u1.2xlarge` (8 vCPU, 32 GB RAM) est un bon point de départ.
+:::tip Rapporto CPU/GPU raccomandato
+Prevedete **da 8 a 16 vCPU per GPU**. Per una singola GPU, un `u1.2xlarge` (8 vCPU, 32 GB RAM) è un buon punto di partenza.
 :::
 
 ---
 
-## GPU sur Kubernetes
+## GPU su Kubernetes
 
-Les GPU sont exposés aux pods via le **NVIDIA Device Plugin** :
+Le GPU sono esposte ai pod tramite il **NVIDIA Device Plugin**:
 
-- Le GPU Operator doit être activé sur le cluster (`plugins.gpu-operator.enabled: true`)
-- Les pods demandent un GPU via `resources.limits` (ex: `nvidia.com/AD102GL_L40S: 1`)
-- Le scheduler Kubernetes place le pod sur un nœud disposant du GPU demandé
-- Les nœuds GPU sont configurés dans les **node groups** avec le champ `gpus[]`
+- Il GPU Operator deve essere attivato sul cluster (`plugins.gpu-operator.enabled: true`)
+- I pod richiedono una GPU tramite `resources.limits` (es: `nvidia.com/AD102GL_L40S: 1`)
+- Lo scheduler Kubernetes posiziona il pod su un nodo che dispone della GPU richiesta
+- I nodi GPU sono configurati nei **node group** con il campo `gpus[]`
 
 ```mermaid
 graph LR
@@ -118,30 +118,30 @@ graph LR
 
 ---
 
-## Comparaison VM vs Kubernetes
+## Confronto VM vs Kubernetes
 
-| Critère | GPU sur VM | GPU sur Kubernetes |
+| Criterio | GPU su VM | GPU su Kubernetes |
 |---------|-----------|-------------------|
-| **Isolation** | GPU dédié (passthrough) | GPU partagé via device plugin |
-| **Performance** | Performances natives | Performances natives |
-| **Flexibilité** | OS complet, pilotes manuels | Conteneurs, scaling automatique |
-| **Multi-GPU** | Via `spec.gpus[]` | Via `resources.limits` |
-| **Cas d'usage** | Workstations, environnements interactifs | Pipelines ML, inférence à grande échelle |
+| **Isolamento** | GPU dedicata (passthrough) | GPU condivisa tramite device plugin |
+| **Prestazioni** | Prestazioni native | Prestazioni native |
+| **Flessibilità** | OS completo, driver manuali | Container, scaling automatico |
+| **Multi-GPU** | Tramite `spec.gpus[]` | Tramite `resources.limits` |
+| **Caso d'uso** | Workstation, ambienti interattivi | Pipeline ML, inferenza su larga scala |
 
 ---
 
-## Limites et quotas
+## Limiti e quote
 
-| Paramètre | Valeur |
+| Parametro | Valore |
 |-----------|--------|
-| GPU par VM | Multiples (selon disponibilité) |
-| GPU par pod Kubernetes | Multiples (via `resources.limits`) |
-| Types de GPU | L40S, A100, H100 |
-| Mémoire GPU max | 80 GB (A100/H100) |
+| GPU per VM | Multipli (secondo disponibilità) |
+| GPU per pod Kubernetes | Multipli (tramite `resources.limits`) |
+| Tipi di GPU | L40S, A100, H100 |
+| Memoria GPU max | 80 GB (A100/H100) |
 
 ---
 
 ## Per approfondire
 
-- [Overview](./overview.md) : présentation du service GPU
-- [Référence API](./api-reference.md) : configuration GPU détaillée
+- [Panoramica](./overview.md): presentazione del servizio GPU
+- [Riferimento API](./api-reference.md): configurazione GPU dettagliata

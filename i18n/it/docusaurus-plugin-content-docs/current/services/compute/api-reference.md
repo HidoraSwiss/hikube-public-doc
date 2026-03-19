@@ -3,17 +3,17 @@ sidebar_position: 3
 title: Riferimento API
 ---
 
-## API Reference – Machines Virtuelles
+## Riferimento API – Macchine Virtuali
 
-Cette référence décrit de manière exhaustive les APIs **VMInstance** et **VMDisk** d’Hikube : paramètres disponibles, exemples d’utilisation et bonnes pratiques recommandées.
+Questo riferimento descrive in modo esaustivo le API **VMInstance** e **VMDisk** di Hikube: parametri disponibili, esempi di utilizzo e buone pratiche raccomandate.
 
 ---
 
 ## VMInstance
 
-### Vue d’ensemble
+### Panoramica
 
-L’API `VMInstance` permet de créer, configurer et gérer des machines virtuelles dans Hikube.
+L'API `VMInstance` permette di creare, configurare e gestire macchine virtuali in Hikube.
 
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
@@ -21,31 +21,31 @@ kind: VMInstance
 metadata:
   name: example-vm
 spec:
-  # Configuration détaillée ci-dessous
+  # Configurazione dettagliata qui sotto
 ```
 
 ---
 
-### Spécification complète
+### Specifica completa
 
-#### Paramètres généraux
+#### Parametri generali
 
-| Paramètre         | Type       | Description                                  | Défaut     | Requis |
+| Parametro         | Tipo       | Descrizione                                  | Default    | Richiesto |
 | ----------------- | ---------- | -------------------------------------------- | ---------- | ------ |
-| `external`        | `boolean`  | Active l’exposition réseau externe de la VM  | `false`    | ✅      |
-| `externalMethod`  | `string`   | Méthode d’exposition (`PortList`, `WholeIP`) | `PortList` | ✅      |
-| `externalPorts`   | `[]int`    | Ports exposés vers l’extérieur               | `[]`       | ✅      |
-| `running`         | `boolean`  | État souhaité de la VM                       | `true`     | ✅      |
-| `instanceType`    | `string`   | Gabarit CPU / mémoire                        | –          | ✅      |
-| `instanceProfile` | `string`   | Profil OS de la VM                           | –          | ✅      |
-| `disks`           | `[]string` | Liste des `VMDisk` attachés                  | `[]`       | ✅      |
-| `sshKeys`         | `[]string` | Clés SSH publiques injectées                 | `[]`       | ✅      |
-| `cloudInit`       | `string`   | Configuration cloud-init (YAML)              | `""`       | ✅      |
-| `cloudInitSeed`   | `string`   | Données seed cloud-init                      | `""`       | ✅      |
+| `external`        | `boolean`  | Attiva l'esposizione di rete esterna della VM  | `false`    | ✅      |
+| `externalMethod`  | `string`   | Metodo di esposizione (`PortList`, `WholeIP`) | `PortList` | ✅      |
+| `externalPorts`   | `[]int`    | Porte esposte verso l'esterno               | `[]`       | ✅      |
+| `running`         | `boolean`  | Stato desiderato della VM                       | `true`     | ✅      |
+| `instanceType`    | `string`   | Modello CPU / memoria                        | –          | ✅      |
+| `instanceProfile` | `string`   | Profilo OS della VM                           | –          | ✅      |
+| `disks`           | `[]string` | Lista dei `VMDisk` collegati                  | `[]`       | ✅      |
+| `sshKeys`         | `[]string` | Chiavi SSH pubbliche iniettate                 | `[]`       | ✅      |
+| `cloudInit`       | `string`   | Configurazione cloud-init (YAML)              | `""`       | ✅      |
+| `cloudInitSeed`   | `string`   | Dati seed cloud-init                      | `""`       | ✅      |
 
 ---
 
-### Configuration réseau
+### Configurazione di rete
 
 ```yaml
 spec:
@@ -59,11 +59,11 @@ spec:
 
 ---
 
-### Types d’instances
+### Tipi di istanze
 
-#### Série S – Standard (ratio 1:2)
+#### Serie S – Standard (rapporto 1:2)
 
-Workloads généraux, CPU partagés et burstables.
+Workload generali, CPU condivisi e burstable.
 
 ```yaml
 instanceType: s1.small     # 1 vCPU, 2 GB RAM
@@ -77,7 +77,7 @@ instanceType: s1.4xlarge   # 32 vCPU, 64 GB RAM
 instanceType: s1.8xlarge   # 64 vCPU, 128 GB RAM
 ```
 
-#### Série U – Universal (ratio 1:4)
+#### Serie U – Universal (rapporto 1:4)
 
 ```yaml
 instanceType: u1.medium    # 1 vCPU, 4 GB RAM
@@ -88,7 +88,7 @@ instanceType: u1.4xlarge   # 16 vCPU, 64 GB RAM
 instanceType: u1.8xlarge   # 32 vCPU, 128 GB RAM
 ```
 
-#### Série M – Memory Optimized (ratio 1:8)
+#### Serie M – Memory Optimized (rapporto 1:8)
 
 ```yaml
 instanceType: m1.large     # 2 vCPU, 16 GB RAM
@@ -100,13 +100,13 @@ instanceType: m1.8xlarge   # 32 vCPU, 256 GB RAM
 
 ---
 
-### Profils d’OS supportés
+### Profili OS supportati
 
-Les profils suivants sont disponibles pour configurer le système d'exploitation de la VM :
+I profili seguenti sono disponibili per configurare il sistema operativo della VM:
 
-| Profil | Description |
+| Profilo | Descrizione |
 |--------|-------------|
-| `ubuntu` | Ubuntu Server (recommandé) |
+| `ubuntu` | Ubuntu Server (raccomandato) |
 | `centos` | CentOS Stream |
 | `debian` | Debian |
 | `fedora` | Fedora Server |
@@ -114,7 +114,7 @@ Les profils suivants sont disponibles pour configurer le système d'exploitation
 
 ---
 
-### Configuration SSH
+### Configurazione SSH
 
 ```yaml
 spec:
@@ -145,7 +145,7 @@ spec:
 
 ---
 
-### Exemple complet VMInstance
+### Esempio completo VMInstance
 
 ```yaml title="production-vm.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -170,10 +170,10 @@ spec:
 
 ## VMDisk
 
-### Vue d’ensemble
+### Panoramica
 
-L’API `VMDisk` permet de gérer les disques virtuels associés aux VMs.
-Elle supporte **plusieurs sources d’images** : HTTP, disque vide et **Golden Images**.
+L'API `VMDisk` permette di gestire i dischi virtuali associati alle VM.
+Supporta **diverse sorgenti di immagini**: HTTP, disco vuoto e **Golden Image**.
 
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
@@ -191,20 +191,20 @@ spec:
 
 ---
 
-### Paramètres principaux
+### Parametri principali
 
-| Paramètre      | Type      | Description              | Défaut       | Requis |
+| Parametro      | Tipo      | Descrizione              | Default      | Richiesto |
 | -------------- | --------- | ------------------------ | ------------ | ------ |
-| `source`       | `object`  | Source de l’image disque | `{}`         | ✅      |
-| `optical`      | `boolean` | Disque optique (ISO)     | `false`      | ✅      |
-| `storage`      | `string`  | Taille du disque         | –            | ✅      |
-| `storageClass` | `string`  | Classe de stockage       | `replicated` | ✅      |
+| `source`       | `object`  | Sorgente dell'immagine disco | `{}`         | ✅      |
+| `optical`      | `boolean` | Disco ottico (ISO)     | `false`      | ✅      |
+| `storage`      | `string`  | Dimensione del disco         | –            | ✅      |
+| `storageClass` | `string`  | Classe di storage       | `replicated` | ✅      |
 
 ---
 
-## Sources d’images
+## Sorgenti di immagini
 
-### Source HTTP / HTTPS
+### Sorgente HTTP / HTTPS
 
 ```yaml
 spec:
@@ -215,7 +215,7 @@ spec:
 
 ---
 
-### Disque vide
+### Disco vuoto
 
 ```yaml
 spec:
@@ -224,17 +224,17 @@ spec:
 
 ---
 
-### Golden Images (Images préchargées Hikube)
+### Golden Image (Immagini precaricate Hikube)
 
-Les **Golden Images** sont des images système maintenues et préchargées dans Hikube.
-Elles permettent un **provisionnement rapide**, standardisé et sans dépendance externe.
+Le **Golden Image** sono immagini di sistema mantenute e precaricate in Hikube.
+Permettono un **provisioning rapido**, standardizzato e senza dipendenze esterne.
 
-:::tip Convention de nommage
-Les images suivent le format `{os}-{version}` (ex : `ubuntu-2404`, `rocky-9`).
-Spécifiez toujours la version pour garantir la compatibilité de vos workloads.
+:::tip Convenzione di denominazione
+Le immagini seguono il formato `{os}-{version}` (es.: `ubuntu-2404`, `rocky-9`).
+Specificate sempre la versione per garantire la compatibilità dei vostri workload.
 :::
 
-#### Utilisation
+#### Utilizzo
 
 ```yaml
 spec:
@@ -243,9 +243,9 @@ spec:
       name: ubuntu-2404
 ```
 
-#### Images disponibles
+#### Immagini disponibili
 
-| Nom | Système d'exploitation | Type | Stockage min. |
+| Nome | Sistema operativo | Tipo | Storage min. |
 | --- | ---------------------- | ---- | :-----------: |
 | `almalinux-8` | AlmaLinux 8 | Cloud | 11 Gi |
 | `almalinux-9` | AlmaLinux 9 | Cloud | 11 Gi |
@@ -271,16 +271,16 @@ spec:
 | `proxmox-9` | Proxmox VE 9 | ISO | 2 Gi |
 | `talos-112` | Talos Linux 1.12 | Cloud | 8 Gi |
 
-:::warning Images ISO
-Les images de type **ISO** (Proxmox) sont des installeurs, pas des images cloud prêtes à l'emploi.
-Elles nécessitent une installation manuelle via la console VNC.
+:::warning Immagini ISO
+Le immagini di tipo **ISO** (Proxmox) sono installer, non immagini cloud pronte all'uso.
+Richiedono un'installazione manuale tramite la console VNC.
 :::
 
 ---
 
-### Exemples VMDisk
+### Esempi VMDisk
 
-#### Disque système via Golden Image
+#### Disco di sistema tramite Golden Image
 
 ```yaml title="ubuntu-golden-disk.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -298,53 +298,53 @@ spec:
 
 ---
 
-## Classes de stockage
+## Classi di storage
 
-| Classe       | Description         | Réplication |
+| Classe       | Descrizione         | Replica |
 | ------------ | ------------------- | ----------- |
-| `local`      | Stockage local nœud | ❌           |
-| `replicated` | Stockage répliqué   | ✅           |
+| `local`      | Storage locale nodo | ❌           |
+| `replicated` | Storage replicato   | ✅           |
 
 ---
 
-## Méthodes d’exposition réseau
+## Metodi di esposizione di rete
 
 ### PortList
 
-* Firewall automatique
-* Ports explicitement autorisés
-* **Recommandé en production**
+* Firewall automatico
+* Porte esplicitamente autorizzate
+* **Raccomandato in produzione**
 
 ### WholeIP
 
-* Tous les ports exposés
-* Aucun filtrage réseau
-* Usage développement uniquement
+* Tutte le porte esposte
+* Nessun filtraggio di rete
+* Solo per sviluppo
 
-:::warning Sécurité
-Avec `WholeIP`, la VM est entièrement exposée sur Internet.
-Un firewall OS est indispensable.
+:::warning Sicurezza
+Con `WholeIP`, la VM è interamente esposta su Internet.
+Un firewall OS è indispensabile.
 :::
 
 ---
 
 ## Buone pratiche
 
-### Sécurité
+### Sicurezza
 
-* Clés SSH uniquement
-* Firewall OS actif
+* Solo chiavi SSH
+* Firewall OS attivo
 
-### Stockage
+### Archiviazione
 
-* `replicated` en production
-* Disques séparés système / données
+* `replicated` in produzione
+* Dischi separati sistema / dati
 
-### Performance
+### Prestazioni
 
-* Adapter le type d’instance au workload
-* Suivre l’utilisation réelle
+* Adattare il tipo di istanza al workload
+* Monitorare l'utilizzo reale
 
-:::tip Architecture recommandée
-En production, utilisez au minimum **2 disques** (système + données) en stockage répliqué.
+:::tip Architettura raccomandata
+In produzione, utilizzate come minimo **2 dischi** (sistema + dati) con storage replicato.
 :::

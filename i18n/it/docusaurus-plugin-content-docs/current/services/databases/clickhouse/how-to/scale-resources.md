@@ -1,36 +1,36 @@
 ---
-title: "Comment scaler verticalement ClickHouse"
+title: "Come scalare verticalmente ClickHouse"
 ---
 
-# Comment scaler verticalement ClickHouse
+# Come scalare verticalmente ClickHouse
 
-Ce guide explique comment ajuster les ressources CPU, memoire et stockage de votre instance ClickHouse sur Hikube, soit via un preset predefini, soit en definissant des valeurs explicites.
+Questa guida spiega come regolare le risorse CPU, memoria e archiviazione della vostra istanza ClickHouse su Hikube, sia tramite un preset predefinito, sia definendo valori espliciti.
 
-## Prerequisitiiti
+## Prerequisiti
 
-- Une instance ClickHouse deployee sur Hikube (voir le [demarrage rapide](../quick-start.md))
-- `kubectl` configure pour interagir avec l'API Hikube
-- Le fichier YAML de configuration de votre instance ClickHouse
+- Un'istanza ClickHouse distribuita su Hikube (vedere l'[avvio rapido](../quick-start.md))
+- `kubectl` configurato per interagire con l'API Hikube
+- Il file YAML di configurazione della vostra istanza ClickHouse
 
-## Passi
+## Passaggi
 
-### 1. Verifier les ressources actuelles
+### 1. Verificare le risorse attuali
 
-Consultez la configuration actuelle de votre instance ClickHouse :
+Consultate la configurazione attuale della vostra istanza ClickHouse:
 
 ```bash
 kubectl get clickhouse my-clickhouse -o yaml
 ```
 
-Notez les valeurs de `resourcesPreset`, `resources`, `replicas`, `shards` et `size` dans la section `spec`.
+Annotate i valori di `resourcesPreset`, `resources`, `replicas`, `shards` e `size` nella sezione `spec`.
 
-### 2. Modifier le resourcesPreset ou les resources explicites
+### 2. Modificare il resourcesPreset o le risorse esplicite
 
-#### Option A : Utiliser un preset
+#### Opzione A: Usare un preset
 
-Voici les presets disponibles :
+Ecco i preset disponibili:
 
-| **Preset** | **CPU** | **Memoire** |
+| **Preset** | **CPU** | **Memoria** |
 |------------|---------|-------------|
 | `nano`     | 250m    | 128Mi       |
 | `micro`    | 500m    | 256Mi       |
@@ -40,7 +40,7 @@ Voici les presets disponibles :
 | `xlarge`   | 4       | 4Gi         |
 | `2xlarge`  | 8       | 8Gi         |
 
-Par exemple, pour passer de `small` (valeur par defaut) a `large` :
+Ad esempio, per passare da `small` (valore predefinito) a `large`:
 
 ```yaml title="clickhouse-large.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -59,9 +59,9 @@ spec:
     size: 1Gi
 ```
 
-#### Option B : Definir des ressources explicites
+#### Opzione B: Definire risorse esplicite
 
-Pour un controle precis, specifiez directement le CPU et la memoire :
+Per un controllo preciso, specificate direttamente CPU e memoria:
 
 ```yaml title="clickhouse-custom-resources.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -83,12 +83,12 @@ spec:
 ```
 
 :::warning
-Si le champ `resources` est defini, la valeur de `resourcesPreset` est entierement ignoree. Supprimez `resourcesPreset` du manifeste pour eviter toute confusion.
+Se il campo `resources` e definito, il valore di `resourcesPreset` viene completamente ignorato. Rimuovete `resourcesPreset` dal manifesto per evitare confusione.
 :::
 
-### 3. Ajuster le stockage si necessaire
+### 3. Regolare l'archiviazione se necessario
 
-ClickHouse stocke les donnees sur disque (contrairement a Redis). Pensez a augmenter le volume persistant (`size`) en fonction du volume de donnees attendu :
+ClickHouse archivia i dati su disco (a differenza di Redis). Pensate ad aumentare il volume persistente (`size`) in funzione del volume di dati previsto:
 
 ```yaml title="clickhouse-storage.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -109,10 +109,10 @@ spec:
 ```
 
 :::tip
-Utilisez `storageClass: replicated` en production pour proteger les donnees contre la perte d'un noeud physique.
+Usate `storageClass: replicated` in produzione per proteggere i dati contro la perdita di un nodo fisico.
 :::
 
-### 4. Appliquer la mise a jour
+### 4. Applicare l'aggiornamento
 
 ```bash
 kubectl apply -f clickhouse-large.yaml
@@ -120,17 +120,17 @@ kubectl apply -f clickhouse-large.yaml
 
 ## Verifica
 
-Verifiez que les ressources ont ete mises a jour :
+Verificate che le risorse siano state aggiornate:
 
 ```bash
-# Verifier la configuration de la ressource ClickHouse
+# Verificare la configurazione della risorsa ClickHouse
 kubectl get clickhouse my-clickhouse -o yaml | grep -A 5 resources
 
-# Verifier l'etat des pods ClickHouse
+# Verificare lo stato dei pod ClickHouse
 kubectl get pods -l app.kubernetes.io/instance=my-clickhouse
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```console
 NAME                READY   STATUS    RESTARTS   AGE
@@ -140,6 +140,6 @@ my-clickhouse-0-1   1/1     Running   0          3m
 
 ## Per approfondire
 
-- [Reference API](../api-reference.md) -- Parametres `resources`, `resourcesPreset`, `size` et `storageClass`
-- [Comment configurer le sharding](./configure-sharding.md) -- Distribution horizontale des donnees
-- [Comment gerer les utilisateurs et profils](./manage-users.md) -- Gestion des acces utilisateurs
+- [Riferimento API](../api-reference.md) -- Parametri `resources`, `resourcesPreset`, `size` e `storageClass`
+- [Come configurare lo sharding](./configure-sharding.md) -- Distribuzione orizzontale dei dati
+- [Come gestire utenti e profili](./manage-users.md) -- Gestione degli accessi utente

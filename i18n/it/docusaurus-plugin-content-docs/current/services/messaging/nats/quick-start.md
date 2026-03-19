@@ -3,37 +3,37 @@ sidebar_position: 2
 title: Avvio rapido
 ---
 
-# Déployer NATS en 5 minutes
+# Distribuire NATS in 5 minuti
 
-Ce guide vous accompagne pas à pas dans le déploiement de votre premier **cluster NATS** sur Hikube, du manifeste YAML jusqu'aux premiers tests de messagerie.
-
----
-
-## Obiettivos
-
-À la fin de ce guide, vous aurez :
-
-- Un **cluster NATS** déployé et opérationnel sur Hikube
-- Une configuration **haute disponibilité** avec plusieurs réplicas
-- Le **JetStream** activé pour le stockage persistant des messages
-- Un **utilisateur** configuré pour se connecter à votre cluster
+Questa guida vi accompagna passo dopo passo nella distribuzione del vostro primo **cluster NATS** su Hikube, dal manifesto YAML fino ai primi test di messaggistica.
 
 ---
 
-## Prerequisitiiti
+## Obiettivi
 
-Avant de commencer, assurez-vous d'avoir :
+Al termine di questa guida, avrete:
 
-- **kubectl** configuré avec votre kubeconfig Hikube
-- **Droits administrateur** sur votre tenant
-- Un **namespace** dédié pour héberger votre cluster NATS
-- Le **CLI NATS** (`nats`) installé sur votre poste (optionnel, pour les tests)
+- Un **cluster NATS** distribuito e operativo su Hikube
+- Una configurazione ad **alta disponibilità** con più repliche
+- **JetStream** attivato per l'archiviazione persistente dei messaggi
+- Un **utente** configurato per connettersi al vostro cluster
 
 ---
 
-## Étape 1 : Créer le manifeste NATS
+## Prerequisiti
 
-Créez un fichier `nats.yaml` avec la configuration suivante :
+Prima di iniziare, assicuratevi di avere:
+
+- **kubectl** configurato con il vostro kubeconfig Hikube
+- **Diritti di amministratore** sul vostro tenant
+- Un **namespace** dedicato per ospitare il vostro cluster NATS
+- La **CLI NATS** (`nats`) installata sulla vostra postazione (opzionale, per i test)
+
+---
+
+## Passo 1: Creare il manifesto NATS
+
+Create un file `nats.yaml` con la seguente configurazione:
 
 ```yaml title="nats.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -64,27 +64,27 @@ spec:
 ```
 
 :::tip
-Si `resources` est défini, la valeur de `resourcesPreset` est ignorée. Consultez la [Référence API](./api-reference.md) pour la liste complète des options disponibles.
+Se `resources` è definito, il valore di `resourcesPreset` viene ignorato. Consultate il [Riferimento API](./api-reference.md) per la lista completa delle opzioni disponibili.
 :::
 
 ---
 
-## Étape 2 : Déployer le cluster NATS
+## Passo 2: Distribuire il cluster NATS
 
-Appliquez le manifeste et vérifiez que le déploiement démarre :
+Applicate il manifesto e verificate che la distribuzione sia avviata:
 
 ```bash
-# Appliquer le manifeste
+# Applicare il manifesto
 kubectl apply -f nats.yaml
 ```
 
-Vérifiez le statut du cluster (peut prendre 1-2 minutes) :
+Verificate lo stato del cluster (può richiedere 1-2 minuti):
 
 ```bash
 kubectl get nats
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```console
 NAME      READY   AGE     VERSION
@@ -93,15 +93,15 @@ example   True    2m      0.10.0
 
 ---
 
-## Étape 3 : Verifica des pods
+## Passo 3: Verifica dei pod
 
-Vérifiez que tous les pods sont en état `Running` :
+Verificate che tutti i pod siano nello stato `Running`:
 
 ```bash
 kubectl get pods | grep nats
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```console
 nats-example-0    1/1     Running   0   2m
@@ -109,23 +109,23 @@ nats-example-1    1/1     Running   0   2m
 nats-example-2    1/1     Running   0   2m
 ```
 
-Avec `replicas: 3`, vous obtenez **3 pods NATS** formant un cluster haute disponibilité avec consensus Raft pour JetStream.
+Con `replicas: 3`, ottenete **3 pod NATS** che formano un cluster ad alta disponibilità con consenso Raft per JetStream.
 
-| Préfixe | Rôle | Nombre |
-|---------|------|--------|
-| `nats-example-*` | **NATS Server** (messagerie + JetStream) | 3 |
+| Prefisso | Ruolo | Numero |
+|----------|-------|--------|
+| `nats-example-*` | **NATS Server** (messaggistica + JetStream) | 3 |
 
 ---
 
-## Étape 4 : Récupérer les identifiants
+## Passo 4: Recuperare le credenziali
 
-Les mots de passe des utilisateurs NATS sont stockés dans un Secret Kubernetes :
+Le password degli utenti NATS sono archiviate in un Secret Kubernetes:
 
 ```bash
 kubectl get secret nats-example-credentials -o json | jq -r '.data | to_entries[] | "\(.key): \(.value|@base64d)"'
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```console
 user1: mypassword
@@ -133,30 +133,30 @@ user1: mypassword
 
 ---
 
-## Étape 5 : Connexion et tests
+## Passo 5: Connessione e test
 
-### Port-forward du service NATS
+### Port-forward del servizio NATS
 
 ```bash
 kubectl port-forward svc/nats-example 4222:4222 &
 ```
 
-### Test de publication et consommation
+### Test di pubblicazione e consumo
 
 ```bash
-# Créer un stream JetStream
+# Creare uno stream JetStream
 nats -s nats://user1:mypassword@localhost:4222 stream add EVENTS \
   --subjects "events.*" --storage file --replicas 3 --retention limits \
   --max-msgs -1 --max-bytes -1 --max-age 24h --discard old
 
-# Publier un message
+# Pubblicare un messaggio
 nats -s nats://user1:mypassword@localhost:4222 pub events.test "Hello Hikube!"
 
-# Consommer le message
+# Consumare il messaggio
 nats -s nats://user1:mypassword@localhost:4222 stream view EVENTS
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```console
 [1] Subject: events.test Received: 2025-01-15T10:30:00Z
@@ -164,87 +164,87 @@ nats -s nats://user1:mypassword@localhost:4222 stream view EVENTS
 ```
 
 :::note
-Si vous n'avez pas le CLI NATS, vous pouvez l'installer depuis [nats-io/natscli](https://github.com/nats-io/natscli).
+Se non avete la CLI NATS, potete installarla da [nats-io/natscli](https://github.com/nats-io/natscli).
 :::
 
 ---
 
-## Étape 6 : Dépannage rapide
+## Passo 6: Risoluzione rapida dei problemi
 
-### Pods en CrashLoopBackOff
+### Pod in CrashLoopBackOff
 
 ```bash
-# Vérifier les logs du pod en erreur
+# Verificare i log del pod in errore
 kubectl logs nats-example-0
 
-# Vérifier les events du pod
+# Verificare gli eventi del pod
 kubectl describe pod nats-example-0
 ```
 
-**Cause frequenti :** mémoire insuffisante (`resources.memory` trop faible), volume JetStream plein (`jetstream.size` trop faible).
+**Cause frequenti:** memoria insufficiente (`resources.memory` troppo bassa), volume JetStream pieno (`jetstream.size` troppo basso).
 
-### NATS non accessible
+### NATS non accessibile
 
 ```bash
-# Vérifier que les services existent
+# Verificare che i servizi esistano
 kubectl get svc | grep nats
 
-# Vérifier le service NATS
+# Verificare il servizio NATS
 kubectl describe svc nats-example
 ```
 
-**Cause frequenti :** port-forward non actif, mauvais port (4222 pour les clients), identifiants incorrects.
+**Cause frequenti:** port-forward non attivo, porta errata (4222 per i client), credenziali errate.
 
-### JetStream non fonctionnel
+### JetStream non funzionante
 
 ```bash
-# Vérifier l'état de JetStream dans les logs
+# Verificare lo stato di JetStream nei log
 kubectl logs nats-example-0 | grep -i jetstream
 
-# Vérifier le rapport JetStream
+# Verificare il report JetStream
 nats -s nats://user1:mypassword@localhost:4222 server report jetstream
 ```
 
-**Cause frequenti :** `jetstream.enabled: false` dans le manifeste, espace de stockage JetStream insuffisant, nombre de réplicas insuffisant pour le facteur de réplication demandé.
+**Cause frequenti:** `jetstream.enabled: false` nel manifesto, spazio di archiviazione JetStream insufficiente, numero di repliche insufficiente per il fattore di replica richiesto.
 
-### Commandes de diagnostic générales
+### Comandi di diagnostica generali
 
 ```bash
-# Events récents sur le namespace
+# Eventi recenti sul namespace
 kubectl get events --sort-by=.metadata.creationTimestamp
 
-# État détaillé du cluster NATS
+# Stato dettagliato del cluster NATS
 kubectl describe nats example
 ```
 
 ---
 
-## Étape 7 : Pulizia
+## Passo 7: Pulizia
 
-Pour supprimer les ressources de test :
+Per eliminare le risorse di test:
 
 ```bash
 kubectl delete -f nats.yaml
 ```
 
 :::warning
-Cette action supprime le cluster NATS et toutes les données associées. Cette opération est **irréversible**.
+Questa azione elimina il cluster NATS e tutti i dati associati. Questa operazione è **irreversibile**.
 :::
 
 ---
 
 ## Riepilogo
 
-Vous avez déployé :
+Avete distribuito:
 
-- Un cluster NATS avec **3 réplicas** en haute disponibilité
-- **JetStream** activé pour la persistance des messages
-- Un **utilisateur** authentifié pour se connecter au cluster
-- Un stockage persistant pour la durabilité des données
+- Un cluster NATS con **3 repliche** in alta disponibilità
+- **JetStream** attivato per la persistenza dei messaggi
+- Un **utente** autenticato per connettersi al cluster
+- Un archivio persistente per la durabilità dei dati
 
 ---
 
 ## Prossimi passi
 
-- **[Référence API](./api-reference.md)** : Configuration complète de toutes les options NATS
-- **[Vue d'ensemble](./overview.md)** : Architecture détaillée et cas d'usage NATS sur Hikube
+- **[Riferimento API](./api-reference.md)**: Configurazione completa di tutte le opzioni NATS
+- **[Panoramica](./overview.md)**: Architettura dettagliata e casi d'uso NATS su Hikube

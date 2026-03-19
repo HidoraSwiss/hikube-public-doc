@@ -5,44 +5,44 @@ title: Risoluzione dei problemi
 
 # Risoluzione dei problemi — Kubernetes
 
-### Nœuds en état NotReady
+### Nodi in stato NotReady
 
-**Causa** : un ou plusieurs nœuds ne répondent plus au plan de contrôle. Cela peut être lié à des ressources insuffisantes, un problème de stockage ou une défaillance du kubelet.
+**Causa**: uno o piu nodi non rispondono piu al piano di controllo. Questo puo essere legato a risorse insufficienti, un problema di archiviazione o un malfunzionamento del kubelet.
 
-**Soluzione** :
+**Soluzione**:
 
-1. Vérifiez l'état des nœuds et leurs conditions :
+1. Verificate lo stato dei nodi e le loro condizioni:
    ```bash
    kubectl get nodes
    kubectl describe node <node-name>
    ```
-2. Consultez les événements pour identifier la cause (DiskPressure, MemoryPressure, PIDPressure) :
+2. Consultate gli eventi per identificare la causa (DiskPressure, MemoryPressure, PIDPressure):
    ```bash
    kubectl get events --sort-by='.lastTimestamp'
    ```
-3. Vérifiez que l'`instanceType` choisi fournit suffisamment de ressources pour les workloads déployés.
-4. Si le problème persiste, augmentez le `maxReplicas` du nodeGroup pour permettre au cluster de provisionner de nouveaux nœuds sains.
+3. Verificate che l'`instanceType` scelto fornisca risorse sufficienti per i workload distribuiti.
+4. Se il problema persiste, aumentate il `maxReplicas` del nodeGroup per permettere al cluster di provisionare nuovi nodi sani.
 
 ---
 
-### Pods en Pending (ressources insuffisantes)
+### Pod in Pending (risorse insufficienti)
 
-**Causa** : aucun nœud ne dispose de suffisamment de CPU ou de mémoire pour planifier le pod. Le scheduler Kubernetes ne peut pas trouver de placement.
+**Causa**: nessun nodo dispone di CPU o memoria sufficienti per pianificare il pod. Lo scheduler Kubernetes non riesce a trovare un posizionamento.
 
-**Soluzione** :
+**Soluzione**:
 
-1. Identifiez la raison du Pending :
+1. Identificate la ragione del Pending:
    ```bash
    kubectl describe pod <pod-name>
    ```
-   Recherchez le message `FailedScheduling` dans les événements.
+   Cercate il messaggio `FailedScheduling` negli eventi.
 
-2. Vérifiez les ressources disponibles sur les nœuds :
+2. Verificate le risorse disponibili sui nodi:
    ```bash
    kubectl top nodes
    ```
 
-3. Si les nœuds sont saturés, augmentez le `maxReplicas` de votre nodeGroup :
+3. Se i nodi sono saturi, aumentate il `maxReplicas` del vostro nodeGroup:
    ```yaml title="cluster.yaml"
    spec:
      nodeGroups:
@@ -51,43 +51,43 @@ title: Risoluzione dei problemi
          maxReplicas: 10
    ```
 
-4. Si le pod est bloqué sur un PVC, vérifiez que le PVC est bien provisionné :
+4. Se il pod e bloccato su un PVC, verificate che il PVC sia correttamente provisionato:
    ```bash
    kubectl get pvc
    ```
 
 ---
 
-### Kubeconfig expiré ou invalide
+### Kubeconfig scaduto o non valido
 
-**Causa** : le certificat client dans le kubeconfig a expiré (erreur `x509: certificate has expired`) ou les credentials sont invalides (erreur `Unauthorized`).
+**Causa**: il certificato client nel kubeconfig e scaduto (errore `x509: certificate has expired`) o le credenziali non sono valide (errore `Unauthorized`).
 
-**Soluzione** :
+**Soluzione**:
 
-1. Regénérez le kubeconfig depuis le Secret source :
+1. Rigenerate il kubeconfig dal Secret sorgente:
    ```bash
    kubectl get tenantsecret <cluster-name>-admin-kubeconfig -o jsonpath='{.data.super-admin\.conf}' | base64 -d > kubeconfig.yaml
    ```
 
-2. Remplacez votre ancien fichier kubeconfig :
+2. Sostituite il vostro vecchio file kubeconfig:
    ```bash
    export KUBECONFIG=kubeconfig.yaml
    ```
 
-3. Vérifiez la connectivité :
+3. Verificate la connettivita:
    ```bash
    kubectl cluster-info
    ```
 
 ---
 
-### Ingress retourne 404
+### Ingress restituisce 404
 
-**Causa** : la ressource Ingress est mal configurée ou l'addon ingressNginx n'est pas activé sur le cluster.
+**Causa**: la risorsa Ingress e mal configurata o l'addon ingressNginx non e attivato sul cluster.
 
-**Soluzione** :
+**Soluzione**:
 
-1. Vérifiez que l'addon `ingressNginx` est activé dans la configuration du cluster :
+1. Verificate che l'addon `ingressNginx` sia attivato nella configurazione del cluster:
    ```yaml title="cluster.yaml"
    spec:
      addons:
@@ -95,7 +95,7 @@ title: Risoluzione dei problemi
          enabled: true
    ```
 
-2. Vérifiez que l'`ingressClassName` est bien spécifié dans votre Ingress :
+2. Verificate che l'`ingressClassName` sia specificato nel vostro Ingress:
    ```yaml title="ingress.yaml"
    apiVersion: networking.k8s.io/v1
    kind: Ingress
@@ -116,25 +116,25 @@ title: Risoluzione dei problemi
                      number: 80
    ```
 
-3. Vérifiez que le backend (Service + Pod) fonctionne :
+3. Verificate che il backend (Service + Pod) funzioni:
    ```bash
    kubectl get pods -l app=my-app
    kubectl get svc my-app-svc
    ```
 
-4. Vérifiez la configuration du host et du path dans la règle Ingress.
+4. Verificate la configurazione dell'host e del path nella regola Ingress.
 
 ---
 
-### PVC en état Pending
+### PVC in stato Pending
 
-**Causa** : la `storageClass` demandée n'existe pas ou la capacité de stockage est insuffisante.
+**Causa**: la `storageClass` richiesta non esiste o la capacita di archiviazione e insufficiente.
 
-**Soluzione** :
+**Soluzione**:
 
-1. Les storageClasses disponibles sur Hikube sont : `local`, `replicated` et `replicated-async`.
+1. Le storageClass disponibili su Hikube sono: `local`, `replicated` e `replicated-async`.
 
-2. Assurez-vous que le nom utilisé dans votre PVC correspond à une storageClass existante :
+2. Assicuratevi che il nome utilizzato nel vostro PVC corrisponda a una storageClass esistente:
    ```yaml title="pvc.yaml"
    apiVersion: v1
    kind: PersistentVolumeClaim
@@ -149,9 +149,9 @@ title: Risoluzione dei problemi
          storage: 10Gi
    ```
 
-3. Vérifiez les événements liés au PVC :
+3. Verificate gli eventi legati al PVC:
    ```bash
    kubectl describe pvc my-data
    ```
 
-4. Si la capacité est insuffisante, réduisez la taille demandée ou contactez le support Hikube.
+4. Se la capacita e insufficiente, riducete la dimensione richiesta o contattate il supporto Hikube.

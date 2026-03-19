@@ -1,22 +1,22 @@
 ---
-title: Come provisionare un GPU su Kubernetes
+title: "Come provisionare un GPU su Kubernetes"
 ---
 
-# Comment provisionner un GPU sur Kubernetes
+# Come provisionare un GPU su Kubernetes
 
-Hikube permet d'ajouter des node groups equipes de GPU NVIDIA a vos clusters Kubernetes. Ce guide explique comment configurer un cluster avec des workers GPU, deployer des pods qui exploitent l'acceleration GPU et mettre en place des node groups specialises.
+Hikube permette di aggiungere node group equipaggiati con GPU NVIDIA ai vostri cluster Kubernetes. Questa guida spiega come configurare un cluster con worker GPU, distribuire pod che sfruttano l'accelerazione GPU e mettere in opera node group specializzati.
 
-## Prerequisitiiti
+## Prerequisiti
 
-- **kubectl** configure avec votre kubeconfig Hikube
-- Un **cluster Kubernetes** existant sur Hikube (ou un manifeste pret a deployer)
-- Familiarite avec les concepts de [Kubernetes](../overview.md) sur Hikube
+- **kubectl** configurato con il vostro kubeconfig Hikube
+- Un **cluster Kubernetes** esistente su Hikube (o un manifest pronto per il deployment)
+- Familiarità con i concetti di [Kubernetes](../overview.md) su Hikube
 
 ## Passi
 
-### 1. Ajouter un node group GPU au cluster
+### 1. Aggiungere un node group GPU al cluster
 
-Modifiez le manifeste de votre cluster pour ajouter un node group avec GPU. La configuration GPU se fait au niveau du node group via `gpus[].name` :
+Modificate il manifest del vostro cluster per aggiungere un node group con GPU. La configurazione GPU si fa a livello del node group tramite `gpus[].name`:
 
 ```yaml title="cluster-gpu.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -44,22 +44,22 @@ spec:
 ```
 
 :::tip
-Separez vos workloads CPU et GPU dans des node groups distincts. Cela permet un scaling independant et une meilleure maitrise des couts.
+Separate i vostri workload CPU e GPU in node group distinti. Questo permette uno scaling indipendente e un migliore controllo dei costi.
 :::
 
-### 2. Appliquer la configuration du cluster
+### 2. Applicare la configurazione del cluster
 
 ```bash
 kubectl apply -f cluster-gpu.yaml
 ```
 
-Attendez que les nodes GPU soient prets :
+Attendete che i nodi GPU siano pronti:
 
 ```bash
 kubectl get nodes -w
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```
 NAME                        STATUS   ROLES    AGE   VERSION
@@ -67,15 +67,15 @@ cluster-gpu-cp-0            Ready    master   5m    v1.29.x
 cluster-gpu-gpu-workers-0   Ready    <none>   3m    v1.29.x
 ```
 
-### 3. Verifier la disponibilite GPU sur les nodes
+### 3. Verificare la disponibilità GPU sui nodi
 
-Confirmez que les GPU sont bien exposes comme ressources Kubernetes :
+Confermate che le GPU siano ben esposte come risorse Kubernetes:
 
 ```bash
 kubectl get nodes -o custom-columns=NAME:.metadata.name,GPU:.status.allocatable.'nvidia\.com/gpu'
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```
 NAME                        GPU
@@ -83,9 +83,9 @@ cluster-gpu-cp-0            <none>
 cluster-gpu-gpu-workers-0   1
 ```
 
-### 4. Deployer un pod avec GPU
+### 4. Distribuire un pod con GPU
 
-Creez un pod de test qui utilise un GPU via les `resources.limits` :
+Create un pod di test che utilizza una GPU tramite i `resources.limits`:
 
 ```yaml title="gpu-pod.yaml"
 apiVersion: v1
@@ -104,25 +104,25 @@ spec:
         nvidia.com/gpu: 1
 ```
 
-Appliquez et verifiez :
+Applicate e verificate:
 
 ```bash
 kubectl apply -f gpu-pod.yaml
 ```
 
-Attendez que le pod termine son execution :
+Attendete che il pod termini la sua esecuzione:
 
 ```bash
 kubectl wait --for=condition=Ready pod/gpu-test --timeout=120s
 ```
 
-Consultez les logs pour confirmer que le GPU est visible :
+Consultate i log per confermare che la GPU è visibile:
 
 ```bash
 kubectl logs gpu-test
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```
 +-----------------------------------------------------------------------------+
@@ -134,9 +134,9 @@ kubectl logs gpu-test
 +-------------------------------+----------------------+----------------------+
 ```
 
-### 5. Configurer des node groups specialises
+### 5. Configurare node group specializzati
 
-Pour les environnements de production, creez des node groups dedies a l'inference et a l'entrainement avec des GPU differents :
+Per gli ambienti di produzione, create node group dedicati all'inferenza e all'addestramento con GPU differenti:
 
 ```yaml title="cluster-multi-gpu.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -172,7 +172,7 @@ spec:
         - name: "nvidia.com/GA100_A100_PCIE_80GB"
 ```
 
-Pour cibler un node group specifique dans vos deployements, utilisez `nodeSelector` :
+Per indirizzare un node group specifico nei vostri deployment, utilizzate `nodeSelector`:
 
 ```yaml title="inference-deployment.yaml"
 apiVersion: apps/v1
@@ -202,26 +202,26 @@ spec:
 ```
 
 :::note
-Les GPU disponibles pour Kubernetes sont les memes que pour les VM : **L40S** (inference/dev), **A100** (entrainement ML) et **H100** (LLM/exascale). Consultez la [reference API GPU](../api-reference.md) pour les specifications completes.
+Le GPU disponibili per Kubernetes sono le stesse delle VM: **L40S** (inferenza/dev), **A100** (addestramento ML) e **H100** (LLM/exascale). Consultate il [riferimento API GPU](../api-reference.md) per le specifiche complete.
 :::
 
 ## Verifica
 
-Apres le deploiement, confirmez que votre configuration GPU fonctionne :
+Dopo il deployment, confermate che la vostra configurazione GPU funzioni:
 
-1. **Verifiez les nodes GPU** :
+1. **Verificate i nodi GPU**:
 
 ```bash
 kubectl get nodes -o custom-columns=NAME:.metadata.name,GPU:.status.allocatable.'nvidia\.com/gpu'
 ```
 
-2. **Verifiez l'allocation GPU sur un node** :
+2. **Verificate l'allocazione GPU su un nodo**:
 
 ```bash
 kubectl describe node cluster-gpu-gpu-workers-0 | grep -A 5 "Allocated resources"
 ```
 
-3. **Testez avec un pod interactif** :
+3. **Testate con un pod interattivo**:
 
 ```bash
 kubectl run gpu-debug --rm -it --image=nvidia/cuda:12.0-runtime-ubuntu22.04 \
@@ -231,7 +231,7 @@ kubectl run gpu-debug --rm -it --image=nvidia/cuda:12.0-runtime-ubuntu22.04 \
 
 ## Per approfondire
 
-- [Reference API GPU](../api-reference.md)
-- [Comment provisionner un GPU sur une VM](./provision-gpu-vm.md)
-- [Comment configurer l'autoscaling](../../../services/kubernetes/how-to/configure-autoscaling.md)
-- [Comment gerer les node groups](../../../services/kubernetes/how-to/manage-node-groups.md)
+- [Riferimento API GPU](../api-reference.md)
+- [Come provisionare un GPU su una VM](./provision-gpu-vm.md)
+- [Come configurare l'autoscaling](../../../services/kubernetes/how-to/configure-autoscaling.md)
+- [Come gestire i node group](../../../services/kubernetes/how-to/manage-node-groups.md)

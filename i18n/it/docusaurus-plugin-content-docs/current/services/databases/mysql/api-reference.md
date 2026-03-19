@@ -3,17 +3,17 @@ sidebar_position: 3
 title: Riferimento API
 ---
 
-# Référence API MySQL
+# Riferimento API MySQL
 
-Cette référence détaille l’utilisation de **MySQL** sur Hikube, en mettant en avant son déploiement en cluster répliqué avec un primary et des réplicas pour la haute disponibilité, ainsi que la possibilité d’activer des sauvegardes automatiques vers un stockage compatible S3.
+Questo riferimento descrive in dettaglio l'utilizzo di **MySQL** su Hikube, evidenziando il deployment in cluster replicato con un primary e delle repliche per l'alta disponibilita, nonche la possibilita di attivare backup automatici verso uno storage compatibile S3.
 
 ---
 
-## Structure de Base
+## Struttura di Base
 
-### **Ressource MySQL**
+### **Risorsa MySQL**
 
-#### Exemple de configuration YAML
+#### Esempio di configurazione YAML
 
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
@@ -25,54 +25,54 @@ spec:
 
 ---
 
-## Paramètres
+## Parametri
 
-### **Paramètres Communs**
+### **Parametri Comuni**
 
-| **Paramètre**      | **Type**   | **Description**                                                                 | **Défaut** | **Requis** |
+| **Parametro**      | **Tipo**   | **Descrizione**                                                                 | **Predefinito** | **Richiesto** |
 |---------------------|------------|---------------------------------------------------------------------------------|------------|------------|
-| `replicas`          | `int`      | Nombre de réplicas MariaDB dans le cluster                                      | `2`        | Oui        |
-| `resources`         | `object`   | Configuration explicite CPU et mémoire pour chaque réplica. Si vide, `resourcesPreset` est appliqué | `{}`       | Non        |
-| `resources.cpu`     | `quantity` | CPU disponible pour chaque réplica                                              | `null`     | Non        |
-| `resources.memory`  | `quantity` | Mémoire (RAM) disponible pour chaque réplica                                    | `null`     | Non        |
-| `resourcesPreset`   | `string`   | Profil de ressources par défaut (`nano`, `micro`, `small`, `medium`, `large`, `xlarge`, `2xlarge`) | `nano`     | Oui        |
-| `size`              | `quantity` | Taille du volume persistant (PVC) pour stocker les données                      | `10Gi`     | Oui        |
-| `storageClass`      | `string`   | StorageClass utilisée pour stocker les données                                  | `""`       | Non        |
-| `external`          | `bool`     | Activer un accès externe au cluster (LoadBalancer)                              | `false`    | Non        |
+| `replicas`          | `int`      | Numero di repliche MariaDB nel cluster                                      | `2`        | Si        |
+| `resources`         | `object`   | Configurazione esplicita CPU e memoria per ogni replica. Se vuoto, viene applicato `resourcesPreset` | `{}`       | No        |
+| `resources.cpu`     | `quantity` | CPU disponibile per ogni replica                                              | `null`     | No        |
+| `resources.memory`  | `quantity` | Memoria (RAM) disponibile per ogni replica                                    | `null`     | No        |
+| `resourcesPreset`   | `string`   | Profilo di risorse predefinito (`nano`, `micro`, `small`, `medium`, `large`, `xlarge`, `2xlarge`) | `nano`     | Si        |
+| `size`              | `quantity` | Dimensione del volume persistente (PVC) per archiviare i dati                      | `10Gi`     | Si        |
+| `storageClass`      | `string`   | StorageClass utilizzata per archiviare i dati                                  | `""`       | No        |
+| `external`          | `bool`     | Attivare un accesso esterno al cluster (LoadBalancer)                              | `false`    | No        |
 
-#### Exemple de configuration YAML
+#### Esempio di configurazione YAML
 
 ```yaml title="mysql.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
 kind: MySQL
 metadata:
-  name: example              # Nom de l'instance
+  name: example              # Nome dell'istanza
 spec:
-  replicas: 3                # Nombre de réplicas (1 primary + 2 réplica)
+  replicas: 3                # Numero di repliche (1 primary + 2 repliche)
 
   resources:
-    cpu: 1000m               # CPU par réplica
-    memory: 1Gi              # RAM par réplica
+    cpu: 1000m               # CPU per replica
+    memory: 1Gi              # RAM per replica
 
-  resourcesPreset: nano      # Profil par défaut si resources est vide
-  size: 10Gi                 # Taille du volume persistant
-  storageClass: ""           # Classe de stockage
-  external: false            # Accès externe (LoadBalancer)
+  resourcesPreset: nano      # Profilo predefinito se resources e vuoto
+  size: 10Gi                 # Dimensione del volume persistente
+  storageClass: ""           # Classe di archiviazione
+  external: false            # Accesso esterno (LoadBalancer)
 ```
 
-### **Paramètres d'application spécifique**
+### **Parametri specifici dell'applicazione**
 
-| **Paramètre**                     | **Type**             | **Description**                                   | **Défaut** | **Requis** |
+| **Parametro**                     | **Tipo**             | **Descrizione**                                   | **Predefinito** | **Richiesto** |
 |-----------------------------------|----------------------|---------------------------------------------------|------------|------------|
-| `users`                           | `map[string]object`  | Configuration des utilisateurs                    | `{...}`    | Oui        |
-| `users[name].password`            | `string`             | Mot de passe de l’utilisateur                     | `""`       | Oui        |
-| `users[name].maxUserConnections`  | `int`                | Nombre maximum de connexions pour l’utilisateur   | `0`        | Non        |
-| `databases`                       | `map[string]object`  | Configuration des bases de données                | `{...}`    | Oui        |
-| `databases[name].roles`           | `object`             | Rôles associés à la base                          | `null`     | Non        |
-| `databases[name].roles.admin`     | `[]string`           | Liste des utilisateurs avec droits admin          | `[]`       | Non        |
-| `databases[name].roles.readonly`  | `[]string`           | Liste des utilisateurs avec droits en lecture     | `[]`       | Non        |
+| `users`                           | `map[string]object`  | Configurazione degli utenti                    | `{...}`    | Si        |
+| `users[name].password`            | `string`             | Password dell'utente                     | `""`       | Si        |
+| `users[name].maxUserConnections`  | `int`                | Numero massimo di connessioni per l'utente   | `0`        | No        |
+| `databases`                       | `map[string]object`  | Configurazione dei database                | `{...}`    | Si        |
+| `databases[name].roles`           | `object`             | Ruoli associati al database                          | `null`     | No        |
+| `databases[name].roles.admin`     | `[]string`           | Lista degli utenti con diritti admin          | `[]`       | No        |
+| `databases[name].roles.readonly`  | `[]string`           | Lista degli utenti con diritti in lettura     | `[]`       | No        |
 
-#### Exemple de configuration YAML
+#### Esempio di configurazione YAML
 
 ```yaml title="mysql.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -83,44 +83,44 @@ spec:
   replicas: 2
   size: 10Gi
   resourcesPreset: nano
-  # Définition des utilisateurs MySQL
+  # Definizione degli utenti MySQL
   users:
     appuser:
-      password: strongpassword     # Mot de passe de l’utilisateur applicatif
-      maxUserConnections: 50       # Limite de connexions simultanées
+      password: strongpassword     # Password dell'utente applicativo
+      maxUserConnections: 50       # Limite di connessioni simultanee
     readonly:
-      password: readonlypass       # Utilisateur avec droits restreints
+      password: readonlypass       # Utente con diritti limitati
       maxUserConnections: 10
 
-  # Définition des bases de données
+  # Definizione dei database
   databases:
     myapp:
       roles:
         admin:
-          - appuser                # appuser = admin de la base "myapp"
+          - appuser                # appuser = admin del database "myapp"
         readonly:
-          - readonly               # readonly = accès en lecture seule
+          - readonly               # readonly = accesso in sola lettura
     analytics:
       roles:
         admin:
-          - appuser                # appuser = admin de la base "analytics"
+          - appuser                # appuser = admin del database "analytics"
 ```
 
-### **Paramètres de backup**
+### **Parametri di backup**
 
-| **Paramètre**           | **Type**  | **Description**                                        | **Défaut**                              | **Requis** |
+| **Parametro**           | **Tipo**  | **Descrizione**                                        | **Predefinito**                              | **Richiesto** |
 |--------------------------|-----------|--------------------------------------------------------|------------------------------------------|------------|
-| `backup`                 | `object`  | Configuration des sauvegardes                          | `{}`                                     | Non        |
-| `backup.enabled`         | `bool`    | Activer les sauvegardes régulières                     | `false`                                  | Non        |
-| `backup.s3Region`        | `string`  | Région AWS S3 où sont stockées les sauvegardes         | `"us-east-1"`                            | Oui        |
-| `backup.s3Bucket`        | `string`  | Bucket S3 utilisé pour stocker les sauvegardes         | `"s3.example.org/mysql-backups"`         | Oui        |
-| `backup.schedule`        | `string`  | Planification des sauvegardes (cron)                   | `"0 2 * * *"`                            | Non        |
-| `backup.cleanupStrategy` | `string`  | Stratégie de rétention pour nettoyer les anciennes sauvegardes | `"--keep-last=3 --keep-daily=3 --keep-within-weekly=1m"` | Non |
-| `backup.s3AccessKey`     | `string`  | Clé d’accès S3 (authentification)                      | `"<your-access-key>"`                    | Oui        |
-| `backup.s3SecretKey`     | `string`  | Clé secrète S3 (authentification)                      | `"<your-secret-key>"`                    | Oui        |
-| `backup.resticPassword`  | `string`  | Mot de passe utilisé pour le chiffrement Restic        | `"<password>"`                           | Oui        |
+| `backup`                 | `object`  | Configurazione dei backup                          | `{}`                                     | No        |
+| `backup.enabled`         | `bool`    | Attivare i backup regolari                     | `false`                                  | No        |
+| `backup.s3Region`        | `string`  | Regione AWS S3 dove sono archiviati i backup         | `"us-east-1"`                            | Si        |
+| `backup.s3Bucket`        | `string`  | Bucket S3 utilizzato per archiviare i backup         | `"s3.example.org/mysql-backups"`         | Si        |
+| `backup.schedule`        | `string`  | Pianificazione dei backup (cron)                   | `"0 2 * * *"`                            | No        |
+| `backup.cleanupStrategy` | `string`  | Strategia di retention per pulire i vecchi backup | `"--keep-last=3 --keep-daily=3 --keep-within-weekly=1m"` | No |
+| `backup.s3AccessKey`     | `string`  | Chiave di accesso S3 (autenticazione)                      | `"<your-access-key>"`                    | Si        |
+| `backup.s3SecretKey`     | `string`  | Chiave segreta S3 (autenticazione)                      | `"<your-secret-key>"`                    | Si        |
+| `backup.resticPassword`  | `string`  | Password utilizzata per la cifratura Restic        | `"<password>"`                           | Si        |
 
-#### Exemple de configuration YAML
+#### Esempio di configurazione YAML
 
 ```yaml title="mysql.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -132,34 +132,34 @@ spec:
   size: 10Gi
   resourcesPreset: small
 
-  # Configuration des sauvegardes automatiques
+  # Configurazione dei backup automatici
   backup:
     enabled: true
     s3Region: eu-central-1
     s3Bucket: s3.hikube.cloud/mysql-backups
-    schedule: "0 3 * * *"                       # Sauvegarde tous les jours à 3h du matin
+    schedule: "0 3 * * *"                       # Backup ogni giorno alle 3 del mattino
     cleanupStrategy: "--keep-last=7 --keep-daily=7 --keep-weekly=4"
     s3AccessKey: "HIKUBE123ACCESSKEY"
     s3SecretKey: "HIKUBE456SECRETKEY"
     resticPassword: "SuperStrongResticPassword!"
 ```
 
-### resources et resourcesPreset  
+### resources e resourcesPreset
 
-Le champ `resources` permet de définir explicitement la configuration CPU et mémoire de chaque réplique MySQL.  
-Si ce champ est laissé vide, la valeur du paramètre `resourcesPreset` est utilisée.  
+Il campo `resources` permette di definire esplicitamente la configurazione CPU e memoria di ogni replica MySQL.
+Se questo campo e lasciato vuoto, viene utilizzato il valore del parametro `resourcesPreset`.
 
-#### Exemple de configuration YAML
+#### Esempio di configurazione YAML
 
 ```yaml title="mysql.yaml"
 resources:
   cpu: 4000m
   memory: 4Gi
-```  
+```
 
-⚠️ Attention : si resources est défini, la valeur de resourcesPreset est ignorée.
+⚠️ Attenzione: se resources e definito, il valore di resourcesPreset viene ignorato.
 
-| **Preset name** | **CPU** | **Mémoire** |
+| **Preset name** | **CPU** | **Memoria** |
 |-----------------|---------|-------------|
 | `nano`          | 250m    | 128Mi       |
 | `micro`         | 500m    | 256Mi       |
@@ -169,20 +169,20 @@ resources:
 | `xlarge`        | 4       | 4Gi         |
 | `2xlarge`       | 8       | 8Gi         |
 
-## Guides pratiques
+## Guide pratiche
 
-Pour les procédures détaillées, consultez les guides dédiés :
+Per le procedure dettagliate, consultate le guide dedicate:
 
-- [Comment configurer les sauvegardes automatiques](./how-to/configure-backups.md)
-- [Comment restaurer une sauvegarde](./how-to/restore-backup.md)
-- [Comment scaler verticalement](./how-to/scale-resources.md)
-- [Comment gérer les utilisateurs et bases de données](./how-to/manage-users-databases.md)
+- [Come configurare i backup automatici](./how-to/configure-backups.md)
+- [Come ripristinare un backup](./how-to/restore-backup.md)
+- [Come scalare verticalmente](./how-to/scale-resources.md)
+- [Come gestire utenti e database](./how-to/manage-users-databases.md)
 
-## Problèmes connus
+## Problemi noti
 
-- La réplication peut échouer avec différentes erreurs
-- La réplication peut échouer si le binlog a été purgé. Tant que `mariadbbackup` n'est pas utilisé pour initialiser un nœud par mariadb-operator (cette fonctionnalité n'est pas encore implémentée), suivez ces étapes manuelles pour corriger le problème : https://github.com/mariadb-operator/mariadb-operator/issues/141#issuecomment-1804760231
-- Les index peuvent parfois être corrompus sur le réplica primaire. Vous pouvez les restaurer depuis un réplica secondaire
+- La replica puo fallire con diversi errori
+- La replica puo fallire se il binlog e stato eliminato. Finche `mariadbbackup` non viene utilizzato per inizializzare un nodo da mariadb-operator (questa funzionalita non e ancora implementata), seguite questi passaggi manuali per correggere il problema: https://github.com/mariadb-operator/mariadb-operator/issues/141#issuecomment-1804760231
+- Gli indici possono talvolta essere corrotti sulla replica primaria. Potete ripristinarli da una replica secondaria
 
 ```bash
 mysqldump -h <slave> -P 3306 -u<user> -p<password> --column-statistics=0 <database> <table> ~/tmp/fix-table.sql
@@ -193,7 +193,7 @@ mysql -h <master> -P 3306 -u<user> -p<password> <database> < ~/tmp/fix-table.sql
 
 ## Esempi Completi
 
-### Cluster de Production
+### Cluster di Produzione
 
 ```yaml title="mysql-production.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -245,7 +245,7 @@ spec:
     resticPassword: SecureResticPassword
 ```
 
-### Cluster de Développement
+### Cluster di Sviluppo
 
 ```yaml title="mysql-development.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -274,15 +274,15 @@ spec:
 
 :::tip Buone Pratiche
 
-- **3 réplicas minimum** en production pour assurer la haute disponibilité (1 primary + 2 réplicas)
-- **`maxUserConnections`** : limitez les connexions par utilisateur pour éviter l'épuisement des ressources
-- **Sauvegardes Restic** : activez les sauvegardes automatiques avec `backup.enabled: true` et conservez le `resticPassword` en lieu sûr
-- **Séparation des bases** : créez une base de données par application avec des rôles distincts (admin, readonly)
+- **3 repliche minimo** in produzione per assicurare l'alta disponibilita (1 primary + 2 repliche)
+- **`maxUserConnections`**: limitate le connessioni per utente per evitare l'esaurimento delle risorse
+- **Backup Restic**: attivate i backup automatici con `backup.enabled: true` e conservate il `resticPassword` in un luogo sicuro
+- **Separazione dei database**: create un database per applicazione con ruoli distinti (admin, readonly)
 :::
 
-:::warning Attention
+:::warning Attenzione
 
-- **Les suppressions sont irréversibles** : la suppression d'une ressource MySQL entraîne la perte définitive des données si aucune sauvegarde n'est configurée
-- **Bascule du primary** : le changement de primary via `spec.replication.primary.podIndex` peut entraîner une brève interruption des écritures
-- **Index corrompus** : les index peuvent parfois être corrompus sur le réplica primaire — restaurez-les depuis un réplica secondaire avec `mysqldump`
+- **Le cancellazioni sono irreversibili**: la cancellazione di una risorsa MySQL comporta la perdita definitiva dei dati se nessun backup e configurato
+- **Commutazione del primary**: il cambio di primary tramite `spec.replication.primary.podIndex` puo comportare una breve interruzione delle scritture
+- **Indici corrotti**: gli indici possono talvolta essere corrotti sulla replica primaria — ripristinateli da una replica secondaria con `mysqldump`
 :::

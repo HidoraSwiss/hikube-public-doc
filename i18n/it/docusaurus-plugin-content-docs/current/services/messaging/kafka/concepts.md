@@ -3,11 +3,11 @@ sidebar_position: 2
 title: Concetti
 ---
 
-# Concepts — Kafka
+# Concetti — Kafka
 
 ## Architettura
 
-Kafka sur Hikube est un service managé de streaming distribué. Chaque instance déployée via la ressource `Kafka` crée un cluster de **brokers** coordonnés par **ZooKeeper**, capable de gérer des millions de messages par seconde avec une persistance garantie.
+Kafka su Hikube è un servizio gestito di streaming distribuito. Ogni istanza distribuita tramite la risorsa `Kafka` crea un cluster di **broker** coordinati da **ZooKeeper**, capace di gestire milioni di messaggi al secondo con persistenza garantita.
 
 ```mermaid
 graph TB
@@ -34,7 +34,7 @@ graph TB
             T2["Topic B (2 partitions)"]
         end
 
-        subgraph "Stockage"
+        subgraph "Archiviazione"
             PV1[PV Broker 1]
             PV2[PV Broker 2]
             PV3[PV Broker 3]
@@ -63,25 +63,25 @@ graph TB
 
 ## Terminologia
 
-| Terme | Description |
-|-------|-------------|
-| **Kafka** | Ressource Kubernetes (`apps.cozystack.io/v1alpha1`) représentant un cluster Kafka managé. |
-| **Broker** | Instance Kafka qui stocke les messages et sert les producteurs/consommateurs. |
-| **ZooKeeper** | Service de coordination distribué qui gère les métadonnées du cluster, l'élection du leader et la configuration des topics. |
-| **Topic** | Canal de messages nommé. Les producteurs écrivent dans un topic, les consommateurs lisent depuis un topic. |
-| **Partition** | Subdivision d'un topic. Chaque partition est un log ordonné de messages, distribué sur un broker. |
-| **Replication Factor** | Nombre de copies de chaque partition sur différents brokers. |
-| **Consumer Group** | Groupe de consommateurs qui se répartissent les partitions d'un topic pour le traitement parallèle. |
-| **Retention** | Durée ou taille maximale de conservation des messages dans un topic. |
-| **resourcesPreset** | Profil de ressources prédéfini (nano à 2xlarge). |
+| Termine | Descrizione |
+|---------|-------------|
+| **Kafka** | Risorsa Kubernetes (`apps.cozystack.io/v1alpha1`) che rappresenta un cluster Kafka gestito. |
+| **Broker** | Istanza Kafka che archivia i messaggi e serve produttori/consumatori. |
+| **ZooKeeper** | Servizio di coordinamento distribuito che gestisce i metadati del cluster, l'elezione del leader e la configurazione dei topic. |
+| **Topic** | Canale di messaggi con un nome. I produttori scrivono in un topic, i consumatori leggono da un topic. |
+| **Partizione** | Suddivisione di un topic. Ogni partizione è un log ordinato di messaggi, distribuito su un broker. |
+| **Replication Factor** | Numero di copie di ogni partizione su diversi broker. |
+| **Consumer Group** | Gruppo di consumatori che si ripartiscono le partizioni di un topic per l'elaborazione parallela. |
+| **Retention** | Durata o dimensione massima di conservazione dei messaggi in un topic. |
+| **resourcesPreset** | Profilo di risorse predefinito (da nano a 2xlarge). |
 
 ---
 
-## Topics et partitions
+## Topic e partizioni
 
-### Fonctionnement
+### Funzionamento
 
-Un **topic** est divisé en **partitions**, chacune distribuée sur un broker différent :
+Un **topic** è suddiviso in **partizioni**, ciascuna distribuita su un broker diverso:
 
 ```mermaid
 graph LR
@@ -91,7 +91,7 @@ graph LR
         P2[Partition 2<br/>Broker 3]
     end
 
-    Prod[Producteur] --> P0
+    Prod[Produttore] --> P0
     Prod --> P1
     Prod --> P2
 
@@ -100,44 +100,44 @@ graph LR
     P2 --> C3[Consumer 3]
 ```
 
-- Plus de partitions = plus de parallélisme
-- Chaque partition a un **leader** (un broker) et des **followers** (réplicas)
-- Le `replicationFactor` détermine le nombre de copies de chaque partition
+- Più partizioni = più parallelismo
+- Ogni partizione ha un **leader** (un broker) e dei **follower** (repliche)
+- Il `replicationFactor` determina il numero di copie di ogni partizione
 
-### Configuration des topics
+### Configurazione dei topic
 
-Les topics sont déclarés directement dans le manifeste Kafka :
+I topic sono dichiarati direttamente nel manifesto Kafka:
 
-| Paramètre | Description |
+| Parametro | Descrizione |
 |-----------|-------------|
-| `topics[name].partitions` | Nombre de partitions du topic |
-| `topics[name].config.replicationFactor` | Nombre de réplicas par partition |
-| `topics[name].config.retentionMs` | Durée de rétention en ms (ex: `604800000` = 7 jours) |
-| `topics[name].config.cleanupPolicy` | `delete` (suppression par TTL) ou `compact` (conservation du dernier message par clé) |
+| `topics[name].partitions` | Numero di partizioni del topic |
+| `topics[name].config.replicationFactor` | Numero di repliche per partizione |
+| `topics[name].config.retentionMs` | Durata di retention in ms (es: `604800000` = 7 giorni) |
+| `topics[name].config.cleanupPolicy` | `delete` (eliminazione per TTL) o `compact` (conservazione dell'ultimo messaggio per chiave) |
 
 ---
 
 ## ZooKeeper
 
-ZooKeeper assure la coordination du cluster Kafka :
+ZooKeeper garantisce il coordinamento del cluster Kafka:
 
-- **Élection du leader** pour chaque partition
-- **Stockage des métadonnées** (topics, partitions, offsets)
-- **Détection des pannes** des brokers
+- **Elezione del leader** per ogni partizione
+- **Archiviazione dei metadati** (topic, partizioni, offset)
+- **Rilevamento dei guasti** dei broker
 
 :::tip
-Configurez toujours un nombre impair d'instances ZooKeeper (`zookeeper.replicas: 3`) pour garantir le quorum.
+Configurate sempre un numero dispari di istanze ZooKeeper (`zookeeper.replicas: 3`) per garantire il quorum.
 :::
 
-Les ressources ZooKeeper sont configurées indépendamment des brokers via `zookeeper.resources` ou `zookeeper.resourcesPreset`.
+Le risorse ZooKeeper sono configurate indipendentemente dai broker tramite `zookeeper.resources` o `zookeeper.resourcesPreset`.
 
 ---
 
-## Presets de ressources
+## Preset di risorse
 
-Les presets s'appliquent séparément aux **brokers Kafka** et au **ZooKeeper** :
+I preset si applicano separatamente ai **broker Kafka** e allo **ZooKeeper**:
 
-| Preset | CPU | Mémoire |
+| Preset | CPU | Memoria |
 |--------|-----|---------|
 | `nano` | 250m | 128Mi |
 | `micro` | 500m | 256Mi |
@@ -149,19 +149,19 @@ Les presets s'appliquent séparément aux **brokers Kafka** et au **ZooKeeper** 
 
 ---
 
-## Limites et quotas
+## Limiti e quote
 
-| Paramètre | Valeur |
+| Parametro | Valore |
 |-----------|--------|
-| Brokers Kafka max | Selon quota tenant |
-| Instances ZooKeeper | 3 recommandé (impair) |
-| Topics par cluster | Illimité (selon ressources) |
-| Partitions par topic | Configurable |
-| Taille stockage | Variable (`kafka.size`, `zookeeper.size`) |
+| Broker Kafka max | Secondo la quota del tenant |
+| Istanze ZooKeeper | 3 raccomandato (dispari) |
+| Topic per cluster | Illimitato (secondo le risorse) |
+| Partizioni per topic | Configurabile |
+| Dimensione archiviazione | Variabile (`kafka.size`, `zookeeper.size`) |
 
 ---
 
 ## Per approfondire
 
-- [Overview](./overview.md) : présentation du service
-- [Référence API](./api-reference.md) : tous les paramètres de la ressource Kafka
+- [Panoramica](./overview.md): presentazione del servizio
+- [Riferimento API](./api-reference.md): tutti i parametri della risorsa Kafka

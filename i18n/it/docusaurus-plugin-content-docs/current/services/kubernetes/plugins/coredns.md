@@ -6,10 +6,10 @@ title: CoreDNS
   <!--coredns     <Object> -required-
     valuesOverride    <Object> -required--->
 
-# 🧩 Détails du champ `addons.coredns`
+# 🧩 Dettagli del campo `addons.coredns`
 
-Le champ `addons.coredns` définit la configuration de l’add-on **CoreDNS**, utilisé comme **service DNS** du cluster Kubernetes.
-CoreDNS gère la résolution des noms de services et des pods internes au cluster, et peut être personnalisé via des paramètres Helm.
+Il campo `addons.coredns` definisce la configurazione dell'add-on **CoreDNS**, utilizzato come **servizio DNS** del cluster Kubernetes.
+CoreDNS gestisce la risoluzione dei nomi dei servizi e dei pod interni al cluster, e puo essere personalizzato tramite parametri Helm.
 
 ```yaml
 addons:
@@ -46,14 +46,14 @@ addons:
 
 ---
 
-## `coredns` (Object) — **Obligatoire**
+## `coredns` (Object) — **Obbligatorio**
 
-### Description
+### Descrizione
 
-Le champ `coredns` regroupe la configuration principale du service DNS du cluster.
-Il définit les paramètres nécessaires au déploiement et au bon fonctionnement de CoreDNS.
+Il campo `coredns` raggruppa la configurazione principale del servizio DNS del cluster.
+Definisce i parametri necessari alla distribuzione e al corretto funzionamento di CoreDNS.
 
-### Exemple
+### Esempio
 
 ```yaml
 coredns:
@@ -64,15 +64,15 @@ coredns:
 
 ---
 
-## `valuesOverride` (Object) — **Obligatoire**
+## `valuesOverride` (Object) — **Obbligatorio**
 
-### Description
+### Descrizione
 
-Le champ `valuesOverride` permet de **surcharger les valeurs par défaut** du déploiement CoreDNS, généralement via Helm.
-Il est utilisé pour personnaliser les ressources, le nombre de réplicas, ou encore la configuration du service DNS (ex : plugins, zones, caches).
-Voir les autres options : https://github.com/coredns/helm/blob/master/charts/coredns/values.yaml
+Il campo `valuesOverride` permette di **sovrascrivere i valori predefiniti** della distribuzione CoreDNS, generalmente tramite Helm.
+E utilizzato per personalizzare le risorse, il numero di repliche o la configurazione del servizio DNS (es: plugin, zone, cache).
+Vedere le altre opzioni: https://github.com/coredns/helm/blob/master/charts/coredns/values.yaml
 
-### Exemple
+### Esempio
 
 ```yaml
 valuesOverride:
@@ -91,10 +91,10 @@ valuesOverride:
 
 ## 💡 Buone pratiche
 
-- Toujours définir `valuesOverride` pour ajuster les ressources selon la taille du cluster.
-- Configurer `replicaCount` à **au moins 2** pour assurer la haute disponibilité du service DNS.
-- Surveiller l’utilisation mémoire : CoreDNS peut consommer plus selon le nombre de services et de requêtes DNS.
-- Adapter la configuration des plugins (ex : `forward`, `cache`, `rewrite`) selon les besoins de ton environnement.
-- Éviter de modifier manuellement le `ConfigMap` de CoreDNS : préférer un déploiement géré via `valuesOverride`.
+- Definire sempre `valuesOverride` per regolare le risorse in base alla dimensione del cluster.
+- Configurare `replicaCount` ad **almeno 2** per garantire l'alta disponibilita del servizio DNS.
+- Monitorare l'utilizzo della memoria: CoreDNS puo consumare di piu in base al numero di servizi e richieste DNS.
+- Adattare la configurazione dei plugin (es: `forward`, `cache`, `rewrite`) in base alle esigenze del vostro ambiente.
+- Evitare di modificare manualmente il `ConfigMap` di CoreDNS: preferire una distribuzione gestita tramite `valuesOverride`.
 
 ---

@@ -3,28 +3,28 @@ sidebar_position: 1
 title: Panoramica
 ---
 
-# MySQL sur Hikube
+# MySQL su Hikube
 
-Hikube propose un service **MySQL managé**, basé sur l’opérateur **MariaDB-Operator**.  
-Il assure le déploiement d’un cluster répliqué et auto-réparant, garantissant **haute disponibilité**, **simplicité de gestion** et **performances fiables**, sans effort côté utilisateur.
+Hikube offre un servizio **MySQL gestito**, basato sull'operatore **MariaDB-Operator**.
+Assicura il deployment di un cluster replicato e auto-riparante, garantendo **alta disponibilita**, **semplicita di gestione** e **prestazioni affidabili**, senza sforzo lato utente.
 
 ---
 
-## 🏗️ Architecture et Fonctionnement
+## 🏗️ Architettura e Funzionamento
 
-Le service **MySQL managé** sur Hikube repose sur l’opérateur **MariaDB-Operator**, qui automatise la gestion complète du cycle de vie de la base de données : déploiement, mise à jour, réplication et reprise après incident.  
+Il servizio **MySQL gestito** su Hikube si basa sull'operatore **MariaDB-Operator**, che automatizza la gestione completa del ciclo di vita del database: deployment, aggiornamento, replica e ripristino dopo un incidente.
 
-L’architecture repose sur un **cluster répliqué** :  
+L'architettura si basa su un **cluster replicato**:
 
-- Un **nœud primaire** (primary) gère toutes les opérations d’écriture et assure la cohérence des données.  
-- Un ou plusieurs **réplicas** (standby) reçoivent en temps réel les transactions via la réplication asynchrone ou semi-synchrone.  
-- Un mécanisme d’**auto-failover** promeut automatiquement un réplica en tant que nouveau primaire en cas de défaillance, garantissant une **haute disponibilité**.  
+- Un **nodo primario** (primary) gestisce tutte le operazioni di scrittura e assicura la coerenza dei dati.
+- Una o piu **repliche** (standby) ricevono in tempo reale le transazioni tramite la replica asincrona o semi-sincrona.
+- Un meccanismo di **auto-failover** promuove automaticamente una replica come nuovo primario in caso di guasto, garantendo un'**alta disponibilita**.
 
-Cette approche offre :  
+Questo approccio offre:
 
-- **Résilience** en cas de panne matérielle ou logicielle  
-- **Scalabilité en lecture** grâce à la distribution des requêtes entre les réplicas  
-- **Simplicité de gestion**, car la plateforme prend en charge la coordination et la maintenance du cluster  
+- **Resilienza** in caso di guasto hardware o software
+- **Scalabilita in lettura** grazie alla distribuzione delle query tra le repliche
+- **Semplicita di gestione**, poiche la piattaforma si occupa del coordinamento e della manutenzione del cluster
 
 ```mermaid
 graph TD
@@ -40,17 +40,17 @@ graph TD
         P3[Pod MySQL Replica] --> PVC3[(PVC - Storage)]
     end
 
-    P1 -->|Réplication| P2
-    P1 -->|Réplication| P3
+    P1 -->|Replica| P2
+    P1 -->|Replica| P3
 ```
 
 ---
 
-## 💡 Cas d’usage
+## 💡 Casi d'uso
 
-Le service **MySQL managé sur Hikube** est particulièrement adapté pour :  
+Il servizio **MySQL gestito su Hikube** e particolarmente adatto per:
 
-- **Applications web transactionnelles (OLTP)** : e-commerce, ERP, CRM, où la fiabilité et la rapidité des transactions sont essentielles.  
-- **Applications SaaS multi-clients** : chaque client peut disposer de sa base isolée tout en bénéficiant de la haute disponibilité.  
-- **Workloads à forte charge en lecture** : la présence de réplicas permet de répartir les requêtes et d’améliorer les performances globales.  
-- **Scénarios de reprise après incident** : grâce au mécanisme d’auto-failover et aux sauvegardes S3 intégrées.  
+- **Applicazioni web transazionali (OLTP)**: e-commerce, ERP, CRM, dove l'affidabilita e la rapidita delle transazioni sono essenziali.
+- **Applicazioni SaaS multi-client**: ogni client puo disporre del proprio database isolato beneficiando dell'alta disponibilita.
+- **Carichi di lavoro con forte domanda in lettura**: la presenza di repliche permette di distribuire le query e migliorare le prestazioni globali.
+- **Scenari di ripristino dopo un incidente**: grazie al meccanismo di auto-failover e ai backup S3 integrati.

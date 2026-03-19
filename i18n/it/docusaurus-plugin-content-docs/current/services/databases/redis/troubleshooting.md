@@ -5,104 +5,104 @@ title: Risoluzione dei problemi
 
 # Risoluzione dei problemi — Redis
 
-### Perte de données après redémarrage
+### Perdita di dati dopo il riavvio
 
-**Causa** : la `storageClass` utilisée est `local`, ce qui signifie que les données sont stockées uniquement sur le nœud physique où s'exécutait le pod. Si le pod est replanifié sur un autre nœud, les données précédentes sont perdues.
+**Causa**: la `storageClass` utilizzata e `local`, il che significa che i dati sono archiviati unicamente sul nodo fisico dove veniva eseguito il pod. Se il pod viene ripianificato su un altro nodo, i dati precedenti vengono persi.
 
-**Soluzione** :
+**Soluzione**:
 
-1. Vérifiez la `storageClass` utilisée :
+1. Verificate la `storageClass` utilizzata:
    ```bash
    kubectl get pvc -l app=redis-<name>
    ```
-2. Si vous utilisez un seul réplica (`replicas` = 1), passez à `storageClass: replicated` pour que le stockage compense l'absence de réplication applicative. Si vous avez plusieurs réplicas (`replicas` >= 3), `storageClass: local` est approprié car Redis Sentinel assure déjà la haute disponibilité :
+2. Se usate una sola replica (`replicas` = 1), passate a `storageClass: replicated` affinche lo storage compensi l'assenza di replica applicativa. Se avete piu repliche (`replicas` >= 3), `storageClass: local` e appropriato perche Redis Sentinel assicura gia l'alta disponibilita:
    ```yaml title="redis.yaml"
    spec:
-     storageClass: replicated    # Si replicas = 1
-     # storageClass: local       # Si replicas >= 3 (Sentinel assure la HA)
+     storageClass: replicated    # Se replicas = 1
+     # storageClass: local       # Se replicas >= 3 (Sentinel assicura l'HA)
    ```
-3. Appliquez la modification. Notez qu'un changement de `storageClass` nécessite généralement une recréation des PVC.
-4. Assurez-vous également que `replicas` >= 3 pour bénéficier de la réplication Redis Sentinel.
+3. Applicate la modifica. Notate che un cambio di `storageClass` richiede generalmente la ricreazione dei PVC.
+4. Assicuratevi anche che `replicas` >= 3 per beneficiare della replica Redis Sentinel.
 
-### Redis Sentinel ne converge pas
+### Redis Sentinel non converge
 
-**Causa** : le nombre de réplicas est pair ou inférieur à 3, ce qui empêche le quorum Sentinel de fonctionner correctement. Sentinel nécessite une majorité pour élire un nouveau primary.
+**Causa**: il numero di repliche e pari o inferiore a 3, il che impedisce al quorum Sentinel di funzionare correttamente. Sentinel necessita di una maggioranza per eleggere un nuovo primary.
 
-**Soluzione** :
+**Soluzione**:
 
-1. Vérifiez le nombre de réplicas :
+1. Verificate il numero di repliche:
    ```bash
    kubectl get pods -l app=redis-<name>
    ```
-2. Assurez-vous d'utiliser un nombre **impair** >= 3 :
+2. Assicuratevi di usare un numero **dispari** >= 3:
    ```yaml title="redis.yaml"
    spec:
-     replicas: 3    # Ou 5, jamais 2 ou 4
+     replicas: 3    # Oppure 5, mai 2 o 4
    ```
-3. Consultez les logs Sentinel pour identifier les problèmes de convergence :
+3. Consultate i log di Sentinel per identificare i problemi di convergenza:
    ```bash
    kubectl logs -l app=rfs-redis-<name>
    ```
-4. Vérifiez la connectivité réseau entre les pods Redis. Des problèmes de DNS ou de réseau peuvent empêcher la découverte des nœuds.
+4. Verificate la connettivita di rete tra i pod Redis. Problemi di DNS o di rete possono impedire la scoperta dei nodi.
 
-### Mémoire saturée (OOMKilled)
+### Memoria satura (OOMKilled)
 
-**Causa** : le dataset Redis dépasse la mémoire allouée au conteneur. Kubernetes tue le pod lorsqu'il dépasse sa limite mémoire.
+**Causa**: il dataset Redis supera la memoria allocata al contenitore. Kubernetes termina il pod quando supera il suo limite di memoria.
 
-**Soluzione** :
+**Soluzione**:
 
-1. Vérifiez si le pod a été tué pour OOM :
+1. Verificate se il pod e stato terminato per OOM:
    ```bash
    kubectl describe pod rfr-redis-<name>-0 | grep -i oom
    ```
-2. Augmentez la mémoire allouée via `resources.memory` ou un `resourcesPreset` supérieur :
+2. Aumentate la memoria allocata tramite `resources.memory` o un `resourcesPreset` superiore:
    ```yaml title="redis.yaml"
    spec:
      resources:
        cpu: 1000m
-       memory: 2Gi    # Augmenter la mémoire
+       memory: 2Gi    # Aumentare la memoria
    ```
-3. Vérifiez la politique d'éviction Redis (`maxmemory-policy`). Par défaut, Redis renvoie une erreur quand la mémoire est pleine. Envisagez d'utiliser `allkeys-lru` si Redis sert de cache.
-4. Surveillez la taille du dataset :
+3. Verificate la politica di eviction Redis (`maxmemory-policy`). Per impostazione predefinita, Redis restituisce un errore quando la memoria e piena. Considerate l'uso di `allkeys-lru` se Redis funge da cache.
+4. Monitorate la dimensione del dataset:
    ```bash
    redis-cli -h rfr-redis-<name> -p 6379 -a <password> INFO memory
    ```
 
-### Connexion timeout
+### Timeout di connessione
 
-**Causa** : les pods Redis ne sont pas en cours d'exécution, les endpoints du service sont vides, ou la configuration d'authentification côté client ne correspond pas à celle du serveur.
+**Causa**: i pod Redis non sono in esecuzione, gli endpoint del servizio sono vuoti, o la configurazione di autenticazione lato client non corrisponde a quella del server.
 
-**Soluzione** :
+**Soluzione**:
 
-1. Vérifiez que les pods sont en état `Running` :
+1. Verificate che i pod siano nello stato `Running`:
    ```bash
    kubectl get pods -l app=redis-<name>
    ```
-2. Vérifiez que les services ont des endpoints :
+2. Verificate che i servizi abbiano endpoint:
    ```bash
    kubectl get endpoints rfr-redis-<name>
    kubectl get endpoints rfs-redis-<name>
    ```
-3. Si `authEnabled: true`, assurez-vous que votre client fournit le mot de passe correct.
-4. Testez la connexion depuis un pod de debug :
+3. Se `authEnabled: true`, assicuratevi che il vostro client fornisca la password corretta.
+4. Testate la connessione da un pod di debug:
    ```bash
    kubectl run test-redis --rm -it --image=redis:7 -- redis-cli -h rfr-redis-<name> -p 6379 -a <password> PING
    ```
 
-### Authentification échoue
+### Autenticazione fallita
 
-**Causa** : le mot de passe utilisé ne correspond pas à celui stocké dans le Secret Kubernetes, ou `authEnabled` n'est pas activé sur le serveur alors que le client envoie un mot de passe (ou inversement).
+**Causa**: la password utilizzata non corrisponde a quella memorizzata nel Secret Kubernetes, oppure `authEnabled` non e attivato sul server mentre il client invia una password (o viceversa).
 
-**Soluzione** :
+**Soluzione**:
 
-1. Récupérez le mot de passe correct depuis le Secret :
+1. Recuperate la password corretta dal Secret:
    ```bash
    kubectl get tenantsecret redis-<name>-auth -o jsonpath='{.data.password}' | base64 -d
    ```
-2. Vérifiez que `authEnabled: true` est configuré dans votre manifeste :
+2. Verificate che `authEnabled: true` sia configurato nel vostro manifesto:
    ```yaml title="redis.yaml"
    spec:
      authEnabled: true
    ```
-3. Assurez-vous que votre client utilise exactement le mot de passe récupéré à l'étape 1.
-4. Si vous avez changé la configuration `authEnabled`, les clients existants doivent être mis à jour pour refléter le changement.
+3. Assicuratevi che il vostro client utilizzi esattamente la password recuperata al passo 1.
+4. Se avete cambiato la configurazione `authEnabled`, i client esistenti devono essere aggiornati per riflettere il cambiamento.

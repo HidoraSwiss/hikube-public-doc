@@ -3,37 +3,37 @@ sidebar_position: 2
 title: Avvio rapido
 ---
 
-# Déployer Kafka en 5 minutes
+# Distribuire Kafka in 5 minuti
 
-Ce guide vous accompagne pas à pas dans le déploiement de votre premier **cluster Kafka** sur Hikube, du manifeste YAML jusqu'aux premiers tests de messagerie.
-
----
-
-## Obiettivos
-
-À la fin de ce guide, vous aurez :
-
-- Un **cluster Kafka** déployé et opérationnel sur Hikube
-- **3 brokers Kafka** et **3 nœuds ZooKeeper** pour la haute disponibilité
-- Un **topic** prêt à recevoir des messages
-- Un **stockage persistant** pour vos données Kafka et ZooKeeper
+Questa guida vi accompagna passo dopo passo nella distribuzione del vostro primo **cluster Kafka** su Hikube, dal manifesto YAML fino ai primi test di messaggistica.
 
 ---
 
-## Prerequisitiiti
+## Obiettivi
 
-Avant de commencer, assurez-vous d'avoir :
+Al termine di questa guida, avrete:
 
-- **kubectl** configuré avec votre kubeconfig Hikube
-- **Droits administrateur** sur votre tenant
-- Un **namespace** dédié pour héberger votre cluster Kafka
-- **kafkacat** (ou `kcat`) installé sur votre poste (optionnel, pour les tests)
+- Un **cluster Kafka** distribuito e operativo su Hikube
+- **3 broker Kafka** e **3 nodi ZooKeeper** per l'alta disponibilità
+- Un **topic** pronto a ricevere messaggi
+- Un **archivio persistente** per i vostri dati Kafka e ZooKeeper
 
 ---
 
-## Étape 1 : Créer le manifeste Kafka
+## Prerequisiti
 
-Créez un fichier `kafka.yaml` avec la configuration suivante :
+Prima di iniziare, assicuratevi di avere:
+
+- **kubectl** configurato con il vostro kubeconfig Hikube
+- **Diritti di amministratore** sul vostro tenant
+- Un **namespace** dedicato per ospitare il vostro cluster Kafka
+- **kafkacat** (o `kcat`) installato sulla vostra postazione (opzionale, per i test)
+
+---
+
+## Passo 1: Creare il manifesto Kafka
+
+Create un file `kafka.yaml` con la seguente configurazione:
 
 ```yaml title="kafka.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -62,27 +62,27 @@ spec:
 ```
 
 :::tip
-Kafka ne dispose pas d'authentification par défaut sur Hikube. Pour un usage en production, il est recommandé de ne pas exposer le cluster à l'extérieur (`external: false`). Consultez la [Référence API](./api-reference.md) pour la configuration complète.
+Kafka non dispone di autenticazione predefinita su Hikube. Per un utilizzo in produzione, si raccomanda di non esporre il cluster all'esterno (`external: false`). Consultate il [Riferimento API](./api-reference.md) per la configurazione completa.
 :::
 
 ---
 
-## Étape 2 : Déployer le cluster Kafka
+## Passo 2: Distribuire il cluster Kafka
 
-Appliquez le manifeste et vérifiez que le déploiement démarre :
+Applicate il manifesto e verificate che la distribuzione sia avviata:
 
 ```bash
-# Appliquer le manifeste
+# Applicare il manifesto
 kubectl apply -f kafka.yaml
 ```
 
-Vérifiez le statut du cluster (peut prendre 2-3 minutes) :
+Verificate lo stato del cluster (può richiedere 2-3 minuti):
 
 ```bash
 kubectl get kafka
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```console
 NAME      READY   AGE     VERSION
@@ -91,15 +91,15 @@ example   True    2m      0.13.0
 
 ---
 
-## Étape 3 : Verifica des pods
+## Passo 3: Verifica dei pod
 
-Vérifiez que tous les pods sont en état `Running` :
+Verificate che tutti i pod siano nello stato `Running`:
 
 ```bash
 kubectl get pods | grep kafka
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```console
 kafka-example-kafka-0        1/1     Running   0   2m
@@ -110,24 +110,24 @@ kafka-example-zookeeper-1    1/1     Running   0   2m
 kafka-example-zookeeper-2    1/1     Running   0   2m
 ```
 
-Avec `kafka.replicas: 3` et `zookeeper.replicas: 3`, vous obtenez **6 pods** :
+Con `kafka.replicas: 3` e `zookeeper.replicas: 3`, ottenete **6 pod**:
 
-| Préfixe | Rôle | Nombre |
-|---------|------|--------|
-| `kafka-example-kafka-*` | **Brokers Kafka** (réception, stockage et distribution des messages) | 3 |
-| `kafka-example-zookeeper-*` | **ZooKeeper** (coordination du cluster et élection du leader) | 3 |
+| Prefisso | Ruolo | Numero |
+|----------|-------|--------|
+| `kafka-example-kafka-*` | **Broker Kafka** (ricezione, archiviazione e distribuzione dei messaggi) | 3 |
+| `kafka-example-zookeeper-*` | **ZooKeeper** (coordinamento del cluster ed elezione del leader) | 3 |
 
 ---
 
-## Étape 4 : Récupérer les identifiants
+## Passo 4: Recuperare le credenziali
 
-Kafka sur Hikube ne dispose pas d'authentification par défaut. Les connexions se font directement via le service bootstrap :
+Kafka su Hikube non dispone di autenticazione predefinita. Le connessioni avvengono direttamente tramite il servizio bootstrap:
 
 ```bash
 kubectl get svc | grep kafka
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```console
 kafka-example-kafka-bootstrap    ClusterIP      10.96.xx.xx    <none>        9092/TCP    2m
@@ -136,117 +136,117 @@ kafka-example-zookeeper-client   ClusterIP      10.96.xx.xx    <none>        218
 ```
 
 :::note
-Le service `kafka-example-kafka-bootstrap` est le point d'entrée principal pour les clients Kafka.
+Il servizio `kafka-example-kafka-bootstrap` è il punto di accesso principale per i client Kafka.
 :::
 
 ---
 
-## Étape 5 : Connexion et tests
+## Passo 5: Connessione e test
 
-### Port-forward du service Kafka
+### Port-forward del servizio Kafka
 
 ```bash
 kubectl port-forward svc/kafka-example-kafka-bootstrap 9092:9092 &
 ```
 
-### Publier et consommer un message
+### Pubblicare e consumare un messaggio
 
 ```bash
-# Envoyer un message sur le topic
+# Inviare un messaggio sul topic
 echo "Hello Hikube!" | kafkacat -b localhost:9092 -t my-topic -P
 
-# Consommer le message
+# Consumare il messaggio
 kafkacat -b localhost:9092 -t my-topic -C -o beginning -e
 ```
 
-**Risultato atteso :**
+**Risultato atteso:**
 
 ```console
 Hello Hikube!
 ```
 
 :::note
-Si vous n'avez pas `kafkacat`, vous pouvez l'installer avec `apt install kafkacat` (Debian/Ubuntu) ou `brew install kcat` (macOS).
+Se non avete `kafkacat`, potete installarlo con `apt install kafkacat` (Debian/Ubuntu) o `brew install kcat` (macOS).
 :::
 
 ---
 
-## Étape 6 : Dépannage rapide
+## Passo 6: Risoluzione rapida dei problemi
 
-### Pods en CrashLoopBackOff
+### Pod in CrashLoopBackOff
 
 ```bash
-# Vérifier les logs du broker en erreur
+# Verificare i log del broker in errore
 kubectl logs kafka-example-kafka-0
 
-# Vérifier les events du pod
+# Verificare gli eventi del pod
 kubectl describe pod kafka-example-kafka-0
 ```
 
-**Cause frequenti :** mémoire insuffisante (`kafka.resources.memory` trop faible), volume de stockage plein.
+**Cause frequenti:** memoria insufficiente (`kafka.resources.memory` troppo bassa), volume di archiviazione pieno.
 
-### Kafka non accessible
+### Kafka non accessibile
 
 ```bash
-# Vérifier que les services existent
+# Verificare che i servizi esistano
 kubectl get svc | grep kafka
 
-# Vérifier le service bootstrap
+# Verificare il servizio bootstrap
 kubectl describe svc kafka-example-kafka-bootstrap
 ```
 
-**Cause frequenti :** port-forward non actif, mauvais port dans la chaîne de connexion, service non prêt.
+**Cause frequenti:** port-forward non attivo, porta errata nella stringa di connessione, servizio non pronto.
 
-### ZooKeeper en erreur
+### ZooKeeper in errore
 
 ```bash
-# Vérifier les logs ZooKeeper
+# Verificare i log di ZooKeeper
 kubectl logs kafka-example-zookeeper-0
 
-# Vérifier l'état des pods ZooKeeper
+# Verificare lo stato dei pod ZooKeeper
 kubectl get pods | grep zookeeper
 ```
 
-**Cause frequenti :** le quorum ZooKeeper nécessite un nombre impair de réplicas (3 minimum recommandé), espace disque insuffisant.
+**Cause frequenti:** il quorum ZooKeeper richiede un numero dispari di repliche (minimo 3 raccomandato), spazio su disco insufficiente.
 
-### Commandes de diagnostic générales
+### Comandi di diagnostica generali
 
 ```bash
-# Events récents sur le namespace
+# Eventi recenti sul namespace
 kubectl get events --sort-by=.metadata.creationTimestamp
 
-# État détaillé du cluster Kafka
+# Stato dettagliato del cluster Kafka
 kubectl describe kafka example
 ```
 
 ---
 
-## Étape 7 : Pulizia
+## Passo 7: Pulizia
 
-Pour supprimer les ressources de test :
+Per eliminare le risorse di test:
 
 ```bash
 kubectl delete -f kafka.yaml
 ```
 
 :::warning
-Cette action supprime le cluster Kafka et toutes les données associées. Cette opération est **irréversible**.
+Questa azione elimina il cluster Kafka e tutti i dati associati. Questa operazione è **irreversibile**.
 :::
 
 ---
 
 ## Riepilogo
 
-Vous avez déployé :
+Avete distribuito:
 
-- Un cluster Kafka avec **3 brokers** répartis sur des nœuds différents
-- **3 nœuds ZooKeeper** pour la coordination du cluster
-- Un **topic** configuré avec 3 partitions et 3 réplicas
-- Un stockage persistant pour la durabilité des données
+- Un cluster Kafka con **3 broker** distribuiti su nodi diversi
+- **3 nodi ZooKeeper** per il coordinamento del cluster
+- Un **topic** configurato con 3 partizioni e 3 repliche
+- Un archivio persistente per la durabilità dei dati
 
 ---
 
 ## Prossimi passi
 
-- **[Référence API](./api-reference.md)** : Configuration complète de toutes les options Kafka
-- **[Vue d'ensemble](./overview.md)** : Architecture détaillée et cas d'usage Kafka sur Hikube
+- **[Riferimento API](./api-reference.md)**: Configurazione completa di tutte le opzioni Kafka
+- **[Panoramica](./overview.md)**: Architettura dettagliata e casi d'uso Kafka su Hikube

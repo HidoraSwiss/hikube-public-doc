@@ -3,11 +3,11 @@ sidebar_position: 2
 title: Concetti
 ---
 
-# Concepts — Machines virtuelles
+# Concetti — Macchine virtuali
 
 ## Architettura
 
-Hikube fournit des machines virtuelles (VM) grâce à **KubeVirt**, une technologie qui permet d'exécuter des VM directement au sein de l'infrastructure Kubernetes. Chaque VM est gérée comme une ressource Kubernetes native, offrant une intégration transparente avec l'écosystème cloud-native.
+Hikube fornisce macchine virtuali (VM) grazie a **KubeVirt**, una tecnologia che permette di eseguire VM direttamente all'interno dell'infrastruttura Kubernetes. Ogni VM è gestita come una risorsa Kubernetes nativa, offrendo un'integrazione trasparente con l'ecosistema cloud-native.
 
 ```mermaid
 graph TB
@@ -23,12 +23,12 @@ graph TB
             QEMU[QEMU/KVM]
         end
 
-        subgraph "Stockage"
+        subgraph "Archiviazione"
             LS[Local Storage]
             RS[Replicated Storage]
         end
 
-        subgraph "Réseau"
+        subgraph "Rete"
             PL[PortList Exposure]
             WI[WholeIP Exposure]
             FW[Distributed Firewall]
@@ -50,108 +50,108 @@ graph TB
 
 ## Terminologia
 
-| Terme | Description |
+| Termine | Descrizione |
 |-------|-------------|
-| **VMInstance** | Ressource Kubernetes (`apps.cozystack.io/v1alpha1`) représentant une machine virtuelle. Gère le cycle de vie, les disques, le réseau et le cloud-init. |
-| **VMDisk** | Ressource Kubernetes représentant un disque virtuel. Peut être créé à partir d'une image Golden, d'une source HTTP ou vide. |
-| **Golden Image** | Image OS pré-configurée et optimisée pour KubeVirt (AlmaLinux, Rocky, Debian, Ubuntu, etc.). |
-| **Instance Type** | Profil de ressources CPU/RAM défini par une série (S, U, M) et une taille. |
-| **cloud-init** | Mécanisme d'initialisation automatique des VM au premier démarrage (utilisateurs, packages, scripts). |
-| **PortList** | Méthode d'exposition réseau qui expose des ports spécifiques avec firewalling automatique sur l'IP dédiée (recommandé). |
-| **WholeIP** | Méthode d'exposition réseau qui attribue une IP publique dédiée à la VM. |
+| **VMInstance** | Risorsa Kubernetes (`apps.cozystack.io/v1alpha1`) che rappresenta una macchina virtuale. Gestisce il ciclo di vita, i dischi, la rete e il cloud-init. |
+| **VMDisk** | Risorsa Kubernetes che rappresenta un disco virtuale. Può essere creato a partire da un'immagine Golden, da una sorgente HTTP o vuoto. |
+| **Golden Image** | Immagine OS preconfigurata e ottimizzata per KubeVirt (AlmaLinux, Rocky, Debian, Ubuntu, ecc.). |
+| **Instance Type** | Profilo di risorse CPU/RAM definito da una serie (S, U, M) e una dimensione. |
+| **cloud-init** | Meccanismo di inizializzazione automatica delle VM al primo avvio (utenti, pacchetti, script). |
+| **PortList** | Metodo di esposizione di rete che espone porte specifiche con firewalling automatico sull'IP dedicato (raccomandato). |
+| **WholeIP** | Metodo di esposizione di rete che assegna un IP pubblico dedicato alla VM. |
 
 ---
 
-## Types d'instances
+## Tipi di istanze
 
-Hikube propose trois séries d'instances avec des ratios CPU/RAM différents :
+Hikube propone tre serie di istanze con rapporti CPU/RAM differenti:
 
-| Série | Ratio CPU:RAM | Cas d'usage |
+| Serie | Rapporto CPU:RAM | Caso d'uso |
 |-------|---------------|-------------|
-| **S (Standard)** | 1:2 | Workloads généraux, CPU partagé, burstable |
-| **U (Universal)** | 1:4 | Workloads équilibrés, plus de mémoire |
-| **M (Memory)** | 1:8 | Applications memory-intensive (caches, bases de données) |
+| **S (Standard)** | 1:2 | Workload generali, CPU condiviso, burstable |
+| **U (Universal)** | 1:4 | Workload bilanciati, più memoria |
+| **M (Memory)** | 1:8 | Applicazioni memory-intensive (cache, database) |
 
-Chaque série va de `small` (1-2 vCPU) à `8xlarge` (32-64 vCPU).
+Ogni serie va da `small` (1-2 vCPU) a `8xlarge` (32-64 vCPU).
 
 ---
 
-## Stockage
+## Archiviazione
 
-Deux classes de stockage sont disponibles pour les disques des VM :
+Due classi di storage sono disponibili per i dischi delle VM:
 
-| Classe | Caractéristique | Cas d'usage |
+| Classe | Caratteristica | Caso d'uso |
 |--------|-----------------|-------------|
-| **local** | Stockage sur le nœud physique, performances maximales | Données éphémères, caches, tests |
-| **replicated** | Réplication sur plusieurs nœuds/régions | Données de production, haute disponibilité |
+| **local** | Storage sul nodo fisico, prestazioni massime | Dati effimeri, cache, test |
+| **replicated** | Replica su più nodi/regioni | Dati di produzione, alta disponibilità |
 
 :::tip
-Utilisez `storageClass: replicated` pour les disques système en production. Le stockage `local` offre de meilleures performances I/O mais ne survit pas à une panne de nœud.
+Utilizzate `storageClass: replicated` per i dischi di sistema in produzione. Lo storage `local` offre migliori prestazioni I/O ma non sopravvive a un guasto del nodo.
 :::
 
 ---
 
-## Réseau et exposition
+## Rete ed esposizione
 
-### PortList (recommandé)
+### PortList (raccomandato)
 
-Le mode **PortList** expose uniquement les ports spécifiés via une IP dédiée à la VM avec firewalling automatique sur le Service. C'est la méthode recommandée car elle :
-- Limite la surface d'attaque
-- Attribue une IP dédiée à la VM
-- Supporte les ports TCP standard (22, 80, 443, etc.)
+La modalità **PortList** espone unicamente le porte specificate tramite un IP dedicato alla VM con firewalling automatico sul Service. È il metodo raccomandato perché:
+- Limita la superficie d'attacco
+- Assegna un IP dedicato alla VM
+- Supporta le porte TCP standard (22, 80, 443, ecc.)
 
 ### WholeIP
 
-Le mode **WholeIP** attribue une IP publique dédiée avec tous les ports ouverts. Utile quand :
-- La VM doit être accessible sur des ports dynamiques
-- Un protocole nécessite une IP dédiée (VPN, SIP, etc.)
-- La VM sert de gateway ou de VPN
+La modalità **WholeIP** assegna un IP pubblico dedicato con tutte le porte aperte. Utile quando:
+- La VM deve essere accessibile su porte dinamiche
+- Un protocollo necessita un IP dedicato (VPN, SIP, ecc.)
+- La VM funge da gateway o VPN
 
 ---
 
-## Cycle de vie d'une VM
+## Ciclo di vita di una VM
 
 ```mermaid
 stateDiagram-v2
     [*] --> Provisioning: kubectl apply
-    Provisioning --> Running: Disques prêts + VM démarrée
+    Provisioning --> Running: Dischi pronti + VM avviata
     Running --> Stopped: runStrategy: Halted
     Stopped --> Running: runStrategy: Always
-    Running --> LiveMigration: Maintenance nœud
-    LiveMigration --> Running: Migration terminée
+    Running --> LiveMigration: Manutenzione nodo
+    LiveMigration --> Running: Migrazione completata
     Running --> [*]: kubectl delete
 ```
 
-Les VM Hikube supportent :
-- **Démarrage/arrêt** via le champ `spec.runStrategy`
-- **Live migration** transparente lors de maintenances
-- **Auto-restart** en cas de panne du nœud hôte
-- **Snapshots** pour la sauvegarde ponctuelle
+Le VM Hikube supportano:
+- **Avvio/arresto** tramite il campo `spec.runStrategy`
+- **Live migration** trasparente durante le manutenzioni
+- **Auto-restart** in caso di guasto del nodo host
+- **Snapshot** per il backup puntuale
 
 ---
 
-## Isolation et sécurité
+## Isolamento e sicurezza
 
-Chaque VM bénéficie d'une isolation multi-niveaux :
+Ogni VM beneficia di un isolamento multi-livello:
 
-- **Isolation kernel** : KubeVirt exécute chaque VM dans son propre processus QEMU/KVM
-- **Isolation réseau** : pare-feu distribué entre les tenants
-- **Isolation stockage** : chaque disque est un volume dédié
+- **Isolamento kernel**: KubeVirt esegue ogni VM nel proprio processo QEMU/KVM
+- **Isolamento di rete**: firewall distribuito tra i tenant
+- **Isolamento storage**: ogni disco è un volume dedicato
 
 ---
 
-## Limites et quotas
+## Limiti e quote
 
-| Paramètre | Limite |
+| Parametro | Limite |
 |-----------|--------|
-| vCPU par VM | Jusqu'à 64 (série S `s1.8xlarge`) |
-| RAM par VM | Jusqu'à 256 GB (série M `m1.8xlarge`) |
-| Disques par VM | Multiples (système + données) |
-| Taille disque | Variable, selon le quota du tenant |
+| vCPU per VM | Fino a 64 (serie S `s1.8xlarge`) |
+| RAM per VM | Fino a 256 GB (serie M `m1.8xlarge`) |
+| Dischi per VM | Multipli (sistema + dati) |
+| Dimensione disco | Variabile, secondo la quota del tenant |
 
 ---
 
 ## Per approfondire
 
-- [Overview](./overview.md) : présentation détaillée du service
-- [Référence API](./api-reference.md) : liste complète des paramètres VMInstance et VMDisk
+- [Panoramica](./overview.md): presentazione dettagliata del servizio
+- [Riferimento API](./api-reference.md): lista completa dei parametri VMInstance e VMDisk

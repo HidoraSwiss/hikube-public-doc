@@ -3,108 +3,108 @@ sidebar_position: 1
 title: Panoramica
 ---
 
-# NATS sur Hikube
+# NATS su Hikube
 
-Les **clusters NATS** d’Hikube offrent une **plateforme de messagerie moderne, ultra-légère et performante**, conçue pour la **communication en temps réel** entre services, applications et appareils connectés.  
-Pensé pour les **architectures cloud natives et microservices**, NATS combine **simplicité, rapidité et résilience** dans un système unique et facile à opérer.
-
----
-
-## 🏗️ Architecture et Fonctionnement
-
-NATS adopte une architecture **pub/sub** (publish–subscribe) sans broker complexe : chaque message est envoyé à un **sujet** (`subject`) que d’autres applications peuvent **écouter**.
-
-* **Publishers** → publient des messages sur un sujet (`orders.created`, `user.login`, etc.)  
-* **Subscribers** → s’abonnent à ces sujets pour recevoir les messages correspondants  
-* **Subjects** → définissent les canaux logiques de communication, hiérarchisés et dynamiques  
-* **JetStream** → ajoute la **persistance**, la **relecture (replay)** et les **garanties de livraison**
+I **cluster NATS** di Hikube offrono una **piattaforma di messaggistica moderna, ultra-leggera e performante**, progettata per la **comunicazione in tempo reale** tra servizi, applicazioni e dispositivi connessi.
+Pensato per le **architetture cloud native e microservizi**, NATS combina **semplicità, velocità e resilienza** in un sistema unico e facile da gestire.
 
 ---
 
-## 🌿 Légèreté et performance
+## 🏗️ Architettura e Funzionamento
 
-NATS est reconnu pour sa **vitesse exceptionnelle** et son **empreinte minimale**, ce qui en fait un composant idéal pour les architectures distribuées.
+NATS adotta un'architettura **pub/sub** (publish-subscribe) senza broker complesso: ogni messaggio viene inviato a un **subject** che altre applicazioni possono **ascoltare**.
 
-**Caractéristiques clés :**
-
-* Temps de démarrage inférieur à la seconde  
-* Moins de **10 Mo de mémoire** consommée par instance  
-* Gestion de **millions de messages par seconde**  
-* Communication directe entre services, sans intermédiaire lourd  
-* Architecture **stateless** et facilement **scalable horizontalement**
-
-> NATS offre un débit élevé avec une latence moyenne mesurée en **microsecondes**, même sous forte charge.
+* **Publisher** → pubblicano messaggi su un subject (`orders.created`, `user.login`, ecc.)
+* **Subscriber** → si iscrivono a questi subject per ricevere i messaggi corrispondenti
+* **Subject** → definiscono i canali logici di comunicazione, gerarchici e dinamici
+* **JetStream** → aggiunge la **persistenza**, la **rilettura (replay)** e le **garanzie di consegna**
 
 ---
 
-## 🧩 Conçu pour les architectures microservices
+## 🌿 Leggerezza e prestazioni
 
-Chaque service peut publier ou consommer des événements sans dépendre du reste du système, favorisant un **découplage fort** et une **meilleure résilience**.
+NATS è riconosciuto per la sua **velocità eccezionale** e la sua **impronta minima**, il che lo rende un componente ideale per le architetture distribuite.
 
-**Exemples d’utilisation :**
+**Caratteristiche chiave:**
 
-* Diffusion d’événements applicatifs en temps réel  
-* Communication entre microservices distribués  
-* Requêtes légères entre services (pattern **request/reply**)  
-* Gestion d’événements métier (création de commande, notification, mise à jour de profil)
+* Tempo di avvio inferiore al secondo
+* Meno di **10 MB di memoria** consumati per istanza
+* Gestione di **milioni di messaggi al secondo**
+* Comunicazione diretta tra servizi, senza intermediari pesanti
+* Architettura **stateless** e facilmente **scalabile orizzontalmente**
 
----
-
-## 🔗 Protocoles supportés
-
-NATS est un protocole **binaire optimisé** mais reste compatible avec de nombreux environnements et standards :
-
-* **NATS Core** → messagerie légère (pub/sub, request/reply)  
-* **NATS JetStream** → persistance, replay et contrôle de flux  
-* **NATS WebSocket** → intégration directe avec des applications web  
-* **NATS MQTT** → support des objets connectés (IoT)  
-* **NATS gRPC** → interopérabilité avec des API modernes  
-* **Clients** disponibles dans plus de **40 langages** : Go, Python, Node.js, Java, Rust, C#, etc.
+> NATS offre un throughput elevato con una latenza media misurata in **microsecondi**, anche sotto forte carico.
 
 ---
 
-## 🚀 Cas d’usage typiques
+## 🧩 Progettato per le architetture microservizi
 
-### ⚡ Communication temps réel
+Ogni servizio può pubblicare o consumare eventi senza dipendere dal resto del sistema, favorendo un **forte disaccoppiamento** e una **migliore resilienza**.
 
-NATS excelle dans la **transmission instantanée d’événements** entre applications distribuées.
+**Esempi di utilizzo:**
 
-**Exemples :**
-
-* Notifications en direct et mises à jour d’état  
-* Monitoring applicatif et collecte de métriques  
-* Synchronisation de données entre microservices
-
----
-
-### 📦 Streaming d’événements et persistance
-
-Avec **JetStream**, NATS devient un **système de streaming durable** :
-
-* Stockage temporaire ou persistant des messages  
-* Relecture des événements pour l’audit ou la reprise après incident  
-* Contrôle de flux pour ne jamais surcharger les consommateurs
+* Diffusione di eventi applicativi in tempo reale
+* Comunicazione tra microservizi distribuiti
+* Richieste leggere tra servizi (pattern **request/reply**)
+* Gestione di eventi di business (creazione ordini, notifiche, aggiornamento profili)
 
 ---
 
-### 🔒 Sécurité et fiabilité
+## 🔗 Protocolli supportati
 
-Les clusters NATS Hikube intègrent des mécanismes de sécurité avancés :
+NATS è un protocollo **binario ottimizzato** ma resta compatibile con numerosi ambienti e standard:
 
-* **Chiffrement TLS/mTLS**  
-* **Authentification par NKeys et JWT**  
-* **Contrôle d’accès par sujet (subject-level ACL)**  
-
-Cela garantit une **communication fiable, sécurisée et isolée** entre services, même dans des environnements multi-tenant.
+* **NATS Core** → messaggistica leggera (pub/sub, request/reply)
+* **NATS JetStream** → persistenza, replay e controllo di flusso
+* **NATS WebSocket** → integrazione diretta con applicazioni web
+* **NATS MQTT** → supporto degli oggetti connessi (IoT)
+* **NATS gRPC** → interoperabilità con API moderne
+* **Client** disponibili in più di **40 linguaggi**: Go, Python, Node.js, Java, Rust, C#, ecc.
 
 ---
 
-### 🧠 Simplicité d’administration
+## 🚀 Casi d'uso tipici
 
-Grâce à son **design minimaliste** et à ses **outils intégrés (CLI, dashboards, métriques Prometheus)**, NATS est simple à exploiter et à superviser, même à grande échelle.
+### ⚡ Comunicazione in tempo reale
 
-**Exemples :**
+NATS eccelle nella **trasmissione istantanea di eventi** tra applicazioni distribuite.
 
-* Bus d’événements internes pour plateformes distribuées  
-* Orchestration d’automatisations internes  
-* Système de messagerie centralisé et léger pour Kubernetes
+**Esempi:**
+
+* Notifiche in diretta e aggiornamenti di stato
+* Monitoraggio applicativo e raccolta di metriche
+* Sincronizzazione di dati tra microservizi
+
+---
+
+### 📦 Streaming di eventi e persistenza
+
+Con **JetStream**, NATS diventa un **sistema di streaming durevole**:
+
+* Archiviazione temporanea o persistente dei messaggi
+* Rilettura degli eventi per audit o ripristino dopo un incidente
+* Controllo di flusso per non sovraccaricare mai i consumatori
+
+---
+
+### 🔒 Sicurezza e affidabilità
+
+I cluster NATS Hikube integrano meccanismi di sicurezza avanzati:
+
+* **Crittografia TLS/mTLS**
+* **Autenticazione tramite NKeys e JWT**
+* **Controllo degli accessi per subject (subject-level ACL)**
+
+Questo garantisce una **comunicazione affidabile, sicura e isolata** tra servizi, anche in ambienti multi-tenant.
+
+---
+
+### 🧠 Semplicità di amministrazione
+
+Grazie al suo **design minimalista** e ai suoi **strumenti integrati (CLI, dashboard, metriche Prometheus)**, NATS è semplice da gestire e monitorare, anche su larga scala.
+
+**Esempi:**
+
+* Bus di eventi interni per piattaforme distribuite
+* Orchestrazione di automazioni interne
+* Sistema di messaggistica centralizzato e leggero per Kubernetes
