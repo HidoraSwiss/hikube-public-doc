@@ -5,21 +5,21 @@ title: Fehlerbehebung
 
 # Fehlerbehebung — RabbitMQ
 
-### Queue bloquée (flow control)
+### Queue blockiert (Flow Control)
 
-**Ursache**: RabbitMQ a déclenché une **alarme mémoire** ou **alarme disque**, bloquant les publications pour protéger le système. Cela se produit lorsque la consommation mémoire dépasse le seuil (high watermark) ou que l'espace disque est insuffisant.
+**Ursache**: RabbitMQ hat einen **Speicheralarm** oder **Festplattenalarm** ausgelöst und blockiert die Veröffentlichungen, um das System zu schützen. Dies tritt auf, wenn der Speicherverbrauch den Schwellenwert (High Watermark) überschreitet oder der Speicherplatz unzureichend ist.
 
 **Lösung**:
 
-1. Vérifiez l'état du cluster et les alarmes aktivierts :
+1. Überprüfen Sie den Cluster-Status und die aktiven Alarme:
    ```bash
    kubectl exec <pod-rabbitmq> -- rabbitmqctl status | grep -A 10 "alarms"
    ```
-2. Identifiez la ressource en cause (mémoire ou disque) :
+2. Identifizieren Sie die betroffene Ressource (Speicher oder Festplatte):
    ```bash
    kubectl exec <pod-rabbitmq> -- rabbitmqctl status | grep -E "mem_|disk_"
    ```
-3. Augmentez les ressources allouées dans votre manifeste :
+3. Erhöhen Sie die zugewiesenen Ressourcen in Ihrem Manifest:
    ```yaml title="rabbitmq.yaml"
    replicas: 3
    resources:
@@ -27,92 +27,92 @@ title: Fehlerbehebung
      memory: 2Gi
    size: 20Gi
    ```
-4. Purgez les queues inutilisées si nécessaire :
+4. Löschen Sie bei Bedarf ungenutzte Queues:
    ```bash
-   kubectl exec <pod-rabbitmq> -- rabbitmqctl purge_queue <nom-queue>
+   kubectl exec <pod-rabbitmq> -- rabbitmqctl purge_queue <queue-name>
    ```
 
-### Nœud RabbitMQ non rejoint au cluster
+### RabbitMQ-Knoten nicht dem Cluster beigetreten
 
-**Ursache**: un nœud RabbitMQ n'arrive pas à rejoindre le cluster, souvent à cause d'un problème de résolution DNS, d'incohérence du cookie Erlang, ou de politiques réseau restrictives.
+**Ursache**: Ein RabbitMQ-Knoten kann dem Cluster nicht beitreten, oft aufgrund eines DNS-Auflösungsproblems, einer Inkonsistenz des Erlang-Cookies oder restriktiver Netzwerkrichtlinien.
 
 **Lösung**:
 
-1. Vérifiez l'état du cluster depuis un nœud fonctionnel :
+1. Überprüfen Sie den Cluster-Status von einem funktionierenden Knoten aus:
    ```bash
    kubectl exec <pod-rabbitmq> -- rabbitmqctl cluster_status
    ```
-2. Consultez les logs du pod en erreur :
+2. Überprüfen Sie die Logs des fehlerhaften Pods:
    ```bash
-   kubectl logs <pod-rabbitmq-problematique>
+   kubectl logs <pod-rabbitmq-problematisch>
    ```
-3. Überprüfen Sie, ob la résolution DNS fonctionne entre les pods :
+3. Überprüfen Sie, ob die DNS-Auflösung zwischen den Pods funktioniert:
    ```bash
-   kubectl exec <pod-rabbitmq> -- nslookup <pod-rabbitmq-problematique>.<service-headless>
+   kubectl exec <pod-rabbitmq> -- nslookup <pod-rabbitmq-problematisch>.<headless-service>
    ```
-4. Si le problème persiste, supprimez le pod en erreur pour forcer sa recréation :
+4. Wenn das Problem weiterhin besteht, löschen Sie den fehlerhaften Pod, um seine Neuerstellung zu erzwingen:
    ```bash
-   kubectl delete pod <pod-rabbitmq-problematique>
+   kubectl delete pod <pod-rabbitmq-problematisch>
    ```
 
-### Messages non routés (exchange mal configuré)
+### Nachrichten nicht geroutet (Exchange falsch konfiguriert)
 
-**Ursache**: les messages publiés ne parviennent pas aux queues, généralement à cause d'un mauvais type d'exchange, d'une routing key incorrecte, ou d'un binding manquant entre l'exchange et la queue.
+**Ursache**: Die veröffentlichten Nachrichten erreichen die Queues nicht, in der Regel aufgrund eines falschen Exchange-Typs, eines falschen Routing Keys oder eines fehlenden Bindings zwischen Exchange und Queue.
 
 **Lösung**:
 
-1. Listez les bindings existants pour identifier les routes configurées :
+1. Listen Sie die vorhandenen Bindings auf, um die konfigurierten Routen zu identifizieren:
    ```bash
    kubectl exec <pod-rabbitmq> -- rabbitmqctl list_bindings -p <vhost>
    ```
-2. Vérifiez le type d'exchange et la routing key attendue :
+2. Überprüfen Sie den Exchange-Typ und den erwarteten Routing Key:
    ```bash
    kubectl exec <pod-rabbitmq> -- rabbitmqctl list_exchanges -p <vhost>
    ```
-3. Configurez un **dead letter exchange** pour capturer les messages non routés et faciliter le diagnostic :
+3. Konfigurieren Sie einen **Dead Letter Exchange**, um nicht geroutete Nachrichten zu erfassen und die Diagnose zu erleichtern:
    ```bash
    kubectl exec <pod-rabbitmq> -- rabbitmqctl set_policy DLX ".*" '{"dead-letter-exchange":"dlx"}' -p <vhost>
    ```
-4. Überprüfen Sie, ob le producteur utilise le bon exchange et la bonne routing key dans sa configuration
+4. Überprüfen Sie, ob der Produzent den richtigen Exchange und den richtigen Routing Key in seiner Konfiguration verwendet
 
-### Mémoire saturée (memory alarm)
+### Speicher gesättigt (Memory Alarm)
 
-**Ursache**: RabbitMQ a atteint le seuil de mémoire (**high watermark**, par défaut 40% de la mémoire disponible). Toutes les publications sont bloquées jusqu'à ce que la mémoire redescende sous le seuil.
+**Ursache**: RabbitMQ hat den Speicherschwellenwert erreicht (**High Watermark**, standardmäßig 40% des verfügbaren Speichers). Alle Veröffentlichungen werden blockiert, bis der Speicher unter den Schwellenwert fällt.
 
 **Lösung**:
 
-1. Vérifiez la consommation mémoire :
+1. Überprüfen Sie den Speicherverbrauch:
    ```bash
    kubectl exec <pod-rabbitmq> -- rabbitmqctl status | grep "mem_used"
    ```
-2. Identifiez les queues les plus volumineuses :
+2. Identifizieren Sie die größten Queues:
    ```bash
    kubectl exec <pod-rabbitmq> -- rabbitmqctl list_queues name messages memory -p <vhost> --formatter table
    ```
-3. Augmentez la mémoire allouée à RabbitMQ :
+3. Erhöhen Sie den RabbitMQ zugewiesenen Speicher:
    ```yaml title="rabbitmq.yaml"
    resources:
      cpu: 1
      memory: 4Gi
    ```
-4. Purgez les queues inutilisées ou les queues contenant un grand nombre de messages non consommés
+4. Löschen Sie ungenutzte Queues oder Queues mit einer großen Anzahl nicht konsumierter Nachrichten
 
-### Connexion AMQP refusée
+### AMQP-Verbindung abgelehnt
 
-**Ursache**: le client ne parvient pas à se connecter au broker RabbitMQ. Cela peut être dû à des identifiants incorrects, des permissions vhost manquantes, ou un problème d'accessibilité réseau.
+**Ursache**: Der Client kann keine Verbindung zum RabbitMQ-Broker herstellen. Dies kann an falschen Zugangsdaten, fehlenden Vhost-Berechtigungen oder einem Netzwerk-Erreichbarkeitsproblem liegen.
 
 **Lösung**:
 
-1. Vérifiez les identifiants de connexion dans le Secret Kubernetes :
+1. Überprüfen Sie die Verbindungszugangsdaten im Kubernetes Secret:
    ```bash
-   kubectl get tenantsecret <nom-rabbitmq>-credentials -o jsonpath='{.data}' | base64 -d
+   kubectl get tenantsecret <rabbitmq-name>-credentials -o jsonpath='{.data}' | base64 -d
    ```
-2. Überprüfen Sie, ob l'utilisateur a les permissions nécessaires sur le vhost :
+2. Überprüfen Sie, ob der Benutzer die erforderlichen Berechtigungen auf dem Vhost hat:
    ```bash
    kubectl exec <pod-rabbitmq> -- rabbitmqctl list_permissions -p <vhost>
    ```
-3. Testez la connectivité au port AMQP (5672) :
+3. Testen Sie die Konnektivität zum AMQP-Port (5672):
    ```bash
    kubectl exec <pod-rabbitmq> -- rabbitmq-diagnostics check_port_connectivity
    ```
-4. Si vous vous connectez depuis l'extérieur du cluster, assurez-vous que `external: true` est configuré dans votre manifeste
+4. Wenn Sie sich von außerhalb des Clusters verbinden, stellen Sie sicher, dass `external: true` in Ihrem Manifest konfiguriert ist

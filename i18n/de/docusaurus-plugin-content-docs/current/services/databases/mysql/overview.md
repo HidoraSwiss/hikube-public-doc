@@ -5,26 +5,26 @@ title: Übersicht
 
 # MySQL auf Hikube
 
-Hikube bietet einen Service **MySQL managé**, basé sur l’opérateur **MariaDB-Operator**.  
-Il assure le Deployment d’un cluster répliqué et auto-réparant, garantissant **Hochverfügbarkeit**, **simplicité de gestion** et **performances fiables**, ohne Aufwand auf Benutzerseite.
+Hikube bietet einen **verwalteten MySQL-Dienst**, basierend auf dem Operator **MariaDB-Operator**.
+Er gewährleistet die Bereitstellung eines replizierten und selbstheilenden Clusters und garantiert **Hochverfügbarkeit**, **einfache Verwaltung** und **zuverlässige Leistung**, ohne Aufwand seitens des Benutzers.
 
 ---
 
-## 🏗️ Architecture et Fonctionnement
+## 🏗️ Architektur und Funktionsweise
 
-Le service **MySQL managé** sur Hikube repose sur l’opérateur **MariaDB-Operator**, qui automatise la gestion complète du cycle de vie de la base de données : Deployment, Aktualisierung, réplication et reprise après incident.  
+Der **verwaltete MySQL-Dienst** auf Hikube basiert auf dem Operator **MariaDB-Operator**, der die vollständige Verwaltung des Datenbank-Lebenszyklus automatisiert: Bereitstellung, Aktualisierung, Replikation und Wiederherstellung nach Ausfällen.
 
-L’architecture repose sur un **cluster répliqué** :  
+Die Architektur basiert auf einem **replizierten Cluster**:
 
-- Un **nœud primaire** (primary) gère toutes les opérations d’écriture et assure la cohérence des données.  
-- Un ou plusieurs **réplicas** (standby) reçoivent en temps réel les transactions via la réplication asynchrone ou semi-synchrone.  
-- Un mécanisme d’**auto-failover** promeut automatiquement un réplica en tant que nouveau primaire en cas de défaillance, garantissant une **Hochverfügbarkeit**.  
+- Ein **Primary-Knoten** (Primary) verwaltet alle Schreibvorgänge und gewährleistet die Datenkonsistenz.
+- Ein oder mehrere **Replikas** (Standby) empfangen Transaktionen in Echtzeit über asynchrone oder semi-synchrone Replikation.
+- Ein **Auto-Failover**-Mechanismus befördert automatisch ein Replika zum neuen Primary bei einem Ausfall und garantiert **Hochverfügbarkeit**.
 
-Cette approche offre :  
+Dieser Ansatz bietet:
 
-- **Résilience** en cas de panne matérielle ou logicielle  
-- **Scalabilité en lecture** grâce à la distribution des requêtes entre les réplicas  
-- **Simplicité de gestion**, car die Plattform prend en charge la coordination et la maintenance du cluster  
+- **Resilienz** bei Hardware- oder Softwareausfällen
+- **Lese-Skalierbarkeit** dank der Verteilung von Anfragen auf die Replikas
+- **Einfache Verwaltung**, da die Plattform die Koordination und Wartung des Clusters übernimmt
 
 ```mermaid
 graph TD
@@ -40,17 +40,17 @@ graph TD
         P3[Pod MySQL Replica] --> PVC3[(PVC - Storage)]
     end
 
-    P1 -->|Réplication| P2
-    P1 -->|Réplication| P3
+    P1 -->|Replikation| P2
+    P1 -->|Replikation| P3
 ```
 
 ---
 
-## 💡 Cas d’usage
+## 💡 Anwendungsfälle
 
-Le service **MySQL managé sur Hikube** est particulièrement adapté pour :  
+Der **verwaltete MySQL-Dienst auf Hikube** eignet sich besonders für:
 
-- **Applications web transactionnelles (OLTP)** : e-commerce, ERP, CRM, où la fiabilité et la rapidité des transactions sont essentielles.  
-- **Applications SaaS multi-clients** : chaque client peut disposer de sa base isolée tout en bénéficiant de la Hochverfügbarkeit.  
-- **Workloads à forte charge en lecture** : la présence de réplicas permet de répartir les requêtes et d’améliorer les performances globales.  
-- **Scénarios de reprise après incident** : grâce au mécanisme d’auto-failover et aux sauvegardes S3 intégrées.  
+- **Transaktionale Webanwendungen (OLTP)**: E-Commerce, ERP, CRM, bei denen Zuverlässigkeit und Transaktionsgeschwindigkeit wesentlich sind.
+- **Multi-Client-SaaS-Anwendungen**: Jeder Client kann über eine eigene isolierte Datenbank verfügen und gleichzeitig von der Hochverfügbarkeit profitieren.
+- **Workloads mit hoher Leselast**: Die Replikas ermöglichen die Verteilung von Anfragen und verbessern die Gesamtleistung.
+- **Disaster-Recovery-Szenarien**: Dank des Auto-Failover-Mechanismus und der integrierten S3-Sicherungen.

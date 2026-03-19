@@ -5,26 +5,26 @@ title: FAQ
 
 # FAQ — RabbitMQ
 
-### Quelle est la différence entre quorum queues et classic queues ?
+### Was ist der Unterschied zwischen Quorum Queues und Classic Queues?
 
-RabbitMQ propose deux types principaux de queues :
+RabbitMQ bietet zwei Haupttypen von Queues:
 
-- **Quorum queues** : basées sur le protocole **Raft**, les données sont répliquées sur plusieurs nœuds du cluster. Elles garantissent la **durabilité** et la **Hochverfügbarkeit** des messages. Recommandées pour la production.
-- **Classic queues** : stockées sur un seul nœud, plus rapides en écriture mais **sans réplication**. En cas de panne du nœud, les messages sont perdus.
+- **Quorum Queues**: Basieren auf dem **Raft**-Protokoll, die Daten werden auf mehrere Cluster-Knoten repliziert. Sie gewährleisten die **Haltbarkeit** und **Hochverfügbarkeit** der Nachrichten. Empfohlen für die Produktion.
+- **Classic Queues**: Auf einem einzigen Knoten gespeichert, schneller beim Schreiben, aber **ohne Replikation**. Bei Ausfall des Knotens gehen die Nachrichten verloren.
 
 :::tip
-Avec 3 réplicas ou plus (`replicas: 3`), RabbitMQ utilise les quorum queues par défaut, garantissant la durabilité des messages en cas de panne d'un nœud.
+Mit 3 oder mehr Replikaten (`replicas: 3`) verwendet RabbitMQ standardmäßig die Quorum Queues, die die Nachrichtenhaltbarkeit bei Ausfall eines Knotens gewährleisten.
 :::
 
-### À quoi servent les virtual hosts (vhosts) ?
+### Wozu dienen Virtual Hosts (Vhosts)?
 
-Les **virtual hosts** (vhosts) fournissent une **isolation logique** au sein d'un même cluster RabbitMQ :
+Die **Virtual Hosts** (Vhosts) bieten eine **logische Isolation** innerhalb desselben RabbitMQ-Clusters:
 
-- Chaque vhost possède ses propres exchanges, queues et bindings
-- Les permissions sont gérées **par vhost**, permettant de contrôler l'accès par application
-- Un utilisateur peut avoir des rôles différents selon le vhost (admin sur l'un, readonly sur l'autre)
+- Jeder Vhost besitzt seine eigenen Exchanges, Queues und Bindings
+- Berechtigungen werden **pro Vhost** verwaltet, was die Zugriffskontrolle pro Anwendung ermöglicht
+- Ein Benutzer kann je nach Vhost unterschiedliche Rollen haben (Admin auf dem einen, Readonly auf dem anderen)
 
-Exemple de configuration avec plusieurs vhosts :
+Konfigurationsbeispiel mit mehreren Vhosts:
 
 ```yaml title="rabbitmq.yaml"
 vhosts:
@@ -37,43 +37,43 @@ vhosts:
       admin: ["admin", "dev"]
 ```
 
-### Comment fonctionnent les exchanges dans RabbitMQ ?
+### Wie funktionieren die Exchanges in RabbitMQ?
 
-Un **exchange** reçoit les messages des producteurs et les route vers les queues selon des règles de **binding** :
+Ein **Exchange** empfängt Nachrichten von Produzenten und routet sie an Queues gemäß **Binding**-Regeln:
 
-| **Type**    | **Comportement**                                                              |
-| ----------- | ----------------------------------------------------------------------------- |
-| `direct`    | Route le message vers la queue dont la **routing key** correspond exactement  |
-| `fanout`    | Diffuse le message à **toutes les queues** liées, sans filtre                 |
-| `topic`     | Route selon un **pattern** de routing key (ex. `orders.*`, `logs.#`)          |
-| `headers`   | Route selon les **headers** du message plutôt que la routing key              |
+| **Typ** | **Verhalten** |
+| ------- | ------------- |
+| `direct` | Routet die Nachricht an die Queue, deren **Routing Key** genau übereinstimmt |
+| `fanout` | Verbreitet die Nachricht an **alle gebundenen Queues** ohne Filter |
+| `topic` | Routet nach einem **Pattern** des Routing Keys (z.B. `orders.*`, `logs.#`) |
+| `headers` | Routet nach den **Headers** der Nachricht anstelle des Routing Keys |
 
-Le producteur publie vers un exchange, jamais directement vers une queue.
+Der Produzent veröffentlicht an einen Exchange, nie direkt an eine Queue.
 
-### Quels protocoles sont supportés ?
+### Welche Protokolle werden unterstützt?
 
-RabbitMQ auf Hikube supporte les protocoles suivants :
+RabbitMQ auf Hikube unterstützt folgende Protokolle:
 
-| **Protocole**        | **Port** | **Usage**                              |
-| -------------------- | -------- | -------------------------------------- |
-| AMQP                 | 5672     | Protocole principal pour les messages  |
-| Management HTTP API  | 15672    | Interface web et API de gestion        |
+| **Protokoll** | **Port** | **Verwendung** |
+| ------------- | -------- | -------------- |
+| AMQP | 5672 | Hauptprotokoll für Nachrichten |
+| Management HTTP API | 15672 | Web-Oberfläche und Management-API |
 
-### Quelle est la différence entre `resourcesPreset` et `resources` ?
+### Was ist der Unterschied zwischen `resourcesPreset` und `resources`?
 
-Le champ `resourcesPreset` applique une configuration CPU/mémoire prédéfinie, tandis que `resources` permet de spécifier des valeurs explicites. Si `resources` est défini, `resourcesPreset` est **ignoré**.
+Das Feld `resourcesPreset` wendet eine vordefinierte CPU-/Speicherkonfiguration an, während `resources` die Angabe expliziter Werte ermöglicht. Wenn `resources` definiert ist, wird `resourcesPreset` **ignoriert**.
 
-| **Preset** | **CPU** | **Mémoire** |
-| ---------- | ------- | ----------- |
-| `nano`     | 100m    | 128Mi       |
-| `micro`    | 250m    | 256Mi       |
-| `small`    | 500m    | 512Mi       |
-| `medium`   | 500m    | 1Gi         |
-| `large`    | 1       | 2Gi         |
-| `xlarge`   | 2       | 4Gi         |
-| `2xlarge`  | 4       | 8Gi         |
+| **Preset** | **CPU** | **Speicher** |
+| ---------- | ------- | ------------ |
+| `nano` | 100m | 128Mi |
+| `micro` | 250m | 256Mi |
+| `small` | 500m | 512Mi |
+| `medium` | 500m | 1Gi |
+| `large` | 1 | 2Gi |
+| `xlarge` | 2 | 4Gi |
+| `2xlarge` | 4 | 8Gi |
 
-Exemple avec des ressources explicites :
+Beispiel mit expliziten Ressourcen:
 
 ```yaml title="rabbitmq.yaml"
 replicas: 3
@@ -83,21 +83,21 @@ resources:
 size: 20Gi
 ```
 
-### Comment accéder à l'interface de management ?
+### Wie greift man auf die Management-Oberfläche zu?
 
-L'interface de management RabbitMQ est accessible sur le port **15672**. Deux options :
+Die RabbitMQ Management-Oberfläche ist über Port **15672** zugänglich. Zwei Optionen:
 
-**Option 1 — Port-forward (accès local)** :
+**Option 1 — Port-Forward (lokaler Zugang)**:
 
 ```bash
-kubectl port-forward svc/<nom-rabbitmq> 15672:15672
+kubectl port-forward svc/<rabbitmq-name> 15672:15672
 ```
 
-Puis ouvrez `http://localhost:15672` dans votre navigateur.
+Dann öffnen Sie `http://localhost:15672` in Ihrem Browser.
 
-**Option 2 — Accès externe** :
+**Option 2 — Externer Zugang**:
 
-Activez `external: true` dans votre manifeste pour exposer le service via un LoadBalancer :
+Aktivieren Sie `external: true` in Ihrem Manifest, um den Service über einen LoadBalancer zu exponieren:
 
 ```yaml title="rabbitmq.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -112,5 +112,5 @@ spec:
 ```
 
 :::warning
-L'accès externe expose les ports AMQP (5672) et Management (15672) sur Internet. Assurez-vous d'utiliser des mots de passe forts pour tous les utilisateurs.
+Der externe Zugang exponiert die Ports AMQP (5672) und Management (15672) im Internet. Stellen Sie sicher, dass Sie starke Passwörter für alle Benutzer verwenden.
 :::

@@ -5,16 +5,16 @@ title: Schnellstart
 
 # PostgreSQL in 5 Minuten bereitstellen
 
-Dieser Leitfaden begleitet Sie beim Deployment Ihrer ersten **PostgreSQL**-Datenbank auf Hikube, von der Installation bis zur ersten Verbindung.
+Diese Anleitung begleitet Sie bei der Bereitstellung Ihrer ersten **PostgreSQL**-Datenbank auf Hikube, von der Installation bis zur ersten Verbindung.
 
 ---
 
 ## Ziele
 
-Am Ende dieses Leitfadens werden Sie haben:
+Am Ende dieser Anleitung haben Sie:
 
 - Eine **PostgreSQL**-Datenbank auf Hikube bereitgestellt
-- Einen replizierten Cluster mit einem **Primary** und **Replicas** für Hochverfügbarkeit
+- Einen replizierten Cluster mit einem **Primary** und **Replikas** für Hochverfügbarkeit
 - Einen Benutzer und ein Passwort für die Verbindung
 - Einen persistenten Speicher zur Aufbewahrung Ihrer Daten
 
@@ -24,7 +24,7 @@ Am Ende dieses Leitfadens werden Sie haben:
 
 Stellen Sie vor dem Start sicher, dass Sie Folgendes haben:
 
-- **kubectl** konfiguriert mit Ihrer Hikube-kubeconfig
+- **kubectl** konfiguriert mit Ihrer Hikube-Kubeconfig
 - **Administratorrechte** auf Ihrem Tenant
 - Einen verfügbaren **Namespace** für Ihre Datenbank
 - (Optional) Einen **S3-kompatiblen** Bucket, wenn Sie automatische Sicherungen über CloudNativePG aktivieren möchten
@@ -35,7 +35,7 @@ Stellen Sie vor dem Start sicher, dass Sie Folgendes haben:
 
 ### **Manifest-Datei vorbereiten**
 
-Erstellen Sie eine Datei `postgresql.yaml` wie unten:
+Erstellen Sie eine Datei `postgresql.yaml` wie folgt:
 
 ```yaml title="postgresql.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -98,16 +98,16 @@ spec:
       password: hackme
 ```
 
-### **PostgreSQL YAML bereitstellen**
+### **PostgreSQL-YAML bereitstellen**
 
 ```bash
-# Appliquer le yaml
+# YAML anwenden
 kubectl apply -f postgresql.yaml
 ```
 
 ---
 
-## Schritt 2: Deployment überprüfen
+## Schritt 2: Überprüfung der Bereitstellung
 
 Überprüfen Sie den Status Ihres PostgreSQL-Clusters (kann 1-2 Minuten dauern):
 
@@ -124,9 +124,9 @@ example   True    1m36s   0.18.0
 
 ---
 
-## Schritt 3: Pods überprüfen
+## Schritt 3: Überprüfung der Pods
 
-Überprüfen Sie, dass die Anwendungs-Pods im Status `Running` sind:
+Überprüfen Sie, dass die Anwendungs-Pods den Status `Running` haben:
 
 ```bash
 kubectl get po -o wide | grep postgres
@@ -140,9 +140,9 @@ postgres-example-2                                1/1     Running     0         
 postgres-example-3                                1/1     Running     0             18m   10.244.117.182   plo-csxhk-004   <none>           <none>
 ```
 
-Mit `replicas: 3` erhalten Sie **3 PostgreSQL-Instanzen**, verteilt auf verschiedene Rechenzentren für Hochverfügbarkeit.
+Mit `replicas: 3` erhalten Sie **3 PostgreSQL-Instanzen**, die für Hochverfügbarkeit auf verschiedene Rechenzentren verteilt sind.
 
-Überprüfen Sie, dass jede Instanz ein persistentes Volume (PVC) hat:
+Überprüfen Sie, dass jede Instanz ein Persistent Volume (PVC) hat:
 
 ```bash
 kubectl get pvc | grep postgres
@@ -158,7 +158,7 @@ postgres-example-3                         Bound     pvc-1dcbab1f-18c1-4eae-9b12
 
 ---
 
-## Schritt 4: Zugangsdaten abrufen
+## Schritt 4: Anmeldedaten abrufen
 
 Die Passwörter sind in einem Kubernetes-Secret gespeichert:
 
@@ -201,7 +201,7 @@ kubectl port-forward svc/postgres-example-rw 5432:5432
 ```
 
 :::note
-Es wird empfohlen, die Datenbank nicht nach außen zu exponieren, wenn dies nicht erforderlich ist.
+Es wird empfohlen, die Datenbank nicht extern freizugeben, wenn dies nicht erforderlich ist.
 :::
 
 ### Verbindungstest mit psql
@@ -241,46 +241,46 @@ myapp=>
 ### Pods im CrashLoopBackOff
 
 ```bash
-# Vérifier les logs du pod en erreur
+# Logs des fehlerhaften Pods prüfen
 kubectl logs postgres-example-1
 
-# Vérifier les events du pod
+# Events des Pods prüfen
 kubectl describe pod postgres-example-1
 ```
 
-**Häufige Ursachen:** Unzureichender Speicher (`resources.memory` zu niedrig), Speichervolume voll, PostgreSQL-Konfigurationsfehler in `postgresql.parameters`.
+**Häufige Ursachen:** Unzureichender Speicher (`resources.memory` zu niedrig), Speichervolumen voll, Konfigurationsfehler in `postgresql.parameters`.
 
 ### PostgreSQL nicht erreichbar
 
 ```bash
-# Vérifier que les services existent
+# Prüfen, ob die Services existieren
 kubectl get svc | grep postgres
 
-# Vérifier que le LoadBalancer a bien une IP externe
+# Prüfen, ob der LoadBalancer eine externe IP hat
 kubectl describe svc postgres-example-external-write
 ```
 
-**Häufige Ursachen:** `external: false` im Manifest, LoadBalancer wartet auf IP-Zuweisung, falscher Servicename in der Verbindungszeichenfolge.
+**Häufige Ursachen:** `external: false` im Manifest, LoadBalancer wartet auf IP-Zuweisung, falscher Service-Name in der Verbindungszeichenkette.
 
 ### Replikation fehlgeschlagen
 
 ```bash
-# Vérifier l'état du cluster CloudNativePG
+# Status des CloudNativePG-Clusters prüfen
 kubectl describe postgres example
 
-# Vérifier les logs du primary
+# Logs des Primary prüfen
 kubectl logs postgres-example-1 -c postgres
 ```
 
-**Häufige Ursachen:** Unzureichender Speicher auf einem Replica, Netzwerkproblem zwischen Knoten, falsch konfigurierte `quorum`-Parameter.
+**Häufige Ursachen:** Unzureichender Speicher auf einem Replika, Netzwerkproblem zwischen den Knoten, falsch konfigurierte `quorum`-Parameter.
 
 ### Allgemeine Diagnosebefehle
 
 ```bash
-# Events récents sur le namespace
+# Letzte Events im Namespace
 kubectl get events --sort-by=.metadata.creationTimestamp
 
-# État détaillé du cluster PostgreSQL
+# Detaillierter Status des PostgreSQL-Clusters
 kubectl describe postgres example
 ```
 
@@ -291,17 +291,17 @@ kubectl describe postgres example
 Sie haben bereitgestellt:
 
 - Eine **PostgreSQL**-Datenbank auf Ihrem Hikube-Tenant
-- Einen replizierten Cluster mit einem **Primary** und **Standby** für Hochverfügbarkeit
-- Konfigurierte Benutzer und Rollen, mit in Kubernetes-Secrets gespeicherten Passwörtern
-- Persistenten Speicher (PVC) für jede PostgreSQL-Instanz
-- Sicheren Zugriff über `psql` (interner Service oder LoadBalancer)
+- Einen replizierten Cluster mit einem **Primary** und **Standbys** für Hochverfügbarkeit
+- Konfigurierte Benutzer und Rollen mit Passwörtern, die in Kubernetes-Secrets gespeichert sind
+- Einen persistenten Speicher (PVC), der an jede PostgreSQL-Instanz angebunden ist
+- Einen sicheren Zugriff über `psql` (interner Service oder LoadBalancer)
 - Die Möglichkeit, automatische **S3-Sicherungen** zu aktivieren
 
 ---
 
 ## Bereinigung
 
-Um die Testressourcen zu löschen:
+Um die Testressourcen zu entfernen:
 
 ```bash
 kubectl delete -f postgresql.yaml
@@ -316,4 +316,4 @@ Diese Aktion löscht den PostgreSQL-Cluster und alle zugehörigen Daten. Dieser 
 ## Nächste Schritte
 
 - **[API-Referenz](./api-reference.md)**: Vollständige Konfiguration aller PostgreSQL-Optionen
-- **[Übersicht](./overview.md)**: Detaillierte Architektur und Anwendungsfälle von PostgreSQL auf Hikube
+- **[Übersicht](./overview.md)**: Detaillierte Architektur und Anwendungsfälle für PostgreSQL auf Hikube

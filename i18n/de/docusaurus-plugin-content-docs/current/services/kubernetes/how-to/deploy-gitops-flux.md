@@ -1,16 +1,16 @@
 ---
-title: "Mit Flux (GitOps) bereitstellen"
+title: "Mit Flux bereitstellen (GitOps)"
 ---
 
-# Mit Flux (GitOps) bereitstellen
+# Mit Flux bereitstellen (GitOps)
 
-Dieser Leitfaden erklärt, wie Sie FluxCD auf einem Hikube-Kubernetes-Cluster aktivieren und konfigurieren, um Ihre Anwendungen nach dem GitOps-Ansatz bereitzustellen: ein Git-Repository als einzige Wahrheitsquelle für den Zustand Ihres Clusters.
+Diese Anleitung erklärt, wie Sie FluxCD auf einem Kubernetes-Hikube-Cluster aktivieren und konfigurieren, um Ihre Anwendungen nach dem GitOps-Ansatz bereitzustellen: ein Git-Repository als einzige Wahrheitsquelle für den Zustand Ihres Clusters.
 
 ## Voraussetzungen
 
-- Ein bereitgestellter Hikube-Kubernetes-Cluster (siehe [Schnellstart](../quick-start.md))
+- Ein bereitgestellter Kubernetes-Hikube-Cluster (siehe [Schnellstart](../quick-start.md))
 - `kubectl` konfiguriert für die Interaktion mit der Hikube-API
-- Ein zugängliches Git-Repository mit Ihren Kubernetes-Manifesten
+- Ein erreichbares Git-Repository mit Ihren Kubernetes-Manifesten
 - Die kubeconfig des Child-Clusters abgerufen
 
 ## Schritte
@@ -77,7 +77,7 @@ spec:
 ```
 
 :::note
-Für private Git-Repositorys konfigurieren Sie die SSH- oder Token-Authentifizierung im Child-Cluster nach dem Deployment von Flux.
+Für private Git-Repositories konfigurieren Sie die SSH- oder Token-Authentifizierung im Child-Cluster nach der Bereitstellung von Flux.
 :::
 
 ### 3. Cluster-Konfiguration anwenden
@@ -85,27 +85,27 @@ Für private Git-Repositorys konfigurieren Sie die SSH- oder Token-Authentifizie
 ```bash
 kubectl apply -f cluster-gitops.yaml
 
-# Attendre que le cluster et les addons soient prets
+# Warten, bis der Cluster und die Addons bereit sind
 kubectl get kubernetes my-cluster -w
 ```
 
 ### 4. Synchronisation beobachten
 
-Überprüfen Sie, ob Flux Ihr Git-Repository korrekt synchronisiert:
+Prüfen Sie, ob Flux Ihr Git-Repository korrekt synchronisiert:
 
 ```bash
 export KUBECONFIG=cluster-admin.yaml
 
-# Verifier le GitRepository
+# GitRepository prüfen
 kubectl get gitrepositories -A
 
-# Verifier les Kustomizations (reconciliation Flux)
+# Kustomizations prüfen (Flux-Reconciliation)
 kubectl get kustomizations -A
 
-# Details de la synchronisation
+# Synchronisierungsdetails
 kubectl describe gitrepository -A
 
-# Verifier les pods Flux
+# Flux-Pods prüfen
 kubectl get pods -n flux-system
 ```
 
@@ -121,7 +121,7 @@ NAMESPACE     NAME            READY   STATUS                  AGE
 flux-system   flux-system     True    Applied revision: main   5m
 ```
 
-### 5. Anwendung über Git bereitstellen
+### 5. Eine Anwendung über Git bereitstellen
 
 Um eine Anwendung bereitzustellen oder zu aktualisieren, pushen Sie einfach die Manifeste in Ihr Git-Repository:
 
@@ -155,24 +155,24 @@ spec:
 ```
 
 ```bash
-# Depuis votre depot local
+# Aus Ihrem lokalen Repository
 git add apps/my-app/deployment.yaml
 git commit -m "deploy: add my-app v1.0.0"
 git push origin main
 ```
 
-Flux erkennt automatisch die Änderungen und wendet die Manifeste im Cluster an:
+Flux erkennt die Änderungen automatisch und wendet die Manifeste im Cluster an:
 
 ```bash
-# Observer la reconciliation
+# Reconciliation beobachten
 kubectl get kustomizations -A -w
 
-# Verifier que l'application est deployee
+# Prüfen, ob die Anwendung bereitgestellt ist
 kubectl get pods -l app=my-app
 ```
 
 :::tip
-Standardmäßig synchronisiert Flux das Repository jede Minute. Um eine sofortige Abstimmung zu erzwingen:
+Standardmäßig synchronisiert Flux das Repository jede Minute. Um eine sofortige Reconciliation zu erzwingen:
 ```bash
 kubectl annotate --overwrite gitrepository flux-system -n flux-system reconcile.fluxcd.io/requestedAt="$(date +%s)"
 ```
@@ -183,21 +183,21 @@ kubectl annotate --overwrite gitrepository flux-system -n flux-system reconcile.
 Validieren Sie, dass die GitOps-Pipeline durchgängig funktioniert:
 
 ```bash
-# Statut global de Flux
+# Globaler Flux-Status
 kubectl get gitrepositories,kustomizations -A
 
-# Logs de Flux en cas de probleme
+# Flux-Logs bei Problemen
 kubectl logs -n flux-system deploy/source-controller --tail=30
 kubectl logs -n flux-system deploy/kustomize-controller --tail=30
 
-# Verifier les resources deployees par Flux
+# Von Flux bereitgestellte Ressourcen prüfen
 kubectl get all -l kustomize.toolkit.fluxcd.io/name=flux-system
 ```
 
 :::warning
-Wenn die Synchronisation fehlschlägt, überprüfen Sie:
+Wenn die Synchronisation fehlschlägt, prüfen Sie:
 - Die Erreichbarkeit des Git-Repositorys vom Cluster aus
-- Die Gültigkeit der YAML-Manifeste im Repository (eine ungültige Datei blockiert die Abstimmung)
+- Die Gültigkeit der YAML-Manifeste im Repository (eine ungültige Datei blockiert die Reconciliation)
 - Die Logs der Flux-Controller, um den genauen Fehler zu identifizieren
 :::
 

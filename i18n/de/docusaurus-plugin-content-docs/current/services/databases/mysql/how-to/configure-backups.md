@@ -1,39 +1,39 @@
 ---
-title: "Konfiguration von les sauvegardes automatiques"
+title: "Automatische Sicherungen konfigurieren"
 ---
 
-# Konfiguration von les sauvegardes automatiques
+# Automatische Sicherungen konfigurieren
 
-Ce guide vous explique comment aktiviertr et configurer les sauvegardes automatiques de votre base de données MySQL auf Hikube. Les sauvegardes utilisent **Restic** et sont stockées dans un bucket **S3-compatible**, ce qui permet une restauration fiable en cas de perte de données.
+Diese Anleitung erklärt, wie Sie automatische Sicherungen Ihrer MySQL-Datenbank auf Hikube aktivieren und konfigurieren. Die Sicherungen verwenden **Restic** und werden in einem **S3-kompatiblen** Bucket gespeichert, was eine zuverlässige Wiederherstellung bei Datenverlust ermöglicht.
 
 ## Voraussetzungen
 
-- **kubectl** configuré avec votre kubeconfig Hikube
-- Une instance **MySQL** déployée sur votre tenant
-- Un **bucket S3-compatible** accessible (Hikube Object Storage, AWS S3, MinIO, etc.)
-- Les **identifiants d'accès S3** (Access Key et Secret Key)
+- **kubectl** konfiguriert mit Ihrer Hikube-Kubeconfig
+- Eine **MySQL**-Instanz auf Ihrem Tenant bereitgestellt
+- Ein zugänglicher **S3-kompatibler Bucket** (Hikube Object Storage, AWS S3, MinIO, etc.)
+- **S3-Zugangsdaten** (Access Key und Secret Key)
 
 ## Schritte
 
-### 1. Préparer le stockage S3 et les identifiants
+### 1. S3-Speicher und Anmeldedaten vorbereiten
 
-Avant de configurer les sauvegardes, assurez-vous de disposer des informations suivantes :
+Stellen Sie vor der Konfiguration der Sicherungen sicher, dass Sie die folgenden Informationen haben:
 
-| Information | Exemple | Beschreibung |
+| Information | Beispiel | Beschreibung |
 |---|---|---|
-| **Région S3** | `eu-central-1` | Région du bucket S3 |
-| **Bucket S3** | `s3.hikube.cloud/mysql-backups` | Chemin complet du bucket |
-| **Access Key** | `HIKUBE123ACCESSKEY` | Clé d'accès S3 |
-| **Secret Key** | `HIKUBE456SECRETKEY` | Clé secrète S3 |
-| **Mot de passe Restic** | `SuperStrongResticPassword!` | Mot de passe pour le chiffrement des sauvegardes |
+| **S3-Region** | `eu-central-1` | Region des S3-Buckets |
+| **S3-Bucket** | `s3.hikube.cloud/mysql-backups` | Vollständiger Pfad des Buckets |
+| **Access Key** | `HIKUBE123ACCESSKEY` | S3-Zugriffsschlüssel |
+| **Secret Key** | `HIKUBE456SECRETKEY` | S3-Geheimschlüssel |
+| **Restic-Passwort** | `SuperStrongResticPassword!` | Passwort für die Verschlüsselung der Sicherungen |
 
 :::warning
-Conservez le **mot de passe Restic** en lieu sûr. Sans ce mot de passe, il est impossible de restaurer les sauvegardes chiffrées.
+Bewahren Sie das **Restic-Passwort** an einem sicheren Ort auf. Ohne dieses Passwort ist es unmöglich, die verschlüsselten Sicherungen wiederherzustellen.
 :::
 
-### 2. Configurer la section backup dans le manifeste
+### 2. Backup-Abschnitt im Manifest konfigurieren
 
-Créez ou modifiez votre manifeste MySQL pour inclure la section `backup` :
+Erstellen oder ändern Sie Ihr MySQL-Manifest, um den Abschnitt `backup` einzufügen:
 
 ```yaml title="mysql-with-backup.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -58,7 +58,7 @@ spec:
 
   backup:
     enabled: true
-    schedule: "0 2 * * *"                                              # Tous les jours à 2h du matin
+    schedule: "0 2 * * *"                                              # Täglich um 2 Uhr morgens
     cleanupStrategy: "--keep-last=3 --keep-daily=3 --keep-within-weekly=1m"
     s3Region: eu-central-1
     s3Bucket: s3.hikube.cloud/mysql-backups
@@ -67,24 +67,24 @@ spec:
     resticPassword: "SuperStrongResticPassword!"
 ```
 
-#### Paramètres de backup
+#### Backup-Parameter
 
-| Paramètre | Beschreibung | Wert par défaut |
+| Parameter | Beschreibung | Standardwert |
 |---|---|---|
-| `backup.enabled` | Active les sauvegardes | `false` |
-| `backup.schedule` | Planification cron | `"0 2 * * *"` |
-| `backup.s3Region` | Région AWS S3 | `"us-east-1"` |
-| `backup.s3Bucket` | Bucket S3 | - |
-| `backup.s3AccessKey` | Clé d'accès S3 | - |
-| `backup.s3SecretKey` | Clé secrète S3 | - |
-| `backup.resticPassword` | Mot de passe Restic | - |
-| `backup.cleanupStrategy` | Stratégie de rétention | `"--keep-last=3 --keep-daily=3 --keep-within-weekly=1m"` |
+| `backup.enabled` | Sicherungen aktivieren | `false` |
+| `backup.schedule` | Cron-Zeitplan | `"0 2 * * *"` |
+| `backup.s3Region` | AWS S3-Region | `"us-east-1"` |
+| `backup.s3Bucket` | S3-Bucket | - |
+| `backup.s3AccessKey` | S3-Zugriffsschlüssel | - |
+| `backup.s3SecretKey` | S3-Geheimschlüssel | - |
+| `backup.resticPassword` | Restic-Passwort | - |
+| `backup.cleanupStrategy` | Aufbewahrungsstrategie | `"--keep-last=3 --keep-daily=3 --keep-within-weekly=1m"` |
 
 :::tip
-Adaptez le `schedule` selon vos besoins. Quelques exemples courants :
-- `"0 2 * * *"` : tous les jours à 2h du matin
-- `"0 */6 * * *"` : toutes les 6 heures
-- `"0 3 * * 0"` : chaque dimanche à 3h du matin
+Passen Sie den `schedule` an Ihre Bedürfnisse an. Einige gängige Beispiele:
+- `"0 2 * * *"`: täglich um 2:00 Uhr morgens
+- `"0 */6 * * *"`: alle 6 Stunden
+- `"0 3 * * 0"`: jeden Sonntag um 3:00 Uhr morgens
 :::
 
 ### 3. Konfiguration anwenden
@@ -93,18 +93,18 @@ Adaptez le `schedule` selon vos besoins. Quelques exemples courants :
 kubectl apply -f mysql-with-backup.yaml
 ```
 
-### 4. Adapter la stratégie de rétention
+### 4. Aufbewahrungsstrategie anpassen
 
-La `cleanupStrategy` utilise les options de rétention de Restic. Voici quelques exemples :
+Die `cleanupStrategy` verwendet die Aufbewahrungsoptionen von Restic. Hier einige Beispiele:
 
-| Stratégie | Beschreibung |
+| Strategie | Beschreibung |
 |---|---|
-| `--keep-last=3` | Conserver les 3 derniers snapshots |
-| `--keep-daily=7` | Conserver 1 snapshot par jour pendant 7 jours |
-| `--keep-weekly=4` | Conserver 1 snapshot par semaine pendant 4 semaines |
-| `--keep-within-weekly=1m` | Conserver tous les snapshots hebdomadaires du dernier mois |
+| `--keep-last=3` | Die letzten 3 Snapshots behalten |
+| `--keep-daily=7` | 1 Snapshot pro Tag für 7 Tage behalten |
+| `--keep-weekly=4` | 1 Snapshot pro Woche für 4 Wochen behalten |
+| `--keep-within-weekly=1m` | Alle wöchentlichen Snapshots des letzten Monats behalten |
 
-Exemple pour un environnement de production :
+Beispiel für eine Produktionsumgebung:
 
 ```yaml title="mysql-production-backup.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -129,13 +129,13 @@ spec:
 
 ## Überprüfung
 
-Überprüfen Sie, ob la configuration a été appliquée correctement :
+Überprüfen Sie, dass die Konfiguration korrekt angewendet wurde:
 
 ```bash
 kubectl get mariadb example -o yaml | grep -A 10 backup
 ```
 
-**Erwartetes Ergebnis :**
+**Erwartetes Ergebnis:**
 
 ```console
   backup:
@@ -147,10 +147,10 @@ kubectl get mariadb example -o yaml | grep -A 10 backup
 ```
 
 :::note
-La première sauvegarde sera exécutée selon le planning cron défini dans `schedule`. Vous pouvez vérifier les snapshots disponibles avec la commande Restic (voir le guide [Comment restaurer une sauvegarde](./restore-backup.md)).
+Die erste Sicherung wird gemäß dem in `schedule` definierten Cron-Zeitplan ausgeführt. Sie können die verfügbaren Snapshots mit dem Restic-Befehl überprüfen (siehe Anleitung [Sicherung wiederherstellen](./restore-backup.md)).
 :::
 
 ## Weiterführende Informationen
 
-- [API-Referenz](../api-reference.md) : liste complète des paramètres de backup
-- [Comment restaurer une sauvegarde](./restore-backup.md) : procédure de restauration depuis un snapshot Restic
+- [API-Referenz](../api-reference.md): Vollständige Liste der Backup-Parameter
+- [Sicherung wiederherstellen](./restore-backup.md): Wiederherstellungsverfahren aus einem Restic-Snapshot

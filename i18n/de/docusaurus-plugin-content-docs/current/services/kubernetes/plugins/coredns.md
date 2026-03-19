@@ -8,8 +8,8 @@ title: CoreDNS
 
 # 🧩 Details zum Feld `addons.coredns`
 
-Das Feld `addons.coredns` definiert die Konfiguration des Add-ons **CoreDNS**, das als **DNS-Service** des Kubernetes-Clusters verwendet wird.
-CoreDNS verwaltet die Namensauflösung von Services und internen Pods des Clusters und kann über Helm-Parameter angepasst werden.
+Das Feld `addons.coredns` definiert die Konfiguration des Add-ons **CoreDNS**, das als **DNS-Dienst** des Kubernetes-Clusters verwendet wird.
+CoreDNS verwaltet die Namensauflösung für Services und Pods innerhalb des Clusters und kann über Helm-Parameter angepasst werden.
 
 ```yaml
 addons:
@@ -50,8 +50,8 @@ addons:
 
 ### Beschreibung
 
-Das Feld `coredns` gruppiert die Hauptkonfiguration des DNS-Services des Clusters.
-Es definiert die für das Deployment und den ordnungsgemäßen Betrieb von CoreDNS erforderlichen Parameter.
+Das Feld `coredns` gruppiert die Hauptkonfiguration des DNS-Dienstes des Clusters.
+Es definiert die für die Bereitstellung und den ordnungsgemäßen Betrieb von CoreDNS erforderlichen Parameter.
 
 ### Beispiel
 
@@ -68,9 +68,9 @@ coredns:
 
 ### Beschreibung
 
-Das Feld `valuesOverride` ermöglicht das **Überschreiben der Standardwerte** des CoreDNS-Deployments, typischerweise über Helm.
-Es wird verwendet, um Ressourcen, die Anzahl der Replicas oder die DNS-Service-Konfiguration (z.B.: Plugins, Zonen, Caches) anzupassen.
-Weitere Optionen: https://github.com/coredns/helm/blob/master/charts/coredns/values.yaml
+Das Feld `valuesOverride` ermöglicht das **Überschreiben der Standardwerte** der CoreDNS-Bereitstellung, in der Regel über Helm.
+Es wird verwendet, um die Ressourcen, die Anzahl der Replikas oder die DNS-Dienst-Konfiguration (z.B.: Plugins, Zonen, Caches) anzupassen.
+Weitere Optionen siehe: https://github.com/coredns/helm/blob/master/charts/coredns/values.yaml
 
 ### Beispiel
 
@@ -91,10 +91,10 @@ valuesOverride:
 
 ## 💡 Best Practices
 
-- Immer `valuesOverride` definieren, um die Ressourcen je nach Clustergröße anzupassen.
-- `replicaCount` auf **mindestens 2** setzen, um die Hochverfügbarkeit des DNS-Services sicherzustellen.
-- Den Speicherverbrauch überwachen: CoreDNS kann je nach Anzahl der Services und DNS-Anfragen mehr verbrauchen.
-- Die Plugin-Konfiguration (z.B.: `forward`, `cache`, `rewrite`) je nach Umgebungsanforderungen anpassen.
-- Die `ConfigMap` von CoreDNS nicht manuell ändern: ein verwaltetes Deployment über `valuesOverride` bevorzugen.
+- Definieren Sie immer `valuesOverride`, um die Ressourcen je nach Cluster-Größe anzupassen.
+- Konfigurieren Sie `replicaCount` auf **mindestens 2**, um die Hochverfügbarkeit des DNS-Dienstes sicherzustellen.
+- Überwachen Sie die Speichernutzung: CoreDNS kann je nach Anzahl der Services und DNS-Anfragen mehr verbrauchen.
+- Passen Sie die Plugin-Konfiguration (z.B.: `forward`, `cache`, `rewrite`) an die Bedürfnisse Ihrer Umgebung an.
+- Vermeiden Sie die manuelle Bearbeitung der `ConfigMap` von CoreDNS: Bevorzugen Sie eine verwaltete Bereitstellung über `valuesOverride`.
 
 ---

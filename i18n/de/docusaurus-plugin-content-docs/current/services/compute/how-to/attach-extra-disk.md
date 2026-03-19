@@ -1,22 +1,22 @@
 ---
-title: "Comment attacher un disque supplémentaire"
+title: "Zusätzliche Festplatte anhängen"
 ---
 
-# Comment attacher un disque supplémentaire
+# Zusätzliche Festplatte anhängen
 
-Séparer les données applicatives du disque système est une bonne pratique pour la fiabilité et la flexibilité de vos VMs. Dieser Leitfaden erklärt comment créer un disque supplémentaire, l'attacher à une VMInstance existante, puis le formater et le monter dans le système d'exploitation.
+Die Trennung von Anwendungsdaten und Systemfestplatte ist eine bewährte Praxis für die Zuverlässigkeit und Flexibilität Ihrer VMs. Diese Anleitung erklärt, wie Sie eine zusätzliche Festplatte erstellen, an eine bestehende VMInstance anhängen und anschließend im Betriebssystem formatieren und einhängen.
 
 ## Voraussetzungen
 
-- **kubectl** configuré avec votre kubeconfig Hikube
-- Une **VMInstance** existante et fonctionnelle
-- Un accès **SSH** ou **console** à la VM
+- **kubectl** konfiguriert mit Ihrem Hikube-Kubeconfig
+- Eine bestehende und funktionsfähige **VMInstance**
+- Ein **SSH**- oder **Konsolen**-Zugang zur VM
 
 ## Schritte
 
-### 1. Créer un VMDisk supplémentaire
+### 1. Zusätzlichen VMDisk erstellen
 
-Créez un disque vide de la taille souhaitée. Un disque vide utilise `source: {}` sans URL ni image :
+Erstellen Sie eine leere Festplatte in der gewünschten Größe. Eine leere Festplatte verwendet `source: {}` ohne URL oder Image:
 
 ```yaml title="data-disk.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -30,28 +30,28 @@ spec:
   storageClass: replicated
 ```
 
-Appliquez le manifeste :
+Wenden Sie das Manifest an:
 
 ```bash
 kubectl apply -f data-disk.yaml
 ```
 
-Überprüfen Sie, ob le disque est prêt :
+Überprüfen Sie, ob die Festplatte bereit ist:
 
 ```bash
 kubectl get vmdisk vm-data-disk -w
 ```
 
-**Erwartetes Ergebnis :**
+**Erwartetes Ergebnis:**
 
 ```
 NAME            STATUS   SIZE   STORAGECLASS   AGE
 vm-data-disk    Ready    50Gi   replicated     30s
 ```
 
-### 2. Référencer le disque dans la VMInstance
+### 2. Festplatte in der VMInstance referenzieren
 
-Ajoutez le nom du nouveau disque dans la liste `spec.disks[]` de votre VMInstance. Par exemple, si votre VM utilise déjà un disque système `vm-system-disk` :
+Fügen Sie den Namen der neuen Festplatte in die Liste `spec.disks[]` Ihrer VMInstance ein. Zum Beispiel, wenn Ihre VM bereits eine Systemfestplatte `vm-system-disk` verwendet:
 
 ```yaml title="vm-instance.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -73,42 +73,42 @@ spec:
     - ssh-ed25519 AAAA... user@host
 ```
 
-### 3. Appliquer les changements
+### 3. Änderungen anwenden
 
 ```bash
 kubectl apply -f vm-instance.yaml
 ```
 
 :::warning
-La VM ne redémarre pas automatiquement après l'ajout d'un disque. Vous devez la redémarrer manuellement :
+Die VM startet nach dem Hinzufügen einer Festplatte nicht automatisch neu. Sie müssen sie manuell neu starten:
 
 ```bash
-# Option 1 : via virtctl
+# Option 1: über virtctl
 virtctl restart my-vm
 
-# Option 2 : via runStrategy
+# Option 2: über runStrategy
 kubectl patch vminstance my-vm --type='merge' -p '{"spec":{"runStrategy":"Halted"}}'
 kubectl patch vminstance my-vm --type='merge' -p '{"spec":{"runStrategy":"Always"}}'
 ```
 
-Attendez que la VM soit de nouveau en état `Running` avant de continuer.
+Warten Sie, bis die VM wieder im Zustand `Running` ist, bevor Sie fortfahren.
 :::
 
-### 4. Formater et monter le disque dans la VM
+### 4. Festplatte in der VM formatieren und einhängen
 
-Connectez-vous à la VM :
+Verbinden Sie sich mit der VM:
 
 ```bash
 virtctl ssh -i ~/.ssh/id_ed25519 ubuntu@my-vm
 ```
 
-Identifiez le nouveau disque avec `lsblk` :
+Identifizieren Sie die neue Festplatte mit `lsblk`:
 
 ```bash
 lsblk
 ```
 
-**Erwartetes Ergebnis :**
+**Erwartetes Ergebnis:**
 
 ```
 NAME    MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
@@ -118,22 +118,22 @@ vda     252:0    0   20G  0 disk
 vdb     252:16   0   50G  0 disk
 ```
 
-Le nouveau disque apparait comme `vdb` (sans partition ni point de montage).
+Die neue Festplatte erscheint als `vdb` (ohne Partition und ohne Einhängepunkt).
 
-Formatez le disque en ext4 :
+Formatieren Sie die Festplatte mit ext4:
 
 ```bash
 sudo mkfs.ext4 /dev/vdb
 ```
 
-Créez le point de montage et montez le disque :
+Erstellen Sie den Einhängepunkt und hängen Sie die Festplatte ein:
 
 ```bash
 sudo mkdir -p /mnt/data
 sudo mount /dev/vdb /mnt/data
 ```
 
-Pour rendre le montage persistant au redémarrage, ajoutez une entrée dans `/etc/fstab` :
+Um das Einhängen beim Neustart persistent zu machen, fügen Sie einen Eintrag in `/etc/fstab` hinzu:
 
 ```bash
 echo '/dev/vdb /mnt/data ext4 defaults 0 2' | sudo tee -a /etc/fstab
@@ -141,27 +141,27 @@ echo '/dev/vdb /mnt/data ext4 defaults 0 2' | sudo tee -a /etc/fstab
 
 ## Überprüfung
 
-Überprüfen Sie, ob le disque est correctement monté et accessible :
+Überprüfen Sie, ob die Festplatte korrekt eingehängt und zugänglich ist:
 
 ```bash
 df -h /mnt/data
 ```
 
-**Erwartetes Ergebnis :**
+**Erwartetes Ergebnis:**
 
 ```
 Filesystem      Size  Used Avail Use% Mounted on
 /dev/vdb         49G   24K   47G   1% /mnt/data
 ```
 
-Testez l'écriture :
+Testen Sie den Schreibzugriff:
 
 ```bash
 sudo touch /mnt/data/test.txt && echo "OK"
 ```
 
-:::tip Stockage répliqué
-Utilisez toujours `storageClass: replicated` pour les disques de données en production. Cela garantit la réplication sur plusieurs datacenters.
+:::tip Replizierter Speicher
+Verwenden Sie für Datenfestplatten in der Produktion immer `storageClass: replicated`. Dies gewährleistet die Replikation über mehrere Rechenzentren.
 :::
 
 ## Weiterführende Informationen

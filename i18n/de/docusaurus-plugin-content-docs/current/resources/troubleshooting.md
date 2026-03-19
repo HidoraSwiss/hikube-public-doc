@@ -1,371 +1,371 @@
 ---
 sidebar_position: 1
-title: Fehlerbehebung global
+title: Globale Fehlerbehebung
 ---
 
-# Fehlerbehebung global Hikube
+# Globale Fehlerbehebung Hikube
 
-Ce guide couvre les problèmes les plus courants rencontrés sur Hikube et leurs solutions.
+Dieser Leitfaden behandelt die häufigsten Probleme auf Hikube und deren Lösungen.
 
 ---
 
-## 1. Diagnostic général
+## 1. Allgemeine Diagnose
 
-Avant de chercher une solution spécifique, commencez par ces commandes de diagnostic :
+Bevor Sie nach einer spezifischen Lösung suchen, beginnen Sie mit diesen Diagnosebefehlen:
 
 ```bash
-# État des ressources dans votre namespace
+# Status der Ressourcen in Ihrem Namespace
 kubectl get all
 
-# Events récents (triés par date)
+# Aktuelle Events (nach Datum sortiert)
 kubectl get events --sort-by=.metadata.creationTimestamp
 
-# Description détaillée d'une ressource
-kubectl describe <type> <nom>
+# Detaillierte Beschreibung einer Ressource
+kubectl describe <type> <name>
 
-# Logs d'un pod
-kubectl logs <nom-du-pod>
+# Logs eines Pods
+kubectl logs <pod-name>
 
-# Logs du conteneur précédent (en cas de crash)
-kubectl logs <nom-du-pod> --previous
+# Logs des vorherigen Containers (bei Absturz)
+kubectl logs <pod-name> --previous
 ```
 
 ---
 
-## 2. Pods en erreur
+## 2. Pods mit Fehlern
 
 ### CrashLoopBackOff
 
-**Symptôme :** Le pod redémarre en boucle, l'état affiche `CrashLoopBackOff`.
+**Symptom:** Der Pod startet in einer Schleife neu, der Status zeigt `CrashLoopBackOff`.
 
-**Diagnostic :**
+**Diagnose:**
 
 ```bash
-kubectl describe pod <nom-du-pod>
-kubectl logs <nom-du-pod> --previous
+kubectl describe pod <pod-name>
+kubectl logs <pod-name> --previous
 ```
 
-**Solutions :**
-- **Mémoire insuffisante** : augmentez `resources.memory` ou utilisez un `resourcesPreset` plus élevé
-- **Erreur de configuration** : vérifiez les variables d'environnement et les fichiers de configuration dans les logs
-- **Dépendance manquante** : vérifiez que les services requis (base de données, secrets) sont disponibles
+**Lösungen:**
+- **Unzureichender Arbeitsspeicher**: Erhöhen Sie `resources.memory` oder verwenden Sie ein höheres `resourcesPreset`
+- **Konfigurationsfehler**: Überprüfen Sie die Umgebungsvariablen und Konfigurationsdateien in den Logs
+- **Fehlende Abhängigkeit**: Überprüfen Sie, ob die erforderlichen Dienste (Datenbank, Secrets) verfügbar sind
 
 ---
 
 ### Pending
 
-**Symptôme :** Le pod reste en état `Pending` sans démarrer.
+**Symptom:** Der Pod bleibt im Status `Pending`, ohne zu starten.
 
-**Diagnostic :**
+**Diagnose:**
 
 ```bash
-kubectl describe pod <nom-du-pod>
-# Cherchez la section "Events" en bas de la sortie
+kubectl describe pod <pod-name>
+# Suchen Sie den Abschnitt "Events" am Ende der Ausgabe
 ```
 
-**Solutions :**
-- **Ressources insuffisantes** : le cluster n'a pas assez de CPU/mémoire. Vérifiez les nœuds disponibles avec `kubectl get nodes` et `kubectl top nodes`
-- **PVC non lié** : le volume persistant demandé n'est pas disponible (voir section Stockage)
-- **NodeSelector/Affinity** : le pod a des contraintes de placement qui ne correspondent à aucun nœud
+**Lösungen:**
+- **Unzureichende Ressourcen**: Der Cluster hat nicht genug CPU/Arbeitsspeicher. Überprüfen Sie die verfügbaren Knoten mit `kubectl get nodes` und `kubectl top nodes`
+- **PVC nicht gebunden**: Das angeforderte persistente Volume ist nicht verfügbar (siehe Abschnitt Speicher)
+- **NodeSelector/Affinity**: Der Pod hat Platzierungseinschränkungen, die zu keinem Knoten passen
 
 ---
 
 ### ImagePullBackOff
 
-**Symptôme :** Le pod ne démarre pas, l'état affiche `ImagePullBackOff` ou `ErrImagePull`.
+**Symptom:** Der Pod startet nicht, der Status zeigt `ImagePullBackOff` oder `ErrImagePull`.
 
-**Diagnostic :**
+**Diagnose:**
 
 ```bash
-kubectl describe pod <nom-du-pod>
-# Cherchez "Failed to pull image" dans les events
+kubectl describe pod <pod-name>
+# Suchen Sie "Failed to pull image" in den Events
 ```
 
-**Solutions :**
-- **Image introuvable** : vérifiez le nom et le tag de l'image dans votre manifeste
-- **Registry privé** : assurez-vous qu'un `imagePullSecret` est configuré
-- **Problème réseau** : vérifiez la connectivité vers le registry
+**Lösungen:**
+- **Image nicht gefunden**: Überprüfen Sie den Namen und das Tag des Images in Ihrem Manifest
+- **Private Registry**: Stellen Sie sicher, dass ein `imagePullSecret` konfiguriert ist
+- **Netzwerkproblem**: Überprüfen Sie die Konnektivität zur Registry
 
 ---
 
 ### OOMKilled
 
-**Symptôme :** Le pod est tué avec le code de sortie `137` et la raison `OOMKilled`.
+**Symptom:** Der Pod wird mit dem Exit-Code `137` und dem Grund `OOMKilled` beendet.
 
-**Diagnostic :**
+**Diagnose:**
 
 ```bash
-kubectl describe pod <nom-du-pod>
-# Cherchez "Last State: Terminated - Reason: OOMKilled"
+kubectl describe pod <pod-name>
+# Suchen Sie "Last State: Terminated - Reason: OOMKilled"
 ```
 
-**Solutions :**
-- Augmentez la limite mémoire dans `resources.memory` ou passez à un `resourcesPreset` supérieur
-- Vérifiez si l'application a une fuite mémoire en observant la consommation avec `kubectl top pod`
+**Lösungen:**
+- Erhöhen Sie das Arbeitsspeicher-Limit in `resources.memory` oder wechseln Sie zu einem höheren `resourcesPreset`
+- Überprüfen Sie, ob die Anwendung ein Speicherleck hat, indem Sie den Verbrauch mit `kubectl top pod` beobachten
 
 ---
 
-## 3. Accès cluster
+## 3. Cluster-Zugang
 
-### Kubeconfig invalide
+### Ungültige Kubeconfig
 
-**Symptôme :** `error: You must be logged in to the server (Unauthorized)`
+**Symptom:** `error: You must be logged in to the server (Unauthorized)`
 
-**Diagnostic :**
+**Diagnose:**
 
 ```bash
-# Vérifier le fichier kubeconfig utilisé
+# Verwendete kubeconfig-Datei überprüfen
 echo $KUBECONFIG
 kubectl config current-context
 ```
 
-**Solutions :**
-- Régénérez le kubeconfig depuis votre cluster Hikube :
+**Lösungen:**
+- Generieren Sie die kubeconfig aus Ihrem Hikube-Cluster neu:
   ```bash
-  kubectl get secret <nom-cluster>-admin-kubeconfig \
+  kubectl get secret <cluster-name>-admin-kubeconfig \
     -o go-template='{{ printf "%s\n" (index .data "super-admin.conf" | base64decode) }}' \
     > my-cluster-kubeconfig.yaml
   export KUBECONFIG=my-cluster-kubeconfig.yaml
   ```
-- Überprüfen Sie, ob la variable `KUBECONFIG` pointe vers le bon fichier
+- Überprüfen Sie, ob die Variable `KUBECONFIG` auf die richtige Datei zeigt
 
 ---
 
-### Certificat expiré
+### Abgelaufenes Zertifikat
 
-**Symptôme :** `Unable to connect to the server: x509: certificate has expired`
+**Symptom:** `Unable to connect to the server: x509: certificate has expired`
 
-**Diagnostic :**
+**Diagnose:**
 
 ```bash
 kubectl config view --raw -o jsonpath='{.clusters[0].cluster.certificate-authority-data}' | base64 -d | openssl x509 -text -noout | grep -A2 Validity
 ```
 
-**Solution :** Récupérez un nouveau kubeconfig à jour depuis le Secret du cluster (voir ci-dessus).
+**Lösung:** Rufen Sie eine aktuelle kubeconfig aus dem Secret des Clusters ab (siehe oben).
 
 ---
 
-### Connexion refusée
+### Verbindung abgelehnt
 
-**Symptôme :** `The connection to the server was refused`
+**Symptom:** `The connection to the server was refused`
 
-**Diagnostic :**
+**Diagnose:**
 
 ```bash
-# Tester la connectivité
+# Konnektivität testen
 kubectl cluster-info
 ```
 
-**Solutions :**
-- Überprüfen Sie, ob le cluster est en état `Ready` : `kubectl get kubernetes <nom-cluster>`
-- Überprüfen Sie, ob le control plane est accessible depuis votre réseau
-- Si vous utilisez un VPN, assurez-vous qu'il est actif
+**Lösungen:**
+- Überprüfen Sie, ob der Cluster im Status `Ready` ist: `kubectl get kubernetes <cluster-name>`
+- Überprüfen Sie, ob die Control Plane von Ihrem Netzwerk aus erreichbar ist
+- Wenn Sie ein VPN verwenden, stellen Sie sicher, dass es aktiv ist
 
 ---
 
-## 4. Stockage
+## 4. Speicher
 
-### PVC en état Pending
+### PVC im Status Pending
 
-**Symptôme :** Le PVC reste en `Pending` et les pods dépendants ne démarrent pas.
+**Symptom:** Das PVC bleibt im Status `Pending` und abhängige Pods starten nicht.
 
-**Diagnostic :**
+**Diagnose:**
 
 ```bash
 kubectl get pvc
-kubectl describe pvc <nom-du-pvc>
+kubectl describe pvc <pvc-name>
 ```
 
-**Solutions :**
-- **StorageClass invalide** : vérifiez que la `storageClass` spécifiée existe avec `kubectl get storageclass`
-- **Capacité insuffisante** : réduisez la taille demandée ou contactez le support pour augmenter les quotas
-- **StorageClass vide** : si `storageClass: ""`, la classe par défaut est utilisée. Essayez `storageClass: replicated` explicitement
+**Lösungen:**
+- **Ungültige StorageClass**: Überprüfen Sie, ob die angegebene `storageClass` existiert mit `kubectl get storageclass`
+- **Unzureichende Kapazität**: Reduzieren Sie die angeforderte Grösse oder kontaktieren Sie den Support zur Erhöhung der Kontingente
+- **Leere StorageClass**: Wenn `storageClass: ""`, wird die Standardklasse verwendet. Versuchen Sie explizit `storageClass: replicated`
 
 ---
 
-### Espace disque insuffisant
+### Unzureichender Festplattenspeicher
 
-**Symptôme :** Les pods crashent avec des erreurs de type `No space left on device`.
+**Symptom:** Pods stürzen ab mit Fehlern vom Typ `No space left on device`.
 
-**Diagnostic :**
+**Diagnose:**
 
 ```bash
-# Vérifier l'utilisation des PVC
-kubectl exec -it <nom-du-pod> -- df -h
+# PVC-Nutzung überprüfen
+kubectl exec -it <pod-name> -- df -h
 ```
 
-**Solutions :**
-- Augmentez la valeur de `size` dans le manifeste et réappliquez
-- Supprimez les données inutiles (logs, fichiers temporaires)
+**Lösungen:**
+- Erhöhen Sie den Wert von `size` im Manifest und wenden Sie es erneut an
+- Löschen Sie unnötige Daten (Logs, temporäre Dateien)
 
 ---
 
-## 5. Réseau
+## 5. Netzwerk
 
-### Service non accessible
+### Dienst nicht erreichbar
 
-**Symptôme :** Impossible de se connecter au service depuis l'extérieur ou entre pods.
+**Symptom:** Verbindung zum Dienst von aussen oder zwischen Pods nicht möglich.
 
-**Diagnostic :**
+**Diagnose:**
 
 ```bash
-# Vérifier que le service existe et a un endpoint
+# Überprüfen, ob der Dienst existiert und einen Endpoint hat
 kubectl get svc
-kubectl get endpoints <nom-du-service>
+kubectl get endpoints <service-name>
 
-# Tester la connectivité depuis un pod
-kubectl run test-net --image=busybox --rm -it -- wget -qO- http://<nom-du-service>:<port>
+# Konnektivität von einem Pod aus testen
+kubectl run test-net --image=busybox --rm -it -- wget -qO- http://<service-name>:<port>
 ```
 
-**Solutions :**
-- **Pas d'endpoint** : les labels du `selector` du service ne correspondent à aucun pod
-- **External non aktiviert** : ajoutez `external: true` dans le manifeste pour créer un LoadBalancer
-- **Port incorrect** : vérifiez que le port du service correspond au port exposé par l'application
+**Lösungen:**
+- **Kein Endpoint**: Die Labels des `selector` des Dienstes stimmen mit keinem Pod überein
+- **External nicht aktiviert**: Fügen Sie `external: true` im Manifest hinzu, um einen LoadBalancer zu erstellen
+- **Falscher Port**: Überprüfen Sie, ob der Port des Dienstes mit dem von der Anwendung exponierten Port übereinstimmt
 
 ---
 
-### DNS non résolu
+### DNS wird nicht aufgelöst
 
-**Symptôme :** `Could not resolve host` lors de l'accès à un service par son nom.
+**Symptom:** `Could not resolve host` beim Zugriff auf einen Dienst über seinen Namen.
 
-**Diagnostic :**
+**Diagnose:**
 
 ```bash
-# Vérifier le DNS du cluster
-kubectl run test-dns --image=busybox --rm -it -- nslookup <nom-du-service>
+# Cluster-DNS überprüfen
+kubectl run test-dns --image=busybox --rm -it -- nslookup <service-name>
 
-# Vérifier les pods CoreDNS
+# CoreDNS-Pods überprüfen
 kubectl get pods -n kube-system -l k8s-app=kube-dns
 ```
 
-**Solutions :**
-- Utilisez le nom DNS complet : `<service>.<namespace>.svc.cluster.local`
-- Überprüfen Sie, ob les pods CoreDNS sont en état `Running`
+**Lösungen:**
+- Verwenden Sie den vollständigen DNS-Namen: `<service>.<namespace>.svc.cluster.local`
+- Überprüfen Sie, ob die CoreDNS-Pods im Status `Running` sind
 
 ---
 
-### Ingress retourne 404 ou 502
+### Ingress gibt 404 oder 502 zurück
 
-**Symptôme :** L'URL de l'Ingress retourne une erreur 404 (Not Found) ou 502 (Bad Gateway).
+**Symptom:** Die Ingress-URL gibt einen Fehler 404 (Not Found) oder 502 (Bad Gateway) zurück.
 
-**Diagnostic :**
+**Diagnose:**
 
 ```bash
-kubectl describe ingress <nom-de-lingress>
+kubectl describe ingress <ingress-name>
 kubectl logs -n ingress-nginx deploy/ingress-nginx-controller
 ```
 
-**Solutions :**
-- **404** : vérifiez que le `path` et le `host` de l'Ingress correspondent à votre configuration
-- **502** : le service backend ne répond pas. Überprüfen Sie, ob les pods du backend sont en état `Running` et que le port est correct
-- **IngressClass manquant** : ajoutez `ingressClassName: nginx` dans la spec de l'Ingress
+**Lösungen:**
+- **404**: Überprüfen Sie, ob `path` und `host` des Ingress mit Ihrer Konfiguration übereinstimmen
+- **502**: Der Backend-Dienst antwortet nicht. Überprüfen Sie, ob die Backend-Pods im Status `Running` sind und der Port korrekt ist
+- **Fehlende IngressClass**: Fügen Sie `ingressClassName: nginx` in der Ingress-Spec hinzu
 
 ---
 
-## 6. Bases de données
+## 6. Datenbanken
 
-### Connexion refusée
+### Verbindung abgelehnt
 
-**Symptôme :** `Connection refused` lors de la tentative de connexion à la base de données.
+**Symptom:** `Connection refused` beim Verbindungsversuch zur Datenbank.
 
-**Diagnostic :**
+**Diagnose:**
 
 ```bash
-# Vérifier l'état des pods de la base
-kubectl get pods | grep <nom-de-la-base>
+# Status der Datenbank-Pods überprüfen
+kubectl get pods | grep <datenbank-name>
 
-# Vérifier les services
-kubectl get svc | grep <nom-de-la-base>
+# Services überprüfen
+kubectl get svc | grep <datenbank-name>
 ```
 
-**Solutions :**
-- Überprüfen Sie, ob les pods de la base sont en état `Running`
-- Vérifiez les identifiants : `kubectl get secret <nom>-auth -o json | jq -r '.data | to_entries[] | "\(.key): \(.value|@base64d)"'`
-- Si `external: false`, utilisez `kubectl port-forward` pour vous connecter localement
+**Lösungen:**
+- Überprüfen Sie, ob die Datenbank-Pods im Status `Running` sind
+- Überprüfen Sie die Zugangsdaten: `kubectl get secret <name>-auth -o json | jq -r '.data | to_entries[] | "\(.key): \(.value|@base64d)"'`
+- Wenn `external: false`, verwenden Sie `kubectl port-forward` für eine lokale Verbindung
 
 ---
 
-### Réplication en retard
+### Replikationsverzögerung
 
-**Symptôme :** Les réplicas ont un lag de réplication important par rapport au master.
+**Symptom:** Die Replicas haben eine erhebliche Replikationsverzögerung gegenüber dem Master.
 
-**Diagnostic :**
+**Diagnose:**
 
 ```bash
-# Redis - Vérifier la réplication
-kubectl exec -it rfr-redis-<nom>-0 -- redis-cli -a "$REDIS_PASSWORD" INFO replication
+# Redis - Replikation überprüfen
+kubectl exec -it rfr-redis-<name>-0 -- redis-cli -a "$REDIS_PASSWORD" INFO replication
 
-# PostgreSQL - Vérifier le lag
-kubectl exec -it <nom>-1 -- psql -c "SELECT * FROM pg_stat_replication;"
+# PostgreSQL - Verzögerung überprüfen
+kubectl exec -it <name>-1 -- psql -c "SELECT * FROM pg_stat_replication;"
 ```
 
-**Solutions :**
-- Augmentez les ressources (CPU/mémoire) des réplicas
-- Vérifiez la charge réseau entre les datacenters
-- Réduisez la charge en écriture si le lag persiste
+**Lösungen:**
+- Erhöhen Sie die Ressourcen (CPU/Arbeitsspeicher) der Replicas
+- Überprüfen Sie die Netzwerklast zwischen den Rechenzentren
+- Reduzieren Sie die Schreiblast, wenn die Verzögerung anhält
 
 ---
 
-### Failover non déclenché
+### Failover wird nicht ausgelöst
 
-**Symptôme :** Le master est en panne mais aucun réplica n'est promu.
+**Symptom:** Der Master ist ausgefallen, aber kein Replica wird befördert.
 
-**Diagnostic :**
+**Diagnose:**
 
 ```bash
-# Redis - Vérifier Sentinel
-kubectl exec -it rfs-redis-<nom>-<id> -- redis-cli -p 26379 SENTINEL masters
+# Redis - Sentinel überprüfen
+kubectl exec -it rfs-redis-<name>-<id> -- redis-cli -p 26379 SENTINEL masters
 
-# Vérifier les events
-kubectl get events --sort-by=.metadata.creationTimestamp | grep <nom-de-la-base>
+# Events überprüfen
+kubectl get events --sort-by=.metadata.creationTimestamp | grep <datenbank-name>
 ```
 
-**Solutions :**
-- Überprüfen Sie, ob `replicas > 1` dans le manifeste (le failover nécessite au moins un réplica)
-- Überprüfen Sie, ob les pods Sentinel (Redis) ou l'opérateur sont en état `Running`
-- Consultez les logs de l'opérateur pour des erreurs
+**Lösungen:**
+- Überprüfen Sie, ob `replicas > 1` im Manifest gesetzt ist (Failover erfordert mindestens ein Replica)
+- Überprüfen Sie, ob die Sentinel-Pods (Redis) oder der Operator im Status `Running` sind
+- Konsultieren Sie die Logs des Operators auf Fehler
 
 ---
 
 ## 7. Messaging (NATS, RabbitMQ)
 
-### Producteur/consommateur déconnecté
+### Produzent/Konsument getrennt
 
-**Symptôme :** Les clients perdent la connexion au broker de messages.
+**Symptom:** Clients verlieren die Verbindung zum Message-Broker.
 
-**Diagnostic :**
+**Diagnose:**
 
 ```bash
-# Vérifier l'état des pods du broker
+# Status der Broker-Pods überprüfen
 kubectl get pods | grep <nats|rabbitmq>
 
-# Vérifier les logs
-kubectl logs <nom-du-pod-broker>
+# Logs überprüfen
+kubectl logs <broker-pod-name>
 ```
 
-**Solutions :**
-- Überprüfen Sie, ob les pods du broker sont en état `Running`
-- Implémentez une logique de reconnexion automatique côté client
-- Vérifiez les limites de connexion configurées
+**Lösungen:**
+- Überprüfen Sie, ob die Broker-Pods im Status `Running` sind
+- Implementieren Sie eine automatische Reconnect-Logik auf Client-Seite
+- Überprüfen Sie die konfigurierten Verbindungslimits
 
 ---
 
-### Messages perdus
+### Verlorene Nachrichten
 
-**Symptôme :** Des messages envoyés ne sont jamais reçus par les consommateurs.
+**Symptom:** Gesendete Nachrichten werden von den Konsumenten nie empfangen.
 
-**Diagnostic :**
+**Diagnose:**
 
 ```bash
-# RabbitMQ - Vérifier les queues
-kubectl exec -it <pod-rabbitmq> -- rabbitmqctl list_queues name messages consumers
+# RabbitMQ - Queues überprüfen
+kubectl exec -it <rabbitmq-pod> -- rabbitmqctl list_queues name messages consumers
 
-# NATS - Vérifier les streams JetStream
-kubectl exec -it <pod-nats> -- nats stream ls
+# NATS - JetStream-Streams überprüfen
+kubectl exec -it <nats-pod> -- nats stream ls
 ```
 
-**Solutions :**
-- **RabbitMQ** : utilisez les Quorum Queues um die ... zu gewährleisten durabilité des messages
-- **NATS** : aktiviertz JetStream pour la persistance des messages
-- Überprüfen Sie, ob les consommateurs sont connectés et actifs
-- Assurez-vous que les queues/subjects existent avant d'envoyer des messages
+**Lösungen:**
+- **RabbitMQ**: Verwenden Sie Quorum Queues, um die Dauerhaftigkeit der Nachrichten zu gewährleisten
+- **NATS**: Aktivieren Sie JetStream für die Nachrichtenpersistenz
+- Überprüfen Sie, ob die Konsumenten verbunden und aktiv sind
+- Stellen Sie sicher, dass die Queues/Subjects existieren, bevor Sie Nachrichten senden

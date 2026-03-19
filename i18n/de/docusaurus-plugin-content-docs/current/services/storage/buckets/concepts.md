@@ -3,11 +3,11 @@ sidebar_position: 2
 title: Konzepte
 ---
 
-# Concepts — Buckets S3
+# Konzepte — S3 Buckets
 
-## Architecture
+## Architektur
 
-Le service Object Storage d'Hikube repose sur **MinIO**, une solution de stockage objet compatible S3. Les données sont **triple-répliquées** automatiquement sur 3 datacenters géographiquement distincts, garantissant une Hochverfügbarkeit même en cas de perte complète d'un datacenter.
+Der Object-Storage-Dienst von Hikube basiert auf **MinIO**, einer S3-kompatiblen Objektspeicherlösung. Die Daten werden **dreifach repliziert** automatisch auf 3 geografisch getrennte Rechenzentren, was Hochverfügbarkeit auch bei vollständigem Ausfall eines Rechenzentrums gewährleistet.
 
 ```mermaid
 graph TB
@@ -21,7 +21,7 @@ graph TB
             GW[S3 API Endpoint]
         end
 
-        subgraph "Triple réplication"
+        subgraph "Dreifache Replikation"
             DC1[Geneva<br/>Data Storage]
             DC2[Gland<br/>Data Storage]
             DC3[Lucerne<br/>Data Storage]
@@ -50,23 +50,23 @@ graph TB
 
 ## Terminologie
 
-| Terme | Beschreibung |
-|-------|-------------|
-| **Bucket** | Ressource Kubernetes (`apps.cozystack.io/v1alpha1`) représentant un bucket S3. Un seul champ requis : le `name`. |
-| **Object Storage** | Stockage non structuré basé sur des objets (fichiers) identifiés par une clé unique. |
-| **S3-compatible** | API compatible avec le protocole Amazon S3, supportée par la majorité des outils et SDKs. |
-| **MinIO** | Serveur de stockage objet open source, compatible S3, utilisé comme backend par Hikube. |
-| **Access Key / Secret Key** | Paire d'identifiants pour l'authentification S3, générée automatiquement dans un Secret Kubernetes. |
-| **BucketInfo** | Feld JSON dans le Secret contenant l'endpoint S3, le protocole et le port. |
-| **Endpoint** | URL du service S3 Hikube : `https://prod.s3.hikube.cloud` |
+| Begriff | Beschreibung |
+|---------|--------------|
+| **Bucket** | Kubernetes-Ressource (`apps.cozystack.io/v1alpha1`), die einen S3-Bucket darstellt. Einziges erforderliches Feld: der `name`. |
+| **Object Storage** | Unstrukturierter Speicher basierend auf Objekten (Dateien), die durch einen eindeutigen Schlüssel identifiziert werden. |
+| **S3-kompatibel** | API kompatibel mit dem Amazon-S3-Protokoll, unterstützt von der Mehrheit der Tools und SDKs. |
+| **MinIO** | Open-Source-Objektspeicherserver, S3-kompatibel, wird als Backend von Hikube verwendet. |
+| **Access Key / Secret Key** | Paar von Zugangsdaten für die S3-Authentifizierung, automatisch in einem Kubernetes Secret generiert. |
+| **BucketInfo** | JSON-Feld im Secret, das den S3-Endpunkt, das Protokoll und den Port enthält. |
+| **Endpoint** | URL des Hikube S3-Dienstes: `https://prod.s3.hikube.cloud` |
 
 ---
 
-## Fonctionnement
+## Funktionsweise
 
-### Création
+### Erstellung
 
-La création d'un bucket est la plus simple de toutes les ressources Hikube :
+Die Erstellung eines Buckets ist die einfachste aller Hikube-Ressourcen:
 
 ```yaml title="bucket.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -76,82 +76,82 @@ metadata:
 spec: {}
 ```
 
-L'opérateur crée automatiquement :
-1. Le **bucket** dans MinIO
-2. Un **Secret Kubernetes** contenant les credentials d'accès
+Der Operator erstellt automatisch:
+1. Den **Bucket** in MinIO
+2. Ein **Kubernetes Secret** mit den Zugangsdaten
 
-### Credentials automatiques
+### Automatische Zugangsdaten
 
-Le Secret `<bucket-name>-credentials` contient :
+Das Secret `<bucket-name>-credentials` enthält:
 
-| Clé | Beschreibung |
-|-----|-------------|
-| `accessKeyID` | Clé d'accès S3 |
-| `accessSecretKey` | Clé secrète S3 |
-| `bucketInfo` | JSON avec endpoint, protocole et port |
+| Schlüssel | Beschreibung |
+|-----------|--------------|
+| `accessKeyID` | S3-Zugriffsschlüssel |
+| `accessSecretKey` | S3-Geheimschlüssel |
+| `bucketInfo` | JSON mit Endpunkt, Protokoll und Port |
 
 ---
 
-## Triple réplication multi-datacenter
+## Dreifache Multi-Datacenter-Replikation
 
-Les données sont automatiquement répliquées sur **3 datacenters** :
+Die Daten werden automatisch auf **3 Rechenzentren** repliziert:
 
-| Datacenter | Localisation |
-|-----------|-------------|
-| Region 1 | Geneva (Genève) |
+| Rechenzentrum | Standort |
+|---------------|----------|
+| Region 1 | Geneva (Genf) |
 | Region 2 | Gland |
-| Region 3 | Lucerne |
+| Region 3 | Lucerne (Luzern) |
 
-Cette architecture garantit :
-- **Zéro perte de données** en cas de panne d'un datacenter
-- **Continuité de service** avec basculement automatique
-- **Latence optimisée** depuis la Suisse et l'Europe
+Diese Architektur gewährleistet:
+- **Null Datenverlust** bei Ausfall eines Rechenzentrums
+- **Dienstkontinuität** mit automatischem Failover
+- **Optimierte Latenz** aus der Schweiz und Europa
 
 :::tip
-La triple réplication est transparente — vous n'avez rien à configurer. Toutes les données sont automatiquement répliquées.
+Die dreifache Replikation ist transparent — Sie müssen nichts konfigurieren. Alle Daten werden automatisch repliziert.
 :::
 
 ---
 
-## Outils compatibles
+## Kompatible Tools
 
-Le service est compatible avec tous les outils supportant le protocole S3 :
+Der Dienst ist mit allen Tools kompatibel, die das S3-Protokoll unterstützen:
 
-| Outil | Anwendungsfälle |
-|-------|-------------|
-| **AWS CLI** | Gestion de fichiers en ligne de commande |
-| **MinIO Client (mc)** | Client natif MinIO |
-| **rclone** | Synchronisation et migration de données |
-| **s3cmd** | Gestion S3 alternative |
-| **Velero** | Sauvegarde de clusters Kubernetes |
-| **Restic** | Sauvegarde de bases de données (PostgreSQL, MySQL, ClickHouse) |
+| Tool | Anwendungsfall |
+|------|---------------|
+| **AWS CLI** | Dateiverwaltung über die Kommandozeile |
+| **MinIO Client (mc)** | Nativer MinIO-Client |
+| **rclone** | Datensynchronisation und -migration |
+| **s3cmd** | Alternative S3-Verwaltung |
+| **Velero** | Kubernetes-Cluster-Sicherung |
+| **Restic** | Datenbanksicherung (PostgreSQL, MySQL, ClickHouse) |
 | **SDKs** | boto3 (Python), AWS SDK (Go, Java, Node.js) |
 
 ---
 
 ## Anwendungsfälle
 
-| Anwendungsfälle | Beschreibung |
-|-------------|-------------|
-| **Stockage d'assets** | Images, vidéos, fichiers statiques pour applications web |
-| **Sauvegarde** | Destination pour les backups de bases de données et clusters K8s |
-| **Data lake** | Stockage de données brutes pour l'analyse |
-| **Archivage** | Conservation long terme de documents et logs |
+| Anwendungsfall | Beschreibung |
+|----------------|--------------|
+| **Asset-Speicherung** | Bilder, Videos, statische Dateien für Webanwendungen |
+| **Sicherung** | Ziel für Datenbank- und K8s-Cluster-Backups |
+| **Data Lake** | Speicherung von Rohdaten für die Analyse |
+| **Archivierung** | Langfristige Aufbewahrung von Dokumenten und Logs |
 
 ---
 
-## Limites et quotas
+## Grenzen und Kontingente
 
-| Paramètre | Wert |
-|-----------|--------|
-| Taille max par objet | Selon configuration MinIO |
-| Nombre de buckets | Selon quota tenant |
-| Réplication | Triple (3 DC), automatique |
-| Endpoint | `https://prod.s3.hikube.cloud` |
+| Parameter | Wert |
+|-----------|------|
+| Max. Größe pro Objekt | Je nach MinIO-Konfiguration |
+| Anzahl der Buckets | Je nach Tenant-Kontingent |
+| Replikation | Dreifach (3 DC), automatisch |
+| Endpunkt | `https://prod.s3.hikube.cloud` |
 
 ---
 
 ## Weiterführende Informationen
 
-- [Overview](./overview.md) : présentation détaillée du service
-- [API-Referenz](./api-reference.md) : paramètres de la ressource Bucket
+- [Übersicht](./overview.md): Detaillierte Vorstellung des Dienstes
+- [API-Referenz](./api-reference.md): Parameter der Bucket-Ressource

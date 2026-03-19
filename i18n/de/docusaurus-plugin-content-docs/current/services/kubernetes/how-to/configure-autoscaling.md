@@ -4,11 +4,11 @@ title: "Autoscaling konfigurieren"
 
 # Autoscaling konfigurieren
 
-Autoscaling ermöglicht es Ihrem Hikube-Cluster, die Anzahl der Knoten automatisch je nach Last anzupassen. Dieser Leitfaden erklärt, wie Sie das automatische Scaling Ihrer Node Groups konfigurieren und beobachten.
+Autoscaling ermöglicht es Ihrem Hikube-Cluster, die Anzahl der Knoten automatisch je nach Last anzupassen. Diese Anleitung erklärt, wie Sie das automatische Skalieren Ihrer Node Groups konfigurieren und beobachten.
 
 ## Voraussetzungen
 
-- Ein bereitgestellter Hikube-Kubernetes-Cluster (siehe [Schnellstart](../quick-start.md))
+- Ein bereitgestellter Kubernetes-Hikube-Cluster (siehe [Schnellstart](../quick-start.md))
 - `kubectl` konfiguriert für die Interaktion mit der Hikube-API
 - Die YAML-Konfigurationsdatei Ihres Clusters
 
@@ -18,18 +18,18 @@ Autoscaling ermöglicht es Ihrem Hikube-Cluster, die Anzahl der Knoten automatis
 
 Das Hikube-Autoscaling funktioniert auf Node-Group-Ebene. Jede Knotengruppe definiert:
 
-- **`minReplicas`**: Minimale Anzahl immer aktiver Knoten
-- **`maxReplicas`**: Maximale Anzahl bereitstellbarer Knoten
+- **`minReplicas`**: minimale Anzahl stets aktiver Knoten
+- **`maxReplicas`**: maximale Anzahl provisionierbarer Knoten
 
-Der Cluster fügt automatisch Knoten hinzu, wenn Pods mangels Ressourcen (CPU, Speicher) nicht geplant werden können. Er entfernt unterausgelastete Knoten, wenn die Last sinkt, wobei der Schwellenwert `minReplicas` stets eingehalten wird.
+Der Cluster fügt automatisch Knoten hinzu, wenn Pods aufgrund fehlender Ressourcen (CPU, Speicher) nicht geplant werden können. Er entfernt unterausgelastete Knoten, wenn die Last sinkt, wobei der Schwellenwert `minReplicas` stets eingehalten wird.
 
 :::note
-Das Scaling wird durch Ressourcendruck ausgelöst: Wenn Pods mangels Kapazität im Zustand `Pending` verbleiben, werden automatisch neue Knoten bereitgestellt.
+Die Skalierung wird durch Ressourcendruck ausgelöst: Wenn Pods mangels Kapazität im Zustand `Pending` verbleiben, werden automatisch neue Knoten bereitgestellt.
 :::
 
 ### 2. minReplicas und maxReplicas konfigurieren
 
-Definieren Sie die Scaling-Grenzen in Ihrer Cluster-Konfiguration:
+Definieren Sie die Skalierungsgrenzen in Ihrer Cluster-Konfiguration:
 
 ```yaml title="cluster-autoscaling.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -41,7 +41,7 @@ spec:
     replicas: 3
 
   nodeGroups:
-    # Node group avec autoscaling modere
+    # Node Group mit moderatem Autoscaling
     web:
       minReplicas: 2
       maxReplicas: 10
@@ -50,7 +50,7 @@ spec:
       roles:
         - ingress-nginx
 
-    # Node group compute avec large amplitude
+    # Compute Node Group mit großer Bandbreite
     compute:
       minReplicas: 1
       maxReplicas: 20
@@ -60,12 +60,12 @@ spec:
 ```
 
 :::tip
-Setzen Sie für eine Produktionsumgebung `minReplicas` auf mindestens 2, um die Hochverfügbarkeit Ihrer Workloads zu gewährleisten.
+Für eine Produktionsumgebung setzen Sie `minReplicas` auf mindestens 2, um die Hochverfügbarkeit Ihrer Workloads zu gewährleisten.
 :::
 
-### 3. Scaling auf Null konfigurieren
+### 3. Skalierung auf Null konfigurieren
 
-Für Entwicklungsumgebungen oder GPU-Workloads können Sie eine Node Group konfigurieren, die auf null Knoten herunterskaliert, wenn sie nicht verwendet wird:
+Für Entwicklungsumgebungen oder GPU-Workloads können Sie eine Node Group konfigurieren, die auf null Knoten herunterskaliert, wenn sie nicht genutzt wird:
 
 ```yaml title="cluster-scale-to-zero.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -77,7 +77,7 @@ spec:
     replicas: 2
 
   nodeGroups:
-    # Node group permanent
+    # Permanente Node Group
     system:
       minReplicas: 2
       maxReplicas: 5
@@ -86,7 +86,7 @@ spec:
       roles:
         - ingress-nginx
 
-    # Node group GPU avec scaling a zero
+    # GPU Node Group mit Skalierung auf Null
     gpu:
       minReplicas: 0
       maxReplicas: 8
@@ -96,22 +96,22 @@ spec:
 ```
 
 :::warning
-Scaling auf Null bedeutet eine Startverzögerung (Cold Start) bei der Bereitstellung des ersten Knotens. Rechnen Sie mit einigen Minuten, bevor Pods auf dem neuen Knoten geplant werden können.
+Die Skalierung auf Null impliziert eine Startverzögerung (Cold Start) bei der Bereitstellung des ersten Knotens. Rechnen Sie mit einigen Minuten, bevor Pods auf dem neuen Knoten geplant werden können.
 :::
 
-### 4. Scaling in Aktion beobachten
+### 4. Skalierung in Aktion beobachten
 
-Wenden Sie die Konfiguration an und beobachten Sie das Scaling-Verhalten:
+Wenden Sie die Konfiguration an und beobachten Sie das Skalierungsverhalten:
 
 ```bash
-# Appliquer la configuration
+# Konfiguration anwenden
 kubectl apply -f cluster-autoscaling.yaml
 
-# Observer les noeuds en temps reel
+# Knoten in Echtzeit beobachten
 kubectl --kubeconfig=cluster-admin.yaml get nodes -w
 ```
 
-Um ein Scaling auszulösen, stellen Sie einen ressourcenintensiven Workload bereit:
+Um eine Skalierung auszulösen, stellen Sie einen Workload bereit, der Ressourcen verbraucht:
 
 ```yaml title="load-test.yaml"
 apiVersion: apps/v1
@@ -139,19 +139,19 @@ spec:
 ```
 
 ```bash
-# Deployer le workload de test
+# Test-Workload bereitstellen
 kubectl --kubeconfig=cluster-admin.yaml apply -f load-test.yaml
 
-# Observer les pods en attente (Pending) puis planifies
+# Pods beobachten: wartend (Pending) dann geplant
 kubectl --kubeconfig=cluster-admin.yaml get pods -w
 
-# Observer l'ajout de noeuds
+# Hinzufügen von Knoten beobachten
 kubectl --kubeconfig=cluster-admin.yaml get nodes -w
 ```
 
 ### 5. Grenzen anpassen
 
-Sie können die Scaling-Grenzen jederzeit mit einem Patch anpassen:
+Sie können die Skalierungsgrenzen jederzeit mit einem Patch anpassen:
 
 ```bash
 kubectl patch kubernetes my-cluster --type='merge' -p='
@@ -162,7 +162,7 @@ spec:
 '
 ```
 
-Oder indem Sie die YAML-Datei ändern und erneut anwenden:
+Oder durch Bearbeitung der YAML-Datei und erneutes Anwenden:
 
 ```bash
 kubectl apply -f cluster-autoscaling.yaml
@@ -170,20 +170,20 @@ kubectl apply -f cluster-autoscaling.yaml
 
 ## Überprüfung
 
-Überprüfen Sie, ob das Autoscaling korrekt konfiguriert ist:
+Prüfen Sie, ob das Autoscaling korrekt konfiguriert ist:
 
 ```bash
-# Verifier la configuration actuelle du cluster
+# Aktuelle Cluster-Konfiguration prüfen
 kubectl get kubernetes my-cluster -o yaml | grep -A 8 nodeGroups
 
-# Verifier l'etat des machines
+# Zustand der Maschinen prüfen
 kubectl get machines -l cluster.x-k8s.io/cluster-name=my-cluster
 
-# Verifier les noeuds dans le cluster enfant
+# Knoten im Child-Cluster prüfen
 kubectl --kubeconfig=cluster-admin.yaml get nodes
 ```
 
-**Erwartetes Ergebnis nach Scaling:**
+**Erwartetes Ergebnis nach der Skalierung:**
 
 ```console
 NAME                         STATUS   ROLES    AGE   VERSION

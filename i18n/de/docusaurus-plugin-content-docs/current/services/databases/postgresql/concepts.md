@@ -3,11 +3,11 @@ sidebar_position: 2
 title: Konzepte
 ---
 
-# Concepts — PostgreSQL
+# Konzepte — PostgreSQL
 
-## Architecture
+## Architektur
 
-PostgreSQL auf Hikube est un service managé basierend auf dem Operator **CloudNativePG**. Chaque instance déployée via la ressource `Postgres` crée un cluster répliqué avec failover automatique, réplication streaming et sauvegarde intégrée.
+PostgreSQL auf Hikube ist ein verwalteter Dienst basierend auf dem Operator **CloudNativePG**. Jede über die Ressource `Postgres` bereitgestellte Instanz erstellt einen replizierten Cluster mit automatischem Failover, Streaming-Replikation und integrierter Sicherung.
 
 ```mermaid
 graph TB
@@ -27,13 +27,13 @@ graph TB
             R2[Replica 2 - RO]
         end
 
-        subgraph "Stockage"
+        subgraph "Speicher"
             PV1[PV Primary]
             PV2[PV Replica 1]
             PV3[PV Replica 2]
         end
 
-        subgraph "Sauvegarde"
+        subgraph "Sicherung"
             S3[Bucket S3]
             WAL[WAL Archive]
         end
@@ -57,26 +57,26 @@ graph TB
 
 ## Terminologie
 
-| Terme | Beschreibung |
-|-------|-------------|
-| **Postgres** | Ressource Kubernetes (`apps.cozystack.io/v1alpha1`) représentant un cluster PostgreSQL managé. |
-| **Primary** | Instance principale qui accepte les lectures et écritures. |
-| **Replica** | Instance en lecture seule, synchronisée par streaming replication depuis le primary. |
-| **CloudNativePG** | Opérateur Kubernetes qui gère le cycle de vie des clusters PostgreSQL (Deployment, failover, backup). |
-| **PITR** | Point-In-Time Recovery — restauration à un instant précis grâce à l'archivage continu des WAL. |
-| **WAL** | Write-Ahead Log — journal des transactions PostgreSQL, base du PITR et de la réplication. |
-| **Quorum** | Nombre minimum de réplicas synchrones requis avant de confirmer une écriture. |
-| **resourcesPreset** | Profil de ressources prédéfini (nano à 2xlarge) pour simplifier le dimensionnement. |
+| Begriff | Beschreibung |
+|---------|-------------|
+| **Postgres** | Kubernetes-Ressource (`apps.cozystack.io/v1alpha1`), die einen verwalteten PostgreSQL-Cluster darstellt. |
+| **Primary** | Hauptinstanz, die Lese- und Schreibvorgänge akzeptiert. |
+| **Replica** | Schreibgeschützte Instanz, die über Streaming-Replikation vom Primary synchronisiert wird. |
+| **CloudNativePG** | Kubernetes-Operator, der den Lebenszyklus von PostgreSQL-Clustern verwaltet (Bereitstellung, Failover, Backup). |
+| **PITR** | Point-In-Time Recovery — Wiederherstellung zu einem bestimmten Zeitpunkt dank kontinuierlicher WAL-Archivierung. |
+| **WAL** | Write-Ahead Log — Transaktionsjournal von PostgreSQL, Grundlage für PITR und Replikation. |
+| **Quorum** | Mindestanzahl synchroner Replikas, die vor der Bestätigung eines Schreibvorgangs erforderlich sind. |
+| **resourcesPreset** | Vordefiniertes Ressourcenprofil (nano bis 2xlarge) zur Vereinfachung der Dimensionierung. |
 
 ---
 
-## Réplication et Hochverfügbarkeit
+## Replikation und Hochverfügbarkeit
 
-CloudNativePG assure la Hochverfügbarkeit via :
+CloudNativePG gewährleistet Hochverfügbarkeit durch:
 
-1. **Streaming replication** : les réplicas reçoivent les WAL en temps réel depuis le primary
-2. **Failover automatique** : si le primary tombe, un réplica est promu automatiquement
-3. **Réplication synchrone** (optionnel) : le primary attend la confirmation d'écriture des réplicas avant de valider une transaction
+1. **Streaming Replication**: Die Replikas erhalten die WAL in Echtzeit vom Primary
+2. **Automatisches Failover**: Wenn der Primary ausfällt, wird automatisch ein Replika befördert
+3. **Synchrone Replikation** (optional): Der Primary wartet auf die Schreibbestätigung der Replikas, bevor eine Transaktion validiert wird
 
 ```mermaid
 sequenceDiagram
@@ -86,59 +86,59 @@ sequenceDiagram
     participant Replica2
 
     Client->>Primary: INSERT INTO ...
-    Primary->>Primary: Écriture WAL
+    Primary->>Primary: WAL schreiben
     Primary->>Replica1: WAL streaming
     Primary->>Replica2: WAL streaming
-    Replica1-->>Primary: ACK (si synchrone)
+    Replica1-->>Primary: ACK (wenn synchron)
     Primary-->>Client: COMMIT OK
 ```
 
-Le champ `quorum` définit le nombre de réplicas synchrones :
-- `quorum: 0` (défaut) — réplication asynchrone, meilleures performances
-- `quorum: 1` — au moins 1 réplica synchrone, protection contre la perte de données
+Das Feld `quorum` definiert die Anzahl der synchronen Replikas:
+- `quorum: 0` (Standard) — asynchrone Replikation, beste Leistung
+- `quorum: 1` — mindestens 1 synchrones Replika, Schutz vor Datenverlust
 
 :::tip
-Pour la production, configurez `replicas: 3` et `quorum: 1` pour un bon compromis entre performance et durabilité.
+Konfigurieren Sie für die Produktion `replicas: 3` und `quorum: 1` für einen guten Kompromiss zwischen Leistung und Haltbarkeit.
 :::
 
 ---
 
-## Sauvegarde et restauration
+## Sicherung und Wiederherstellung
 
-PostgreSQL auf Hikube supporte deux mécanismes de sauvegarde :
+PostgreSQL auf Hikube unterstützt zwei Sicherungsmechanismen:
 
-### Sauvegarde continue (WAL archiving)
+### Kontinuierliche Sicherung (WAL-Archivierung)
 
-Les WAL sont archivés en continu vers un bucket S3. Cela permet le **PITR** (Point-In-Time Recovery) — restaurer la base à n'importe quel instant dans le passé.
+Die WAL werden kontinuierlich in einen S3-Bucket archiviert. Dies ermöglicht **PITR** (Point-In-Time Recovery) — die Wiederherstellung der Datenbank zu jedem beliebigen Zeitpunkt in der Vergangenheit.
 
-### Sauvegarde planifiée
+### Geplante Sicherung
 
-Un cron schedule déclenche des sauvegardes complètes (base backup) à intervalles réguliers. La politique de rétention (`retentionPolicy`) détermine la durée de conservation.
+Ein Cron-Zeitplan löst vollständige Sicherungen (Base Backup) in regelmäßigen Abständen aus. Die Aufbewahrungsrichtlinie (`retentionPolicy`) bestimmt die Aufbewahrungsdauer.
 
-| Paramètre | Beschreibung |
+| Parameter | Beschreibung |
 |-----------|-------------|
-| `backup.schedule` | Planification cron (ex: `0 2 * * *`) |
-| `backup.retentionPolicy` | Durée de rétention (ex: `30d`) |
-| `backup.s3*` | Identifiants et endpoint du bucket S3 |
+| `backup.schedule` | Cron-Zeitplan (z.B.: `0 2 * * *`) |
+| `backup.retentionPolicy` | Aufbewahrungsdauer (z.B.: `30d`) |
+| `backup.s3*` | Anmeldedaten und Endpoint des S3-Buckets |
 
 ---
 
-## Gestion des utilisateurs et bases
+## Benutzer- und Datenbankverwaltung
 
-Chaque cluster PostgreSQL permet de déclarer :
+Jeder PostgreSQL-Cluster ermöglicht die Deklaration von:
 
-- **Utilisateurs** avec mot de passe
-- **Bases de données** avec owner
-- **Rôles** : `admin` (lecture/écriture), `readonly` (lecture seule)
+- **Benutzern** mit Passwort
+- **Datenbanken** mit Owner
+- **Rollen**: `admin` (Lesen/Schreiben), `readonly` (nur Lesen)
 
-Les credentials sont stockés dans un **Secret Kubernetes** nommé `<instance>-credentials`.
+Die Anmeldedaten werden in einem **Kubernetes-Secret** namens `<instance>-credentials` gespeichert.
 
 ---
 
-## Presets de ressources
+## Ressourcen-Presets
 
-| Preset | CPU | Mémoire |
-|--------|-----|---------|
+| Preset | CPU | Speicher |
+|--------|-----|----------|
 | `nano` | 250m | 128Mi |
 | `micro` | 500m | 256Mi |
 | `small` | 1 | 512Mi |
@@ -148,22 +148,22 @@ Les credentials sont stockés dans un **Secret Kubernetes** nommé `<instance>-c
 | `2xlarge` | 8 | 8Gi |
 
 :::warning
-Si le champ `resources` (CPU/mémoire explicites) est défini, `resourcesPreset` est ignoré. Les deux approches sont mutuellement exclusives.
+Wenn das Feld `resources` (explizite CPU/Speicher) definiert ist, wird `resourcesPreset` ignoriert. Die beiden Ansätze schließen sich gegenseitig aus.
 :::
 
 ---
 
-## Limites et quotas
+## Limits und Kontingente
 
-| Paramètre | Wert |
-|-----------|--------|
-| Réplicas max | Selon quota tenant |
-| Taille stockage | Variable (`size` en Gi) |
-| Connexions par utilisateur | Configurables par base |
+| Parameter | Wert |
+|-----------|------|
+| Max. Replikas | Je nach Tenant-Kontingent |
+| Speichergröße | Variabel (`size` in Gi) |
+| Verbindungen pro Benutzer | Pro Datenbank konfigurierbar |
 
 ---
 
 ## Weiterführende Informationen
 
-- [Overview](./overview.md) : présentation du service
-- [API-Referenz](./api-reference.md) : tous les paramètres de la ressource Postgres
+- [Übersicht](./overview.md): Vorstellung des Dienstes
+- [API-Referenz](./api-reference.md): Alle Parameter der Postgres-Ressource

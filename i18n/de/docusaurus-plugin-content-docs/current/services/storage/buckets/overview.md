@@ -3,55 +3,55 @@ sidebar_position: 1
 title: Übersicht
 ---
 
-# S3-Buckets auf Hikube
+# S3 Buckets auf Hikube
 
-Les **Buckets S3** d’Hikube offrent une solution de stockage objet **hautement disponible**, **répliquée** et **compatible S3** pour vos applications cloud-native, backups, artefacts CI/CD ou données analytiques.  
-Die Plattform fournit une alternative souveraine et performante à Amazon S3, avec une intégration native à Kubernetes.
-
----
-
-## 🏗️ Architecture et Fonctionnement
-
-### **Stockage Objet Distribué**
-
-Les buckets Hikube reposent sur une architecture S3 **100 % distribuée et répliquée** sur plusieurs datacenters.  
-Contrairement aux volumes block utilisés pour les VMs, le stockage objet n’est pas attaché à une machine : il est accessible via des **APIs S3 standardisées** depuis n’importe quelle application ou service autorisé.
-
-#### 📦 Couche Stockage
-
-- Chaque bucket est hébergé sur une **infrastructure multi-nœuds** répartie entre plusieurs datacenters suisses  
-- Les objets sont **répliqués automatiquement** sur 3 zones physiques distinctes pour garantir une durabilité maximale  
-- Le système est conçu pour tolérer la panne d’un datacenter complet sans perte de données ni indisponibilité
-
-#### 🌐 Couche Accès
-
-- Les buckets sont accessibles via un **endpoint HTTPS unique** compatible avec la signature S3 v4  
-- L’accès est authentifié par des **Access Keys S3** générées automatiquement lors de la création du bucket  
-- Chaque bucket est isolé dans son tenant Kubernetes et dispose de ses propres credentials
+Die **S3 Buckets** von Hikube bieten eine **hochverfügbare**, **replizierte** und **S3-kompatible** Objektspeicherlösung für Ihre Cloud-native-Anwendungen, Backups, CI/CD-Artefakte oder analytische Daten.
+Die Plattform bietet eine souveräne und leistungsstarke Alternative zu Amazon S3 mit nativer Kubernetes-Integration.
 
 ---
 
-### **Architecture Multi-Datacenter**
+## 🏗️ Architektur und Funktionsweise
+
+### **Verteilter Objektspeicher**
+
+Die Hikube-Buckets basieren auf einer **100 % verteilten und replizierten** S3-Architektur über mehrere Rechenzentren.
+Im Gegensatz zu Block-Volumes, die für VMs verwendet werden, ist der Objektspeicher nicht an eine Maschine gebunden: Er ist über **standardisierte S3-APIs** von jeder autorisierten Anwendung oder jedem autorisierten Dienst aus zugänglich.
+
+#### 📦 Speicherschicht
+
+- Jeder Bucket wird auf einer **Multi-Knoten-Infrastruktur** gehostet, die über mehrere Schweizer Rechenzentren verteilt ist
+- Die Objekte werden **automatisch** auf 3 physisch getrennte Zonen repliziert, um maximale Haltbarkeit zu gewährleisten
+- Das System ist darauf ausgelegt, den Ausfall eines kompletten Rechenzentrums ohne Datenverlust oder Nichtverfügbarkeit zu tolerieren
+
+#### 🌐 Zugriffsschicht
+
+- Die Buckets sind über einen **einzigen HTTPS-Endpunkt** zugänglich, der mit der S3 v4-Signatur kompatibel ist
+- Der Zugriff wird durch **S3 Access Keys** authentifiziert, die bei der Bucket-Erstellung automatisch generiert werden
+- Jeder Bucket ist in seinem Kubernetes-Tenant isoliert und verfügt über eigene Zugangsdaten
+
+---
+
+### **Multi-Datacenter-Architektur**
 
 ```mermaid
 flowchart TD
-    subgraph DC1["🏢 Datacenter Genève"]
+    subgraph DC1["🏢 Datacenter Genf"]
         B1["🪣 Bucket Data"]
-        S1["📦 Objets"]
+        S1["📦 Objekte"]
     end
 
-    subgraph DC2["🏢 Datacenter Lucerne"]
-        S2["📦 Objets (Réplica)"]
+    subgraph DC2["🏢 Datacenter Luzern"]
+        S2["📦 Objekte (Replikat)"]
     end
 
     subgraph DC3["🏢 Datacenter Gland"]
-        S3["📦 Objets (Réplica)"]
+        S3["📦 Objekte (Replikat)"]
     end
 
     B1 --> S1
-    S1 <-.->|"Réplication"| S2
-    S2 <-.->|"Réplication"| S3
-    S1 <-.->|"Réplication"| S3
+    S1 <-.->|"Replikation"| S2
+    S2 <-.->|"Replikation"| S3
+    S1 <-.->|"Replikation"| S3
 
     style DC1 fill:#e3f2fd
     style DC2 fill:#e8f5e8
@@ -59,92 +59,92 @@ flowchart TD
     style B1 fill:#f3e5f5
 ```
 
-Cette architecture garantit la **disponibilité et la durabilité** des données, tout en restant entièrement opérée en Suisse 🇨🇭.
+Diese Architektur gewährleistet die **Verfügbarkeit und Haltbarkeit** der Daten und wird vollständig in der Schweiz betrieben 🇨🇭.
 
 ---
 
-## ⚙️ Cas d’Usage Typiques
+## ⚙️ Typische Anwendungsfälle
 
-Les buckets Hikube sont conçus pour couvrir un large éventail de scénarios de stockage cloud :
+Die Hikube-Buckets sind für eine Vielzahl von Cloud-Speicherszenarien konzipiert:
 
-| **Cas d'Usage**                 | **Description**                                                   |
-| ------------------------------- | ----------------------------------------------------------------- |
-| **Backups**                     | Sauvegardes automatisées d'applications ou de volumes persistants |
-| **Artefacts CI/CD**             | Stockage d'images, binaires et pipelines GitOps                   |
-| **Contenu statique**            | Hébergement de fichiers publics (assets web, PDF, images)         |
-| **Données analytiques**         | Centralisation de fichiers CSV/Parquet/JSON pour ETL et outils BI |
-| **Logs et archives**            | Stockage longue durée des journaux applicatifs et d'audit         |
-| **Snapshots et exports VM**     | Stockage de snapshots KubeVirt, exports RAW ou QCOW2              |
-| **Applications S3-compatibles** | Utilisation directe par des apps tierces via SDK ou AWS CLI       |
-
----
-
-## 🔒 Isolation et Sécurité
-
-### **Séparation par Tenant**
-
-Chaque bucket est **provisionné dans un namespace Kubernetes spécifique**, garantissant un cloisonnement strict :
-
-- Les credentials sont uniques par bucket et stockés dans un Secret Kubernetes généré automatiquement
-- Aucune donnée ni clé d'accès n'est partagée entre tenants
-
-### **Chiffrement et Accès Sécurisé**
-
-- Tous les accès passent par **HTTPS/TLS** avec authentification par clé S3
-- L’endpoint ne permet pas d’accès anonyme : une clé valide est toujours requise
+| **Anwendungsfall** | **Beschreibung** |
+| ------------------ | ---------------- |
+| **Backups** | Automatisierte Sicherungen von Anwendungen oder persistenten Volumes |
+| **CI/CD-Artefakte** | Speicherung von Images, Binaries und GitOps-Pipelines |
+| **Statische Inhalte** | Hosting öffentlicher Dateien (Web-Assets, PDF, Bilder) |
+| **Analytische Daten** | Zentralisierung von CSV/Parquet/JSON-Dateien für ETL und BI-Tools |
+| **Logs und Archive** | Langfristige Speicherung von Anwendungs- und Audit-Logs |
+| **VM-Snapshots und Exporte** | Speicherung von KubeVirt-Snapshots, RAW- oder QCOW2-Exporten |
+| **S3-kompatible Anwendungen** | Direkte Nutzung durch Drittanbieter-Apps über SDK oder AWS CLI |
 
 ---
 
-## 🌐 Connectivité et Intégration
+## 🔒 Isolation und Sicherheit
 
-### **Endpoint S3 Unique**
+### **Trennung nach Tenant**
 
-Tous les buckets sont accessibles via l’endpoint unique :
+Jeder Bucket wird **in einem spezifischen Kubernetes-Namespace** bereitgestellt, was eine strikte Isolierung gewährleistet:
+
+- Die Zugangsdaten sind pro Bucket eindeutig und werden in einem automatisch generierten Kubernetes Secret gespeichert
+- Keine Daten oder Zugriffsschlüssel werden zwischen Tenants geteilt
+
+### **Verschlüsselung und sicherer Zugriff**
+
+- Alle Zugriffe erfolgen über **HTTPS/TLS** mit S3-Schlüssel-Authentifizierung
+- Der Endpunkt erlaubt keinen anonymen Zugriff: Ein gültiger Schlüssel ist immer erforderlich
+
+---
+
+## 🌐 Konnektivität und Integration
+
+### **Einziger S3-Endpunkt**
+
+Alle Buckets sind über den einzigen Endpunkt zugänglich:
 
 ```url
 https://prod.s3.hikube.cloud
 ```
 
-### **Compatibilité Totale**
+### **Vollständige Kompatibilität**
 
-Hikube est compatible avec les outils et SDK AWS S3 standards :
+Hikube ist mit den Standard-AWS-S3-Tools und -SDKs kompatibel:
 
-- **AWS CLI** : `aws s3 --endpoint-url https://prod.s3.hikube.cloud ...`
-- **MinIO Client (`mc`)** : configuration simple d’un alias avec Access Key / Secret Key
-- **Rclone / S3cmd / Velero / Restic** : support natif via la signature v4
+- **AWS CLI**: `aws s3 --endpoint-url https://prod.s3.hikube.cloud ...`
+- **MinIO Client (`mc`)**: Einfache Konfiguration eines Alias mit Access Key / Secret Key
+- **Rclone / S3cmd / Velero / Restic**: Nativer Support über die v4-Signatur
 
-Cela permet une intégration fluide dans les pipelines CI/CD, les outils de sauvegarde et les applications analytiques existantes, sans adaptation spécifique.
-
----
-
-## 📦 Gestion et Portabilité
-
-### **Cycle de Vie Simple**
-
-- La création et la suppression des buckets se font via un simple manifeste Kubernetes
-- Les credentials sont automatiquement générés et stockés dans un Secret au format JSON (`BucketInfo`)
-- Aucune configuration manuelle n’est requise
-
-### **Interopérabilité Standard**
-
-Grâce à la compatibilité S3, vos données restent **interopérables** avec :
-
-- Des outils cloud existants (AWS CLI, MinIO, Velero…)
-- Des pipelines de migration S3 standard (rclone sync, s3cmd mirror…)
-- Des services d’analyse externes (Spark, DuckDB, etc.)
+Dies ermöglicht eine nahtlose Integration in CI/CD-Pipelines, Backup-Tools und bestehende analytische Anwendungen ohne spezifische Anpassung.
 
 ---
 
-## 🚀 Prochaines Étapes
+## 📦 Verwaltung und Portabilität
 
-Maintenant que vous comprenez l’architecture des Buckets Hikube :
+### **Einfacher Lebenszyklus**
 
-**🏃‍♂️ Démarrage Immédiat**
-→ [Créer votre premier bucket](./quick-start.md)
+- Die Erstellung und Löschung von Buckets erfolgt über ein einfaches Kubernetes-Manifest
+- Die Zugangsdaten werden automatisch generiert und in einem Secret im JSON-Format (`BucketInfo`) gespeichert
+- Keine manuelle Konfiguration erforderlich
 
-**📖 Configuration Avancée**
-→ [API-Referenz complète](./api-reference.md)
+### **Standardmäßige Interoperabilität**
 
-:::tip Recommandation Production
-Utilisez un bucket dédié par application ou environnement.
+Dank der S3-Kompatibilität bleiben Ihre Daten **interoperabel** mit:
+
+- Bestehenden Cloud-Tools (AWS CLI, MinIO, Velero...)
+- Standard-S3-Migrationspipelines (rclone sync, s3cmd mirror...)
+- Externen Analysediensten (Spark, DuckDB usw.)
+
+---
+
+## 🚀 Nächste Schritte
+
+Nachdem Sie die Architektur der Hikube-Buckets verstanden haben:
+
+**🏃‍♂️ Sofortiger Einstieg**
+→ [Ihren ersten Bucket erstellen](./quick-start.md)
+
+**📖 Erweiterte Konfiguration**
+→ [Vollständige API-Referenz](./api-reference.md)
+
+:::tip Produktionsempfehlung
+Verwenden Sie einen dedizierten Bucket pro Anwendung oder Umgebung.
 :::

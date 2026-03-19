@@ -1,22 +1,22 @@
 ---
-title: "Verwaltung von les utilisateurs et bases de données"
+title: "Benutzer und Datenbanken verwalten"
 ---
 
-# Verwaltung von les utilisateurs et bases de données
+# Benutzer und Datenbanken verwalten
 
-Ce guide vous explique comment créer et gérer les utilisateurs, les bases de données et les rôles d'accès de votre instance MySQL auf Hikube. Vous apprendrez également à basculer le noeud primary dans un cluster répliqué.
+Diese Anleitung erklärt, wie Sie Benutzer, Datenbanken und Zugriffsrollen Ihrer MySQL-Instanz auf Hikube erstellen und verwalten. Sie erfahren auch, wie Sie den Primary-Knoten in einem replizierten Cluster wechseln.
 
 ## Voraussetzungen
 
-- **kubectl** configuré avec votre kubeconfig Hikube
-- Une instance **MySQL** déployée sur votre tenant
-- Un client **mysql** pour tester les connexions
+- **kubectl** konfiguriert mit Ihrer Hikube-Kubeconfig
+- Eine **MySQL**-Instanz auf Ihrem Tenant bereitgestellt
+- Ein **mysql**-Client zum Testen der Verbindungen
 
 ## Schritte
 
-### 1. Ajouter un utilisateur
+### 1. Benutzer hinzufügen
 
-Les utilisateurs sont définis dans la section `users` du manifeste. Chaque utilisateur est identifié par un nom et peut avoir un mot de passe et une limite de connexions :
+Benutzer werden im Abschnitt `users` des Manifests definiert. Jeder Benutzer wird durch einen Namen identifiziert und kann ein Passwort und ein Verbindungslimit haben:
 
 ```yaml title="mysql-users.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -40,18 +40,18 @@ spec:
       maxUserConnections: 10
 ```
 
-| Paramètre | Beschreibung | Défaut |
+| Parameter | Beschreibung | Standard |
 |---|---|---|
-| `users[name].password` | Mot de passe de l'utilisateur | `""` |
-| `users[name].maxUserConnections` | Nombre maximum de connexions simultanées pour cet utilisateur | `0` (illimité) |
+| `users[name].password` | Passwort des Benutzers | `""` |
+| `users[name].maxUserConnections` | Maximale gleichzeitige Verbindungen für diesen Benutzer | `0` (unbegrenzt) |
 
 :::tip
-Limitez le `maxUserConnections` par utilisateur pour éviter qu'une application ne consomme toutes les connexions disponibles du serveur.
+Begrenzen Sie `maxUserConnections` pro Benutzer, um zu verhindern, dass eine Anwendung alle verfügbaren Serververbindungen verbraucht.
 :::
 
-### 2. Créer une base de données avec des rôles
+### 2. Datenbank mit Rollen erstellen
 
-Les bases de données sont définies dans la section `databases`. Chaque base peut attribuer des rôles **admin** (lecture/écriture) ou **readonly** (lecture seule) à des utilisateurs :
+Datenbanken werden im Abschnitt `databases` definiert. Jede Datenbank kann die Rollen **admin** (Lesen/Schreiben) oder **readonly** (nur Lesen) an Benutzer vergeben:
 
 ```yaml title="mysql-databases.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -78,39 +78,39 @@ spec:
     production:
       roles:
         admin:
-          - appuser          # appuser a les droits complets sur "production"
+          - appuser
         readonly:
-          - readonly         # readonly peut uniquement lire "production"
-          - analytics        # analytics peut aussi lire "production"
+          - readonly
+          - analytics
     analytics_db:
       roles:
         admin:
-          - analytics        # analytics a les droits complets sur "analytics_db"
+          - analytics
         readonly:
-          - readonly         # readonly peut lire "analytics_db"
+          - readonly
 ```
 
 :::note
-Un même utilisateur peut avoir des rôles différents sur des bases différentes. Par exemple, `analytics` est **admin** sur `analytics_db` mais **readonly** sur `production`.
+Ein Benutzer kann unterschiedliche Rollen für verschiedene Datenbanken haben. Zum Beispiel ist `analytics` **admin** auf `analytics_db`, aber **readonly** auf `production`.
 :::
 
-### 3. Appliquer les changements
+### 3. Änderungen anwenden
 
-Appliquez le manifeste pour créer ou mettre à jour les utilisateurs et bases de données :
+Wenden Sie das Manifest an, um Benutzer und Datenbanken zu erstellen oder zu aktualisieren:
 
 ```bash
 kubectl apply -f mysql-databases.yaml
 ```
 
-### 4. Récupérer les identifiants
+### 4. Anmeldedaten abrufen
 
-Les mots de passe sont stockés dans un Secret Kubernetes nommé `<instance>-credentials` :
+Die Passwörter sind in einem Kubernetes-Secret namens `<instance>-credentials` gespeichert:
 
 ```bash
 kubectl get secret example-credentials -o json | jq -r '.data | to_entries[] | "\(.key): \(.value|@base64d)"'
 ```
 
-**Erwartetes Ergebnis :**
+**Erwartetes Ergebnis:**
 
 ```console
 root: cr42msoxKhnEajfo
@@ -120,12 +120,12 @@ readonly: SecureReadOnlyPassword
 ```
 
 :::tip
-Le mot de passe `root` est généré automatiquement par l'opérateur. Utilisez-le uniquement pour l'administration du cluster, jamais dans vos applications.
+Das `root`-Passwort wird automatisch vom Operator generiert. Verwenden Sie es nur für die Cluster-Administration, niemals in Ihren Anwendungen.
 :::
 
-### 5. Tester la connexion
+### 5. Verbindung testen
 
-#### Via port-forward (accès interne)
+#### Über Port-Forward (interner Zugriff)
 
 ```bash
 kubectl port-forward svc/mysql-example 3306:3306
@@ -135,56 +135,56 @@ kubectl port-forward svc/mysql-example 3306:3306
 mysql -h 127.0.0.1 -P 3306 -u appuser -p production
 ```
 
-#### Via LoadBalancer (si `external: true`)
+#### Über LoadBalancer (wenn `external: true`)
 
 ```bash
-# Récupérer l'IP externe
+# Externe IP abrufen
 kubectl get svc mysql-example-primary -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
 ```
 
 ```bash
-mysql -h <IP_EXTERNE> -P 3306 -u appuser -p production
+mysql -h <EXTERNE_IP> -P 3306 -u appuser -p production
 ```
 
-Vérifiez les droits de l'utilisateur :
+Überprüfen Sie die Benutzerrechte:
 
 ```sql
--- En tant que appuser (admin sur production)
+-- Als appuser (admin auf production)
 SHOW DATABASES;
 CREATE TABLE test (id INT PRIMARY KEY);
 INSERT INTO test VALUES (1);
 
--- En tant que readonly (lecture seule sur production)
+-- Als readonly (nur Lesen auf production)
 SELECT * FROM test;       -- OK
-INSERT INTO test VALUES (2);  -- ERREUR : accès refusé
+INSERT INTO test VALUES (2);  -- FEHLER: Zugriff verweigert
 ```
 
-### 6. Basculer le noeud primary (optionnel)
+### 6. Primary-Knoten wechseln (optional)
 
-Dans un cluster MySQL répliqué, un noeud est désigné comme **primary** (écritures) et les autres comme **réplicas** (lecture). Vous pouvez basculer le rôle primary vers un autre noeud, par exemple lors d'une maintenance.
+In einem replizierten MySQL-Cluster ist ein Knoten als **Primary** (Schreibvorgänge) und die anderen als **Replikas** (Lesevorgänge) designiert. Sie können die Primary-Rolle auf einen anderen Knoten wechseln, z.B. für Wartungsarbeiten.
 
-#### Éditer la ressource MariaDB
+#### MariaDB-Ressource bearbeiten
 
 ```bash
 kubectl edit mariadb mysql-example
 ```
 
-Modifiez la section `replication` pour désigner le nouveau primary :
+Ändern Sie den Abschnitt `replication`, um den neuen Primary zu designieren:
 
 ```yaml title="switchover.yaml"
 spec:
   replication:
     primary:
-      podIndex: 1   # Promouvoir mysql-example-1 en primary
+      podIndex: 1   # mysql-example-1 zum Primary befördern
 ```
 
-#### Vérifier la bascule
+#### Wechsel überprüfen
 
 ```bash
 kubectl get mariadb
 ```
 
-**Erwartetes Ergebnis :**
+**Erwartetes Ergebnis:**
 
 ```console
 NAME            READY   STATUS    PRIMARY           UPDATES                    AGE
@@ -192,23 +192,23 @@ mysql-example   True    Running   mysql-example-1   ReplicasFirstPrimaryLast   8
 ```
 
 :::warning
-La bascule du primary peut entraîner une **brève interruption des écritures** pendant la promotion du nouveau noeud. Les lectures restent disponibles via les réplicas.
+Der Primary-Wechsel kann eine **kurze Unterbrechung der Schreibvorgänge** während der Beförderung des neuen Knotens verursachen. Lesevorgänge bleiben über die Replikas verfügbar.
 :::
 
 ## Überprüfung
 
-Vérifiez la configuration complète de votre instance :
+Überprüfen Sie die vollständige Konfiguration Ihrer Instanz:
 
 ```bash
 kubectl get mariadb example -o yaml
 ```
 
-Assurez-vous que :
-- Les utilisateurs sont présents dans la section `users`
-- Les bases de données sont listées dans la section `databases`
-- Les rôles sont correctement attribués
+Stellen Sie sicher, dass:
+- Die Benutzer im Abschnitt `users` vorhanden sind
+- Die Datenbanken im Abschnitt `databases` aufgelistet sind
+- Die Rollen korrekt zugewiesen sind
 
 ## Weiterführende Informationen
 
-- [API-Referenz](../api-reference.md) : liste complète des paramètres utilisateurs et bases de données
-- [Skalierung von verticalement](./scale-resources.md) : ajuster les ressources CPU et mémoire
+- [API-Referenz](../api-reference.md): Vollständige Liste der Benutzer- und Datenbankparameter
+- [Vertikal skalieren](./scale-resources.md): CPU- und Speicherressourcen anpassen

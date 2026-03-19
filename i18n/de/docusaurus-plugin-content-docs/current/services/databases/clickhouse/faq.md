@@ -5,57 +5,57 @@ title: FAQ
 
 # FAQ — ClickHouse
 
-### Quelle est la différence entre shards et réplicas ?
+### Was ist der Unterschied zwischen Shards und Replikas?
 
-Les **shards** et les **réplicas** jouent des rôles différents dans l'architecture ClickHouse :
+**Shards** und **Replikas** spielen unterschiedliche Rollen in der ClickHouse-Architektur:
 
-- **Shards** : distribution **horizontale** des données. Chaque shard contient une partie du dataset total. Ajouter des shards augmente la capacité de stockage et de traitement.
-- **Réplicas** : copies **identiques** des données au sein d'un même shard. Chaque réplica contient les mêmes données um die ... sicherzustellen Hochverfügbarkeit.
+- **Shards**: **Horizontale** Verteilung der Daten. Jeder Shard enthält einen Teil des Gesamtdatasets. Mehr Shards erhöhen die Speicher- und Verarbeitungskapazität.
+- **Replikas**: **Identische** Kopien der Daten innerhalb eines Shards. Jedes Replika enthält die gleichen Daten für Hochverfügbarkeit.
 
 ```yaml title="clickhouse.yaml"
 spec:
-  shards: 2       # Les données sont réparties sur 2 shards
-  replicas: 3     # Chaque shard a 3 copies (total: 6 pods)
+  shards: 2       # Daten werden auf 2 Shards verteilt
+  replicas: 3     # Jeder Shard hat 3 Kopien (insgesamt: 6 Pods)
 ```
 
 :::tip
-En production, utilisez au moins 2 réplicas par shard pour la Hochverfügbarkeit. Augmentez le nombre de shards pour traiter des volumes de données plus importants.
+Verwenden Sie in der Produktion mindestens 2 Replikas pro Shard für Hochverfügbarkeit. Erhöhen Sie die Anzahl der Shards, um größere Datenvolumen zu verarbeiten.
 :::
 
-### À quoi sert ClickHouse Keeper ?
+### Wofür dient ClickHouse Keeper?
 
-**ClickHouse Keeper** est le composant de coordination du cluster, basé sur le protocole **Raft**. Il remplace Apache ZooKeeper et assure :
+**ClickHouse Keeper** ist die Cluster-Koordinationskomponente, basierend auf dem **Raft**-Protokoll. Er ersetzt Apache ZooKeeper und gewährleistet:
 
-- L'**élection du leader** pour les tables répliquées
-- La **coordination** des opérations de réplication entre réplicas
-- La gestion des **métadonnées** du cluster
+- Die **Leader-Wahl** für replizierte Tabellen
+- Die **Koordination** der Replikationsvorgänge zwischen Replikas
+- Die Verwaltung der **Cluster-Metadaten**
 
-Le nombre de réplicas Keeper doit être **impair** (3 ou 5) pour garantir le quorum (majorité nécessaire pour l'élection du leader). Le minimum recommandé est **3 réplicas**.
+Die Anzahl der Keeper-Replikas muss **ungerade** sein (3 oder 5), um das Quorum zu gewährleisten (Mehrheit erforderlich für die Leader-Wahl). Das empfohlene Minimum sind **3 Replikas**.
 
 ```yaml title="clickhouse.yaml"
 spec:
   clickhouseKeeper:
     enabled: true
-    replicas: 3        # Toujours impair : 3 ou 5
+    replicas: 3        # Immer ungerade: 3 oder 5
     resourcesPreset: micro
     size: 2Gi
 ```
 
-### ClickHouse est-il adapté aux requêtes transactionnelles (OLTP) ?
+### Ist ClickHouse für transaktionale Abfragen (OLTP) geeignet?
 
-**Non.** ClickHouse est un moteur de base de données **OLAP** (Online Analytical Processing) optimisé pour l'analyse de données :
+**Nein.** ClickHouse ist eine **OLAP**-Datenbank-Engine (Online Analytical Processing), optimiert für Datenanalyse:
 
-- Architecture **orientée colonnes** : très performant pour les agrégations et les scans sur de grands volumes de données
-- Optimisé pour les **lectures massives** et les requêtes analytiques
-- **Non adapté** aux opérations transactionnelles fréquentes (`UPDATE`, `DELETE` unitaires)
+- **Spaltenorientierte** Architektur: sehr leistungsfähig für Aggregationen und Scans über große Datenvolumen
+- Optimiert für **massives Lesen** und analytische Abfragen
+- **Nicht geeignet** für häufige transaktionale Operationen (einzelne `UPDATE`, `DELETE`)
 
-Si vous avez besoin d'un moteur transactionnel (OLTP), utilisez plutôt **PostgreSQL** ou **MySQL** sur Hikube.
+Wenn Sie eine transaktionale Engine (OLTP) benötigen, verwenden Sie stattdessen **PostgreSQL** oder **MySQL** auf Hikube.
 
-### Quelle est la différence entre `resourcesPreset` et `resources` ?
+### Was ist der Unterschied zwischen `resourcesPreset` und `resources`?
 
-Le champ `resourcesPreset` permet de choisir un profil de ressources prédéterminé pour chaque réplica ClickHouse. Si le champ `resources` (CPU/mémoire explicites) est défini, `resourcesPreset` est **entièrement ignoré**.
+Das Feld `resourcesPreset` ermöglicht die Auswahl eines vordefinierten Ressourcenprofils für jedes ClickHouse-Replika. Wenn das Feld `resources` (explizite CPU/Speicher) definiert ist, wird `resourcesPreset` **vollständig ignoriert**.
 
-| **Preset** | **CPU** | **Mémoire** |
+| **Preset** | **CPU** | **Speicher** |
 |------------|---------|-------------|
 | `nano`     | 250m    | 128Mi       |
 | `micro`    | 500m    | 256Mi       |
@@ -67,28 +67,28 @@ Le champ `resourcesPreset` permet de choisir un profil de ressources prédéterm
 
 ```yaml title="clickhouse.yaml"
 spec:
-  # Utilisation d'un preset
+  # Verwendung eines Presets
   resourcesPreset: large
 
-  # OU configuration explicite (le preset est alors ignoré)
+  # ODER explizite Konfiguration (das Preset wird dann ignoriert)
   resources:
     cpu: 4000m
     memory: 8Gi
 ```
 
-### Comment sont distribuées les données entre shards ?
+### Wie werden die Daten zwischen Shards verteilt?
 
-Les données sont distribuées entre les shards via le moteur **Distributed** de ClickHouse :
+Die Daten werden zwischen Shards über die **Distributed**-Engine von ClickHouse verteilt:
 
-- Chaque shard stocke une **partition** du dataset total
-- Le moteur `Distributed` redirige les requêtes vers tous les shards et **fusionne les résultats**
-- Les données sont **répliquées** innerhalb von chaque shard selon le nombre de réplicas configuré
+- Jeder Shard speichert eine **Partition** des Gesamtdatasets
+- Die `Distributed`-Engine leitet Abfragen an alle Shards weiter und **fusioniert die Ergebnisse**
+- Die Daten werden innerhalb jedes Shards gemäß der konfigurierten Replika-Anzahl **repliziert**
 
-Pour bénéficier de la distribution, créez des tables avec le moteur `ReplicatedMergeTree` sur chaque shard et une table `Distributed` pour les requêtes globales.
+Um von der Verteilung zu profitieren, erstellen Sie Tabellen mit der `ReplicatedMergeTree`-Engine auf jedem Shard und eine `Distributed`-Tabelle für globale Abfragen.
 
-### Konfiguration von les backups ClickHouse ?
+### Wie konfiguriere ich ClickHouse-Backups?
 
-Les sauvegardes ClickHouse utilisent **Restic** pour l'envoi vers un stockage S3 compatible. Configurez la section `backup` :
+Die ClickHouse-Sicherungen verwenden **Restic** für den Versand an S3-kompatiblen Speicher. Konfigurieren Sie den Abschnitt `backup`:
 
 ```yaml title="clickhouse.yaml"
 spec:
@@ -104,5 +104,5 @@ spec:
 ```
 
 :::warning
-Conservez le `resticPassword` en lieu sûr. Sans ce mot de passe, les sauvegardes ne pourront pas être déchiffrées.
+Bewahren Sie das `resticPassword` an einem sicheren Ort auf. Ohne dieses Passwort können die Sicherungen nicht entschlüsselt werden.
 :::

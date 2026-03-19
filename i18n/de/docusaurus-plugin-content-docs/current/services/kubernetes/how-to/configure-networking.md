@@ -4,20 +4,20 @@ title: "Networking konfigurieren"
 
 # Networking konfigurieren
 
-Dieser Leitfaden erklärt, wie Sie die Netzwerkkonfiguration Ihres Hikube-Kubernetes-Clusters verwalten, unter Verwendung von Kubernetes-NetworkPolicies und den Cilium/Hubble-Observability-Tools.
+Diese Anleitung erklärt, wie Sie die Netzwerkkonfiguration Ihres Kubernetes-Hikube-Clusters verwalten, unter Verwendung von Kubernetes-NetworkPolicies und den Observability-Tools Cilium/Hubble.
 
 ## Voraussetzungen
 
-- Ein bereitgestellter Hikube-Kubernetes-Cluster (siehe [Schnellstart](../quick-start.md))
+- Ein bereitgestellter Kubernetes-Hikube-Cluster (siehe [Schnellstart](../quick-start.md))
 - Die kubeconfig des Child-Clusters konfiguriert (`export KUBECONFIG=cluster-admin.yaml`)
-- Grundkenntnisse über Kubernetes-Networking (Services, Pods, Namespaces)
+- Grundkenntnisse des Kubernetes-Netzwerks (Services, Pods, Namespaces)
 
 ## Schritte
 
 ### 1. Das Hikube-Netzwerk verstehen
 
 :::note
-Cilium ist das Standard-CNI (Container Network Interface) auf Hikube-Kubernetes-Clustern. Es bietet Networking, Netzwerksicherheit und Observability.
+Cilium ist das standardmäßige CNI (Container Network Interface) auf Kubernetes-Hikube-Clustern. Es bietet Netzwerk, Netzwerksicherheit und Observability.
 :::
 
 Hikube-Cluster integrieren:
@@ -29,7 +29,7 @@ Standardmäßig können alle Pods ohne Einschränkung miteinander kommunizieren.
 
 ### 2. Eine NetworkPolicy erstellen
 
-Definieren Sie Regeln zur Steuerung des eingehenden (Ingress) und ausgehenden (Egress) Traffics Ihrer Pods:
+Definieren Sie Regeln zur Steuerung des eingehenden (Ingress) und ausgehenden (Egress) Datenverkehrs Ihrer Pods:
 
 ```yaml title="network-policy.yaml"
 apiVersion: networking.k8s.io/v1
@@ -62,23 +62,23 @@ spec:
 ```
 
 Diese Richtlinie:
-- **Erlaubt eingehenden Traffic** zu den Pods `app: web` nur von den Pods `app: frontend` auf Port 80
-- **Erlaubt ausgehenden Traffic** von den Pods `app: web` nur zu den Pods `app: database` auf Port 5432
-- **Blockiert allen anderen Traffic** ein- und ausgehend für die Pods `app: web`
+- **Erlaubt eingehenden Datenverkehr** zu den Pods `app: web` nur von den Pods `app: frontend` auf Port 80
+- **Erlaubt ausgehenden Datenverkehr** von den Pods `app: web` nur zu den Pods `app: database` auf Port 5432
+- **Blockiert jeglichen anderen Datenverkehr** (eingehend und ausgehend) für die Pods `app: web`
 
 ### 3. Anwenden und testen
 
 ```bash
-# Appliquer la NetworkPolicy
+# NetworkPolicy anwenden
 kubectl apply -f network-policy.yaml
 
-# Verifier que la politique est creee
+# Prüfen, ob die Richtlinie erstellt wurde
 kubectl get networkpolicies
 
-# Tester la connectivite autorisee
+# Erlaubte Konnektivität testen
 kubectl exec -it deploy/frontend -- curl -s http://web-service:80
 
-# Tester la connectivite bloquee (devrait echouer)
+# Blockierte Konnektivität testen (sollte fehlschlagen)
 kubectl exec -it deploy/other-app -- curl -s --connect-timeout 3 http://web-service:80
 ```
 
@@ -86,7 +86,7 @@ kubectl exec -it deploy/other-app -- curl -s --connect-timeout 3 http://web-serv
 Beginnen Sie mit permissiven Richtlinien im Beobachtungsmodus und schränken Sie dann schrittweise ein. Eine zu restriktive Richtlinie kann die Kommunikation zwischen Ihren Services unterbrechen.
 :::
 
-**Beispiel einer Standard-Richtlinie zur Namespace-Isolation:**
+**Beispiel einer Standard-Richtlinie zur Isolierung eines Namespace:**
 
 ```yaml title="default-deny.yaml"
 apiVersion: networking.k8s.io/v1
@@ -101,7 +101,7 @@ spec:
 ```
 
 :::warning
-Die Richtlinie `default-deny-all` blockiert **allen Traffic** im Namespace, einschließlich DNS-Zugriff. Wenn Sie sie anwenden, fügen Sie sofort eine Richtlinie hinzu, die ausgehenden DNS-Traffic (Port 53) erlaubt, sonst wird die Namensauflösung nicht funktionieren.
+Die Richtlinie `default-deny-all` blockiert **jeglichen Datenverkehr** im Namespace, einschließlich des DNS-Zugriffs. Wenn Sie sie anwenden, fügen Sie sofort eine Richtlinie hinzu, die den DNS-Datenverkehr (Port 53) ausgehend erlaubt, sonst wird die Namensauflösung unterbrochen.
 :::
 
 ### 4. Hubble für Netzwerk-Debugging verwenden
@@ -109,38 +109,38 @@ Die Richtlinie `default-deny-all` blockiert **allen Traffic** im Namespace, eins
 Hubble bietet vollständige Sichtbarkeit auf die Netzwerkflüsse des Clusters. Verwenden Sie es zur Diagnose von Konnektivitätsproblemen:
 
 ```bash
-# Verifier le statut de Hubble
+# Hubble-Status prüfen
 kubectl exec -n kube-system -it ds/cilium -- hubble status
 
-# Observer les flux reseau en temps reel
+# Netzwerkflüsse in Echtzeit beobachten
 kubectl exec -n kube-system -it ds/cilium -- hubble observe
 
-# Filtrer les flux pour un pod specifique
+# Flüsse für einen bestimmten Pod filtern
 kubectl exec -n kube-system -it ds/cilium -- hubble observe --pod web-xxxxx
 
-# Voir les flux refuses par les NetworkPolicies
+# Von NetworkPolicies abgelehnte Flüsse anzeigen
 kubectl exec -n kube-system -it ds/cilium -- hubble observe --verdict DROPPED
 
-# Filtrer par namespace
+# Nach Namespace filtern
 kubectl exec -n kube-system -it ds/cilium -- hubble observe --namespace production
 ```
 
 :::tip
-Der Befehl `hubble observe --verdict DROPPED` ist besonders nützlich, um durch eine NetworkPolicy blockierte Flüsse zu identifizieren und Ihre Regeln anzupassen.
+Der Befehl `hubble observe --verdict DROPPED` ist besonders nützlich, um von einer NetworkPolicy blockierte Flüsse zu identifizieren und Ihre Regeln anzupassen.
 :::
 
 ## Überprüfung
 
-Überprüfen Sie, ob Ihre Netzwerkrichtlinien korrekt angewendet werden:
+Prüfen Sie, ob Ihre Netzwerkrichtlinien korrekt angewendet werden:
 
 ```bash
-# Lister toutes les NetworkPolicies
+# Alle NetworkPolicies auflisten
 kubectl get networkpolicies -A
 
-# Details d'une politique
+# Details einer Richtlinie
 kubectl describe networkpolicy allow-web
 
-# Verifier l'etat de Cilium
+# Cilium-Status prüfen
 kubectl exec -n kube-system -it ds/cilium -- cilium status
 ```
 

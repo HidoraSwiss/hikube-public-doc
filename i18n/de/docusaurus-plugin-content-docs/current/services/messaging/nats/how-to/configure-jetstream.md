@@ -1,22 +1,22 @@
 ---
-title: "Konfiguration von JetStream"
+title: "JetStream konfigurieren"
 ---
 
-# Konfiguration von JetStream
+# JetStream konfigurieren
 
-Dieser Leitfaden erklärt comment aktiviertr et configurer le module **JetStream** sur un cluster NATS déployé sur Hikube. JetStream fournit la persistance des messages, le streaming et le pattern request/reply avec garanties de livraison.
+Diese Anleitung erklärt, wie Sie das **JetStream**-Modul auf einem auf Hikube bereitgestellten NATS-Cluster aktivieren und konfigurieren. JetStream bietet Nachrichtenpersistenz, Streaming und das Request/Reply-Pattern mit Zustellgarantien.
 
 ## Voraussetzungen
 
-- **kubectl** configuré avec votre kubeconfig Hikube
-- Un cluster **NATS** déployé sur Hikube (ou un manifeste prêt à déployer)
-- (Optionnel) le CLI **nats** installé localement pour tester
+- **kubectl** konfiguriert mit Ihrer Hikube-Kubeconfig
+- Ein auf Hikube bereitgestellter **NATS**-Cluster (oder ein Manifest zur Bereitstellung)
+- (Optional) das **nats** CLI lokal installiert zum Testen
 
 ## Schritte
 
-### 1. Activer JetStream
+### 1. JetStream aktivieren
 
-JetStream est aktiviert par défaut (`jetstream.enabled: true`). Si vous l'avez désaktiviert ou si vous souhaitez le configurer explicitement, ajoutez la section `jetstream` au manifeste :
+JetStream ist standardmäßig aktiviert (`jetstream.enabled: true`). Wenn Sie es deaktiviert haben oder es explizit konfigurieren möchten, fügen Sie den Abschnitt `jetstream` zum Manifest hinzu:
 
 ```yaml title="nats-jetstream.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -37,24 +37,24 @@ spec:
       password: SecureAdminPassword
 ```
 
-**Paramètres JetStream :**
+**JetStream-Parameter:**
 
-| Paramètre | Typ | Beschreibung | Défaut |
-|-----------|------|-------------|--------|
-| `jetstream.enabled` | `bool` | Active ou désaktiviert JetStream | `true` |
-| `jetstream.size` | `quantity` | Taille du volume persistant pour les données JetStream | `10Gi` |
+| Parameter | Typ | Beschreibung | Standard |
+|-----------|-----|--------------|----------|
+| `jetstream.enabled` | `bool` | Aktiviert oder deaktiviert JetStream | `true` |
+| `jetstream.size` | `quantity` | Größe des persistenten Volumes für JetStream-Daten | `10Gi` |
 
 :::tip
-Utilisez 3 réplicas minimum en production pour bénéficier du consensus Raft de JetStream. Cela garantit la Hochverfügbarkeit et la durabilité des streams en cas de panne d'un nœud.
+Verwenden Sie mindestens 3 Replikate in der Produktion, um vom Raft-Konsens von JetStream zu profitieren. Dies gewährleistet Hochverfügbarkeit und Haltbarkeit der Streams bei Ausfall eines Knotens.
 :::
 
-### 2. Configurer le stockage JetStream
+### 2. JetStream-Speicher konfigurieren
 
-Le dimensionnement du volume JetStream dépend de votre cas d'usage :
+Die Dimensionierung des JetStream-Volumes hängt von Ihrem Anwendungsfall ab:
 
-- **Messages éphémères** (TTL court, quelques heures) : `10Gi` à `20Gi`
-- **Rétention longue** (jours, semaines) : `50Gi` à `100Gi`
-- **Streams volumineux** (événements, logs) : `100Gi` et plus
+- **Ephemere Nachrichten** (kurze TTL, wenige Stunden): `10Gi` bis `20Gi`
+- **Langfristige Aufbewahrung** (Tage, Wochen): `50Gi` bis `100Gi`
+- **Große Streams** (Ereignisse, Logs): `100Gi` und mehr
 
 ```yaml title="nats-jetstream-storage.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -76,12 +76,12 @@ spec:
 ```
 
 :::warning
-Réduire `jetstream.size` sur un cluster existant peut entraîner une perte de données. Prévoyez toujours une marge suffisante lors du dimensionnement initial.
+Die Reduzierung von `jetstream.size` auf einem bestehenden Cluster kann zu Datenverlust führen. Planen Sie bei der anfänglichen Dimensionierung immer einen ausreichenden Puffer ein.
 :::
 
-### 3. Configuration avancée via config.merge
+### 3. Erweiterte Konfiguration über config.merge
 
-Le champ `config.merge` permet d'ajuster les paramètres bas niveau de NATS :
+Das Feld `config.merge` ermöglicht die Anpassung von Low-Level-NATS-Parametern:
 
 ```yaml title="nats-config-advanced.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -109,40 +109,40 @@ spec:
       trace: false
 ```
 
-**Options de configuration courantes :**
+**Gängige Konfigurationsoptionen:**
 
-| Paramètre | Beschreibung | Défaut |
-|-----------|-------------|--------|
-| `max_payload` | Taille maximale d'un message | `1MB` |
-| `write_deadline` | Délai maximal pour écrire une réponse au client | `2s` |
-| `debug` | Active les logs de debug | `false` |
-| `trace` | Active le traçage des messages (très verbeux) | `false` |
+| Parameter | Beschreibung | Standard |
+|-----------|--------------|----------|
+| `max_payload` | Maximale Größe einer Nachricht | `1MB` |
+| `write_deadline` | Maximale Verzögerung für das Schreiben einer Antwort an den Client | `2s` |
+| `debug` | Aktiviert Debug-Logs | `false` |
+| `trace` | Aktiviert Nachrichten-Tracing (sehr ausführlich) | `false` |
 
 :::note
-Activez `debug` et `trace` uniquement pour le Fehlerbehebung temporaire. Ces options génèrent un volume important de logs et peuvent impacter les performances.
+Aktivieren Sie `debug` und `trace` nur für temporäre Fehlerbehebung. Diese Optionen erzeugen ein erhebliches Log-Volumen und können die Performance beeinträchtigen.
 :::
 
-### 4. Appliquer et vérifier
+### 4. Anwenden und überprüfen
 
-Appliquez le manifeste :
+Wenden Sie das Manifest an:
 
 ```bash
 kubectl apply -f nats-config-advanced.yaml
 ```
 
-Surveillez le rolling update des pods :
+Überwachen Sie das Rolling Update der Pods:
 
 ```bash
 kubectl get po -w | grep my-nats
 ```
 
-Attendez que tous les pods soient en état `Running` :
+Warten Sie, bis alle Pods im Status `Running` sind:
 
 ```bash
 kubectl get po | grep my-nats
 ```
 
-**Erwartetes Ergebnis :**
+**Erwartetes Ergebnis:**
 
 ```console
 my-nats-0   1/1     Running   0   2m
@@ -150,15 +150,15 @@ my-nats-1   1/1     Running   0   4m
 my-nats-2   1/1     Running   0   6m
 ```
 
-### 5. Tester JetStream
+### 5. JetStream testen
 
-Ouvrez un port-forward vers le service NATS :
+Öffnen Sie einen Port-Forward zum NATS-Service:
 
 ```bash
 kubectl port-forward svc/my-nats 4222:4222
 ```
 
-Créez un stream avec le CLI `nats` :
+Erstellen Sie einen Stream mit dem `nats` CLI:
 
 ```bash
 nats stream create EVENTS \
@@ -171,7 +171,7 @@ nats stream create EVENTS \
   --replicas 3
 ```
 
-**Erwartetes Ergebnis :**
+**Erwartetes Ergebnis:**
 
 ```console
 Stream EVENTS was created
@@ -185,14 +185,14 @@ Information:
   ...
 ```
 
-Publiez un message :
+Veröffentlichen Sie eine Nachricht:
 
 ```bash
 nats pub events.test "Hello JetStream" \
   --server nats://admin:SecureAdminPassword@127.0.0.1:4222
 ```
 
-Consommez le message :
+Konsumieren Sie die Nachricht:
 
 ```bash
 nats sub "events.>" \
@@ -200,14 +200,14 @@ nats sub "events.>" \
   --count 1
 ```
 
-**Erwartetes Ergebnis :**
+**Erwartetes Ergebnis:**
 
 ```console
 [#1] Received on "events.test"
 Hello JetStream
 ```
 
-Vérifiez l'état du stream :
+Überprüfen Sie den Stream-Status:
 
 ```bash
 nats stream info EVENTS \
@@ -216,14 +216,14 @@ nats stream info EVENTS \
 
 ## Überprüfung
 
-La configuration est réussie si :
+Die Konfiguration ist erfolgreich, wenn:
 
-- Les pods NATS sont tous en état `Running`
-- Un stream peut être créé avec le nombre de réplicas souhaité
-- Les messages publiés sont persistés et peuvent être consommés
-- Le stream info affiche le bon nombre de réplicas et la politique de rétention configurée
+- Alle NATS-Pods im Status `Running` sind
+- Ein Stream mit der gewünschten Anzahl von Replikaten erstellt werden kann
+- Veröffentlichte Nachrichten persistiert und konsumiert werden können
+- Die Stream-Info die richtige Anzahl von Replikaten und die konfigurierte Aufbewahrungsrichtlinie anzeigt
 
 ## Weiterführende Informationen
 
-- **[API-Referenz NATS](../api-reference.md)** : documentation complète des paramètres `jetstream`, `config` et `config.merge`
-- **[Verwaltung von les utilisateurs NATS](./manage-users.md)** : créer et gérer les comptes d'accès au cluster
+- **[NATS API-Referenz](../api-reference.md)**: Vollständige Dokumentation der Parameter `jetstream`, `config` und `config.merge`
+- **[NATS-Benutzer verwalten](./manage-users.md)**: Zugangskonten zum Cluster erstellen und verwalten

@@ -3,11 +3,11 @@ sidebar_position: 2
 title: Konzepte
 ---
 
-# Concepts — ClickHouse
+# Konzepte — ClickHouse
 
-## Architecture
+## Architektur
 
-ClickHouse auf Hikube est un service managé basierend auf dem Operator **ClickHouse Operator**. C'est une base de données SQL orientée colonnes, optimisée pour l'analyse de données (OLAP). L'architecture repose sur des **shards** (partitionnement horizontal) et des **réplicas** (Hochverfügbarkeit), coordonnés par **ClickHouse Keeper**.
+ClickHouse auf Hikube ist ein verwalteter Dienst basierend auf dem **ClickHouse Operator**. Es handelt sich um eine spaltenorientierte SQL-Datenbank, die für die Datenanalyse (OLAP) optimiert ist. Die Architektur basiert auf **Shards** (horizontale Partitionierung) und **Replikas** (Hochverfügbarkeit), koordiniert durch **ClickHouse Keeper**.
 
 ```mermaid
 graph TB
@@ -32,13 +32,13 @@ graph TB
             end
         end
 
-        subgraph "Coordination"
+        subgraph "Koordination"
             K1[Keeper 1]
             K2[Keeper 2]
             K3[Keeper 3]
         end
 
-        subgraph "Sauvegarde"
+        subgraph "Sicherung"
             S3[Bucket S3]
             RES[Restic]
         end
@@ -49,8 +49,8 @@ graph TB
     OP --> S1R2
     OP --> S2R1
     OP --> S2R2
-    S1R1 <-->|réplication| S1R2
-    S2R1 <-->|réplication| S2R2
+    S1R1 <-->|Replikation| S1R2
+    S2R1 <-->|Replikation| S2R2
     K1 <--> K2
     K2 <--> K3
     S1R1 -.-> K1
@@ -64,43 +64,43 @@ graph TB
 
 ## Terminologie
 
-| Terme | Beschreibung |
-|-------|-------------|
-| **ClickHouse** | Ressource Kubernetes (`apps.cozystack.io/v1alpha1`) représentant un cluster ClickHouse managé. |
-| **Shard** | Partition horizontale des données. Chaque shard contient un sous-ensemble des données totales. |
-| **Replica** | Copie d'un shard. Assure la redondance et permet la lecture parallèle. |
-| **ClickHouse Keeper** | Service de coordination distribué (alternative à ZooKeeper) qui gère la réplication et le consensus entre les nœuds. |
-| **Restic** | Outil de sauvegarde pour créer des snapshots chiffrés vers un stockage S3. |
-| **OLAP** | Online Analytical Processing — modèle d'accès aux données optimisé pour les requêtes analytiques (agrégations, scans de colonnes). |
-| **resourcesPreset** | Profil de ressources prédéfini (nano à 2xlarge). |
+| Begriff | Beschreibung |
+|---------|-------------|
+| **ClickHouse** | Kubernetes-Ressource (`apps.cozystack.io/v1alpha1`), die einen verwalteten ClickHouse-Cluster darstellt. |
+| **Shard** | Horizontale Partition der Daten. Jeder Shard enthält eine Teilmenge der Gesamtdaten. |
+| **Replica** | Kopie eines Shards. Gewährleistet Redundanz und ermöglicht paralleles Lesen. |
+| **ClickHouse Keeper** | Verteilter Koordinationsdienst (Alternative zu ZooKeeper), der die Replikation und den Konsens zwischen den Knoten verwaltet. |
+| **Restic** | Sicherungstool zum Erstellen verschlüsselter Snapshots auf S3-Speicher. |
+| **OLAP** | Online Analytical Processing — Datenzugriffsmodell, optimiert für analytische Abfragen (Aggregationen, Spaltenscans). |
+| **resourcesPreset** | Vordefiniertes Ressourcenprofil (nano bis 2xlarge). |
 
 ---
 
-## Sharding et réplication
+## Sharding und Replikation
 
 ### Sharding
 
-Le sharding distribue les données horizontalement entre plusieurs nœuds :
+Sharding verteilt die Daten horizontal auf mehrere Knoten:
 
-- Chaque **shard** contient une partie des données
-- Les requêtes `SELECT` sont exécutées en parallèle sur tous les shards
-- Le paramètre `shards` dans le manifeste détermine le nombre de partitions
+- Jeder **Shard** enthält einen Teil der Daten
+- `SELECT`-Abfragen werden parallel auf allen Shards ausgeführt
+- Der Parameter `shards` im Manifest bestimmt die Anzahl der Partitionen
 
-### Réplication
+### Replikation
 
-Chaque shard peut avoir plusieurs réplicas :
+Jeder Shard kann mehrere Replikas haben:
 
-- Les réplicas d'un même shard contiennent des **données identiques**
-- La coordination est assurée par **ClickHouse Keeper**
-- En cas de panne d'une réplica, les lectures sont redirigées vers les autres
+- Die Replikas eines Shards enthalten **identische Daten**
+- Die Koordination wird durch **ClickHouse Keeper** gewährleistet
+- Bei Ausfall eines Replikas werden Lesevorgänge auf die anderen umgeleitet
 
 ```mermaid
 graph LR
-    subgraph "Shard 1 (données A-M)"
+    subgraph "Shard 1 (Daten A-M)"
         R1A[Replica 1]
         R1B[Replica 2]
     end
-    subgraph "Shard 2 (données N-Z)"
+    subgraph "Shard 2 (Daten N-Z)"
         R2A[Replica 1]
         R2B[Replica 2]
     end
@@ -110,52 +110,52 @@ graph LR
 ```
 
 :::tip
-Pour les petits volumes de données, un seul shard avec 2 réplicas suffit. Ajoutez des shards quand le volume dépasse les capacités d'un seul nœud.
+Für kleine Datenvolumen reicht ein einzelner Shard mit 2 Replikas aus. Fügen Sie Shards hinzu, wenn das Volumen die Kapazitäten eines einzelnen Knotens übersteigt.
 :::
 
 ---
 
 ## ClickHouse Keeper
 
-ClickHouse Keeper remplace ZooKeeper pour la coordination du cluster :
+ClickHouse Keeper ersetzt ZooKeeper für die Cluster-Koordination:
 
-- Gère le **consensus** entre les réplicas (protocole Raft)
-- Stocke les **métadonnées** du cluster (tables distribuées, réplication)
-- Nécessite un nombre **impair** d'instances (3 recommandé) pour le quorum
+- Verwaltet den **Konsens** zwischen den Replikas (Raft-Protokoll)
+- Speichert die **Metadaten** des Clusters (verteilte Tabellen, Replikation)
+- Erfordert eine **ungerade** Anzahl von Instanzen (3 empfohlen) für das Quorum
 
-| Paramètre Keeper | Beschreibung |
+| Keeper-Parameter | Beschreibung |
 |-------------------|-------------|
-| `keeper.replicas` | Nombre d'instances Keeper (3 recommandé) |
-| `keeper.resources` / `keeper.resourcesPreset` | Ressources allouées au Keeper |
-| `keeper.size` | Taille du stockage Keeper |
+| `keeper.replicas` | Anzahl der Keeper-Instanzen (3 empfohlen) |
+| `keeper.resources` / `keeper.resourcesPreset` | Dem Keeper zugewiesene Ressourcen |
+| `keeper.size` | Keeper-Speichergröße |
 
 ---
 
-## Sauvegarde
+## Sicherung
 
-ClickHouse auf Hikube utilise **Restic** pour les sauvegardes, avec le même modèle que MySQL :
+ClickHouse auf Hikube verwendet **Restic** für Sicherungen, mit dem gleichen Modell wie MySQL:
 
-- Snapshots **chiffrés** stockés dans un bucket S3
-- Planification via cron (`backup.schedule`)
-- Stratégie de rétention configurable (`backup.cleanupStrategy`)
-
----
-
-## Gestion des utilisateurs
-
-Les utilisateurs sont déclarés dans le manifeste avec :
-
-- **Mot de passe** pour l'authentification
-- **Flag readonly** : `true` pour un accès en lecture seule, `false` pour l'accès complet
-
-Un utilisateur `admin` est créé automatiquement avec les droits complets.
+- **Verschlüsselte** Snapshots, gespeichert in einem S3-Bucket
+- Planung über Cron (`backup.schedule`)
+- Konfigurierbare Aufbewahrungsstrategie (`backup.cleanupStrategy`)
 
 ---
 
-## Presets de ressources
+## Benutzerverwaltung
 
-| Preset | CPU | Mémoire |
-|--------|-----|---------|
+Benutzer werden im Manifest deklariert mit:
+
+- **Passwort** für die Authentifizierung
+- **Flag readonly**: `true` für Nur-Lese-Zugriff, `false` für Vollzugriff
+
+Ein `admin`-Benutzer wird automatisch mit Vollrechten erstellt.
+
+---
+
+## Ressourcen-Presets
+
+| Preset | CPU | Speicher |
+|--------|-----|----------|
 | `nano` | 250m | 128Mi |
 | `micro` | 500m | 256Mi |
 | `small` | 1 | 512Mi |
@@ -166,18 +166,18 @@ Un utilisateur `admin` est créé automatiquement avec les droits complets.
 
 ---
 
-## Limites et quotas
+## Limits und Kontingente
 
-| Paramètre | Wert |
-|-----------|--------|
-| Shards max | Selon quota tenant |
-| Réplicas par shard | Selon quota tenant |
-| Taille stockage (`size`) | Variable (en Gi) |
-| Keeper instances | 3 recommandé (impair) |
+| Parameter | Wert |
+|-----------|------|
+| Max. Shards | Je nach Tenant-Kontingent |
+| Replikas pro Shard | Je nach Tenant-Kontingent |
+| Speichergröße (`size`) | Variabel (in Gi) |
+| Keeper-Instanzen | 3 empfohlen (ungerade) |
 
 ---
 
 ## Weiterführende Informationen
 
-- [Overview](./overview.md) : présentation du service
-- [API-Referenz](./api-reference.md) : tous les paramètres de la ressource ClickHouse
+- [Übersicht](./overview.md): Vorstellung des Dienstes
+- [API-Referenz](./api-reference.md): Alle Parameter der ClickHouse-Ressource

@@ -1,66 +1,66 @@
 ---
-title: "Comment résoudre le DNS .local dans les VMs"
+title: "DNS .local in VMs auflösen"
 ---
 
-# Comment résoudre le DNS .local dans les VMs
+# DNS .local in VMs auflösen
 
-Les VMs Hikube basées sur Debian ou Ubuntu utilisent `systemd-resolved` pour la résolution DNS. Or, le domaine DNS interne du cluster est `cozy.local`, et `systemd-resolved` refuse par défaut toutes les requêtes `*.local` car ce TLD est réservé au protocole mDNS (RFC 6762). Dieser Leitfaden erklärt comment corriger ce comportement pour permettre la résolution DNS des services Kubernetes depuis une VM.
+Hikube-VMs, die auf Debian oder Ubuntu basieren, verwenden `systemd-resolved` für die DNS-Auflösung. Die interne DNS-Domain des Clusters ist jedoch `cozy.local`, und `systemd-resolved` lehnt standardmäßig alle `*.local`-Anfragen ab, da diese TLD dem mDNS-Protokoll vorbehalten ist (RFC 6762). Diese Anleitung erklärt, wie Sie dieses Verhalten korrigieren, um die DNS-Auflösung von Kubernetes-Diensten aus einer VM heraus zu ermöglichen.
 
 ## Voraussetzungen
 
-- Une **VMInstance** Hikube basée sur Debian ou Ubuntu
-- Un accès **SSH** ou **console** à la VM
-- Droits **root** ou **sudo** sur la VM
+- Eine **VMInstance** auf Hikube, basierend auf Debian oder Ubuntu
+- Ein **SSH**- oder **Konsolen**-Zugang zur VM
+- **Root**- oder **sudo**-Rechte auf der VM
 
 ## Schritte
 
-### 1. Diagnostiquer le problème
+### 1. Problem diagnostizieren
 
-Connectez-vous à la VM :
+Verbinden Sie sich mit der VM:
 
 ```bash
 virtctl ssh -i ~/.ssh/id_ed25519 ubuntu@my-vm
 ```
 
-Vérifiez la configuration DNS actuelle :
+Überprüfen Sie die aktuelle DNS-Konfiguration:
 
 ```bash
 resolvectl status
 ```
 
-Observez la section de votre interface réseau (généralement `enp1s0`). Vous constaterez l'absence de domaines de recherche (search domains) et de domaines de routage (routing domains).
+Beobachten Sie den Abschnitt Ihrer Netzwerkschnittstelle (in der Regel `enp1s0`). Sie werden feststellen, dass keine Suchdomains (search domains) und keine Routing-Domains vorhanden sind.
 
-Testez la résolution d'un service Kubernetes :
+Testen Sie die Auflösung eines Kubernetes-Dienstes:
 
 ```bash
 dig my-service.my-namespace.svc.cozy.local
 ```
 
-**Résultat typique du problème :**
+**Typisches Ergebnis des Problems:**
 
 ```
 ;; ->>HEADER<<- opcode: QUERY, status: REFUSED, id: 12345
 ```
 
-Le statut `REFUSED` confirme que `systemd-resolved` envoie la requête `.local` vers mDNS (désaktiviert dans la VM) au lieu du serveur DNS unicast.
+Der Status `REFUSED` bestätigt, dass `systemd-resolved` die `.local`-Anfrage an mDNS sendet (in der VM deaktiviert) anstatt an den Unicast-DNS-Server.
 
-**Cause racine** : le DHCP de KubeVirt (virt-launcher) fournit un serveur DNS mais ne transmet pas de domaines de recherche. Sans le domaine de routage `~local`, `systemd-resolved` applique le comportement par défaut du RFC 6762 et route `.local` vers mDNS.
+**Grundursache**: Der DHCP von KubeVirt (virt-launcher) liefert einen DNS-Server, übermittelt aber keine Suchdomains. Ohne die Routing-Domain `~local` wendet `systemd-resolved` das Standardverhalten nach RFC 6762 an und routet `.local` über mDNS.
 
-### 2. Créer le drop-in systemd-networkd
+### 2. systemd-networkd Drop-in erstellen
 
-La solution consiste à créer un fichier drop-in pour `systemd-networkd` qui déclare les domaines de recherche et les domaines de routage appropriés.
+Die Lösung besteht darin, eine Drop-in-Datei für `systemd-networkd` zu erstellen, die die entsprechenden Suchdomains und Routing-Domains deklariert.
 
-:::warning Ne pas utiliser netplan
-Netplan ne supporte pas les domaines de routage (préfixe `~`). Utilisez directement un drop-in `systemd-networkd`.
+:::warning Netplan nicht verwenden
+Netplan unterstützt keine Routing-Domains (Präfix `~`). Verwenden Sie direkt ein `systemd-networkd` Drop-in.
 :::
 
-Créez le répertoire du drop-in :
+Erstellen Sie das Drop-in-Verzeichnis:
 
 ```bash
 sudo mkdir -p /etc/systemd/network/10-netplan-enp1s0.network.d/
 ```
 
-Créez le fichier de configuration :
+Erstellen Sie die Konfigurationsdatei:
 
 ```bash
 sudo tee /etc/systemd/network/10-netplan-enp1s0.network.d/dns-fix.conf << 'EOF'
@@ -69,37 +69,37 @@ Domains=<namespace>.svc.cozy.local svc.cozy.local cozy.local ~local ~.
 EOF
 ```
 
-:::note Remplacez le namespace
-Remplacez `<namespace>` par le nom réel de votre namespace (tenant) Hikube. Par exemple : `tenant-prod.svc.cozy.local`.
+:::note Namespace ersetzen
+Ersetzen Sie `<namespace>` durch den tatsächlichen Namen Ihres Hikube-Namespace (Tenant). Zum Beispiel: `tenant-prod.svc.cozy.local`.
 :::
 
-**Explication des domaines configurés :**
+**Erklärung der konfigurierten Domains:**
 
-| Domaine | Rôle |
+| Domain | Rolle |
 |---------|------|
-| `<namespace>.svc.cozy.local` | Domaine de recherche : permet la résolution par nom court (ex : `my-service` au lieu de `my-service.my-namespace.svc.cozy.local`) |
-| `svc.cozy.local` | Domaine de recherche : résolution des services dans d'autres namespaces |
-| `cozy.local` | Domaine de recherche : résolution de tout nom dans le cluster |
-| `~local` | Domaine de routage : force `.local` vers le DNS unicast au lieu de mDNS |
-| `~.` | Domaine de routage : fait de cette interface la route DNS par défaut (sinon la résolution externe cesse de fonctionner) |
+| `<namespace>.svc.cozy.local` | Suchdomain: ermöglicht die Auflösung über Kurznamen (z.B.: `my-service` anstatt `my-service.my-namespace.svc.cozy.local`) |
+| `svc.cozy.local` | Suchdomain: Auflösung von Diensten in anderen Namespaces |
+| `cozy.local` | Suchdomain: Auflösung aller Namen im Cluster |
+| `~local` | Routing-Domain: erzwingt `.local` über Unicast-DNS statt mDNS |
+| `~.` | Routing-Domain: macht diese Schnittstelle zur Standard-DNS-Route (sonst funktioniert die externe Auflösung nicht mehr) |
 
 ### 3. Konfiguration anwenden
 
-Redémarrez les services réseau :
+Starten Sie die Netzwerkdienste neu:
 
 ```bash
 sudo systemctl restart systemd-networkd systemd-resolved
 ```
 
-### 4. Vérifier la configuration
+### 4. Konfiguration überprüfen
 
-Überprüfen Sie, ob les domaines sont correctement appliqués :
+Überprüfen Sie, dass die Domains korrekt angewendet wurden:
 
 ```bash
 resolvectl status
 ```
 
-Vous devriez voir les domaines de recherche et de routage dans la section de l'interface `enp1s0` :
+Sie sollten die Such- und Routing-Domains im Abschnitt der Schnittstelle `enp1s0` sehen:
 
 ```
 Link 2 (enp1s0)
@@ -116,32 +116,32 @@ Current DNS Server: 10.x.x.x
 
 ## Überprüfung
 
-Testez la résolution DNS d'un service Kubernetes par nom complet (FQDN) :
+Testen Sie die DNS-Auflösung eines Kubernetes-Dienstes über den vollständigen Namen (FQDN):
 
 ```bash
 dig my-service.my-namespace.svc.cozy.local
 ```
 
-**Erwartetes Ergebnis :** statut `NOERROR` avec une réponse contenant l'adresse IP du service.
+**Erwartetes Ergebnis:** Status `NOERROR` mit einer Antwort, die die IP-Adresse des Dienstes enthält.
 
-Testez la résolution par nom court (grâce aux domaines de recherche) :
+Testen Sie die Auflösung über den Kurznamen (dank der Suchdomains):
 
 ```bash
 dig my-service
 ```
 
-Testez que la résolution DNS externe fonctionne toujours :
+Testen Sie, dass die externe DNS-Auflösung weiterhin funktioniert:
 
 ```bash
 dig google.com
 ```
 
-:::tip Persistance
-Cette configuration est **persistante** : elle survit aux redémarrages de la VM. Le fichier drop-in est lu automatiquement par `systemd-networkd` au démarrage.
+:::tip Persistenz
+Diese Konfiguration ist **persistent**: sie übersteht Neustarts der VM. Die Drop-in-Datei wird beim Start automatisch von `systemd-networkd` gelesen.
 :::
 
-:::note Solution au niveau plateforme
-Ce problème sera résolu à terme au niveau de die Plattform Hikube en configurant le DHCP de KubeVirt (virt-launcher) pour transmettre les domaines de recherche aux VMs. En attendant, cette correction manuelle est nécessaire.
+:::note Lösung auf Plattformebene
+Dieses Problem wird langfristig auf Hikube-Plattformebene gelöst, indem der DHCP von KubeVirt (virt-launcher) so konfiguriert wird, dass er die Suchdomains an die VMs übermittelt. In der Zwischenzeit ist diese manuelle Korrektur notwendig.
 :::
 
 ## Weiterführende Informationen

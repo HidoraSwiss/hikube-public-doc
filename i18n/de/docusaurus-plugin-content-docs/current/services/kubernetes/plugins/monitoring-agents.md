@@ -5,8 +5,8 @@ title: Monitoring Agents
 
 # 🧩 Details zum Feld `addons.monitoringAgents`
 
-Das Feld `addons.monitoringAgents` definiert die Konfiguration des Add-ons **Monitoring Agents**, verantwortlich für die Sammlung von Metriken und Logs innerhalb des Kubernetes-Clusters.
-Dieses Add-on gruppiert die Monitoring-Agenten (Prometheus Node Exporter, kube-state-metrics oder andere Kollektoren), die auf den Cluster-Knoten bereitgestellt werden.
+Das Feld `addons.monitoringAgents` definiert die Konfiguration des Add-ons **Monitoring Agents**, das für die Erfassung von Metriken und Logs innerhalb des Kubernetes-Clusters verantwortlich ist.
+Dieses Add-on umfasst die Monitoring-Agents (Prometheus Node Exporter, kube-state-metrics oder andere Collectoren), die auf den Cluster-Knoten bereitgestellt werden.
 
 ```yaml
 addons:
@@ -26,7 +26,7 @@ addons:
 
 ### Beschreibung
 
-Das Feld `monitoringAgents` gruppiert die Hauptkonfiguration der im Cluster bereitgestellten Monitoring-Agenten.
+Das Feld `monitoringAgents` gruppiert die Hauptkonfiguration der im Cluster bereitgestellten Monitoring-Agents.
 Es ermöglicht die Aktivierung der Komponente und die Anpassung ihres Verhaltens über Helm-Werte.
 
 ### Beispiel
@@ -46,8 +46,8 @@ monitoringAgents:
 
 ### Beschreibung
 
-Gibt an, ob die **Monitoring-Agenten** aktiviert (`true`) oder deaktiviert (`false`) sind.
-Wenn aktiviert, sammeln die Agenten automatisch System- und Kubernetes-Metriken für den Export an einen Überwachungsserver (z.B. Prometheus, Grafana Agent, OpenTelemetry Collector usw.).
+Gibt an, ob die **Monitoring-Agents** aktiviert (`true`) oder deaktiviert (`false`) sind.
+Wenn sie aktiviert sind, erfassen die Agents automatisch System- und Kubernetes-Metriken für den Export an einen Überwachungsserver (z.B. Prometheus, Grafana Agent, OpenTelemetry Collector usw.).
 
 ### Beispiel
 
@@ -61,18 +61,18 @@ enabled: true
 
 ### Beschreibung
 
-Das Feld `valuesOverride` ermöglicht das **Überschreiben der Helm-Werte**, die für das Deployment der Monitoring-Agenten verwendet werden.
-Es wird verwendet, um die Konfiguration anzupassen (Modulaktivierung, Ressourcen, Listening-Ports, Labels usw.).
+Das Feld `valuesOverride` ermöglicht das **Überschreiben der Helm-Werte**, die für die Bereitstellung der Monitoring-Agents verwendet werden.
+Es wird zur Anpassung der Konfiguration verwendet (Aktivierung der Module, Ressourcen, Listening-Ports, Labels usw.).
 
 ### Beispiel
 
-### **Monitoring-Agenten**
+### **Monitoring-Agents**
 
-Log- und Metriksammlung mit FluentBit und anderen Agenten.
+Erfassung von Logs und Metriken mit FluentBit und anderen Agents.
 
 ```yaml
 valuesOverride:
-  # Configuration FluentBit
+  # FluentBit-Konfiguration
   fluentbit:
     enabled: true
     config:
@@ -89,7 +89,7 @@ valuesOverride:
 ```yaml
 valuesOverride:
   monitoringAgents:
-    # FluentBit pour les logs
+    # FluentBit für Logs
     fluentbit:
       enabled: true
       resources:
@@ -121,7 +121,7 @@ valuesOverride:
               Host  logs.company.com
               Port  24224
 
-    # Node Exporter pour les métriques système
+    # Node Exporter für Systemmetriken
     nodeExporter:
       enabled: true
       resources:
@@ -137,6 +137,6 @@ valuesOverride:
 
 ## 💡 Best Practices
 
-- `enabled: true` aktivieren, um die kontinuierliche Sammlung von System- und Anwendungsmetriken sicherzustellen.
-- `valuesOverride` verwenden, um die Agenten-Konfiguration nach Bedarf anzupassen (z.B. Sammlung auf bestimmten Knoten einschränken).
-- Angemessene `resource limits` konfigurieren, um zu verhindern, dass die Agenten die Cluster-Last beeinträchtigen.
+- Aktivieren Sie `enabled: true`, um die kontinuierliche Erfassung von System- und Anwendungsmetriken sicherzustellen.
+- Verwenden Sie `valuesOverride`, um die Agent-Konfiguration je nach Bedarf anzupassen (z.B. Erfassung auf bestimmte Knoten beschränken).
+- Konfigurieren Sie angemessene `resource limits`, um zu verhindern, dass die Agents die Cluster-Last beeinträchtigen.

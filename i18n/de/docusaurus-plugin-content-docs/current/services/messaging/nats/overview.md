@@ -5,106 +5,106 @@ title: Übersicht
 
 # NATS auf Hikube
 
-Les **clusters NATS** d’Hikube offrent une **plateforme de messagerie moderne, ultra-légère et performante**, conçue pour la **communication en temps réel** entre services, applications et appareils connectés.  
-Pensé pour les **architectures cloud natives et microservices**, NATS combine **simplicité, rapidité et résilience** dans un système unique et facile à opérer.
+Die **NATS-Cluster** von Hikube bieten eine **moderne, ultraleichte und leistungsstarke Messaging-Plattform**, die für die **Echtzeit-Kommunikation** zwischen Diensten, Anwendungen und vernetzten Geräten konzipiert ist.
+Entwickelt für **Cloud-native- und Microservice-Architekturen**, kombiniert NATS **Einfachheit, Geschwindigkeit und Resilienz** in einem einzigen, einfach zu betreibenden System.
 
 ---
 
-## 🏗️ Architecture et Fonctionnement
+## 🏗️ Architektur und Funktionsweise
 
-NATS adopte une architecture **pub/sub** (publish–subscribe) sans broker complexe : chaque message est envoyé à un **sujet** (`subject`) que d’autres applications peuvent **écouter**.
+NATS verwendet eine **Pub/Sub**-Architektur (Publish–Subscribe) ohne komplexen Broker: Jede Nachricht wird an ein **Subject** gesendet, das andere Anwendungen **abonnieren** können.
 
-* **Publishers** → publient des messages sur un sujet (`orders.created`, `user.login`, etc.)  
-* **Subscribers** → s’abonnent à ces sujets pour recevoir les messages correspondants  
-* **Subjects** → définissent les canaux logiques de communication, hiérarchisés et dynamiques  
-* **JetStream** → ajoute la **persistance**, la **relecture (replay)** et les **garanties de livraison**
-
----
-
-## 🌿 Légèreté et performance
-
-NATS est reconnu pour sa **vitesse exceptionnelle** et son **empreinte minimale**, ce qui en fait un composant idéal pour les architectures distribuées.
-
-**Caractéristiques clés :**
-
-* Temps de démarrage inférieur à la seconde  
-* Moins de **10 Mo de mémoire** consommée par instance  
-* Gestion de **millions de messages par seconde**  
-* Communication directe entre services, sans intermédiaire lourd  
-* Architecture **stateless** et facilement **scalable horizontalement**
-
-> NATS offre un débit élevé avec une latence moyenne mesurée en **microsecondes**, même sous forte charge.
+* **Publishers** → veröffentlichen Nachrichten zu einem Subject (`orders.created`, `user.login` usw.)
+* **Subscribers** → abonnieren diese Subjects, um die entsprechenden Nachrichten zu empfangen
+* **Subjects** → definieren die logischen Kommunikationskanäle, hierarchisch und dynamisch
+* **JetStream** → fügt **Persistenz**, **Replay** und **Zustellgarantien** hinzu
 
 ---
 
-## 🧩 Conçu pour les architectures microservices
+## 🌿 Leichtgewichtigkeit und Performance
 
-Chaque service peut publier ou consommer des événements sans dépendre du reste du système, favorisant un **découplage fort** et une **meilleure résilience**.
+NATS ist bekannt für seine **außergewöhnliche Geschwindigkeit** und seinen **minimalen Ressourcenverbrauch**, was es zu einer idealen Komponente für verteilte Architekturen macht.
 
-**Exemples d’utilisation :**
+**Hauptmerkmale:**
 
-* Diffusion d’événements applicatifs en temps réel  
-* Communication entre microservices distribués  
-* Requêtes légères entre services (pattern **request/reply**)  
-* Gestion d’événements métier (création de commande, notification, Aktualisierung de profil)
+* Startzeit unter einer Sekunde
+* Weniger als **10 MB Arbeitsspeicher** pro Instanz
+* Verarbeitung von **Millionen von Nachrichten pro Sekunde**
+* Direkte Kommunikation zwischen Diensten ohne schwere Zwischenschicht
+* **Stateless**-Architektur und einfach **horizontal skalierbar**
 
----
-
-## 🔗 Protocoles supportés
-
-NATS est un protocole **binaire optimisé** mais reste compatible avec de nombreux environnements et standards :
-
-* **NATS Core** → messagerie légère (pub/sub, request/reply)  
-* **NATS JetStream** → persistance, replay et contrôle de flux  
-* **NATS WebSocket** → intégration directe avec des applications web  
-* **NATS MQTT** → support des objets connectés (IoT)  
-* **NATS gRPC** → interopérabilité avec des API modernes  
-* **Clients** disponibles dans plus de **40 langages** : Go, Python, Node.js, Java, Rust, C#, etc.
+> NATS bietet hohen Durchsatz mit einer durchschnittlichen Latenz im **Mikrosekundenbereich**, selbst unter hoher Last.
 
 ---
 
-## 🚀 Cas d’usage typiques
+## 🧩 Für Microservice-Architekturen konzipiert
 
-### ⚡ Communication temps réel
+Jeder Dienst kann Ereignisse veröffentlichen oder konsumieren, ohne vom Rest des Systems abhängig zu sein, was eine **starke Entkopplung** und **bessere Resilienz** fördert.
 
-NATS excelle dans la **transmission instantanée d’événements** entre applications distribuées.
+**Anwendungsbeispiele:**
 
-**Exemples :**
-
-* Notifications en direct et Aktualisierungen d’état  
-* Monitoring applicatif et collecte de métriques  
-* Synchronisation de données entre microservices
-
----
-
-### 📦 Streaming d’événements et persistance
-
-Avec **JetStream**, NATS devient un **système de streaming durable** :
-
-* Stockage temporaire ou persistant des messages  
-* Relecture des événements pour l’audit ou la reprise après incident  
-* Contrôle de flux pour ne jamais surcharger les consommateurs
+* Echtzeit-Verbreitung von Anwendungsereignissen
+* Kommunikation zwischen verteilten Microservices
+* Leichtgewichtige Anfragen zwischen Diensten (Pattern **Request/Reply**)
+* Verwaltung von Geschäftsereignissen (Bestellerstellung, Benachrichtigung, Profilaktualisierung)
 
 ---
 
-### 🔒 Sécurité et fiabilité
+## 🔗 Unterstützte Protokolle
 
-Les clusters NATS Hikube intègrent des mécanismes de sécurité avancés :
+NATS ist ein **optimiertes Binärprotokoll**, aber kompatibel mit vielen Umgebungen und Standards:
 
-* **Chiffrement TLS/mTLS**  
-* **Authentification par NKeys et JWT**  
-* **Contrôle d’accès par sujet (subject-level ACL)**  
-
-Cela garantit une **communication fiable, sécurisée et isolée** entre services, même dans des environnements multi-tenant.
+* **NATS Core** → leichtgewichtiges Messaging (Pub/Sub, Request/Reply)
+* **NATS JetStream** → Persistenz, Replay und Flusskontrolle
+* **NATS WebSocket** → direkte Integration mit Webanwendungen
+* **NATS MQTT** → Unterstützung für vernetzte Objekte (IoT)
+* **NATS gRPC** → Interoperabilität mit modernen APIs
+* **Clients** verfügbar in mehr als **40 Sprachen**: Go, Python, Node.js, Java, Rust, C# usw.
 
 ---
 
-### 🧠 Simplicité d’administration
+## 🚀 Typische Anwendungsfälle
 
-Grâce à son **design minimaliste** et à ses **outils intégrés (CLI, dashboards, métriques Prometheus)**, NATS est simple à exploiter et à superviser, même à grande échelle.
+### ⚡ Echtzeit-Kommunikation
 
-**Exemples :**
+NATS zeichnet sich durch die **sofortige Übertragung von Ereignissen** zwischen verteilten Anwendungen aus.
 
-* Bus d’événements internes pour plateformes distribuées  
-* Orchestration d’automatisations internes  
-* Système de messagerie centralisé et léger pour Kubernetes
+**Beispiele:**
+
+* Echtzeit-Benachrichtigungen und Statusaktualisierungen
+* Anwendungsmonitoring und Metrikerfassung
+* Datensynchronisation zwischen Microservices
+
+---
+
+### 📦 Event-Streaming und Persistenz
+
+Mit **JetStream** wird NATS zu einem **dauerhaften Streaming-System**:
+
+* Temporäre oder persistente Nachrichtenspeicherung
+* Replay von Ereignissen für Audit oder Wiederherstellung nach Vorfall
+* Flusskontrolle, um Konsumenten nie zu überlasten
+
+---
+
+### 🔒 Sicherheit und Zuverlässigkeit
+
+Die NATS-Cluster von Hikube integrieren fortschrittliche Sicherheitsmechanismen:
+
+* **TLS/mTLS-Verschlüsselung**
+* **Authentifizierung über NKeys und JWT**
+* **Subject-basierte Zugriffskontrolle (Subject-Level ACL)**
+
+Dies gewährleistet eine **zuverlässige, sichere und isolierte Kommunikation** zwischen Diensten, auch in Multi-Tenant-Umgebungen.
+
+---
+
+### 🧠 Einfache Administration
+
+Dank seines **minimalistischen Designs** und seiner **integrierten Tools (CLI, Dashboards, Prometheus-Metriken)** ist NATS einfach zu betreiben und zu überwachen, auch in großem Maßstab.
+
+**Beispiele:**
+
+* Interner Event-Bus für verteilte Plattformen
+* Orchestrierung interner Automatisierungen
+* Zentralisiertes und leichtgewichtiges Messaging-System für Kubernetes

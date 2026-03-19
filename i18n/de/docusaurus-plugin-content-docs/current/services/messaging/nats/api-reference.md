@@ -5,15 +5,15 @@ title: API-Referenz
 
 # API-Referenz NATS
 
-Cette référence détaille la configuration et le fonctionnement des **clusters NATS** sur Hikube, incluant la gestion des **utilisateurs**, la configuration du **JetStream** pour la persistance des messages, et les options de personnalisation via le champ `config`.
+Diese Referenz beschreibt die Konfiguration und Funktionsweise der **NATS-Cluster** auf Hikube, einschließlich der **Benutzerverwaltung**, der **JetStream**-Konfiguration für die Nachrichtenpersistenz und der Anpassungsoptionen über das Feld `config`.
 
 ---
 
-## Structure de Base
+## Grundstruktur
 
-### **Ressource NATS**
+### **NATS-Ressource**
 
-#### Beispiel de configuration YAML
+#### Beispiel einer YAML-Konfiguration
 
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
@@ -34,21 +34,21 @@ spec:
 
 ---
 
-## Paramètres
+## Parameter
 
-### **Paramètres Communs**
+### **Allgemeine Parameter**
 
-| **Paramètre**      | **Type**   | **Description**                                                                                      | **Défaut** | **Requis** |
-| ------------------ | ---------- | ---------------------------------------------------------------------------------------------------- | ---------- | ---------- |
-| `replicas`         | `int`      | Nombre de réplicas NATS (nœuds du cluster)                                                           | `2`        | Oui        |
-| `resources`        | `object`   | Configuration explicite CPU et mémoire pour chaque réplique. Si vide, `resourcesPreset` est utilisé. | `{}`       | Non        |
-| `resources.cpu`    | `quantity` | CPU disponible par réplique NATS                                                                     | `""`       | Non        |
-| `resources.memory` | `quantity` | RAM disponible par réplique NATS                                                                     | `""`       | Non        |
-| `resourcesPreset`  | `string`   | Preset de ressources par défaut (`nano`, `micro`, `small`, `medium`, `large`, `xlarge`, `2xlarge`)   | `"nano"`   | Oui        |
-| `storageClass`     | `string`   | StorageClass utilisé pour stocker les données persistantes du cluster                                | `""`       | Non        |
-| `external`         | `bool`     | Active l’accès externe au cluster NATS (exposition hors du cluster Kubernetes)                       | `false`    | Non        |
+| **Parameter** | **Typ** | **Beschreibung** | **Standard** | **Erforderlich** |
+| ------------- | ------- | ---------------- | ------------ | ---------------- |
+| `replicas` | `int` | Anzahl der NATS-Replikate (Cluster-Knoten) | `2` | Ja |
+| `resources` | `object` | Explizite CPU- und Speicherkonfiguration pro Replikat. Wenn leer, wird `resourcesPreset` verwendet. | `{}` | Nein |
+| `resources.cpu` | `quantity` | Verfügbare CPU pro NATS-Replikat | `""` | Nein |
+| `resources.memory` | `quantity` | Verfügbarer RAM pro NATS-Replikat | `""` | Nein |
+| `resourcesPreset` | `string` | Standard-Ressourcen-Preset (`nano`, `micro`, `small`, `medium`, `large`, `xlarge`, `2xlarge`) | `"nano"` | Ja |
+| `storageClass` | `string` | StorageClass für die Speicherung der persistenten Cluster-Daten | `""` | Nein |
+| `external` | `bool` | Aktiviert den externen Zugang zum NATS-Cluster (Exposition außerhalb des Kubernetes-Clusters) | `false` | Nein |
 
-#### Beispiel YAML
+#### YAML-Beispiel
 
 ```yaml title="nats.yaml"
 replicas: 3
@@ -59,20 +59,20 @@ storageClass: replicated
 
 ---
 
-### **Paramètres Application (Spécifiques à NATS)**
+### **Anwendungsparameter (NATS-spezifisch)**
 
-| **Paramètre**          | **Type**            | **Description**                                                                                                | **Défaut** | **Requis**    |
-| ---------------------- | ------------------- | -------------------------------------------------------------------------------------------------------------- | ---------- | ------------- |
-| `users`                | `map[string]object` | Liste des utilisateurs autorisés à se connecter au cluster NATS. La clé correspond au nom d’utilisateur.       | `{}`       | Non           |
-| `users[name].password` | `string`            | Mot de passe associé à l’utilisateur.                                                                          | `""`       | Oui si défini |
-| `jetstream`            | `object`            | Configuration du module **JetStream** pour la persistance des messages.                                        | `{}`       | Non           |
-| `jetstream.enabled`    | `bool`              | Active ou désaktiviert le module JetStream.                                                                       | `true`     | Non           |
-| `jetstream.size`       | `quantity`          | Taille du volume persistant alloué pour JetStream.                                                             | `10Gi`     | Non           |
-| `config`               | `object`            | Configuration avancée de NATS. Permet d’ajouter ou d’écraser certaines valeurs de la configuration par défaut. | `{}`       | Non           |
-| `config.merge`         | `object`            | Configuration additionnelle fusionnée dans la configuration NATS principale.                                   | `{}`       | Non           |
-| `config.resolver`      | `object`            | Configuration spécifique du résolveur NATS (DNS, opérateur, etc.).                                             | `{}`       | Non           |
+| **Parameter** | **Typ** | **Beschreibung** | **Standard** | **Erforderlich** |
+| ------------- | ------- | ---------------- | ------------ | ---------------- |
+| `users` | `map[string]object` | Liste der autorisierten Benutzer für die Verbindung zum NATS-Cluster. Der Schlüssel entspricht dem Benutzernamen. | `{}` | Nein |
+| `users[name].password` | `string` | Dem Benutzer zugeordnetes Passwort. | `""` | Ja, wenn definiert |
+| `jetstream` | `object` | Konfiguration des **JetStream**-Moduls für die Nachrichtenpersistenz. | `{}` | Nein |
+| `jetstream.enabled` | `bool` | Aktiviert oder deaktiviert das JetStream-Modul. | `true` | Nein |
+| `jetstream.size` | `quantity` | Größe des persistenten Volumes für JetStream. | `10Gi` | Nein |
+| `config` | `object` | Erweiterte NATS-Konfiguration. Ermöglicht das Hinzufügen oder Überschreiben bestimmter Werte der Standardkonfiguration. | `{}` | Nein |
+| `config.merge` | `object` | Zusätzliche Konfiguration, die in die NATS-Hauptkonfiguration eingefügt wird. | `{}` | Nein |
+| `config.resolver` | `object` | Spezifische Konfiguration des NATS-Resolvers (DNS, Operator usw.). | `{}` | Nein |
 
-#### Beispiel YAML
+#### YAML-Beispiel
 
 ```yaml title="nats.yaml"
 users:
@@ -95,12 +95,12 @@ config:
 
 ---
 
-### **resources et resourcesPreset**
+### **resources und resourcesPreset**
 
-Le champ `resources` ermöglicht die Definition explicitement la configuration CPU et mémoire de chaque réplique.
-Si ce champ est laissé vide, la valeur du paramètre `resourcesPreset` est utilisée.
+Das Feld `resources` ermöglicht die explizite Definition der CPU- und Speicherkonfiguration jedes Replikats.
+Wenn dieses Feld leer gelassen wird, wird der Wert des Parameters `resourcesPreset` verwendet.
 
-#### Beispiel YAML
+#### YAML-Beispiel
 
 ```yaml title="nats.yaml"
 resources:
@@ -108,23 +108,23 @@ resources:
   memory: 4Gi
 ```
 
-⚠️ **Note :** si `resources` est défini, la valeur de `resourcesPreset` est ignorée.
+⚠️ **Hinweis:** Wenn `resources` definiert ist, wird der Wert von `resourcesPreset` ignoriert.
 
-| **Preset name** | **CPU** | **Mémoire** |
-| --------------- | ------- | ----------- |
-| `nano`          | 250m    | 128Mi       |
-| `micro`         | 500m    | 256Mi       |
-| `small`         | 1       | 512Mi       |
-| `medium`        | 1       | 1Gi         |
-| `large`         | 2       | 2Gi         |
-| `xlarge`        | 4       | 4Gi         |
-| `2xlarge`       | 8       | 8Gi         |
+| **Preset-Name** | **CPU** | **Speicher** |
+| --------------- | ------- | ------------ |
+| `nano` | 250m | 128Mi |
+| `micro` | 500m | 256Mi |
+| `small` | 1 | 512Mi |
+| `medium` | 1 | 1Gi |
+| `large` | 2 | 2Gi |
+| `xlarge` | 4 | 4Gi |
+| `2xlarge` | 8 | 8Gi |
 
 ---
 
-## Beispiels Complets
+## Vollständige Beispiele
 
-### Cluster de Production
+### Produktionscluster
 
 ```yaml title="nats-production.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -159,7 +159,7 @@ spec:
       trace: false
 ```
 
-### Cluster de Développement
+### Entwicklungscluster
 
 ```yaml title="nats-development.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -182,17 +182,17 @@ spec:
 
 ---
 
-:::tip Bonnes Pratiques
+:::tip Best Practices
 
-- **JetStream en production** : aktiviertz toujours JetStream (`jetstream.enabled: true`) pour bénéficier de la persistance des messages et du streaming
-- **3 réplicas minimum** en production um die ... zu gewährleisten Hochverfügbarkeit et le consensus Raft pour JetStream
-- **`max_payload`** : ajustez la taille maximale des messages selon votre cas d'usage (défaut : 1MB, maximum recommandé : 8MB)
-- **Utilisateurs dédiés** : créez des utilisateurs distincts par application pour un contrôle d'accès granulaire
+- **JetStream in der Produktion**: Aktivieren Sie immer JetStream (`jetstream.enabled: true`), um von der Nachrichtenpersistenz und dem Streaming zu profitieren
+- **Mindestens 3 Replikate** in der Produktion, um Hochverfügbarkeit und Raft-Konsens für JetStream zu gewährleisten
+- **`max_payload`**: Passen Sie die maximale Nachrichtengröße an Ihren Anwendungsfall an (Standard: 1MB, empfohlenes Maximum: 8MB)
+- **Dedizierte Benutzer**: Erstellen Sie separate Benutzer pro Anwendung für eine granulare Zugriffskontrolle
 :::
 
 :::warning Achtung
 
-- **Les suppressions sont irréversibles** : la suppression d'une ressource NATS entraîne la perte définitive des streams JetStream et de tous les messages
-- **Modification de `jetstream.size`** : réduire la taille du volume JetStream sur un cluster existant peut entraîner une perte de données
-- **Accès externe** : aktiviertr `external: true` expose le cluster NATS sur Internet — assurez-vous que l'authentification est bien configurée
+- **Löschungen sind unwiderruflich**: Das Löschen einer NATS-Ressource führt zum endgültigen Verlust der JetStream-Streams und aller Nachrichten
+- **Änderung von `jetstream.size`**: Die Reduzierung der JetStream-Volume-Größe auf einem bestehenden Cluster kann zu Datenverlust führen
+- **Externer Zugang**: Die Aktivierung von `external: true` exponiert den NATS-Cluster im Internet — stellen Sie sicher, dass die Authentifizierung korrekt konfiguriert ist
 :::

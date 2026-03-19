@@ -1,22 +1,22 @@
 ---
-title: "Verwaltung von les utilisateurs et profils ClickHouse"
+title: "ClickHouse-Benutzer und -Profile verwalten"
 ---
 
-# Verwaltung von les utilisateurs et profils ClickHouse
+# ClickHouse-Benutzer und -Profile verwalten
 
-Dieser Leitfaden erklärt comment creer et gerer les utilisateurs ClickHouse auf Hikube, definir des permissions en lecture seule pour les analystes, et configurer la retention des logs de requetes.
+Diese Anleitung erklärt, wie Sie ClickHouse-Benutzer auf Hikube erstellen und verwalten, Nur-Lese-Berechtigungen für Analysten definieren und die Aufbewahrung der Abfragelogs konfigurieren.
 
 ## Voraussetzungen
 
-- Une instance ClickHouse deployee sur Hikube (siehe [Schnellstart](../quick-start.md))
+- Eine ClickHouse-Instanz auf Hikube bereitgestellt (siehe [Schnellstart](../quick-start.md))
 - `kubectl` konfiguriert für die Interaktion mit der Hikube-API
-- Le fichier YAML de configuration de votre instance ClickHouse
+- Die YAML-Konfigurationsdatei Ihrer ClickHouse-Instanz
 
 ## Schritte
 
-### 1. Creer un utilisateur admin
+### 1. Admin-Benutzer erstellen
 
-Definissez un utilisateur avec un acces complet en ecriture et lecture dans le champ `users` du manifeste :
+Definieren Sie einen Benutzer mit Vollzugriff (Lesen und Schreiben) im Feld `users` des Manifests:
 
 ```yaml title="clickhouse-users.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -35,16 +35,16 @@ spec:
     size: 1Gi
   users:
     admin:
-      password: MonMotDePasseAdmin2024
+      password: MeinAdminPasswort2024
 ```
 
 :::warning
-Utilisez des mots de passe forts en production. Les mots de passe sont stockes dans le manifeste en clair -- assurez-vous de proteger l'acces a vos fichiers YAML et aux Secrets Kubernetes associes.
+Verwenden Sie in der Produktion starke Passwörter. Passwörter werden im Manifest im Klartext gespeichert -- stellen Sie sicher, dass der Zugriff auf Ihre YAML-Dateien und die zugehörigen Kubernetes-Secrets geschützt ist.
 :::
 
-### 2. Creer un utilisateur en lecture seule
+### 2. Schreibgeschützten Benutzer erstellen
 
-Ajoutez un utilisateur `analyst` avec le flag `readonly: true` pour limiter l'acces aux requetes de lecture (SELECT) uniquement :
+Fügen Sie einen Benutzer `analyst` mit dem Flag `readonly: true` hinzu, um den Zugriff auf Leseabfragen (SELECT) zu beschränken:
 
 ```yaml title="clickhouse-users-readonly.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -63,19 +63,19 @@ spec:
     size: 1Gi
   users:
     admin:
-      password: MonMotDePasseAdmin2024
+      password: MeinAdminPasswort2024
     analyst:
-      password: AnalysteSecure2024
+      password: AnalystSicher2024
       readonly: true
 ```
 
 :::tip
-Creez un utilisateur en lecture seule pour les outils d'analyse et de reporting (Grafana, Metabase, etc.). Cela limite les risques de modification accidentelle des donnees.
+Erstellen Sie einen schreibgeschützten Benutzer für Analyse- und Reporting-Tools (Grafana, Metabase, etc.). Dies begrenzt das Risiko versehentlicher Datenänderungen.
 :::
 
-### 3. Configurer les logs de requetes
+### 3. Abfragelogs konfigurieren
 
-ClickHouse enregistre les requetes executees dans les tables systeme `query_log` et `query_thread_log`. Configurez la taille de stockage et la duree de retention des logs :
+ClickHouse zeichnet ausgeführte Abfragen in den Systemtabellen `query_log` und `query_thread_log` auf. Konfigurieren Sie die Speichergröße und Aufbewahrungsdauer der Logs:
 
 ```yaml title="clickhouse-users-logs.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -96,52 +96,52 @@ spec:
     size: 1Gi
   users:
     admin:
-      password: MonMotDePasseAdmin2024
+      password: MeinAdminPasswort2024
     analyst:
-      password: AnalysteSecure2024
+      password: AnalystSicher2024
       readonly: true
 ```
 
-- **`logStorageSize`** : taille du volume persistant dedie aux logs (defaut : `2Gi`)
-- **`logTTL`** : duree de retention en jours pour `query_log` et `query_thread_log` (defaut : `15`)
+- **`logStorageSize`**: Größe des dedizierten persistenten Volumes für Logs (Standard: `2Gi`)
+- **`logTTL`**: Aufbewahrungsdauer in Tagen für `query_log` und `query_thread_log` (Standard: `15`)
 
 :::note
-Ajustez `logTTL` je nach vos besoins d'audit. Une valeur elevee consomme plus d'espace disque (`logStorageSize`). Pour un environnement de developpement, `7` jours est generalement suffisant.
+Passen Sie `logTTL` an Ihre Audit-Bedürfnisse an. Ein hoher Wert verbraucht mehr Festplattenplatz (`logStorageSize`). Für eine Entwicklungsumgebung sind `7` Tage in der Regel ausreichend.
 :::
 
-### 4. Appliquer les changements
+### 4. Änderungen anwenden
 
 ```bash
 kubectl apply -f clickhouse-users-logs.yaml
 ```
 
-### 5. Se connecter avec clickhouse-client
+### 5. Mit clickhouse-client verbinden
 
-Testez la connexion avec chaque utilisateur :
+Testen Sie die Verbindung mit jedem Benutzer:
 
 ```bash
-# Connexion avec l'utilisateur admin
-kubectl exec -it my-clickhouse-0-0 -- clickhouse-client --user admin --password MonMotDePasseAdmin2024
+# Verbindung mit dem Admin-Benutzer
+kubectl exec -it my-clickhouse-0-0 -- clickhouse-client --user admin --password MeinAdminPasswort2024
 ```
 
 ```bash
-# Connexion avec l'utilisateur analyst
-kubectl exec -it my-clickhouse-0-0 -- clickhouse-client --user analyst --password AnalysteSecure2024
+# Verbindung mit dem Analyst-Benutzer
+kubectl exec -it my-clickhouse-0-0 -- clickhouse-client --user analyst --password AnalystSicher2024
 ```
 
-### 6. Verifier les permissions
+### 6. Berechtigungen überprüfen
 
-Une fois connecte avec l'utilisateur `analyst`, verifiez que l'ecriture est bloquee :
+Sobald Sie mit dem Benutzer `analyst` verbunden sind, überprüfen Sie, dass Schreibvorgänge blockiert sind:
 
 ```sql
--- Cette requete doit reussir (lecture autorisee)
+-- Diese Abfrage muss erfolgreich sein (Lesen erlaubt)
 SELECT count() FROM system.tables;
 
--- Cette requete doit echouer (ecriture interdite)
+-- Diese Abfrage muss fehlschlagen (Schreiben verboten)
 CREATE TABLE test_write (id UInt32) ENGINE = Memory;
 ```
 
-L'utilisateur en lecture seule recevra une erreur du type :
+Der schreibgeschützte Benutzer erhält einen Fehler wie:
 
 ```console
 Code: 164. DB::Exception: analyst: Not enough privileges.
@@ -149,17 +149,17 @@ Code: 164. DB::Exception: analyst: Not enough privileges.
 
 ## Überprüfung
 
-Überprüfen Sie, ob les utilisateurs sont correctement configures :
+Überprüfen Sie, dass die Benutzer korrekt konfiguriert sind:
 
 ```bash
-# Verifier la configuration de la ressource ClickHouse
+# ClickHouse-Ressourcenkonfiguration prüfen
 kubectl get clickhouse my-clickhouse -o yaml | grep -A 10 users
 
-# Verifier que les pods sont en etat Running
+# Prüfen, ob die Pods den Status Running haben
 kubectl get pods -l app.kubernetes.io/instance=my-clickhouse
 ```
 
-Connectez-vous en tant qu'admin et listez les utilisateurs :
+Verbinden Sie sich als Admin und listen Sie die Benutzer auf:
 
 ```sql
 SELECT name, storage, auth_type FROM system.users;
@@ -167,6 +167,6 @@ SELECT name, storage, auth_type FROM system.users;
 
 ## Weiterführende Informationen
 
-- [API-Referenz](../api-reference.md) -- Parametres `users`, `logStorageSize` et `logTTL`
-- [Skalierung von verticalement ClickHouse](./scale-resources.md) -- Ajuster les ressources CPU et memoire
-- [Konfiguration von le sharding](./configure-sharding.md) -- Distribution horizontale des donnees
+- [API-Referenz](../api-reference.md) -- Parameter `users`, `logStorageSize` und `logTTL`
+- [ClickHouse vertikal skalieren](./scale-resources.md) -- CPU- und Speicherressourcen anpassen
+- [Sharding konfigurieren](./configure-sharding.md) -- Horizontale Datenverteilung

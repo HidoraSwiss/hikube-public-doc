@@ -5,18 +5,18 @@ title: API-Referenz
 
 # API-Referenz Redis
 
-Cette référence détaille l’utilisation de **Redis** sur Hikube, en mettant en avant sa rapidité et sa polyvalence en tant que **data store in-memory** et système de **cache distribué**.  
-Le service managé simplifie le Deployment et la gestion des clusters Redis, garantissant une **Hochverfügbarkeit**, une **faible latence** et des performances optimales pour vos applications.  
+Diese Referenz beschreibt die Verwendung von **Redis** auf Hikube, mit Schwerpunkt auf Geschwindigkeit und Vielseitigkeit als **In-Memory Data Store** und **verteiltes Cache-System**.
+Der verwaltete Dienst vereinfacht die Bereitstellung und Verwaltung von Redis-Clustern und garantiert **Hochverfügbarkeit**, **geringe Latenz** und optimale Leistung für Ihre Anwendungen.
 
-Le service s’appuie sur l’opérateur **[Spotahome Redis Operator](https://github.com/spotahome/redis-operator)**, qui assure l’orchestration, la réplication et la supervision des clusters Redis.  
+Der Dienst basiert auf dem Operator **[Spotahome Redis Operator](https://github.com/spotahome/redis-operator)**, der die Orchestrierung, Replikation und Überwachung von Redis-Clustern gewährleistet.
 
 ---
 
-## Structure de Base
+## Grundstruktur
 
-### **Ressource Redis**
+### **Redis-Ressource**
 
-#### Beispiel de configuration YAML
+#### YAML-Konfigurationsbeispiel
 
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
@@ -28,23 +28,23 @@ spec:
 
 ---
 
-## Paramètres
+## Parameter
 
-### **Paramètres Communs**
+### **Allgemeine Parameter**
 
-| **Paramètre**     | **Type**   | **Description**                                                                 | **Valeur par défaut** | **Requis** |
-|--------------------|------------|---------------------------------------------------------------------------------|------------------------|------------|
-| `replicas`         | `int`      | Nombre de réplicas Redis (instances dans le cluster)                            | `2`                    | Oui        |
-| `resources`        | `object`   | Configuration CPU et mémoire explicite de chaque réplique Redis. Si vide, `resourcesPreset` est appliqué | `{}`                   | Non        |
-| `resources.cpu`    | `quantity` | CPU disponible par réplique                                                     | `null`                 | Non        |
-| `resources.memory` | `quantity` | RAM disponible par réplique                                                     | `null`                 | Non        |
-| `resourcesPreset`  | `string`   | Profil de ressources prédéfini (`nano`, `micro`, `small`, `medium`, `large`, `xlarge`, `2xlarge`) | `"nano"`              | Oui        |
-| `size`             | `quantity` | Taille du volume persistant (PVC) pour les données                              | `1Gi`                  | Oui        |
-| `storageClass`     | `string`   | Classe de stockage utilisée                                                     | `""`                   | Non        |
-| `external`         | `bool`     | Activer l’accès externe au cluster (LoadBalancer)                               | `false`                | Non        |
-| `authEnabled`      | `bool`     | Activer l’authentification par mot de passe (stockée dans un Secret Kubernetes) | `true`                 | Non        |
+| **Parameter**     | **Typ**    | **Beschreibung**                                                                 | **Standardwert** | **Erforderlich** |
+|--------------------|------------|---------------------------------------------------------------------------------|-------------------|------------------|
+| `replicas`         | `int`      | Anzahl der Redis-Replikas (Instanzen im Cluster)                               | `2`               | Ja               |
+| `resources`        | `object`   | Explizite CPU- und Speicherkonfiguration pro Redis-Replika. Wenn leer, wird `resourcesPreset` angewendet | `{}`              | Nein             |
+| `resources.cpu`    | `quantity` | Verfügbare CPU pro Replika                                                      | `null`            | Nein             |
+| `resources.memory` | `quantity` | Verfügbarer RAM pro Replika                                                     | `null`            | Nein             |
+| `resourcesPreset`  | `string`   | Vordefiniertes Ressourcenprofil (`nano`, `micro`, `small`, `medium`, `large`, `xlarge`, `2xlarge`) | `"nano"`         | Ja               |
+| `size`             | `quantity` | Größe des persistenten Volumes (PVC) für Daten                                  | `1Gi`             | Ja               |
+| `storageClass`     | `string`   | Verwendete Speicherklasse                                                       | `""`              | Nein             |
+| `external`         | `bool`     | Externen Zugriff zum Cluster aktivieren (LoadBalancer)                          | `false`           | Nein             |
+| `authEnabled`      | `bool`     | Passwort-Authentifizierung aktivieren (im Kubernetes-Secret gespeichert)        | `true`            | Nein             |
 
-#### Beispiel de configuration YAML
+#### YAML-Konfigurationsbeispiel
 
 ```yaml title="redis.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -52,35 +52,35 @@ kind: Redis
 metadata:
   name: example
 spec:
-  # Nombre de réplicas Redis (haute dispo si >1)
+  # Anzahl der Redis-Replikas (Hochverfügbarkeit wenn >1)
   replicas: 3
 
-  # Ressources allouées par instance
+  # Zugewiesene Ressourcen pro Instanz
   resources:
     cpu: 1000m      # 1 vCPU
-    memory: 1Gi     # 1 GiB de RAM
+    memory: 1Gi     # 1 GiB RAM
 
-  # Taille du disque persistant pour chaque instance
+  # Größe der persistenten Festplatte pro Instanz
   size: 2Gi
   storageClass: replicated
 
-  # Activer l’authentification Redis
-  # Si true, un mot de passe est généré automatiquement
+  # Redis-Authentifizierung aktivieren
+  # Wenn true, wird ein Passwort automatisch generiert
   authEnabled: true
 
-  # Exposer le service Redis à l’extérieur du cluster
+  # Redis-Service extern freigeben
   external: true
 ```
 
 ---
 
-### **Paramètres d'application spécifique**
+### **Anwendungsspezifische Parameter**
 
-| **Paramètre**   | **Type** | **Description**                  | **Valeur par défaut** | **Requis** |
-|------------------|----------|----------------------------------|------------------------|------------|
-| `authEnabled`    | `bool`   | Active la génération d’un mot de passe (stocké dans un Secret Kubernetes) | `true` | Non |
+| **Parameter**   | **Typ** | **Beschreibung**                  | **Standardwert** | **Erforderlich** |
+|------------------|----------|----------------------------------|-------------------|------------------|
+| `authEnabled`    | `bool`   | Aktiviert die Generierung eines Passworts (im Kubernetes-Secret gespeichert) | `true` | Nein |
 
-#### Beispiel de configuration YAML
+#### YAML-Konfigurationsbeispiel
 
 ```yaml title="redis.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -94,30 +94,30 @@ spec:
     memory: 1Gi
   size: 2Gi
   storageClass: replicated
-  # Activer l’authentification Redis
-  # Si true, un mot de passe est généré automatiquement
+  # Redis-Authentifizierung aktivieren
+  # Wenn true, wird ein Passwort automatisch generiert
   authEnabled: false
-  # Exposer le service Redis à l’extérieur du cluster
+  # Redis-Service extern freigeben
   external: false
 ```
 
-### resources et resourcesPreset  
+### resources und resourcesPreset
 
-Le champ `resources` ermöglicht die Definition explicitement la configuration CPU et mémoire de chaque réplique Redis.  
-Si ce champ est laissé vide, la valeur du paramètre `resourcesPreset` est utilisée.  
+Das Feld `resources` ermöglicht die explizite Definition der CPU- und Speicherkonfiguration jedes Redis-Replikas.
+Wenn dieses Feld leer gelassen wird, wird der Wert des Parameters `resourcesPreset` verwendet.
 
-#### Beispiel de configuration YAML
+#### YAML-Konfigurationsbeispiel
 
 ```yaml title="redis.yaml"
 resources:
   cpu: 4000m
   memory: 4Gi
-```  
+```
 
-⚠️ Attention : si resources est défini, la valeur de resourcesPreset est ignorée.
+⚠️ Achtung: Wenn resources definiert ist, wird der Wert von resourcesPreset ignoriert.
 
-| **Preset name** | **CPU** | **Mémoire** |
-|-----------------|---------|-------------|
+| **Preset-Name** | **CPU** | **Speicher** |
+|------------------|---------|-------------|
 | `nano`          | 250m    | 128Mi       |
 | `micro`         | 500m    | 256Mi       |
 | `small`         | 1       | 512Mi       |
@@ -128,17 +128,17 @@ resources:
 
 ---
 
-:::tip Bonnes Pratiques
+:::tip Bewährte Praktiken
 
-- **`authEnabled: true`** : aktiviertz toujours l'authentification en production pour sécuriser l'accès à vos données Redis
-- **3 réplicas minimum** en production um die ... zu gewährleisten Hochverfügbarkeit avec Redis Sentinel
-- **Stockage répliqué** : utilisez `storageClass: replicated` pour protéger les données contre la perte d'un noeud physique
-- **Dimensionnement mémoire** : la mémoire allouée (`resources.memory`) doit être suffisante pour contenir l'ensemble de votre dataset Redis
+- **`authEnabled: true`**: Aktivieren Sie in der Produktion immer die Authentifizierung, um den Zugriff auf Ihre Redis-Daten zu sichern
+- **Mindestens 3 Replikas** in der Produktion für Hochverfügbarkeit mit Redis Sentinel
+- **Replizierter Speicher**: Verwenden Sie `storageClass: replicated`, um Daten gegen den Verlust eines physischen Knotens zu schützen
+- **Speicherdimensionierung**: Der zugewiesene Speicher (`resources.memory`) muss ausreichend sein, um Ihr gesamtes Redis-Dataset aufzunehmen
 :::
 
 :::warning Achtung
 
-- **Les suppressions sont irréversibles** : la suppression d'une ressource Redis entraîne la perte définitive des données si aucune persistance externe n'est configurée
-- **`resources` vs `resourcesPreset`** : si `resources` est défini, `resourcesPreset` est entièrement ignoré
-- **Accès externe** : aktiviertr `external: true` expose Redis sur Internet — assurez-vous que `authEnabled: true` est configuré
+- **Löschungen sind unwiderruflich**: Das Löschen einer Redis-Ressource führt zum endgültigen Datenverlust, wenn keine externe Persistenz konfiguriert ist
+- **`resources` vs `resourcesPreset`**: Wenn `resources` definiert ist, wird `resourcesPreset` vollständig ignoriert
+- **Externer Zugriff**: Die Aktivierung von `external: true` stellt Redis im Internet bereit — stellen Sie sicher, dass `authEnabled: true` konfiguriert ist
 :::

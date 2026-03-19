@@ -10,7 +10,7 @@ title: FAQ
 Hikube bietet drei Instanzreihen für Kubernetes-Knoten:
 
 | Reihe | Präfix | Verhältnis vCPU:RAM | Empfohlene Verwendung |
-|-------|--------|---------------------|----------------------|
+|-------|---------|----------------|------------------|
 | **Standard** | `s1` | 1:2 | Allgemeine Workloads, Webserver |
 | **Universal** | `u1` | 1:4 | Geschäftsanwendungen, Datenbanken |
 | **Memory** | `m1` | 1:8 | Cache, Analytics, In-Memory-Verarbeitung |
@@ -26,10 +26,10 @@ Die im Cluster-Manifest gewählte storageClass wird **innerhalb des Tenant-Clust
 Die verfügbaren storageClasses sind: `local`, `replicated` und `replicated-async`.
 
 | Eigenschaft | `local` | `replicated` / `replicated-async` |
-|-------------|---------|-------------------------------------|
-| **Replikation** | Ein einzelnes Rechenzentrum | Multi-Rechenzentrum (synchron oder asynchron) |
-| **Leistung** | Schneller (niedrige Latenz) | Etwas langsamer |
-| **Hochverfügbarkeit** | Nein (Speicherebene) | Ja |
+|----------------|---------|-------------------------------------|
+| **Replikation** | Ein einziges Rechenzentrum | Multi-Datacenter (synchron oder asynchron) |
+| **Leistung** | Schneller (geringe Latenz) | Etwas langsamer |
+| **Hochverfügbarkeit** | Nein (auf Speicherebene) | Ja |
 
 :::tip
 Die Standardempfehlung für Kubernetes ist **`replicated`**, die die Datenhaltbarkeit auf Speicherebene gewährleistet.
@@ -43,14 +43,14 @@ Die Standardempfehlung für Kubernetes ist **`replicated`**, die die Datenhaltba
 
 ### Welche Addons sind verfügbar?
 
-Folgende Addons können auf Ihrem Cluster aktiviert werden:
+Die folgenden Addons können auf Ihrem Cluster aktiviert werden:
 
 | Addon | Beschreibung |
 |-------|-------------|
 | `certManager` | Automatische Verwaltung von TLS-Zertifikaten (Let's Encrypt) |
-| `ingressNginx` | NGINX Ingress Controller für HTTP/HTTPS-Routing |
-| `fluxcd` | Kontinuierliches GitOps-Deployment |
-| `monitoringAgents` | Monitoring-Agenten (Metriken, Logs) |
+| `ingressNginx` | NGINX-Ingress-Controller für HTTP/HTTPS-Routing |
+| `fluxcd` | Kontinuierliche GitOps-Bereitstellung |
+| `monitoringAgents` | Monitoring-Agents (Metriken, Logs) |
 | `gpuOperator` | NVIDIA GPU Operator für GPU-Workloads |
 
 Jedes Addon wird im Cluster-Manifest aktiviert:
@@ -124,5 +124,5 @@ spec:
 
 :::warning
 - Vergessen Sie nicht, das Addon `gpuOperator` zu aktivieren, damit die NVIDIA-Treiber automatisch auf den GPU-Knoten installiert werden.
-- Jeder Knoten der GPU-NodeGroup verbraucht **1 physische GPU**. Eine NodeGroup mit `minReplicas: 4` benötigt 4 verfügbare GPUs, mit direkter Auswirkung auf die Abrechnung.
+- Jeder Knoten der GPU-nodeGroup verbraucht **1 physische GPU**. Eine nodeGroup mit `minReplicas: 4` benötigt 4 verfügbare GPUs, mit direkter Auswirkung auf die Abrechnung.
 :::

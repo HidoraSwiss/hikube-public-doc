@@ -1,22 +1,22 @@
 ---
-title: "Skalierung von verticalement"
+title: "Vertikal skalieren"
 ---
 
-# Skalierung von verticalement
+# Vertikal skalieren
 
-Dieser Leitfaden erklärt comment ajuster les ressources CPU et mémoire de votre instance PostgreSQL auf Hikube, soit via un preset prédéfini, soit avec des valeurs explicites.
+Diese Anleitung erklärt, wie Sie die CPU- und Speicherressourcen Ihrer PostgreSQL-Instanz auf Hikube anpassen, entweder über ein vordefiniertes Preset oder mit expliziten Werten.
 
 ## Voraussetzungen
 
-- **kubectl** configuré avec votre kubeconfig Hikube
-- Une instance **PostgreSQL** déployée sur Hikube
+- **kubectl** konfiguriert mit Ihrer Hikube-Kubeconfig
+- Eine **PostgreSQL**-Instanz auf Hikube bereitgestellt
 
-## Presets disponibles
+## Verfügbare Presets
 
-Hikube bietet des presets de ressources prédéfinis pour simplifier le dimensionnement :
+Hikube bietet vordefinierte Ressourcen-Presets zur Vereinfachung der Dimensionierung:
 
-| Preset | CPU | Mémoire |
-|--------|-----|---------|
+| Preset | CPU | Speicher |
+|--------|-----|----------|
 | `nano` | 250m | 128Mi |
 | `micro` | 500m | 256Mi |
 | `small` | 1 | 512Mi |
@@ -26,27 +26,27 @@ Hikube bietet des presets de ressources prédéfinis pour simplifier le dimensio
 | `2xlarge` | 8 | 8Gi |
 
 :::warning
-Si le champ `resources` (CPU/mémoire explicites) est défini, la valeur de `resourcesPreset` est **entièrement ignorée**. Assurez-vous de vider le champ `resources` si vous souhaitez utiliser un preset.
+Wenn das Feld `resources` (explizite CPU/Speicher) definiert ist, wird der Wert von `resourcesPreset` **vollständig ignoriert**. Stellen Sie sicher, dass das Feld `resources` leer ist, wenn Sie ein Preset verwenden möchten.
 :::
 
 ## Schritte
 
-### 1. Vérifier les ressources actuelles
+### 1. Aktuelle Ressourcen überprüfen
 
-Consultez la configuration actuelle de votre instance :
+Überprüfen Sie die aktuelle Konfiguration Ihrer Instanz:
 
 ```bash
 kubectl get postgres my-database -o yaml | grep -A 5 -E "resources:|resourcesPreset"
 ```
 
-**Exemple de résultat avec un preset :**
+**Beispielergebnis mit einem Preset:**
 
 ```console
   resourcesPreset: micro
   resources: {}
 ```
 
-**Exemple de résultat avec des ressources explicites :**
+**Beispielergebnis mit expliziten Ressourcen:**
 
 ```console
   resourcesPreset: micro
@@ -55,9 +55,9 @@ kubectl get postgres my-database -o yaml | grep -A 5 -E "resources:|resourcesPre
     memory: 2Gi
 ```
 
-### 2. Option A : changer le preset de ressources
+### 2. Option A: Ressourcen-Preset ändern
 
-Pour passer d'un preset à un autre (par exemple de `micro` à `large`), appliquez un patch :
+Um von einem Preset zu einem anderen zu wechseln (z.B. von `micro` zu `large`), wenden Sie einen Patch an:
 
 ```bash
 kubectl patch postgres my-database --type='merge' -p='
@@ -68,10 +68,10 @@ spec:
 ```
 
 :::note
-Il est important de remettre `resources: {}` lors du passage à un preset, afin que le preset soit bien pris en compte. Si `resources` contient des valeurs explicites, le preset est ignoré.
+Es ist wichtig, `resources: {}` beim Wechsel zu einem Preset zurückzusetzen, damit das Preset berücksichtigt wird. Wenn `resources` explizite Werte enthält, wird das Preset ignoriert.
 :::
 
-Vous pouvez aussi modifier le manifeste YAML complet :
+Sie können auch das vollständige YAML-Manifest ändern:
 
 ```yaml title="postgresql-scaled.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -94,15 +94,15 @@ spec:
           - admin
 ```
 
-Puis appliquer :
+Dann anwenden:
 
 ```bash
 kubectl apply -f postgresql-scaled.yaml
 ```
 
-### 3. Option B : définir des ressources explicites
+### 3. Option B: Explizite Ressourcen definieren
 
-Pour un contrôle fin, définissez directement les valeurs CPU et mémoire :
+Für eine feine Steuerung definieren Sie die CPU- und Speicherwerte direkt:
 
 ```bash
 kubectl patch postgres my-database --type='merge' -p='
@@ -113,7 +113,7 @@ spec:
 '
 ```
 
-Ou via le manifeste complet :
+Oder über das vollständige Manifest:
 
 ```yaml title="postgresql-custom-resources.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -143,18 +143,18 @@ kubectl apply -f postgresql-custom-resources.yaml
 ```
 
 :::tip
-Pour le dimensionnement PostgreSQL, une bonne règle de départ est d'allouer `shared_buffers` à environ 25% de la mémoire totale. Ajustez les paramètres PostgreSQL en conséquence via la section `postgresql.parameters`.
+Für die PostgreSQL-Dimensionierung ist eine gute Faustregel, `shared_buffers` auf etwa 25% des Gesamtspeichers zuzuweisen. Passen Sie die PostgreSQL-Parameter entsprechend über den Abschnitt `postgresql.parameters` an.
 :::
 
-### 4. Vérifier le rolling update
+### 4. Rolling Update überprüfen
 
-Après le changement de ressources, l'opérateur effectue un **rolling update** des pods PostgreSQL. Surveillez la progression :
+Nach der Ressourcenänderung führt der Operator ein **Rolling Update** der PostgreSQL-Pods durch. Überwachen Sie den Fortschritt:
 
 ```bash
 kubectl get po -w | grep postgres-my-database
 ```
 
-**Erwartetes Ergebnis (pendant le rolling update) :**
+**Erwartetes Ergebnis (während des Rolling Updates):**
 
 ```console
 postgres-my-database-2   1/1     Terminating   0   45m
@@ -162,7 +162,7 @@ postgres-my-database-2   0/1     Pending       0   0s
 postgres-my-database-2   1/1     Running       0   30s
 ```
 
-Attendez que tous les pods soient en état `Running` :
+Warten Sie, bis alle Pods den Status `Running` haben:
 
 ```bash
 kubectl get po | grep postgres-my-database
@@ -176,19 +176,19 @@ postgres-my-database-3   1/1     Running   0   6m
 
 ## Überprüfung
 
-Confirmez que les nouvelles ressources sont appliquées :
+Bestätigen Sie, dass die neuen Ressourcen angewendet wurden:
 
 ```bash
 kubectl get postgres my-database -o yaml | grep -A 5 -E "resources:|resourcesPreset"
 ```
 
-Überprüfen Sie, ob l'instance est fonctionnelle :
+Überprüfen Sie, dass die Instanz funktionsfähig ist:
 
 ```bash
 kubectl get postgres my-database
 ```
 
-**Erwartetes Ergebnis :**
+**Erwartetes Ergebnis:**
 
 ```console
 NAME          READY   AGE   VERSION
@@ -197,4 +197,4 @@ my-database   True    1h    0.18.0
 
 ## Weiterführende Informationen
 
-- **[API-Referenz PostgreSQL](../api-reference.md)** : documentation complète des paramètres `resources`, `resourcesPreset` et tableau des presets
+- **[API-Referenz PostgreSQL](../api-reference.md)**: Vollständige Dokumentation der Parameter `resources`, `resourcesPreset` und Preset-Tabelle

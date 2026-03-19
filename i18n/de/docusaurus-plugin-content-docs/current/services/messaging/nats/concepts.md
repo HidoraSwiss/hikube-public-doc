@@ -3,11 +3,11 @@ sidebar_position: 2
 title: Konzepte
 ---
 
-# Concepts — NATS
+# Konzepte — NATS
 
-## Architecture
+## Architektur
 
-NATS auf Hikube est un service de messaging managé, ultra-léger et haute performance. Chaque instance déployée via la ressource `NATS` crée un cluster de serveurs avec support optionnel de **JetStream** pour la persistance des messages.
+NATS auf Hikube ist ein verwalteter Messaging-Dienst, ultraleicht und hochperformant. Jede über die Ressource `NATS` bereitgestellte Instanz erstellt einen Server-Cluster mit optionaler **JetStream**-Unterstützung für die Nachrichtenpersistenz.
 
 ```mermaid
 graph TB
@@ -52,26 +52,26 @@ graph TB
 
 ## Terminologie
 
-| Terme | Beschreibung |
-|-------|-------------|
-| **NATS** | Ressource Kubernetes (`apps.cozystack.io/v1alpha1`) représentant un cluster NATS managé. |
-| **Subject** | Adresse de routage des messages (ex: `orders.created`). Supporte les wildcards (`*`, `>`). |
-| **Publish/Subscribe** | Modèle de communication où les publishers envoient des messages à un subject et les subscribers les reçoivent. |
-| **JetStream** | Extension de persistance de NATS — stockage durable des messages avec replay, acknowledgment et consumers. |
-| **Stream** | Collection persistante de messages dans JetStream, avec politique de rétention configurable. |
-| **Consumer** | Abonnement durable dans JetStream avec suivi de la position (offset) et acknowledgment. |
-| **Request/Reply** | Modèle de communication synchrone — un client envoie une requête et attend une réponse. |
-| **resourcesPreset** | Profil de ressources prédéfini (nano à 2xlarge). |
+| Begriff | Beschreibung |
+|---------|--------------|
+| **NATS** | Kubernetes-Ressource (`apps.cozystack.io/v1alpha1`), die einen verwalteten NATS-Cluster darstellt. |
+| **Subject** | Routing-Adresse für Nachrichten (z.B. `orders.created`). Unterstützt Wildcards (`*`, `>`). |
+| **Publish/Subscribe** | Kommunikationsmodell, bei dem Publisher Nachrichten an ein Subject senden und Subscriber sie empfangen. |
+| **JetStream** | Persistenzerweiterung von NATS — dauerhafte Nachrichtenspeicherung mit Replay, Acknowledgment und Consumern. |
+| **Stream** | Persistente Nachrichtensammlung in JetStream mit konfigurierbarer Aufbewahrungsrichtlinie. |
+| **Consumer** | Dauerhaftes Abonnement in JetStream mit Positionsverfolgung (Offset) und Acknowledgment. |
+| **Request/Reply** | Synchrones Kommunikationsmodell — ein Client sendet eine Anfrage und wartet auf eine Antwort. |
+| **resourcesPreset** | Vordefiniertes Ressourcenprofil (nano bis 2xlarge). |
 
 ---
 
-## Modèles de communication
+## Kommunikationsmodelle
 
-NATS supporte trois modèles de communication :
+NATS unterstützt drei Kommunikationsmodelle:
 
 ### Publish/Subscribe
 
-Le modèle le plus simple — un publisher envoie un message, tous les subscribers reçoivent une copie :
+Das einfachste Modell — ein Publisher sendet eine Nachricht, alle Subscriber erhalten eine Kopie:
 
 ```mermaid
 graph LR
@@ -83,7 +83,7 @@ graph LR
 
 ### Queue Groups
 
-Les subscribers d'un même queue group se répartissent les messages (load balancing) :
+Die Subscriber derselben Queue Group teilen sich die Nachrichten (Load Balancing):
 
 ```mermaid
 graph LR
@@ -95,7 +95,7 @@ graph LR
 
 ### Request/Reply
 
-Communication synchrone avec réponse attendue :
+Synchrone Kommunikation mit erwarteter Antwort:
 
 ```mermaid
 sequenceDiagram
@@ -113,29 +113,29 @@ sequenceDiagram
 
 ## JetStream
 
-JetStream ajoute la **persistance** à NATS :
+JetStream fügt NATS **Persistenz** hinzu:
 
-- Les messages sont stockés sur disque dans des **streams**
-- Les **consumers** suivent leur position et peuvent re-lire les messages
-- Support du **at-least-once** et **exactly-once** delivery
-- Rétention configurable par durée, nombre de messages ou taille
+- Die Nachrichten werden auf der Festplatte in **Streams** gespeichert
+- Die **Consumer** verfolgen ihre Position und können Nachrichten erneut lesen
+- Unterstützung von **At-least-once**- und **Exactly-once**-Zustellung
+- Konfigurierbare Aufbewahrung nach Dauer, Nachrichtenanzahl oder Größe
 
 :::tip
-Activez JetStream uniquement si vous avez besoin de persistance. Pour du pub/sub éphémère, le NATS de base est plus léger (< 10 MB de RAM par instance).
+Aktivieren Sie JetStream nur, wenn Sie Persistenz benötigen. Für ephemeres Pub/Sub ist das Basis-NATS leichtgewichtiger (< 10 MB RAM pro Instanz).
 :::
 
 ---
 
-## Gestion des utilisateurs
+## Benutzerverwaltung
 
-Les utilisateurs NATS sont déclarés dans le manifeste avec un mot de passe. Les credentials sont stockés dans le Secret `<instance>-credentials`.
+Die NATS-Benutzer werden im Manifest mit einem Passwort deklariert. Die Zugangsdaten werden im Secret `<instance>-credentials` gespeichert.
 
 ---
 
-## Presets de ressources
+## Ressourcen-Presets
 
-| Preset | CPU | Mémoire |
-|--------|-----|---------|
+| Preset | CPU | Speicher |
+|--------|-----|----------|
 | `nano` | 250m | 128Mi |
 | `micro` | 500m | 256Mi |
 | `small` | 1 | 512Mi |
@@ -146,18 +146,18 @@ Les utilisateurs NATS sont déclarés dans le manifeste avec un mot de passe. Le
 
 ---
 
-## Limites et quotas
+## Grenzen und Kontingente
 
-| Paramètre | Wert |
-|-----------|--------|
-| Réplicas max | Selon quota tenant |
-| Empreinte mémoire minimale | < 10 MB par instance (sans JetStream) |
-| Taille stockage JetStream | Variable (en Gi) |
-| Latence typique | < 1 ms (même datacenter) |
+| Parameter | Wert |
+|-----------|------|
+| Max. Replikate | Je nach Tenant-Kontingent |
+| Minimaler Speicherverbrauch | < 10 MB pro Instanz (ohne JetStream) |
+| JetStream-Speichergröße | Variabel (in Gi) |
+| Typische Latenz | < 1 ms (im selben Datacenter) |
 
 ---
 
 ## Weiterführende Informationen
 
-- [Overview](./overview.md) : présentation du service
-- [API-Referenz](./api-reference.md) : tous les paramètres de la ressource NATS
+- [Übersicht](./overview.md): Vorstellung des Dienstes
+- [API-Referenz](./api-reference.md): Alle Parameter der NATS-Ressource

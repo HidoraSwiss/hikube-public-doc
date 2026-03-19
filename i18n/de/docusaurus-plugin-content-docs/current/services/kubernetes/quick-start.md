@@ -5,23 +5,23 @@ title: Schnellstart
 
 # 🚀 Kubernetes in 5 Minuten bereitstellen
 
-Dieser Leitfaden begleitet Sie bei der Erstellung Ihres ersten Kubernetes-Clusters auf Hikube, von der Grundkonfiguration bis zum Deployment einer Testanwendung.
+Diese Anleitung begleitet Sie bei der Erstellung Ihres ersten Kubernetes-Clusters auf Hikube, von der Basiskonfiguration bis zur Bereitstellung einer Testanwendung.
 
 ---
 
 ## Voraussetzungen
 
-Stellen Sie vor dem Start sicher, dass Sie Folgendes haben:
+Stellen Sie vor Beginn sicher, dass Sie Folgendes haben:
 
-- **Zugang zu einem Hikube-Tenant** mit entsprechenden Berechtigungen
-- **CLI kubectl konfiguriert** für die Interaktion mit der Hikube-API
+- **Zugriff auf einen Hikube-Tenant** mit entsprechenden Berechtigungen
+- **CLI kubectl konfiguriert**, um mit der Hikube-API zu interagieren
 - **Kubernetes-Grundkenntnisse** (Pods, Services, Deployments)
 
 ---
 
 ## Schritt 1: Cluster-Konfiguration
 
-### **Basis-Kubernetes-Cluster**
+### **Einfacher Kubernetes-Cluster**
 
 Erstellen Sie eine Datei `my-first-cluster.yaml` mit folgender Konfiguration:
 
@@ -31,25 +31,25 @@ kind: Kubernetes
 metadata:
   name: my-first-cluster
 spec:
-  # Configuration du plan de contrôle
+  # Konfiguration der Steuerungsebene
   controlPlane:
-    replicas: 2  # Haute disponibilité
+    replicas: 2  # Hochverfügbarkeit
 
-  # Configuration des nœuds workers
+  # Konfiguration der Worker-Knoten
   nodeGroups:
     general:
       minReplicas: 1
       maxReplicas: 5
       instanceType: "s1.large"     # 4 vCPU, 8 GB RAM
-      ephemeralStorage: 50Gi       # Stockage partition système
-      resources: {}               # Requis — instanceType définit les valeurs
+      ephemeralStorage: 50Gi       # Speicher für die Systempartition
+      resources: {}               # Erforderlich — instanceType bestimmt die Werte
       roles:
-        - ingress-nginx           # Support Ingress
+        - ingress-nginx           # Ingress-Unterstützung
 
-  # Active la réplication sur le stockage
+  # Aktiviert die Replikation des Speichers
   storageClass: "replicated"
 
-  # Add-ons essentiels activés
+  # Wesentliche Add-ons aktiviert
   addons:
     certManager:
       enabled: true
@@ -59,17 +59,17 @@ spec:
         - my-app.example.com
 ```
 
-:::warning Feld `resources` obligatorisch
+:::warning Feld `resources` erforderlich
 Das Feld `resources` ist in jeder Node Group erforderlich, auch wenn Sie `instanceType` verwenden. Mit `resources: {}` werden die CPU-/Speicherwerte durch `instanceType` bestimmt. Wenn Sie explizite Werte angeben (z.B. `cpu: 4, memory: 8Gi`), **überschreiben** diese `instanceType`.
 :::
 
 ### **Cluster bereitstellen**
 
 ```bash
-# Appliquer la configuration
+# Konfiguration anwenden
 kubectl apply -f my-first-cluster.yaml
 
-# Vérifier le statut de déploiement
+# Bereitstellungsstatus prüfen
 kubectl get kubernetes my-first-cluster -w
 ```
 
@@ -81,18 +81,18 @@ kubectl get kubernetes my-first-cluster -w
 
 ### **Kubeconfig abrufen**
 
-Sobald der Cluster bereitgestellt ist, rufen Sie die Zugangsdaten ab:
+Sobald der Cluster bereitgestellt ist, rufen Sie die Zugangsinformationen ab:
 
 ```bash
-# Récupérer le kubeconfig du cluster
+# Kubeconfig des Clusters abrufen
 kubectl get tenantsecret my-first-cluster-admin-kubeconfig \
   -o go-template='{{ index .data "super-admin.conf" | base64decode }}' \
   > my-cluster-kubeconfig.yaml
 
-# Configurer kubectl pour le nouveau cluster
+# kubectl für den neuen Cluster konfigurieren
 export KUBECONFIG=my-cluster-kubeconfig.yaml
 
-# Tester la connexion
+# Verbindung testen
 kubectl get nodes
 ```
 
@@ -105,9 +105,9 @@ my-first-cluster-md0-xxxxx   Ready    <none>   2m    v1.29.0
 
 ---
 
-## 🚀 Schritt 3: Anwendungs-Deployment
+## 🚀 Schritt 3: Bereitstellung einer Anwendung
 
-### **Demoanwendung**
+### **Demo-Anwendung**
 
 Stellen wir eine einfache Webanwendung bereit, um unseren Cluster zu testen:
 
@@ -186,10 +186,10 @@ spec:
 ### **Anwendung bereitstellen**
 
 ```bash
-# Déployer l'application
+# Anwendung bereitstellen
 kubectl apply -f demo-app.yaml
 
-# Vérifier le déploiement
+# Bereitstellung prüfen
 kubectl get deployments
 kubectl get pods
 kubectl get services
@@ -200,10 +200,10 @@ kubectl get ingress
 
 ## ✅ Schritt 4: Überprüfung und Tests
 
-### **Überprüfen, dass alles funktioniert**
+### **Prüfen, ob alles funktioniert**
 
 ```bash
-# Statut des pods
+# Pod-Status
 kubectl get pods -l app=hello-hikube
 ```
 
@@ -219,10 +219,10 @@ hello-hikube-xxxxx-zzzz        1/1     Running   0          1m
 ### **Zugriff auf die Anwendung**
 
 ```bash
-# Obtenir l'IP externe de l'Ingress Controller
+# Externe IP des Ingress Controllers abrufen
 kubectl get svc -n ingress-nginx ingress-nginx-controller
 
-# Test local (en attendant la configuration DNS)
+# Lokaler Test (bis die DNS-Konfiguration steht)
 kubectl port-forward svc/hello-hikube-service 8080:80 &
 curl http://localhost:8080
 ```
@@ -236,23 +236,23 @@ curl http://localhost:8080
 Wenn Sie das Monitoring bei der Tenant-Konfiguration aktiviert haben:
 
 ```bash
-# Vérifier les services de monitoring
+# Monitoring-Services prüfen
 kubectl get pods -n monitoring
 
-# Accéder à Grafana (selon configuration du tenant)
+# Zugriff auf Grafana (je nach Tenant-Konfiguration)
 kubectl get ingress -n monitoring
 ```
 
 ### **Cluster-Metriken**
 
 ```bash
-# Métriques des nœuds
+# Knoten-Metriken
 kubectl top nodes
 
-# Métriques des pods
+# Pod-Metriken
 kubectl top pods
 
-# Events du cluster
+# Cluster-Events
 kubectl get events --sort-by=.metadata.creationTimestamp
 ```
 
@@ -262,28 +262,28 @@ kubectl get events --sort-by=.metadata.creationTimestamp
 
 ### **Cluster-Skalierung**
 
-Der Hikube-Cluster kann die Anzahl der Knoten automatisch an die Nachfrage anpassen:
+Der Hikube-Cluster kann die Anzahl der Knoten automatisch je nach Bedarf anpassen:
 
 ```bash
-# Vérifier le nombre de nœuds actuel
+# Aktuelle Knotenanzahl prüfen
 kubectl get nodes
 
-# Voir la configuration du nodeGroup
+# NodeGroup-Konfiguration anzeigen
 kubectl get kubernetes my-first-cluster -o yaml | grep -A 10 nodeGroups
 
-# Le scaling automatique se déclenche selon les ressources demandées
-# Exemple : déployer plus de pods nécessitera plus de nœuds
+# Die automatische Skalierung wird durch die angeforderten Ressourcen ausgelöst
+# Beispiel: Mehr Pods bereitzustellen erfordert mehr Knoten
 kubectl scale deployment hello-hikube --replicas=6
 ```
 
 ### **Skalierung beobachten**
 
 ```bash
-# Voir l'ajout automatique de nœuds
+# Automatische Hinzufügung von Knoten beobachten
 kubectl get nodes -w
 
-# Vérifier les métriques de scaling
-kubectl describe hpa  # Si HPA est configuré
+# Skalierungsmetriken prüfen
+kubectl describe hpa  # Wenn HPA konfiguriert ist
 ```
 
 ---
@@ -292,21 +292,21 @@ kubectl describe hpa  # Si HPA est configuré
 
 ### **Erweiterte Konfiguration**
 
-Jetzt, da Ihr Cluster läuft, erkunden Sie die erweiterten Funktionen:
+Nun da Ihr Cluster funktioniert, erkunden Sie die erweiterten Funktionen:
 
 ```bash
-# Pour ajouter des node groups, modifiez le fichier YAML et ré-appliquez
-# Exemple dans my-first-cluster.yaml :
+# Um Node Groups hinzuzufügen, bearbeiten Sie die YAML-Datei und wenden Sie sie erneut an
+# Beispiel in my-first-cluster.yaml:
 # nodeGroups:
 #   general:
-#     # ... configuration existante
+#     # ... bestehende Konfiguration
 #   compute:
 #     minReplicas: 0
 #     maxReplicas: 3
 #     instanceType: "s1.2xlarge"
 #     ephemeralStorage: 100Gi
 
-# Puis appliquer les changements
+# Dann die Änderungen anwenden
 kubectl apply -f my-first-cluster.yaml
 ```
 
@@ -320,7 +320,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: replicated  # Stockage hautement disponible
+  storageClassName: replicated  # Hochverfügbarer Speicher
   resources:
     requests:
       storage: 10Gi
@@ -333,17 +333,17 @@ spec:
 ### **Häufige Probleme**
 
 ```bash
-# Cluster en création trop long
+# Cluster-Erstellung dauert zu lange
 kubectl describe kubernetes my-first-cluster
 
-# Nœuds pas Ready
+# Knoten nicht Ready
 kubectl describe nodes
 
-# Pods en erreur
+# Pods im Fehlerzustand
 kubectl logs -l app=hello-hikube
 kubectl describe pod <pod-name>
 
-# Ingress non fonctionnel
+# Ingress funktioniert nicht
 kubectl describe ingress hello-hikube-ingress
 kubectl logs -n ingress-nginx deploy/ingress-nginx-controller
 ```
@@ -351,10 +351,10 @@ kubectl logs -n ingress-nginx deploy/ingress-nginx-controller
 ### **Bereinigung**
 
 ```bash
-# Supprimer l'application de test
+# Testanwendung löschen
 kubectl delete -f demo-app.yaml
 
-# Supprimer le cluster (ATTENTION: action irréversible)
+# Cluster löschen (ACHTUNG: irreversible Aktion)
 kubectl delete kubernetes my-first-cluster
 ```
 
@@ -376,4 +376,4 @@ Sie haben erstellt:
 
 ---
 
-**💡 Tipp:** Bewahren Sie Ihre `kubeconfig`-Datei sicher auf und denken Sie daran, RBAC zu konfigurieren, um den Zugriff auf Ihren Cluster nach Teams und Umgebungen zu steuern.
+**💡 Tipp:** Bewahren Sie Ihre `kubeconfig`-Datei sicher auf und denken Sie daran, RBAC zu konfigurieren, um den Zugriff auf Ihren Cluster je nach Teams und Umgebungen zu steuern.

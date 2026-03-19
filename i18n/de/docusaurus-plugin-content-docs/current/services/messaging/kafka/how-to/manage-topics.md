@@ -1,21 +1,21 @@
 ---
-title: "Comment créer et gérer les topics"
+title: "Topics erstellen und verwalten"
 ---
 
-# Comment créer et gérer les topics
+# Topics erstellen und verwalten
 
-Dieser Leitfaden erklärt comment créer, configurer et gérer les topics Kafka auf Hikube de manière déclarative via les manifestes Kubernetes. Vous apprendrez à définir les partitions, les réplicas et les politiques de rétention et de Bereinigung.
+Diese Anleitung erklärt, wie Sie Kafka-Topics auf Hikube deklarativ über Kubernetes-Manifeste erstellen, konfigurieren und verwalten. Sie lernen, wie Sie Partitionen, Replikate sowie Aufbewahrungs- und Bereinigungsrichtlinien definieren.
 
 ## Voraussetzungen
 
-- **kubectl** configuré avec votre kubeconfig Hikube
-- Un cluster **Kafka** déployé sur Hikube (ou un manifeste prêt à déployer)
+- **kubectl** konfiguriert mit Ihrer Hikube-Kubeconfig
+- Ein auf Hikube bereitgestellter **Kafka**-Cluster (oder ein Manifest zur Bereitstellung)
 
 ## Schritte
 
-### 1. Ajouter un topic au manifeste
+### 1. Ein Topic zum Manifest hinzufügen
 
-Les topics sont déclarés dans la section `topics` du manifeste Kafka. Chaque topic possède un nom, un nombre de partitions et un nombre de réplicas.
+Die Topics werden im Abschnitt `topics` des Kafka-Manifests deklariert. Jedes Topic hat einen Namen, eine Anzahl von Partitionen und eine Anzahl von Replikaten.
 
 ```yaml title="kafka-topics.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -40,25 +40,25 @@ spec:
       replicas: 3
 ```
 
-**Paramètres des topics :**
+**Topic-Parameter:**
 
-| Paramètre | Typ | Beschreibung |
-|-----------|------|-------------|
-| `topics[i].name` | `string` | Nom du topic |
-| `topics[i].partitions` | `int` | Nombre de partitions (parallélisme de consommation) |
-| `topics[i].replicas` | `int` | Nombre de réplicas (durabilité des données) |
-| `topics[i].config` | `object` | Configuration avancée du topic |
+| Parameter | Typ | Beschreibung |
+|-----------|-----|--------------|
+| `topics[i].name` | `string` | Name des Topics |
+| `topics[i].partitions` | `int` | Anzahl der Partitionen (Parallelität des Konsums) |
+| `topics[i].replicas` | `int` | Anzahl der Replikate (Datenhaltbarkeit) |
+| `topics[i].config` | `object` | Erweiterte Topic-Konfiguration |
 
 :::warning
-Le nombre de réplicas d'un topic ne peut pas dépasser le nombre de brokers disponibles. Par exemple, avec 3 brokers, le maximum est `replicas: 3`.
+Die Anzahl der Replikate eines Topics darf die Anzahl der verfügbaren Broker nicht überschreiten. Beispielsweise ist bei 3 Brokern das Maximum `replicas: 3`.
 :::
 
-### 2. Configurer la rétention et la politique de Bereinigung
+### 2. Aufbewahrung und Bereinigungsrichtlinie konfigurieren
 
-Chaque topic peut être personnalisé via le champ `config`. Les deux principales politiques de Bereinigung sont :
+Jedes Topic kann über das Feld `config` angepasst werden. Die beiden wichtigsten Bereinigungsrichtlinien sind:
 
-- **`delete`** : les messages sont supprimés après expiration du délai de rétention (`retention.ms`)
-- **`compact`** : seule la dernière valeur de chaque clé est conservée (idéal pour les tables de référence, les états)
+- **`delete`**: Nachrichten werden nach Ablauf der Aufbewahrungsfrist gelöscht (`retention.ms`)
+- **`compact`**: Nur der letzte Wert jedes Schlüssels wird beibehalten (ideal für Referenztabellen, Zustände)
 
 ```yaml title="kafka-topics-config.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -92,58 +92,58 @@ spec:
         min.insync.replicas: "2"
 ```
 
-**Options de configuration courantes :**
+**Gängige Konfigurationsoptionen:**
 
-| Paramètre | Beschreibung | Exemple |
-|-----------|-------------|---------|
-| `cleanup.policy` | Politique de Bereinigung : `delete` ou `compact` | `"delete"` |
-| `retention.ms` | Durée de rétention des messages en millisecondes | `"604800000"` (7 jours) |
-| `min.insync.replicas` | Nombre minimum de réplicas synchronisés pour confirmer une écriture | `"2"` |
-| `segment.ms` | Durée avant rotation d'un segment de log (en ms) | `"3600000"` (1 heure) |
-| `max.compaction.lag.ms` | Délai maximal avant compaction d'un message (en ms) | `"5400000"` (1h30) |
+| Parameter | Beschreibung | Beispiel |
+|-----------|--------------|----------|
+| `cleanup.policy` | Bereinigungsrichtlinie: `delete` oder `compact` | `"delete"` |
+| `retention.ms` | Aufbewahrungsdauer der Nachrichten in Millisekunden | `"604800000"` (7 Tage) |
+| `min.insync.replicas` | Mindestanzahl synchronisierter Replikate zur Bestätigung eines Schreibvorgangs | `"2"` |
+| `segment.ms` | Dauer vor Rotation eines Log-Segments (in ms) | `"3600000"` (1 Stunde) |
+| `max.compaction.lag.ms` | Maximale Verzögerung vor der Kompaktierung einer Nachricht (in ms) | `"5400000"` (1h30) |
 
 :::tip
-Pour les topics de production, configurez toujours `min.insync.replicas: "2"` avec 3 réplicas. Cela garantit qu'au moins 2 brokers confirment chaque écriture, protégeant contre la perte de données en cas de panne d'un broker.
+Konfigurieren Sie für Produktions-Topics immer `min.insync.replicas: "2"` mit 3 Replikaten. Dies stellt sicher, dass mindestens 2 Broker jeden Schreibvorgang bestätigen und schützt vor Datenverlust bei Ausfall eines Brokers.
 :::
 
-### 3. Appliquer les changements
+### 3. Änderungen anwenden
 
 ```bash
 kubectl apply -f kafka-topics-config.yaml
 ```
 
-L'opérateur Kafka crée ou met à jour automatiquement les topics déclarés dans le manifeste.
+Der Kafka-Operator erstellt oder aktualisiert automatisch die im Manifest deklarierten Topics.
 
-### 4. Vérifier les topics
+### 4. Topics überprüfen
 
-Überprüfen Sie, ob la ressource Kafka a bien été Aktualisierung :
+Überprüfen Sie, ob die Kafka-Ressource aktualisiert wurde:
 
 ```bash
 kubectl get kafka my-kafka -o yaml | grep -A 10 "topics:"
 ```
 
-Pour une Überprüfung plus poussée, vous pouvez lancer un pod de debug avec le CLI Kafka :
+Für eine eingehendere Überprüfung können Sie einen Debug-Pod mit dem Kafka-CLI starten:
 
 ```bash
 kubectl run kafka-debug --rm -it --image=bitnami/kafka:latest --restart=Never -- \
   kafka-topics.sh --bootstrap-server my-kafka-kafka-bootstrap:9092 --list
 ```
 
-**Erwartetes Ergebnis :**
+**Erwartetes Ergebnis:**
 
 ```console
 events
 orders
 ```
 
-Pour voir le détail d'un topic :
+Um die Details eines Topics anzuzeigen:
 
 ```bash
 kubectl run kafka-debug --rm -it --image=bitnami/kafka:latest --restart=Never -- \
   kafka-topics.sh --bootstrap-server my-kafka-kafka-bootstrap:9092 --describe --topic events
 ```
 
-**Erwartetes Ergebnis :**
+**Erwartetes Ergebnis:**
 
 ```console
 Topic: events   TopicId: AbC123...   PartitionCount: 6   ReplicationFactor: 3
@@ -154,13 +154,13 @@ Topic: events   TopicId: AbC123...   PartitionCount: 6   ReplicationFactor: 3
 
 ## Überprüfung
 
-La configuration est réussie si :
+Die Konfiguration ist erfolgreich, wenn:
 
-- Les topics apparaissent dans la liste (`--list`)
-- Le nombre de partitions et le facteur de réplication correspondent au manifeste
-- Les ISR (In-Sync Replicas) contiennent bien le nombre attendu de brokers
+- Die Topics in der Liste erscheinen (`--list`)
+- Die Anzahl der Partitionen und der Replikationsfaktor mit dem Manifest übereinstimmen
+- Die ISR (In-Sync Replicas) die erwartete Anzahl von Brokern enthalten
 
 ## Weiterführende Informationen
 
-- **[API-Referenz Kafka](../api-reference.md)** : documentation complète des paramètres `topics` et de la configuration avancée
-- **[Skalierung von le cluster Kafka](./scale-resources.md)** : ajuster les ressources des brokers et de ZooKeeper
+- **[Kafka API-Referenz](../api-reference.md)**: Vollständige Dokumentation der `topics`-Parameter und der erweiterten Konfiguration
+- **[Kafka-Cluster skalieren](./scale-resources.md)**: Ressourcen der Broker und ZooKeeper anpassen

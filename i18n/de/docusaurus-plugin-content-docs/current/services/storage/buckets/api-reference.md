@@ -3,18 +3,18 @@ sidebar_position: 3
 title: API-Referenz
 ---
 
-# API-Referenz - Buckets S3
+# API-Referenz - S3 Buckets
 
-Cette référence détaille l’API `Bucket` d’Hikube, utilisée pour provisionner des buckets S3 compatibles [MinIO](https://min.io/) dans votre tenant Kubernetes.  
-Les buckets S3 permettent de stocker et servir des données (fichiers, objets, backups, logs, etc.) de façon durable, hautement disponible et compatible avec les outils S3 standard.
+Diese Referenz beschreibt die `Bucket`-API von Hikube, die zur Bereitstellung von S3-kompatiblen [MinIO](https://min.io/)-Buckets in Ihrem Kubernetes-Tenant verwendet wird.
+Die S3-Buckets ermöglichen die dauerhafte, hochverfügbare und mit Standard-S3-Tools kompatible Speicherung und Bereitstellung von Daten (Dateien, Objekte, Backups, Logs usw.).
 
 ---
 
 ## Bucket
 
-### **Vue d’ensemble**
+### **Übersicht**
 
-L’API `Bucket` permet de créer des buckets S3 directement depuis Kubernetes.
+Die `Bucket`-API ermöglicht die Erstellung von S3-Buckets direkt aus Kubernetes.
 
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
@@ -23,22 +23,22 @@ metadata:
   name: example-bucket
 ```
 
-> 📌 La création d’un objet `Bucket` dans votre tenant entraîne automatiquement la création du bucket correspondant dans le backend S3.
+> 📌 Die Erstellung eines `Bucket`-Objekts in Ihrem Tenant führt automatisch zur Erstellung des entsprechenden Buckets im S3-Backend.
 
 ---
 
-### **Spécification Complète**
+### **Vollständige Spezifikation**
 
-L’objet `Bucket` ne possède **aucun champ `spec` configurable**.
-La seule partie nécessaire est la **métadonnée `metadata.name`**, qui définit le nom du bucket créé dans l'interface utilisateur.
+Das `Bucket`-Objekt hat **keine konfigurierbaren `spec`-Felder**.
+Der einzige erforderliche Teil ist die **Metadaten `metadata.name`**, die den in der Benutzeroberfläche erstellten Bucket-Namen definiert.
 
-| **Paramètre**        | **Type** | **Description**                                      | **Requis** |
-| -------------------- | -------- | ---------------------------------------------------- | ---------- |
-| `metadata.name`      | string   | Nom unique du bucket (utilisé comme nom S3)          | ✅          |
+| **Parameter** | **Typ** | **Beschreibung** | **Erforderlich** |
+| ------------- | ------- | ---------------- | ---------------- |
+| `metadata.name` | string | Eindeutiger Bucket-Name (als S3-Name verwendet) | ✅ |
 
 ---
 
-### **Exemple Minimal**
+### **Minimales Beispiel**
 
 ```yaml title="zitadel-bucket.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -49,16 +49,16 @@ metadata:
 
 ---
 
-## 🔐 Secret d’Accès S3
+## 🔐 S3-Zugangs-Secret
 
-Lorsqu’un bucket est créé, Hikube génère automatiquement un secret Kubernetes associé.
-Ce secret est nommé selon le pattern suivant :
+Wenn ein Bucket erstellt wird, generiert Hikube automatisch ein zugehöriges Kubernetes Secret.
+Dieses Secret wird nach folgendem Muster benannt:
 
 ```txt
-bucket-<nom-du-bucket>
+bucket-<bucket-name>
 ```
 
-Par exemple :
+Zum Beispiel:
 
 ```bash
 kubectl get secret
@@ -69,7 +69,7 @@ NAME                  TYPE     DATA   AGE
 bucket-backup-prod    Opaque   1      10s
 ```
 
-Le contenu de ce secret est stocké dans une **clé unique `BucketInfo`** au format JSON :
+Der Inhalt dieses Secrets wird in einem **einzigen Schlüssel `BucketInfo`** im JSON-Format gespeichert:
 
 ```json
 {
@@ -94,27 +94,27 @@ Le contenu de ce secret est stocké dans une **clé unique `BucketInfo`** au for
 
 ---
 
-### **Champs Importants**
+### **Wichtige Felder**
 
-| **Champ**                       | **Description**                               |
-| ------------------------------- | --------------------------------------------- |
-| `spec.bucketName`               | Nom interne réel du bucket dans le backend S3 |
-| `spec.secretS3.endpoint`        | Endpoint HTTPS du service S3 Hikube           |
-| `spec.secretS3.accessKeyID`     | Clé d’accès S3 générée pour ce bucket         |
-| `spec.secretS3.accessSecretKey` | Clé secrète S3 associée                       |
-| `spec.protocols`                | Protocoles supportés (actuellement `["s3"]`)  |
+| **Feld** | **Beschreibung** |
+| -------- | ---------------- |
+| `spec.bucketName` | Tatsächlicher interner Bucket-Name im S3-Backend |
+| `spec.secretS3.endpoint` | HTTPS-Endpunkt des Hikube S3-Dienstes |
+| `spec.secretS3.accessKeyID` | Generierter S3-Zugriffsschlüssel für diesen Bucket |
+| `spec.secretS3.accessSecretKey` | Zugehöriger S3-Geheimschlüssel |
+| `spec.protocols` | Unterstützte Protokolle (derzeit `["s3"]`) |
 
 ---
 
-### **Extraction des identifiants**
+### **Extraktion der Zugangsdaten**
 
-Vous pouvez récupérer les informations avec `kubectl` et `jq` :
+Sie können die Informationen mit `kubectl` und `jq` abrufen:
 
 ```bash
 kubectl get secret bucket-bckprd -o jsonpath='{.data.BucketInfo}' | base64 -d | jq
 ```
 
-Ou pour extraire uniquement la clé et le secret :
+Oder um nur den Schlüssel und das Secret zu extrahieren:
 
 ```bash
 kubectl get secret bucket-bckprd -o jsonpath='{.data.BucketInfo}' \
@@ -124,42 +124,42 @@ kubectl get secret bucket-bckprd -o jsonpath='{.data.BucketInfo}' \
 
 ---
 
-## 🌐 Endpoint S3
+## 🌐 S3-Endpunkt
 
-L’endpoint public pour accéder à vos buckets est :
+Der öffentliche Endpunkt für den Zugriff auf Ihre Buckets ist:
 
 ```url
 https://prod.s3.hikube.cloud
 ```
 
-Vous pouvez l’utiliser avec :
+Sie können ihn verwenden mit:
 
-* `aws-cli` (en configurant un profil avec `--endpoint-url`)
+* `aws-cli` (durch Konfiguration eines Profils mit `--endpoint-url`)
 * `mc` (MinIO Client)
-* `rclone`, `s3cmd`, Velero, ou toute bibliothèque compatible AWS S3.
+* `rclone`, `s3cmd`, Velero oder jeder AWS-S3-kompatiblen Bibliothek.
 
 ---
 
-## ⚠️ Bonnes Pratiques
+## ⚠️ Best Practices
 
-### **Sécurité**
+### **Sicherheit**
 
-* Ne stockez jamais vos clés S3 en clair dans vos manifests ou dépôts Git.
-* Utilisez toujours les Secrets Kubernetes et des montages sécurisés.
-* Limitez les permissions au strict nécessaire (1 bucket = 1 couple de clés idéalement).
+* Speichern Sie Ihre S3-Schlüssel niemals im Klartext in Ihren Manifesten oder Git-Repositories.
+* Verwenden Sie immer Kubernetes Secrets und sichere Mounts.
+* Beschränken Sie die Berechtigungen auf das Notwendigste (1 Bucket = 1 Schlüsselpaar idealerweise).
 
-### **Nommage**
+### **Namensgebung**
 
-* Utilisez des noms explicites pour identifier facilement les buckets.
-* Gardez à l’esprit que le nom réel dans S3 (`bucketName`) est généré automatiquement et peut différer du nom Kubernetes.
+* Verwenden Sie aussagekräftige Namen, um die Buckets leicht zu identifizieren.
+* Beachten Sie, dass der tatsächliche Name in S3 (`bucketName`) automatisch generiert wird und vom Kubernetes-Namen abweichen kann.
 
-### **Utilisation**
+### **Verwendung**
 
-* Configurez vos outils S3 pour pointer vers `https://prod.s3.hikube.cloud`.
-* Utilisez la clé `accessKeyID` et `accessSecretKey` fournies dans le secret associé.
+* Konfigurieren Sie Ihre S3-Tools so, dass sie auf `https://prod.s3.hikube.cloud` zeigen.
+* Verwenden Sie den im zugehörigen Secret bereitgestellten `accessKeyID` und `accessSecretKey`.
 
 ---
 
-:::tip Bon à savoir
-Chaque bucket créé via l’API Hikube est stocké sur une infrastructure **triple-répliquée** et bénéficie de la Hochverfügbarkeit native du cluster S3.
+:::tip Gut zu wissen
+Jeder über die Hikube-API erstellte Bucket wird auf einer **dreifach replizierten** Infrastruktur gespeichert und profitiert von der nativen Hochverfügbarkeit des S3-Clusters.
 :::

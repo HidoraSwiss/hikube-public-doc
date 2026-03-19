@@ -1,11 +1,11 @@
 ---
 sidebar_position: 1
-title: Terraform avec Hikube
+title: Terraform mit Hikube
 ---
 
-# Infrastructure as Code avec Hikube
+# Infrastructure as Code mit Hikube
 
-Hikube étant basé sur Kubernetes, vous pouvez utiliser **Terraform** pour gérer votre infrastructure de manière déclarative et reproductible. Cette approche vous permet de versionner, tester et déployer votre infrastructure Hikube de façon automatisée.
+Da Hikube auf Kubernetes basiert, können Sie **Terraform** verwenden, um Ihre Infrastruktur deklarativ und reproduzierbar zu verwalten. Dieser Ansatz ermöglicht es Ihnen, Ihre Hikube-Infrastruktur automatisiert zu versionieren, zu testen und bereitzustellen.
 
 ---
 
@@ -13,12 +13,12 @@ Hikube étant basé sur Kubernetes, vous pouvez utiliser **Terraform** pour gér
 
 ### Voraussetzungen
 
-- [Terraform](https://www.terraform.io/downloads) (version >= 1.0)
+- [Terraform](https://www.terraform.io/downloads) (Version >= 1.0)
 - [kubectl](https://kubernetes.io/docs/tasks/tools/)
-- Accès à un tenant Hikube
-- Kubeconfig configuré
+- Zugang zu einem Hikube-Tenant
+- Konfigurierte Kubeconfig
 
-### Provider Kubernetes
+### Kubernetes-Provider
 
 ```hcl title="main.tf"
 terraform {
@@ -43,22 +43,22 @@ provider "kubectl" {
 }
 ```
 
-### Variables
+### Variablen
 
 ```hcl title="variables.tf"
 variable "ssh_public_key" {
-  description = "Clé SSH publique pour l'accès aux VMs"
+  description = "Öffentlicher SSH-Schlüssel für den VM-Zugang"
   type        = string
 }
 
 variable "cluster_name" {
-  description = "Nom du cluster Kubernetes"
+  description = "Name des Kubernetes-Clusters"
   type        = string
   default     = "terraform-cluster"
 }
 
 variable "vm_name" {
-  description = "Nom de la machine virtuelle"
+  description = "Name der virtuellen Maschine"
   type        = string
   default     = "terraform-vm"
 }
@@ -66,9 +66,9 @@ variable "vm_name" {
 
 ---
 
-## Beispiels
+## Beispiele
 
-### Déployer un Cluster Kubernetes
+### Kubernetes-Cluster bereitstellen
 
 ```hcl title="kubernetes.tf"
 resource "kubectl_manifest" "kubernetes_cluster" {
@@ -83,7 +83,7 @@ resource "kubectl_manifest" "kubernetes_cluster" {
       controlPlane = {
         replicas = 2
       }
-      
+
       nodeGroups = {
         general = {
           minReplicas      = 1
@@ -93,9 +93,9 @@ resource "kubectl_manifest" "kubernetes_cluster" {
           roles = ["ingress-nginx"]
         }
       }
-      
+
       storageClass = "replicated"
-      
+
       addons = {
         certManager = {
           enabled = true
@@ -111,17 +111,17 @@ resource "kubectl_manifest" "kubernetes_cluster" {
   })
 }
 
-# Récupérer le kubeconfig
+# Kubeconfig abrufen
 data "kubernetes_secret" "cluster_kubeconfig" {
   depends_on = [kubectl_manifest.kubernetes_cluster]
-  
+
   metadata {
     name      = "${var.cluster_name}-admin-kubeconfig"
     namespace = "default"
   }
 }
 
-# Sauvegarder le kubeconfig
+# Kubeconfig speichern
 resource "local_file" "kubeconfig" {
   content = base64decode(
     data.kubernetes_secret.cluster_kubeconfig.data["super-admin.conf"]
@@ -131,7 +131,7 @@ resource "local_file" "kubeconfig" {
 }
 ```
 
-### Déployer une Machine Virtuelle
+### Virtuelle Maschine bereitstellen
 
 ```hcl title="virtual-machine.tf"
 resource "kubectl_manifest" "virtual_machine" {
@@ -145,18 +145,18 @@ resource "kubectl_manifest" "virtual_machine" {
       running         = true
       instanceProfile = "ubuntu"
       instanceType    = "u1.xlarge"
-      
+
       systemDisk = {
         size         = "50Gi"
         storageClass = "replicated"
       }
-      
+
       external       = true
       externalMethod = "PortList"
       externalPorts  = [22, 80, 443]
-      
+
       sshKeys = [var.ssh_public_key]
-      
+
       cloudInit = <<-EOT
         #cloud-config
         users:
@@ -165,14 +165,14 @@ resource "kubectl_manifest" "virtual_machine" {
             shell: /bin/bash
             ssh_authorized_keys:
               - ${var.ssh_public_key}
-        
+
         package_update: true
         packages:
           - curl
           - wget
           - git
           - docker.io
-        
+
         runcmd:
           - systemctl enable docker
           - systemctl start docker
@@ -183,7 +183,7 @@ resource "kubectl_manifest" "virtual_machine" {
 }
 ```
 
-### Déployer une VM avec GPU
+### VM mit GPU bereitstellen
 
 ```hcl title="vm-gpu.tf"
 resource "kubectl_manifest" "vm_gpu" {
@@ -197,39 +197,39 @@ resource "kubectl_manifest" "vm_gpu" {
       running         = true
       instanceProfile = "ubuntu"
       instanceType    = "u1.xlarge"
-      
+
       gpus = [
         {
           name = "nvidia.com/AD102GL_L40S"
         }
       ]
-      
+
       systemDisk = {
         size         = "100Gi"
         storageClass = "replicated"
       }
-      
+
       external       = true
       externalMethod = "PortList"
       externalPorts  = [22, 8888]
-      
+
       sshKeys = [var.ssh_public_key]
-      
+
       cloudInit = <<-EOT
         #cloud-config
         users:
           - name: ubuntu
             sudo: ALL=(ALL) NOPASSWD:ALL
             shell: /bin/bash
-        
+
         package_update: true
         packages:
           - curl
           - wget
           - build-essential
-        
+
         runcmd:
-          # Installation pilotes NVIDIA
+          # NVIDIA-Treiber installieren
           - wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.0-1_all.deb
           - dpkg -i cuda-keyring_1.0-1_all.deb
           - apt-get update
@@ -241,7 +241,7 @@ resource "kubectl_manifest" "vm_gpu" {
 }
 ```
 
-### Déployer PostgreSQL
+### PostgreSQL bereitstellen
 
 ```hcl title="postgresql.tf"
 resource "kubectl_manifest" "postgres" {
@@ -256,13 +256,13 @@ resource "kubectl_manifest" "postgres" {
       size         = "20Gi"
       replicas     = 2
       storageClass = "replicated"
-      
+
       users = {
         admin = {
           password = var.postgres_password
         }
       }
-      
+
       databases = {
         myapp = {
           roles = {
@@ -275,7 +275,7 @@ resource "kubectl_manifest" "postgres" {
 }
 
 variable "postgres_password" {
-  description = "Password for PostgreSQL admin user"
+  description = "Passwort für den PostgreSQL-Admin-Benutzer"
   type        = string
   sensitive   = true
 }
@@ -283,47 +283,47 @@ variable "postgres_password" {
 
 ---
 
-## Outputs et Variables
+## Outputs und Variablen
 
-### Outputs utiles
+### Nützliche Outputs
 
 ```hcl title="outputs.tf"
 output "cluster_kubeconfig" {
-  description = "Chemin vers le kubeconfig du cluster"
+  description = "Pfad zur Kubeconfig des Clusters"
   value       = local_file.kubeconfig.filename
 }
 
 output "vm_status" {
-  description = "Commande pour vérifier le statut de la VM"
+  description = "Befehl zur Überprüfung des VM-Status"
   value       = "kubectl get virtualmachine ${var.vm_name}"
 }
 
 output "postgres_connection" {
-  description = "Commande pour se connecter à PostgreSQL"
+  description = "Befehl zur Verbindung mit PostgreSQL"
   value       = "kubectl exec -it postgres-terraform-postgres-0 -- psql -U admin -d myapp"
   sensitive   = true
 }
 ```
 
-### Fichier terraform.tfvars
+### Datei terraform.tfvars
 
 ```hcl title="terraform.tfvars"
-# Configuration de base
+# Grundkonfiguration
 cluster_name = "my-prod-cluster"
 vm_name      = "my-app-vm"
 
-# Votre clé SSH publique
+# Ihr öffentlicher SSH-Schlüssel
 ssh_public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQ... user@hostname"
 
-# Mot de passe PostgreSQL
+# PostgreSQL-Passwort
 postgres_password = "your-secure-password-here"
 ```
 
 ---
 
-## Bonnes Pratiques
+## Best Practices
 
-### Structure de projet
+### Projektstruktur
 
 ```
 hikube-terraform/
@@ -340,29 +340,29 @@ hikube-terraform/
     └── outputs.tf
 ```
 
-### Commandes utiles
+### Nützliche Befehle
 
 ```bash
-# Initialiser Terraform
+# Terraform initialisieren
 terraform init
 
-# Planifier les changements
+# Änderungen planen
 terraform plan
 
-# Appliquer la configuration
+# Konfiguration anwenden
 terraform apply
 
-# Vérifier les ressources créées
+# Erstellte Ressourcen überprüfen
 terraform show
 
-# Nettoyer les ressources
+# Ressourcen bereinigen
 terraform destroy
 ```
 
 ---
 
-## Références
+## Referenzen
 
 - [Provider Kubernetes](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs)
 - [Provider kubectl](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs)
-- [Documentation Terraform](https://developer.hashicorp.com/terraform/docs)
+- [Terraform-Dokumentation](https://developer.hashicorp.com/terraform/docs)

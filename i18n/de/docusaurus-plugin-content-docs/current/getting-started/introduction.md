@@ -7,7 +7,7 @@ title: Einführung in Hikube
 
 ## **Was ist Hikube?**
 
-**Hikube** ist eine private Enterprise-Cloud-Plattform, die eine moderne Infrastruktur mit maximalen Souveränitäts- und Sicherheitsgarantien bietet.
+**Hikube** ist eine private Enterprise-Cloud-Plattform, die eine moderne Infrastruktur mit höchsten Souveränitäts- und Sicherheitsgarantien bietet.
 
 ### **Infrastruktur und Verfügbarkeit**
 
@@ -15,21 +15,21 @@ title: Einführung in Hikube
 - Alle Ihre Daten verbleiben strikt auf Schweizer Territorium, was die Einhaltung lokaler Vorschriften gewährleistet und maximale Sicherheit beim Datenschutz bietet.
 
 **Sehr hohe Verfügbarkeit mit Replikation über 3 Rechenzentren**
-- Stellen Sie sicher, dass Ihre Anwendungen dank unserer redundanten Infrastruktur, verteilt auf drei geografisch getrennte Rechenzentren in der Schweiz, permanent erreichbar bleiben.
+- Stellen Sie sicher, dass Ihre Anwendungen dank unserer redundanten Infrastruktur, die über drei geografisch getrennte Rechenzentren in der Schweiz verteilt ist, dauerhaft erreichbar bleiben.
 
-**100% Green IT Rechenzentrum**
-- Engagieren Sie sich für die Umwelt mit unserem Rechenzentrum, das mit erneuerbaren Energien betrieben wird und den CO2-Fußabdruck Ihrer IT-Operationen minimiert.
+**Rechenzentrum 100% Green IT**
+- Engagieren Sie sich für die Umwelt mit unserem Rechenzentrum, das mit erneuerbaren Energien betrieben wird und den CO2-Fussabdruck Ihrer IT-Operationen minimiert.
 
-### **Compute-Services**
+### **Compute-Dienste**
 
 **Kubernetes as a Service**
-- Stellen Sie Ihre containerisierten Anwendungen einfach bereit und verwalten Sie diese dank unserem Kubernetes-Service, der automatisierte Orchestrierung, Skalierbarkeit und vereinfachte Verwaltung bietet.
+- Stellen Sie Ihre containerisierten Anwendungen einfach bereit und verwalten Sie sie dank unseres Kubernetes-Dienstes, der automatisierte Orchestrierung, Skalierbarkeit und vereinfachte Verwaltung bietet.
 
 **Linux- und Windows-VM-Instanzen**
-- Hosten Sie Ihre Anwendungen auf Linux- oder Windows-Instanzen, angepasst an Ihre spezifischen Bedürfnisse und optimiert für maximale Leistung.
+- Hosten Sie Ihre Anwendungen auf Linux- oder Windows-Instanzen, die auf Ihre spezifischen Bedürfnisse zugeschnitten und für maximale Leistung optimiert sind.
 
 **GPU as a Service**
-- Nutzen Sie die Leistung von Hochleistungsrechnen mit unserem GPU-as-a-Service-Angebot, ideal für anspruchsvolle Workloads wie künstliche Intelligenz, Machine Learning und komplexe Simulationen.
+- Nutzen Sie die Leistung des Hochleistungsrechnens mit unserem GPU-as-a-Service-Angebot, ideal für anspruchsvolle Workloads wie künstliche Intelligenz, maschinelles Lernen und komplexe Simulationen.
 
 ### **Sicherheit und Isolation**
 
@@ -41,8 +41,8 @@ title: Einführung in Hikube
 **Steuerbar über API und Terraform**
 - Automatisieren und verwalten Sie Ihre Cloud-Infrastruktur effizient dank unserer API- und Terraform-Unterstützung, die die Integration und Verwaltung Ihrer Ressourcen erleichtert.
 
-**Enterprise- und Qualitätsorientiert**
-- Unser Angebot ist speziell auf die Anforderungen von Unternehmen zugeschnitten und bietet robuste, zuverlässige und qualitativ hochwertige Lösungen für Ihre professionellen Bedürfnisse.
+**Unternehmensorientiert und qualitätsfokussiert**
+- Unser Angebot ist speziell darauf ausgelegt, den Anforderungen von Unternehmen gerecht zu werden, und bietet robuste, zuverlässige und hochwertige Lösungen für Ihre professionellen Bedürfnisse.
 
 ---
 
@@ -52,8 +52,8 @@ title: Einführung in Hikube
 - **[Schnellstart](./quick-start.md)** → Stellen Sie Ihre erste Anwendung bereit
 - **[Konzepte](./concepts.md)** → Architektur und detaillierte Funktionen
 
-**Services und Integrationen**
-- **[Servicekatalog](../services/kubernetes/overview.md)** → Verfügbare Funktionen
+**Dienste und Integrationen**
+- **[Dienstkatalog](../services/kubernetes/overview.md)** → Verfügbare Funktionen
 - **APIs und Automatisierung** → Erweiterte Integrationen
 
 ---
@@ -68,17 +68,17 @@ title: Einführung in Hikube
 
 ### **Erforderlicher Zugang:**
 - **Aktiver Hikube-Tenant** mit Ihren Zugangsdaten
-- **Entsprechende Berechtigungen** je nach Ihrer Rolle (Dev/Admin/Viewer)
+- **Entsprechende Berechtigungen** je nach Rolle (Dev/Admin/Viewer)
 
 :::tip Erste Anmeldung?
-Wenn Sie noch keinen Zugang haben, kontaktieren Sie das Hikube-Team unter **support@hidora.io**
+Falls Sie noch keinen Zugang haben, kontaktieren Sie das Hikube-Team unter **support@hidora.io**
 :::
 ---
 
 :::info **Empfohlener nächster Schritt**
-**[Schnellstart](./quick-start.md)** → Stellen Sie Ihre erste Kubernetes-Anwendung in 5 Minuten bereit!
+**[Quick Start](./quick-start.md)** → Stellen Sie Ihre erste Kubernetes-Anwendung in 5 Minuten bereit!
 :::
 
 ---
 
-*Diese Dokumentation wird kontinuierlich aktualisiert. Letzte Aktualisierung: Version 2.0*
+*Diese Dokumentation wird laufend aktualisiert. Letzte Aktualisierung: Version 2.0*

@@ -3,65 +3,65 @@ sidebar_position: 7
 title: Fehlerbehebung
 ---
 
-# Fehlerbehebung — Buckets S3
+# Fehlerbehebung — S3 Buckets
 
-### AccessDenied lors de l'accès au bucket
+### AccessDenied beim Zugriff auf den Bucket
 
-**Ursache**: les credentials utilisées sont incorrectes, ou le nom de bucket utilisé ne correspond pas au nom réel dans le backend S3.
+**Ursache**: Die verwendeten Zugangsdaten sind falsch, oder der verwendete Bucket-Name entspricht nicht dem tatsächlichen Namen im S3-Backend.
 
 **Lösung**:
 
-1. Récupérez les credentials depuis le Secret Kubernetes :
+1. Rufen Sie die Zugangsdaten aus dem Kubernetes Secret ab:
    ```bash
    kubectl get tenantsecret bucket-<name> -o jsonpath='{.data.BucketInfo}' | base64 -d | jq
    ```
 
-2. Utilisez le champ `spec.bucketName` comme nom de bucket (et non `metadata.name`) :
+2. Verwenden Sie das Feld `spec.bucketName` als Bucket-Namen (nicht `metadata.name`):
    ```bash
    aws --endpoint-url https://prod.s3.hikube.cloud s3 ls s3://<spec.bucketName>/
    ```
 
-3. Überprüfen Sie, ob `accessKeyID` et `accessSecretKey` sont correctement configurés dans votre outil S3.
+3. Überprüfen Sie, ob `accessKeyID` und `accessSecretKey` in Ihrem S3-Tool korrekt konfiguriert sind.
 
 ---
 
-### ListBucket échoue sur la racine
+### ListBucket schlägt am Root fehl
 
-**Ursache**: chaque bucket possède ses propres credentials isolées. Il n'est pas possible de lister tous les buckets avec un seul jeu de credentials.
+**Ursache**: Jeder Bucket verfügt über eigene isolierte Zugangsdaten. Es ist nicht möglich, alle Buckets mit einem einzigen Satz von Zugangsdaten aufzulisten.
 
 **Lösung**:
 
-1. Utilisez les credentials spécifiques au bucket que vous souhaitez lister :
+1. Verwenden Sie die spezifischen Zugangsdaten des Buckets, den Sie auflisten möchten:
    ```bash
    aws --endpoint-url https://prod.s3.hikube.cloud s3 ls s3://<spec.bucketName>/
    ```
 
-2. Pour lister tous vos buckets, utilisez `kubectl` :
+2. Um alle Ihre Buckets aufzulisten, verwenden Sie `kubectl`:
    ```bash
    kubectl get buckets
    ```
 
-3. Pour chaque bucket, récupérez les credentials individuelles depuis le Secret correspondant.
+3. Für jeden Bucket rufen Sie die individuellen Zugangsdaten aus dem entsprechenden Secret ab.
 
 ---
 
-### Credentials introuvables
+### Zugangsdaten nicht auffindbar
 
-**Ursache**: le nom du Secret suit le pattern `bucket-<name>` où `<name>` est le `metadata.name` de la ressource Bucket.
+**Ursache**: Der Name des Secrets folgt dem Muster `bucket-<name>`, wobei `<name>` der `metadata.name` der Bucket-Ressource ist.
 
 **Lösung**:
 
-1. Listez les Secrets disponibles :
+1. Listen Sie die verfügbaren Secrets auf:
    ```bash
    kubectl get tenantsecrets | grep bucket-
    ```
 
-2. Extrayez les informations d'accès :
+2. Extrahieren Sie die Zugangsinformationen:
    ```bash
    kubectl get tenantsecret bucket-<name> -o jsonpath='{.data.BucketInfo}' | base64 -d | jq
    ```
 
-3. Pour extraire uniquement les clés :
+3. Um nur die Schlüssel zu extrahieren:
    ```bash
    kubectl get tenantsecret bucket-<name> -o jsonpath='{.data.BucketInfo}' \
      | base64 -d \
@@ -70,53 +70,53 @@ title: Fehlerbehebung
 
 ---
 
-### Upload lent ou timeout
+### Langsamer Upload oder Timeout
 
-**Ursache**: problème réseau, taille de fichier importante sans multipart upload, ou endpoint distant.
+**Ursache**: Netzwerkproblem, große Dateigröße ohne Multipart-Upload oder entfernter Endpunkt.
 
 **Lösung**:
 
-1. Vérifiez votre connectivité vers l'endpoint :
+1. Überprüfen Sie Ihre Konnektivität zum Endpunkt:
    ```bash
    curl -s -o /dev/null -w "%{time_total}" https://prod.s3.hikube.cloud
    ```
 
-2. Utilisez l'endpoint régional `https://prod.s3.hikube.cloud` (pas de CDN intermédiaire).
+2. Verwenden Sie den regionalen Endpunkt `https://prod.s3.hikube.cloud` (kein zwischengeschaltetes CDN).
 
-3. Pour les fichiers volumineux, aktiviertz le multipart upload :
+3. Für große Dateien aktivieren Sie den Multipart-Upload:
    ```bash
    aws --endpoint-url https://prod.s3.hikube.cloud s3 cp large-file.tar.gz s3://<bucket-name>/ \
      --expected-size $(stat -c%s large-file.tar.gz)
    ```
 
-4. Avec `mc`, le multipart est automatique pour les fichiers de plus de 64 Mo.
+4. Mit `mc` erfolgt Multipart automatisch bei Dateien über 64 MB.
 
 ---
 
-### Bucket non trouvé après création
+### Bucket nach Erstellung nicht gefunden
 
-**Ursache**: le nom réel du bucket dans le backend S3 (`spec.bucketName`) diffère du `metadata.name` de la ressource Kubernetes.
+**Ursache**: Der tatsächliche Bucket-Name im S3-Backend (`spec.bucketName`) unterscheidet sich vom `metadata.name` der Kubernetes-Ressource.
 
 **Lösung**:
 
-1. Vérifiez le statut de la ressource Bucket :
+1. Überprüfen Sie den Status der Bucket-Ressource:
    ```bash
    kubectl get bucket <name>
    kubectl describe bucket <name>
    ```
 
-2. Récupérez le nom réel du bucket depuis le Secret :
+2. Rufen Sie den tatsächlichen Bucket-Namen aus dem Secret ab:
    ```bash
    kubectl get tenantsecret bucket-<name> -o jsonpath='{.data.BucketInfo}' \
      | base64 -d \
      | jq -r '.spec.bucketName'
    ```
 
-3. Utilisez ce nom réel pour accéder au bucket :
+3. Verwenden Sie diesen tatsächlichen Namen für den Zugriff auf den Bucket:
    ```bash
    aws --endpoint-url https://prod.s3.hikube.cloud s3 ls s3://<real-bucket-name>/
    ```
 
 :::warning
-Ne confondez pas `metadata.name` (nom Kubernetes) et `spec.bucketName` (nom réel dans S3). Seul le second fonctionne pour l'accès S3.
+Verwechseln Sie nicht `metadata.name` (Kubernetes-Name) und `spec.bucketName` (tatsächlicher Name in S3). Nur der zweite funktioniert für den S3-Zugriff.
 :::

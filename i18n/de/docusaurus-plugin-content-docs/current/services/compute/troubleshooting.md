@@ -3,37 +3,37 @@ sidebar_position: 7
 title: Fehlerbehebung
 ---
 
-# Fehlerbehebung — Machines virtuelles
+# Fehlerbehebung — Virtuelle Maschinen
 
-### VM ne boot pas
+### VM startet nicht
 
-**Ursache**: le disque système n'est pas prêt, l'image source est invalide, ou le profil d'instance ne correspond pas à l'image.
+**Ursache**: Die Systemfestplatte ist nicht bereit, das Quellimage ist ungültig oder das Instanzprofil passt nicht zum Image.
 
 **Lösung**:
 
-1. Überprüfen Sie, ob les ressources VMDisk existent et sont prêtes :
+1. Überprüfen Sie, dass die VMDisk-Ressourcen existieren und bereit sind:
    ```bash
    kubectl get vmdisk
    ```
 
-2. Vérifiez les événements de la VMInstance :
+2. Überprüfen Sie die Ereignisse der VMInstance:
    ```bash
    kubectl describe vminstance <vm-name>
    ```
 
-3. Überprüfen Sie, ob l'`instanceProfile` est adapté à l'OS de l'image (par exemple `ubuntu` pour une image Ubuntu). Un profil inadapté n'empêche pas le démarrage mais la VM ne sera pas optimisée (drivers manquants).
+3. Überprüfen Sie, dass das `instanceProfile` zum OS des Images passt (z.B. `ubuntu` für ein Ubuntu-Image). Ein unpassendes Profil verhindert den Start nicht, aber die VM wird nicht optimiert (fehlende Treiber).
 
-4. Überprüfen Sie, ob l'`instanceType` choisi est valide (préfixe `s1`, `u1` ou `m1` suivi d'une taille valide).
+4. Überprüfen Sie, dass der gewählte `instanceType` gültig ist (Präfix `s1`, `u1` oder `m1` gefolgt von einer gültigen Größe).
 
 ---
 
-### SSH timeout avec PortList
+### SSH-Timeout mit PortList
 
-**Ursache**: le port 22 n'est pas dans la liste `externalPorts`, l'exposition externe n'est pas aktivierte, ou la clé SSH n'a pas été injectée.
+**Ursache**: Port 22 ist nicht in der Liste `externalPorts`, die externe Exposition ist nicht aktiviert oder der SSH-Schlüssel wurde nicht injiziert.
 
 **Lösung**:
 
-1. Überprüfen Sie, ob `external: true` est aktiviert et que le port 22 est listé :
+1. Überprüfen Sie, dass `external: true` aktiviert ist und Port 22 aufgelistet ist:
    ```yaml title="vm.yaml"
    spec:
      external: true
@@ -42,37 +42,37 @@ title: Fehlerbehebung
        - 22
    ```
 
-2. Récupérez l'adresse IP du service exposé :
+2. Rufen Sie die IP-Adresse des exponierten Services ab:
    ```bash
    kubectl get svc
    ```
 
-3. Überprüfen Sie, ob votre clé SSH a bien été injectée dans le manifeste :
+3. Überprüfen Sie, dass Ihr SSH-Schlüssel im Manifest injiziert wurde:
    ```yaml title="vm.yaml"
    spec:
      sshKeys:
        - "ssh-ed25519 AAAAC3... user@laptop"
    ```
 
-4. Testez la connexion en mode verbose :
+4. Testen Sie die Verbindung im Verbose-Modus:
    ```bash
    ssh -v user@<external-ip>
    ```
 
 ---
 
-### DNS .local ne fonctionne pas dans la VM
+### DNS .local funktioniert nicht in der VM
 
-**Ursache**: `systemd-resolved` traite les domaines `.local` comme du mDNS (multicast DNS), ce qui empêche la résolution DNS classique pour ces domaines.
+**Ursache**: `systemd-resolved` behandelt `.local`-Domains als mDNS (Multicast DNS), was die klassische DNS-Auflösung für diese Domains verhindert.
 
 **Lösung**:
 
-1. Créez un drop-in pour `systemd-networkd` qui désaktiviert le mDNS :
+1. Erstellen Sie ein Drop-in für `systemd-networkd`, das mDNS deaktiviert:
    ```bash
    sudo mkdir -p /etc/systemd/network/10-cloud-init-eth0.network.d
    ```
 
-2. Créez le fichier de configuration :
+2. Erstellen Sie die Konfigurationsdatei:
    ```bash
    sudo tee /etc/systemd/network/10-cloud-init-eth0.network.d/override.conf << 'EOF'
    [Network]
@@ -80,68 +80,68 @@ title: Fehlerbehebung
    EOF
    ```
 
-3. Rechargez la configuration réseau :
+3. Laden Sie die Netzwerkkonfiguration neu:
    ```bash
    sudo networkctl reload
    ```
 
-4. Überprüfen Sie, ob la résolution fonctionne :
+4. Überprüfen Sie, dass die Auflösung funktioniert:
    ```bash
    resolvectl status
    resolvectl query mon-service.local
    ```
 
 :::note
-Ce problème affecte toutes les distributions utilisant `systemd-resolved` (Ubuntu 22.04+, Debian 12+, etc.). Le correctif persiste après redémarrage.
+Dieses Problem betrifft alle Distributionen, die `systemd-resolved` verwenden (Ubuntu 22.04+, Debian 12+, usw.). Die Korrektur bleibt nach einem Neustart bestehen.
 :::
 
 ---
 
-### Disque non attaché à la VM
+### Festplatte nicht an die VM angehängt
 
-**Ursache**: le nom du VMDisk ne correspond pas à l'entrée dans `spec.disks`, le VMDisk n'est pas prêt, ou la `storageClass` est invalide.
+**Ursache**: Der VMDisk-Name stimmt nicht mit dem Eintrag in `spec.disks` überein, der VMDisk ist nicht bereit oder die `storageClass` ist ungültig.
 
 **Lösung**:
 
-1. Überprüfen Sie, ob le nom du VMDisk correspond exactement à celui référencé dans `spec.disks` :
+1. Überprüfen Sie, dass der VMDisk-Name genau mit dem in `spec.disks` referenzierten übereinstimmt:
    ```yaml title="vm.yaml"
    spec:
      disks:
-       - data-volume  # Doit correspondre à metadata.name du VMDisk
+       - data-volume  # Muss mit metadata.name des VMDisk übereinstimmen
    ```
 
-2. Vérifiez le statut du VMDisk :
+2. Überprüfen Sie den Status des VMDisk:
    ```bash
    kubectl get vmdisk data-volume
    kubectl describe vmdisk data-volume
    ```
 
-3. Les storageClasses disponibles sur Hikube sont : `local`, `replicated` et `replicated-async`. Pour une VM (instance isolée), `replicated` est recommandé.
+3. Die auf Hikube verfügbaren storageClasses sind: `local`, `replicated` und `replicated-async`. Für eine VM (isolierte Instanz) wird `replicated` empfohlen.
 
 ---
 
-### Console série / VNC pour debug
+### Serielle Konsole / VNC für Debugging
 
-**Ursache**: la VM ne répond pas en SSH et vous avez besoin d'un accès direct pour diagnostiquer le problème.
+**Ursache**: Die VM antwortet nicht per SSH und Sie benötigen einen direkten Zugang zur Diagnose des Problems.
 
 **Lösung**:
 
-1. Pour un accès console série (texte) :
+1. Für seriellen Konsolenzugang (Text):
    ```bash
    virtctl console <vm-name>
    ```
 
-2. Pour un accès VNC (graphique) :
+2. Für VNC-Zugang (grafisch):
    ```bash
    virtctl vnc <vm-name>
    ```
 
-3. Depuis la console, vous pouvez vérifier :
-   - Les logs de démarrage
-   - La configuration réseau (`ip addr`, `ip route`)
-   - L'état des services (`systemctl status`)
-   - Les logs système (`journalctl -xe`)
+3. Von der Konsole aus können Sie überprüfen:
+   - Die Startprotokolle
+   - Die Netzwerkkonfiguration (`ip addr`, `ip route`)
+   - Den Zustand der Dienste (`systemctl status`)
+   - Die Systemprotokolle (`journalctl -xe`)
 
 :::tip
-`virtctl` est le CLI KubeVirt. Installez-le depuis les [releases KubeVirt](https://github.com/kubevirt/kubevirt/releases).
+`virtctl` ist das KubeVirt-CLI. Installieren Sie es von den [KubeVirt-Releases](https://github.com/kubevirt/kubevirt/releases).
 :::

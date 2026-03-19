@@ -3,21 +3,21 @@ sidebar_position: 1
 title: Übersicht
 ---
 
-<!--- Vorstellung des verwalteten Kubernetes auf Hikube
-- Schéma architecture (parlé de la réplication, des controls plane, workers, infra, addons, versionning k8s)
-- Composition des différents éléments de configuration du k8s géré
-- Explication du fonctionnement :
-  - control plane
-  - worker/nodeGroup
-    - Exemple
-  - storageclass
-  - versionning
-  - addons-->
+<!--- Vorstellung des Managed Kubernetes auf Hikube
+- Architekturschema (Replikation, Control Planes, Workers, Infrastruktur, Addons, K8s-Versionierung)
+- Zusammensetzung der verschiedenen Konfigurationselemente des verwalteten K8s
+- Funktionsweise:
+  - Control Plane
+  - Worker/nodeGroup
+    - Beispiel
+  - StorageClass
+  - Versionierung
+  - Addons-->
 
-# Vorstellung des verwalteten Kubernetes auf Hikube
+# Vorstellung des Managed Kubernetes auf Hikube
 
-Hikube bietet einen **verwalteten Kubernetes-Service**, der für eine hochverfügbare, sichere und leistungsstarke Infrastruktur konzipiert ist.
-Die Steuerungsebene wird vollständig von der Plattform verwaltet, während die **Worker-Knoten** in Ihrem Tenant als virtuelle Maschinen bereitgestellt werden.
+Hikube bietet einen **Managed-Kubernetes-Service**, der auf eine hochverfügbare, sichere und leistungsfähige Infrastruktur ausgelegt ist.
+Die Steuerungsebene wird vollständig von der Plattform verwaltet, während die **Worker-Knoten** als virtuelle Maschinen in Ihrem Tenant bereitgestellt werden.
 
 ---
 
@@ -25,7 +25,7 @@ Die Steuerungsebene wird vollständig von der Plattform verwaltet, während die 
 
 ### **Übersicht**
 
-Die Kubernetes-Cluster von Hikube basieren auf einer **Multi-Rechenzentrum-Infrastruktur** (3 Schweizer Standorte), die Replikation, Fehlertoleranz und Dienstkontinuität gewährleistet.
+Die Kubernetes-Cluster von Hikube basieren auf einer **Multi-Datacenter-Infrastruktur** (3 Schweizer Standorte), die Replikation, Fehlertoleranz und Dienstkontinuität gewährleistet.
 
 - **Steuerungsebene (Control Plane)**: gehostet und betrieben von Hikube
   Bestehend aus:
@@ -33,11 +33,11 @@ Die Kubernetes-Cluster von Hikube basieren auf einer **Multi-Rechenzentrum-Infra
   - `etcd`
   - `kube-scheduler`
   - `kube-controller-manager`
-- **Worker-Knoten**: Virtuelle Maschinen in Ihrem Tenant
+- **Worker-Knoten**: virtuelle Maschinen in Ihrem Tenant
 - **Netzwerk**: CNI mit Unterstützung für `LoadBalancer`, `Ingress` und Netzwerkrichtlinien (`NetworkPolicy`)
-- **Speicher**: Persistente Volumes repliziert über die 3 Rechenzentren
+- **Speicher**: persistente Volumes, repliziert über die 3 Rechenzentren
 - **Add-ons**: Integration von cert-manager, FluxCD, Monitoring usw.
-- **Kubernetes-Versionierung**: Multi-Versions-Unterstützung mit progressiven Updates
+- **Kubernetes-Versionierung**: Multi-Versions-Unterstützung mit schrittweisen Updates
 
 ---
 
@@ -49,8 +49,8 @@ Die wichtigsten Konfigurationselemente umfassen:
 | Element | Beschreibung |
 |----------|--------------|
 | **nodeGroups** | Homogene Knotengruppen (Größe, Rolle, GPU usw.) |
-| **storageClass** | Definiert den Persistenztyp und die Replikation |
-| **addons** | Satz optionaler aktivierbarer Funktionen |
+| **storageClass** | Definiert den Persistenz-Typ und die Replikation |
+| **addons** | Sammlung optionaler aktivierbarer Funktionen |
 | **version** | Verwendete Kubernetes-Server-Version |
 | **network** | Verwaltung von CNI, LoadBalancer und Ingress |
 
@@ -67,9 +67,9 @@ Die wichtigsten Konfigurationselemente umfassen:
 
 ### 🧩 **Worker Nodes / NodeGroups**
 
-Die **NodeGroups** ermöglichen die Anpassung der Ressourcen an Ihre Bedürfnisse. Jede Gruppe kann mit einem Instanztyp, Rollen und automatischer Skalierung konfiguriert werden.
+Die **NodeGroups** ermöglichen es, die Ressourcen an Ihre Bedürfnisse anzupassen. Jede Gruppe kann mit einem Instanztyp, Rollen und automatischer Skalierung konfiguriert werden.
 
-#### NodeGroup-Beispiel
+#### Beispiel eines NodeGroup
 
 ```yaml
 nodeGroups:
@@ -83,8 +83,8 @@ nodeGroups:
 #### Hauptmerkmale
 
 - **Autoscaling**: Parameter `minReplicas` und `maxReplicas`
-- **GPU-Unterstützung**: Dynamische Anbindung von NVIDIA-GPUs
-- **Instanztypen**: `S1` (Standard), `U1` (Universal), `M1` (Memory-optimiert)
+- **GPU-Unterstützung**: dynamische Anbindung von NVIDIA-GPUs
+- **Instanztypen**: `S1` (Standard), `U1` (Universal), `M1` (speicheroptimiert)
 
 ---
 
@@ -96,7 +96,7 @@ nodeGroups:
 - Dynamische Bereitstellung persistenter Volumes (PVC)
 - Fehlertoleranz und native Hochverfügbarkeit
 
-Verwendungsbeispiel:
+Anwendungsbeispiel:
 
 ```yaml
 storageClassName: replicated
@@ -110,7 +110,7 @@ resources:
 ## 🔢 Kubernetes-Versionierung
 
 - Cluster können mit einer **bestimmten Kubernetes-Version** erstellt werden
-- Hikube gewährleistet kontrollierte Minor- und Patch-Updates
+- Hikube führt Minor- und Patch-Updates kontrolliert durch
 - Der Kunde behält die Möglichkeit, Major-Upgrades zu planen
 
 Beispiel:
@@ -126,20 +126,20 @@ version: "1.30.3"
 ### **Cert-Manager**
 
 - Automatisierte Verwaltung von SSL/TLS-Zertifikaten
-- Unterstützung für Let's Encrypt und private Zertifizierungsstellen
+- Unterstützung von Let's Encrypt und privaten Zertifizierungsstellen
 - Automatische Erneuerung
 
 ### **Ingress NGINX**
 
 - Integrierter Ingress-Controller
-- Unterstützung für Wildcard, SNI und Prometheus-Metriken
+- Unterstützung von Wildcard, SNI und Prometheus-Metriken
 
 ### **Flux CD (GitOps)**
 
-- Kontinuierliche Synchronisation mit Ihren Git-Repositories
-- Automatisiertes Deployment und Rollback
+- Kontinuierliche Synchronisierung mit Ihren Git-Repositories
+- Automatisierte Bereitstellung und Rollback
 
-### **Monitoring-Stack**
+### **Monitoring Stack**
 
 - **Node Exporter**, **FluentBit**, **Kube-State-Metrics**
 - Vollständige Integration mit Grafana und Prometheus des Tenants
@@ -185,16 +185,16 @@ nodeGroups:
 
 ## 📚 Ressourcen
 
-- **[Konzepte und Architektur](./concepts.md)** → Verstehen, wie ein Hikube-Kubernetes-Cluster bereitgestellt wird
+- **[Konzepte und Architektur](./concepts.md)** → Verstehen, wie ein Kubernetes-Cluster bei Hikube bereitgestellt wird
 - **[Schnellstart](./quick-start.md)** → Erstellen Sie Ihren ersten Hikube-Cluster
 - **[API-Referenz](./api-reference.md)** → Vollständige Konfigurationsdokumentation
 
 ---
 
-## 💡 Wichtige Punkte
+## 💡 Kernpunkte
 
-- **Verwaltete Steuerungsebene**: Keine Master-Wartung erforderlich
-- **Knoten in Ihrem Tenant**: Vollständige Kontrolle über die Worker
-- **Automatische Skalierung**: Dynamische Anpassung nach Last
-- **Multi-Rechenzentrum**: Native Hochverfügbarkeit und Replikation
+- **Verwaltete Steuerungsebene**: keine Wartung der Master erforderlich
+- **Knoten in Ihrem Tenant**: volle Kontrolle über die Worker
+- **Automatische Skalierung**: dynamische Anpassung je nach Last
+- **Multi-Datacenter**: native Hochverfügbarkeit und Replikation
 - **Vollständige Kompatibilität**: Standard-Kubernetes-API unterstützt

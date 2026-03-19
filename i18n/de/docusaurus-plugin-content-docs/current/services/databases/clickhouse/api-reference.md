@@ -5,15 +5,15 @@ title: API-Referenz
 
 # API-Referenz ClickHouse
 
-Cette référence détaille l’utilisation de **ClickHouse** sur Hikube, que ce soit en configuration simple ou distribuée avec shards et réplicas.
+Diese Referenz beschreibt die Verwendung von **ClickHouse** auf Hikube, sowohl in einfacher als auch in verteilter Konfiguration mit Shards und Replikas.
 
 ---
 
-## Structure de Base
+## Grundstruktur
 
-### **Ressource Clickhouse**
+### **ClickHouse-Ressource**
 
-#### Beispiel de configuration YAML
+#### YAML-Konfigurationsbeispiel
 
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
@@ -23,22 +23,22 @@ metadata:
 spec:
 ```
 
-## Paramètres
+## Parameter
 
-### **Paramètres Communs**
+### **Allgemeine Parameter**
 
-| **Paramètre**       | **Type**   | **Description**                                                                 | **Défaut** | **Requis** |
-|----------------------|------------|---------------------------------------------------------------------------------|------------|------------|
-| `replicas`           | `int`      | Number of ClickHouse replicas                                                   | `2`        | Oui        |
-| `shards`             | `int`      | Number of ClickHouse shards                                                     | `1`        | Oui        |
-| `resources`          | `object`   | Explicit CPU and memory configuration for each replica. Si vide, `resourcesPreset` est appliqué | `{}`       | Non        |
-| `resources.cpu`      | `quantity` | CPU available to each replica                                                   | `null`     | Non        |
-| `resources.memory`   | `quantity` | Memory (RAM) available to each replica                                          | `null`     | Non        |
-| `resourcesPreset`    | `string`   | Default sizing preset (`nano`, `micro`, `small`, `medium`, `large`, `xlarge`, `2xlarge`) | `"small"`  | Oui        |
-| `size`               | `quantity` | Persistent Volume Claim size, available for application data                    | `10Gi`     | Oui        |
-| `storageClass`       | `string`   | StorageClass used to store the data                                             | `""`       | Non        |
+| **Parameter**       | **Typ**    | **Beschreibung**                                                                 | **Standard** | **Erforderlich** |
+|----------------------|------------|---------------------------------------------------------------------------------|--------------|------------------|
+| `replicas`           | `int`      | Anzahl der ClickHouse-Replikas                                                  | `2`          | Ja               |
+| `shards`             | `int`      | Anzahl der ClickHouse-Shards                                                    | `1`          | Ja               |
+| `resources`          | `object`   | Explizite CPU- und Speicherkonfiguration pro Replika. Wenn leer, wird `resourcesPreset` angewendet | `{}`         | Nein             |
+| `resources.cpu`      | `quantity` | Verfügbare CPU pro Replika                                                      | `null`       | Nein             |
+| `resources.memory`   | `quantity` | Verfügbarer Speicher (RAM) pro Replika                                          | `null`       | Nein             |
+| `resourcesPreset`    | `string`   | Standard-Dimensionierungsprofil (`nano`, `micro`, `small`, `medium`, `large`, `xlarge`, `2xlarge`) | `"small"`    | Ja               |
+| `size`               | `quantity` | Persistent Volume Claim-Größe für Anwendungsdaten                               | `10Gi`       | Ja               |
+| `storageClass`       | `string`   | StorageClass zur Datenspeicherung                                               | `""`         | Nein             |
 
-#### Beispiel de configuration YAML
+#### YAML-Konfigurationsbeispiel
 
 ```yaml title="clickhouse.yaml"
 replicas: 2
@@ -51,17 +51,17 @@ size: 20Gi
 storageClass: replicated
 ```
 
-### **Paramètres d'application spécifique**
+### **Anwendungsspezifische Parameter**
 
-| **Paramètre**           | **Type**             | **Description**                                             | **Défaut** | **Requis** |
-|--------------------------|----------------------|-------------------------------------------------------------|------------|------------|
-| `logStorageSize`         | `quantity`           | Size of Persistent Volume for logs                          | `2Gi`      | Non        |
-| `logTTL`                 | `int`                | TTL (expiration time) for `query_log` and `query_thread_log`| `15`       | Non        |
-| `users`                  | `map[string]object`  | Users configuration                                         | `{...}`    | Non        |
-| `users[name].password`   | `string`             | Password for the user                                       | `null`     | Oui        |
-| `users[name].readonly`   | `bool`               | User is readonly, default is false                          | `null`     | Non        |
+| **Parameter**           | **Typ**              | **Beschreibung**                                             | **Standard** | **Erforderlich** |
+|--------------------------|----------------------|-------------------------------------------------------------|--------------|------------------|
+| `logStorageSize`         | `quantity`           | Größe des persistenten Volumes für Logs                     | `2Gi`        | Nein             |
+| `logTTL`                 | `int`                | TTL (Ablaufzeit) für `query_log` und `query_thread_log`     | `15`         | Nein             |
+| `users`                  | `map[string]object`  | Benutzerkonfiguration                                        | `{...}`      | Nein             |
+| `users[name].password`   | `string`             | Passwort des Benutzers                                       | `null`       | Ja               |
+| `users[name].readonly`   | `bool`               | Benutzer ist schreibgeschützt, Standard ist false            | `null`       | Nein             |
 
-#### Beispiel de configuration YAML
+#### YAML-Konfigurationsbeispiel
 
 ```yaml title="clickhouse.yaml"
 logStorageSize: 5Gi
@@ -74,21 +74,21 @@ users:
     password: adminStrongPwd
 ```
 
-### **Paramètres de backup**
+### **Backup-Parameter**
 
-| **Paramètre**           | **Type**   | **Description**                                | **Défaut**                                   | **Requis** |
-|--------------------------|------------|------------------------------------------------|-----------------------------------------------|------------|
-| `backup`                 | `object`   | Backup configuration                           | `{}`                                          | Non        |
-| `backup.enabled`         | `bool`     | Enable regular backups                         | `false`                                       | Non        |
-| `backup.s3Region`        | `string`   | AWS S3 region where backups are stored         | `us-east-1`                                   | Non        |
-| `backup.s3Bucket`        | `string`   | S3 bucket used for storing backups             | `s3.example.org/clickhouse-backups`           | Non        |
-| `backup.schedule`        | `string`   | Cron schedule for automated backups            | `"0 2 * * *"`                                 | Non        |
-| `backup.cleanupStrategy` | `string`   | Retention strategy for cleaning up old backups | `"--keep-last=3 --keep-daily=3 --keep-within-weekly=1m"` | Non        |
-| `backup.s3AccessKey`     | `string`   | Access key for S3, used for authentication     | `<your-access-key>`                           | Oui        |
-| `backup.s3SecretKey`     | `string`   | Secret key for S3, used for authentication     | `<your-secret-key>`                           | Oui        |
-| `backup.resticPassword`  | `string`   | Password for Restic backup encryption          | `<password>`                                  | Oui        |
+| **Parameter**           | **Typ**    | **Beschreibung**                                | **Standard**                                   | **Erforderlich** |
+|--------------------------|------------|------------------------------------------------|------------------------------------------------|------------------|
+| `backup`                 | `object`   | Backup-Konfiguration                           | `{}`                                           | Nein             |
+| `backup.enabled`         | `bool`     | Regelmäßige Sicherungen aktivieren             | `false`                                        | Nein             |
+| `backup.s3Region`        | `string`   | AWS S3-Region der Sicherungen                  | `us-east-1`                                    | Nein             |
+| `backup.s3Bucket`        | `string`   | S3-Bucket für Sicherungen                      | `s3.example.org/clickhouse-backups`            | Nein             |
+| `backup.schedule`        | `string`   | Cron-Zeitplan für automatische Sicherungen     | `"0 2 * * *"`                                  | Nein             |
+| `backup.cleanupStrategy` | `string`   | Aufbewahrungsstrategie für alte Sicherungen    | `"--keep-last=3 --keep-daily=3 --keep-within-weekly=1m"` | Nein             |
+| `backup.s3AccessKey`     | `string`   | S3-Zugriffsschlüssel zur Authentifizierung     | `<your-access-key>`                            | Ja               |
+| `backup.s3SecretKey`     | `string`   | S3-Geheimschlüssel zur Authentifizierung       | `<your-secret-key>`                            | Ja               |
+| `backup.resticPassword`  | `string`   | Passwort für Restic-Backup-Verschlüsselung    | `<password>`                                   | Ja               |
 
-#### Beispiel de configuration YAML
+#### YAML-Konfigurationsbeispiel
 
 ```yaml title="clickhouse.yaml"
 backup:
@@ -102,43 +102,43 @@ backup:
   resticPassword: "<password>"
 ```
 
-### **Paramètres de Clickhouse keeper**
+### **ClickHouse Keeper-Parameter**
 
-| **Paramètre**                   | **Type**   | **Description**                                                                 | **Défaut** | **Requis** |
-|---------------------------------|------------|---------------------------------------------------------------------------------|------------|------------|
-| `clickhouseKeeper`              | `object`   | ClickHouse Keeper configuration                                                 | `{}`       | Non        |
-| `clickhouseKeeper.enabled`      | `bool`     | Deploy ClickHouse Keeper for cluster coordination                               | `true`     | Oui        |
-| `clickhouseKeeper.size`         | `quantity` | Persistent Volume Claim size, available for application data                    | `1Gi`      | Oui        |
-| `clickhouseKeeper.resourcesPreset` | `string` | Default sizing preset (`nano`, `micro`, `small`, `medium`, `large`, `xlarge`, `2xlarge`) | `micro` | Oui        |
-| `clickhouseKeeper.replicas`     | `int`      | Number of Keeper replicas                                                       | `3`        | Oui        |
+| **Parameter**                   | **Typ**    | **Beschreibung**                                                                 | **Standard** | **Erforderlich** |
+|---------------------------------|------------|---------------------------------------------------------------------------------|--------------|------------------|
+| `clickhouseKeeper`              | `object`   | ClickHouse Keeper-Konfiguration                                                  | `{}`         | Nein             |
+| `clickhouseKeeper.enabled`      | `bool`     | ClickHouse Keeper für Cluster-Koordination bereitstellen                         | `true`       | Ja               |
+| `clickhouseKeeper.size`         | `quantity` | Persistent Volume Claim-Größe für Anwendungsdaten                               | `1Gi`        | Ja               |
+| `clickhouseKeeper.resourcesPreset` | `string` | Standard-Dimensionierungsprofil (`nano`, `micro`, `small`, `medium`, `large`, `xlarge`, `2xlarge`) | `micro`  | Ja               |
+| `clickhouseKeeper.replicas`     | `int`      | Anzahl der Keeper-Replikas                                                       | `3`          | Ja               |
 
-#### Beispiel de configuration YAML
+#### YAML-Konfigurationsbeispiel
 
 ```yaml title="clickhouse.yaml"
 clickhouseKeeper:
   enabled: true
   replicas: 3
   resourcesPreset: medium
-  size: 5Gi  
-```  
+  size: 5Gi
+```
 
-### resources et resourcesPreset
+### resources und resourcesPreset
 
-Le champ `resources` ermöglicht die Definition explicitement la configuration CPU et mémoire de chaque réplique ClickHouse.  
-Si ce champ est laissé vide, la valeur du paramètre `resourcesPreset` est utilisée.  
+Das Feld `resources` ermöglicht die explizite Definition der CPU- und Speicherkonfiguration jedes ClickHouse-Replikas.
+Wenn dieses Feld leer gelassen wird, wird der Wert des Parameters `resourcesPreset` verwendet.
 
-#### Beispiel de configuration YAML
+#### YAML-Konfigurationsbeispiel
 
 ```yaml title="clickhouse.yaml"
 resources:
   cpu: 4000m
   memory: 4Gi
-```  
+```
 
-⚠️ Attention : si resources est défini, la valeur de resourcesPreset est ignorée.
+⚠️ Achtung: Wenn resources definiert ist, wird der Wert von resourcesPreset ignoriert.
 
-| **Preset name** | **CPU** | **Mémoire** |
-|-----------------|---------|-------------|
+| **Preset-Name** | **CPU** | **Speicher** |
+|------------------|---------|-------------|
 | `nano`          | 250m    | 128Mi       |
 | `micro`         | 500m    | 256Mi       |
 | `small`         | 1       | 512Mi       |
@@ -149,9 +149,9 @@ resources:
 
 ---
 
-## Beispiels Complets
+## Vollständige Beispiele
 
-### Cluster de Production
+### Produktionscluster
 
 ```yaml title="clickhouse-production.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -194,7 +194,7 @@ spec:
     resticPassword: SecureResticPassword
 ```
 
-### Cluster de Développement
+### Entwicklungscluster
 
 ```yaml title="clickhouse-development.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -223,17 +223,17 @@ spec:
 
 ---
 
-:::tip Bonnes Pratiques
+:::tip Bewährte Praktiken
 
-- **Keeper en nombre impair** : déployez toujours 3 ou 5 réplicas Keeper pour garantir le quorum (majorité nécessaire pour l'élection du leader)
-- **`logTTL`** : ajustez la durée de rétention des logs système (`query_log`, `query_thread_log`) pour éviter l'accumulation de données inutiles
-- **Shards vs réplicas** : utilisez les shards pour distribuer les données horizontalement (plus de capacité) et les réplicas pour la redondance (plus de disponibilité)
-- **Utilisateur `readonly`** : créez un utilisateur en lecture seule pour les outils d'analyse et de reporting
+- **Keeper in ungerader Anzahl**: Stellen Sie immer 3 oder 5 Keeper-Replikas bereit, um das Quorum zu gewährleisten (Mehrheit erforderlich für die Leader-Wahl)
+- **`logTTL`**: Passen Sie die Aufbewahrungsdauer der Systemlogs (`query_log`, `query_thread_log`) an, um die Ansammlung unnötiger Daten zu vermeiden
+- **Shards vs Replikas**: Verwenden Sie Shards zur horizontalen Datenverteilung (mehr Kapazität) und Replikas für Redundanz (mehr Verfügbarkeit)
+- **Benutzer `readonly`**: Erstellen Sie einen schreibgeschützten Benutzer für Analyse- und Reporting-Tools
 :::
 
 :::warning Achtung
 
-- **Les suppressions sont irréversibles** : la suppression d'une ressource ClickHouse entraîne la perte définitive des données si aucune sauvegarde n'est configurée
-- **Changement de shards** : modifier le nombre de shards sur un cluster existant peut entraîner une redistribution complexe des données
-- **Keeper et quorum** : avec moins de 3 Keeper, le cluster ne peut pas maintenir le quorum en cas de panne d'un nœud
+- **Löschungen sind unwiderruflich**: Das Löschen einer ClickHouse-Ressource führt zum endgültigen Datenverlust, wenn keine Sicherung konfiguriert ist
+- **Änderung von Shards**: Das Ändern der Shard-Anzahl auf einem bestehenden Cluster kann eine komplexe Datenumverteilung verursachen
+- **Keeper und Quorum**: Mit weniger als 3 Keeper kann der Cluster bei Ausfall eines Knotens das Quorum nicht aufrechterhalten
 :::

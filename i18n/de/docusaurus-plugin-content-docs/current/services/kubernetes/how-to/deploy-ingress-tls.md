@@ -4,11 +4,11 @@ title: "Ingress mit TLS bereitstellen"
 
 # Ingress mit TLS bereitstellen
 
-Dieser Leitfaden erklärt, wie Sie eine Anwendung über HTTPS mit einem automatischen TLS-Zertifikat auf einem Hikube-Kubernetes-Cluster exponieren, unter Verwendung der Addons cert-manager und ingress-nginx.
+Diese Anleitung erklärt, wie Sie eine Anwendung über HTTPS mit einem automatischen TLS-Zertifikat auf einem Kubernetes-Hikube-Cluster exponieren, unter Verwendung der Addons cert-manager und ingress-nginx.
 
 ## Voraussetzungen
 
-- Ein bereitgestellter Hikube-Kubernetes-Cluster (siehe [Schnellstart](../quick-start.md))
+- Ein bereitgestellter Kubernetes-Hikube-Cluster (siehe [Schnellstart](../quick-start.md))
 - `kubectl` konfiguriert für die Interaktion mit der Hikube-API
 - Ein Domainname, der auf Ihren Cluster zeigt (DNS A- oder CNAME-Eintrag)
 - Die kubeconfig des Child-Clusters abgerufen
@@ -47,12 +47,12 @@ spec:
 ```
 
 :::note
-Das Feld `hosts` unter `ingressNginx` definiert die Domains, für die der Ingress Controller Traffic akzeptiert. Sie können Wildcards (`*.example.com`) verwenden, um mehrere Subdomains abzudecken.
+Das Feld `hosts` unter `ingressNginx` definiert die Domains, für die der Ingress Controller Datenverkehr akzeptiert. Sie können Wildcards (`*.example.com`) verwenden, um mehrere Subdomains abzudecken.
 :::
 
 ### 2. Die Rolle ingress-nginx einer Node Group zuweisen
 
-Die Node Group, die den Ingress Controller hostet, muss die Rolle `ingress-nginx` in ihrer Konfiguration haben. Überprüfen Sie, ob Ihre Node Group korrekt konfiguriert ist:
+Die Node Group, die den Ingress Controller hostet, muss die Rolle `ingress-nginx` in ihrer Konfiguration haben. Prüfen Sie, ob Ihre Node Group korrekt konfiguriert ist:
 
 ```yaml title="cluster-ingress.yaml"
 nodeGroups:
@@ -66,7 +66,7 @@ nodeGroups:
 ```
 
 :::tip
-Eine dedizierte Node Group für den Ingress ermöglicht es, den eingehenden Traffic zu isolieren und die HTTP/HTTPS-Expositionsressourcen unabhängig zu dimensionieren.
+Eine dedizierte Node Group für den Ingress ermöglicht es, den eingehenden Datenverkehr zu isolieren und die HTTP/HTTPS-Expositionsressourcen unabhängig zu dimensionieren.
 :::
 
 ### 3. Cluster-Konfiguration anwenden
@@ -74,22 +74,22 @@ Eine dedizierte Node Group für den Ingress ermöglicht es, den eingehenden Traf
 ```bash
 kubectl apply -f cluster-ingress-tls.yaml
 
-# Attendre que le cluster soit pret
+# Warten, bis der Cluster bereit ist
 kubectl get kubernetes my-cluster -w
 ```
 
-Überprüfen Sie, ob die Addons im Child-Cluster bereitgestellt sind:
+Prüfen Sie, ob die Addons im Child-Cluster bereitgestellt sind:
 
 ```bash
 export KUBECONFIG=cluster-admin.yaml
 
-# Verifier cert-manager
+# cert-manager prüfen
 kubectl get pods -n cert-manager
 
-# Verifier l'Ingress Controller
+# Ingress Controller prüfen
 kubectl get pods -n ingress-nginx
 
-# Recuperer l'IP externe de l'Ingress Controller
+# Externe IP des Ingress Controllers abrufen
 kubectl get svc -n ingress-nginx ingress-nginx-controller
 ```
 
@@ -130,20 +130,20 @@ kubectl apply -f ingress-tls.yaml
 ```
 
 :::note
-Die Annotation `cert-manager.io/cluster-issuer: letsencrypt-prod` weist cert-manager an, automatisch ein Let's Encrypt-Zertifikat für die angegebene Domain zu erhalten.
+Die Annotation `cert-manager.io/cluster-issuer: letsencrypt-prod` weist cert-manager an, automatisch ein Let's-Encrypt-Zertifikat für die angegebene Domain zu beschaffen.
 :::
 
 ### 5. Zertifikat überprüfen
 
 ```bash
-# Verifier l'etat du certificat
+# Zertifikatsstatus prüfen
 kubectl get certificate
 
-# Resultat attendu
+# Erwartetes Ergebnis
 # NAME      READY   SECRET    AGE
 # app-tls   True    app-tls   2m
 
-# Details du certificat
+# Zertifikatsdetails
 kubectl describe certificate app-tls
 ```
 
@@ -152,10 +152,10 @@ kubectl describe certificate app-tls
 Testen Sie den HTTPS-Zugriff auf Ihre Anwendung:
 
 ```bash
-# Verifier l'Ingress
+# Ingress prüfen
 kubectl get ingress my-app
 
-# Tester l'acces HTTPS
+# HTTPS-Zugriff testen
 curl -v https://app.example.com
 ```
 
@@ -167,7 +167,7 @@ my-app   nginx   app.example.com   203.0.113.10   80, 443   5m
 ```
 
 :::warning
-Die Bereitstellung des Let's Encrypt-Zertifikats kann einige Minuten dauern. Wenn das Zertifikat im Zustand `False` bleibt, überprüfen Sie, ob Ihr DNS-Eintrag korrekt auf die IP des Ingress Controllers zeigt und Port 80 erreichbar ist (erforderlich für die HTTP-01-Validierung).
+Die Bereitstellung des Let's-Encrypt-Zertifikats kann einige Minuten dauern. Wenn das Zertifikat im Zustand `False` verbleibt, prüfen Sie, ob Ihr DNS-Eintrag korrekt auf die IP des Ingress Controllers zeigt und ob Port 80 erreichbar ist (erforderlich für die HTTP-01-Validierung).
 :::
 
 ## Weiterführende Informationen

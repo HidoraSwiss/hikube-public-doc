@@ -2,23 +2,23 @@
 title: "Sicherung wiederherstellen"
 ---
 
-# Comment restaurer une sauvegarde
+# Sicherung wiederherstellen
 
-Ce guide vous explique comment restaurer une base de données MySQL à partir d'une sauvegarde Restic stockée dans un bucket S3-compatible. La restauration est effectuée via le CLI **Restic** depuis votre poste de travail.
+Diese Anleitung erklärt, wie Sie eine MySQL-Datenbank aus einer Restic-Sicherung wiederherstellen, die in einem S3-kompatiblen Bucket gespeichert ist. Die Wiederherstellung erfolgt über die **Restic**-CLI von Ihrem Arbeitsplatz aus.
 
 ## Voraussetzungen
 
-- **Restic CLI** installé sur votre machine locale
-- Les **identifiants S3** utilisés lors de la configuration des sauvegardes (Access Key, Secret Key)
-- Le **mot de passe Restic** utilisé pour chiffrer les sauvegardes
-- Le **nom du bucket S3** et le chemin du dépôt
-- Un client **mysql** pour importer les données restaurées
+- **Restic CLI** auf Ihrem lokalen Rechner installiert
+- Die bei der Konfiguration der Sicherungen verwendeten **S3-Anmeldedaten** (Access Key, Secret Key)
+- Das zur Verschlüsselung der Sicherungen verwendete **Restic-Passwort**
+- Der **Name des S3-Buckets** und der Repository-Pfad
+- Ein **mysql**-Client zum Importieren der wiederhergestellten Daten
 
 ## Schritte
 
-### 1. Installer Restic CLI
+### 1. Restic CLI installieren
 
-Installez Restic selon votre système d'exploitation :
+Installieren Sie Restic je nach Betriebssystem:
 
 ```bash
 # macOS (Homebrew)
@@ -27,13 +27,13 @@ brew install restic
 # Debian / Ubuntu
 sudo apt install restic
 
-# Depuis les binaires officiels
+# Von den offiziellen Binärdateien
 # https://github.com/restic/restic/releases
 ```
 
-### 2. Configurer les variables d'environnement Restic
+### 2. Restic-Umgebungsvariablen konfigurieren
 
-Exportez les variables nécessaires pour que Restic puisse accéder au dépôt de sauvegardes :
+Exportieren Sie die notwendigen Variablen, damit Restic auf das Sicherungs-Repository zugreifen kann:
 
 ```bash
 export AWS_ACCESS_KEY_ID="HIKUBE123ACCESSKEY"
@@ -43,18 +43,18 @@ export RESTIC_REPOSITORY="s3:s3.hikube.cloud/mysql-backups/example"
 ```
 
 :::warning
-Le chemin du dépôt (`RESTIC_REPOSITORY`) correspond au `s3Bucket` configuré dans le manifeste MySQL, suivi du **nom de l'instance**. Par exemple, pour une instance nommée `example` avec `s3Bucket: s3.hikube.cloud/mysql-backups`, le dépôt sera `s3:s3.hikube.cloud/mysql-backups/example`.
+Der Repository-Pfad (`RESTIC_REPOSITORY`) entspricht dem im MySQL-Manifest konfigurierten `s3Bucket`, gefolgt vom **Instanznamen**. Zum Beispiel lautet für eine Instanz namens `example` mit `s3Bucket: s3.hikube.cloud/mysql-backups` das Repository `s3:s3.hikube.cloud/mysql-backups/example`.
 :::
 
-### 3. Lister les snapshots disponibles
+### 3. Verfügbare Snapshots auflisten
 
-Affichez l'ensemble des sauvegardes stockées dans le dépôt :
+Zeigen Sie alle im Repository gespeicherten Sicherungen an:
 
 ```bash
 restic snapshots
 ```
 
-**Erwartetes Ergebnis :**
+**Erwartetes Ergebnis:**
 
 ```console
 repository abc12345 opened successfully
@@ -68,44 +68,44 @@ i9j0k1l2  2025-01-17 02:00:04  mysql-example            /backup
 ```
 
 :::tip
-Vous pouvez filtrer les snapshots par date avec `restic snapshots --latest 5` pour afficher uniquement les 5 plus récents.
+Sie können Snapshots nach Datum filtern mit `restic snapshots --latest 5`, um nur die 5 neuesten anzuzeigen.
 :::
 
-### 4. Restaurer un snapshot
+### 4. Snapshot wiederherstellen
 
-Restaurez le dernier snapshot (ou un snapshot spécifique) dans un répertoire local :
+Stellen Sie den letzten Snapshot (oder einen bestimmten Snapshot) in ein lokales Verzeichnis wieder her:
 
 ```bash
-# Restaurer le dernier snapshot
+# Letzten Snapshot wiederherstellen
 restic restore latest --target /tmp/mysql-restore
 
-# Ou restaurer un snapshot spécifique par son ID
+# Oder einen bestimmten Snapshot nach ID wiederherstellen
 restic restore a1b2c3d4 --target /tmp/mysql-restore
 ```
 
-Le contenu restauré sera disponible dans `/tmp/mysql-restore/backup/`.
+Der wiederhergestellte Inhalt ist unter `/tmp/mysql-restore/backup/` verfügbar.
 
-### 5. Importer les données dans MySQL
+### 5. Daten in MySQL importieren
 
-Une fois les fichiers de sauvegarde extraits, importez-les dans votre instance MySQL :
+Nachdem die Sicherungsdateien extrahiert wurden, importieren Sie sie in Ihre MySQL-Instanz:
 
 ```bash
-# Identifier les fichiers de dump restaurés
+# Wiederhergestellte Dump-Dateien identifizieren
 ls /tmp/mysql-restore/backup/
 
-# Importer le dump dans la base de données cible
-mysql -h <host-mysql> -P 3306 -u <utilisateur> -p <base_de_donnees> < /tmp/mysql-restore/backup/dump.sql
+# Dump in die Zieldatenbank importieren
+mysql -h <host-mysql> -P 3306 -u <benutzer> -p <datenbank> < /tmp/mysql-restore/backup/dump.sql
 ```
 
 :::note
-L'adresse du host MySQL dépend de votre configuration :
-- **Accès interne** (port-forward) : `127.0.0.1` après `kubectl port-forward svc/mysql-example 3306:3306`
-- **Accès externe** (LoadBalancer) : l'IP externe du service `mysql-example-primary`
+Die MySQL-Hostadresse hängt von Ihrer Konfiguration ab:
+- **Interner Zugriff** (Port-Forward): `127.0.0.1` nach `kubectl port-forward svc/mysql-example 3306:3306`
+- **Externer Zugriff** (LoadBalancer): Die externe IP des Services `mysql-example-primary`
 :::
 
-### 6. Nettoyer les fichiers temporaires
+### 6. Temporäre Dateien bereinigen
 
-Une fois la restauration terminée et vérifiée, supprimez les fichiers temporaires :
+Nach Abschluss und Überprüfung der Wiederherstellung löschen Sie die temporären Dateien:
 
 ```bash
 rm -rf /tmp/mysql-restore
@@ -113,25 +113,25 @@ rm -rf /tmp/mysql-restore
 
 ## Überprüfung
 
-Connectez-vous à l'instance MySQL et vérifiez que les données ont été correctement restaurées :
+Verbinden Sie sich mit der MySQL-Instanz und überprüfen Sie, ob die Daten korrekt wiederhergestellt wurden:
 
 ```bash
-mysql -h <host-mysql> -P 3306 -u <utilisateur> -p <base_de_donnees>
+mysql -h <host-mysql> -P 3306 -u <benutzer> -p <datenbank>
 ```
 
 ```sql
--- Vérifier les tables présentes
+-- Vorhandene Tabellen überprüfen
 SHOW TABLES;
 
--- Vérifier le nombre de lignes dans une table
-SELECT COUNT(*) FROM <nom_table>;
+-- Zeilenanzahl in einer Tabelle überprüfen
+SELECT COUNT(*) FROM <tabellenname>;
 ```
 
-:::warning Testez la restauration régulièrement
-Il est fortement recommandé de tester la procédure de restauration de manière régulière, idéalement dans un environnement de développement. Une sauvegarde qui n'a jamais été testée ne garantit pas une restauration réussie.
+:::warning Wiederherstellung regelmäßig testen
+Es wird dringend empfohlen, das Wiederherstellungsverfahren regelmäßig zu testen, idealerweise in einer Entwicklungsumgebung. Eine Sicherung, die nie getestet wurde, garantiert keine erfolgreiche Wiederherstellung.
 :::
 
 ## Weiterführende Informationen
 
-- [API-Referenz](../api-reference.md) : configuration complète des paramètres de backup
-- [Konfiguration von les sauvegardes automatiques](./configure-backups.md) : mise en place des sauvegardes Restic + S3
+- [API-Referenz](../api-reference.md): Vollständige Konfiguration der Backup-Parameter
+- [Automatische Sicherungen konfigurieren](./configure-backups.md): Restic + S3-Sicherungen einrichten

@@ -3,40 +3,40 @@ sidebar_position: 2
 title: Schnellstart
 ---
 
-# Déployer MySQL en 5 minutes
+# MySQL in 5 Minuten bereitstellen
 
-Dieser Leitfaden begleitet Sie dans le Deployment de votre première base de données **MySQL** sur Hikube, depuis l'installation jusqu'à la première connexion.
+Diese Anleitung begleitet Sie bei der Bereitstellung Ihrer ersten **MySQL**-Datenbank auf Hikube, von der Installation bis zur ersten Verbindung.
 
 ---
 
-## Objectifs
+## Ziele
 
-À la fin de ce guide, vous aurez :
+Am Ende dieser Anleitung haben Sie:
 
-- Une base de données **MySQL** opérationnelle sur Hikube
-- Un cluster répliqué avec un **primary** et des **réplicas** um die ... sicherzustellen Hochverfügbarkeit
-- Des **utilisateurs et mots de passe** pour accéder à vos applications
-- Un **stockage persistant** attaché à chaque instance um die ... zu gewährleisten durabilité des données
-- (Optionnel) La possibilité d'aktiviertr des **sauvegardes automatiques** vers un stockage compatible S3
+- Eine betriebsbereite **MySQL**-Datenbank auf Hikube
+- Einen replizierten Cluster mit einem **Primary** und **Replikas** für Hochverfügbarkeit
+- **Benutzer und Passwörter** für den Zugriff auf Ihre Anwendungen
+- Einen **persistenten Speicher** für jede Instanz zur Gewährleistung der Datenhaltbarkeit
+- (Optional) Die Möglichkeit, **automatische Sicherungen** auf S3-kompatiblen Speicher zu aktivieren
 
 ---
 
 ## Voraussetzungen
 
-Bevor Sie beginnen, assurez-vous d'avoir :
+Stellen Sie vor dem Start sicher, dass Sie Folgendes haben:
 
-- **kubectl** configuré avec votre kubeconfig Hikube
-- **Droits administrateur** sur votre tenant
-- Un **namespace** disponible pour héberger votre base de données
-- (Optionnel) Un bucket **S3-compatible** si vous souhaitez aktiviertr les sauvegardes automatiques via MariaDB-Operator
+- **kubectl** konfiguriert mit Ihrer Hikube-Kubeconfig
+- **Administratorrechte** auf Ihrem Tenant
+- Einen verfügbaren **Namespace** für Ihre Datenbank
+- (Optional) Einen **S3-kompatiblen** Bucket, wenn Sie automatische Sicherungen über MariaDB-Operator aktivieren möchten
 
 ---
 
-## Étape 1 : Créer le manifeste MySQL
+## Schritt 1: MySQL-Manifest erstellen
 
-### **Préparez le fichier manifest**
+### **Manifest-Datei vorbereiten**
 
-Erstellen Sie eine Datei `mysql.yaml` comme ci-dessous:
+Erstellen Sie eine Datei `mysql.yaml` wie folgt:
 
 ```yaml title="mysql.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -77,24 +77,24 @@ spec:
       password: hackme
 ```
 
-### **Déployez le yaml MySQL**
+### **MySQL-YAML bereitstellen**
 
 ```bash
-# Appliquer le yaml
+# YAML anwenden
 kubectl apply -f mysql.yaml
 ```
 
 ---
 
-## Étape 2 : Überprüfung du Deployment
+## Schritt 2: Überprüfung der Bereitstellung
 
-Vérifiez le statut de votre cluster MySQL (peut prendre 1-2 minutes) :
+Überprüfen Sie den Status Ihres MySQL-Clusters (kann 1-2 Minuten dauern):
 
 ```bash
 kubectl get mysql
 ```
 
-**Erwartetes Ergebnis :**
+**Erwartetes Ergebnis:**
 
 ```console
 NAME      READY   AGE     VERSION
@@ -103,15 +103,15 @@ example   True    1m16s   0.10.0
 
 ---
 
-## Étape 3 : Überprüfung des pods
+## Schritt 3: Überprüfung der Pods
 
-Überprüfen Sie, ob les pods applicatifs sont en état `Running` :
+Überprüfen Sie, dass die Anwendungs-Pods den Status `Running` haben:
 
 ```bash
 kubectl get po -o wide | grep mysql
 ```
 
-**Erwartetes Ergebnis :**
+**Erwartetes Ergebnis:**
 
 ```console
 mysql-example-0                                   1/1     Running     0             24m   10.244.123.64    gld-csxhk-006   <none>           <none>
@@ -120,15 +120,15 @@ mysql-example-2                                   1/1     Running     0         
 mysql-example-metrics-747cf456c9-6vnq9            1/1     Running     0             23m   10.244.123.73    plo-csxhk-004   <none>           <none>
 ```
 
-Avec `replicas: 3`, vous obtenez **3 instances MySQL** (1 primary + 2 réplicas) réparties sur des datacenters différents, plus un pod de métriques.
+Mit `replicas: 3` erhalten Sie **3 MySQL-Instanzen** (1 Primary + 2 Replikas) auf verschiedenen Rechenzentren verteilt, plus einen Metriken-Pod.
 
-Überprüfen Sie, ob chaque instance dispose d'un volume persistant (PVC) :
+Überprüfen Sie, dass jede Instanz ein Persistent Volume (PVC) hat:
 
 ```bash
 kubectl get pvc | grep mysql
 ```
 
-**Erwartetes Ergebnis :**
+**Erwartetes Ergebnis:**
 
 ```console
 storage-mysql-example-0                    Bound     pvc-3622a61d-7432-4a36-9812-953e30f85fbe   10Gi       RWO            local          <unset>                 24m
@@ -138,15 +138,15 @@ storage-mysql-example-2                    Bound     pvc-597da2f3-1604-416c-a480
 
 ---
 
-## Étape 4 : Récupérer les identifiants
+## Schritt 4: Anmeldedaten abrufen
 
-Les mots de passe sont stockés dans un Secret Kubernetes :
+Die Passwörter sind in einem Kubernetes-Secret gespeichert:
 
 ```bash
 kubectl get secret mysql-example-credentials -o json | jq -r '.data | to_entries[] | "\(.key): \(.value|@base64d)"'
 ```
 
-**Erwartetes Ergebnis :**
+**Erwartetes Ergebnis:**
 
 ```console
 root: cr42msoxKhnEajfo
@@ -156,11 +156,11 @@ user2: hackme
 
 ---
 
-## Étape 5 : Connexion et tests
+## Schritt 5: Verbindung und Tests
 
-### Accès externe (si `external: true`)
+### Externer Zugriff (wenn `external: true`)
 
-Vérifiez les services disponibles :
+Überprüfen Sie die verfügbaren Services:
 
 ```bash
 kubectl get svc | grep mysql
@@ -174,17 +174,17 @@ mysql-example-primary                LoadBalancer   10.96.161.170   91.223.132.6
 mysql-example-secondary              ClusterIP      10.96.105.28    <none>          3306/TCP                     27m
 ```
 
-### Accès via port-forward (si `external: false`)
+### Zugriff über Port-Forward (wenn `external: false`)
 
 ```bash
 kubectl port-forward svc/mysql-example 3306:3306
 ```
 
 :::note
-Il est recommandé de ne pas exposer la base de données à l'extérieur si vous n'en avez pas le besoin.
+Es wird empfohlen, die Datenbank nicht extern freizugeben, wenn dies nicht erforderlich ist.
 :::
 
-### Test de connexion avec mysql
+### Verbindungstest mit mysql
 
 ```bash
 mysql -h 91.223.132.64 -u user1 -p myapp1
@@ -211,84 +211,84 @@ mysql>
 
 ---
 
-## Étape 6 : Schnelle Fehlerbehebung
+## Schritt 6: Schnelle Fehlerbehebung
 
-### Pods en CrashLoopBackOff
+### Pods im CrashLoopBackOff
 
 ```bash
-# Vérifier les logs du pod en erreur
+# Logs des fehlerhaften Pods prüfen
 kubectl logs mysql-example-0
 
-# Vérifier les events du pod
+# Events des Pods prüfen
 kubectl describe pod mysql-example-0
 ```
 
-**Causes fréquentes :** mémoire insuffisante (`resources.memory` trop faible), volume de stockage plein, erreur de configuration MariaDB.
+**Häufige Ursachen:** Unzureichender Speicher (`resources.memory` zu niedrig), Speichervolumen voll, MariaDB-Konfigurationsfehler.
 
-### MySQL non accessible
+### MySQL nicht erreichbar
 
 ```bash
-# Vérifier que les services existent
+# Prüfen, ob die Services existieren
 kubectl get svc | grep mysql
 
-# Vérifier que le LoadBalancer a bien une IP externe
+# Prüfen, ob der LoadBalancer eine externe IP hat
 kubectl describe svc mysql-example-primary
 ```
 
-**Causes fréquentes :** `external: false` dans le manifeste, LoadBalancer en attente d'attribution d'IP, mauvais port ou nom d'hôte dans la chaîne de connexion.
+**Häufige Ursachen:** `external: false` im Manifest, LoadBalancer wartet auf IP-Zuweisung, falscher Port oder Hostname in der Verbindungszeichenkette.
 
-### Réplication en échec
+### Replikation fehlgeschlagen
 
 ```bash
-# Vérifier l'état du cluster MariaDB
+# Status des MariaDB-Clusters prüfen
 kubectl get mariadb
 
-# Inspecter les détails de la ressource MariaDB
+# Details der MariaDB-Ressource prüfen
 kubectl describe mariadb mysql-example
 ```
 
-**Causes fréquentes :** binlog purgé avant la synchronisation d'un réplica, espace disque insuffisant, problème réseau entre les nœuds.
+**Häufige Ursachen:** Binlog vor der Synchronisation eines Replikas gelöscht, unzureichender Festplattenplatz, Netzwerkproblem zwischen den Knoten.
 
-### Commandes de diagnostic générales
+### Allgemeine Diagnosebefehle
 
 ```bash
-# Events récents sur le namespace
+# Letzte Events im Namespace
 kubectl get events --sort-by=.metadata.creationTimestamp
 
-# État détaillé du cluster MySQL
+# Detaillierter Status des MySQL-Clusters
 kubectl describe mysql example
 ```
 
 ---
 
-## 📋 Résumé
+## 📋 Zusammenfassung
 
-Vous avez déployé :
+Sie haben bereitgestellt:
 
-- Une base de données **MySQL** sur votre tenant Hikube
-- Un cluster répliqué avec un **primary** et des **réplicas** um die ... sicherzustellen continuité de service
-- Des utilisateurs créés automatiquement, avec leurs identifiants stockés dans des Secrets Kubernetes
-- Un stockage persistant (PVC) dédié à chaque pod MySQL um die ... zu gewährleisten durabilité des données
-- Un accès sécurisé via le client `mysql` (port-forward ou LoadBalancer)
-- La possibilité de configurer des **sauvegardes S3** et de restaurer en cas de besoin
+- Eine **MySQL**-Datenbank auf Ihrem Hikube-Tenant
+- Einen replizierten Cluster mit einem **Primary** und **Replikas** für Servicekontinuität
+- Automatisch erstellte Benutzer mit Anmeldedaten in Kubernetes-Secrets
+- Einen dedizierten persistenten Speicher (PVC) für jeden MySQL-Pod zur Gewährleistung der Datenhaltbarkeit
+- Einen sicheren Zugriff über den `mysql`-Client (Port-Forward oder LoadBalancer)
+- Die Möglichkeit, **S3-Sicherungen** zu konfigurieren und bei Bedarf wiederherzustellen
 
 ---
 
 ## Bereinigung
 
-Pour supprimer les ressources de test :
+Um die Testressourcen zu entfernen:
 
 ```bash
 kubectl delete -f mysql.yaml
 ```
 
 :::warning
-Cette action supprime le cluster MySQL et toutes les données associées. Cette opération est **irréversible**.
+Diese Aktion löscht den MySQL-Cluster und alle zugehörigen Daten. Dieser Vorgang ist **unwiderruflich**.
 :::
 
 ---
 
 ## Nächste Schritte
 
-- **[API-Referenz](./api-reference.md)** : Configuration complète de toutes les options MySQL
-- **[Übersicht](./overview.md)** : Architecture détaillée et cas d'usage MySQL auf Hikube
+- **[API-Referenz](./api-reference.md)**: Vollständige Konfiguration aller MySQL-Optionen
+- **[Übersicht](./overview.md)**: Detaillierte Architektur und Anwendungsfälle für MySQL auf Hikube

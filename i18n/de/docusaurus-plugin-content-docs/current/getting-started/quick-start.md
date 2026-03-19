@@ -12,11 +12,11 @@ Willkommen! Dieser Leitfaden begleitet Sie Schritt für Schritt bei der Erstellu
 ## Voraussetzungen
 
 ### **Zugang zur Plattform**
-Wenn Sie noch kein Hikube-Konto haben, kontaktieren Sie unser Team unter **sales@hidora.io**, um Ihre Zugangsdaten zu erhalten.
+Falls Sie noch kein Hikube-Konto haben, kontaktieren Sie unser Team unter **sales@hidora.io**, um Ihre Zugangsdaten zu erhalten.
 
 ### **Installation der erforderlichen Tools**
 
-#### **kubectl** (obligatorisch)
+#### **kubectl** (erforderlich)
 
 **macOS**
 ```bash
@@ -31,7 +31,7 @@ sudo apt-get update && sudo apt-get install -y kubectl
 
 # RHEL/CentOS/Fedora
 sudo dnf install kubectl
-# ou pour les versions plus anciennes
+# oder für ältere Versionen
 sudo yum install kubectl
 
 # Alpine Linux
@@ -51,7 +51,7 @@ winget install Kubernetes.kubectl
 
 #### **kubelogin** (erforderlich für OIDC-Authentifizierung)
 
-[kubelogin](https://github.com/int128/kubelogin) ist ein kubectl-Plugin für die OpenID Connect (OIDC)-Authentifizierung.
+[kubelogin](https://github.com/int128/kubelogin) ist ein kubectl-Plugin für die OpenID-Connect-Authentifizierung (OIDC).
 
 **macOS / Linux (Homebrew)**
 ```bash
@@ -71,10 +71,10 @@ choco install kubelogin
 📖 **Offizielle Dokumentation**: [int128/kubelogin](https://github.com/int128/kubelogin)
 
 :::warning Achtung
-Verwenden Sie **nicht** das Azure-kubelogin (`Azure/kubelogin`). Hikube verwendet Standard-OIDC-Authentifizierung und benötigt das Plugin [int128/kubelogin](https://github.com/int128/kubelogin).
+Verwenden Sie **nicht** das Azure-kubelogin (`Azure/kubelogin`). Hikube verwendet die standardmässige OIDC-Authentifizierung und benötigt das Plugin [int128/kubelogin](https://github.com/int128/kubelogin).
 :::
 
-### **Empfohlene optionale Tools**
+### **Optionale empfohlene Tools**
 
 Für eine bessere Kubernetes-Verwaltungserfahrung:
 
@@ -88,13 +88,13 @@ Für eine bessere Kubernetes-Verwaltungserfahrung:
 ## Schritt 1: Auf Ihren Tenant zugreifen
 
 ### **kubectl-Konfiguration**
-1. **Holen Sie sich Ihre kubeconfig** von Ihrem Hikube-Administrator
+1. **Holen Sie Ihre kubeconfig** von Ihrem Hikube-Administrator
 2. **Konfigurieren Sie kubectl** mit Ihrer Konfigurationsdatei:
    ```bash
-   # Option 1: Variable d'environnement
+   # Option 1: Umgebungsvariable
    export KUBECONFIG=/path/to/your/hikube-kubeconfig.yaml
 
-   # Option 2: Copie dans le répertoire par défaut
+   # Option 2: Kopie in das Standardverzeichnis
    cp hikube-kubeconfig.yaml ~/.kube/config
    ```
 3. **Überprüfen Sie die Verbindung**:
@@ -107,20 +107,20 @@ Sie können mehrere Cluster mit `kubectl config get-contexts` und `kubectl confi
 :::
 
 ### **Überprüfung Ihres Tenants**
-Ihr Tenant ist Ihr **isolierter Arbeitsbereich**. Überprüfen Sie, dass Sie im richtigen Kontext sind:
+Ihr Tenant ist Ihr **isolierter Arbeitsbereich**. Überprüfen Sie, dass Sie sich im richtigen Kontext befinden:
 ```bash
 kubectl config current-context
 ```
 
 :::warning -A / --all-namespaces nicht verwenden
-Das Flag `-A` (`--all-namespaces`) führt eine Abfrage auf Cluster-Ebene durch, was für einen Tenant-Benutzer verboten ist. Verwenden Sie Befehle immer ohne `-A`: Ihre kubeconfig zielt bereits auf Ihren Namespace.
+Das Flag `-A` (`--all-namespaces`) führt eine Abfrage auf Cluster-Ebene durch, was für einen Tenant-Benutzer nicht erlaubt ist. Verwenden Sie Befehle immer ohne `-A`: Ihre kubeconfig zielt bereits auf Ihren Namespace ab.
 :::
 
 ---
 
 ## Schritt 2: Ihren ersten Kubernetes-Cluster erstellen
 
-### **Deployment über kubectl**
+### **Bereitstellung über kubectl**
 1. **Erstellen Sie eine YAML-Datei** für Ihren Kubernetes-Cluster
 2. **Passen Sie die Konfiguration** an Ihre Bedürfnisse an
 3. **Stellen Sie mit kubectl bereit**:
@@ -179,11 +179,11 @@ spec:
 
 4. **Stellen Sie den Cluster bereit**:
    ```bash
-   # Sauvegardez la configuration dans un fichier
+   # Konfiguration in einer Datei speichern
    kubectl apply -f my-kubernetes-cluster.yaml
    ```
 
-### **⏳ Deployment-Verfolgung**
+### **⏳ Bereitstellung verfolgen**
 - Der Cluster ist in **1-3 Minuten** bereit
 - Verfolgen Sie den Status mit kubectl:
   ```bash
@@ -198,10 +198,10 @@ spec:
 
 ### **Erforderliche DNS-Einträge**
 
-Damit Ihr Cluster erreichbar ist, müssen Sie folgende DNS-Einträge bei Ihrem DNS-Anbieter erstellen:
+Damit Ihr Cluster erreichbar ist, müssen Sie die folgenden DNS-Einträge bei Ihrem DNS-Anbieter erstellen:
 
 ```bash
-# Récupérez l'IP publique de votre cluster via les Ingress
+# Öffentliche IP Ihres Clusters über die Ingress-Ressourcen abrufen
 kubectl get ingress
 ```
 
@@ -221,47 +221,47 @@ Type A : mon-app.example.com → <ADDRESS>
 ```
 
 :::tip DNS-Konfiguration
-- **k8s-api.example.com**: Zugriffspunkt auf die Kubernetes-API
+- **k8s-api.example.com**: Zugangspunkt zur Kubernetes-API
 - **mon-app.example.com**: Domain für Ihre Anwendungen über Ingress
-- Ersetzen Sie `example.com` durch Ihre echte DNS-Zone
+- Ersetzen Sie `example.com` durch Ihre tatsächliche DNS-Zone
 :::
 
 ---
 
-## Schritt 3: Die Kubeconfig abrufen
+## Schritt 3: Kubeconfig abrufen
 
 ### **Kubeconfig des Clusters extrahieren**
-Sobald Ihr Cluster bereitgestellt und bereit ist, rufen Sie die Zugangsdaten mit folgendem Befehl ab:
+Sobald Ihr Cluster bereitgestellt und bereit ist, rufen Sie die Zugangsdaten mit diesem Befehl ab:
 
 ```bash
-# Récupérez le kubeconfig du cluster créé (adaptez le nom du cluster)
+# Kubeconfig des erstellten Clusters abrufen (Clusternamen anpassen)
 kubectl get secret kubernetes-<clusterName>-admin-kubeconfig \
   -o go-template='{{ printf "%s\n" (index .data "admin.conf" | base64decode) }}' > admin.conf
 
-# Exemple concret avec le cluster "kube" :
+# Konkretes Beispiel mit dem Cluster "kube":
 kubectl get secret kubernetes-kube-admin-kubeconfig \
   -o go-template='{{ printf "%s\n" (index .data "admin.conf" | base64decode) }}' > admin.conf
 ```
 
 :::info Anzupassende Variable
-- `<clusterName>`: Ersetzen Sie durch den Namen Ihres Clusters (z.B.: `kube` gemäß dem YAML-Manifest)
+- `<clusterName>`: Ersetzen Sie durch den Namen Ihres Clusters (z.B. `kube` gemäss dem YAML-Manifest)
 :::
 
 ### **Lokale Konfiguration**
 ```bash
-# Utilisez le kubeconfig du nouveau cluster
+# Kubeconfig des neuen Clusters verwenden
 export KUBECONFIG=./admin.conf
 
-# Vérifiez la connexion au cluster créé
+# Verbindung zum erstellten Cluster überprüfen
 kubectl get nodes
 ```
 
 :::note
-Dieser Befehl funktioniert erst, nachdem Sie die DNS-Einträge (vorheriger Abschnitt) konfiguriert haben. Die Worker-Knoten können einige zusätzliche Minuten benötigen, um zu erscheinen.
+Dieser Befehl funktioniert erst, nachdem die DNS-Einträge konfiguriert wurden (vorheriger Abschnitt). Die Worker-Knoten können einige zusätzliche Minuten benötigen, um zu erscheinen.
 :::
 
 :::success Herzlichen Glückwunsch!
-Ihr Kubernetes-Cluster ist jetzt mit **nativer Hochverfügbarkeit** betriebsbereit!
+Ihr Kubernetes-Cluster ist jetzt betriebsbereit mit **nativer Hochverfügbarkeit**!
 :::
 
 ---

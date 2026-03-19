@@ -5,109 +5,109 @@ title: Fehlerbehebung
 
 # Fehlerbehebung — MySQL
 
-### Réplication cassée (binlog purgé)
+### Defekte Replikation (Binlog gelöscht)
 
-**Ursache**: le binary log (binlog) a été purgé sur le primary avant que le réplica n'ait pu le lire. C'est un problème connu du MariaDB Operator lorsque `mariadbbackup` n'est pas encore utilisé pour initialiser les nœuds.
+**Ursache**: Das Binary Log (Binlog) wurde auf dem Primary gelöscht, bevor das Replika es lesen konnte. Dies ist ein bekanntes Problem des MariaDB Operators, wenn `mariadbbackup` noch nicht zur Initialisierung der Knoten verwendet wird.
 
 **Lösung**:
 
-1. Identifiez le réplica désynchronisé :
+1. Identifizieren Sie das desynchronisierte Replika:
    ```bash
    kubectl get pods -l app=mysql-<name>
    ```
-2. Effectuez un dump depuis un réplica fonctionnel et restaurez-le sur le primary :
+2. Führen Sie einen Dump von einem funktionierenden Replika durch und stellen Sie ihn auf dem Primary wieder her:
    ```bash
    mysqldump -h <replica-host> -P 3306 -u<user> -p<password> --column-statistics=0 <database> <table> > fix-table.sql
    mysql -h <primary-host> -P 3306 -u<user> -p<password> <database> < fix-table.sql
    ```
-3. Überprüfen Sie, ob la réplication reprend correctement après la restauration.
+3. Überprüfen Sie, dass die Replikation nach der Wiederherstellung korrekt fortgesetzt wird.
 
 :::note
-Ce problème est référencé dans le [MariaDB Operator](https://github.com/mariadb-operator/mariadb-operator/issues/141). Une correction automatique est prévue dans les futures versions de l'opérateur.
+Dieses Problem ist im [MariaDB Operator](https://github.com/mariadb-operator/mariadb-operator/issues/141) referenziert. Eine automatische Korrektur ist in zukünftigen Versionen des Operators geplant.
 :::
 
-### Backup Restic échoué
+### Restic-Backup fehlgeschlagen
 
-**Ursache**: les identifiants S3 sont incorrects, l'endpoint est inaccessible, ou le `resticPassword` ne correspond pas à celui utilisé lors de l'initialisation du dépôt.
+**Ursache**: Die S3-Anmeldedaten sind falsch, der Endpoint ist nicht erreichbar oder das `resticPassword` stimmt nicht mit dem bei der Initialisierung des Repositories verwendeten überein.
 
 **Lösung**:
 
-1. Vérifiez les logs du pod de backup :
+1. Überprüfen Sie die Logs des Backup-Pods:
    ```bash
    kubectl logs -l app=mysql-<name>-backup
    ```
-2. Assurez-vous que les paramètres S3 sont corrects dans votre manifeste :
-   - `s3Bucket` : le bucket existe et est accessible
-   - `s3AccessKey` / `s3SecretKey` : les clés sont valides
-   - `s3Region` : la région correspond à celle du bucket
-3. Überprüfen Sie, ob le `resticPassword` est identique à celui utilisé lors de la première sauvegarde. Un changement de mot de passe rend les anciennes sauvegardes inaccessibles.
-4. Testez la connectivité vers l'endpoint S3 depuis le cluster.
+2. Stellen Sie sicher, dass die S3-Parameter in Ihrem Manifest korrekt sind:
+   - `s3Bucket`: Der Bucket existiert und ist zugänglich
+   - `s3AccessKey` / `s3SecretKey`: Die Schlüssel sind gültig
+   - `s3Region`: Die Region entspricht der des Buckets
+3. Überprüfen Sie, dass das `resticPassword` identisch mit dem bei der ersten Sicherung verwendeten ist. Eine Passwortänderung macht alte Sicherungen unzugänglich.
+4. Testen Sie die Verbindung zum S3-Endpoint vom Cluster aus.
 
-### Connexion refusée
+### Verbindung verweigert
 
-**Ursache**: les pods MySQL ne sont pas en cours d'exécution, le nom du Secret est incorrect, ou la limite `maxUserConnections` est atteinte.
+**Ursache**: Die MySQL-Pods laufen nicht, der Secret-Name ist falsch oder das `maxUserConnections`-Limit ist erreicht.
 
 **Lösung**:
 
-1. Überprüfen Sie, ob les pods sont en état `Running` :
+1. Überprüfen Sie, dass die Pods den Status `Running` haben:
    ```bash
    kubectl get pods -l app=mysql-<name>
    ```
-2. Récupérez les identifiants depuis le Secret. Le pattern est `mysql-<name>-auth` :
+2. Rufen Sie die Anmeldedaten aus dem Secret ab. Das Muster ist `mysql-<name>-auth`:
    ```bash
    kubectl get tenantsecret mysql-<name>-auth -o jsonpath='{.data.password}' | base64 -d
    ```
-3. Überprüfen Sie, ob la limite `maxUserConnections` n'est pas atteinte pour l'utilisateur concerné.
-4. Testez la connexion depuis un pod dans le cluster :
+3. Überprüfen Sie, dass das `maxUserConnections`-Limit für den betreffenden Benutzer nicht erreicht ist.
+4. Testen Sie die Verbindung von einem Pod im Cluster:
    ```bash
    kubectl run test-mysql --rm -it --image=mariadb:11 -- mysql -h mysql-<name> -P 3306 -u<user> -p
    ```
 
-### Pod en CrashLoopBackOff
+### Pod im CrashLoopBackOff
 
-**Ursache**: le pod redémarre en boucle, généralement à cause d'un manque de mémoire (OOMKilled) ou d'une configuration invalide.
+**Ursache**: Der Pod startet in einer Schleife neu, üblicherweise wegen Speichermangel (OOMKilled) oder einer ungültigen Konfiguration.
 
 **Lösung**:
 
-1. Consultez les logs du pod précédent pour identifier l'erreur :
+1. Prüfen Sie die Logs des vorherigen Pods, um den Fehler zu identifizieren:
    ```bash
    kubectl logs mysql-<name>-0 --previous
    ```
-2. Vérifiez si le pod a été tué pour dépassement mémoire (OOMKilled) :
+2. Prüfen Sie, ob der Pod wegen Speicherüberschreitung (OOMKilled) beendet wurde:
    ```bash
    kubectl describe pod mysql-<name>-0 | grep -i oom
    ```
-3. Si c'est un problème de mémoire, augmentez le `resourcesPreset` ou définissez des `resources` explicites :
+3. Bei einem Speicherproblem erhöhen Sie den `resourcesPreset` oder definieren Sie explizite `resources`:
    ```yaml title="mysql.yaml"
    spec:
-     resourcesPreset: medium    # Passer de nano/micro à medium ou plus
+     resourcesPreset: medium    # Von nano/micro auf medium oder höher wechseln
    ```
-4. Appliquez la modification et attendez le redémarrage :
+4. Wenden Sie die Änderung an und warten Sie auf den Neustart:
    ```bash
    kubectl apply -f mysql.yaml
    ```
 
-### Espace disque plein
+### Festplatte voll
 
-**Ursache**: le volume persistant est saturé par les données, les logs binaires ou les fichiers temporaires.
+**Ursache**: Das persistente Volume ist durch Daten, Binary Logs oder temporäre Dateien gesättigt.
 
 **Lösung**:
 
-1. Vérifiez l'utilisation du disque dans le pod :
+1. Überprüfen Sie die Festplattennutzung im Pod:
    ```bash
    kubectl exec mysql-<name>-0 -- df -h /var/lib/mysql
    ```
-2. Augmentez la taille du volume dans votre manifeste :
+2. Erhöhen Sie die Volume-Größe in Ihrem Manifest:
    ```yaml title="mysql.yaml"
    spec:
-     size: 20Gi    # Augmenter depuis la valeur actuelle
+     size: 20Gi    # Vom aktuellen Wert erhöhen
    ```
-3. Appliquez la modification :
+3. Wenden Sie die Änderung an:
    ```bash
    kubectl apply -f mysql.yaml
    ```
-4. Si le problème est urgent, nettoyez les données obsolètes depuis un client MySQL.
+4. Bei dringendem Bedarf bereinigen Sie veraltete Daten über einen MySQL-Client.
 
 :::warning
-Ne réduisez jamais la valeur de `size`. L'augmentation de volume est supportée, mais la réduction ne l'est pas.
+Verringern Sie niemals den Wert von `size`. Die Volume-Vergrößerung wird unterstützt, die Verkleinerung jedoch nicht.
 :::

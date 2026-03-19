@@ -2,33 +2,33 @@
 title: "GPU auf einer VM bereitstellen"
 ---
 
-# Comment provisionner un GPU sur une VM
+# GPU auf einer VM bereitstellen
 
-Hikube permet d'attacher un ou plusieurs GPU NVIDIA directement a une machine virtuelle. Dieser Leitfaden erklärt comment choisir le type de GPU adapte a votre workload, creer une VM avec GPU et verifier que l'acceleration materielle est bien disponible.
+Hikube ermöglicht es, einen oder mehrere NVIDIA-GPUs direkt an eine virtuelle Maschine anzuhängen. Diese Anleitung erklärt, wie Sie den für Ihren Workload geeigneten GPU-Typ auswählen, eine VM mit GPU erstellen und überprüfen, dass die Hardware-Beschleunigung verfügbar ist.
 
 ## Voraussetzungen
 
-- **kubectl** configure avec votre kubeconfig Hikube
-- Un acces **SSH** a la VM (cle publique SSH disponible)
-- Familiarite avec les concepts de [machines virtuelles](../../compute/overview.md) sur Hikube
+- **kubectl** konfiguriert mit Ihrem Hikube-Kubeconfig
+- Ein **SSH**-Zugang zur VM (öffentlicher SSH-Schlüssel verfügbar)
+- Vertrautheit mit den Konzepten von [virtuellen Maschinen](../../compute/overview.md) auf Hikube
 
 ## Schritte
 
-### 1. Choisir le type de GPU
+### 1. GPU-Typ auswählen
 
-Hikube bietet trois familles de GPU NVIDIA adaptees a differents cas d'usage :
+Hikube bietet drei NVIDIA GPU-Familien für verschiedene Anwendungsfälle:
 
-| GPU | Architecture | Memoire | Performance | Anwendungsfälle |
+| GPU | Architektur | Speicher | Leistung | Anwendungsfall |
 |-----|-------------|---------|-------------|-------------|
-| **L40S** | Ada Lovelace | 48 GB GDDR6 | 362 TOPS (INT8) | Inference, developpement, prototypage |
-| **A100** | Ampere | 80 GB HBM2e | 312 TOPS (INT8) | Entrainement ML, fine-tuning |
-| **H100** | Hopper | 80 GB HBM3 | 1979 TOPS (INT8) | LLM, calcul exascale, entrainement distribue |
+| **L40S** | Ada Lovelace | 48 GB GDDR6 | 362 TOPS (INT8) | Inferenz, Entwicklung, Prototyping |
+| **A100** | Ampere | 80 GB HBM2e | 312 TOPS (INT8) | ML-Training, Fine-Tuning |
+| **H100** | Hopper | 80 GB HBM3 | 1979 TOPS (INT8) | LLM, Exascale-Rechnen, verteiltes Training |
 
-:::tip Quel GPU choisir ?
-Commencez par un **L40S** pour le developpement et le prototypage. Passez a un **A100** pour l'entrainement de modeles ML standard, et reservez le **H100** pour les workloads exigeants comme l'entrainement de LLM ou le calcul haute performance.
+:::tip Welchen GPU wählen?
+Beginnen Sie mit einem **L40S** für Entwicklung und Prototyping. Wechseln Sie zu einem **A100** für Standard-ML-Modelltraining und reservieren Sie den **H100** für anspruchsvolle Workloads wie LLM-Training oder Hochleistungsrechnen.
 :::
 
-Les identifiants GPU a utiliser dans vos manifestes sont :
+Die GPU-Bezeichner für Ihre Manifeste sind:
 
 | GPU | Wert `gpus[].name` |
 |-----|----------------------|
@@ -36,9 +36,9 @@ Les identifiants GPU a utiliser dans vos manifestes sont :
 | A100 | `nvidia.com/GA100_A100_PCIE_80GB` |
 | H100 | `nvidia.com/H100_94GB` |
 
-### 2. Creer le manifeste de la VM avec GPU
+### 2. VM-Manifest mit GPU erstellen
 
-Creez un manifeste qui declare le GPU souhaite dans la section `spec.gpus` :
+Erstellen Sie ein Manifest, das den gewünschten GPU im Abschnitt `spec.gpus` deklariert:
 
 ```yaml title="gpu-vm.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -63,25 +63,25 @@ spec:
     - ssh-ed25519 AAAA... user@host
 ```
 
-:::tip Ratio CPU/GPU recommande
-Prevoyez **8 a 16 vCPU par GPU**. Pour un seul GPU, un `u1.2xlarge` (8 vCPU, 32 GB RAM) est un bon point de depart. Pour du multi-GPU, montez a `u1.4xlarge` ou `u1.8xlarge`.
+:::tip Empfohlenes CPU/GPU-Verhältnis
+Planen Sie **8 bis 16 vCPU pro GPU**. Für einen einzelnen GPU ist ein `u1.2xlarge` (8 vCPU, 32 GB RAM) ein guter Ausgangspunkt. Für Multi-GPU steigen Sie auf `u1.4xlarge` oder `u1.8xlarge` um.
 :::
 
-### 3. Deployer la VM
+### 3. VM bereitstellen
 
-Appliquez le manifeste :
+Wenden Sie das Manifest an:
 
 ```bash
 kubectl apply -f gpu-vm.yaml
 ```
 
-Attendez que la VM soit en etat `Running` :
+Warten Sie, bis die VM im Zustand `Running` ist:
 
 ```bash
 kubectl get vminstance gpu-workstation -w
 ```
 
-**Erwartetes Ergebnis :**
+**Erwartetes Ergebnis:**
 
 ```
 NAME               STATUS    AGE
@@ -89,24 +89,24 @@ gpu-workstation    Running   2m
 ```
 
 :::note
-Le provisionnement d'une VM avec GPU peut prendre quelques minutes supplementaires par rapport a une VM standard, le temps que le GPU soit alloue et attache.
+Die Bereitstellung einer VM mit GPU kann im Vergleich zu einer Standard-VM einige zusätzliche Minuten dauern, da der GPU zugewiesen und angehängt werden muss.
 :::
 
-### 4. Verifier le GPU dans la VM
+### 4. GPU in der VM überprüfen
 
-Connectez-vous a la VM via SSH :
+Verbinden Sie sich über SSH mit der VM:
 
 ```bash
 virtctl ssh -i ~/.ssh/id_ed25519 ubuntu@gpu-workstation
 ```
 
-Überprüfen Sie, ob le GPU est detecte :
+Überprüfen Sie, ob der GPU erkannt wird:
 
 ```bash
 nvidia-smi
 ```
 
-**Erwartetes Ergebnis :**
+**Erwartetes Ergebnis:**
 
 ```
 +-----------------------------------------------------------------------------+
@@ -120,15 +120,15 @@ nvidia-smi
 +-------------------------------+----------------------+----------------------+
 ```
 
-Pour des informations detaillees :
+Für detaillierte Informationen:
 
 ```bash
 nvidia-smi --query-gpu=name,memory.total,utilization.gpu --format=csv
 ```
 
-### 5. Configurer une VM multi-GPU
+### 5. Multi-GPU-VM konfigurieren
 
-Pour les workloads intensifs (entrainement distribue, inference a grande echelle), vous pouvez attacher plusieurs GPU a une meme VM en repetant les entrees dans `spec.gpus` :
+Für intensive Workloads (verteiltes Training, Inferenz im großen Maßstab) können Sie mehrere GPUs an dieselbe VM anhängen, indem Sie die Einträge in `spec.gpus` wiederholen:
 
 ```yaml title="multi-gpu-vm.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -157,26 +157,26 @@ spec:
 ```
 
 :::warning
-Pour du multi-GPU, dimensionnez le type d'instance en consequence. Prevoyez au minimum 8 vCPU et 32 GB de RAM par GPU. Un `u1.8xlarge` (32 vCPU, 128 GB RAM) est adapte pour 4 GPU.
+Für Multi-GPU dimensionieren Sie den Instanztyp entsprechend. Planen Sie mindestens 8 vCPU und 32 GB RAM pro GPU. Ein `u1.8xlarge` (32 vCPU, 128 GB RAM) ist für 4 GPUs geeignet.
 :::
 
 ## Überprüfung
 
-Apres le Deployment, confirmez que tout fonctionne :
+Bestätigen Sie nach der Bereitstellung, dass alles funktioniert:
 
-1. **Verifiez l'etat de la VM** :
+1. **VM-Status überprüfen**:
 
 ```bash
 kubectl get vminstance gpu-workstation
 ```
 
-2. **Verifiez le GPU dans la VM** :
+2. **GPU in der VM überprüfen**:
 
 ```bash
 virtctl ssh -i ~/.ssh/id_ed25519 ubuntu@gpu-workstation -- nvidia-smi
 ```
 
-3. **Testez CUDA** (si les pilotes sont installes) :
+3. **CUDA testen** (wenn die Treiber installiert sind):
 
 ```bash
 virtctl ssh -i ~/.ssh/id_ed25519 ubuntu@gpu-workstation -- nvidia-smi --query-gpu=name,memory.total,driver_version,cuda_version --format=csv,noheader
@@ -184,6 +184,6 @@ virtctl ssh -i ~/.ssh/id_ed25519 ubuntu@gpu-workstation -- nvidia-smi --query-gp
 
 ## Weiterführende Informationen
 
-- [API-Referenz GPU](../api-reference.md)
-- [Comment provisionner un GPU sur Kubernetes](./provision-gpu-kubernetes.md)
-- [Comment installer les pilotes CUDA](../../compute/how-to/install-cuda-drivers.md)
+- [GPU API-Referenz](../api-reference.md)
+- [GPU auf Kubernetes bereitstellen](./provision-gpu-kubernetes.md)
+- [CUDA-Treiber installieren](../../compute/how-to/install-cuda-drivers.md)

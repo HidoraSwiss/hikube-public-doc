@@ -5,21 +5,21 @@ title: FAQ
 
 # FAQ — MySQL
 
-### Pourquoi Hikube utilise MariaDB pour le service MySQL ?
+### Warum verwendet Hikube MariaDB für den MySQL-Dienst?
 
-Le service MySQL auf Hikube est basé sur **MariaDB**, déployé via le **MariaDB Operator**. MariaDB est un fork open-source de MySQL, entièrement compatible avec le protocole et la syntaxe MySQL. Ce choix garantit :
+Der MySQL-Dienst auf Hikube basiert auf **MariaDB**, bereitgestellt über den **MariaDB Operator**. MariaDB ist ein Open-Source-Fork von MySQL, der vollständig kompatibel mit dem MySQL-Protokoll und der MySQL-Syntax ist. Diese Wahl garantiert:
 
-- Une **compatibilité totale** avec les clients et applications MySQL existants
-- Un développement **open-source** actif et transparent
-- Des fonctionnalités avancées (compression de colonnes, moteur Aria, etc.)
+- **Vollständige Kompatibilität** mit bestehenden MySQL-Clients und -Anwendungen
+- Eine aktive und transparente **Open-Source**-Entwicklung
+- Erweiterte Funktionen (Spaltenkompression, Aria-Engine, etc.)
 
-Vos applications MySQL fonctionnent sans modification avec le service MySQL Hikube.
+Ihre MySQL-Anwendungen funktionieren ohne Änderung mit dem Hikube MySQL-Dienst.
 
-### Quelle est la différence entre `resourcesPreset` et `resources` ?
+### Was ist der Unterschied zwischen `resourcesPreset` und `resources`?
 
-Le champ `resourcesPreset` permet de choisir un profil de ressources prédéterminé pour chaque réplica MySQL. Si le champ `resources` (CPU/mémoire explicites) est défini, `resourcesPreset` est **entièrement ignoré**.
+Das Feld `resourcesPreset` ermöglicht die Auswahl eines vordefinierten Ressourcenprofils für jedes MySQL-Replika. Wenn das Feld `resources` (explizite CPU/Speicher) definiert ist, wird `resourcesPreset` **vollständig ignoriert**.
 
-| **Preset** | **CPU** | **Mémoire** |
+| **Preset** | **CPU** | **Speicher** |
 |------------|---------|-------------|
 | `nano`     | 250m    | 128Mi       |
 | `micro`    | 500m    | 256Mi       |
@@ -31,28 +31,28 @@ Le champ `resourcesPreset` permet de choisir un profil de ressources prédéterm
 
 ```yaml title="mysql.yaml"
 spec:
-  # Utilisation d'un preset
+  # Verwendung eines Presets
   resourcesPreset: small
 
-  # OU configuration explicite (le preset est alors ignoré)
+  # ODER explizite Konfiguration (das Preset wird dann ignoriert)
   resources:
     cpu: 2000m
     memory: 2Gi
 ```
 
-### Comment fonctionne la réplication MySQL auf Hikube ?
+### Wie funktioniert die MySQL-Replikation auf Hikube?
 
-La réplication MySQL auf Hikube utilise la **réplication binlog** (binary log) gérée par le MariaDB Operator :
+Die MySQL-Replikation auf Hikube verwendet die **Binlog-Replikation** (Binary Log), verwaltet vom MariaDB Operator:
 
-- Un nœud est désigné comme **primary** (lecture-écriture)
-- Les autres nœuds sont des **réplicas** (lecture seule)
-- Le basculement automatique (**auto-failover**) est géré par l'opérateur en cas de panne du primary
+- Ein Knoten wird als **Primary** (Lesen-Schreiben) bezeichnet
+- Die anderen Knoten sind **Replikas** (nur Lesen)
+- Der automatische Failover (**Auto-Failover**) wird vom Operator bei einem Ausfall des Primary verwaltet
 
-Avec 3 réplicas, vous obtenez 1 primary + 2 réplicas, ce qui assure la Hochverfügbarkeit.
+Mit 3 Replikas erhalten Sie 1 Primary + 2 Replikas, was Hochverfügbarkeit gewährleistet.
 
-### Konfiguration von les backups avec Restic ?
+### Wie konfiguriere ich Backups mit Restic?
 
-Les sauvegardes MySQL utilisent **Restic** pour le chiffrement et la compression. Configurez la section `backup` avec un stockage S3 compatible :
+Die MySQL-Sicherungen verwenden **Restic** für Verschlüsselung und Komprimierung. Konfigurieren Sie den Abschnitt `backup` mit einem S3-kompatiblen Speicher:
 
 ```yaml title="mysql.yaml"
 spec:
@@ -68,33 +68,33 @@ spec:
 ```
 
 :::warning
-Conservez le `resticPassword` en lieu sûr. Sans ce mot de passe, les sauvegardes ne pourront pas être déchiffrées.
+Bewahren Sie das `resticPassword` an einem sicheren Ort auf. Ohne dieses Passwort können die Sicherungen nicht entschlüsselt werden.
 :::
 
-### Comment effectuer un switchover de primary ?
+### Wie führe ich einen Primary-Switchover durch?
 
-Pour basculer le rôle de primary vers un autre réplica, modifiez le champ `spec.replication.primary.podIndex` dans votre manifeste :
+Um die Primary-Rolle auf ein anderes Replika zu übertragen, ändern Sie das Feld `spec.replication.primary.podIndex` in Ihrem Manifest:
 
 ```yaml title="mysql.yaml"
 spec:
   replication:
     primary:
-      podIndex: 1    # Index du pod qui deviendra le nouveau primary
+      podIndex: 1    # Index des Pods, der zum neuen Primary wird
 ```
 
-Appliquez ensuite la modification :
+Wenden Sie dann die Änderung an:
 
 ```bash
 kubectl apply -f mysql.yaml
 ```
 
 :::note
-Le switchover entraîne une **brève interruption** des écritures pendant la bascule. Les lectures restent disponibles sur les réplicas.
+Der Switchover verursacht eine **kurze Unterbrechung** der Schreibvorgänge während des Wechsels. Lesevorgänge bleiben über die Replikas verfügbar.
 :::
 
-### Verwaltung von les utilisateurs et bases de données ?
+### Wie verwalte ich Benutzer und Datenbanken?
 
-Utilisez les maps `users` et `databases` pour définir vos utilisateurs et bases. Chaque utilisateur peut avoir une limite de connexions, et chaque base des rôles `admin` et `readonly` :
+Verwenden Sie die Maps `users` und `databases`, um Ihre Benutzer und Datenbanken zu definieren. Jeder Benutzer kann ein Verbindungslimit haben, und jede Datenbank `admin`- und `readonly`-Rollen:
 
 ```yaml title="mysql.yaml"
 spec:

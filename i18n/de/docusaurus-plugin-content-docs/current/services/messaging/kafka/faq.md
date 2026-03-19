@@ -5,37 +5,37 @@ title: FAQ
 
 # FAQ — Kafka
 
-### Quelle est la différence entre `partitions` et `replicationFactor` ?
+### Was ist der Unterschied zwischen `partitions` und `replicationFactor`?
 
-Ces deux paramètres servent des objectifs distincts :
+Diese beiden Parameter dienen unterschiedlichen Zwecken:
 
-- **`partitions`** : détermine le **parallélisme et le débit** d'un topic. Plus il y a de partitions, plus le nombre de consumers pouvant lire en parallèle est élevé. Chaque partition est une séquence ordonnée de messages.
-- **`replicas`** (facteur de réplication) : détermine le nombre de **copies** de chaque partition réparties sur différents brokers, garantissant la **Hochverfügbarkeit**. Si un broker tombe, une réplique prend le relais.
+- **`partitions`**: Bestimmt die **Parallelität und den Durchsatz** eines Topics. Je mehr Partitionen vorhanden sind, desto mehr Consumer können parallel lesen. Jede Partition ist eine geordnete Sequenz von Nachrichten.
+- **`replicas`** (Replikationsfaktor): Bestimmt die Anzahl der **Kopien** jeder Partition, die auf verschiedene Broker verteilt sind, und gewährleistet die **Hochverfügbarkeit**. Wenn ein Broker ausfällt, übernimmt ein Replikat.
 
 :::warning
-Le nombre de réplicas d'un topic **ne peut pas dépasser** le nombre de brokers disponibles. Par exemple, avec 3 brokers (`kafka.replicas: 3`), vous pouvez configurer au maximum `replicas: 3` sur un topic.
+Die Anzahl der Replikate eines Topics **darf nicht** die Anzahl der verfügbaren Broker überschreiten. Beispielsweise können Sie mit 3 Brokern (`kafka.replicas: 3`) maximal `replicas: 3` für ein Topic konfigurieren.
 :::
 
-### Pourquoi Kafka utilise-t-il ZooKeeper ?
+### Warum verwendet Kafka ZooKeeper?
 
-ZooKeeper assure la **coordination du cluster Kafka** :
+ZooKeeper sorgt für die **Koordination des Kafka-Clusters**:
 
-- **Élection du contrôleur** : désigne le broker leader responsable de la gestion des partitions
-- **Métadonnées des topics** : stocke la liste des topics, partitions et leur assignation aux brokers
-- **Détection des pannes** : surveille l'état des brokers et déclenche la réassignation en cas de défaillance
+- **Controller-Wahl**: Bestimmt den Leader-Broker, der für die Verwaltung der Partitionen verantwortlich ist
+- **Topic-Metadaten**: Speichert die Liste der Topics, Partitionen und deren Zuordnung zu den Brokern
+- **Ausfallerkennung**: Überwacht den Status der Broker und löst bei Ausfall die Neuzuordnung aus
 
 :::tip
-ZooKeeper nécessite un **nombre impair de réplicas** (3, 5, 7...) pour maintenir le quorum. En production, utilisez au minimum `zookeeper.replicas: 3`.
+ZooKeeper erfordert eine **ungerade Anzahl von Replikaten** (3, 5, 7...), um das Quorum aufrechtzuerhalten. Verwenden Sie in der Produktion mindestens `zookeeper.replicas: 3`.
 :::
 
-### À quoi sert `cleanup.policy` sur un topic ?
+### Wozu dient `cleanup.policy` bei einem Topic?
 
-La politique de Bereinigung définit comment Kafka gère les anciens messages :
+Die Bereinigungsrichtlinie definiert, wie Kafka alte Nachrichten verwaltet:
 
-- **`delete`** (par défaut) : supprime les segments de log qui dépassent la durée de rétention définie par `retention.ms`. Adapté aux flux d'événements.
-- **`compact`** : conserve uniquement la **dernière valeur pour chaque clé**. Adapté aux tables de référence ou aux états (changelog).
+- **`delete`** (Standard): Löscht Log-Segmente, die die durch `retention.ms` definierte Aufbewahrungsdauer überschreiten. Geeignet für Ereignisströme.
+- **`compact`**: Behält nur den **letzten Wert für jeden Schlüssel** bei. Geeignet für Referenztabellen oder Zustände (Changelog).
 
-Exemple de configuration :
+Konfigurationsbeispiel:
 
 ```yaml title="kafka.yaml"
 topics:
@@ -46,31 +46,31 @@ topics:
       cleanup.policy: compact
 ```
 
-### Comment fonctionnent les consumer groups ?
+### Wie funktionieren Consumer Groups?
 
-Un **consumer group** est un ensemble de consumers qui se répartissent la lecture des partitions d'un topic :
+Eine **Consumer Group** ist eine Gruppe von Consumern, die sich das Lesen der Partitionen eines Topics aufteilen:
 
-- Chaque partition est lue par **un seul consumer** du groupe à un instant donné
-- Si un consumer tombe, ses partitions sont redistribuées aux autres membres du groupe (**rebalancing**)
-- Plusieurs consumer groups peuvent lire le même topic indépendamment (chacun maintient son propre offset)
+- Jede Partition wird zu einem bestimmten Zeitpunkt von **einem einzigen Consumer** der Gruppe gelesen
+- Wenn ein Consumer ausfällt, werden seine Partitionen an die anderen Mitglieder der Gruppe umverteilt (**Rebalancing**)
+- Mehrere Consumer Groups können dasselbe Topic unabhängig lesen (jede behält ihren eigenen Offset bei)
 
-Cela permet une **consommation parallèle** tout en garantissant l'ordre des messages innerhalb von chaque partition.
+Dies ermöglicht einen **parallelen Konsum** bei gleichzeitiger Gewährleistung der Nachrichtenreihenfolge innerhalb jeder Partition.
 
-### Quelle est la différence entre `resourcesPreset` et `resources` ?
+### Was ist der Unterschied zwischen `resourcesPreset` und `resources`?
 
-Le champ `resourcesPreset` applique une configuration CPU/mémoire prédéfinie, tandis que `resources` permet de spécifier des valeurs explicites. Si `resources` est défini, `resourcesPreset` est **ignoré**.
+Das Feld `resourcesPreset` wendet eine vordefinierte CPU-/Speicherkonfiguration an, während `resources` die Angabe expliziter Werte ermöglicht. Wenn `resources` definiert ist, wird `resourcesPreset` **ignoriert**.
 
-| **Preset** | **CPU** | **Mémoire** |
-| ---------- | ------- | ----------- |
-| `nano`     | 250m    | 128Mi       |
-| `micro`    | 500m    | 256Mi       |
-| `small`    | 1       | 512Mi       |
-| `medium`   | 1       | 1Gi         |
-| `large`    | 2       | 2Gi         |
-| `xlarge`   | 4       | 4Gi         |
-| `2xlarge`  | 8       | 8Gi         |
+| **Preset** | **CPU** | **Speicher** |
+| ---------- | ------- | ------------ |
+| `nano` | 250m | 128Mi |
+| `micro` | 500m | 256Mi |
+| `small` | 1 | 512Mi |
+| `medium` | 1 | 1Gi |
+| `large` | 2 | 2Gi |
+| `xlarge` | 4 | 4Gi |
+| `2xlarge` | 8 | 8Gi |
 
-Exemple avec des ressources explicites :
+Beispiel mit expliziten Ressourcen:
 
 ```yaml title="kafka.yaml"
 kafka:
@@ -81,9 +81,9 @@ kafka:
   size: 50Gi
 ```
 
-### Comment exposer Kafka à l'extérieur du cluster ?
+### Wie kann Kafka außerhalb des Clusters exponiert werden?
 
-Activez le paramètre `external: true` dans votre manifeste :
+Aktivieren Sie den Parameter `external: true` in Ihrem Manifest:
 
 ```yaml title="kafka.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -102,15 +102,15 @@ spec:
     size: 5Gi
 ```
 
-Cela crée un service de type **LoadBalancer** pour chaque broker, permettant l'accès depuis l'extérieur du cluster Kubernetes.
+Dies erstellt einen **LoadBalancer**-Service für jeden Broker, der den Zugang von außerhalb des Kubernetes-Clusters ermöglicht.
 
 :::warning
-L'exposition externe rend vos brokers accessibles sur Internet. Assurez-vous que l'authentification et le chiffrement sont correctement configurés avant d'aktiviertr cette option.
+Die externe Exposition macht Ihre Broker über das Internet zugänglich. Stellen Sie sicher, dass Authentifizierung und Verschlüsselung korrekt konfiguriert sind, bevor Sie diese Option aktivieren.
 :::
 
-### Konfiguration von `min.insync.replicas` ?
+### Wie konfiguriert man `min.insync.replicas`?
 
-Le paramètre `min.insync.replicas` garantit qu'un nombre minimum de réplicas confirme chaque écriture avant qu'elle ne soit considérée comme réussie. C'est une configuration au niveau du **topic** :
+Der Parameter `min.insync.replicas` stellt sicher, dass eine Mindestanzahl von Replikaten jeden Schreibvorgang bestätigt, bevor er als erfolgreich gilt. Dies ist eine Konfiguration auf **Topic**-Ebene:
 
 ```yaml title="kafka.yaml"
 topics:
@@ -122,5 +122,5 @@ topics:
 ```
 
 :::tip
-Pour un cluster de production avec 3 réplicas, configurez `min.insync.replicas: 2`. Cela tolère la perte d'un broker tout en garantissant la durabilité des données.
+Konfigurieren Sie für einen Produktionscluster mit 3 Replikaten `min.insync.replicas: 2`. Dies toleriert den Ausfall eines Brokers und gewährleistet gleichzeitig die Datenhaltbarkeit.
 :::

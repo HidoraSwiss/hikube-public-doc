@@ -3,24 +3,24 @@ sidebar_position: 2
 title: Schnellstart
 ---
 
-# Utiliser les GPU auf Hikube
+# GPUs auf Hikube nutzen
 
-Ce guide présente les deux méthodes d'utilisation des GPU : avec des machines virtuelles et avec des clusters Kubernetes.
-
----
-
-## 🎯 Méthodes d'Usage
-
-Hikube bietet deux approches pour utiliser les GPU :
-
-1. **GPU avec VM** : Attachment direct d'un GPU à une machine virtuelle
-2. **GPU avec Kubernetes** : Allocation de GPU aux workers pour utilisation par les pods
+Diese Anleitung stellt die beiden Methoden zur GPU-Nutzung vor: mit virtuellen Maschinen und mit Kubernetes-Clustern.
 
 ---
 
-## 🖥️ Méthode 1 : GPU avec Machine Virtuelle
+## 🎯 Nutzungsmethoden
 
-### **Étape 1 : Créer le disque**
+Hikube bietet zwei Ansätze zur GPU-Nutzung:
+
+1. **GPU mit VM**: Direktes Anhängen eines GPU an eine virtuelle Maschine
+2. **GPU mit Kubernetes**: GPU-Zuweisung an Worker zur Nutzung durch Pods
+
+---
+
+## 🖥️ Methode 1: GPU mit Virtueller Maschine
+
+### **Schritt 1: Festplatte erstellen**
 
 ```yaml title="vm-disk.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -36,7 +36,7 @@ spec:
   storageClass: "replicated"
 ```
 
-### **Étape 2 : Créer la VM avec GPU**
+### **Schritt 2: VM mit GPU erstellen**
 
 ```yaml title="vm-gpu.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -57,22 +57,22 @@ spec:
   externalPorts:
     - 22
   sshKeys:
-    - "ssh-rsa AAAAB3NzaC... votre-clé-publique"
+    - "ssh-rsa AAAAB3NzaC... ihr-oeffentlicher-schluessel"
   cloudInit: |
     #cloud-config
     users:
       - name: ubuntu
         sudo: ALL=(ALL) NOPASSWD:ALL
         shell: /bin/bash
-    
+
     package_update: true
     packages:
       - curl
       - wget
       - build-essential
-    
+
     runcmd:
-      # Installation pilotes NVIDIA
+      # NVIDIA-Treiber installieren
       - wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.0-1_all.deb
       - dpkg -i cuda-keyring_1.0-1_all.deb
       - apt-get update
@@ -80,31 +80,31 @@ spec:
       - nvidia-smi -pm 1
 ```
 
-### **Étape 3 : Déployer**
+### **Schritt 3: Bereitstellen**
 
 ```bash
 kubectl apply -f vm-disk.yaml
 kubectl apply -f vm-gpu.yaml
 
-# Vérifier l'état
+# Status überprüfen
 kubectl get virtualmachine vm-gpu-example
 ```
 
-### **Étape 4 : Accéder et tester**
+### **Schritt 4: Zugreifen und testen**
 
 ```bash
-# Accès SSH
+# SSH-Zugang
 virtctl ssh ubuntu@vm-gpu-example
 
-# Vérifier le GPU
+# GPU überprüfen
 nvidia-smi
 ```
 
 ---
 
-## ☸️ Méthode 2 : GPU avec Kubernetes
+## ☸️ Methode 2: GPU mit Kubernetes
 
-### **Étape 1 : Créer un cluster avec workers GPU**
+### **Schritt 1: Cluster mit GPU-Workern erstellen**
 
 ```yaml title="cluster-gpu.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -114,9 +114,9 @@ metadata:
 spec:
   controlPlane:
     replicas: 1
-  
+
   nodeGroups:
-    # Workers GPU
+    # GPU-Worker
     gpu-nodes:
       minReplicas: 1
       maxReplicas: 3
@@ -124,40 +124,40 @@ spec:
       ephemeralStorage: 100Gi
       gpus:
         - name: "nvidia.com/AD102GL_L40S"
-    
-    # Workers standard (optionnel)
+
+    # Standard-Worker (optional)
     standard-nodes:
       minReplicas: 1
       maxReplicas: 2
       instanceType: "s1.medium"
       ephemeralStorage: 50Gi
-  
+
   storageClass: "replicated"
 ```
 
-### **Étape 2 : Déployer le cluster**
+### **Schritt 2: Cluster bereitstellen**
 
 ```bash
 kubectl apply -f cluster-gpu.yaml
 
-# Attendre que le cluster soit prêt
+# Warten, bis der Cluster bereit ist
 kubectl get kubernetes cluster-gpu -w
 ```
 
-### **Étape 3 : Configurer l'accès**
+### **Schritt 3: Zugang konfigurieren**
 
 ```bash
-# Récupérer le kubeconfig
+# Kubeconfig abrufen
 kubectl get secret cluster-gpu-admin-kubeconfig \
   -o go-template='{{ printf "%s\n" (index .data "super-admin.conf" | base64decode) }}' \
   > cluster-gpu-kubeconfig.yaml
 
-# Utiliser le cluster GPU
+# GPU-Cluster verwenden
 export KUBECONFIG=cluster-gpu-kubeconfig.yaml
 kubectl get nodes
 ```
 
-### **Étape 4 : Déployer un pod GPU**
+### **Schritt 4: GPU-Pod bereitstellen**
 
 ```yaml title="pod-gpu.yaml"
 apiVersion: v1
@@ -179,66 +179,66 @@ spec:
 ```bash
 kubectl apply -f pod-gpu.yaml
 
-# Vérifier l'allocation GPU
+# GPU-Zuweisung überprüfen
 kubectl describe pod gpu-test
 
-# Tester le GPU
+# GPU testen
 kubectl exec -it gpu-test -- nvidia-smi
 ```
 
 ---
 
-## 📋 Comparaison Pratique
+## 📋 Praktischer Vergleich
 
-| **Aspect** | **VM GPU** | **Kubernetes GPU** |
+| **Aspekt** | **VM GPU** | **Kubernetes GPU** |
 |------------|------------|-------------------|
-| **Temps setup** | ~5 minutes | ~10 minutes |
-| **Complexité** | Simple | Modérée |
-| **Isolation** | Totale | Partielle |
-| **Flexibilité** | Limitée | Élevée |
-| **Scaling** | Manuel | Automatique |
+| **Setup-Zeit** | ~5 Minuten | ~10 Minuten |
+| **Komplexität** | Einfach | Moderat |
+| **Isolation** | Vollständig | Teilweise |
+| **Flexibilität** | Begrenzt | Hoch |
+| **Skalierung** | Manuell | Automatisch |
 
 ---
 
-## 🔧 Types de GPU Disponibles
+## 🔧 Verfügbare GPU-Typen
 
-### **Configuration selon l'usage**
+### **Konfiguration nach Anwendungsfall**
 
 ```yaml
-# Pour inférence/développement
+# Für Inferenz/Entwicklung
 gpus:
   - name: "nvidia.com/AD102GL_L40S"  # 48 GB GDDR6
 
-# Pour entraînement ML
+# Für ML-Training
 gpus:
   - name: "nvidia.com/GA100_A100_PCIE_80GB"  # 80 GB HBM2e
 
-# Pour LLM/calcul exascale
+# Für LLM/Exascale-Rechnen
 gpus:
   - name: "nvidia.com/H100_94GB"  # 80 GB HBM3
 ```
 
 ---
 
-## ✅ Überprüfungs Post-Deployment
+## ✅ Überprüfungen nach der Bereitstellung
 
 ### **VM GPU**
 
 ```bash
-# Vérifier le GPU
+# GPU überprüfen
 virtctl ssh ubuntu@vm-gpu-example -- nvidia-smi
 
-# Test CUDA
+# CUDA testen
 virtctl ssh ubuntu@vm-gpu-example -- nvcc --version
 ```
 
 ### **Kubernetes GPU**
 
 ```bash
-# Voir les ressources GPU disponibles
+# Verfügbare GPU-Ressourcen anzeigen
 kubectl describe nodes
 
-# Vérifier l'allocation
+# Zuweisung überprüfen
 kubectl top nodes
 ```
 
@@ -246,42 +246,42 @@ kubectl top nodes
 
 ## Bereinigung
 
-### Supprimer une VM GPU
+### GPU-VM löschen
 
 ```bash
 kubectl delete -f vm-gpu.yaml
 kubectl delete -f vm-disk.yaml
 ```
 
-### Supprimer un cluster Kubernetes GPU
+### GPU-Kubernetes-Cluster löschen
 
 ```bash
 kubectl delete -f cluster-gpu.yaml
 ```
 
 :::warning
-Ces actions suppriment les ressources GPU et toutes les données associées. Ces opérations sont **irréversibles**.
+Diese Aktionen löschen die GPU-Ressourcen und alle zugehörigen Daten. Diese Operationen sind **unwiderruflich**.
 :::
 
 ---
 
-## 🚀 Prochaines Étapes
+## 🚀 Nächste Schritte
 
-### **Pour approfondir VM GPU :**
+### **VM GPU vertiefen:**
 
-- [Configuration avancée VM](./api-reference.md)
-- [Types d'instances optimisées](../compute/api-reference.md)
+- [Erweiterte VM-Konfiguration](./api-reference.md)
+- [Optimierte Instanztypen](../compute/api-reference.md)
 
-### **Pour approfondir Kubernetes GPU :**
+### **Kubernetes GPU vertiefen:**
 
-- [Clusters avec GPU](../kubernetes/api-reference.md)
-- [Scaling automatique](../kubernetes/overview.md)
+- [Cluster mit GPU](../kubernetes/api-reference.md)
+- [Automatische Skalierung](../kubernetes/overview.md)
 
 ---
 
-## 💡 Conseils
+## 💡 Tipps
 
-- **VM GPU** : Idéal pour prototypage et applications legacy
-- **Kubernetes GPU** : Recommandé pour workloads de production scalables
-- Commencez par **L40S** pour tester avant d'utiliser A100/H100
-- Utilisez `replicated` storage class pour la production
+- **VM GPU**: Ideal für Prototyping und Legacy-Anwendungen
+- **Kubernetes GPU**: Empfohlen für skalierbare Produktions-Workloads
+- Beginnen Sie mit **L40S** zum Testen, bevor Sie A100/H100 verwenden
+- Verwenden Sie die `replicated` Storage Class für die Produktion

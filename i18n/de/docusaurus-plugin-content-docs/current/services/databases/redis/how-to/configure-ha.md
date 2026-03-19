@@ -1,22 +1,22 @@
 ---
-title: "Konfiguration von la Hochverfügbarkeit Redis"
+title: "Redis-Hochverfügbarkeit konfigurieren"
 ---
 
-# Konfiguration von la Hochverfügbarkeit Redis
+# Redis-Hochverfügbarkeit konfigurieren
 
-Dieser Leitfaden erklärt comment deployer un cluster Redis hautement disponible sur Hikube. Le service s'appuie sur l'operateur **Spotahome Redis Operator** qui utilise **Redis Sentinel** pour assurer le failover automatique lorsque 3 replicas ou plus sont configures.
+Diese Anleitung erklärt, wie Sie einen hochverfügbaren Redis-Cluster auf Hikube bereitstellen. Der Dienst basiert auf dem Operator **Spotahome Redis Operator**, der **Redis Sentinel** für automatisches Failover verwendet, wenn 3 oder mehr Replikas konfiguriert sind.
 
 ## Voraussetzungen
 
 - `kubectl` konfiguriert für die Interaktion mit der Hikube-API
-- Connaissance des bases de Redis (siehe [Schnellstart](../quick-start.md))
-- Un environnement de production necessitant de la Hochverfügbarkeit
+- Grundkenntnisse über Redis (siehe [Schnellstart](../quick-start.md))
+- Eine Produktionsumgebung, die Hochverfügbarkeit erfordert
 
 ## Schritte
 
-### 1. Configurer le manifeste avec 3+ replicas
+### 1. Manifest mit 3+ Replikas konfigurieren
 
-Pour aktiviertr la Hochverfügbarkeit, configurez au minimum 3 replicas. Redis Sentinel est automatiquement deploye par l'operateur Spotahome pour orchestrer l'election du leader et le failover :
+Um Hochverfügbarkeit zu aktivieren, konfigurieren Sie mindestens 3 Replikas. Redis Sentinel wird automatisch vom Spotahome-Operator bereitgestellt, um die Leader-Wahl und das Failover zu orchestrieren:
 
 ```yaml title="redis-ha.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -32,7 +32,7 @@ spec:
 ```
 
 :::note
-Le `storageClass: replicated` garantit que les volumes persistants sont repliques au niveau du stockage, protegeant les donnees contre la perte d'un noeud physique.
+Die `storageClass: replicated` garantiert, dass die persistenten Volumes auf Speicherebene repliziert werden und die Daten gegen den Verlust eines physischen Knotens schützen.
 :::
 
 ### 2. Konfiguration anwenden
@@ -41,16 +41,16 @@ Le `storageClass: replicated` garantit que les volumes persistants sont replique
 kubectl apply -f redis-ha.yaml
 ```
 
-### 3. Verifier le cluster Redis
+### 3. Redis-Cluster überprüfen
 
-Attendez que tous les pods soient prets :
+Warten Sie, bis alle Pods bereit sind:
 
 ```bash
-# Verifier l'etat des pods Redis
+# Status der Redis-Pods prüfen
 kubectl get pods -l app.kubernetes.io/instance=my-redis-ha -w
 ```
 
-**Erwartetes Ergebnis :**
+**Erwartetes Ergebnis:**
 
 ```console
 NAME                READY   STATUS    RESTARTS   AGE
@@ -59,57 +59,57 @@ my-redis-ha-1       1/1     Running   0          2m
 my-redis-ha-2       1/1     Running   0          1m
 ```
 
-Verifiez egalement le statut de Redis Sentinel :
+Überprüfen Sie auch den Status von Redis Sentinel:
 
 ```bash
-# Verifier les pods Sentinel
+# Sentinel-Pods prüfen
 kubectl get pods -l app.kubernetes.io/component=sentinel,app.kubernetes.io/instance=my-redis-ha
 ```
 
-### 4. Comprendre le failover automatique
+### 4. Automatisches Failover verstehen
 
-Avec 3 replicas, Redis Sentinel assure les fonctions suivantes :
+Mit 3 Replikas gewährleistet Redis Sentinel folgende Funktionen:
 
-- **Detection de panne** : Sentinel surveille en continu le noeud maitre et les replicas
-- **Election automatique** : si le maitre tombe, Sentinel elit un nouveau maitre parmi les replicas disponibles
-- **Reconfiguration** : les replicas restants sont automatiquement reconfigures pour repliquer depuis le nouveau maitre
+- **Ausfallerkennung**: Sentinel überwacht kontinuierlich den Master-Knoten und die Replikas
+- **Automatische Wahl**: Wenn der Master ausfällt, wählt Sentinel einen neuen Master unter den verfügbaren Replikas
+- **Rekonfiguration**: Die verbleibenden Replikas werden automatisch rekonfiguriert, um vom neuen Master zu replizieren
 
 :::tip
-Le failover est entierement automatique. Aucune intervention manuelle n'est necessaire. Le temps de basculement est generalement de quelques secondes.
+Das Failover ist vollständig automatisch. Kein manueller Eingriff ist erforderlich. Die Umschaltzeit beträgt in der Regel wenige Sekunden.
 :::
 
-### 5. Recuperer le mot de passe
+### 5. Passwort abrufen
 
-Avec `authEnabled: true`, un mot de passe est genere automatiquement et stocke dans un Secret Kubernetes :
+Mit `authEnabled: true` wird ein Passwort automatisch generiert und in einem Kubernetes-Secret gespeichert:
 
 ```bash
-# Recuperer le nom du secret
+# Secret-Name abrufen
 kubectl get secrets | grep my-redis-ha
 
-# Extraire le mot de passe
+# Passwort extrahieren
 kubectl get secret my-redis-ha -o jsonpath='{.data.password}' | base64 -d
 ```
 
 :::warning
-Activez toujours `authEnabled: true` en production. Sans authentification, toute application ayant acces au reseau du cluster peut lire et ecrire dans Redis.
+Aktivieren Sie in der Produktion immer `authEnabled: true`. Ohne Authentifizierung kann jede Anwendung mit Zugriff auf das Cluster-Netzwerk in Redis lesen und schreiben.
 :::
 
 ## Überprüfung
 
-Überprüfen Sie, ob le cluster HA fonctionne correctement :
+Überprüfen Sie, dass der HA-Cluster korrekt funktioniert:
 
 ```bash
-# Verifier la ressource Redis
+# Redis-Ressource prüfen
 kubectl get redis my-redis-ha
 
-# Verifier que tous les pods sont Running
+# Prüfen, ob alle Pods Running sind
 kubectl get pods -l app.kubernetes.io/instance=my-redis-ha
 
-# Verifier les services exposes
+# Freigegebene Services prüfen
 kubectl get svc -l app.kubernetes.io/instance=my-redis-ha
 ```
 
-**Erwartetes Ergebnis :**
+**Erwartetes Ergebnis:**
 
 ```console
 NAME                     TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)     AGE
@@ -119,5 +119,5 @@ my-redis-ha-sentinel     ClusterIP   10.96.xxx.xxx   <none>        26379/TCP   5
 
 ## Weiterführende Informationen
 
-- [API-Referenz](../api-reference.md) -- Parametres `replicas`, `authEnabled` et `storageClass`
-- [Skalierung von verticalement Redis](./scale-resources.md) -- Ajuster les ressources CPU et memoire
+- [API-Referenz](../api-reference.md) -- Parameter `replicas`, `authEnabled` und `storageClass`
+- [Redis vertikal skalieren](./scale-resources.md) -- CPU- und Speicherressourcen anpassen

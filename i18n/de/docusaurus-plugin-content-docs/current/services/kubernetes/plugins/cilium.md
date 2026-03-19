@@ -7,7 +7,7 @@ title: Cilium
 
 Das Feld `addons.cilium` definiert die Konfiguration des Add-ons **Cilium**, das als **CNI (Container Network Interface)** für den Kubernetes-Cluster verwendet wird.
 Cilium verwaltet das Netzwerk, die Sicherheit und die Observability der Pods mithilfe von **BPF (Berkeley Packet Filter)**.
-Dieses Feld ermöglicht die Anpassung des Deployments über spezifische Werte.
+Dieses Feld ermöglicht die Anpassung der Komponentenbereitstellung über spezifische Werte.
 
 ```yaml
 addons:
@@ -45,10 +45,10 @@ cilium:
 
 ### Beschreibung
 
-Das Feld `valuesOverride` ermöglicht das **Überschreiben der Standardwerte**, die beim Deployment von Cilium verwendet werden.
+Das Feld `valuesOverride` ermöglicht das **Überschreiben der Standardwerte**, die bei der Bereitstellung von Cilium verwendet werden.
 Es dient zur Anpassung des CNI-Verhaltens, ohne das Haupt-Chart zu ändern.
 Diese Werte können die Konfiguration von **Hubble**, der Verschlüsselung, der Netzwerkrichtlinien oder der zugewiesenen Ressourcen umfassen.
-Weitere definierbare Werte: https://docs.cilium.io/en/stable/helm-reference/
+Für weitere konfigurierbare Werte: https://docs.cilium.io/en/stable/helm-reference/
 
 ### Beispiel
 
@@ -65,9 +65,9 @@ valuesOverride:
 
 ## 💡 Best Practices
 
-- Immer `valuesOverride` definieren, um die Kontrolle über die Netzwerkkonfiguration zu behalten.
-- **Hubble** (`hubble.enabled: true`) aktivieren, um von der Netzwerksichtbarkeit und Flussverfolgung zu profitieren.
-- `encryption.enabled: true` verwenden, um den Inter-Pod-Traffic in sensiblen Umgebungen zu verschlüsseln.
-- Die Kompatibilität der Cilium-Version mit der Kubernetes-Cluster-Version überprüfen.
+- Definieren Sie immer `valuesOverride`, um die Kontrolle über die Netzwerkkonfiguration zu behalten.
+- Aktivieren Sie **Hubble** (`hubble.enabled: true`), um von der Netzwerk-Sichtbarkeit und der Flussverfolgung zu profitieren.
+- Verwenden Sie `encryption.enabled: true`, um den Inter-Pod-Datenverkehr in sensiblen Umgebungen zu verschlüsseln.
+- Prüfen Sie die Kompatibilität der Cilium-Version mit der Kubernetes-Cluster-Version.
 
 ---

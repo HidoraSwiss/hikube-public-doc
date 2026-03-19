@@ -1,120 +1,120 @@
 ---
 sidebar_position: 1
-title: Übersicht des GPU
+title: GPU-Übersicht
 ---
 
-# GPUs sur Hikube
+# GPUs auf Hikube
 
-Hikube bietet l'accès aux accélérateurs **NVIDIA** via GPU Passthrough, permettant l'exécution de workloads nécessitant une accélération matérielle. Les GPU sont disponibles pour deux types de workloads : machines virtuelles et pods Kubernetes.
-
----
-
-## 🎯 Types d'Utilisation
-
-### **GPU avec Machines Virtuelles**
-
-Les GPU peuvent être attachés directement aux machines virtuelles via GPU passthrough VFIO-PCI, offrant un accès complet et exclusif à l'accélérateur.
-
-**Anwendungsfälle :**
-
-- Applications nécessitant un contrôle complet du GPU
-- Workloads legacy ou spécialisés
-- Environnements de développement isolés
-- Applications graphiques (rendu, CAO)
-
-### **GPU avec Kubernetes**
-
-Les GPU peuvent être alloués aux workers Kubernetes et ensuite assignés aux pods via les resource requests/limits.
-
-**Anwendungsfälle :**
-
-- Workloads containerisés d'IA/ML
-- Scaling automatique des applications GPU
-- Partage de ressources GPU entre applications
-- Orchestration complexe de jobs parallèles
+Hikube bietet Zugang zu **NVIDIA**-Beschleunigern über GPU Passthrough, was die Ausführung von Workloads ermöglicht, die Hardware-Beschleunigung benötigen. GPUs sind für zwei Arten von Workloads verfügbar: Virtuelle Maschinen und Kubernetes-Pods.
 
 ---
 
-## 🖥️ Hardware Disponible
+## 🎯 Nutzungsarten
 
-Hikube bietet trois types de GPU NVIDIA :
+### **GPU mit Virtuellen Maschinen**
+
+GPUs können direkt an virtuelle Maschinen über GPU Passthrough VFIO-PCI angehängt werden und bieten einen vollständigen und exklusiven Zugang zum Beschleuniger.
+
+**Anwendungsfälle:**
+
+- Anwendungen, die vollständige Kontrolle über den GPU erfordern
+- Legacy- oder spezialisierte Workloads
+- Isolierte Entwicklungsumgebungen
+- Grafische Anwendungen (Rendering, CAD)
+
+### **GPU mit Kubernetes**
+
+GPUs können Kubernetes-Workern zugewiesen und dann über Resource Requests/Limits den Pods zugeordnet werden.
+
+**Anwendungsfälle:**
+
+- Containerisierte KI/ML-Workloads
+- Automatische Skalierung von GPU-Anwendungen
+- GPU-Ressourcenteilung zwischen Anwendungen
+- Komplexe Orchestrierung paralleler Jobs
+
+---
+
+## 🖥️ Verfügbare Hardware
+
+Hikube bietet drei Typen von NVIDIA-GPUs:
 
 ### **NVIDIA L40S**
 
-- **Architecture** : Ada Lovelace
-- **Mémoire** : 48 GB GDDR6 avec ECC
-- **Performance** : 362 TOPS (INT8), 91.6 TFLOPs (FP32)
-- **Usage typique** : IA générative, inférence, rendu temps réel
+- **Architektur**: Ada Lovelace
+- **Speicher**: 48 GB GDDR6 mit ECC
+- **Leistung**: 362 TOPS (INT8), 91.6 TFLOPs (FP32)
+- **Typischer Einsatz**: Generative KI, Inferenz, Echtzeit-Rendering
 
 ### **NVIDIA A100**
 
-- **Architecture** : Ampere
-- **Mémoire** : 80 GB HBM2e avec ECC
-- **Performance** : 312 TOPS (INT8), 624 TFLOPs (Tensor)
-- **Usage typique** : Entraînement ML, calcul haute performance
+- **Architektur**: Ampere
+- **Speicher**: 80 GB HBM2e mit ECC
+- **Leistung**: 312 TOPS (INT8), 624 TFLOPs (Tensor)
+- **Typischer Einsatz**: ML-Training, Hochleistungsrechnen
 
 ### **NVIDIA H100**
 
-- **Architecture** : Hopper
-- **Mémoire** : 80 GB HBM3 avec ECC
-- **Performance** : 1979 TOPS (INT8), 989 TFLOPs (Tensor)
-- **Usage typique** : LLM, transformers, calcul exascale
+- **Architektur**: Hopper
+- **Speicher**: 80 GB HBM3 mit ECC
+- **Leistung**: 1979 TOPS (INT8), 989 TFLOPs (Tensor)
+- **Typischer Einsatz**: LLM, Transformers, Exascale-Rechnen
 
 ---
 
-## 🏗️ Architecture
+## 🏗️ Architektur
 
-### **Allocation GPU avec VMs**
+### **GPU-Zuweisung mit VMs**
 
 ```mermaid
 flowchart TD
-    subgraph HIKUBE["Infrastructure Hikube"]
-        subgraph NODE["Nœud Physique"]
+    subgraph HIKUBE["Hikube-Infrastruktur"]
+        subgraph NODE["Physischer Knoten"]
             GPU1["🎮 GPU L40S"]
             GPU2["🎮 GPU A100"]
             GPU3["🎮 GPU H100"]
         end
-        
+
         subgraph VM1["VM Instance"]
-            APP1["Application GPU"]
+            APP1["GPU-Anwendung"]
         end
     end
-    
+
     GPU1 --> VM1
     VM1 --> APP1
-    
+
     style GPU1 fill:#90EE90
     style VM1 fill:#FFE4B5
     style APP1 fill:#ADD8E6
 ```
 
-### **Allocation GPU avec Kubernetes**
+### **GPU-Zuweisung mit Kubernetes**
 
 ```mermaid
 flowchart TD
-    subgraph CLUSTER["Cluster Kubernetes"]
+    subgraph CLUSTER["Kubernetes-Cluster"]
         subgraph WORKER["Worker Node"]
             GPU1["🎮 GPU L40S"]
             GPU2["🎮 GPU A100"]
             KUBELET["kubelet"]
         end
-        
+
         subgraph POD1["Pod"]
-            CONTAINER1["Container GPU"]
+            CONTAINER1["GPU-Container"]
         end
-        
+
         subgraph POD2["Pod"]
-            CONTAINER2["Container GPU"]
+            CONTAINER2["GPU-Container"]
         end
     end
-    
+
     GPU1 --> KUBELET
     GPU2 --> KUBELET
     KUBELET --> POD1
     KUBELET --> POD2
     POD1 --> CONTAINER1
     POD2 --> CONTAINER2
-    
+
     style GPU1 fill:#90EE90
     style GPU2 fill:#90EE90
     style POD1 fill:#FFE4B5
@@ -123,9 +123,9 @@ flowchart TD
 
 ---
 
-## ⚙️ Configuration
+## ⚙️ Konfiguration
 
-### **GPU sur VM**
+### **GPU auf VM**
 
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
@@ -136,7 +136,7 @@ spec:
     - name: "nvidia.com/AD102GL_L40S"
 ```
 
-### **GPU sur Kubernetes Worker**
+### **GPU auf Kubernetes Worker**
 
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
@@ -149,7 +149,7 @@ spec:
         - name: "nvidia.com/AD102GL_L40S"
 ```
 
-### **GPU dans Pod Kubernetes**
+### **GPU in Kubernetes-Pod**
 
 ```yaml
 apiVersion: v1
@@ -165,27 +165,27 @@ spec:
 
 ---
 
-## 📋 Comparaison des Approches
+## 📋 Vergleich der Ansätze
 
-| **Aspect** | **GPU sur VM** | **GPU sur Kubernetes** |
+| **Aspekt** | **GPU auf VM** | **GPU auf Kubernetes** |
 |------------|----------------|------------------------|
-| **Isolation** | Complète (1 GPU = 1 VM) | Partagée (orchestrée) |
-| **Performance** | Native (passthrough) | Native (device plugin) |
-| **Gestion** | Manuelle | Automatisée |
-| **Scaling** | Vertical uniquement | Horizontal + Vertical |
-| **Partage** | Non | Oui (entre pods) |
-| **Complexité** | Simple | Complexe |
+| **Isolation** | Vollständig (1 GPU = 1 VM) | Geteilt (orchestriert) |
+| **Leistung** | Nativ (Passthrough) | Nativ (Device Plugin) |
+| **Verwaltung** | Manuell | Automatisiert |
+| **Skalierung** | Nur vertikal | Horizontal + Vertikal |
+| **Teilung** | Nein | Ja (zwischen Pods) |
+| **Komplexität** | Einfach | Komplex |
 
 ---
 
-## 🚀 Prochaines Étapes
+## 🚀 Nächste Schritte
 
-### **Pour les Machines Virtuelles**
+### **Für Virtuelle Maschinen**
 
-- [Créer une VM GPU](./quick-start.md) → Praktischer Leitfaden
-- [API Reference](./api-reference.md) → Configuration complète
+- [GPU-VM erstellen](./quick-start.md) → Praktische Anleitung
+- [API-Referenz](./api-reference.md) → Vollständige Konfiguration
 
-### **Pour Kubernetes**
+### **Für Kubernetes**
 
-- [Clusters GPU](../kubernetes/overview.md) → Workers avec GPU
-  - [Configuration avancée](../kubernetes/api-reference.md) → NodeGroups GPU
+- [GPU-Cluster](../kubernetes/overview.md) → Worker mit GPU
+  - [Erweiterte Konfiguration](../kubernetes/api-reference.md) → GPU-NodeGroups

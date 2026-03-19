@@ -5,39 +5,39 @@ title: Übersicht
 
 # ClickHouse auf Hikube
 
-Les **bases de données ClickHouse** d’Hikube offrent un système de gestion SQL open source, haute performance et orienté colonnes, conçu pour le traitement analytique en ligne (OLAP). Elles garantissent l’ingestion rapide de données massives, l’exécution de requêtes complexes en temps quasi réel et la fiabilité nécessaire aux applications analytiques critiques des entreprises.
+Die **ClickHouse-Datenbanken** von Hikube bieten ein leistungsstarkes, spaltenorientiertes Open-Source-SQL-Datenbankmanagementsystem, das für die analytische Online-Verarbeitung (OLAP) konzipiert ist. Sie garantieren die schnelle Aufnahme massiver Datenmengen, die Ausführung komplexer Abfragen in nahezu Echtzeit und die für geschäftskritische Analyseanwendungen erforderliche Zuverlässigkeit.
 
 ---
 
-## 🏗️ Architecture et Fonctionnement
+## 🏗️ Architektur und Funktionsweise
 
-L’architecture de ClickHouse repose sur deux paramètres essentiels qui permettent d’adapter le Deployment aux besoins réels :  
+Die ClickHouse-Architektur basiert auf zwei wesentlichen Parametern, die die Bereitstellung an die tatsächlichen Bedürfnisse anpassen:
 
-- **Shards** → ils permettent de **répartir les données en plusieurs morceaux** sur différents nœuds. Plus il y a de shards, plus la charge est distribuée, ce qui améliore la vitesse d’exécution des requêtes sur de très grands volumes.  
-- **Réplicas** → ils créent des **copies redondantes** des shards. Cela augmente la résilience et la tolérance aux pannes, tout en permettant de répartir la charge de lecture entre plusieurs nœuds.  
+- **Shards** → ermöglichen die **Aufteilung der Daten in mehrere Teile** auf verschiedenen Knoten. Je mehr Shards, desto besser wird die Last verteilt, was die Ausführungsgeschwindigkeit von Abfragen über sehr große Volumen verbessert.
+- **Replikas** → erstellen **redundante Kopien** der Shards. Dies erhöht die Resilienz und Fehlertoleranz und ermöglicht gleichzeitig die Verteilung der Leselast auf mehrere Knoten.
 
-### 🔎 Exemple illustratif
+### 🔎 Anschauliches Beispiel
 
-Imaginons une base de **1 milliard d’enregistrements clients** :  
+Stellen Sie sich eine Datenbank mit **1 Milliarde Kundendatensätzen** vor:
 
-- **1 shard – 1 réplica**  
-  Toutes les données sont stockées dans un seul espace.  
-  **Cas d’usage :**  
-  - Projets pilotes (POC)  
-  - Environnements de développement  
-  - Charges analytiques ponctuelles  
+- **1 Shard – 1 Replika**
+  Alle Daten werden in einem einzigen Bereich gespeichert.
+  **Anwendungsfälle:**
+  - Pilotprojekte (POC)
+  - Entwicklungsumgebungen
+  - Gelegentliche Analyselasten
 
-- **2 shards – 1 réplica**  
-  Les données sont divisées en deux parties (par ex. clients A–M et N–Z). Les requêtes sont exécutées en parallèle, ce qui accélère considérablement l’analyse.  
-  **Cas d’usage :**  
-  - Analyses sur de grands volumes de données  
-  - Applications nécessitant de meilleures performances  
-  - Rapports réguliers sur de larges bases clients ou transactions  
+- **2 Shards – 1 Replika**
+  Die Daten werden in zwei Teile aufgeteilt (z.B. Kunden A–M und N–Z). Die Abfragen werden parallel ausgeführt, was die Analyse erheblich beschleunigt.
+  **Anwendungsfälle:**
+  - Analysen über große Datenvolumen
+  - Anwendungen, die bessere Leistung erfordern
+  - Regelmäßige Berichte über große Kunden- oder Transaktionsdatenbanken
 
-- **2 shards – 2 réplicas**  
-  Chaque shard est dupliqué sur un autre nœud. On bénéficie à la fois de la rapidité (données distribuées) et de la sécurité (tolérance aux pannes).  
-  **Cas d’usage :**  
-  - Applications analytiques critiques en production  
-  - Besoins de Hochverfügbarkeit  
-  - Plateformes multi-utilisateurs avec forte concurrence de requêtes  
-  - Plans de reprise après sinistre (DRP)  
+- **2 Shards – 2 Replikas**
+  Jeder Shard wird auf einem anderen Knoten dupliziert. Man profitiert gleichzeitig von Geschwindigkeit (verteilte Daten) und Sicherheit (Fehlertoleranz).
+  **Anwendungsfälle:**
+  - Geschäftskritische Produktions-Analyseanwendungen
+  - Hochverfügbarkeitsanforderungen
+  - Multi-User-Plattformen mit hoher Abfragekonkurrenz
+  - Disaster-Recovery-Pläne (DRP)

@@ -1,22 +1,22 @@
 ---
-title: "Verwaltung von les utilisateurs et bases de données"
+title: "Benutzer und Datenbanken verwalten"
 ---
 
-# Verwaltung von les utilisateurs et bases de données
+# Benutzer und Datenbanken verwalten
 
-Dieser Leitfaden erklärt comment créer et gérer les utilisateurs, bases de données, rôles et extensions PostgreSQL auf Hikube de manière déclarative via les manifestes Kubernetes.
+Diese Anleitung erklärt, wie Sie Benutzer, Datenbanken, Rollen und PostgreSQL-Erweiterungen auf Hikube deklarativ über Kubernetes-Manifeste erstellen und verwalten.
 
 ## Voraussetzungen
 
-- **kubectl** configuré avec votre kubeconfig Hikube
-- Une instance **PostgreSQL** déployée sur Hikube (ou un manifeste prêt à déployer)
-- (Optionnel) **psql** installé localement pour tester la connexion
+- **kubectl** konfiguriert mit Ihrer Hikube-Kubeconfig
+- Eine **PostgreSQL**-Instanz auf Hikube bereitgestellt (oder ein Manifest zur Bereitstellung)
+- (Optional) **psql** lokal installiert zum Testen der Verbindung
 
 ## Schritte
 
-### 1. Ajouter des utilisateurs
+### 1. Benutzer hinzufügen
 
-Les utilisateurs sont déclarés dans la section `users` du manifeste. Chaque utilisateur est identifié par un nom et possède un mot de passe.
+Benutzer werden im Abschnitt `users` des Manifests deklariert. Jeder Benutzer wird durch einen Namen identifiziert und hat ein Passwort.
 
 ```yaml title="postgresql-users.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -40,20 +40,20 @@ spec:
       replication: true
 ```
 
-**Paramètres utilisateur :**
+**Benutzerparameter:**
 
-| Paramètre | Typ | Beschreibung |
+| Parameter | Typ | Beschreibung |
 |-----------|------|-------------|
-| `users[name].password` | `string` | Mot de passe de l'utilisateur |
-| `users[name].replication` | `bool` | Accorde le privilège de réplication à l'utilisateur |
+| `users[name].password` | `string` | Passwort des Benutzers |
+| `users[name].replication` | `bool` | Gewährt dem Benutzer das Replikationsrecht |
 
 :::note
-Le privilège `replication` est nécessaire pour les utilisateurs utilisés par des outils de Change Data Capture (CDC) comme Debezium, ou pour la réplication logique PostgreSQL. Ne l'aktiviertz que si vous en avez besoin.
+Das `replication`-Recht wird für Benutzer benötigt, die von Change Data Capture (CDC)-Tools wie Debezium oder für die logische PostgreSQL-Replikation verwendet werden. Aktivieren Sie es nur, wenn Sie es benötigen.
 :::
 
-### 2. Créer des bases de données avec des rôles
+### 2. Datenbanken mit Rollen erstellen
 
-Les bases de données sont déclarées dans la section `databases`. Chaque base peut définir des rôles `admin` et `readonly`, qui sont assignés aux utilisateurs déclarés dans `users`.
+Datenbanken werden im Abschnitt `databases` deklariert. Jede Datenbank kann die Rollen `admin` und `readonly` definieren, die den in `users` deklarierten Benutzern zugewiesen werden.
 
 ```yaml title="postgresql-databases.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -90,20 +90,20 @@ spec:
           - readonly
 ```
 
-**Rôles disponibles :**
+**Verfügbare Rollen:**
 
-| Rôle | Beschreibung |
+| Rolle | Beschreibung |
 |------|-------------|
-| `admin` | Accès complet en lecture/écriture sur la base de données |
-| `readonly` | Accès en lecture seule sur la base de données |
+| `admin` | Vollständiger Lese-/Schreibzugriff auf die Datenbank |
+| `readonly` | Nur-Lese-Zugriff auf die Datenbank |
 
 :::tip
-Suivez le principe du moindre privilège : n'accordez le rôle `admin` qu'aux utilisateurs qui en ont réellement besoin. Utilisez `readonly` pour les services de reporting ou de monitoring.
+Befolgen Sie das Prinzip der geringsten Rechte: Gewähren Sie die Rolle `admin` nur Benutzern, die sie wirklich benötigen. Verwenden Sie `readonly` für Reporting- oder Monitoring-Dienste.
 :::
 
-### 3. Activer des extensions
+### 3. Erweiterungen aktivieren
 
-Les extensions PostgreSQL sont aktiviertes par base de données via le champ `extensions` :
+PostgreSQL-Erweiterungen werden pro Datenbank über das Feld `extensions` aktiviert:
 
 ```yaml title="postgresql-extensions.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -130,17 +130,17 @@ spec:
         - pgcrypto
 ```
 
-**Extensions courantes :**
+**Gängige Erweiterungen:**
 
-| Extension | Beschreibung |
+| Erweiterung | Beschreibung |
 |-----------|-------------|
-| `hstore` | Typ de données clé-valeur |
-| `uuid-ossp` | Génération d'identifiants UUID |
-| `pgcrypto` | Fonctions cryptographiques (hachage, chiffrement) |
+| `hstore` | Schlüssel-Wert-Datentyp |
+| `uuid-ossp` | Generierung von UUID-Identifikatoren |
+| `pgcrypto` | Kryptografische Funktionen (Hashing, Verschlüsselung) |
 
-### 4. Appliquer les changements
+### 4. Änderungen anwenden
 
-Combinez tous les éléments dans un seul manifeste et appliquez-le :
+Kombinieren Sie alle Elemente in einem einzigen Manifest und wenden Sie es an:
 
 ```yaml title="postgresql-complete.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -187,15 +187,15 @@ spec:
 kubectl apply -f postgresql-complete.yaml
 ```
 
-### 5. Récupérer les identifiants
+### 5. Anmeldedaten abrufen
 
-Les mots de passe des utilisateurs sont stockés dans un Secret Kubernetes. Récupérez-les avec :
+Die Benutzerpasswörter sind in einem Kubernetes-Secret gespeichert. Rufen Sie sie ab mit:
 
 ```bash
 kubectl get secret postgres-my-database-credentials -o json | jq -r '.data | to_entries[] | "\(.key): \(.value|@base64d)"'
 ```
 
-**Erwartetes Ergebnis :**
+**Erwartetes Ergebnis:**
 
 ```console
 admin: SecureAdminPassword
@@ -204,37 +204,37 @@ readonly: ReadOnlyPassword789
 ```
 
 :::note
-Si vous ne spécifiez pas de mot de passe pour un utilisateur, l'opérateur en génère un automatiquement. Utilisez la commande ci-dessus pour le récupérer.
+Wenn Sie kein Passwort für einen Benutzer angeben, generiert der Operator automatisch eines. Verwenden Sie den obigen Befehl, um es abzurufen.
 :::
 
-### 6. Tester la connexion
+### 6. Verbindung testen
 
-Ouvrez un port-forward vers le service PostgreSQL :
+Öffnen Sie einen Port-Forward zum PostgreSQL-Service:
 
 ```bash
 kubectl port-forward svc/postgres-my-database-rw 5432:5432
 ```
 
-Connectez-vous avec `psql` :
+Verbinden Sie sich mit `psql`:
 
 ```bash
 psql -h 127.0.0.1 -U appuser myapp
 ```
 
-Vérifiez les utilisateurs et les rôles :
+Überprüfen Sie die Benutzer und Rollen:
 
 ```sql
--- Lister les utilisateurs
+-- Benutzer auflisten
 \du
 
--- Lister les bases de données
+-- Datenbanken auflisten
 \l
 
--- Vérifier les extensions installées
+-- Installierte Erweiterungen überprüfen
 \dx
 ```
 
-**Erwartetes Ergebnis pour `\du` :**
+**Erwartetes Ergebnis für `\du`:**
 
 ```console
                                  List of roles
@@ -252,15 +252,15 @@ Vérifiez les utilisateurs et les rôles :
 
 ## Überprüfung
 
-La configuration est réussie si :
+Die Konfiguration ist erfolgreich, wenn:
 
-- Les utilisateurs apparaissent dans `\du` avec les attributs corrects
-- Les bases de données sont listées dans `\l`
-- Les extensions sont aktivierts (vérifiables avec `\dx` dans chaque base)
-- Chaque utilisateur peut se connecter avec son mot de passe
-- Les utilisateurs `readonly` ne peuvent pas modifier les données
+- Die Benutzer in `\du` mit den korrekten Attributen erscheinen
+- Die Datenbanken in `\l` aufgelistet sind
+- Die Erweiterungen aktiv sind (überprüfbar mit `\dx` in jeder Datenbank)
+- Jeder Benutzer sich mit seinem Passwort verbinden kann
+- Die `readonly`-Benutzer keine Daten ändern können
 
 ## Weiterführende Informationen
 
-- **[API-Referenz PostgreSQL](../api-reference.md)** : documentation complète des paramètres `users`, `databases` et `extensions`
-- **[Schnellstart PostgreSQL](../quick-start.md)** : déployer une instance PostgreSQL complète
+- **[API-Referenz PostgreSQL](../api-reference.md)**: Vollständige Dokumentation der Parameter `users`, `databases` und `extensions`
+- **[Schnellstart PostgreSQL](../quick-start.md)**: Eine vollständige PostgreSQL-Instanz bereitstellen

@@ -4,25 +4,25 @@ title: "Cluster aktualisieren"
 
 # Cluster aktualisieren
 
-Dieser Leitfaden erklärt, wie Sie die Kubernetes-Version auf einem Hikube-Cluster aktualisieren. Die Updates erfolgen per Rolling Update, ohne Unterbrechung der Steuerungsebene.
+Diese Anleitung erklärt, wie Sie die Kubernetes-Version eines Hikube-Clusters aktualisieren. Die Aktualisierungen erfolgen per Rolling Update, ohne Unterbrechung der Steuerungsebene.
 
 ## Voraussetzungen
 
-- Ein bereitgestellter Hikube-Kubernetes-Cluster (siehe [Schnellstart](../quick-start.md))
+- Ein bereitgestellter Kubernetes-Hikube-Cluster (siehe [Schnellstart](../quick-start.md))
 - `kubectl` konfiguriert für die Interaktion mit der Hikube-API
 - Die kubeconfig des Child-Clusters abgerufen
 
 ## Schritte
 
-### 1. Aktuelle Version überprüfen
+### 1. Aktuelle Version prüfen
 
 Identifizieren Sie die aktuell auf Ihrem Cluster bereitgestellte Kubernetes-Version:
 
 ```bash
-# Version dans la configuration Hikube
+# Version in der Hikube-Konfiguration
 kubectl get kubernetes my-cluster -o yaml | grep version
 
-# Version reportee par les noeuds
+# Von den Knoten gemeldete Version
 kubectl --kubeconfig=cluster-admin.yaml get nodes
 ```
 
@@ -36,19 +36,19 @@ my-cluster-general-yyyyy     Ready    <none>   30d   v1.29.0
 
 ### 2. Verfügbare Versionen prüfen
 
-Bevor Sie aktualisieren, überprüfen Sie die von Hikube unterstützten Versionen:
+Bevor Sie aktualisieren, prüfen Sie die von Hikube unterstützten Versionen:
 
 ```bash
-# Verifier la configuration actuelle du cluster
+# Aktuelle Cluster-Konfiguration prüfen
 kubectl get kubernetes my-cluster -o yaml
 ```
 
 :::warning
-Testen Sie das Update immer in einer Staging-Umgebung vor der Produktion. Einige Anwendungen sind möglicherweise nicht mit neuen Kubernetes-Versionen kompatibel.
+Testen Sie das Update immer in einer Staging-Umgebung vor der Produktion. Einige Anwendungen sind möglicherweise nicht mit den neuen Kubernetes-Versionen kompatibel.
 :::
 
 :::note
-Updates müssen inkrementell erfolgen (z.B. v1.29 nach v1.30). Überspringen Sie nicht mehrere Minor-Versionen auf einmal.
+Die Updates müssen inkrementell erfolgen (zum Beispiel v1.29 auf v1.30). Überspringen Sie nicht mehrere Minor-Versionen auf einmal.
 :::
 
 ### 3. Version aktualisieren
@@ -62,7 +62,7 @@ spec:
 '
 ```
 
-**Option B: YAML-Datei ändern**
+**Option B: YAML-Datei bearbeiten**
 
 ```yaml title="cluster-upgrade.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -94,18 +94,18 @@ kubectl apply -f cluster-upgrade.yaml
 Beobachten Sie den Ablauf des Updates:
 
 ```bash
-# Suivre l'etat du cluster Hikube
+# Status des Hikube-Clusters verfolgen
 kubectl get kubernetes my-cluster -w
 
-# Observer le remplacement des machines
+# Austausch der Maschinen beobachten
 kubectl get machines -l cluster.x-k8s.io/cluster-name=my-cluster -w
 
-# Verifier les events
+# Events prüfen
 kubectl describe kubernetes my-cluster
 ```
 
 :::tip
-Updates erfolgen per Rolling Update: Die Knoten werden einzeln ersetzt. Die Steuerungsebene wird zuerst aktualisiert, gefolgt von den Node Groups. Ihre Workloads laufen während des Updates weiter.
+Die Updates erfolgen per Rolling Update: Die Knoten werden einzeln ersetzt. Die Steuerungsebene wird zuerst aktualisiert, gefolgt von den Node Groups. Ihre Workloads laufen während des Updates weiter.
 :::
 
 ### 5. Update überprüfen
@@ -113,25 +113,25 @@ Updates erfolgen per Rolling Update: Die Knoten werden einzeln ersetzt. Die Steu
 Sobald das Rolling Update abgeschlossen ist, bestätigen Sie die neue Version:
 
 ```bash
-# Verifier la version des noeuds
+# Knoten-Version prüfen
 kubectl --kubeconfig=cluster-admin.yaml get nodes
 
-# Verifier la version de l'API server
+# API Server Version prüfen
 kubectl --kubeconfig=cluster-admin.yaml version
 ```
 
 ## Überprüfung
 
-Validieren Sie, dass der Cluster nach dem Update korrekt funktioniert:
+Validieren Sie, dass der Cluster nach dem Update ordnungsgemäß funktioniert:
 
 ```bash
-# Noeuds en etat Ready avec la nouvelle version
+# Knoten im Zustand Ready mit neuer Version
 kubectl --kubeconfig=cluster-admin.yaml get nodes
 
-# Pods systeme operationnels
+# System-Pods betriebsbereit
 kubectl --kubeconfig=cluster-admin.yaml get pods -n kube-system
 
-# Vos workloads fonctionnent
+# Ihre Workloads funktionieren
 kubectl --kubeconfig=cluster-admin.yaml get pods -A
 ```
 
@@ -144,7 +144,7 @@ my-cluster-general-yyyyy     Ready    <none>   3m    v1.30.0
 ```
 
 :::warning
-Wenn Pods nach dem Update im Fehlerzustand verbleiben, überprüfen Sie die Kompatibilität Ihrer Manifeste mit der neuen Kubernetes-Version. Einige veraltete APIs könnten entfernt worden sein.
+Wenn Pods nach dem Update fehlerhaft bleiben, prüfen Sie die Kompatibilität Ihrer Manifeste mit der neuen Kubernetes-Version. Einige veraltete APIs könnten entfernt worden sein.
 :::
 
 ## Weiterführende Informationen

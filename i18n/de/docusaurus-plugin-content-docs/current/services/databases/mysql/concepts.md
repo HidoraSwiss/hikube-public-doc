@@ -3,11 +3,11 @@ sidebar_position: 2
 title: Konzepte
 ---
 
-# Concepts — MySQL
+# Konzepte — MySQL
 
-## Architecture
+## Architektur
 
-MySQL auf Hikube est un service managé basierend auf dem Operator **MariaDB-Operator**. Bien que l'opérateur utilise MariaDB (un fork compatible de MySQL), le service est entièrement compatible avec les clients et protocoles MySQL. Chaque instance déployée via la ressource `MariaDB` crée un cluster répliqué avec un primary et des réplicas pour la Hochverfügbarkeit.
+MySQL auf Hikube ist ein verwalteter Dienst basierend auf dem Operator **MariaDB-Operator**. Obwohl der Operator MariaDB (einen MySQL-kompatiblen Fork) verwendet, ist der Dienst vollständig kompatibel mit MySQL-Clients und -Protokollen. Jede über die Ressource `MariaDB` bereitgestellte Instanz erstellt einen replizierten Cluster mit einem Primary und Replikas für Hochverfügbarkeit.
 
 ```mermaid
 graph TB
@@ -27,13 +27,13 @@ graph TB
             R2[Replica 2 - RO]
         end
 
-        subgraph "Stockage"
+        subgraph "Speicher"
             PV1[PV Primary]
             PV2[PV Replica 1]
             PV3[PV Replica 2]
         end
 
-        subgraph "Sauvegarde"
+        subgraph "Sicherung"
             S3[Bucket S3]
             RES[Restic]
         end
@@ -48,7 +48,7 @@ graph TB
     P --> PV1
     R1 --> PV2
     R2 --> PV3
-    RES -->|backup chiffré| S3
+    RES -->|verschlüsseltes Backup| S3
     P --> RES
     OP --> SEC
 ```
@@ -57,25 +57,25 @@ graph TB
 
 ## Terminologie
 
-| Terme | Beschreibung |
-|-------|-------------|
-| **MariaDB** | Ressource Kubernetes (`apps.cozystack.io/v1alpha1`) représentant un cluster MySQL managé. Le CRD s'appelle `MariaDB` car le service repose sur MariaDB-Operator. |
-| **Primary** | Nœud principal qui accepte les lectures et écritures. |
-| **Replica** | Nœud en lecture seule, synchronisé depuis le primary via la réplication binlog. |
-| **MariaDB-Operator** | Opérateur Kubernetes qui gère le Deployment, la réplication, le failover et les sauvegardes. |
-| **Restic** | Outil de sauvegarde utilisé pour créer des snapshots chiffrés vers un stockage S3. |
-| **Switchover** | Bascule planifiée du rôle primary vers un autre nœud du cluster. |
-| **resourcesPreset** | Profil de ressources prédéfini (nano à 2xlarge). |
+| Begriff | Beschreibung |
+|---------|-------------|
+| **MariaDB** | Kubernetes-Ressource (`apps.cozystack.io/v1alpha1`), die einen verwalteten MySQL-Cluster darstellt. Die CRD heißt `MariaDB`, da der Dienst auf dem MariaDB-Operator basiert. |
+| **Primary** | Hauptknoten, der Lese- und Schreibvorgänge akzeptiert. |
+| **Replica** | Schreibgeschützter Knoten, der vom Primary über Binlog-Replikation synchronisiert wird. |
+| **MariaDB-Operator** | Kubernetes-Operator, der Bereitstellung, Replikation, Failover und Sicherungen verwaltet. |
+| **Restic** | Sicherungstool zum Erstellen verschlüsselter Snapshots auf S3-Speicher. |
+| **Switchover** | Geplanter Wechsel der Primary-Rolle zu einem anderen Knoten im Cluster. |
+| **resourcesPreset** | Vordefiniertes Ressourcenprofil (nano bis 2xlarge). |
 
 ---
 
-## Réplication et Hochverfügbarkeit
+## Replikation und Hochverfügbarkeit
 
-Le cluster MySQL utilise la **réplication binlog** de MariaDB :
+Der MySQL-Cluster verwendet die **Binlog-Replikation** von MariaDB:
 
-1. **Le primary** écrit toutes les modifications dans le binary log
-2. **Les réplicas** consomment le binlog et appliquent les modifications
-3. **En cas de panne** du primary, l'opérateur promeut automatiquement un réplica
+1. **Der Primary** schreibt alle Änderungen in das Binary Log
+2. **Die Replikas** konsumieren das Binlog und wenden die Änderungen an
+3. **Bei einem Ausfall** des Primary befördert der Operator automatisch ein Replika
 
 ```mermaid
 sequenceDiagram
@@ -84,64 +84,64 @@ sequenceDiagram
     participant Replica
 
     Client->>Primary: INSERT INTO ...
-    Primary->>Primary: Écriture binlog
+    Primary->>Primary: Binlog schreiben
     Primary-->>Client: OK
     Primary->>Replica: Binlog event
-    Replica->>Replica: Applique la modification
+    Replica->>Replica: Änderung anwenden
 ```
 
-### Switchover manuel
+### Manueller Switchover
 
-Vous pouvez basculer le primary vers un autre nœud pour effectuer une maintenance :
+Sie können den Primary zu einem anderen Knoten für Wartungszwecke wechseln:
 
 ```bash
 kubectl edit mariadb <instance-name>
-# Modifier spec.replication.primary.podIndex
+# spec.replication.primary.podIndex ändern
 ```
 
 :::warning
-La bascule du primary entraîne une brève interruption des écritures. Les lectures restent disponibles via les réplicas.
+Der Wechsel des Primary verursacht eine kurze Unterbrechung der Schreibvorgänge. Lesevorgänge bleiben über die Replikas verfügbar.
 :::
 
 ---
 
-## Sauvegarde
+## Sicherung
 
-MySQL auf Hikube utilise **Restic** pour les sauvegardes :
+MySQL auf Hikube verwendet **Restic** für Sicherungen:
 
-- Les snapshots sont **chiffrés** avec un mot de passe Restic
-- Stockés dans un **bucket S3-compatible** (Hikube Object Storage, AWS S3, MinIO)
-- La **stratégie de rétention** (`cleanupStrategy`) contrôle la durée de conservation
+- Die Snapshots werden mit einem Restic-Passwort **verschlüsselt**
+- Gespeichert in einem **S3-kompatiblen Bucket** (Hikube Object Storage, AWS S3, MinIO)
+- Die **Aufbewahrungsstrategie** (`cleanupStrategy`) steuert die Aufbewahrungsdauer
 
-| Paramètre | Beschreibung |
+| Parameter | Beschreibung |
 |-----------|-------------|
-| `backup.schedule` | Planification cron (ex: `0 2 * * *`) |
-| `backup.cleanupStrategy` | Options Restic de rétention (ex: `--keep-last=3 --keep-daily=7`) |
-| `backup.resticPassword` | Mot de passe de chiffrement des sauvegardes |
-| `backup.s3*` | Identifiants et bucket S3 |
+| `backup.schedule` | Cron-Zeitplan (z.B.: `0 2 * * *`) |
+| `backup.cleanupStrategy` | Restic-Aufbewahrungsoptionen (z.B.: `--keep-last=3 --keep-daily=7`) |
+| `backup.resticPassword` | Verschlüsselungspasswort für die Sicherungen |
+| `backup.s3*` | S3-Anmeldedaten und Bucket |
 
 :::tip
-Testez régulièrement la procédure de restauration. Une sauvegarde non testée ne garantit pas une restauration réussie.
+Testen Sie regelmäßig das Wiederherstellungsverfahren. Eine nicht getestete Sicherung garantiert keine erfolgreiche Wiederherstellung.
 :::
 
 ---
 
-## Gestion des utilisateurs et bases
+## Benutzer- und Datenbankverwaltung
 
-Le manifeste permet de déclarer :
+Das Manifest ermöglicht die Deklaration von:
 
-- **Utilisateurs** : nom, mot de passe, limite de connexions (`maxUserConnections`)
-- **Bases de données** : nom et attribution de rôles
-- **Rôles** : `admin` (lecture/écriture complète), `readonly` (SELECT uniquement)
+- **Benutzern**: Name, Passwort, Verbindungslimit (`maxUserConnections`)
+- **Datenbanken**: Name und Rollenzuweisung
+- **Rollen**: `admin` (vollständiger Lese-/Schreibzugriff), `readonly` (nur SELECT)
 
-Un mot de passe `root` est généré automatiquement par l'opérateur et stocké dans le Secret `<instance>-credentials`.
+Ein `root`-Passwort wird automatisch vom Operator generiert und im Secret `<instance>-credentials` gespeichert.
 
 ---
 
-## Presets de ressources
+## Ressourcen-Presets
 
-| Preset | CPU | Mémoire |
-|--------|-----|---------|
+| Preset | CPU | Speicher |
+|--------|-----|----------|
 | `nano` | 250m | 128Mi |
 | `micro` | 500m | 256Mi |
 | `small` | 1 | 512Mi |
@@ -151,22 +151,22 @@ Un mot de passe `root` est généré automatiquement par l'opérateur et stocké
 | `2xlarge` | 8 | 8Gi |
 
 :::warning
-Si le champ `resources` (CPU/mémoire explicites) est défini, `resourcesPreset` est ignoré.
+Wenn das Feld `resources` (explizite CPU/Speicher) definiert ist, wird `resourcesPreset` ignoriert.
 :::
 
 ---
 
-## Limites et quotas
+## Limits und Kontingente
 
-| Paramètre | Wert |
-|-----------|--------|
-| Réplicas max | Selon quota tenant |
-| Taille stockage (`size`) | Variable (en Gi) |
-| `maxUserConnections` | Configurable par utilisateur (0 = illimité) |
+| Parameter | Wert |
+|-----------|------|
+| Max. Replikas | Je nach Tenant-Kontingent |
+| Speichergröße (`size`) | Variabel (in Gi) |
+| `maxUserConnections` | Pro Benutzer konfigurierbar (0 = unbegrenzt) |
 
 ---
 
 ## Weiterführende Informationen
 
-- [Overview](./overview.md) : présentation du service
-- [API-Referenz](./api-reference.md) : tous les paramètres de la ressource MariaDB
+- [Übersicht](./overview.md): Vorstellung des Dienstes
+- [API-Referenz](./api-reference.md): Alle Parameter der MariaDB-Ressource

@@ -3,38 +3,38 @@ sidebar_position: 2
 title: Schnellstart
 ---
 
-# Déployer Redis en 5 minutes
+# Redis in 5 Minuten bereitstellen
 
-Dieser Leitfaden begleitet Sie pas à pas dans le Deployment de votre premier cluster **Redis** sur Hikube, du manifeste YAML jusqu'aux premiers tests de connexion.
+Diese Anleitung begleitet Sie Schritt für Schritt bei der Bereitstellung Ihres ersten **Redis**-Clusters auf Hikube, vom YAML-Manifest bis zu den ersten Verbindungstests.
 
 ---
 
-## Objectifs
+## Ziele
 
-À la fin de ce guide, vous aurez :
+Am Ende dieser Anleitung haben Sie:
 
-- Un cluster **Redis** déployé sur Hikube
-- Une architecture composée d'un **master** et de **réplicas** um die ... zu gewährleisten Hochverfügbarkeit
-- **Redis Sentinel** configuré pour l'auto-failover
-- Un accès Redis sécurisé avec vos identifiants d'authentification
-- Un stockage persistant attaché pour conserver les données au-delà des redémarrages
+- Einen **Redis**-Cluster auf Hikube bereitgestellt
+- Eine Architektur bestehend aus einem **Master** und **Replikas** für Hochverfügbarkeit
+- **Redis Sentinel** konfiguriert für Auto-Failover
+- Einen sicheren Redis-Zugriff mit Ihren Authentifizierungsdaten
+- Einen persistenten Speicher zur Datenaufbewahrung über Neustarts hinaus
 
 ---
 
 ## Voraussetzungen
 
-Avant de démarrer, assurez-vous d'avoir :
+Stellen Sie vor dem Start sicher, dass Sie Folgendes haben:
 
-- **kubectl** configuré avec votre kubeconfig Hikube
-- Des **droits administrateur** sur votre tenant
-- Un **namespace** dédié pour héberger votre cluster Redis
-- **redis-cli** installé sur votre poste (optionnel, pour les tests de connexion)
+- **kubectl** konfiguriert mit Ihrer Hikube-Kubeconfig
+- **Administratorrechte** auf Ihrem Tenant
+- Einen dedizierten **Namespace** für Ihren Redis-Cluster
+- **redis-cli** auf Ihrem Rechner installiert (optional, für Verbindungstests)
 
 ---
 
-## Étape 1 : Créer le manifeste Redis
+## Schritt 1: Redis-Manifest erstellen
 
-Erstellen Sie eine Datei `redis.yaml` avec la configuration suivante :
+Erstellen Sie eine Datei `redis.yaml` mit folgender Konfiguration:
 
 ```yaml title="redis.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -42,50 +42,50 @@ kind: Redis
 metadata:
   name: example
 spec:
-  # Nombre de réplicas Redis (haute dispo si >1)
+  # Anzahl der Redis-Replikas (Hochverfügbarkeit wenn >1)
   replicas: 3
 
-  # Profil de ressources prédéfini (nano, micro, small, medium, large, xlarge, 2xlarge)
+  # Vordefiniertes Ressourcenprofil (nano, micro, small, medium, large, xlarge, 2xlarge)
   resourcesPreset: nano
 
-  # Ou définir les ressources explicitement (remplace resourcesPreset)
+  # Oder Ressourcen explizit definieren (ersetzt resourcesPreset)
   resources:
     cpu: 3000m
     memory: 3Gi
 
-  # Taille du disque persistant par instance
+  # Größe der persistenten Festplatte pro Instanz
   size: 1Gi
   storageClass: ""
 
-  # Activer l'authentification Redis
+  # Redis-Authentifizierung aktivieren
   authEnabled: true
 
-  # Exposer le service Redis à l'extérieur du cluster
+  # Redis-Service extern freigeben
   external: true
 ```
 
 :::tip
-Si `resources` est défini, la valeur de `resourcesPreset` est ignorée. Consultez la [API-Referenz](./api-reference.md) pour la liste complète des presets disponibles.
+Wenn `resources` definiert ist, wird der Wert von `resourcesPreset` ignoriert. Konsultieren Sie die [API-Referenz](./api-reference.md) für die vollständige Liste der verfügbaren Presets.
 :::
 
 ---
 
-## Étape 2 : Déployer le cluster Redis
+## Schritt 2: Redis-Cluster bereitstellen
 
-Appliquez le manifeste et vérifiez que le Deployment démarre :
+Wenden Sie das Manifest an und überprüfen Sie, dass die Bereitstellung startet:
 
 ```bash
-# Appliquer le manifeste
+# Manifest anwenden
 kubectl apply -f redis.yaml
 ```
 
-Vérifiez le statut du cluster (peut prendre 1-2 minutes) :
+Überprüfen Sie den Clusterstatus (kann 1-2 Minuten dauern):
 
 ```bash
 kubectl get redis
 ```
 
-**Erwartetes Ergebnis :**
+**Erwartetes Ergebnis:**
 
 ```console
 NAME      READY   AGE     VERSION
@@ -94,15 +94,15 @@ example   True    1m39s   0.10.0
 
 ---
 
-## Étape 3 : Überprüfung des pods
+## Schritt 3: Überprüfung der Pods
 
-Überprüfen Sie, ob tous les pods sont en état `Running` :
+Überprüfen Sie, dass alle Pods den Status `Running` haben:
 
 ```bash
 kubectl get po -o wide | grep redis
 ```
 
-**Erwartetes Ergebnis :**
+**Erwartetes Ergebnis:**
 
 ```console
 rfr-redis-example-0                               2/2     Running     0     7m7s    10.244.2.109   gld-csxhk-006   <none>   <none>
@@ -113,24 +113,24 @@ rfs-redis-example-7b65c79ccb-kvjt8                1/1     Running     0     7m7s
 rfs-redis-example-7b65c79ccb-xwk7v                1/1     Running     0     7m7s    10.244.2.110   plo-csxhk-004   <none>   <none>
 ```
 
-Avec `replicas: 3`, vous obtenez **6 pods** répartis sur différents datacenters :
+Mit `replicas: 3` erhalten Sie **6 Pods** auf verschiedenen Rechenzentren verteilt:
 
-| Préfixe | Rôle | Nombre |
+| Präfix | Rolle | Anzahl |
 |---------|------|--------|
-| `rfr-redis-example-*` | **Redis** (master + réplicas) | 3 |
-| `rfs-redis-example-*` | **Redis Sentinel** (supervision et auto-failover) | 3 |
+| `rfr-redis-example-*` | **Redis** (Master + Replikas) | 3 |
+| `rfs-redis-example-*` | **Redis Sentinel** (Überwachung und Auto-Failover) | 3 |
 
 ---
 
-## Étape 4 : Récupérer les identifiants
+## Schritt 4: Anmeldedaten abrufen
 
-Si `authEnabled: true`, un mot de passe est généré automatiquement dans un Secret Kubernetes :
+Wenn `authEnabled: true`, wird ein Passwort automatisch in einem Kubernetes-Secret generiert:
 
 ```bash
 kubectl get secret redis-example-auth -o json | jq -r '.data | to_entries[] | "\(.key): \(.value|@base64d)"'
 ```
 
-**Erwartetes Ergebnis :**
+**Erwartetes Ergebnis:**
 
 ```console
 password: QkP9bhppEFCQcXIXLzEAhAUBlMYEVFNZ
@@ -138,11 +138,11 @@ password: QkP9bhppEFCQcXIXLzEAhAUBlMYEVFNZ
 
 ---
 
-## Étape 5 : Connexion et tests
+## Schritt 5: Verbindung und Tests
 
-### Accès externe (si `external: true`)
+### Externer Zugriff (wenn `external: true`)
 
-Récupérez l'IP externe du LoadBalancer :
+Rufen Sie die externe IP des LoadBalancers ab:
 
 ```bash
 kubectl get svc | grep redis
@@ -157,114 +157,114 @@ rfrs-redis-example                   ClusterIP      10.96.118.28    <none>      
 rfs-redis-example                    ClusterIP      10.96.176.169   <none>          26379/TCP   13m
 ```
 
-Le service `redis-example-external-lb` expose Redis sur l'IP externe `91.223.132.41`.
+Der Service `redis-example-external-lb` stellt Redis über die externe IP `91.223.132.41` bereit.
 
-### Accès via port-forward (si `external: false`)
+### Zugriff über Port-Forward (wenn `external: false`)
 
 ```bash
 kubectl port-forward svc/rfrm-redis-example 6379:6379 &
 ```
 
-### Tests avec redis-cli
+### Tests mit redis-cli
 
 ```bash
-# Récupérer le mot de passe
+# Passwort abrufen
 REDIS_PASSWORD=$(kubectl get secret redis-example-auth -o jsonpath="{.data.password}" | base64 -d)
 
 # Test PING
 redis-cli -h 91.223.132.41 -p 6379 -a "$REDIS_PASSWORD" ping
 # PONG
 
-# Créer une clé
+# Schlüssel erstellen
 redis-cli -h 91.223.132.41 -p 6379 -a "$REDIS_PASSWORD" SET hello "hikube"
 # OK
 
-# Lire la clé
+# Schlüssel lesen
 redis-cli -h 91.223.132.41 -p 6379 -a "$REDIS_PASSWORD" GET hello
 # "hikube"
 ```
 
 :::note
-Si vous utilisez le port-forward, remplacez `91.223.132.41` par `127.0.0.1` dans les commandes ci-dessus.
-Il est recommandé de ne pas exposer la base de données à l'extérieur si vous n'en avez pas le besoin.
+Wenn Sie Port-Forward verwenden, ersetzen Sie `91.223.132.41` durch `127.0.0.1` in den obigen Befehlen.
+Es wird empfohlen, die Datenbank nicht extern freizugeben, wenn dies nicht erforderlich ist.
 :::
 
 ---
 
-## Étape 6 : Schnelle Fehlerbehebung
+## Schritt 6: Schnelle Fehlerbehebung
 
-### Pods en CrashLoopBackOff
+### Pods im CrashLoopBackOff
 
 ```bash
-# Vérifier les logs du pod en erreur
+# Logs des fehlerhaften Pods prüfen
 kubectl logs rfr-redis-example-0
 
-# Vérifier les events
+# Events prüfen
 kubectl describe pod rfr-redis-example-0
 ```
 
-**Causes fréquentes :** mémoire insuffisante (`resources.memory` trop faible), volume de stockage plein.
+**Häufige Ursachen:** Unzureichender Speicher (`resources.memory` zu niedrig), Speichervolumen voll.
 
-### Redis non accessible
+### Redis nicht erreichbar
 
 ```bash
-# Vérifier que le service existe
+# Prüfen, ob der Service existiert
 kubectl get svc | grep redis
 
-# Vérifier que le LoadBalancer a bien une IP externe
+# Prüfen, ob der LoadBalancer eine externe IP hat
 kubectl describe svc redis-example-external-lb
 ```
 
-**Causes fréquentes :** `external: false` dans le manifeste, LoadBalancer en attente d'attribution d'IP.
+**Häufige Ursachen:** `external: false` im Manifest, LoadBalancer wartet auf IP-Zuweisung.
 
-### Sentinel ne détecte pas le master
+### Sentinel erkennt den Master nicht
 
 ```bash
-# Vérifier les logs Sentinel
+# Sentinel-Logs prüfen
 kubectl logs rfs-redis-example-7b65c79ccb-dkqqz
 
-# Vérifier la topologie Sentinel
+# Sentinel-Topologie prüfen
 kubectl exec -it rfs-redis-example-7b65c79ccb-dkqqz -- redis-cli -p 26379 SENTINEL masters
 ```
 
-### Commandes de diagnostic générales
+### Allgemeine Diagnosebefehle
 
 ```bash
-# Events récents sur le namespace
+# Letzte Events im Namespace
 kubectl get events --sort-by=.metadata.creationTimestamp
 
-# État détaillé du cluster Redis
+# Detaillierter Status des Redis-Clusters
 kubectl describe redis example
 ```
 
 ---
 
-## Étape 7 : Bereinigung
+## Schritt 7: Bereinigung
 
-Pour supprimer les ressources de test :
+Um die Testressourcen zu entfernen:
 
 ```bash
 kubectl delete -f redis.yaml
 ```
 
 :::warning
-Cette action supprime le cluster Redis et toutes les données associées. Cette opération est **irréversible**.
+Diese Aktion löscht den Redis-Cluster und alle zugehörigen Daten. Dieser Vorgang ist **unwiderruflich**.
 :::
 
 ---
 
 ## Zusammenfassung
 
-Vous avez déployé :
+Sie haben bereitgestellt:
 
-- Un cluster Redis avec **3 réplicas** répartis sur des datacenters différents
-- **3 pods Sentinel** pour la supervision et l'auto-failover
-- Un accès sécurisé par mot de passe généré automatiquement
-- Un stockage persistant pour la durabilité des données
+- Einen Redis-Cluster mit **3 Replikas** auf verschiedenen Rechenzentren verteilt
+- **3 Sentinel-Pods** für Überwachung und Auto-Failover
+- Einen sicheren Zugriff mit automatisch generiertem Passwort
+- Einen persistenten Speicher für die Datenhaltbarkeit
 
 ---
 
 ## Nächste Schritte
 
-- **[API-Referenz](./api-reference.md)** : Configuration complète de toutes les options Redis
-- **[Übersicht](./overview.md)** : Architecture détaillée et cas d'usage Redis auf Hikube
+- **[API-Referenz](./api-reference.md)**: Vollständige Konfiguration aller Redis-Optionen
+- **[Übersicht](./overview.md)**: Detaillierte Architektur und Anwendungsfälle für Redis auf Hikube

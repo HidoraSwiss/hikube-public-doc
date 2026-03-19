@@ -1,17 +1,17 @@
 ---
 sidebar_position: 3
-title: API Reference
+title: API-Referenz
 ---
 
-# API Reference - GPU
+# API-Referenz - GPU
 
-Cette référence détaille les APIs pour utiliser les GPU auf Hikube, que ce soit avec des machines virtuelles ou des clusters Kubernetes.
+Diese Referenz beschreibt die APIs zur Nutzung von GPUs auf Hikube, sowohl mit virtuellen Maschinen als auch mit Kubernetes-Clustern.
 
 ---
 
-## 🖥️ GPU avec Machines Virtuelles
+## 🖥️ GPU mit Virtuellen Maschinen
 
-### **API VirtualMachine**
+### **VirtualMachine-API**
 
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
@@ -26,38 +26,38 @@ spec:
     - name: "nvidia.com/AD102GL_L40S"
 ```
 
-#### **Paramètres GPU pour VM**
+#### **GPU-Parameter für VM**
 
-| **Paramètre** | **Type** | **Description** | **Requis** |
+| **Parameter** | **Typ** | **Beschreibung** | **Erforderlich** |
 |---------------|----------|-----------------|------------|
-| `gpus` | `[]GPU` | Liste des GPUs à attacher | ✅ |
-| `gpus[].name` | `string` | Typ de GPU NVIDIA | ✅ |
+| `gpus` | `[]GPU` | Liste der anzuhängenden GPUs | ✅ |
+| `gpus[].name` | `string` | NVIDIA GPU-Typ | ✅ |
 
-#### **Types de GPU Disponibles**
+#### **Verfügbare GPU-Typen**
 
 ```yaml
-# GPU pour inférence et développement
+# GPU für Inferenz und Entwicklung
 gpus:
   - name: "nvidia.com/AD102GL_L40S"
 
-# GPU pour entraînement ML
+# GPU für ML-Training
 gpus:
   - name: "nvidia.com/GA100_A100_PCIE_80GB"
 
-# GPU pour LLM et calcul exascale
+# GPU für LLM und Exascale-Rechnen
 gpus:
   - name: "nvidia.com/H100_94GB"
 ```
 
-#### **Spécifications Hardware**
+#### **Hardware-Spezifikationen**
 
-| **GPU** | **Architecture** | **Mémoire** | **Performance** |
+| **GPU** | **Architektur** | **Speicher** | **Leistung** |
 |---------|------------------|-------------|-----------------|
 | **L40S** | Ada Lovelace | 48 GB GDDR6 | 362 TOPS (INT8) |
 | **A100** | Ampere | 80 GB HBM2e | 312 TOPS (INT8) |
 | **H100** | Hopper | 80 GB HBM3 | 1979 TOPS (INT8) |
 
-#### **Exemple VM GPU Complet**
+#### **Vollständiges VM GPU-Beispiel**
 
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
@@ -83,27 +83,27 @@ spec:
     users:
       - name: ubuntu
         sudo: ALL=(ALL) NOPASSWD:ALL
-    
+
     packages:
       - python3-pip
       - build-essential
-    
+
     runcmd:
-      # Pilotes NVIDIA
+      # NVIDIA-Treiber
       - wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.0-1_all.deb
       - dpkg -i cuda-keyring_1.0-1_all.deb
       - apt-get update
       - apt-get install -y cuda-toolkit nvidia-driver-535
-      
-      # PyTorch avec CUDA
+
+      # PyTorch mit CUDA
       - pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cu121
 ```
 
 ---
 
-## ☸️ GPU avec Kubernetes
+## ☸️ GPU mit Kubernetes
 
-### **API Kubernetes avec GPU Workers**
+### **Kubernetes-API mit GPU-Workern**
 
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
@@ -113,7 +113,7 @@ metadata:
 spec:
   controlPlane:
     replicas: 1
-  
+
   nodeGroups:
     gpu-workers:
       minReplicas: 1
@@ -124,14 +124,14 @@ spec:
         - name: "nvidia.com/AD102GL_L40S"
 ```
 
-#### **Paramètres GPU pour NodeGroups**
+#### **GPU-Parameter für NodeGroups**
 
-| **Paramètre** | **Type** | **Description** | **Requis** |
+| **Parameter** | **Typ** | **Beschreibung** | **Erforderlich** |
 |---------------|----------|-----------------|------------|
-| `nodeGroups.<name>.gpus` | `[]GPU` | GPUs pour les workers | ❌ |
-| `gpus[].name` | `string` | Typ de GPU NVIDIA | ✅ |
+| `nodeGroups.<name>.gpus` | `[]GPU` | GPUs für die Worker | ❌ |
+| `gpus[].name` | `string` | NVIDIA GPU-Typ | ✅ |
 
-#### **Configuration Multi-GPU**
+#### **Multi-GPU-Konfiguration**
 
 ```yaml
 nodeGroups:
@@ -146,7 +146,7 @@ nodeGroups:
       - name: "nvidia.com/GA100_A100_PCIE_80GB"
 ```
 
-#### **Utilisation dans les Pods**
+#### **Verwendung in Pods**
 
 ```yaml
 apiVersion: v1
@@ -167,7 +167,7 @@ spec:
       - train.py
 ```
 
-#### **Job Multi-GPU**
+#### **Multi-GPU-Job**
 
 ```yaml
 apiVersion: batch/v1
@@ -193,42 +193,42 @@ spec:
 
 ---
 
-## 📋 Comparaison des Approches
+## 📋 Vergleich der Ansätze
 
 ### **VM GPU vs Kubernetes GPU**
 
-| **Aspect** | **VM GPU** | **Kubernetes GPU** |
+| **Aspekt** | **VM GPU** | **Kubernetes GPU** |
 |------------|------------|-------------------|
-| **Allocation** | 1 GPU = 1 VM (exclusif) | 1+ GPU par worker (partageable) |
-| **Isolation** | Complète au niveau VM | Namespace/Pod |
-| **Scaling** | Vertical (plus de GPUs) | Horizontal + Vertical |
-| **Gestion** | Manuelle via YAML | Orchestrée par K8s |
-| **Partage** | Non | Oui (entre pods) |
-| **Overhead** | Minimal | Overhead orchestration |
+| **Zuweisung** | 1 GPU = 1 VM (exklusiv) | 1+ GPU pro Worker (teilbar) |
+| **Isolation** | Vollständig auf VM-Ebene | Namespace/Pod |
+| **Skalierung** | Vertikal (mehr GPUs) | Horizontal + Vertikal |
+| **Verwaltung** | Manuell via YAML | Orchestriert durch K8s |
+| **Teilung** | Nein | Ja (zwischen Pods) |
+| **Overhead** | Minimal | Orchestrierungs-Overhead |
 
-### **Quand utiliser chaque approche**
+### **Wann welchen Ansatz verwenden**
 
-#### **VM GPU recommandée pour :**
+#### **VM GPU empfohlen für:**
 
-- Applications legacy non-containerisées
-- Besoin d'accès direct et complet au GPU
-- Développement et prototypage
-- Workloads monolithiques
-- Applications graphiques (rendu, CAO)
+- Nicht-containerisierte Legacy-Anwendungen
+- Bedarf an direktem und vollständigem GPU-Zugang
+- Entwicklung und Prototyping
+- Monolithische Workloads
+- Grafische Anwendungen (Rendering, CAD)
 
-#### **Kubernetes GPU recommandé pour :**
+#### **Kubernetes GPU empfohlen für:**
 
-- Applications containerisées
-- Workloads nécessitant du scaling automatique
-- Jobs parallèles et distribués
-- Partage de ressources GPU
-- Pipelines ML/AI complexes
+- Containerisierte Anwendungen
+- Workloads, die automatische Skalierung erfordern
+- Parallele und verteilte Jobs
+- GPU-Ressourcenteilung
+- Komplexe ML/AI-Pipelines
 
 ---
 
-## 🔧 Configuration Avancée
+## 🔧 Erweiterte Konfiguration
 
-### **Multi-GPU sur VM**
+### **Multi-GPU auf VM**
 
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
@@ -244,7 +244,7 @@ spec:
     - name: "nvidia.com/H100_94GB"
 ```
 
-### **NodeGroup spécialisé GPU**
+### **Spezialisierte GPU-NodeGroup**
 
 ```yaml
 nodeGroups:
@@ -254,7 +254,7 @@ nodeGroups:
     instanceType: "u1.large"
     gpus:
       - name: "nvidia.com/AD102GL_L40S"
-    
+
   gpu-training:
     minReplicas: 1
     maxReplicas: 3
@@ -264,7 +264,7 @@ nodeGroups:
       - name: "nvidia.com/GA100_A100_PCIE_80GB"
 ```
 
-### **Pod avec GPU spécifique**
+### **Pod mit spezifischem GPU**
 
 ```yaml
 apiVersion: v1
@@ -284,65 +284,65 @@ spec:
 
 ---
 
-## ✅ Überprüfung et Monitoring
+## ✅ Überprüfung und Monitoring
 
-### **Überprüfung VM GPU**
+### **VM GPU-Überprüfung**
 
 ```bash
-# Accéder à la VM
+# Auf die VM zugreifen
 virtctl ssh ubuntu@vm-gpu
 
-# Vérifier les GPU
+# GPUs überprüfen
 nvidia-smi
 
-# Test CUDA
+# CUDA-Test
 nvidia-smi --query-gpu=name,memory.total,utilization.gpu --format=csv
 ```
 
-### **Überprüfung Kubernetes GPU**
+### **Kubernetes GPU-Überprüfung**
 
 ```bash
-# Voir les ressources GPU sur les nodes
+# GPU-Ressourcen auf den Nodes anzeigen
 kubectl describe nodes
 
-# Vérifier l'allocation GPU
+# GPU-Zuweisung überprüfen
 kubectl get nodes -o custom-columns=NAME:.metadata.name,GPU:.status.allocatable.'nvidia\.com/gpu'
 
-# Monitoring utilisation GPU
+# GPU-Nutzung überwachen
 kubectl top nodes
 ```
 
-### **Monitoring GPU dans un Pod**
+### **GPU-Monitoring in einem Pod**
 
 ```bash
-# Exec dans un pod avec GPU
+# In einen Pod mit GPU einsteigen
 kubectl exec -it <pod-name> -- nvidia-smi
 
-# Voir les métriques GPU
+# GPU-Metriken anzeigen
 kubectl exec -it <pod-name> -- nvidia-smi --query-gpu=utilization.gpu,memory.used,memory.total --format=csv -l 5
 ```
 
 ---
 
-## 💡 Bonnes Pratiques
+## 💡 Best Practices
 
-### **Pour VM GPU :**
+### **Für VM GPU:**
 
-- Utilisez `replicated` storage class pour la production
-- Dimensionnez le CPU/RAM selon le GPU (ratio 8-16 vCPU par GPU)
-- Installez les pilotes NVIDIA via cloud-init
-- Arrêtez les VMs quand inutilisées pour optimiser les coûts
+- Verwenden Sie die `replicated` Storage Class für die Produktion
+- Dimensionieren Sie CPU/RAM entsprechend dem GPU (Verhältnis 8-16 vCPU pro GPU)
+- Installieren Sie NVIDIA-Treiber über cloud-init
+- Stoppen Sie VMs bei Nichtbenutzung, um Kosten zu optimieren
 
-### **Pour Kubernetes GPU :**
+### **Für Kubernetes GPU:**
 
-- Configurez des resource limits appropriées
-- Utilisez nodeSelector ou nodeAffinity pour cibler des GPU spécifiques
-- Implémentez des PodDisruptionBudgets pour les workloads critiques
-- Surveillez l'utilisation GPU avec des métriques personnalisées
+- Konfigurieren Sie angemessene Resource Limits
+- Verwenden Sie nodeSelector oder nodeAffinity, um spezifische GPUs anzuvisieren
+- Implementieren Sie PodDisruptionBudgets für kritische Workloads
+- Überwachen Sie die GPU-Nutzung mit benutzerdefinierten Metriken
 
-### **Générale :**
+### **Allgemein:**
 
-- L40S pour inférence/développement
-- A100 pour entraînement ML standard  
-- H100 pour LLM et calcul exascale
-- Testez avec L40S avant de passer aux GPU plus coûteux
+- L40S für Inferenz/Entwicklung
+- A100 für Standard-ML-Training
+- H100 für LLM und Exascale-Rechnen
+- Testen Sie mit L40S, bevor Sie auf teurere GPUs umsteigen

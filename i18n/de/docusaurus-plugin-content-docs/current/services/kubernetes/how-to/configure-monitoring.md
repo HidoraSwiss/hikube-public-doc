@@ -4,11 +4,11 @@ title: "Monitoring konfigurieren"
 
 # Monitoring konfigurieren
 
-Dieser Leitfaden erklärt, wie Sie das Monitoring auf einem Hikube-Kubernetes-Cluster aktivieren und konfigurieren, einschließlich der Sammlung von Metriken, Logs und Visualisierungs-Dashboards.
+Diese Anleitung erklärt, wie Sie das Monitoring auf einem Kubernetes-Hikube-Cluster aktivieren und konfigurieren, einschließlich der Erfassung von Metriken, Logs und Visualisierungs-Dashboards.
 
 ## Voraussetzungen
 
-- Ein bereitgestellter Hikube-Kubernetes-Cluster (siehe [Schnellstart](../quick-start.md))
+- Ein bereitgestellter Kubernetes-Hikube-Cluster (siehe [Schnellstart](../quick-start.md))
 - `kubectl` konfiguriert für die Interaktion mit der Hikube-API
 - Die YAML-Konfigurationsdatei Ihres Clusters
 
@@ -53,12 +53,12 @@ spec:
 ```
 
 :::note
-Die Aktivierung von Fluent Bit (`fluentbit.enabled: true`) ermöglicht die Sammlung und Weiterleitung der Logs Ihrer Anwendungen an den Observability-Stack.
+Die Aktivierung von Fluent Bit (`fluentbit.enabled: true`) ermöglicht die Erfassung und Weiterleitung der Logs Ihrer Anwendungen an den Observability-Stack.
 :::
 
 ### 2. Dedizierte Node Group für Monitoring erstellen
 
-Die Monitoring-Komponenten (VictoriaMetrics, Grafana, Fluent Bit) verbrauchen erhebliche Ressourcen. Es wird empfohlen, eine dedizierte Node Group mit speicheroptimierten Instanzen einzurichten:
+Die Monitoring-Komponenten (VictoriaMetrics, Grafana, Fluent Bit) verbrauchen erhebliche Ressourcen. Es wird empfohlen, eine dedizierte Node Group mit speicheroptimierten Instanzen bereitzustellen:
 
 ```yaml title="cluster-monitoring.yaml"
 nodeGroups:
@@ -66,13 +66,13 @@ nodeGroups:
     minReplicas: 2
     maxReplicas: 4
     instanceType: "m1.xlarge"    # 4 vCPU, 32 GB RAM
-    ephemeralStorage: 200Gi       # Stockage important pour les metriques et logs
+    ephemeralStorage: 200Gi       # Großer Speicher für Metriken und Logs
     roles:
       - monitoring
 ```
 
 :::tip
-Die Serie M (Memory Optimized) ist ideal für Monitoring, da Metrik-Datenbanken (VictoriaMetrics) und Log-Indexierungsengines viel Speicher benötigen.
+Die M-Serie (Memory Optimized) ist ideal für Monitoring, da Metriken-Datenbanken (VictoriaMetrics) und Log-Indexierungsengines viel Speicher benötigen.
 :::
 
 ### 3. Konfiguration anwenden
@@ -80,46 +80,46 @@ Die Serie M (Memory Optimized) ist ideal für Monitoring, da Metrik-Datenbanken 
 ```bash
 kubectl apply -f cluster-monitoring.yaml
 
-# Attendre que le cluster soit pret
+# Warten, bis der Cluster bereit ist
 kubectl get kubernetes my-cluster -w
 ```
 
-### 4. Auf Monitoring-Tools zugreifen
+### 4. Zugriff auf die Monitoring-Tools
 
-Sobald der Cluster aktualisiert ist, überprüfen Sie, ob die Monitoring-Komponenten im Child-Cluster bereitgestellt sind:
+Sobald der Cluster aktualisiert ist, prüfen Sie, ob die Monitoring-Komponenten im Child-Cluster bereitgestellt sind:
 
 ```bash
 export KUBECONFIG=cluster-admin.yaml
 
-# Lister les pods de monitoring
+# Monitoring-Pods auflisten
 kubectl get pods -n monitoring
 
-# Verifier les services disponibles
+# Verfügbare Services prüfen
 kubectl get svc -n monitoring
 
-# Acceder a Grafana (si disponible via Ingress)
+# Zugriff auf Grafana (falls über Ingress verfügbar)
 kubectl get ingress -n monitoring
 ```
 
-Um lokal auf Grafana zuzugreifen:
+Für lokalen Zugriff auf Grafana:
 
 ```bash
 kubectl port-forward -n monitoring svc/grafana 3000:80 &
-# Ouvrir http://localhost:3000 dans le navigateur
+# http://localhost:3000 im Browser öffnen
 ```
 
 ### 5. Metriken überprüfen
 
-Bestätigen Sie, dass die Metriken korrekt gesammelt werden:
+Bestätigen Sie, dass die Metriken korrekt erfasst werden:
 
 ```bash
-# Metriques des noeuds
+# Knoten-Metriken
 kubectl top nodes
 
-# Metriques des pods
+# Pod-Metriken
 kubectl top pods -A
 
-# Events du cluster
+# Cluster-Events
 kubectl get events --sort-by=.metadata.creationTimestamp
 ```
 
@@ -133,13 +133,13 @@ my-cluster-monitoring-yyyyy   800m         20%    4500Mi          14%
 
 ## Überprüfung
 
-Überprüfen Sie, ob der gesamte Monitoring-Stack betriebsbereit ist:
+Prüfen Sie, ob der gesamte Monitoring-Stack funktionsfähig ist:
 
 ```bash
-# Verifier tous les composants de monitoring
+# Alle Monitoring-Komponenten prüfen
 kubectl get pods -n monitoring
 
-# Verifier les logs Fluent Bit
+# Fluent Bit Logs prüfen
 kubectl logs -n monitoring -l app.kubernetes.io/name=fluent-bit --tail=20
 ```
 

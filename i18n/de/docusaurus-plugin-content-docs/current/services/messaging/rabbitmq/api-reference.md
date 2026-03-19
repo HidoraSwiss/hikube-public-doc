@@ -5,16 +5,16 @@ title: API-Referenz
 
 # API-Referenz RabbitMQ
 
-Cette référence détaille la configuration et le fonctionnement des **clusters RabbitMQ** sur Hikube, incluant la gestion des **utilisateurs**, des **vhosts**, et des **queues**.
-Les Deployments s’appuient sur l’**opérateur officiel RabbitMQ**, garantissant une gestion simplifiée, hautement disponible et conforme aux Best Practices du projet upstream.
+Diese Referenz beschreibt die Konfiguration und Funktionsweise der **RabbitMQ-Cluster** auf Hikube, einschließlich der Verwaltung von **Benutzern**, **Vhosts** und **Queues**.
+Die Bereitstellungen basieren auf dem **offiziellen RabbitMQ-Operator**, der eine vereinfachte, hochverfügbare und den Best Practices des Upstream-Projekts konforme Verwaltung gewährleistet.
 
 ---
 
-## Structure de Base
+## Grundstruktur
 
-### **Ressource RabbitMQ**
+### **RabbitMQ-Ressource**
 
-#### Beispiel de configuration YAML
+#### Beispiel einer YAML-Konfiguration
 
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
@@ -37,22 +37,22 @@ spec:
 
 ---
 
-## Paramètres
+## Parameter
 
-### **Paramètres Communs**
+### **Allgemeine Parameter**
 
-| **Paramètre**      | **Type**   | **Description**                                                                         | **Défaut** | **Requis** |
-| ------------------ | ---------- | --------------------------------------------------------------------------------------- | ---------- | ---------- |
-| `external`         | `bool`     | Active l’accès externe au cluster RabbitMQ (exposition hors du cluster)                 | `false`    | Non        |
-| `replicas`         | `int`      | Nombre de réplicas RabbitMQ (nœuds du cluster)                                          | `3`        | Oui        |
-| `resources`        | `object`   | Configuration explicite CPU et mémoire pour chaque réplique RabbitMQ                    | `{}`       | Non        |
-| `resources.cpu`    | `quantity` | CPU disponible par réplique                                                             | `null`     | Non        |
-| `resources.memory` | `quantity` | RAM disponible par réplique                                                             | `null`     | Non        |
-| `resourcesPreset`  | `string`   | Preset de ressources (`nano`, `micro`, `small`, `medium`, `large`, `xlarge`, `2xlarge`) | `"small"`  | Oui        |
-| `size`             | `quantity` | Taille du volume persistant utilisé pour les données RabbitMQ                           | `10Gi`     | Oui        |
-| `storageClass`     | `string`   | StorageClass utilisé pour stocker les données RabbitMQ                                  | `""`       | Non        |
+| **Parameter** | **Typ** | **Beschreibung** | **Standard** | **Erforderlich** |
+| ------------- | ------- | ---------------- | ------------ | ---------------- |
+| `external` | `bool` | Aktiviert den externen Zugang zum RabbitMQ-Cluster (Exposition außerhalb des Clusters) | `false` | Nein |
+| `replicas` | `int` | Anzahl der RabbitMQ-Replikate (Cluster-Knoten) | `3` | Ja |
+| `resources` | `object` | Explizite CPU- und Speicherkonfiguration pro RabbitMQ-Replikat | `{}` | Nein |
+| `resources.cpu` | `quantity` | Verfügbare CPU pro Replikat | `null` | Nein |
+| `resources.memory` | `quantity` | Verfügbarer RAM pro Replikat | `null` | Nein |
+| `resourcesPreset` | `string` | Ressourcen-Preset (`nano`, `micro`, `small`, `medium`, `large`, `xlarge`, `2xlarge`) | `"small"` | Ja |
+| `size` | `quantity` | Größe des persistenten Volumes für RabbitMQ-Daten | `10Gi` | Ja |
+| `storageClass` | `string` | StorageClass für die Speicherung der RabbitMQ-Daten | `""` | Nein |
 
-#### Beispiel YAML
+#### YAML-Beispiel
 
 ```yaml title="rabbitmq.yaml"
 replicas: 3
@@ -64,14 +64,14 @@ external: true
 
 ---
 
-### **Paramètres Utilisateurs**
+### **Benutzerparameter**
 
-| **Paramètre**          | **Type**            | **Description**                 | **Défaut** | **Requis** |
-| ---------------------- | ------------------- | ------------------------------- | ---------- | ---------- |
-| `users`                | `map[string]object` | Liste des utilisateurs RabbitMQ | `{}`       | Oui        |
-| `users[name].password` | `string`            | Mot de passe de l’utilisateur   | `null`     | Oui        |
+| **Parameter** | **Typ** | **Beschreibung** | **Standard** | **Erforderlich** |
+| ------------- | ------- | ---------------- | ------------ | ---------------- |
+| `users` | `map[string]object` | Liste der RabbitMQ-Benutzer | `{}` | Ja |
+| `users[name].password` | `string` | Passwort des Benutzers | `null` | Ja |
 
-#### Beispiel YAML
+#### YAML-Beispiel
 
 ```yaml title="rabbitmq.yaml"
 users:
@@ -83,16 +83,16 @@ users:
 
 ---
 
-### **Paramètres Virtual Hosts (vhosts)**
+### **Virtual-Host-Parameter (Vhosts)**
 
-| **Paramètre**                 | **Type**            | **Description**                                                   | **Défaut** | **Requis** |
-| ----------------------------- | ------------------- | ----------------------------------------------------------------- | ---------- | ---------- |
-| `vhosts`                      | `map[string]object` | Liste des virtual hosts RabbitMQ                                  | `{}`       | Non        |
-| `vhosts[name].roles`          | `object`            | Rôles et permissions associés à ce virtual host                   | `{}`       | Non        |
-| `vhosts[name].roles.admin`    | `[]string`          | Liste des utilisateurs ayant un accès administrateur sur ce vhost | `[]`       | Non        |
-| `vhosts[name].roles.readonly` | `[]string`          | Liste des utilisateurs avec accès lecture seule                   | `[]`       | Non        |
+| **Parameter** | **Typ** | **Beschreibung** | **Standard** | **Erforderlich** |
+| ------------- | ------- | ---------------- | ------------ | ---------------- |
+| `vhosts` | `map[string]object` | Liste der RabbitMQ Virtual Hosts | `{}` | Nein |
+| `vhosts[name].roles` | `object` | Rollen und Berechtigungen für diesen Virtual Host | `{}` | Nein |
+| `vhosts[name].roles.admin` | `[]string` | Liste der Benutzer mit Administratorzugriff auf diesen Vhost | `[]` | Nein |
+| `vhosts[name].roles.readonly` | `[]string` | Liste der Benutzer mit Lesezugriff | `[]` | Nein |
 
-#### Beispiel YAML
+#### YAML-Beispiel
 
 ```yaml title="rabbitmq.yaml"
 vhosts:
@@ -108,12 +108,12 @@ vhosts:
 
 ---
 
-### **resources et resourcesPreset**
+### **resources und resourcesPreset**
 
-Le champ `resources` ermöglicht die Definition explicitement la configuration CPU et mémoire de chaque réplique RabbitMQ.
-Si ce champ est laissé vide, la valeur du paramètre `resourcesPreset` est utilisée.
+Das Feld `resources` ermöglicht die explizite Definition der CPU- und Speicherkonfiguration jedes RabbitMQ-Replikats.
+Wenn dieses Feld leer gelassen wird, wird der Wert des Parameters `resourcesPreset` verwendet.
 
-#### Beispiel YAML
+#### YAML-Beispiel
 
 ```yaml title="rabbitmq.yaml"
 resources:
@@ -121,23 +121,23 @@ resources:
   memory: 4Gi
 ```
 
-⚠️ Si `resources` est défini, la valeur de `resourcesPreset` est ignorée.
+⚠️ Wenn `resources` definiert ist, wird der Wert von `resourcesPreset` ignoriert.
 
-| **Preset name** | **CPU** | **Mémoire** |
-| --------------- | ------- | ----------- |
-| `nano`          | 100m    | 128Mi       |
-| `micro`         | 250m    | 256Mi       |
-| `small`         | 500m    | 512Mi       |
-| `medium`        | 500m    | 1Gi         |
-| `large`         | 1       | 2Gi         |
-| `xlarge`        | 2       | 4Gi         |
-| `2xlarge`       | 4       | 8Gi         |
+| **Preset-Name** | **CPU** | **Speicher** |
+| --------------- | ------- | ------------ |
+| `nano` | 100m | 128Mi |
+| `micro` | 250m | 256Mi |
+| `small` | 500m | 512Mi |
+| `medium` | 500m | 1Gi |
+| `large` | 1 | 2Gi |
+| `xlarge` | 2 | 4Gi |
+| `2xlarge` | 4 | 8Gi |
 
 ---
 
-## Beispiels Complets
+## Vollständige Beispiele
 
-### Cluster de Production
+### Produktionscluster
 
 ```yaml title="rabbitmq-production.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -172,7 +172,7 @@ spec:
         readonly: ["appuser"]
 ```
 
-### Cluster de Développement
+### Entwicklungscluster
 
 ```yaml title="rabbitmq-development.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -197,24 +197,24 @@ spec:
 
 ---
 
-:::tip Bonnes Pratiques
+:::tip Best Practices
 
-- **3 réplicas pour les quorum queues** : avec 3 noeuds, RabbitMQ utilise les quorum queues um die ... zu gewährleisten durabilité des messages en cas de panne
-- **Vhosts par application** : isolez chaque application dans un vhost dédié pour limiter l'impact en cas de surcharge
-- **Rôles distincts** : séparez les utilisateurs admin, applicatifs et de monitoring avec des permissions adaptées
-- **Stockage répliqué** : utilisez `storageClass: replicated` pour protéger les données contre la perte d'un noeud
+- **3 Replikate für Quorum Queues**: Mit 3 Knoten verwendet RabbitMQ die Quorum Queues, um die Nachrichtenhaltbarkeit bei Ausfällen zu gewährleisten
+- **Vhosts pro Anwendung**: Isolieren Sie jede Anwendung in einem dedizierten Vhost, um die Auswirkungen bei Überlastung zu begrenzen
+- **Getrennte Rollen**: Trennen Sie Admin-, Anwendungs- und Monitoring-Benutzer mit angepassten Berechtigungen
+- **Replizierter Speicher**: Verwenden Sie `storageClass: replicated`, um die Daten vor dem Verlust eines Knotens zu schützen
 :::
 
 :::warning Achtung
 
-- **Les suppressions sont irréversibles** : la suppression d'une ressource RabbitMQ entraîne la perte définitive de toutes les queues et messages
-- **Réplicas sous 3** : avec moins de 3 réplicas, les quorum queues ne peuvent pas garantir la durabilité des messages en cas de panne
-- **Ports exposés** : si `external: true`, les ports AMQP (5672) et Management UI (15672) sont accessibles depuis l'extérieur — sécurisez les identifiants
+- **Löschungen sind unwiderruflich**: Das Löschen einer RabbitMQ-Ressource führt zum endgültigen Verlust aller Queues und Nachrichten
+- **Weniger als 3 Replikate**: Mit weniger als 3 Replikaten können die Quorum Queues die Nachrichtenhaltbarkeit bei Ausfällen nicht gewährleisten
+- **Exponierte Ports**: Wenn `external: true`, sind die Ports AMQP (5672) und Management UI (15672) von außen zugänglich — sichern Sie die Zugangsdaten
 :::
 
 ---
 
-### Références externes
+### Externe Referenzen
 
-* **Opérateur officiel RabbitMQ :** [GitHub – rabbitmq/cluster-operator](https://github.com/rabbitmq/cluster-operator/)
-* **Documentation RabbitMQ Operator :** [operator-overview.html](https://www.rabbitmq.com/kubernetes/operator/operator-overview.html)
+* **Offizieller RabbitMQ-Operator:** [GitHub – rabbitmq/cluster-operator](https://github.com/rabbitmq/cluster-operator/)
+* **RabbitMQ Operator-Dokumentation:** [operator-overview.html](https://www.rabbitmq.com/kubernetes/operator/operator-overview.html)

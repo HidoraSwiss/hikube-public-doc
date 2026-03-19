@@ -5,122 +5,122 @@ title: Fehlerbehebung
 
 # Fehlerbehebung — NATS
 
-### Messages perdus (pas de JetStream)
+### Verlorene Nachrichten (kein JetStream)
 
-**Ursache**: JetStream n'est pas aktiviert ou aucun stream n'est configuré pour capturer les messages. Sans JetStream, NATS fonctionne en mode fire-and-forget : les messages ne sont délivrés qu'aux abonnés connectés au moment de la publication.
+**Ursache**: JetStream ist nicht aktiviert oder es ist kein Stream konfiguriert, um die Nachrichten zu erfassen. Ohne JetStream arbeitet NATS im Fire-and-Forget-Modus: Nachrichten werden nur an zum Zeitpunkt der Veröffentlichung verbundene Abonnenten zugestellt.
 
 **Lösung**:
 
-1. Überprüfen Sie, ob JetStream est aktiviert dans votre manifeste :
+1. Überprüfen Sie, ob JetStream in Ihrem Manifest aktiviert ist:
    ```yaml title="nats.yaml"
    jetstream:
      enabled: true
      size: 10Gi
    ```
-2. Réappliquez le manifeste si nécessaire :
+2. Wenden Sie das Manifest bei Bedarf erneut an:
    ```bash
    kubectl apply -f nats.yaml
    ```
-3. Créez un stream pour capturer les messages des subjects souhaités :
+3. Erstellen Sie einen Stream, um die Nachrichten der gewünschten Subjects zu erfassen:
    ```bash
    nats stream add --subjects "orders.>" --storage file --replicas 3 --retention limits orders-stream
    ```
-4. Überprüfen Sie, ob le stream est bien créé et capture les messages :
+4. Überprüfen Sie, ob der Stream erstellt wurde und Nachrichten erfasst:
    ```bash
    nats stream info orders-stream
    ```
 
-### Consumer ne reçoit pas les messages
+### Consumer empfängt keine Nachrichten
 
-**Ursache**: le consumer est abonné à un subject qui ne correspond pas à celui utilisé par le producteur. Les erreurs courantes incluent une faute de frappe dans le nom du subject, un mauvais usage des wildcards, ou une configuration de queue group incorrecte.
+**Ursache**: Der Consumer ist auf ein Subject abonniert, das nicht dem vom Produzenten verwendeten entspricht. Häufige Fehler sind ein Tippfehler im Subject-Namen, eine falsche Verwendung von Wildcards oder eine fehlerhafte Queue-Group-Konfiguration.
 
 **Lösung**:
 
-1. Vérifiez le subject exact utilisé par le producteur et le consumer — les subjects sont **sensibles à la casse**
-2. Testez la réception avec un abonnement de diagnostic :
+1. Überprüfen Sie das genaue Subject, das vom Produzenten und Consumer verwendet wird — Subjects sind **case-sensitive**
+2. Testen Sie den Empfang mit einem Diagnose-Abonnement:
    ```bash
    nats sub ">"
    ```
-   Cela permet de voir **tous les messages** publiés sur le serveur
-3. Vérifiez les wildcards utilisés :
-   - `orders.*` ne matche **pas** `orders.new.urgent` (utilisez `orders.>` pour les sous-niveaux)
-4. Si vous utilisez des queue groups, vérifiez que le consumer est bien membre du groupe attendu et que le group name est identique
+   Dies ermöglicht es, **alle Nachrichten** auf dem Server zu sehen
+3. Überprüfen Sie die verwendeten Wildcards:
+   - `orders.*` matcht **nicht** `orders.new.urgent` (verwenden Sie `orders.>` für Unterebenen)
+4. Wenn Sie Queue Groups verwenden, überprüfen Sie, ob der Consumer Mitglied der erwarteten Gruppe ist und der Gruppenname identisch ist
 
-### Stockage JetStream plein
+### JetStream-Speicher voll
 
-**Ursache**: le volume JetStream a atteint sa capacité maximale (`jetstream.size`). Les nouveaux messages ne peuvent plus être persistés et les publications échouent.
+**Ursache**: Das JetStream-Volume hat seine maximale Kapazität erreicht (`jetstream.size`). Neue Nachrichten können nicht mehr persistiert werden und Veröffentlichungen schlagen fehl.
 
 **Lösung**:
 
-1. Vérifiez l'utilisation du stockage JetStream :
+1. Überprüfen Sie die JetStream-Speichernutzung:
    ```bash
    nats account info
    ```
-2. Identifiez les streams les plus volumineux :
+2. Identifizieren Sie die größten Streams:
    ```bash
    nats stream list
    ```
-3. Purgez les anciens messages des streams qui le permettent :
+3. Löschen Sie alte Nachrichten aus Streams, die dies erlauben:
    ```bash
-   nats stream purge <nom-stream>
+   nats stream purge <stream-name>
    ```
-4. Vérifiez la politique de rétention des streams — utilisez `limits` avec `max-age` pour supprimer automatiquement les anciens messages :
+4. Überprüfen Sie die Aufbewahrungsrichtlinie der Streams — verwenden Sie `limits` mit `max-age`, um alte Nachrichten automatisch zu löschen:
    ```bash
-   nats stream edit <nom-stream> --max-age 72h
+   nats stream edit <stream-name> --max-age 72h
    ```
-5. Si nécessaire, augmentez `jetstream.size` dans votre manifeste :
+5. Erhöhen Sie bei Bedarf `jetstream.size` in Ihrem Manifest:
    ```yaml title="nats.yaml"
    jetstream:
      enabled: true
      size: 50Gi
    ```
 
-### Mémoire insuffisante
+### Unzureichender Arbeitsspeicher
 
-**Ursache**: le serveur NATS consomme plus de mémoire que la limite allouée, souvent à cause d'un nombre élevé de connexions, de messages volumineux (`max_payload` trop élevé), ou de streams JetStream en mémoire.
+**Ursache**: Der NATS-Server verbraucht mehr Speicher als das zugewiesene Limit, oft aufgrund einer hohen Anzahl von Verbindungen, großer Nachrichten (`max_payload` zu hoch) oder JetStream-Streams im Speicher.
 
 **Lösung**:
 
-1. Vérifiez les événements du pod pour confirmer un OOMKill :
+1. Überprüfen Sie die Pod-Ereignisse, um einen OOMKill zu bestätigen:
    ```bash
    kubectl describe pod <pod-nats> | grep -A 5 "Last State"
    ```
-2. Augmentez les ressources allouées à NATS :
+2. Erhöhen Sie die NATS zugewiesenen Ressourcen:
    ```yaml title="nats.yaml"
    replicas: 3
    resources:
      cpu: 1
      memory: 2Gi
    ```
-3. Vérifiez la valeur de `max_payload` dans `config.merge` — réduisez-la si des messages très volumineux ne sont pas nécessaires
-4. Réappliquez le manifeste :
+3. Überprüfen Sie den Wert von `max_payload` in `config.merge` — reduzieren Sie ihn, wenn sehr große Nachrichten nicht erforderlich sind
+4. Wenden Sie das Manifest erneut an:
    ```bash
    kubectl apply -f nats.yaml
    ```
 
-### Connexion refusée
+### Verbindung abgelehnt
 
-**Ursache**: le client ne parvient pas à se connecter au serveur NATS. Cela peut être dû à des pods non démarrés, des identifiants incorrects, ou une tentative de connexion externe sans `external: true`.
+**Ursache**: Der Client kann keine Verbindung zum NATS-Server herstellen. Dies kann an nicht gestarteten Pods, falschen Zugangsdaten oder einem externen Verbindungsversuch ohne `external: true` liegen.
 
 **Lösung**:
 
-1. Überprüfen Sie, ob les pods NATS sont en état `Running` :
+1. Überprüfen Sie, ob die NATS-Pods im Status `Running` sind:
    ```bash
    kubectl get pods -l app.kubernetes.io/component=nats
    ```
-2. Consultez les logs du pod pour identifier les erreurs :
+2. Überprüfen Sie die Pod-Logs auf Fehler:
    ```bash
    kubectl logs <pod-nats>
    ```
-3. Vérifiez les identifiants utilisateur dans le Secret Kubernetes :
+3. Überprüfen Sie die Benutzerzugangsdaten im Kubernetes Secret:
    ```bash
-   kubectl get tenantsecret <nom-nats>-credentials -o jsonpath='{.data}' | base64 -d
+   kubectl get tenantsecret <nats-name>-credentials -o jsonpath='{.data}' | base64 -d
    ```
-4. Si vous vous connectez depuis l'extérieur du cluster, assurez-vous que `external: true` est configuré :
+4. Wenn Sie sich von außerhalb des Clusters verbinden, stellen Sie sicher, dass `external: true` konfiguriert ist:
    ```yaml title="nats.yaml"
    external: true
    ```
-5. Testez la connectivité depuis un pod dans le cluster :
+5. Testen Sie die Konnektivität von einem Pod innerhalb des Clusters:
    ```bash
    kubectl exec <pod-nats> -- nats-server --help 2>&1 | head -1
    ```

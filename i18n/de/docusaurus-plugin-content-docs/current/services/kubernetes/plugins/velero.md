@@ -5,7 +5,7 @@ title: Velero
 
 # 🧩 Details zum Feld `addons.velero`
 
-Das Feld `addons.velero` definiert die Konfiguration des Add-ons **Velero**, das für die **Sicherung und Wiederherstellung** von Kubernetes-Ressourcen und persistenten Volumes verwendet wird.
+Das Feld `addons.velero` definiert die Konfiguration des Add-ons **Velero**, das für die **Sicherung und Wiederherstellung** von Kubernetes-Ressourcen sowie persistenten Volumes verwendet wird.
 Velero gewährleistet die Resilienz des Clusters bei Datenverlust oder Migration zwischen Umgebungen.
 
 ```yaml
@@ -35,7 +35,7 @@ addons:
 ### Beschreibung
 
 Das Feld `velero` gruppiert die Hauptkonfiguration des Sicherungs- und Wiederherstellungssystems des Kubernetes-Clusters.
-Es ermöglicht die Aktivierung von Velero und die Definition seiner Deployment-Parameter.
+Es ermöglicht die Aktivierung von Velero und die Definition seiner Bereitstellungsparameter.
 
 ### Beispiel
 
@@ -56,7 +56,7 @@ velero:
 ### Beschreibung
 
 Gibt an, ob **Velero** aktiviert (`true`) oder deaktiviert (`false`) ist.
-Wenn aktiviert, stellt Velero seine Komponenten (Server, Controller und CRDs) bereit, die die Verwaltung von Sicherungen und Wiederherstellungen ermöglichen.
+Wenn es aktiviert ist, stellt Velero seine Komponenten (Server, Controller und CRDs) bereit, die die Verwaltung von Sicherungen und Wiederherstellungen ermöglichen.
 
 ### Beispiel
 
@@ -70,8 +70,8 @@ enabled: true
 
 ### Beschreibung
 
-Das Feld `valuesOverride` ermöglicht das **Überschreiben der Werte** des Velero-Deployments.
-Es dient zur Definition der Speicherparameter, automatischen Zeitpläne, Cloud-Anbieter oder auch der Sicherheits- und Ressourcenoptionen.
+Das Feld `valuesOverride` ermöglicht das **Überschreiben der Werte** der Velero-Bereitstellung.
+Es dient zur Definition der Speicherparameter, der automatischen Zeitpläne, der Cloud-Anbieter oder der Sicherheits- und Ressourcenoptionen.
 
 ### Beispiel
 
@@ -95,10 +95,10 @@ valuesOverride:
 
 ## 💡 Best Practices
 
-- `enabled: true` aktivieren, um die regelmäßige Sicherung kritischer Cluster-Ressourcen sicherzustellen.
-- `valuesOverride` verwenden, um die Konfiguration an den gewählten Cloud-Anbieter oder Speicher anzupassen (AWS, GCP, Azure, MinIO usw.).
-- Automatische **Zeitpläne** (Schedules) für wiederkehrende Sicherungen konfigurieren.
-- Die Integrität der Sicherungen und die Wiederherstellungsmöglichkeit regelmäßig überprüfen.
-- Den Zugriff auf Speicherschlüssel einschränken, um die Sicherungsdaten zu schützen.
+- Aktivieren Sie `enabled: true`, um die regelmäßige Sicherung kritischer Cluster-Ressourcen sicherzustellen.
+- Verwenden Sie `valuesOverride`, um die Konfiguration an den Cloud-Anbieter oder den gewählten Speicher anzupassen (AWS, GCP, Azure, MinIO usw.).
+- Konfigurieren Sie automatische **schedules** (Zeitpläne) für wiederkehrende Sicherungen.
+- Überprüfen Sie regelmäßig die Integrität der Sicherungen und die Wiederherstellungsmöglichkeit.
+- Beschränken Sie den Zugriff auf Speicherschlüssel, um die Sicherungsdaten zu schützen.
 
 ---

@@ -1,34 +1,34 @@
 ---
-title: "Skalierung von verticalement Redis"
+title: "Redis vertikal skalieren"
 ---
 
-# Skalierung von verticalement Redis
+# Redis vertikal skalieren
 
-Dieser Leitfaden erklärt comment ajuster les ressources CPU, memoire et stockage de votre instance Redis auf Hikube, soit via un preset predefini, soit en definissant des valeurs explicites.
+Diese Anleitung erklärt, wie Sie die CPU-, Speicher- und Storage-Ressourcen Ihrer Redis-Instanz auf Hikube anpassen, entweder über ein vordefiniertes Preset oder durch Definition expliziter Werte.
 
 ## Voraussetzungen
 
-- Une instance Redis deployee sur Hikube (siehe [Schnellstart](../quick-start.md))
+- Eine Redis-Instanz auf Hikube bereitgestellt (siehe [Schnellstart](../quick-start.md))
 - `kubectl` konfiguriert für die Interaktion mit der Hikube-API
-- Le fichier YAML de configuration de votre instance Redis
+- Die YAML-Konfigurationsdatei Ihrer Redis-Instanz
 
 ## Schritte
 
-### 1. Verifier les ressources actuelles
+### 1. Aktuelle Ressourcen überprüfen
 
-Consultez la configuration actuelle de votre instance Redis :
+Überprüfen Sie die aktuelle Konfiguration Ihrer Redis-Instanz:
 
 ```bash
 kubectl get redis my-redis -o yaml
 ```
 
-Notez les valeurs de `resourcesPreset`, `resources`, `replicas` et `size` dans la section `spec`.
+Notieren Sie die Werte von `resourcesPreset`, `resources`, `replicas` und `size` im Abschnitt `spec`.
 
-### 2. Option A : Modifier le resourcesPreset
+### 2. Option A: resourcesPreset ändern
 
-Le moyen le plus simple de scaler est d'utiliser un preset predefini. Voici les presets disponibles :
+Der einfachste Weg zu skalieren ist die Verwendung eines vordefinierten Presets. Hier sind die verfügbaren Presets:
 
-| **Preset** | **CPU** | **Memoire** |
+| **Preset** | **CPU** | **Speicher** |
 |------------|---------|-------------|
 | `nano`     | 250m    | 128Mi       |
 | `micro`    | 500m    | 256Mi       |
@@ -38,7 +38,7 @@ Le moyen le plus simple de scaler est d'utiliser un preset predefini. Voici les 
 | `xlarge`   | 4       | 4Gi         |
 | `2xlarge`  | 8       | 8Gi         |
 
-Par exemple, pour passer de `nano` a `medium` :
+Zum Beispiel, um von `nano` auf `medium` zu wechseln:
 
 ```yaml title="redis-medium.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -52,9 +52,9 @@ spec:
   authEnabled: true
 ```
 
-### 3. Option B : Definir des ressources explicites
+### 3. Option B: Explizite Ressourcen definieren
 
-Pour un controle precis, specifiez directement le CPU et la memoire avec le champ `resources` :
+Für eine präzise Steuerung geben Sie CPU und Speicher direkt über das Feld `resources` an:
 
 ```yaml title="redis-custom-resources.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -71,12 +71,12 @@ spec:
 ```
 
 :::warning
-Si le champ `resources` est defini, la valeur de `resourcesPreset` est entierement ignoree. Supprimez `resourcesPreset` du manifeste pour eviter toute confusion.
+Wenn das Feld `resources` definiert ist, wird der Wert von `resourcesPreset` vollständig ignoriert. Entfernen Sie `resourcesPreset` aus dem Manifest, um Verwirrung zu vermeiden.
 :::
 
-### 4. Ajuster le nombre de replicas si necessaire
+### 4. Anzahl der Replikas bei Bedarf anpassen
 
-Vous pouvez egalement augmenter le nombre de replicas pour repartir la charge de lecture :
+Sie können auch die Anzahl der Replikas erhöhen, um die Leselast zu verteilen:
 
 ```yaml title="redis-scaled.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -91,29 +91,29 @@ spec:
   authEnabled: true
 ```
 
-### 5. Appliquer la Aktualisierung
+### 5. Update anwenden
 
 ```bash
 kubectl apply -f redis-medium.yaml
 ```
 
 :::tip
-Redis est un data store in-memory : la memoire allouee (`resources.memory` ou celle du preset) doit etre suffisante pour contenir l'ensemble de votre dataset. Surveillez l'utilisation memoire avant de scaler.
+Redis ist ein In-Memory Data Store: Der zugewiesene Speicher (`resources.memory` oder der des Presets) muss ausreichend sein, um Ihr gesamtes Dataset aufzunehmen. Überwachen Sie die Speichernutzung vor dem Skalieren.
 :::
 
 ## Überprüfung
 
-Überprüfen Sie, ob les ressources ont ete Aktualisierungen :
+Überprüfen Sie, dass die Ressourcen aktualisiert wurden:
 
 ```bash
-# Verifier la configuration de la ressource Redis
+# Redis-Ressourcenkonfiguration prüfen
 kubectl get redis my-redis -o yaml | grep -A 5 resources
 
-# Verifier l'etat des pods Redis
+# Status der Redis-Pods prüfen
 kubectl get pods -l app.kubernetes.io/instance=my-redis
 ```
 
-**Erwartetes Ergebnis :**
+**Erwartetes Ergebnis:**
 
 ```console
 NAME              READY   STATUS    RESTARTS   AGE
@@ -123,5 +123,5 @@ my-redis-1        1/1     Running   0          2m
 
 ## Weiterführende Informationen
 
-- [API-Referenz](../api-reference.md) -- Parametres `resources`, `resourcesPreset` et `replicas`
-- [Konfiguration von la Hochverfügbarkeit](./configure-ha.md) -- Configuration Redis HA avec Sentinel
+- [API-Referenz](../api-reference.md) -- Parameter `resources`, `resourcesPreset` und `replicas`
+- [Hochverfügbarkeit konfigurieren](./configure-ha.md) -- Redis HA-Konfiguration mit Sentinel

@@ -3,11 +3,11 @@ sidebar_position: 2
 title: Konzepte
 ---
 
-# Concepts — RabbitMQ
+# Konzepte — RabbitMQ
 
-## Architecture
+## Architektur
 
-RabbitMQ auf Hikube est un service de messaging managé basé sur le protocole **AMQP**. Chaque instance déployée via la ressource `RabbitMQ` crée un cluster Hochverfügbarkeit avec des **quorum queues** (protocole Raft) pour la réplication des messages.
+RabbitMQ auf Hikube ist ein verwalteter Messaging-Dienst basierend auf dem **AMQP**-Protokoll. Jede über die Ressource `RabbitMQ` bereitgestellte Instanz erstellt einen Hochverfügbarkeits-Cluster mit **Quorum Queues** (Raft-Protokoll) für die Nachrichtenreplikation.
 
 ```mermaid
 graph TB
@@ -23,14 +23,14 @@ graph TB
             N3[Node 3 - Follower]
         end
 
-        subgraph "Composants AMQP"
+        subgraph "AMQP-Komponenten"
             EX[Exchange]
             Q1[Queue 1]
             Q2[Queue 2]
             B[Bindings]
         end
 
-        subgraph "Stockage"
+        subgraph "Speicher"
             PV1[PV Node 1]
             PV2[PV Node 2]
             PV3[PV Node 3]
@@ -62,23 +62,23 @@ graph TB
 
 ## Terminologie
 
-| Terme | Beschreibung |
-|-------|-------------|
-| **RabbitMQ** | Ressource Kubernetes (`apps.cozystack.io/v1alpha1`) représentant un cluster RabbitMQ managé. |
-| **AMQP** | Advanced Message Queuing Protocol — protocole standard de messaging supporté par RabbitMQ. |
-| **Exchange** | Point d'entrée des messages. Route les messages vers les queues via des bindings. |
-| **Queue** | File d'attente qui stocke les messages en attendant qu'un consumer les traite. |
-| **Binding** | Règle de routage entre un exchange et une queue (basée sur une routing key). |
-| **Quorum Queue** | Typ de queue utilisant le protocole **Raft** pour répliquer les messages sur plusieurs nœuds. |
-| **Virtual Host (vhost)** | Espace de noms logique qui isole les exchanges, queues et permissions au sein d'un même cluster. |
-| **Consumer** | Application qui lit et traite les messages d'une queue. |
-| **resourcesPreset** | Profil de ressources prédéfini (nano à 2xlarge). |
+| Begriff | Beschreibung |
+|---------|--------------|
+| **RabbitMQ** | Kubernetes-Ressource (`apps.cozystack.io/v1alpha1`), die einen verwalteten RabbitMQ-Cluster darstellt. |
+| **AMQP** | Advanced Message Queuing Protocol — Standard-Messaging-Protokoll, das von RabbitMQ unterstützt wird. |
+| **Exchange** | Einstiegspunkt für Nachrichten. Routet Nachrichten über Bindings an Queues. |
+| **Queue** | Warteschlange, die Nachrichten speichert, bis ein Consumer sie verarbeitet. |
+| **Binding** | Routing-Regel zwischen einem Exchange und einer Queue (basierend auf einem Routing Key). |
+| **Quorum Queue** | Queue-Typ, der das **Raft**-Protokoll verwendet, um Nachrichten auf mehreren Knoten zu replizieren. |
+| **Virtual Host (vhost)** | Logischer Namespace, der Exchanges, Queues und Berechtigungen innerhalb desselben Clusters isoliert. |
+| **Consumer** | Anwendung, die Nachrichten aus einer Queue liest und verarbeitet. |
+| **resourcesPreset** | Vordefiniertes Ressourcenprofil (nano bis 2xlarge). |
 
 ---
 
-## Routage des messages
+## Nachrichtenrouting
 
-RabbitMQ utilise un modèle de routage flexible basé sur les exchanges et les bindings :
+RabbitMQ verwendet ein flexibles Routing-Modell basierend auf Exchanges und Bindings:
 
 ```mermaid
 graph LR
@@ -95,24 +95,24 @@ graph LR
     Q3 --> C3[Consumer 3]
 ```
 
-### Types d'exchanges
+### Exchange-Typen
 
-| Typ | Routage |
-|------|---------|
-| **direct** | Routing key exacte |
-| **topic** | Pattern matching avec wildcards (`*`, `#`) |
-| **fanout** | Broadcast à toutes les queues liées |
-| **headers** | Routage basé sur les headers du message |
+| Typ | Routing |
+|-----|---------|
+| **direct** | Exakter Routing Key |
+| **topic** | Pattern Matching mit Wildcards (`*`, `#`) |
+| **fanout** | Broadcast an alle gebundenen Queues |
+| **headers** | Routing basierend auf den Message-Headers |
 
 ---
 
-## Quorum Queues et Hochverfügbarkeit
+## Quorum Queues und Hochverfügbarkeit
 
-Les quorum queues utilisent le protocole **Raft** pour répliquer les messages :
+Die Quorum Queues verwenden das **Raft**-Protokoll zur Nachrichtenreplikation:
 
-1. Un nœud est élu **leader** pour chaque queue
-2. Les messages sont répliqués sur les **followers** avant confirmation
-3. En cas de panne du leader, un follower est automatiquement promu
+1. Ein Knoten wird zum **Leader** für jede Queue gewählt
+2. Die Nachrichten werden vor der Bestätigung auf die **Follower** repliziert
+3. Bei Ausfall des Leaders wird automatisch ein Follower befördert
 
 ```mermaid
 sequenceDiagram
@@ -126,41 +126,41 @@ sequenceDiagram
     L->>F2: Replicate (Raft)
     F1-->>L: ACK
     F2-->>L: ACK
-    Note over L: Quorum atteint (2/3)
+    Note over L: Quorum erreicht (2/3)
     L-->>P: Confirm
 ```
 
 :::tip
-Configurez `replicas: 3` minimum pour garantir le quorum Raft et la Hochverfügbarkeit des quorum queues.
+Konfigurieren Sie mindestens `replicas: 3`, um das Raft-Quorum und die Hochverfügbarkeit der Quorum Queues zu gewährleisten.
 :::
 
 ---
 
 ## Virtual Hosts
 
-Les **vhosts** isolent les ressources au sein d'un même cluster :
+Die **Vhosts** isolieren Ressourcen innerhalb desselben Clusters:
 
-- Chaque vhost a ses propres exchanges, queues et permissions
-- Les utilisateurs peuvent avoir des rôles différents par vhost : `admin` ou `readonly`
-- Utile pour séparer les environnements (production, staging) sur un même cluster
-
----
-
-## Gestion des utilisateurs
-
-Les utilisateurs sont déclarés dans le manifeste avec :
-
-- **Mot de passe** pour l'authentification
-- **Rôles par vhost** : `admin` (lecture/écriture/configuration), `readonly` (lecture seule)
-
-Les credentials sont stockés dans le Secret `<instance>-credentials`.
+- Jeder Vhost hat seine eigenen Exchanges, Queues und Berechtigungen
+- Benutzer können pro Vhost unterschiedliche Rollen haben: `admin` oder `readonly`
+- Nützlich zur Trennung von Umgebungen (Produktion, Staging) auf demselben Cluster
 
 ---
 
-## Presets de ressources
+## Benutzerverwaltung
 
-| Preset | CPU | Mémoire |
-|--------|-----|---------|
+Die Benutzer werden im Manifest deklariert mit:
+
+- **Passwort** für die Authentifizierung
+- **Rollen pro Vhost**: `admin` (Lesen/Schreiben/Konfiguration), `readonly` (nur Lesen)
+
+Die Zugangsdaten werden im Secret `<instance>-credentials` gespeichert.
+
+---
+
+## Ressourcen-Presets
+
+| Preset | CPU | Speicher |
+|--------|-----|----------|
 | `nano` | 250m | 128Mi |
 | `micro` | 500m | 256Mi |
 | `small` | 1 | 512Mi |
@@ -171,18 +171,18 @@ Les credentials sont stockés dans le Secret `<instance>-credentials`.
 
 ---
 
-## Limites et quotas
+## Grenzen und Kontingente
 
-| Paramètre | Wert |
-|-----------|--------|
-| Réplicas max | Selon quota tenant |
-| Taille stockage (`size`) | Variable (en Gi) |
-| Vhosts par cluster | Illimité (selon ressources) |
-| Protocoles supportés | AMQP 0-9-1, AMQP 1.0, MQTT, STOMP |
+| Parameter | Wert |
+|-----------|------|
+| Max. Replikate | Je nach Tenant-Kontingent |
+| Speichergröße (`size`) | Variabel (in Gi) |
+| Vhosts pro Cluster | Unbegrenzt (je nach Ressourcen) |
+| Unterstützte Protokolle | AMQP 0-9-1, AMQP 1.0, MQTT, STOMP |
 
 ---
 
 ## Weiterführende Informationen
 
-- [Overview](./overview.md) : présentation du service
-- [API-Referenz](./api-reference.md) : tous les paramètres de la ressource RabbitMQ
+- [Übersicht](./overview.md): Vorstellung des Dienstes
+- [API-Referenz](./api-reference.md): Alle Parameter der RabbitMQ-Ressource

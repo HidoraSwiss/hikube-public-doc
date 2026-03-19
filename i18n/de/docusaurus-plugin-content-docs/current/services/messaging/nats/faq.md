@@ -5,11 +5,11 @@ title: FAQ
 
 # FAQ — NATS
 
-### Faut-il aktiviertr JetStream ?
+### Sollte man JetStream aktivieren?
 
-**JetStream** ajoute la **persistance**, le **streaming** et le **replay** des messages à NATS. Sans JetStream, NATS fonctionne en mode **pub/sub pur** (fire-and-forget) : les messages sont transmis uniquement aux abonnés connectés au moment de la publication.
+**JetStream** fügt NATS **Persistenz**, **Streaming** und **Replay** von Nachrichten hinzu. Ohne JetStream arbeitet NATS im reinen **Pub/Sub**-Modus (Fire-and-Forget): Nachrichten werden nur an zum Zeitpunkt der Veröffentlichung verbundene Abonnenten übertragen.
 
-JetStream est aktiviert par défaut (`jetstream.enabled: true`). Ne le désaktiviertz que si vous avez besoin uniquement de messagerie éphémère sans persistance :
+JetStream ist standardmäßig aktiviert (`jetstream.enabled: true`). Deaktivieren Sie es nur, wenn Sie ausschließlich ephemeres Messaging ohne Persistenz benötigen:
 
 ```yaml title="nats.yaml"
 jetstream:
@@ -18,46 +18,46 @@ jetstream:
 ```
 
 :::tip
-En production, gardez toujours JetStream aktiviert pour bénéficier de la persistance des messages, de la possibilité de rejouer les événements, et des consumer groups durables.
+Lassen Sie JetStream in der Produktion immer aktiviert, um von der Nachrichtenpersistenz, der Möglichkeit des Event-Replays und dauerhaften Consumer Groups zu profitieren.
 :::
 
-### Quelle est la différence entre pub/sub et queue groups ?
+### Was ist der Unterschied zwischen Pub/Sub und Queue Groups?
 
-NATS propose deux modèles de consommation :
+NATS bietet zwei Konsummodelle:
 
-- **Pub/sub classique** : chaque abonné reçoit **tous les messages** publiés sur le subject. Adapté à la diffusion (notifications, logs).
-- **Queue groups** : les abonnés d'un même groupe se **partagent les messages** (load balancing). Chaque message est délivré à **un seul abonné** du groupe. Adapté au traitement distribué.
+- **Klassisches Pub/Sub**: Jeder Abonnent erhält **alle Nachrichten**, die auf dem Subject veröffentlicht werden. Geeignet für Verbreitung (Benachrichtigungen, Logs).
+- **Queue Groups**: Die Abonnenten derselben Gruppe **teilen sich die Nachrichten** (Load Balancing). Jede Nachricht wird an **nur einen Abonnenten** der Gruppe zugestellt. Geeignet für verteilte Verarbeitung.
 
-Plusieurs queue groups peuvent s'abonner au même subject — chaque groupe reçoit une copie de chaque message, mais un seul membre par groupe le traite.
+Mehrere Queue Groups können dasselbe Subject abonnieren — jede Gruppe erhält eine Kopie jeder Nachricht, aber nur ein Mitglied pro Gruppe verarbeitet sie.
 
-### Comment fonctionnent les wildcards dans les subjects ?
+### Wie funktionieren Wildcards in Subjects?
 
-NATS utilise un système de subjects hiérarchiques séparés par des points (`.`). Deux wildcards sont disponibles :
+NATS verwendet ein hierarchisches Subject-System, das durch Punkte (`.`) getrennt wird. Zwei Wildcards sind verfügbar:
 
-| **Wildcard** | **Description**                        | **Exemple**                                                     |
-| ------------ | -------------------------------------- | --------------------------------------------------------------- |
-| `*`          | Correspond à **un seul token**         | `orders.*` matche `orders.new` mais pas `orders.new.urgent`     |
-| `>`          | Correspond à **un ou plusieurs tokens**| `orders.>` matche `orders.new`, `orders.new.urgent`, etc.       |
+| **Wildcard** | **Beschreibung** | **Beispiel** |
+| ------------ | ---------------- | ------------ |
+| `*` | Entspricht **genau einem Token** | `orders.*` matcht `orders.new`, aber nicht `orders.new.urgent` |
+| `>` | Entspricht **einem oder mehreren Token** | `orders.>` matcht `orders.new`, `orders.new.urgent` usw. |
 
-Exemples :
-- `logs.*` : reçoit `logs.info`, `logs.error`, mais pas `logs.app.error`
-- `logs.>` : reçoit `logs.info`, `logs.error`, `logs.app.error`, etc.
+Beispiele:
+- `logs.*`: empfängt `logs.info`, `logs.error`, aber nicht `logs.app.error`
+- `logs.>`: empfängt `logs.info`, `logs.error`, `logs.app.error` usw.
 
-### Quelle est la différence entre `resourcesPreset` et `resources` ?
+### Was ist der Unterschied zwischen `resourcesPreset` und `resources`?
 
-Le champ `resourcesPreset` applique une configuration CPU/mémoire prédéfinie, tandis que `resources` permet de spécifier des valeurs explicites. Si `resources` est défini, `resourcesPreset` est **ignoré**.
+Das Feld `resourcesPreset` wendet eine vordefinierte CPU-/Speicherkonfiguration an, während `resources` die Angabe expliziter Werte ermöglicht. Wenn `resources` definiert ist, wird `resourcesPreset` **ignoriert**.
 
-| **Preset** | **CPU** | **Mémoire** |
-| ---------- | ------- | ----------- |
-| `nano`     | 250m    | 128Mi       |
-| `micro`    | 500m    | 256Mi       |
-| `small`    | 1       | 512Mi       |
-| `medium`   | 1       | 1Gi         |
-| `large`    | 2       | 2Gi         |
-| `xlarge`   | 4       | 4Gi         |
-| `2xlarge`  | 8       | 8Gi         |
+| **Preset** | **CPU** | **Speicher** |
+| ---------- | ------- | ------------ |
+| `nano` | 250m | 128Mi |
+| `micro` | 500m | 256Mi |
+| `small` | 1 | 512Mi |
+| `medium` | 1 | 1Gi |
+| `large` | 2 | 2Gi |
+| `xlarge` | 4 | 4Gi |
+| `2xlarge` | 8 | 8Gi |
 
-Exemple avec des ressources explicites :
+Beispiel mit expliziten Ressourcen:
 
 ```yaml title="nats.yaml"
 replicas: 3
@@ -66,20 +66,20 @@ resources:
   memory: 2Gi
 ```
 
-### NATS persiste-t-il les messages ?
+### Persistiert NATS die Nachrichten?
 
-Par défaut, NATS fonctionne en mode **fire-and-forget** : les messages ne sont transmis qu'aux abonnés connectés au moment de la publication. **Aucune persistance** n'a lieu sans configuration supplémentaire.
+Standardmäßig arbeitet NATS im **Fire-and-Forget**-Modus: Nachrichten werden nur an zum Zeitpunkt der Veröffentlichung verbundene Abonnenten übertragen. **Keine Persistenz** findet ohne zusätzliche Konfiguration statt.
 
-Pour persister les messages, deux conditions doivent être remplies :
+Um Nachrichten zu persistieren, müssen zwei Bedingungen erfüllt sein:
 
-1. **JetStream doit être aktiviert** (`jetstream.enabled: true`)
-2. **Un stream doit être créé** pour capturer les messages des subjects concernés
+1. **JetStream muss aktiviert sein** (`jetstream.enabled: true`)
+2. **Ein Stream muss erstellt werden**, um die Nachrichten der gewünschten Subjects zu erfassen
 
-Sans stream configuré, même avec JetStream aktiviert, les messages publiés sur un subject sans stream associé ne sont pas persistés.
+Ohne konfigurierten Stream werden selbst bei aktiviertem JetStream die auf einem Subject ohne zugehörigen Stream veröffentlichten Nachrichten nicht persistiert.
 
-### Konfiguration von NATS de manière avancée ?
+### Wie konfiguriert man NATS erweitert?
 
-Le champ `config.merge` permet d'ajouter ou de surcharger des paramètres de la configuration NATS :
+Das Feld `config.merge` ermöglicht das Hinzufügen oder Überschreiben von NATS-Konfigurationsparametern:
 
 ```yaml title="nats.yaml"
 config:
@@ -90,15 +90,15 @@ config:
     trace: false
 ```
 
-Paramètres courants :
+Gängige Parameter:
 
-| **Paramètre**     | **Description**                                          | **Défaut** |
-| ------------------ | -------------------------------------------------------- | ---------- |
-| `max_payload`      | Taille maximale d'un message                             | 1MB        |
-| `write_deadline`   | Timeout d'écriture vers un client                        | 2s         |
-| `debug`            | Active les logs de debug                                 | false      |
-| `trace`            | Active le traçage des messages (très verbeux)            | false      |
+| **Parameter** | **Beschreibung** | **Standard** |
+| ------------- | ---------------- | ------------ |
+| `max_payload` | Maximale Größe einer Nachricht | 1MB |
+| `write_deadline` | Schreib-Timeout für einen Client | 2s |
+| `debug` | Aktiviert Debug-Logs | false |
+| `trace` | Aktiviert Nachrichten-Tracing (sehr ausführlich) | false |
 
 :::warning
-Activer `debug` et `trace` en production génère un volume de logs considérable. Utilisez-les uniquement pour le diagnostic temporaire.
+Die Aktivierung von `debug` und `trace` in der Produktion erzeugt ein erhebliches Log-Volumen. Verwenden Sie sie nur für temporäre Diagnose.
 :::

@@ -1,34 +1,34 @@
 ---
-title: "Skalierung von verticalement"
+title: "Vertikal skalieren"
 ---
 
-# Skalierung von verticalement
+# Vertikal skalieren
 
-Ce guide vous explique comment ajuster les ressources CPU et mémoire de votre instance MySQL auf Hikube, soit via un preset prédéterminé, soit en définissant des valeurs explicites.
+Diese Anleitung erklärt, wie Sie die CPU- und Speicherressourcen Ihrer MySQL-Instanz auf Hikube anpassen, entweder über ein vordefiniertes Preset oder durch Definition expliziter Werte.
 
 ## Voraussetzungen
 
-- **kubectl** configuré avec votre kubeconfig Hikube
-- Une instance **MySQL** déployée sur votre tenant
-- Connaissance des besoins en ressources de votre charge de travail
+- **kubectl** konfiguriert mit Ihrer Hikube-Kubeconfig
+- Eine **MySQL**-Instanz auf Ihrem Tenant bereitgestellt
+- Kenntnis der Ressourcenanforderungen Ihrer Arbeitslast
 
 ## Schritte
 
-### 1. Vérifier les ressources actuelles
+### 1. Aktuelle Ressourcen überprüfen
 
-Consultez la configuration actuelle de votre instance MySQL :
+Überprüfen Sie die aktuelle Konfiguration Ihrer MySQL-Instanz:
 
 ```bash
 kubectl get mariadb example -o yaml | grep -A 5 -E "resources:|resourcesPreset"
 ```
 
-**Erwartetes Ergebnis (avec preset) :**
+**Erwartetes Ergebnis (mit Preset):**
 
 ```console
   resourcesPreset: nano
 ```
 
-**Erwartetes Ergebnis (avec ressources explicites) :**
+**Erwartetes Ergebnis (mit expliziten Ressourcen):**
 
 ```console
   resources:
@@ -36,35 +36,35 @@ kubectl get mariadb example -o yaml | grep -A 5 -E "resources:|resourcesPreset"
     memory: 1Gi
 ```
 
-### 2. Choisir la méthode de scaling
+### 2. Skalierungsmethode wählen
 
-Hikube bietet deux approches pour définir les ressources :
+Hikube bietet zwei Ansätze zur Definition von Ressourcen:
 
-#### Option A : Utiliser un `resourcesPreset`
+#### Option A: `resourcesPreset` verwenden
 
-Les presets offrent des profils de ressources prédéfinis et adaptés à différents cas d'usage :
+Die Presets bieten vordefinierte Ressourcenprofile für verschiedene Anwendungsfälle:
 
-| Preset | CPU | Mémoire | Anwendungsfälle |
+| Preset | CPU | Speicher | Anwendungsfall |
 |---|---|---|---|
-| `nano` | 250m | 128Mi | Tests, développement minimal |
-| `micro` | 500m | 256Mi | Développement, petites applications |
-| `small` | 1 | 512Mi | Applications légères |
-| `medium` | 1 | 1Gi | Applications standard |
-| `large` | 2 | 2Gi | Charges de travail modérées |
-| `xlarge` | 4 | 4Gi | Production standard |
-| `2xlarge` | 8 | 8Gi | Production intensive |
+| `nano` | 250m | 128Mi | Tests, minimale Entwicklung |
+| `micro` | 500m | 256Mi | Entwicklung, kleine Anwendungen |
+| `small` | 1 | 512Mi | Leichte Anwendungen |
+| `medium` | 1 | 1Gi | Standardanwendungen |
+| `large` | 2 | 2Gi | Moderate Arbeitslasten |
+| `xlarge` | 4 | 4Gi | Standard-Produktion |
+| `2xlarge` | 8 | 8Gi | Intensive Produktion |
 
-#### Option B : Définir des ressources explicites
+#### Option B: Explizite Ressourcen definieren
 
-Pour un contrôle précis, définissez directement les valeurs `resources.cpu` et `resources.memory`.
+Für eine präzise Steuerung definieren Sie direkt die Werte `resources.cpu` und `resources.memory`.
 
 :::warning
-Si le champ `resources` est défini (CPU et mémoire explicites), la valeur de `resourcesPreset` est **ignorée**. Les deux approches sont mutuellement exclusives.
+Wenn das Feld `resources` definiert ist (explizite CPU und Speicher), wird der Wert von `resourcesPreset` **ignoriert**. Die beiden Ansätze schließen sich gegenseitig aus.
 :::
 
-### 3. Option A : Modifier le resourcesPreset
+### 3. Option A: resourcesPreset ändern
 
-Pour passer d'un preset à un autre, utilisez `kubectl patch` :
+Um von einem Preset zu einem anderen zu wechseln, verwenden Sie `kubectl patch`:
 
 ```bash
 kubectl patch mariadb example --type='merge' -p='
@@ -73,7 +73,7 @@ spec:
 '
 ```
 
-Ou modifiez directement le manifeste :
+Oder ändern Sie direkt das Manifest:
 
 ```yaml title="mysql-scaled.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -90,9 +90,9 @@ spec:
 kubectl apply -f mysql-scaled.yaml
 ```
 
-### 4. Option B : Définir des ressources explicites
+### 4. Option B: Explizite Ressourcen definieren
 
-Pour un contrôle fin des ressources, spécifiez les valeurs CPU et mémoire directement :
+Für eine feine Ressourcensteuerung geben Sie die CPU- und Speicherwerte direkt an:
 
 ```bash
 kubectl patch mariadb example --type='merge' -p='
@@ -103,7 +103,7 @@ spec:
 '
 ```
 
-Ou via le manifeste complet :
+Oder über das vollständige Manifest:
 
 ```yaml title="mysql-custom-resources.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -123,18 +123,18 @@ kubectl apply -f mysql-custom-resources.yaml
 ```
 
 :::tip
-Pour revenir à un preset après avoir utilisé des ressources explicites, supprimez le champ `resources` et définissez `resourcesPreset` dans votre manifeste.
+Um nach der Verwendung expliziter Ressourcen zu einem Preset zurückzukehren, entfernen Sie das Feld `resources` und definieren Sie `resourcesPreset` in Ihrem Manifest.
 :::
 
 ## Überprüfung
 
-Suivez le rolling update des pods MySQL :
+Verfolgen Sie das Rolling Update der MySQL-Pods:
 
 ```bash
 kubectl get pods -w | grep mysql-example
 ```
 
-**Erwartetes Ergebnis :**
+**Erwartetes Ergebnis:**
 
 ```console
 mysql-example-0   1/1     Running   0   5m
@@ -142,16 +142,16 @@ mysql-example-1   1/1     Running   0   3m
 mysql-example-2   1/1     Running   0   1m
 ```
 
-Überprüfen Sie, ob les nouvelles ressources sont bien appliquées :
+Überprüfen Sie, dass die neuen Ressourcen korrekt angewendet wurden:
 
 ```bash
 kubectl get mariadb example -o yaml | grep -A 5 -E "resources:|resourcesPreset"
 ```
 
 :::note
-Le scaling vertical entraîne un **rolling update** des pods. Les réplicas sont redémarrés un par un pour minimiser l'impact sur la disponibilité. Pendant ce processus, le cluster reste accessible en lecture via les réplicas déjà aktualisiert.
+Die vertikale Skalierung verursacht ein **Rolling Update** der Pods. Die Replikas werden nacheinander neu gestartet, um die Auswirkungen auf die Verfügbarkeit zu minimieren. Während dieses Prozesses bleibt der Cluster über die bereits aktualisierten Replikas zum Lesen zugänglich.
 :::
 
 ## Weiterführende Informationen
 
-- [API-Referenz](../api-reference.md) : liste complète des presets et paramètres de ressources
+- [API-Referenz](../api-reference.md): Vollständige Liste der Presets und Ressourcenparameter

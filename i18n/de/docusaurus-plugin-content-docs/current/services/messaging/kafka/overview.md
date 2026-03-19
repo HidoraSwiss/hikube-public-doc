@@ -5,65 +5,65 @@ title: Übersicht
 
 # Kafka auf Hikube
 
-Les **clusters Kafka** d’Hikube offrent une plateforme de **streaming de données distribuée, scalable et hautement disponible**, conçue pour la **collecte, le traitement et la distribution d’événements en temps réel**.
-Grâce à son intégration native avec **ZooKeeper**, chaque cluster Kafka auf Hikube bénéficie d’une **gestion coordonnée et résiliente des brokers**, assurant la **stabilité et la cohérence** des métadonnées du cluster.
+Die **Kafka-Cluster** von Hikube bieten eine **verteilte, skalierbare und hochverfügbare Daten-Streaming-Plattform**, die für die **Erfassung, Verarbeitung und Verteilung von Ereignissen in Echtzeit** konzipiert ist.
+Dank der nativen Integration mit **ZooKeeper** profitiert jeder Kafka-Cluster auf Hikube von einer **koordinierten und resilienten Verwaltung der Broker**, die **Stabilität und Konsistenz** der Cluster-Metadaten gewährleistet.
 
 ---
 
-## 🏗️ Architecture et Fonctionnement
+## 🏗️ Architektur und Funktionsweise
 
-Un Deployment Kafka auf Hikube repose sur deux composants clés :
+Ein Kafka-Deployment auf Hikube basiert auf zwei Schlüsselkomponenten:
 
-* **Kafka** → assure la **publication, le stockage et la diffusion** des messages via un modèle *publish / subscribe*.
-  Les messages sont organisés en **topics**, divisés en **partitions** réparties entre plusieurs **brokers**.
-  Cela permet d’obtenir un **haut débit**, une **faible latence** et une **scalabilité horizontale**.
+* **Kafka** → sorgt für die **Veröffentlichung, Speicherung und Verteilung** von Nachrichten über ein *Publish / Subscribe*-Modell.
+  Die Nachrichten sind in **Topics** organisiert, die in **Partitionen** aufgeteilt und auf mehrere **Broker** verteilt werden.
+  Dies ermöglicht einen **hohen Durchsatz**, eine **geringe Latenz** und eine **horizontale Skalierbarkeit**.
 
-* **ZooKeeper** → agit comme un **registre central de coordination**.
-  Il gère la **configuration des brokers**, le **suivi des partitions et des leaders**, ainsi que la **synchronisation entre les nœuds**.
-  En cas de défaillance d’un broker, ZooKeeper élit automatiquement un nouveau leader pour maintenir la continuité du service.
-
----
-
-## 🚀 Cas d’usage typiques
-
-### 📡 Intégration et synchronisation de systèmes
-
-Kafka joue le rôle de **bus d’événements central** entre les différentes applications d’une organisation.
-**Exemples :**
-
-* Synchroniser les données entre microservices ou systèmes distants
-* Connecter des bases de données et outils analytiques via **Kafka Connect**
-* Décorréler les échanges entre applications pour une architecture plus robuste
+* **ZooKeeper** → fungiert als **zentrales Koordinierungsregister**.
+  Es verwaltet die **Broker-Konfiguration**, die **Überwachung von Partitionen und Leadern** sowie die **Synchronisation zwischen den Knoten**.
+  Bei Ausfall eines Brokers wählt ZooKeeper automatisch einen neuen Leader, um die Dienstkontinuität aufrechtzuerhalten.
 
 ---
 
-### ⚙️ Traitement temps réel et analytics
+## 🚀 Typische Anwendungsfälle
 
-Kafka permet d’analyser et de transformer les données **au moment où elles sont produites**.
-**Exemples :**
+### 📡 Integration und Synchronisation von Systemen
 
-* Détection de fraude en temps réel
-* Calcul de métriques ou génération d’alertes instantanées
-* Alimentation continue de dashboards analytiques (ClickHouse, Elasticsearch, Grafana, etc.)
+Kafka fungiert als **zentraler Event-Bus** zwischen den verschiedenen Anwendungen einer Organisation.
+**Beispiele:**
 
----
-
-### 🛰️ Collecte de données IoT et logs
-
-Kafka simplifie la **collecte massive de données hétérogènes** provenant de capteurs, d’applications ou de serveurs.
-**Exemples :**
-
-* Centralisation de télémétrie IoT pour des milliers d’appareils
-* Agrégation de logs applicatifs dans un pipeline de monitoring
-* Transmission de flux vers plusieurs destinations simultanément
+* Daten zwischen Microservices oder entfernten Systemen synchronisieren
+* Datenbanken und Analysetools über **Kafka Connect** verbinden
+* Austausch zwischen Anwendungen für eine robustere Architektur entkoppeln
 
 ---
 
-### 💬 Communication inter-services
+### ⚙️ Echtzeit-Verarbeitung und Analytics
 
-Kafka permet une **communication asynchrone** entre microservices, améliorant la résilience et réduisant la dépendance entre composants.
-**Exemples :**
+Kafka ermöglicht die Analyse und Transformation von Daten **zum Zeitpunkt ihrer Erzeugung**.
+**Beispiele:**
 
-* Gestion d’événements métiers (commandes, paiements, notifications)
-* File d’attente distribuée pour tâches ou workflows complexes
-* Intégration avec des workers ou consumers spécialisés
+* Betrugserkennung in Echtzeit
+* Berechnung von Metriken oder Generierung sofortiger Alarme
+* Kontinuierliche Speisung analytischer Dashboards (ClickHouse, Elasticsearch, Grafana usw.)
+
+---
+
+### 🛰️ IoT- und Log-Datenerfassung
+
+Kafka vereinfacht die **massive Erfassung heterogener Daten** von Sensoren, Anwendungen oder Servern.
+**Beispiele:**
+
+* Zentralisierung von IoT-Telemetrie für Tausende von Geräten
+* Aggregation von Anwendungslogs in einer Monitoring-Pipeline
+* Übertragung von Streams an mehrere Ziele gleichzeitig
+
+---
+
+### 💬 Inter-Service-Kommunikation
+
+Kafka ermöglicht eine **asynchrone Kommunikation** zwischen Microservices, verbessert die Resilienz und reduziert die Abhängigkeit zwischen Komponenten.
+**Beispiele:**
+
+* Verwaltung von Geschäftsereignissen (Bestellungen, Zahlungen, Benachrichtigungen)
+* Verteilte Warteschlange für komplexe Aufgaben oder Workflows
+* Integration mit spezialisierten Workern oder Consumern
