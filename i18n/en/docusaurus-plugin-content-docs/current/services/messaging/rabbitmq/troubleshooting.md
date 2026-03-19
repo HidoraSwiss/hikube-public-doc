@@ -105,7 +105,7 @@ title: Troubleshooting
 
 1. Check connection credentials in the Kubernetes Secret:
    ```bash
-   kubectl get secret <rabbitmq-name>-credentials -o jsonpath='{.data}' | base64 -d
+   kubectl get tenantsecret <rabbitmq-name>-credentials -o jsonpath='{.data}' | base64 -d
    ```
 2. Verify the user has the necessary permissions on the vhost:
    ```bash

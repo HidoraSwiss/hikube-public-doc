@@ -114,7 +114,7 @@ title: Dépannage
    ```
 3. Vérifiez les identifiants utilisateur dans le Secret Kubernetes :
    ```bash
-   kubectl get secret <nom-nats>-credentials -o jsonpath='{.data}' | base64 -d
+   kubectl get tenantsecret <nom-nats>-credentials -o jsonpath='{.data}' | base64 -d
    ```
 4. Si vous vous connectez depuis l'extérieur du cluster, assurez-vous que `external: true` est configuré :
    ```yaml title="nats.yaml"
