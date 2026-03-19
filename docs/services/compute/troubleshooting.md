@@ -21,7 +21,7 @@ title: Dépannage
    kubectl describe vminstance <vm-name>
    ```
 
-3. Assurez-vous que l'`instanceProfile` correspond bien à l'image utilisée (par exemple `ubuntu` pour une image Ubuntu).
+3. Vérifiez que l'`instanceProfile` est adapté à l'OS de l'image (par exemple `ubuntu` pour une image Ubuntu). Un profil inadapté n'empêche pas le démarrage mais la VM ne sera pas optimisée (drivers manquants).
 
 4. Vérifiez que l'`instanceType` choisi est valide (préfixe `s1`, `u1` ou `m1` suivi d'une taille valide).
 

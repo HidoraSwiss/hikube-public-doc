@@ -19,19 +19,24 @@ Chaque gamme est disponible en tailles allant de `small` à `8xlarge`. Par exemp
 
 ---
 
-### Quelle est la différence entre `storageClass` local et replicated ?
+### Comment fonctionne la `storageClass` dans un cluster Kubernetes ?
 
-Les trois storageClasses disponibles sont : `local`, `replicated` et `replicated-async`.
+La storageClass choisie dans le manifeste du cluster est **répliquée à l'intérieur du cluster tenant**. Lorsque vos workloads créent des PVC dans le cluster, le stockage est provisionné avec cette storageClass côté infrastructure.
+
+Les storageClasses disponibles sont : `local`, `replicated` et `replicated-async`.
 
 | Caractéristique | `local` | `replicated` / `replicated-async` |
 |----------------|---------|-------------------------------------|
 | **Réplication** | Un seul datacenter | Multi-datacenter (synchrone ou asynchrone) |
 | **Performance** | Plus rapide (latence faible) | Légèrement plus lent |
 | **Haute disponibilité** | Non (niveau stockage) | Oui |
-| **Cas d'usage** | Clusters K8s (les nœuds assurent la HA applicative) | Instances isolées, données critiques sans réplication applicative |
 
 :::tip
-Pour un cluster Kubernetes, les nœuds fournissent déjà la haute disponibilité au niveau applicatif. Utilisez `local` pour de meilleures performances. Réservez `replicated` aux workloads mono-instance sans réplication applicative intégrée.
+La recommandation par défaut pour Kubernetes est **`replicated`**, qui assure la durabilité des données au niveau stockage.
+:::
+
+:::note
+**Limitation actuelle** : une seule storageClass peut être passée au cluster tenant. Une amélioration est en cours pour permettre de passer toutes les storageClasses et laisser le client choisir selon ses besoins.
 :::
 
 ---
@@ -118,29 +123,7 @@ spec:
 ```
 
 :::warning
-N'oubliez pas d'activer l'addon `gpuOperator` pour que les drivers NVIDIA soient automatiquement installés sur les nœuds GPU.
+- N'oubliez pas d'activer l'addon `gpuOperator` pour que les drivers NVIDIA soient automatiquement installés sur les nœuds GPU.
+- Chaque nœud du nodeGroup GPU consomme **1 GPU physique**. Un nodeGroup avec `minReplicas: 4` nécessite 4 GPUs disponibles, avec un impact direct sur la facturation.
 :::
 
----
-
-### Pourquoi `kubectl get ... -A` retourne Forbidden ?
-
-L'accès aux clusters Hikube est limité au scope de votre tenant. Les requêtes cluster-scope (avec le flag `-A` ou `--all-namespaces`) sont interdites par le RBAC en place.
-
-**Ce qui ne fonctionne pas :**
-
-```bash
-kubectl get pods -A
-# Error: pods is forbidden: User "..." cannot list resource "pods" at the cluster scope
-```
-
-**Ce qui fonctionne :**
-
-```bash
-kubectl get pods
-kubectl get pods -n mon-namespace
-```
-
-:::note
-Cette restriction est une mesure de sécurité multi-tenant. Vous ne pouvez interroger que les namespaces auxquels votre tenant a accès.
-:::

@@ -40,7 +40,7 @@ Hikube propose des **Golden Images** pré-configurées :
 | **Rocky Linux** | 8, 9, 10 |
 | **AlmaLinux** | 8, 9, 10 |
 
-Les images suivent le format `{os}-{version}` dans le champ `instanceProfile`. Par exemple : `ubuntu`, `debian`, `centos`, `rocky`, `almalinux`.
+Les images sont spécifiées dans le champ `source.image.name` de la ressource **VMDisk**, au format `{os}-{version}`. Par exemple : `ubuntu-2404`, `debian-12`, `rocky-9`.
 
 ---
 
@@ -149,7 +149,7 @@ Cloud-init s'exécute au premier démarrage de la VM et permet d'installer des p
 
 | Paramètre | Rôle | Exemples |
 |-----------|------|----------|
-| `instanceProfile` | Définit le **profil OS** (système d'exploitation) | `ubuntu`, `debian`, `centos`, `rocky`, `almalinux` |
+| `instanceProfile` | Charge les **drivers et kernels** adaptés à l'OS | `ubuntu`, `centos`, `windows.2k25.virtio` |
 | `instanceType` | Définit la **taille** de la VM (CPU/RAM) | `s1.small`, `u1.large`, `m1.2xlarge` |
 
-Les deux sont obligatoires et complémentaires : `instanceProfile` détermine quel OS sera installé, tandis que `instanceType` dimensionne les ressources CPU et mémoire allouées à la VM.
+`instanceProfile` ne détermine pas l'image OS — celle-ci est définie dans la ressource **VMDisk** via `source.image.name`. Le profil sert à charger les drivers et kernels optimisés pour le système d'exploitation. C'est principalement utile pour **Windows** (drivers virtio). `instanceType` dimensionne les ressources CPU et mémoire allouées à la VM.

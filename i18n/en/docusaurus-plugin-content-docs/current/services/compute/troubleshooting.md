@@ -21,7 +21,7 @@ title: Troubleshooting
    kubectl describe vminstance <vm-name>
    ```
 
-3. Make sure the `instanceProfile` matches the image used (for example `ubuntu` for an Ubuntu image).
+3. Verify that the `instanceProfile` is appropriate for the OS image (for example `ubuntu` for an Ubuntu image). An incorrect profile will not prevent boot but the VM will not be optimized (missing drivers).
 
 4. Verify that the chosen `instanceType` is valid (prefix `s1`, `u1`, or `m1` followed by a valid size).
 

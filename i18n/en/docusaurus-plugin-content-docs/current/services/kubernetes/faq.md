@@ -19,19 +19,24 @@ Each family is available in sizes from `small` to `8xlarge`. For example: `s1.sm
 
 ---
 
-### What is the difference between `storageClass` local and replicated?
+### How does `storageClass` work in a Kubernetes cluster?
 
-The three available storageClasses are: `local`, `replicated`, and `replicated-async`.
+The storageClass chosen in the cluster manifest is **replicated inside the tenant cluster**. When your workloads create PVCs in the cluster, storage is provisioned with this storageClass on the infrastructure side.
+
+The available storageClasses are: `local`, `replicated`, and `replicated-async`.
 
 | Feature | `local` | `replicated` / `replicated-async` |
 |---------|---------|-------------------------------------|
 | **Replication** | Single datacenter | Multi-datacenter (synchronous or asynchronous) |
 | **Performance** | Faster (low latency) | Slightly slower |
 | **High availability** | No (at storage level) | Yes |
-| **Use case** | K8s clusters (nodes provide application-level HA) | Single instances, critical data without application-level replication |
 
 :::tip
-For a Kubernetes cluster, the nodes already provide high availability at the application level. Use `local` for better performance. Reserve `replicated` for single-instance workloads without built-in application-level replication.
+The default recommendation for Kubernetes is **`replicated`**, which ensures data durability at the storage level.
+:::
+
+:::note
+**Current limitation**: only one storageClass can be passed to the tenant cluster. An improvement is in progress to allow passing all storageClasses and letting the client choose based on their needs.
 :::
 
 ---
@@ -118,29 +123,7 @@ spec:
 ```
 
 :::warning
-Don't forget to enable the `gpuOperator` addon so that NVIDIA drivers are automatically installed on GPU nodes.
+- Don't forget to enable the `gpuOperator` addon so that NVIDIA drivers are automatically installed on GPU nodes.
+- Each node in the GPU nodeGroup consumes **1 physical GPU**. A nodeGroup with `minReplicas: 4` requires 4 available GPUs, with a direct impact on billing.
 :::
 
----
-
-### Why does `kubectl get ... -A` return Forbidden?
-
-Access to Hikube clusters is limited to your tenant scope. Cluster-scope queries (with the `-A` or `--all-namespaces` flag) are forbidden by the RBAC configuration.
-
-**What does not work:**
-
-```bash
-kubectl get pods -A
-# Error: pods is forbidden: User "..." cannot list resource "pods" at the cluster scope
-```
-
-**What works:**
-
-```bash
-kubectl get pods
-kubectl get pods -n my-namespace
-```
-
-:::note
-This restriction is a multi-tenant security measure. You can only query namespaces that your tenant has access to.
-:::
