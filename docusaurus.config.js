@@ -68,7 +68,18 @@ const config = {
             },
           },
         },
-        blog: false,
+        blog: {
+          showReadingTime: true,
+          blogTitle: 'Changelog',
+          blogDescription: 'Nouveautés et mises à jour de la plateforme Hikube',
+          blogSidebarTitle: 'Releases récentes',
+          blogSidebarCount: 10,
+          feedOptions: {
+            type: 'all',
+            title: 'Hikube Changelog',
+            description: 'Suivez les mises à jour de la plateforme Hikube',
+          },
+        },
         
         theme: {
           customCss: './src/css/custom.css',
@@ -88,7 +99,7 @@ const config = {
         hashed: true,
         language: ['fr', 'en'],
         docsRouteBasePath: '/',
-        indexBlog: false,
+        indexBlog: true,
         highlightSearchTermsOnTargetPage: true,
       }),
     ],
@@ -117,6 +128,11 @@ const config = {
             sidebarId: 'docsSidebar',
             position: 'left',
             label: 'Documentation',
+          },
+          {
+            to: '/blog',
+            label: 'Changelog',
+            position: 'left',
           },
           {
             type: 'docsVersionDropdown',
