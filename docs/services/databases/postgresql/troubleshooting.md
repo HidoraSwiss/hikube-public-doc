@@ -20,10 +20,7 @@ title: Dépannage
    kubectl get pvc
    kubectl describe pvc pg-<name>-1
    ```
-3. Assurez-vous que la `storageClass` spécifiée dans votre manifeste existe :
-   ```bash
-   kubectl get storageclass
-   ```
+3. Vérifiez que la `storageClass` utilisée est bien l'une des classes disponibles : `local`, `replicated` ou `replicated-async`.
 4. Vérifiez que votre quota de stockage n'est pas atteint.
 5. Si nécessaire, corrigez la `storageClass` dans votre manifeste et réappliquez :
    ```bash
@@ -66,7 +63,7 @@ title: Dépannage
    ```
 3. Assurez-vous d'utiliser le bon nom de Secret pour les identifiants. Le pattern est `pg-<name>-app` :
    ```bash
-   kubectl get secret pg-<name>-app
+   kubectl get tenantsecret pg-<name>-app
    ```
 4. Testez la connexion depuis un pod dans le même namespace :
    ```bash

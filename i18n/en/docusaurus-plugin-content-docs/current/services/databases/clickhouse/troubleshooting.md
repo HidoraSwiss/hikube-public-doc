@@ -94,10 +94,7 @@ title: Troubleshooting
    ```bash
    kubectl get pvc -l app=clickhouse-<name>
    ```
-3. Make sure the `storageClass` exists:
-   ```bash
-   kubectl get storageclass
-   ```
+3. Make sure the `storageClass` used is one of the available classes: `local`, `replicated`, or `replicated-async`.
 4. Check that resource quotas (CPU, memory, storage) have not been reached.
 5. Fix the configuration in your manifest and reapply:
    ```bash

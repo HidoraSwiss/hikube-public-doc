@@ -53,13 +53,13 @@ Oui. Redis sur Hikube utilise la **persistance RDB/AOF** combinée à des volume
 
 Le choix de `storageClass` influence la durabilité :
 
-- **`local`** : données persistées sur le nœud physique. Rapide mais vulnérables à la panne du nœud.
-- **`replicated`** : données répliquées sur plusieurs nœuds. Plus lent mais résilient aux pannes.
+- **`local`** : données persistées sur le nœud physique. Rapide mais vulnérables à la panne du nœud. Recommandé si `replicas` > 1 (la réplication Redis Sentinel assure déjà la HA).
+- **`replicated`** : données répliquées sur plusieurs nœuds. Plus lent mais résilient aux pannes. Recommandé si `replicas` = 1 (le stockage répliqué compense l'absence de réplication applicative).
 
 ```yaml title="redis.yaml"
 spec:
   size: 2Gi
-  storageClass: replicated    # Recommandé en production
+  storageClass: local    # Si replicas > 1 (Sentinel assure la HA)
 ```
 
 ### À quoi sert le paramètre `authEnabled` ?
@@ -94,7 +94,7 @@ Redis Sentinel **reconfigure automatiquement** le cluster pour intégrer les nou
 
 1. Récupérez le mot de passe depuis le Secret (si `authEnabled: true`) :
    ```bash
-   kubectl get secret redis-<name>-auth -o jsonpath='{.data.password}' | base64 -d
+   kubectl get tenantsecret redis-<name>-auth -o jsonpath='{.data.password}' | base64 -d
    ```
 
 2. Connectez-vous via le service **Sentinel** (recommandé pour le failover automatique) :

@@ -94,10 +94,7 @@ title: Dépannage
    ```bash
    kubectl get pvc -l app=clickhouse-<name>
    ```
-3. Assurez-vous que la `storageClass` existe :
-   ```bash
-   kubectl get storageclass
-   ```
+3. Vérifiez que la `storageClass` utilisée est bien l'une des classes disponibles : `local`, `replicated` ou `replicated-async`.
 4. Vérifiez que les quotas de ressources (CPU, mémoire, stockage) ne sont pas atteints.
 5. Corrigez la configuration dans votre manifeste et réappliquez :
    ```bash

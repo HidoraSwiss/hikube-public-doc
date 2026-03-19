@@ -15,10 +15,11 @@ title: Troubleshooting
    ```bash
    kubectl get pvc -l app=redis-<name>
    ```
-2. To ensure data durability, use `storageClass: replicated`:
+2. If you are using a single replica (`replicas` = 1), switch to `storageClass: replicated` so that storage compensates for the lack of application replication. If you have multiple replicas (`replicas` >= 3), `storageClass: local` is appropriate since Redis Sentinel already ensures high availability:
    ```yaml title="redis.yaml"
    spec:
-     storageClass: replicated
+     storageClass: replicated    # If replicas = 1
+     # storageClass: local       # If replicas >= 3 (Sentinel ensures HA)
    ```
 3. Apply the change. Note that changing `storageClass` typically requires recreating the PVCs.
 4. Also ensure that `replicas` >= 3 to benefit from Redis Sentinel replication.
@@ -96,7 +97,7 @@ title: Troubleshooting
 
 1. Get the correct password from the Secret:
    ```bash
-   kubectl get secret redis-<name>-auth -o jsonpath='{.data.password}' | base64 -d
+   kubectl get tenantsecret redis-<name>-auth -o jsonpath='{.data.password}' | base64 -d
    ```
 2. Verify that `authEnabled: true` is configured in your manifest:
    ```yaml title="redis.yaml"

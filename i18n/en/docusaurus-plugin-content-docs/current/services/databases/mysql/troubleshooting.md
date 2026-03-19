@@ -55,7 +55,7 @@ This issue is tracked in the [MariaDB Operator](https://github.com/mariadb-opera
    ```
 2. Get the credentials from the Secret. The pattern is `mysql-<name>-auth`:
    ```bash
-   kubectl get secret mysql-<name>-auth -o jsonpath='{.data.password}' | base64 -d
+   kubectl get tenantsecret mysql-<name>-auth -o jsonpath='{.data.password}' | base64 -d
    ```
 3. Check that the `maxUserConnections` limit has not been reached for the concerned user.
 4. Test the connection from a pod within the cluster:

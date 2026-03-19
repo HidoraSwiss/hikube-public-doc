@@ -38,7 +38,7 @@ Hikube propose deux types de classes de stockage :
 - **`replicated`** : les données sont répliquées sur plusieurs nœuds physiques. Ce mode assure la **haute disponibilité multi-DC** et protège contre la perte d'un nœud, au prix d'une latence légèrement supérieure.
 
 :::tip
-En production, privilégiez `storageClass: replicated` pour garantir la durabilité des données. En développement, `local` peut suffire pour de meilleures performances.
+Utilisez `storageClass: local` si vous configurez plusieurs réplicas (`replicas` > 1) : la réplication applicative (standby PostgreSQL) assure déjà la haute disponibilité. Utilisez `storageClass: replicated` si vous n'avez qu'un seul réplica (`replicas` = 1) : le stockage répliqué compense l'absence de réplication applicative. En développement avec un seul réplica, `local` peut suffire si la perte de données est acceptable.
 :::
 
 ### Comment se connecter à PostgreSQL depuis l'intérieur du cluster ?
@@ -51,10 +51,10 @@ Les identifiants de connexion sont stockés dans un Secret Kubernetes nommé `pg
 
 ```bash
 # Récupérer le mot de passe
-kubectl get secret pg-mydb-app -o jsonpath='{.data.password}' | base64 -d
+kubectl get tenantsecret pg-mydb-app -o jsonpath='{.data.password}' | base64 -d
 
 # Récupérer le nom d'utilisateur
-kubectl get secret pg-mydb-app -o jsonpath='{.data.username}' | base64 -d
+kubectl get tenantsecret pg-mydb-app -o jsonpath='{.data.username}' | base64 -d
 
 # Se connecter depuis un pod
 psql -h pg-mydb-rw -p 5432 -U <username> -d <database>
