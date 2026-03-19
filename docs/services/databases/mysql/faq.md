@@ -7,19 +7,19 @@ title: FAQ
 
 ### Pourquoi Hikube utilise MariaDB pour le service MySQL ?
 
-Le service MySQL sur Hikube est base sur **MariaDB**, deploye via le **MariaDB Operator**. MariaDB est un fork open-source de MySQL, entierement compatible avec le protocole et la syntaxe MySQL. Ce choix garantit :
+Le service MySQL sur Hikube est basé sur **MariaDB**, déployé via le **MariaDB Operator**. MariaDB est un fork open-source de MySQL, entièrement compatible avec le protocole et la syntaxe MySQL. Ce choix garantit :
 
-- Une **compatibilite totale** avec les clients et applications MySQL existants
-- Un developpement **open-source** actif et transparent
-- Des fonctionnalites avancees (compression de colonnes, moteur Aria, etc.)
+- Une **compatibilité totale** avec les clients et applications MySQL existants
+- Un développement **open-source** actif et transparent
+- Des fonctionnalités avancées (compression de colonnes, moteur Aria, etc.)
 
 Vos applications MySQL fonctionnent sans modification avec le service MySQL Hikube.
 
-### Quelle est la difference entre `resourcesPreset` et `resources` ?
+### Quelle est la différence entre `resourcesPreset` et `resources` ?
 
-Le champ `resourcesPreset` permet de choisir un profil de ressources predetermine pour chaque replica MySQL. Si le champ `resources` (CPU/memoire explicites) est defini, `resourcesPreset` est **entierement ignore**.
+Le champ `resourcesPreset` permet de choisir un profil de ressources prédéterminé pour chaque réplica MySQL. Si le champ `resources` (CPU/mémoire explicites) est défini, `resourcesPreset` est **entièrement ignoré**.
 
-| **Preset** | **CPU** | **Memoire** |
+| **Preset** | **CPU** | **Mémoire** |
 |------------|---------|-------------|
 | `nano`     | 250m    | 128Mi       |
 | `micro`    | 500m    | 256Mi       |
@@ -34,21 +34,21 @@ spec:
   # Utilisation d'un preset
   resourcesPreset: small
 
-  # OU configuration explicite (le preset est alors ignore)
+  # OU configuration explicite (le preset est alors ignoré)
   resources:
     cpu: 2000m
     memory: 2Gi
 ```
 
-### Comment fonctionne la replication MySQL sur Hikube ?
+### Comment fonctionne la réplication MySQL sur Hikube ?
 
-La replication MySQL sur Hikube utilise la **replication binlog** (binary log) geree par le MariaDB Operator :
+La réplication MySQL sur Hikube utilise la **réplication binlog** (binary log) gérée par le MariaDB Operator :
 
-- Un noeud est designe comme **primary** (lecture-ecriture)
-- Les autres noeuds sont des **replicas** (lecture seule)
-- Le basculement automatique (**auto-failover**) est gere par l'operateur en cas de panne du primary
+- Un nœud est désigné comme **primary** (lecture-écriture)
+- Les autres nœuds sont des **réplicas** (lecture seule)
+- Le basculement automatique (**auto-failover**) est géré par l'opérateur en cas de panne du primary
 
-Avec 3 replicas, vous obtenez 1 primary + 2 replicas, ce qui assure la haute disponibilite.
+Avec 3 réplicas, vous obtenez 1 primary + 2 réplicas, ce qui assure la haute disponibilité.
 
 ### Comment configurer les backups avec Restic ?
 
@@ -68,12 +68,12 @@ spec:
 ```
 
 :::warning
-Conservez le `resticPassword` en lieu sur. Sans ce mot de passe, les sauvegardes ne pourront pas etre dechiffrees.
+Conservez le `resticPassword` en lieu sûr. Sans ce mot de passe, les sauvegardes ne pourront pas être déchiffrées.
 :::
 
 ### Comment effectuer un switchover de primary ?
 
-Pour basculer le role de primary vers un autre replica, modifiez le champ `spec.replication.primary.podIndex` dans votre manifeste :
+Pour basculer le rôle de primary vers un autre réplica, modifiez le champ `spec.replication.primary.podIndex` dans votre manifeste :
 
 ```yaml title="mysql.yaml"
 spec:
@@ -89,12 +89,12 @@ kubectl apply -f mysql.yaml
 ```
 
 :::note
-Le switchover entraine une **breve interruption** des ecritures pendant la bascule. Les lectures restent disponibles sur les replicas.
+Le switchover entraîne une **brève interruption** des écritures pendant la bascule. Les lectures restent disponibles sur les réplicas.
 :::
 
-### Comment gerer les utilisateurs et bases de donnees ?
+### Comment gérer les utilisateurs et bases de données ?
 
-Utilisez les maps `users` et `databases` pour definir vos utilisateurs et bases. Chaque utilisateur peut avoir une limite de connexions, et chaque base des roles `admin` et `readonly` :
+Utilisez les maps `users` et `databases` pour définir vos utilisateurs et bases. Chaque utilisateur peut avoir une limite de connexions, et chaque base des rôles `admin` et `readonly` :
 
 ```yaml title="mysql.yaml"
 spec:

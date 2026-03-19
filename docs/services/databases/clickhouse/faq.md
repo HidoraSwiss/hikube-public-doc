@@ -5,32 +5,32 @@ title: FAQ
 
 # FAQ — ClickHouse
 
-### Quelle est la difference entre shards et replicas ?
+### Quelle est la différence entre shards et réplicas ?
 
-Les **shards** et les **replicas** jouent des roles differents dans l'architecture ClickHouse :
+Les **shards** et les **réplicas** jouent des rôles différents dans l'architecture ClickHouse :
 
-- **Shards** : distribution **horizontale** des donnees. Chaque shard contient une partie du dataset total. Ajouter des shards augmente la capacite de stockage et de traitement.
-- **Replicas** : copies **identiques** des donnees au sein d'un meme shard. Chaque replica contient les memes donnees pour assurer la haute disponibilite.
+- **Shards** : distribution **horizontale** des données. Chaque shard contient une partie du dataset total. Ajouter des shards augmente la capacité de stockage et de traitement.
+- **Réplicas** : copies **identiques** des données au sein d'un même shard. Chaque réplica contient les mêmes données pour assurer la haute disponibilité.
 
 ```yaml title="clickhouse.yaml"
 spec:
-  shards: 2       # Les donnees sont reparties sur 2 shards
+  shards: 2       # Les données sont réparties sur 2 shards
   replicas: 3     # Chaque shard a 3 copies (total: 6 pods)
 ```
 
 :::tip
-En production, utilisez au moins 2 replicas par shard pour la haute disponibilite. Augmentez le nombre de shards pour traiter des volumes de donnees plus importants.
+En production, utilisez au moins 2 réplicas par shard pour la haute disponibilité. Augmentez le nombre de shards pour traiter des volumes de données plus importants.
 :::
 
-### A quoi sert ClickHouse Keeper ?
+### À quoi sert ClickHouse Keeper ?
 
-**ClickHouse Keeper** est le composant de coordination du cluster, base sur le protocole **Raft**. Il remplace Apache ZooKeeper et assure :
+**ClickHouse Keeper** est le composant de coordination du cluster, basé sur le protocole **Raft**. Il remplace Apache ZooKeeper et assure :
 
-- L'**election du leader** pour les tables repliquees
-- La **coordination** des operations de replication entre replicas
-- La gestion des **metadonnees** du cluster
+- L'**élection du leader** pour les tables répliquées
+- La **coordination** des opérations de réplication entre réplicas
+- La gestion des **métadonnées** du cluster
 
-Le nombre de replicas Keeper doit etre **impair** (3 ou 5) pour garantir le quorum (majorite necessaire pour l'election du leader). Le minimum recommande est **3 replicas**.
+Le nombre de réplicas Keeper doit être **impair** (3 ou 5) pour garantir le quorum (majorité nécessaire pour l'élection du leader). Le minimum recommandé est **3 réplicas**.
 
 ```yaml title="clickhouse.yaml"
 spec:
@@ -41,21 +41,21 @@ spec:
     size: 2Gi
 ```
 
-### ClickHouse est-il adapte aux requetes transactionnelles (OLTP) ?
+### ClickHouse est-il adapté aux requêtes transactionnelles (OLTP) ?
 
-**Non.** ClickHouse est un moteur de base de donnees **OLAP** (Online Analytical Processing) optimise pour l'analyse de donnees :
+**Non.** ClickHouse est un moteur de base de données **OLAP** (Online Analytical Processing) optimisé pour l'analyse de données :
 
-- Architecture **orientee colonnes** : tres performant pour les aggregations et les scans sur de grands volumes de donnees
-- Optimise pour les **lectures massives** et les requetes analytiques
-- **Non adapte** aux operations transactionnelles frequentes (`UPDATE`, `DELETE` unitaires)
+- Architecture **orientée colonnes** : très performant pour les agrégations et les scans sur de grands volumes de données
+- Optimisé pour les **lectures massives** et les requêtes analytiques
+- **Non adapté** aux opérations transactionnelles fréquentes (`UPDATE`, `DELETE` unitaires)
 
-Si vous avez besoin d'un moteur transactionnel (OLTP), utilisez plutot **PostgreSQL** ou **MySQL** sur Hikube.
+Si vous avez besoin d'un moteur transactionnel (OLTP), utilisez plutôt **PostgreSQL** ou **MySQL** sur Hikube.
 
-### Quelle est la difference entre `resourcesPreset` et `resources` ?
+### Quelle est la différence entre `resourcesPreset` et `resources` ?
 
-Le champ `resourcesPreset` permet de choisir un profil de ressources predetermine pour chaque replica ClickHouse. Si le champ `resources` (CPU/memoire explicites) est defini, `resourcesPreset` est **entierement ignore**.
+Le champ `resourcesPreset` permet de choisir un profil de ressources prédéterminé pour chaque réplica ClickHouse. Si le champ `resources` (CPU/mémoire explicites) est défini, `resourcesPreset` est **entièrement ignoré**.
 
-| **Preset** | **CPU** | **Memoire** |
+| **Preset** | **CPU** | **Mémoire** |
 |------------|---------|-------------|
 | `nano`     | 250m    | 128Mi       |
 | `micro`    | 500m    | 256Mi       |
@@ -70,21 +70,21 @@ spec:
   # Utilisation d'un preset
   resourcesPreset: large
 
-  # OU configuration explicite (le preset est alors ignore)
+  # OU configuration explicite (le preset est alors ignoré)
   resources:
     cpu: 4000m
     memory: 8Gi
 ```
 
-### Comment sont distribuees les donnees entre shards ?
+### Comment sont distribuées les données entre shards ?
 
-Les donnees sont distribuees entre les shards via le moteur **Distributed** de ClickHouse :
+Les données sont distribuées entre les shards via le moteur **Distributed** de ClickHouse :
 
 - Chaque shard stocke une **partition** du dataset total
-- Le moteur `Distributed` redirige les requetes vers tous les shards et **fusionne les resultats**
-- Les donnees sont **repliquees** au sein de chaque shard selon le nombre de replicas configure
+- Le moteur `Distributed` redirige les requêtes vers tous les shards et **fusionne les résultats**
+- Les données sont **répliquées** au sein de chaque shard selon le nombre de réplicas configuré
 
-Pour beneficier de la distribution, creez des tables avec le moteur `ReplicatedMergeTree` sur chaque shard et une table `Distributed` pour les requetes globales.
+Pour bénéficier de la distribution, créez des tables avec le moteur `ReplicatedMergeTree` sur chaque shard et une table `Distributed` pour les requêtes globales.
 
 ### Comment configurer les backups ClickHouse ?
 
@@ -104,5 +104,5 @@ spec:
 ```
 
 :::warning
-Conservez le `resticPassword` en lieu sur. Sans ce mot de passe, les sauvegardes ne pourront pas etre dechiffrees.
+Conservez le `resticPassword` en lieu sûr. Sans ce mot de passe, les sauvegardes ne pourront pas être déchiffrées.
 :::
