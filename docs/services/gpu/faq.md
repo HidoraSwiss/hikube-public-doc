@@ -5,17 +5,17 @@ title: FAQ
 
 # FAQ — GPU
 
-### Quels modeles de GPU sont disponibles ?
+### Quels modèles de GPU sont disponibles ?
 
 Hikube propose trois familles de GPU NVIDIA :
 
-| GPU | Architecture | Memoire | Cas d'usage |
+| GPU | Architecture | Mémoire | Cas d'usage |
 |-----|-------------|---------|-------------|
-| **L40S** | Ada Lovelace | 48 Go GDDR6 | Inference, rendu graphique |
-| **A100** | Ampere | 80 Go HBM2e | Entrainement ML, calcul scientifique |
+| **L40S** | Ada Lovelace | 48 Go GDDR6 | Inférence, rendu graphique |
+| **A100** | Ampere | 80 Go HBM2e | Entraînement ML, calcul scientifique |
 | **H100** | Hopper | 80 Go HBM3 | LLM, calcul exascale |
 
-Les identifiants a utiliser dans les manifestes :
+Les identifiants à utiliser dans les manifestes :
 
 ```yaml
 gpus:
@@ -26,22 +26,22 @@ gpus:
 
 ---
 
-### Quelle est la difference entre GPU en VM et GPU en Kubernetes ?
+### Quelle est la différence entre GPU en VM et GPU en Kubernetes ?
 
 | Aspect | GPU en VM | GPU en Kubernetes |
 |--------|----------|-------------------|
-| **Mode d'acces** | PCI passthrough exclusif | Device plugin partage |
-| **Isolation** | GPU dedie a la VM | Scheduling orchestre par K8s |
+| **Mode d'accès** | PCI passthrough exclusif | Device plugin partagé |
+| **Isolation** | GPU dédié à la VM | Scheduling orchestré par K8s |
 | **Installation drivers** | Manuelle (cloud-init) | Automatique (GPU Operator) |
-| **Cas d'usage** | Workstation dediee, CUDA dev | Workloads containerises, batch |
+| **Cas d'usage** | Workstation dédiée, CUDA dev | Workloads conteneurisés, batch |
 
-En VM, le GPU est directement attache via PCI passthrough : la VM a un acces exclusif au hardware. En Kubernetes, le GPU Operator gere les drivers et le scheduling permet de partager les ressources GPU entre plusieurs pods.
+En VM, le GPU est directement attaché via PCI passthrough : la VM a un accès exclusif au hardware. En Kubernetes, le GPU Operator gère les drivers et le scheduling permet de partager les ressources GPU entre plusieurs pods.
 
 ---
 
-### Quel ratio CPU/GPU est recommande ?
+### Quel ratio CPU/GPU est recommandé ?
 
-Pour une utilisation optimale, prevoyez **8 a 16 vCPU par GPU**. Les instances de la gamme **Universal (u1)** avec un ratio 1:4 sont recommandees :
+Pour une utilisation optimale, prévoyez **8 à 16 vCPU par GPU**. Les instances de la gamme **Universal (u1)** avec un ratio 1:4 sont recommandées :
 
 | Configuration | Instance | vCPU | RAM |
 |--------------|----------|------|-----|
@@ -51,11 +51,11 @@ Pour une utilisation optimale, prevoyez **8 a 16 vCPU par GPU**. Les instances d
 
 ---
 
-### Comment sont installes les drivers NVIDIA ?
+### Comment sont installés les drivers NVIDIA ?
 
-L'installation depend du mode d'utilisation :
+L'installation dépend du mode d'utilisation :
 
-**En VM** : installez manuellement via cloud-init au demarrage :
+**En VM** : installez manuellement via cloud-init au démarrage :
 
 ```yaml title="vm-gpu.yaml"
 spec:
@@ -67,7 +67,7 @@ spec:
       - apt-get install -y nvidia-driver-550 nvidia-utils-550
 ```
 
-**En Kubernetes** : activez l'addon GPU Operator qui installe automatiquement les drivers sur les noeuds GPU :
+**En Kubernetes** : activez l'addon GPU Operator qui installe automatiquement les drivers sur les nœuds GPU :
 
 ```yaml title="cluster-gpu.yaml"
 spec:
@@ -78,7 +78,7 @@ spec:
 
 ---
 
-### Comment verifier que le GPU est detecte ?
+### Comment vérifier que le GPU est détecté ?
 
 **En VM** :
 
@@ -86,7 +86,7 @@ spec:
 nvidia-smi
 ```
 
-Cette commande affiche les GPU detectes, leur utilisation memoire et les processus actifs.
+Cette commande affiche les GPU détectés, leur utilisation mémoire et les processus actifs.
 
 **En Kubernetes** :
 
@@ -94,7 +94,7 @@ Cette commande affiche les GPU detectes, leur utilisation memoire et les process
 kubectl get nodes -o json | jq '.items[].status.allocatable["nvidia.com/gpu"]'
 ```
 
-Vous pouvez egalement verifier depuis un pod :
+Vous pouvez également vérifier depuis un pod :
 
 ```bash
 kubectl exec -it <pod-name> -- nvidia-smi
@@ -104,7 +104,7 @@ kubectl exec -it <pod-name> -- nvidia-smi
 
 ### Comment demander un GPU dans un pod Kubernetes ?
 
-Specifiez la ressource `nvidia.com/gpu` dans les limites du conteneur :
+Spécifiez la ressource `nvidia.com/gpu` dans les limites du conteneur :
 
 ```yaml title="pod-gpu.yaml"
 apiVersion: v1
@@ -121,5 +121,5 @@ spec:
 ```
 
 :::note
-Le nombre de GPU demande dans `limits` doit correspondre aux GPU physiques disponibles sur les noeuds. Un pod ne peut pas demander une fraction de GPU.
+Le nombre de GPU demandé dans `limits` doit correspondre aux GPU physiques disponibles sur les nœuds. Un pod ne peut pas demander une fraction de GPU.
 :::
