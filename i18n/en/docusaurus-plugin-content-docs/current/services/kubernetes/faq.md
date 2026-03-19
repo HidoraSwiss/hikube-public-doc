@@ -21,15 +21,17 @@ Each family is available in sizes from `small` to `8xlarge`. For example: `s1.sm
 
 ### What is the difference between `storageClass` local and replicated?
 
-| Feature | `local` | `replicated` |
-|---------|---------|--------------|
-| **Replication** | Single datacenter | Multi-datacenter |
+The three available storageClasses are: `local`, `replicated`, and `replicated-async`.
+
+| Feature | `local` | `replicated` / `replicated-async` |
+|---------|---------|-------------------------------------|
+| **Replication** | Single datacenter | Multi-datacenter (synchronous or asynchronous) |
 | **Performance** | Faster (low latency) | Slightly slower |
-| **High availability** | No | Yes |
-| **Use case** | Dev, non-critical workloads | Production, critical data |
+| **High availability** | No (at storage level) | Yes |
+| **Use case** | K8s clusters (nodes provide application-level HA) | Single instances, critical data without application-level replication |
 
 :::tip
-For production, prefer `replicated` to ensure data availability in case of a datacenter failure.
+For a Kubernetes cluster, the nodes already provide high availability at the application level. Use `local` for better performance. Reserve `replicated` for single-instance workloads without built-in application-level replication.
 :::
 
 ---
@@ -64,7 +66,7 @@ spec:
 The kubeconfig is stored in a Kubernetes Secret automatically generated when the cluster is created:
 
 ```bash
-kubectl get secret <cluster-name>-admin-kubeconfig -o jsonpath='{.data.super-admin\.conf}' | base64 -d > kubeconfig.yaml
+kubectl get tenantsecret <cluster-name>-admin-kubeconfig -o jsonpath='{.data.super-admin\.conf}' | base64 -d > kubeconfig.yaml
 ```
 
 You can then use it:

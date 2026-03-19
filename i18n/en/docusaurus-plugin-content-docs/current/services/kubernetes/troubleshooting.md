@@ -66,7 +66,7 @@ title: Troubleshooting
 
 1. Regenerate the kubeconfig from the source Secret:
    ```bash
-   kubectl get secret <cluster-name>-admin-kubeconfig -o jsonpath='{.data.super-admin\.conf}' | base64 -d > kubeconfig.yaml
+   kubectl get tenantsecret <cluster-name>-admin-kubeconfig -o jsonpath='{.data.super-admin\.conf}' | base64 -d > kubeconfig.yaml
    ```
 
 2. Replace your old kubeconfig file:
@@ -132,12 +132,9 @@ title: Troubleshooting
 
 **Solution**:
 
-1. Check available storageClasses:
-   ```bash
-   kubectl get storageclass
-   ```
+1. The available storageClasses on Hikube are: `local`, `replicated`, and `replicated-async`.
 
-2. Make sure the name used in your PVC matches an existing storageClass (`local` or `replicated`):
+2. Make sure the name used in your PVC matches an existing storageClass:
    ```yaml title="pvc.yaml"
    apiVersion: v1
    kind: PersistentVolumeClaim

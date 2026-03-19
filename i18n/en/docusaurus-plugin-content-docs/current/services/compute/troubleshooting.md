@@ -116,10 +116,7 @@ This issue affects all distributions using `systemd-resolved` (Ubuntu 22.04+, De
    kubectl describe vmdisk data-volume
    ```
 
-3. Verify that the `storageClass` used exists:
-   ```bash
-   kubectl get storageclass
-   ```
+3. The available storageClasses on Hikube are: `local`, `replicated`, and `replicated-async`. For a VM (single instance), `replicated` is recommended.
 
 ---
 

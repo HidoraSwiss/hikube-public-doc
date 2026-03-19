@@ -39,7 +39,7 @@ Any AWS S3-compatible library (boto3, aws-sdk-js, etc.) also works.
 When a bucket is created, Hikube automatically generates a Kubernetes Secret named `bucket-<name>`. This secret contains a `BucketInfo` key in JSON format with all access information:
 
 ```bash
-kubectl get secret bucket-<name> -o jsonpath='{.data.BucketInfo}' | base64 -d | jq
+kubectl get tenantsecret bucket-<name> -o jsonpath='{.data.BucketInfo}' | base64 -d | jq
 ```
 
 The JSON contains:

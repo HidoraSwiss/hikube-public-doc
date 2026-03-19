@@ -13,7 +13,7 @@ title: Troubleshooting
 
 1. Retrieve credentials from the Kubernetes Secret:
    ```bash
-   kubectl get secret bucket-<name> -o jsonpath='{.data.BucketInfo}' | base64 -d | jq
+   kubectl get tenantsecret bucket-<name> -o jsonpath='{.data.BucketInfo}' | base64 -d | jq
    ```
 
 2. Use the `spec.bucketName` field as the bucket name (not `metadata.name`):
@@ -53,17 +53,17 @@ title: Troubleshooting
 
 1. List available Secrets:
    ```bash
-   kubectl get secrets | grep bucket-
+   kubectl get tenantsecrets | grep bucket-
    ```
 
 2. Extract access information:
    ```bash
-   kubectl get secret bucket-<name> -o jsonpath='{.data.BucketInfo}' | base64 -d | jq
+   kubectl get tenantsecret bucket-<name> -o jsonpath='{.data.BucketInfo}' | base64 -d | jq
    ```
 
 3. To extract only the keys:
    ```bash
-   kubectl get secret bucket-<name> -o jsonpath='{.data.BucketInfo}' \
+   kubectl get tenantsecret bucket-<name> -o jsonpath='{.data.BucketInfo}' \
      | base64 -d \
      | jq -r '.spec.secretS3 | "\(.accessKeyID) \(.accessSecretKey)"'
    ```
@@ -107,7 +107,7 @@ title: Troubleshooting
 
 2. Retrieve the real bucket name from the Secret:
    ```bash
-   kubectl get secret bucket-<name> -o jsonpath='{.data.BucketInfo}' \
+   kubectl get tenantsecret bucket-<name> -o jsonpath='{.data.BucketInfo}' \
      | base64 -d \
      | jq -r '.spec.bucketName'
    ```
