@@ -11,7 +11,7 @@ Based on the **AMQP (Advanced Message Queuing Protocol)**, RabbitMQ guarantees *
 
 ---
 
-## Architecture and Operation
+## 🏗️ Architecture and Operation
 
 A RabbitMQ deployment on Hikube relies on several fundamental concepts:
 
@@ -22,13 +22,13 @@ A RabbitMQ deployment on Hikube relies on several fundamental concepts:
 
 RabbitMQ clusters on Hikube are configured in **high availability (HA) mode**, with **message queue replication** across multiple nodes to ensure service continuity in the event of a failure.
 
-> RabbitMQ clusters on Hikube use the **quorum queues** feature to provide behavior similar to distributed consensus (based on Raft), guaranteeing **integrity and fault tolerance**.
+> ⚙️ RabbitMQ clusters on Hikube use the **quorum queues** feature to provide behavior similar to distributed consensus (based on Raft), guaranteeing **integrity and fault tolerance**.
 
 ---
 
-## Typical Use Cases
+## 🚀 Typical Use Cases
 
-### Inter-service Communication
+### 💬 Inter-service Communication
 
 RabbitMQ is often used as an **internal message bus** between applications or microservices.
 It helps **decouple processing**, reduce perceived latency, and improve **overall resilience**.
@@ -41,7 +41,7 @@ It helps **decouple processing**, reduce perceived latency, and improve **overal
 
 ---
 
-### Asynchronous Workflow Management
+### ⚙️ Asynchronous Workflow Management
 
 RabbitMQ simplifies the implementation of **asynchronous workflows** where each component works independently of the others.
 
@@ -53,7 +53,7 @@ RabbitMQ simplifies the implementation of **asynchronous workflows** where each 
 
 ---
 
-### Application Integration and System Interconnection
+### 📡 Application Integration and System Interconnection
 
 RabbitMQ acts as a **universal communication bridge** between applications, languages, or heterogeneous environments.
 
@@ -65,7 +65,7 @@ RabbitMQ acts as a **universal communication bridge** between applications, lang
 
 ---
 
-### Reliability and Persistence
+### 🔒 Reliability and Persistence
 
 RabbitMQ ensures **message durability** through disk persistence and **acknowledgment** management (ACK/NACK).
 This guarantees that no message is lost, even in the event of a temporary node or network failure.
