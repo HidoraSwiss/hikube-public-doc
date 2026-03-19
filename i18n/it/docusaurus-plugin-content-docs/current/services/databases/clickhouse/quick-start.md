@@ -86,7 +86,7 @@ kubectl apply -f clickhouse.yaml
 
 ## Passo 2: Verifica del deployment
 
-Verificate lo stato del vostro cluster ClickHouse (puo richiedere 1-2 minuti):
+Verificate lo stato del vostro cluster ClickHouse (può richiedere 1-2 minuti):
 
 ```bash
 kubectl get clickhouse
@@ -209,7 +209,7 @@ kubectl logs chk-clickhouse-example-keeper-cluster1-0-0-0
 kubectl get pods | grep keeper
 ```
 
-**Cause frequenti:** il quorum Keeper necessita di un numero dispari di repliche (3 minimo raccomandato), spazio disco Keeper insufficiente (`clickhouseKeeper.size` troppo basso).
+**Cause frequenti:** il quorum Keeper necessità di un numero dispari di repliche (3 minimo raccomandato), spazio disco Keeper insufficiente (`clickhouseKeeper.size` troppo basso).
 
 ### Comandi di diagnostica generali
 
@@ -233,7 +233,7 @@ Avete distribuito:
 - Un'archiviazione persistente collegata per i vostri dati e log
 - Utenti con password generate e memorizzate in un Secret Kubernetes
 - Un accesso al vostro database tramite `clickhouse-client`
-- La possibilita di configurare **backup S3** automatici
+- La possibilità di configurare **backup S3** automatici
 
 ---
 

@@ -53,7 +53,7 @@ spec:
 ```
 
 :::note
-L'attivazione di Fluent Bit (`fluentbit.enabled: true`) permette la raccolta e il trasferimento dei log delle vostre applicazioni verso lo stack di osservabilita.
+L'attivazione di Fluent Bit (`fluentbit.enabled: true`) permette la raccolta e il trasferimento dei log delle vostre applicazioni verso lo stack di osservabilità.
 :::
 
 ### 2. Creare un node group dedicato al monitoring
@@ -72,7 +72,7 @@ nodeGroups:
 ```
 
 :::tip
-La serie M (Memory Optimized) e ideale per il monitoring perche i database di metriche (VictoriaMetrics) e i motori di indicizzazione dei log necessitano di molta memoria.
+La serie M (Memory Optimized) è ideale per il monitoring perché i database di metriche (VictoriaMetrics) e i motori di indicizzazione dei log necessitano di molta memoria.
 :::
 
 ### 3. Applicare la configurazione
@@ -155,5 +155,5 @@ fluent-bit-xxxxx                     1/1     Running   0          10m
 ## Per approfondire
 
 - [Riferimento API](../api-reference.md) -- Configurazione dell'addon `monitoringAgents`
-- [Concetti](../concepts.md) -- Architettura e osservabilita
+- [Concetti](../concepts.md) -- Architettura e osservabilità
 - [Accesso e strumenti](./toolbox.md) -- Comandi di debugging e metriche

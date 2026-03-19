@@ -4,7 +4,7 @@ title: "Come configurare lo sharding ClickHouse"
 
 # Come configurare lo sharding ClickHouse
 
-Questa guida spiega come configurare lo sharding (partizionamento orizzontale) su ClickHouse per distribuire i dati su piu shard e garantire l'alta disponibilita con le repliche. Il coordinamento del cluster e assicurato da **ClickHouse Keeper**.
+Questa guida spiega come configurare lo sharding (partizionamento orizzontale) su ClickHouse per distribuire i dati su più shard e garantire l'alta disponibilità con le repliche. Il coordinamento del cluster e assicurato da **ClickHouse Keeper**.
 
 ## Prerequisiti
 
@@ -16,20 +16,20 @@ Questa guida spiega come configurare lo sharding (partizionamento orizzontale) s
 
 ### 1. Comprendere shard vs repliche
 
-Prima di configurare lo sharding, e importante distinguere questi due concetti:
+Prima di configurare lo sharding, è importante distinguere questi due concetti:
 
-- **Shard**: distribuiscono i dati orizzontalmente. Ogni shard contiene una parte dei dati. Piu shard = piu capacita di archiviazione e di elaborazione in parallelo.
-- **Repliche**: duplicano i dati all'interno di ogni shard per la ridondanza. Piu repliche = piu disponibilita in caso di guasto.
+- **Shard**: distribuiscono i dati orizzontalmente. Ogni shard contiene una parte dei dati. Più shard = più capacità di archiviazione e di elaborazione in parallelo.
+- **Repliche**: duplicano i dati all'interno di ogni shard per la ridondanza. Più repliche = più disponibilità in caso di guasto.
 
 Ad esempio, con `shards: 2` e `replicas: 2`, ottenete 4 pod ClickHouse in totale (2 shard x 2 repliche per shard).
 
 :::note
-Lo sharding e utile quando il volume di dati supera la capacita di un singolo nodo, o quando desiderate parallelizzare le query su piu server.
+Lo sharding è utile quando il volume di dati supera la capacità di un singolo nodo, o quando desiderate parallelizzare le query su più server.
 :::
 
 ### 2. Configurare lo sharding
 
-Create un manifesto con piu shard e repliche:
+Create un manifesto con più shard e repliche:
 
 ```yaml title="clickhouse-sharded.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -81,7 +81,7 @@ Distribuite sempre il Keeper in numero dispari (3 o 5 repliche) per garantire il
 :::
 
 :::warning
-Modificare il numero di shard su un cluster esistente puo comportare una ridistribuzione complessa dei dati. Pianificate il numero di shard fin dal deployment iniziale per quanto possibile.
+Modificare il numero di shard su un cluster esistente può comportare una ridistribuzione complessa dei dati. Pianificate il numero di shard fin dal deployment iniziale per quanto possibile.
 :::
 
 ### 4. Applicare e verificare

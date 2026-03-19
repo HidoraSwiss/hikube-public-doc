@@ -22,7 +22,7 @@ spec:
   host: "k8s-prod.company.com"
   storageClass: "replicated"
 
-  # Piano di controllo ad alta disponibilita
+  # Piano di controllo ad alta disponibilità
   controlPlane:
     replicas: 3
 
@@ -194,8 +194,8 @@ spec:
 
 - **Utilizzate le label** per organizzare i vostri cluster per ambiente
 - **Configurate RBAC** fin dalla creazione per proteggere l'accesso
-- **Attivate il monitoring** per un'osservabilita completa
-- **Pianificate la capacita** con node group appropriati
+- **Attivate il monitoring** per un'osservabilità completa
+- **Pianificate la capacità** con node group appropriati
 - **Testate i backup** regolarmente
 :::
 
@@ -203,5 +203,5 @@ spec:
 
 - **Le eliminazioni sono irreversibili** - pensate ai backup
 - **Gli aggiornamenti** possono avere un impatto sui workload
-- **Verificate la compatibilita** degli add-on con le versioni Kubernetes
+- **Verificate la compatibilità** degli add-on con le versioni Kubernetes
 :::

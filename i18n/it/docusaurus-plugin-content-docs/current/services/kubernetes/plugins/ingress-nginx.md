@@ -49,8 +49,8 @@ ingressNginx:
 
 ### Descrizione
 
-Indica se il controller **Ingress NGINX** e attivato (`true`) o disattivato (`false`).
-Quando e attivato, uno o piu pod NGINX vengono distribuiti per gestire le regole di ingresso del cluster.
+Indica se il controller **Ingress NGINX** è attivato (`true`) o disattivato (`false`).
+Quando è attivato, uno o più pod NGINX vengono distribuiti per gestire le regole di ingresso del cluster.
 
 ### Esempio
 
@@ -133,7 +133,7 @@ spec:
       valuesOverride:
         ingressNginx:
           controller:
-            # Replica per alta disponibilita
+            # Replica per alta disponibilità
             replicaCount: 3
 
             # Configurazione delle risorse
@@ -170,7 +170,7 @@ spec:
 
 ## 💡 Buone pratiche
 
-- Preferire `Proxied` per gli ambienti on-premises dove l'accesso e gestito tramite un reverse proxy esterno.
+- Preferire `Proxied` per gli ambienti on-premises dove l'accesso è gestito tramite un reverse proxy esterno.
 - Definire diversi `hosts` per le applicazioni multi-dominio.
 - Utilizzare `valuesOverride` per regolare le risorse, il numero di repliche e la configurazione TLS.
 - Configurare le annotazioni (`nginx.ingress.kubernetes.io/*`) direttamente tramite i manifesti `Ingress` per un miglior controllo applicativo.

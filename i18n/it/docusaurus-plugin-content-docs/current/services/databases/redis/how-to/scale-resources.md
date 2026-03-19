@@ -26,7 +26,7 @@ Annotate i valori di `resourcesPreset`, `resources`, `replicas` e `size` nella s
 
 ### 2. Opzione A: Modificare il resourcesPreset
 
-Il modo piu semplice per scalare e usare un preset predefinito. Ecco i preset disponibili:
+Il modo più semplice per scalare e usare un preset predefinito. Ecco i preset disponibili:
 
 | **Preset** | **CPU** | **Memoria** |
 |------------|---------|-------------|
@@ -124,4 +124,4 @@ my-redis-1        1/1     Running   0          2m
 ## Per approfondire
 
 - [Riferimento API](../api-reference.md) -- Parametri `resources`, `resourcesPreset` e `replicas`
-- [Come configurare l'alta disponibilita](./configure-ha.md) -- Configurazione Redis HA con Sentinel
+- [Come configurare l'alta disponibilità](./configure-ha.md) -- Configurazione Redis HA con Sentinel

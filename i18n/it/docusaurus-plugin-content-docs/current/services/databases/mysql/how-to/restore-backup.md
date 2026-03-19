@@ -68,7 +68,7 @@ i9j0k1l2  2025-01-17 02:00:04  mysql-example            /backup
 ```
 
 :::tip
-Potete filtrare gli snapshot per data con `restic snapshots --latest 5` per visualizzare solo i 5 piu recenti.
+Potete filtrare gli snapshot per data con `restic snapshots --latest 5` per visualizzare solo i 5 più recenti.
 :::
 
 ### 4. Ripristinare uno snapshot
@@ -128,7 +128,7 @@ SELECT COUNT(*) FROM <nome_tabella>;
 ```
 
 :::warning Testate il ripristino regolarmente
-Si raccomanda fortemente di testare la procedura di ripristino in modo regolare, idealmente in un ambiente di sviluppo. Un backup che non e mai stato testato non garantisce un ripristino riuscito.
+Si raccomanda fortemente di testare la procedura di ripristino in modo regolare, idealmente in un ambiente di sviluppo. Un backup che non è mai stato testato non garantisce un ripristino riuscito.
 :::
 
 ## Per approfondire

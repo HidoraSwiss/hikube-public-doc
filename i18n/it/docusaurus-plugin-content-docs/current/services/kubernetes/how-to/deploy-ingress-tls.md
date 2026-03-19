@@ -47,7 +47,7 @@ spec:
 ```
 
 :::note
-Il campo `hosts` sotto `ingressNginx` definisce i domini per i quali l'Ingress Controller accettera il traffico. Potete utilizzare dei wildcard (`*.example.com`) per coprire piu sottodomini.
+Il campo `hosts` sotto `ingressNginx` definisce i domini per i quali l'Ingress Controller accettera il traffico. Potete utilizzare dei wildcard (`*.example.com`) per coprire più sottodomini.
 :::
 
 ### 2. Assegnare il ruolo ingress-nginx a un node group
@@ -167,7 +167,7 @@ my-app   nginx   app.example.com   203.0.113.10   80, 443   5m
 ```
 
 :::warning
-Il provisioning del certificato Let's Encrypt puo richiedere alcuni minuti. Se il certificato rimane in stato `False`, verificate che il vostro record DNS punti correttamente verso l'IP dell'Ingress Controller e che la porta 80 sia accessibile (necessario per la validazione HTTP-01).
+Il provisioning del certificato Let's Encrypt può richiedere alcuni minuti. Se il certificato rimane in stato `False`, verificate che il vostro record DNS punti correttamente verso l'IP dell'Ingress Controller e che la porta 80 sia accessibile (necessario per la validazione HTTP-01).
 :::
 
 ## Per approfondire

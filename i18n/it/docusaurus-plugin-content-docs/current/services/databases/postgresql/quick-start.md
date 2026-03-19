@@ -14,7 +14,7 @@ Questa guida vi accompagna nel deployment del vostro primo database **PostgreSQL
 Alla fine di questa guida, avrete:
 
 - Un database **PostgreSQL** distribuito su Hikube
-- Un cluster replicato con un **primary** e delle **repliche** per garantire l'alta disponibilita
+- Un cluster replicato con un **primary** e delle **repliche** per garantire l'alta disponibilità
 - Un utente e una password per connettervi
 - Un'archiviazione persistente per conservare i vostri dati
 
@@ -109,7 +109,7 @@ kubectl apply -f postgresql.yaml
 
 ## Passo 2: Verifica del deployment
 
-Verificate lo stato del vostro cluster PostgreSQL (puo richiedere 1-2 minuti):
+Verificate lo stato del vostro cluster PostgreSQL (può richiedere 1-2 minuti):
 
 ```bash
 kubectl get postgreses
@@ -140,7 +140,7 @@ postgres-example-2                                1/1     Running     0         
 postgres-example-3                                1/1     Running     0             18m   10.244.117.182   plo-csxhk-004   <none>           <none>
 ```
 
-Con `replicas: 3`, ottenete **3 istanze PostgreSQL** distribuite su datacenter diversi per l'alta disponibilita.
+Con `replicas: 3`, ottenete **3 istanze PostgreSQL** distribuite su datacenter diversi per l'alta disponibilità.
 
 Verificate che ogni istanza disponga di un volume persistente (PVC):
 
@@ -201,7 +201,7 @@ kubectl port-forward svc/postgres-example-rw 5432:5432
 ```
 
 :::note
-Si raccomanda di non esporre il database all'esterno se non ne avete necessita.
+Si raccomanda di non esporre il database all'esterno se non ne avete necessità.
 :::
 
 ### Test di connessione con psql
@@ -291,11 +291,11 @@ kubectl describe postgres example
 Avete distribuito:
 
 - Un database **PostgreSQL** sul vostro tenant Hikube
-- Un cluster replicato con un **primary** e degli **standby** per l'alta disponibilita
+- Un cluster replicato con un **primary** e degli **standby** per l'alta disponibilità
 - Utenti e ruoli configurati, con password memorizzate nei Secret Kubernetes
 - Un'archiviazione persistente (PVC) collegata a ogni istanza PostgreSQL
 - Un accesso sicuro tramite `psql` (servizio interno o LoadBalancer)
-- La possibilita di attivare **backup S3** automatici
+- La possibilità di attivare **backup S3** automatici
 
 ---
 

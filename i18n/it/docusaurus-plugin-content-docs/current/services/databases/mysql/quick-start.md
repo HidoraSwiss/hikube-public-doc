@@ -14,10 +14,10 @@ Questa guida vi accompagna nel deployment del vostro primo database **MySQL** su
 Alla fine di questa guida, avrete:
 
 - Un database **MySQL** operativo su Hikube
-- Un cluster replicato con un **primary** e delle **repliche** per garantire l'alta disponibilita
+- Un cluster replicato con un **primary** e delle **repliche** per garantire l'alta disponibilità
 - **Utenti e password** per accedere alle vostre applicazioni
 - Un'**archiviazione persistente** collegata a ogni istanza per garantire la durabilita dei dati
-- (Opzionale) La possibilita di attivare **backup automatici** verso uno storage compatibile S3
+- (Opzionale) La possibilità di attivare **backup automatici** verso uno storage compatibile S3
 
 ---
 
@@ -88,7 +88,7 @@ kubectl apply -f mysql.yaml
 
 ## Passo 2: Verifica del deployment
 
-Verificate lo stato del vostro cluster MySQL (puo richiedere 1-2 minuti):
+Verificate lo stato del vostro cluster MySQL (può richiedere 1-2 minuti):
 
 ```bash
 kubectl get mysql
@@ -120,7 +120,7 @@ mysql-example-2                                   1/1     Running     0         
 mysql-example-metrics-747cf456c9-6vnq9            1/1     Running     0             23m   10.244.123.73    plo-csxhk-004   <none>           <none>
 ```
 
-Con `replicas: 3`, ottenete **3 istanze MySQL** (1 primary + 2 repliche) distribuite su datacenter diversi, piu un pod di metriche.
+Con `replicas: 3`, ottenete **3 istanze MySQL** (1 primary + 2 repliche) distribuite su datacenter diversi, più un pod di metriche.
 
 Verificate che ogni istanza disponga di un volume persistente (PVC):
 
@@ -181,7 +181,7 @@ kubectl port-forward svc/mysql-example 3306:3306
 ```
 
 :::note
-Si raccomanda di non esporre il database all'esterno se non ne avete necessita.
+Si raccomanda di non esporre il database all'esterno se non ne avete necessità.
 :::
 
 ### Test di connessione con mysql
@@ -266,11 +266,11 @@ kubectl describe mysql example
 Avete distribuito:
 
 - Un database **MySQL** sul vostro tenant Hikube
-- Un cluster replicato con un **primary** e delle **repliche** per assicurare la continuita del servizio
+- Un cluster replicato con un **primary** e delle **repliche** per assicurare la continuità del servizio
 - Utenti creati automaticamente, con le loro credenziali memorizzate nei Secret Kubernetes
 - Un'archiviazione persistente (PVC) dedicata a ogni pod MySQL per garantire la durabilita dei dati
 - Un accesso sicuro tramite il client `mysql` (port-forward o LoadBalancer)
-- La possibilita di configurare **backup S3** e ripristinare in caso di necessita
+- La possibilità di configurare **backup S3** e ripristinare in caso di necessità
 
 ---
 

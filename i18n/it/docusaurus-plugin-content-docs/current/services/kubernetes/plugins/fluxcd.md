@@ -51,8 +51,8 @@ fluxcd:
 
 ### Descrizione
 
-Indica se **FluxCD** e attivato (`true`) o disattivato (`false`) nel cluster.
-Quando e attivato, FluxCD distribuisce i suoi controller e avvia la sincronizzazione GitOps.
+Indica se **FluxCD** è attivato (`true`) o disattivato (`false`) nel cluster.
+Quando è attivato, FluxCD distribuisce i suoi controller e avvia la sincronizzazione GitOps.
 
 ### Esempio
 
@@ -106,4 +106,4 @@ valuesOverride:
 - Attivare `enabled: true` per beneficiare della distribuzione continua basata su GitOps.
 - Utilizzare `valuesOverride` per personalizzare le risorse e regolare la frequenza di sincronizzazione in base alle esigenze.
 - Proteggere l'accesso Git con **secret Kubernetes** o **token personali**.
-- Verificare la compatibilita della versione di FluxCD con quella di Kubernetes prima di ogni aggiornamento.
+- Verificare la compatibilità della versione di FluxCD con quella di Kubernetes prima di ogni aggiornamento.

@@ -15,7 +15,7 @@ Hikube propone tre gamme di istanze per i nodi Kubernetes:
 | **Universal** | `u1` | 1:4 | Applicazioni aziendali, database |
 | **Memory** | `m1` | 1:8 | Cache, analytics, elaborazione in memoria |
 
-Ogni gamma e disponibile in dimensioni che vanno da `small` a `8xlarge`. Ad esempio: `s1.small`, `u1.large`, `m1.2xlarge`.
+Ogni gamma è disponibile in dimensioni che vanno da `small` a `8xlarge`. Ad esempio: `s1.small`, `u1.large`, `m1.2xlarge`.
 
 ---
 
@@ -28,15 +28,15 @@ Le storageClass disponibili sono: `local`, `replicated` e `replicated-async`.
 | Caratteristica | `local` | `replicated` / `replicated-async` |
 |----------------|---------|-------------------------------------|
 | **Replica** | Un solo datacenter | Multi-datacenter (sincrona o asincrona) |
-| **Prestazioni** | Piu veloce (latenza bassa) | Leggermente piu lento |
-| **Alta disponibilita** | No (livello archiviazione) | Si |
+| **Prestazioni** | Più veloce (latenza bassa) | Leggermente più lento |
+| **Alta disponibilità** | No (livello archiviazione) | Si |
 
 :::tip
 La raccomandazione predefinita per Kubernetes e **`replicated`**, che garantisce la durabilita dei dati a livello di archiviazione.
 :::
 
 :::note
-**Limitazione attuale**: una sola storageClass puo essere passata al cluster tenant. Un miglioramento e in corso per permettere di passare tutte le storageClass e lasciare al cliente la scelta in base alle proprie esigenze.
+**Limitazione attuale**: una sola storageClass può essere passata al cluster tenant. Un miglioramento e in corso per permettere di passare tutte le storageClass e lasciare al cliente la scelta in base alle proprie esigenze.
 :::
 
 ---
@@ -124,5 +124,5 @@ spec:
 
 :::warning
 - Non dimenticate di attivare l'addon `gpuOperator` affinche i driver NVIDIA vengano installati automaticamente sui nodi GPU.
-- Ogni nodo del nodeGroup GPU consuma **1 GPU fisico**. Un nodeGroup con `minReplicas: 4` necessita di 4 GPU disponibili, con un impatto diretto sulla fatturazione.
+- Ogni nodo del nodeGroup GPU consuma **1 GPU fisico**. Un nodeGroup con `minReplicas: 4` necessità di 4 GPU disponibili, con un impatto diretto sulla fatturazione.
 :::

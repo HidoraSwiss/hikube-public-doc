@@ -7,7 +7,7 @@ title: Panoramica
 
 Hikube offre un servizio **Redis gestito**, basato sull'operatore **[Spotahome Redis Operator](https://github.com/spotahome/redis-operator)**, ampiamente utilizzato nella comunita.
 La piattaforma supporta il deployment e la gestione di un cluster Redis **replicato e auto-riparante**, basandosi su **Redis Sentinel** per assicurare il rilevamento dei guasti e l'auto-failover.
-Questo servizio garantisce rapidita, bassa latenza e alta disponibilita, senza sforzo lato utente.
+Questo servizio garantisce rapidità, bassa latenza e alta disponibilità, senza sforzo lato utente.
 
 ---
 
@@ -29,11 +29,11 @@ spec:
 
 ## 🏗️ Architettura e Funzionamento
 
-Il servizio Redis gestito su Hikube e progettato per offrire **alta disponibilita** e **resilienza** grazie a un'architettura replicata.
+Il servizio Redis gestito su Hikube è progettato per offrire **alta disponibilità** e **resilienza** grazie a un'architettura replicata.
 
 - Un **nodo master** gestisce tutte le scritture e funge da fonte di verita per i dati.
-- Uno o piu **nodi replica** ricevono i dati in replica per assicurare la scalabilita in lettura.
-- **Redis Sentinel** sorveglia permanentemente lo stato del cluster, rileva i guasti e puo promuovere automaticamente una replica a nuovo master (**auto-failover**).
+- Uno o più **nodi replica** ricevono i dati in replica per assicurare la scalabilità in lettura.
+- **Redis Sentinel** sorveglia permanentemente lo stato del cluster, rileva i guasti e può promuovere automaticamente una replica a nuovo master (**auto-failover**).
 
 Questa combinazione garantisce:
 

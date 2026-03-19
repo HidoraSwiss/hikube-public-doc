@@ -5,7 +5,7 @@ title: Riferimento API
 
 # Riferimento API MySQL
 
-Questo riferimento descrive in dettaglio l'utilizzo di **MySQL** su Hikube, evidenziando il deployment in cluster replicato con un primary e delle repliche per l'alta disponibilita, nonche la possibilita di attivare backup automatici verso uno storage compatibile S3.
+Questo riferimento descrive in dettaglio l'utilizzo di **MySQL** su Hikube, evidenziando il deployment in cluster replicato con un primary e delle repliche per l'alta disponibilità, nonche la possibilità di attivare backup automatici verso uno storage compatibile S3.
 
 ---
 
@@ -180,8 +180,8 @@ Per le procedure dettagliate, consultate le guide dedicate:
 
 ## Problemi noti
 
-- La replica puo fallire con diversi errori
-- La replica puo fallire se il binlog e stato eliminato. Finche `mariadbbackup` non viene utilizzato per inizializzare un nodo da mariadb-operator (questa funzionalita non e ancora implementata), seguite questi passaggi manuali per correggere il problema: https://github.com/mariadb-operator/mariadb-operator/issues/141#issuecomment-1804760231
+- La replica può fallire con diversi errori
+- La replica può fallire se il binlog è stato eliminato. Finche `mariadbbackup` non viene utilizzato per inizializzare un nodo da mariadb-operator (questa funzionalità non è ancora implementata), seguite questi passaggi manuali per correggere il problema: https://github.com/mariadb-operator/mariadb-operator/issues/141#issuecomment-1804760231
 - Gli indici possono talvolta essere corrotti sulla replica primaria. Potete ripristinarli da una replica secondaria
 
 ```bash
@@ -274,7 +274,7 @@ spec:
 
 :::tip Buone Pratiche
 
-- **3 repliche minimo** in produzione per assicurare l'alta disponibilita (1 primary + 2 repliche)
+- **3 repliche minimo** in produzione per assicurare l'alta disponibilità (1 primary + 2 repliche)
 - **`maxUserConnections`**: limitate le connessioni per utente per evitare l'esaurimento delle risorse
 - **Backup Restic**: attivate i backup automatici con `backup.enabled: true` e conservate il `resticPassword` in un luogo sicuro
 - **Separazione dei database**: create un database per applicazione con ruoli distinti (admin, readonly)
@@ -282,7 +282,7 @@ spec:
 
 :::warning Attenzione
 
-- **Le cancellazioni sono irreversibili**: la cancellazione di una risorsa MySQL comporta la perdita definitiva dei dati se nessun backup e configurato
-- **Commutazione del primary**: il cambio di primary tramite `spec.replication.primary.podIndex` puo comportare una breve interruzione delle scritture
+- **Le cancellazioni sono irreversibili**: la cancellazione di una risorsa MySQL comporta la perdita definitiva dei dati se nessun backup è configurato
+- **Commutazione del primary**: il cambio di primary tramite `spec.replication.primary.podIndex` può comportare una breve interruzione delle scritture
 - **Indici corrotti**: gli indici possono talvolta essere corrotti sulla replica primaria — ripristinateli da una replica secondaria con `mysqldump`
 :::

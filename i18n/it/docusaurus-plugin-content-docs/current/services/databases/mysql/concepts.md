@@ -7,7 +7,7 @@ title: Concetti
 
 ## Architettura
 
-MySQL su Hikube e un servizio gestito basato sull'operatore **MariaDB-Operator**. Sebbene l'operatore utilizzi MariaDB (un fork compatibile di MySQL), il servizio e completamente compatibile con i client e i protocolli MySQL. Ogni istanza distribuita tramite la risorsa `MariaDB` crea un cluster replicato con un primary e delle repliche per l'alta disponibilita.
+MySQL su Hikube e un servizio gestito basato sull'operatore **MariaDB-Operator**. Sebbene l'operatore utilizzi MariaDB (un fork compatibile di MySQL), il servizio è completamente compatibile con i client e i protocolli MySQL. Ogni istanza distribuita tramite la risorsa `MariaDB` crea un cluster replicato con un primary e delle repliche per l'alta disponibilità.
 
 ```mermaid
 graph TB
@@ -59,7 +59,7 @@ graph TB
 
 | Termine | Descrizione |
 |---------|-------------|
-| **MariaDB** | Risorsa Kubernetes (`apps.cozystack.io/v1alpha1`) che rappresenta un cluster MySQL gestito. Il CRD si chiama `MariaDB` perche il servizio si basa su MariaDB-Operator. |
+| **MariaDB** | Risorsa Kubernetes (`apps.cozystack.io/v1alpha1`) che rappresenta un cluster MySQL gestito. Il CRD si chiama `MariaDB` perché il servizio si basa su MariaDB-Operator. |
 | **Primary** | Nodo principale che accetta letture e scritture. |
 | **Replica** | Nodo in sola lettura, sincronizzato dal primary tramite la replica binlog. |
 | **MariaDB-Operator** | Operatore Kubernetes che gestisce il deployment, la replica, il failover e i backup. |
@@ -69,7 +69,7 @@ graph TB
 
 ---
 
-## Replica e alta disponibilita
+## Replica e alta disponibilità
 
 Il cluster MySQL utilizza la **replica binlog** di MariaDB:
 

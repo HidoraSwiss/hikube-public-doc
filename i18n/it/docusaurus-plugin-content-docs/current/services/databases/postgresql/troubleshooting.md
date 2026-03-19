@@ -7,7 +7,7 @@ title: Risoluzione dei problemi
 
 ### Pod PostgreSQL in stato Pending
 
-**Causa**: il PersistentVolumeClaim (PVC) non riesce a legarsi a un volume. Questo puo essere dovuto a una `storageClass` inesistente, una quota di archiviazione superata o una mancanza di risorse sui nodi.
+**Causa**: il PersistentVolumeClaim (PVC) non riesce a legarsi a un volume. Questo può essere dovuto a una `storageClass` inesistente, una quota di archiviazione superata o una mancanza di risorse sui nodi.
 
 **Soluzione**:
 
@@ -29,7 +29,7 @@ title: Risoluzione dei problemi
 
 ### Replica desincronizzata tra primary e standby
 
-**Causa**: un ritardo (lag) di replica puo verificarsi a causa di un carico di rete elevato, risorse insufficienti sugli standby, o un volume di transazioni importante sul primary.
+**Causa**: un ritardo (lag) di replica può verificarsi a causa di un carico di rete elevato, risorse insufficienti sugli standby, o un volume di transazioni importante sul primary.
 
 **Soluzione**:
 
@@ -40,7 +40,7 @@ title: Risoluzione dei problemi
    ```
 2. Confrontate le posizioni LSN tra `sent_lsn` e `replay_lsn`. Un divario importante indica un lag.
 3. Verificate le risorse allocate agli standby (CPU, memoria). Se necessario, aumentate il `resourcesPreset` o le `resources` esplicite.
-4. Verificate la connettivita di rete tra i pod:
+4. Verificate la connettività di rete tra i pod:
    ```bash
    kubectl logs pg-<name>-2
    ```
@@ -48,7 +48,7 @@ title: Risoluzione dei problemi
 
 ### Connessione rifiutata a PostgreSQL
 
-**Causa**: i pod non sono in esecuzione, il nome del Secret e errato, o il servizio non e accessibile.
+**Causa**: i pod non sono in esecuzione, il nome del Secret e errato, o il servizio non è accessibile.
 
 **Soluzione**:
 

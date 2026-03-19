@@ -7,7 +7,7 @@ title: Concetti
 
 ## Architettura
 
-ClickHouse su Hikube e un servizio gestito basato sull'operatore **ClickHouse Operator**. E un database SQL orientato per colonne, ottimizzato per l'analisi dei dati (OLAP). L'architettura si basa su **shard** (partizionamento orizzontale) e **repliche** (alta disponibilita), coordinati da **ClickHouse Keeper**.
+ClickHouse su Hikube e un servizio gestito basato sull'operatore **ClickHouse Operator**. E un database SQL orientato per colonne, ottimizzato per l'analisi dei dati (OLAP). L'architettura si basa su **shard** (partizionamento orizzontale) e **repliche** (alta disponibilità), coordinati da **ClickHouse Keeper**.
 
 ```mermaid
 graph TB
@@ -80,7 +80,7 @@ graph TB
 
 ### Sharding
 
-Lo sharding distribuisce i dati orizzontalmente tra piu nodi:
+Lo sharding distribuisce i dati orizzontalmente tra più nodi:
 
 - Ogni **shard** contiene una parte dei dati
 - Le query `SELECT` vengono eseguite in parallelo su tutti gli shard
@@ -88,7 +88,7 @@ Lo sharding distribuisce i dati orizzontalmente tra piu nodi:
 
 ### Replica
 
-Ogni shard puo avere piu repliche:
+Ogni shard può avere più repliche:
 
 - Le repliche di uno stesso shard contengono **dati identici**
 - Il coordinamento e assicurato da **ClickHouse Keeper**
@@ -110,7 +110,7 @@ graph LR
 ```
 
 :::tip
-Per piccoli volumi di dati, un solo shard con 2 repliche e sufficiente. Aggiungete shard quando il volume supera le capacita di un singolo nodo.
+Per piccoli volumi di dati, un solo shard con 2 repliche è sufficiente. Aggiungete shard quando il volume supera le capacità di un singolo nodo.
 :::
 
 ---

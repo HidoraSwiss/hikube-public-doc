@@ -7,7 +7,7 @@ title: Risoluzione dei problemi
 
 ### Replica interrotta (binlog eliminato)
 
-**Causa**: il binary log (binlog) e stato eliminato sul primary prima che la replica abbia potuto leggerlo. Questo e un problema noto del MariaDB Operator quando `mariadbbackup` non e ancora utilizzato per inizializzare i nodi.
+**Causa**: il binary log (binlog) è stato eliminato sul primary prima che la replica abbia potuto leggerlo. Questo e un problema noto del MariaDB Operator quando `mariadbbackup` non è ancora utilizzato per inizializzare i nodi.
 
 **Soluzione**:
 
@@ -41,11 +41,11 @@ Questo problema e documentato nel [MariaDB Operator](https://github.com/mariadb-
    - `s3AccessKey` / `s3SecretKey`: le chiavi sono valide
    - `s3Region`: la regione corrisponde a quella del bucket
 3. Verificate che il `resticPassword` sia identico a quello utilizzato durante il primo backup. Un cambio di password rende i vecchi backup inaccessibili.
-4. Testate la connettivita verso l'endpoint S3 dal cluster.
+4. Testate la connettività verso l'endpoint S3 dal cluster.
 
 ### Connessione rifiutata
 
-**Causa**: i pod MySQL non sono in esecuzione, il nome del Secret e errato, o il limite `maxUserConnections` e stato raggiunto.
+**Causa**: i pod MySQL non sono in esecuzione, il nome del Secret e errato, o il limite `maxUserConnections` è stato raggiunto.
 
 **Soluzione**:
 
@@ -73,7 +73,7 @@ Questo problema e documentato nel [MariaDB Operator](https://github.com/mariadb-
    ```bash
    kubectl logs mysql-<name>-0 --previous
    ```
-2. Verificate se il pod e stato terminato per superamento della memoria (OOMKilled):
+2. Verificate se il pod è stato terminato per superamento della memoria (OOMKilled):
    ```bash
    kubectl describe pod mysql-<name>-0 | grep -i oom
    ```

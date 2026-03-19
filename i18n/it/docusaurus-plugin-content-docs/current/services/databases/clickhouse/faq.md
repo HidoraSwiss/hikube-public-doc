@@ -9,8 +9,8 @@ title: FAQ
 
 Gli **shard** e le **repliche** svolgono ruoli diversi nell'architettura ClickHouse:
 
-- **Shard**: distribuzione **orizzontale** dei dati. Ogni shard contiene una parte del dataset totale. Aggiungere shard aumenta la capacita di archiviazione e di elaborazione.
-- **Repliche**: copie **identiche** dei dati all'interno di uno stesso shard. Ogni replica contiene gli stessi dati per assicurare l'alta disponibilita.
+- **Shard**: distribuzione **orizzontale** dei dati. Ogni shard contiene una parte del dataset totale. Aggiungere shard aumenta la capacità di archiviazione e di elaborazione.
+- **Repliche**: copie **identiche** dei dati all'interno di uno stesso shard. Ogni replica contiene gli stessi dati per assicurare l'alta disponibilità.
 
 ```yaml title="clickhouse.yaml"
 spec:
@@ -19,7 +19,7 @@ spec:
 ```
 
 :::tip
-In produzione, usate almeno 2 repliche per shard per l'alta disponibilita. Aumentate il numero di shard per elaborare volumi di dati piu importanti.
+In produzione, usate almeno 2 repliche per shard per l'alta disponibilità. Aumentate il numero di shard per elaborare volumi di dati più importanti.
 :::
 
 ### A cosa serve ClickHouse Keeper?
@@ -41,7 +41,7 @@ spec:
     size: 2Gi
 ```
 
-### ClickHouse e adatto alle query transazionali (OLTP)?
+### ClickHouse è adatto alle query transazionali (OLTP)?
 
 **No.** ClickHouse e un motore di database **OLAP** (Online Analytical Processing) ottimizzato per l'analisi dei dati:
 

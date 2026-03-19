@@ -144,7 +144,7 @@ my-cluster-general-yyyyy     Ready    <none>   3m    v1.30.0
 ```
 
 :::warning
-Se dei pod rimangono in errore dopo l'aggiornamento, verificate la compatibilita dei vostri manifesti con la nuova versione Kubernetes. Alcune API deprecate potrebbero essere state rimosse.
+Se dei pod rimangono in errore dopo l'aggiornamento, verificate la compatibilità dei vostri manifesti con la nuova versione Kubernetes. Alcune API deprecate potrebbero essere state rimosse.
 :::
 
 ## Per approfondire

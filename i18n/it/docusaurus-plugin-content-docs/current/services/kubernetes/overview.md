@@ -25,9 +25,9 @@ Il piano di controllo e interamente gestito dalla piattaforma, mentre i **nodi w
 
 ### **Panoramica**
 
-I cluster Kubernetes Hikube si basano su un'**infrastruttura multi-datacenter** (3 siti svizzeri) che garantisce la replica, la tolleranza ai guasti e la continuita del servizio.
+I cluster Kubernetes Hikube si basano su un'**infrastruttura multi-datacenter** (3 siti svizzeri) che garantisce la replica, la tolleranza ai guasti e la continuità del servizio.
 
-- **Piano di controllo (Control Plane)**: ospitato e gestito da Hikube
+- **Piano di controllo (Control Plane)**: ospitato è gestito da Hikube
   Composto da:
   - `kube-apiserver`
   - `etcd`
@@ -50,7 +50,7 @@ I principali elementi di configurazione includono:
 |----------|-------------|
 | **nodeGroups** | Gruppi di nodi omogenei (dimensione, ruolo, GPU, ecc.) |
 | **storageClass** | Definisce il tipo di persistenza e la replica |
-| **addons** | Insieme delle funzionalita opzionali attivabili |
+| **addons** | Insieme delle funzionalità opzionali attivabili |
 | **version** | Versione del server Kubernetes utilizzata |
 | **network** | Gestione del CNI, LoadBalancer e Ingress |
 
@@ -61,13 +61,13 @@ I principali elementi di configurazione includono:
 ### 🧠 **Control Plane**
 
 - Gestito da Hikube, senza manutenzione necessaria lato cliente
-- Componenti critici replicati su piu siti
-- Gestione dell'alta disponibilita, del monitoring e degli aggiornamenti automatici
+- Componenti critici replicati su più siti
+- Gestione dell'alta disponibilità, del monitoring e degli aggiornamenti automatici
 - Accesso tramite l'API standard Kubernetes (`kubectl`, client SDK, ecc.)
 
 ### 🧩 **Worker Nodes / NodeGroups**
 
-I **NodeGroups** permettono di adattare le risorse alle vostre esigenze. Ogni gruppo puo essere configurato con un tipo di istanza, dei ruoli e uno scaling automatico.
+I **NodeGroups** permettono di adattare le risorse alle vostre esigenze. Ogni gruppo può essere configurato con un tipo di istanza, dei ruoli e uno scaling automatico.
 
 #### Esempio di NodeGroup
 
@@ -94,7 +94,7 @@ nodeGroups:
 
 - Replica automatica sui **3 datacenter svizzeri**
 - Provisioning dinamico dei volumi persistenti (PVC)
-- Tolleranza ai guasti e alta disponibilita nativa
+- Tolleranza ai guasti e alta disponibilità nativa
 
 Esempio di utilizzo:
 
@@ -111,7 +111,7 @@ resources:
 
 - I cluster possono essere creati con una **versione Kubernetes specifica**
 - Hikube garantisce gli aggiornamenti minori e correttivi in modo controllato
-- Il cliente mantiene la possibilita di pianificare gli upgrade maggiori
+- Il cliente mantiene la possibilità di pianificare gli upgrade maggiori
 
 Esempio:
 
@@ -196,5 +196,5 @@ nodeGroups:
 - **Piano di controllo gestito**: nessuna manutenzione dei master necessaria
 - **Nodi nel vostro tenant**: controllo completo sui worker
 - **Scaling automatico**: adeguamento dinamico in base al carico
-- **Multi-datacenter**: alta disponibilita nativa e replica
+- **Multi-datacenter**: alta disponibilità nativa e replica
 - **Compatibilita totale**: API Kubernetes standard supportata

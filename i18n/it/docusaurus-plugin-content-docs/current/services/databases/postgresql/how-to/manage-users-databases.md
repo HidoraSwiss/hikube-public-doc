@@ -16,7 +16,7 @@ Questa guida spiega come creare e gestire utenti, database, ruoli ed estensioni 
 
 ### 1. Aggiungere utenti
 
-Gli utenti sono dichiarati nella sezione `users` del manifesto. Ogni utente e identificato da un nome e possiede una password.
+Gli utenti sono dichiarati nella sezione `users` del manifesto. Ogni utente è identificato da un nome e possiede una password.
 
 ```yaml title="postgresql-users.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -48,12 +48,12 @@ spec:
 | `users[name].replication` | `bool` | Concede il privilegio di replica all'utente |
 
 :::note
-Il privilegio `replication` e necessario per gli utenti utilizzati da strumenti di Change Data Capture (CDC) come Debezium, o per la replica logica PostgreSQL. Attivatelo solo se ne avete bisogno.
+Il privilegio `replication` è necessario per gli utenti utilizzati da strumenti di Change Data Capture (CDC) come Debezium, o per la replica logica PostgreSQL. Attivatelo solo se ne avete bisogno.
 :::
 
 ### 2. Creare database con ruoli
 
-I database sono dichiarati nella sezione `databases`. Ogni database puo definire ruoli `admin` e `readonly`, che vengono assegnati agli utenti dichiarati in `users`.
+I database sono dichiarati nella sezione `databases`. Ogni database può definire ruoli `admin` e `readonly`, che vengono assegnati agli utenti dichiarati in `users`.
 
 ```yaml title="postgresql-databases.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -257,7 +257,7 @@ La configurazione ha avuto successo se:
 - Gli utenti appaiono in `\du` con gli attributi corretti
 - I database sono elencati in `\l`
 - Le estensioni sono attive (verificabili con `\dx` in ogni database)
-- Ogni utente puo connettersi con la propria password
+- Ogni utente può connettersi con la propria password
 - Gli utenti `readonly` non possono modificare i dati
 
 ## Per approfondire

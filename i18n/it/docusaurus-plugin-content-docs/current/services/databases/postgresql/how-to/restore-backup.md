@@ -37,7 +37,7 @@ YYYY-MM-DDTHH:MM:SSZ
 | _(vuoto)_ | Ripristino all'ultimo stato disponibile |
 
 :::tip
-Se lasciate `recoveryTime` vuoto, il ripristino viene effettuato fino all'ultimo WAL disponibile, cioe lo stato piu recente possibile.
+Se lasciate `recoveryTime` vuoto, il ripristino viene effettuato fino all'ultimo WAL disponibile, cioe lo stato più recente possibile.
 :::
 
 ### 2. Preparare il manifesto della nuova istanza

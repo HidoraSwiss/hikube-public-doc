@@ -74,9 +74,9 @@ graph TB
 
 ---
 
-## Alta disponibilita con Sentinel
+## Alta disponibilità con Sentinel
 
-Redis Sentinel assicura l'alta disponibilita:
+Redis Sentinel assicura l'alta disponibilità:
 
 1. **Sorvegliando** permanentemente il master e le repliche
 2. **Rilevando** il guasto del master tramite consenso (quorum tra Sentinel)
@@ -117,7 +117,7 @@ Redis su Hikube supporta lo storage persistente:
 | Parametro | Descrizione |
 |-----------|-------------|
 | `size` | Dimensione del volume persistente (es: `10Gi`) |
-| `storageClass` | `local` (prestazioni) o `replicated` (alta disponibilita) |
+| `storageClass` | `local` (prestazioni) o `replicated` (alta disponibilità) |
 
 I dati Redis vengono scritti su disco tramite i meccanismi nativi Redis (RDB/AOF), garantendo la durabilita anche in caso di riavvio.
 

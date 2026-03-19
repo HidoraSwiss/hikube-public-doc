@@ -7,7 +7,7 @@ title: Risoluzione dei problemi
 
 ### Nodi in stato NotReady
 
-**Causa**: uno o piu nodi non rispondono piu al piano di controllo. Questo puo essere legato a risorse insufficienti, un problema di archiviazione o un malfunzionamento del kubelet.
+**Causa**: uno o più nodi non rispondono più al piano di controllo. Questo può essere legato a risorse insufficienti, un problema di archiviazione o un malfunzionamento del kubelet.
 
 **Soluzione**:
 
@@ -74,7 +74,7 @@ title: Risoluzione dei problemi
    export KUBECONFIG=kubeconfig.yaml
    ```
 
-3. Verificate la connettivita:
+3. Verificate la connettività:
    ```bash
    kubectl cluster-info
    ```
@@ -83,7 +83,7 @@ title: Risoluzione dei problemi
 
 ### Ingress restituisce 404
 
-**Causa**: la risorsa Ingress e mal configurata o l'addon ingressNginx non e attivato sul cluster.
+**Causa**: la risorsa Ingress e mal configurata o l'addon ingressNginx non è attivato sul cluster.
 
 **Soluzione**:
 
@@ -128,7 +128,7 @@ title: Risoluzione dei problemi
 
 ### PVC in stato Pending
 
-**Causa**: la `storageClass` richiesta non esiste o la capacita di archiviazione e insufficiente.
+**Causa**: la `storageClass` richiesta non esiste o la capacità di archiviazione e insufficiente.
 
 **Soluzione**:
 
@@ -154,4 +154,4 @@ title: Risoluzione dei problemi
    kubectl describe pvc my-data
    ```
 
-4. Se la capacita e insufficiente, riducete la dimensione richiesta o contattate il supporto Hikube.
+4. Se la capacità e insufficiente, riducete la dimensione richiesta o contattate il supporto Hikube.

@@ -106,7 +106,7 @@ spec:
 - **`logTTL`**: durata di retention in giorni per `query_log` e `query_thread_log` (predefinito: `15`)
 
 :::note
-Regolate `logTTL` in base alle vostre esigenze di audit. Un valore elevato consuma piu spazio disco (`logStorageSize`). Per un ambiente di sviluppo, `7` giorni e generalmente sufficiente.
+Regolate `logTTL` in base alle vostre esigenze di audit. Un valore elevato consuma più spazio disco (`logStorageSize`). Per un ambiente di sviluppo, `7` giorni e generalmente sufficiente.
 :::
 
 ### 4. Applicare le modifiche

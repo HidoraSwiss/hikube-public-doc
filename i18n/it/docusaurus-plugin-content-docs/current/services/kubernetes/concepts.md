@@ -7,7 +7,7 @@ title: Concetti
 
 ## Architettura
 
-Lo schema seguente illustra la struttura e le interazioni principali del **cluster Kubernetes Hikube**, includendo l'alta disponibilita del piano di controllo, la gestione dei nodi, la persistenza dei dati e la replica inter-regioni.
+Lo schema seguente illustra la struttura e le interazioni principali del **cluster Kubernetes Hikube**, includendo l'alta disponibilità del piano di controllo, la gestione dei nodi, la persistenza dei dati e la replica inter-regioni.
 
 <div class="only-light">
   <img src="/img/hikube-kubernetes-architecture.svg" alt="Logo chiaro"/>
@@ -44,7 +44,7 @@ Lo schema seguente illustra la struttura e le interazioni principali del **clust
 
 - Rappresenta l'**archiviazione persistente** utilizzata dai pod.
 - I dati dei workload vengono **scritti e letti da questa archiviazione**.
-- Questo livello e integrato nella replica Hikube per garantire la disponibilita dei dati.
+- Questo livello è integrato nella replica Hikube per garantire la disponibilità dei dati.
 
 ---
 
@@ -54,9 +54,9 @@ Lo schema seguente illustra la struttura e le interazioni principali del **clust
 
 - Funge da interfaccia tra Kubernetes e i **sistemi di archiviazione regionali**.
 - Replica automaticamente i dati dei PV verso diverse regioni per:
-  - l'**alta disponibilita**,
+  - l'**alta disponibilità**,
   - la **resilienza ai guasti regionali**,
-  - e la **continuita del servizio**.
+  - e la **continuità del servizio**.
 
 #### Archiviazioni regionali
 
@@ -95,7 +95,7 @@ Ogni regione dispone del proprio backend di archiviazione, tutti sincronizzati t
 
 Questa architettura garantisce:
 
-- **Alta disponibilita** del cluster Kubernetes.
+- **Alta disponibilità** del cluster Kubernetes.
 - **Resilienza geografica** grazie alla replica inter-regioni.
 - **Integrita dei dati** tramite etcd e l'archiviazione persistente.
 - **Scalabilita** orizzontale con i Node Groups.
@@ -105,7 +105,7 @@ Questa architettura garantisce:
 ## Control Plane
 
 Il campo `controlPlane` definisce la configurazione del piano di controllo del cluster Kubernetes gestito.
-Specifica le risorse allocate a ciascun componente chiave (API Server, Scheduler, Controller Manager, Konnectivity) e il numero di repliche per l'alta disponibilita.
+Specifica le risorse allocate a ciascun componente chiave (API Server, Scheduler, Controller Manager, Konnectivity) e il numero di repliche per l'alta disponibilità.
 
 ```yaml title="control-plane.yaml"
 controlPlane:
@@ -162,7 +162,7 @@ Garantisce la creazione, l'aggiornamento e l'eliminazione delle risorse (pod, se
 ### `konnectivity` (Object)
 
 Il servizio **Konnectivity** gestisce la comunicazione sicura tra il piano di controllo e i nodi (agenti).
-Sostituisce il vecchio `kube-proxy` per le connessioni in uscita dei nodi e ottimizza la connettivita di rete.
+Sostituisce il vecchio `kube-proxy` per le connessioni in uscita dei nodi e ottimizza la connettività di rete.
 
 | Campo | Tipo | Obbligatorio | Descrizione |
 |-------|------|--------------|-------------|
@@ -185,7 +185,7 @@ Lo `scheduler` determina su quale nodo ogni pod deve essere eseguito in base ai 
 ### `replicas` (integer)
 
 Il campo `replicas` definisce il **numero di istanze del piano di controllo**.
-Un numero dispari di repliche (generalmente `3`) e raccomandato per garantire l'alta disponibilita e il quorum in `etcd`.
+Un numero dispari di repliche (generalmente `3`) è raccomandato per garantire l'alta disponibilità e il quorum in `etcd`.
 
 ---
 
@@ -205,7 +205,7 @@ resourcesPreset: "2xlarge"  # 4 CPU, 8 GiB RAM
 - Definire sempre `replicas: 3` per la ridondanza.
 - Utilizzare `resourcesPreset` coerenti tra i componenti.
 - Adattare le risorse in base al carico (cluster di produzione → `medium` o `large`).
-- Non sottodimensionare `apiServer`, e il componente piu sollecitato.
+- Non sottodimensionare `apiServer`, e il componente più sollecitato.
 :::
 
 ---
@@ -269,7 +269,7 @@ instanceType: "s1.8xlarge"   # 64 vCPU, 128 GB RAM
 
 #### Serie U (Universal) — Rapporto 1:4
 
-Ottimizzata per workload bilanciati con piu memoria.
+Ottimizzata per workload bilanciati con più memoria.
 
 ```yaml
 instanceType: "u1.medium"    # 1 vCPU, 4 GB RAM
@@ -354,7 +354,7 @@ nodeGroups:
 ```
 
 :::tip Buone pratiche Node Groups
-- Regolare `minReplicas` e `maxReplicas` in base alle esigenze di scalabilita.
+- Regolare `minReplicas` e `maxReplicas` in base alle esigenze di scalabilità.
 - Utilizzare `instanceType` coerenti con il carico di lavoro.
 - Definire un'archiviazione effimera sufficiente per i carichi temporanei (log, cache).
 - Specificare chiaramente i ruoli per segmentare le funzioni dei nodi (es: separazione `worker` / `ingress`).

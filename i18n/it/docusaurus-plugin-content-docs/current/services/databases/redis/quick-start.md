@@ -14,7 +14,7 @@ Questa guida vi accompagna passo dopo passo nel deployment del vostro primo clus
 Alla fine di questa guida, avrete:
 
 - Un cluster **Redis** distribuito su Hikube
-- Un'architettura composta da un **master** e delle **repliche** per garantire l'alta disponibilita
+- Un'architettura composta da un **master** e delle **repliche** per garantire l'alta disponibilità
 - **Redis Sentinel** configurato per l'auto-failover
 - Un accesso Redis sicuro con le vostre credenziali di autenticazione
 - Un'archiviazione persistente collegata per conservare i dati oltre i riavvii
@@ -42,7 +42,7 @@ kind: Redis
 metadata:
   name: example
 spec:
-  # Numero di repliche Redis (alta disponibilita se >1)
+  # Numero di repliche Redis (alta disponibilità se >1)
   replicas: 3
 
   # Profilo di risorse predefinito (nano, micro, small, medium, large, xlarge, 2xlarge)
@@ -79,7 +79,7 @@ Applicate il manifesto e verificate che il deployment inizi:
 kubectl apply -f redis.yaml
 ```
 
-Verificate lo stato del cluster (puo richiedere 1-2 minuti):
+Verificate lo stato del cluster (può richiedere 1-2 minuti):
 
 ```bash
 kubectl get redis
@@ -186,7 +186,7 @@ redis-cli -h 91.223.132.41 -p 6379 -a "$REDIS_PASSWORD" GET hello
 
 :::note
 Se usate il port-forward, sostituite `91.223.132.41` con `127.0.0.1` nei comandi qui sopra.
-Si raccomanda di non esporre il database all'esterno se non ne avete necessita.
+Si raccomanda di non esporre il database all'esterno se non ne avete necessità.
 :::
 
 ---

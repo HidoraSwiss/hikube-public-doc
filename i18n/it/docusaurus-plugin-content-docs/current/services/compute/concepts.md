@@ -54,7 +54,7 @@ graph TB
 |-------|-------------|
 | **VMInstance** | Risorsa Kubernetes (`apps.cozystack.io/v1alpha1`) che rappresenta una macchina virtuale. Gestisce il ciclo di vita, i dischi, la rete e il cloud-init. |
 | **VMDisk** | Risorsa Kubernetes che rappresenta un disco virtuale. Può essere creato a partire da un'immagine Golden, da una sorgente HTTP o vuoto. |
-| **Golden Image** | Immagine OS preconfigurata e ottimizzata per KubeVirt (AlmaLinux, Rocky, Debian, Ubuntu, ecc.). |
+| **Golden Image** | Immagine OS preconfigurata è ottimizzata per KubeVirt (AlmaLinux, Rocky, Debian, Ubuntu, ecc.). |
 | **Instance Type** | Profilo di risorse CPU/RAM definito da una serie (S, U, M) e una dimensione. |
 | **cloud-init** | Meccanismo di inizializzazione automatica delle VM al primo avvio (utenti, pacchetti, script). |
 | **PortList** | Metodo di esposizione di rete che espone porte specifiche con firewalling automatico sull'IP dedicato (raccomandato). |
@@ -104,7 +104,7 @@ La modalità **PortList** espone unicamente le porte specificate tramite un IP d
 
 La modalità **WholeIP** assegna un IP pubblico dedicato con tutte le porte aperte. Utile quando:
 - La VM deve essere accessibile su porte dinamiche
-- Un protocollo necessita un IP dedicato (VPN, SIP, ecc.)
+- Un protocollo necessità un IP dedicato (VPN, SIP, ecc.)
 - La VM funge da gateway o VPN
 
 ---

@@ -5,8 +5,8 @@ title: Riferimento API
 
 # Riferimento API Redis
 
-Questo riferimento descrive in dettaglio l'utilizzo di **Redis** su Hikube, evidenziando la sua rapidita e versatilita come **data store in-memory** e sistema di **cache distribuita**.
-Il servizio gestito semplifica il deployment e la gestione dei cluster Redis, garantendo **alta disponibilita**, **bassa latenza** e prestazioni ottimali per le vostre applicazioni.
+Questo riferimento descrive in dettaglio l'utilizzo di **Redis** su Hikube, evidenziando la sua rapidità e versatilita come **data store in-memory** e sistema di **cache distribuita**.
+Il servizio gestito semplifica il deployment e la gestione dei cluster Redis, garantendo **alta disponibilità**, **bassa latenza** e prestazioni ottimali per le vostre applicazioni.
 
 Il servizio si basa sull'operatore **[Spotahome Redis Operator](https://github.com/spotahome/redis-operator)**, che assicura l'orchestrazione, la replica e la supervisione dei cluster Redis.
 
@@ -52,7 +52,7 @@ kind: Redis
 metadata:
   name: example
 spec:
-  # Numero di repliche Redis (alta disponibilita se >1)
+  # Numero di repliche Redis (alta disponibilità se >1)
   replicas: 3
 
   # Risorse allocate per istanza
@@ -131,14 +131,14 @@ resources:
 :::tip Buone Pratiche
 
 - **`authEnabled: true`**: attivate sempre l'autenticazione in produzione per proteggere l'accesso ai vostri dati Redis
-- **3 repliche minimo** in produzione per garantire l'alta disponibilita con Redis Sentinel
+- **3 repliche minimo** in produzione per garantire l'alta disponibilità con Redis Sentinel
 - **Storage replicato**: usate `storageClass: replicated` per proteggere i dati contro la perdita di un nodo fisico
 - **Dimensionamento memoria**: la memoria allocata (`resources.memory`) deve essere sufficiente a contenere l'intero dataset Redis
 :::
 
 :::warning Attenzione
 
-- **Le cancellazioni sono irreversibili**: la cancellazione di una risorsa Redis comporta la perdita definitiva dei dati se nessuna persistenza esterna e configurata
+- **Le cancellazioni sono irreversibili**: la cancellazione di una risorsa Redis comporta la perdita definitiva dei dati se nessuna persistenza esterna è configurata
 - **`resources` vs `resourcesPreset`**: se `resources` e definito, `resourcesPreset` viene completamente ignorato
 - **Accesso esterno**: attivare `external: true` espone Redis su Internet — assicuratevi che `authEnabled: true` sia configurato
 :::

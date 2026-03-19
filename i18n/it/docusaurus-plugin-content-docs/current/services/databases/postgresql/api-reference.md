@@ -5,7 +5,7 @@ title: Riferimento API
 
 # Riferimento API PostgreSQL
 
-Questo riferimento descrive in dettaglio l'utilizzo di **PostgreSQL** su Hikube, evidenziando il funzionamento in cluster replicato con un primary e degli standby per l'alta disponibilita, nonche la possibilita di attivare backup automatici verso uno storage compatibile S3.
+Questo riferimento descrive in dettaglio l'utilizzo di **PostgreSQL** su Hikube, evidenziando il funzionamento in cluster replicato con un primary e degli standby per l'alta disponibilità, nonche la possibilità di attivare backup automatici verso uno storage compatibile S3.
 
 ---
 
@@ -336,7 +336,7 @@ spec:
 
 :::warning Attenzione
 
-- **Le cancellazioni sono irreversibili**: la cancellazione di una risorsa Postgres comporta la perdita definitiva dei dati se nessun backup e configurato
+- **Le cancellazioni sono irreversibili**: la cancellazione di una risorsa Postgres comporta la perdita definitiva dei dati se nessun backup è configurato
 - **`resources` vs `resourcesPreset`**: se `resources` e definito, `resourcesPreset` viene completamente ignorato
 - **Ripristino PITR**: il ripristino crea una **nuova istanza** con un nome diverso — non ripristina l'istanza esistente
 :::

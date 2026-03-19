@@ -48,8 +48,8 @@ gpuOperator:
 
 ### Descrizione
 
-Indica se il **GPU Operator** e attivato (`true`) o disattivato (`false`) nel cluster.
-Quando e attivato, l'operatore distribuisce automaticamente i componenti necessari alla gestione delle GPU NVIDIA.
+Indica se il **GPU Operator** è attivato (`true`) o disattivato (`false`) nel cluster.
+Quando è attivato, l'operatore distribuisce automaticamente i componenti necessari alla gestione delle GPU NVIDIA.
 
 ### Esempio
 
@@ -84,5 +84,5 @@ valuesOverride:
 ## 💡 Buone pratiche
 
 - Attivare `enabled: true` sui nodi dotati di GPU affinche l'operatore gestisca automaticamente i componenti NVIDIA.
-- Utilizzare `valuesOverride` per adattare la configurazione alle esigenze specifiche (es. attivare o disattivare il `driver` se gia installato manualmente).
+- Utilizzare `valuesOverride` per adattare la configurazione alle esigenze specifiche (es. attivare o disattivare il `driver` se già installato manualmente).
 - Distribuire il GPU Operator solo negli ambienti in cui sono necessari workload GPU (IA, ML, calcolo scientifico).

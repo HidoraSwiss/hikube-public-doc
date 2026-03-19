@@ -227,13 +227,13 @@ spec:
 
 - **Keeper in numero dispari**: distribuite sempre 3 o 5 repliche Keeper per garantire il quorum (maggioranza necessaria per l'elezione del leader)
 - **`logTTL`**: regolate la durata di retention dei log di sistema (`query_log`, `query_thread_log`) per evitare l'accumulo di dati inutili
-- **Shard vs repliche**: usate gli shard per distribuire i dati orizzontalmente (piu capacita) e le repliche per la ridondanza (piu disponibilita)
+- **Shard vs repliche**: usate gli shard per distribuire i dati orizzontalmente (più capacità) e le repliche per la ridondanza (più disponibilità)
 - **Utente `readonly`**: create un utente in sola lettura per gli strumenti di analisi e reporting
 :::
 
 :::warning Attenzione
 
-- **Le cancellazioni sono irreversibili**: la cancellazione di una risorsa ClickHouse comporta la perdita definitiva dei dati se nessun backup e configurato
-- **Modifica degli shard**: modificare il numero di shard su un cluster esistente puo comportare una ridistribuzione complessa dei dati
-- **Keeper e quorum**: con meno di 3 Keeper, il cluster non puo mantenere il quorum in caso di guasto di un nodo
+- **Le cancellazioni sono irreversibili**: la cancellazione di una risorsa ClickHouse comporta la perdita definitiva dei dati se nessun backup è configurato
+- **Modifica degli shard**: modificare il numero di shard su un cluster esistente può comportare una ridistribuzione complessa dei dati
+- **Keeper e quorum**: con meno di 3 Keeper, il cluster non può mantenere il quorum in caso di guasto di un nodo
 :::

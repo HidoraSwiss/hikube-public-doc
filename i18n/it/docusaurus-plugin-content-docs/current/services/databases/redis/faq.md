@@ -7,10 +7,10 @@ title: FAQ
 
 ### Come funziona Redis Sentinel su Hikube?
 
-Redis su Hikube viene distribuito tramite l'operatore **Spotahome Redis Operator**, che implementa un'architettura **Redis Sentinel** per l'alta disponibilita:
+Redis su Hikube viene distribuito tramite l'operatore **Spotahome Redis Operator**, che implementa un'architettura **Redis Sentinel** per l'alta disponibilità:
 
 - **Redis Sentinel** sorveglia le istanze Redis ed effettua una **commutazione automatica** (failover) in caso di guasto del primary.
-- Un **quorum** e necessario per decidere il failover: servono almeno **3 repliche** per garantire un quorum funzionale (maggioranza di 2 su 3).
+- Un **quorum** è necessario per decidere il failover: servono almeno **3 repliche** per garantire un quorum funzionale (maggioranza di 2 su 3).
 - I client devono connettersi tramite il **servizio Sentinel** per beneficiare del failover automatico.
 
 ```yaml title="redis.yaml"
@@ -53,8 +53,8 @@ Si. Redis su Hikube utilizza la **persistenza RDB/AOF** combinata con volumi per
 
 La scelta di `storageClass` influenza la durabilita:
 
-- **`local`**: dati persistiti sul nodo fisico. Veloce ma vulnerabile al guasto del nodo. Raccomandato se `replicas` > 1 (la replica Redis Sentinel assicura gia l'HA).
-- **`replicated`**: dati replicati su piu nodi. Piu lento ma resiliente ai guasti. Raccomandato se `replicas` = 1 (lo storage replicato compensa l'assenza di replica applicativa).
+- **`local`**: dati persistiti sul nodo fisico. Veloce ma vulnerabile al guasto del nodo. Raccomandato se `replicas` > 1 (la replica Redis Sentinel assicura già l'HA).
+- **`replicated`**: dati replicati su più nodi. Più lento ma resiliente ai guasti. Raccomandato se `replicas` = 1 (lo storage replicato compensa l'assenza di replica applicativa).
 
 ```yaml title="redis.yaml"
 spec:
@@ -88,7 +88,7 @@ spec:
 kubectl apply -f redis.yaml
 ```
 
-Redis Sentinel **riconfigura automaticamente** il cluster per integrare le nuove repliche. Nessun intervento manuale e necessario.
+Redis Sentinel **riconfigura automaticamente** il cluster per integrare le nuove repliche. Nessun intervento manuale è necessario.
 
 ### Come connettersi a Redis da un pod?
 

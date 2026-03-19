@@ -70,9 +70,9 @@ graph TB
 
 ---
 
-## Replica e alta disponibilita
+## Replica e alta disponibilità
 
-CloudNativePG assicura l'alta disponibilita tramite:
+CloudNativePG assicura l'alta disponibilità tramite:
 
 1. **Streaming replication**: le repliche ricevono i WAL in tempo reale dal primary
 2. **Failover automatico**: se il primary cade, una replica viene promossa automaticamente

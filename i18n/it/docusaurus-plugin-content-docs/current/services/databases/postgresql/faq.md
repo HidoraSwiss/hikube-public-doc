@@ -35,10 +35,10 @@ spec:
 Hikube propone due tipi di classi di archiviazione:
 
 - **`local`**: i dati sono archiviati sul nodo fisico dove viene eseguito il pod. Questa modalita offre le **migliori prestazioni** (latenza minima) ma non protegge contro il guasto di un nodo.
-- **`replicated`**: i dati sono replicati su piu nodi fisici. Questa modalita assicura l'**alta disponibilita multi-DC** e protegge contro la perdita di un nodo, al prezzo di una latenza leggermente superiore.
+- **`replicated`**: i dati sono replicati su più nodi fisici. Questa modalita assicura l'**alta disponibilità multi-DC** e protegge contro la perdita di un nodo, al prezzo di una latenza leggermente superiore.
 
 :::tip
-Usate `storageClass: local` se configurate piu repliche (`replicas` > 1): la replica applicativa (standby PostgreSQL) assicura gia l'alta disponibilita. Usate `storageClass: replicated` se avete una sola replica (`replicas` = 1): lo storage replicato compensa l'assenza di replica applicativa. In sviluppo con una sola replica, `local` puo bastare se la perdita di dati e accettabile.
+Usate `storageClass: local` se configurate più repliche (`replicas` > 1): la replica applicativa (standby PostgreSQL) assicura già l'alta disponibilità. Usate `storageClass: replicated` se avete una sola replica (`replicas` = 1): lo storage replicato compensa l'assenza di replica applicativa. In sviluppo con una sola replica, `local` può bastare se la perdita di dati e accettabile.
 :::
 
 ### Come connettersi a PostgreSQL dall'interno del cluster?
@@ -62,7 +62,7 @@ psql -h pg-mydb-rw -p 5432 -U <username> -d <database>
 
 ### Come configurare la replica sincrona?
 
-La replica sincrona garantisce che una transazione venga confermata solo quando e stata scritta su un numero minimo di repliche. Configurate i parametri `quorum` nel vostro manifesto:
+La replica sincrona garantisce che una transazione venga confermata solo quando è stata scritta su un numero minimo di repliche. Configurate i parametri `quorum` nel vostro manifesto:
 
 ```yaml title="postgresql.yaml"
 spec:
@@ -116,9 +116,9 @@ spec:
 
 Le estensioni vengono attivate automaticamente alla creazione del database. Le estensioni disponibili dipendono dalla versione di PostgreSQL distribuita.
 
-### Si possono creare piu database e utenti?
+### Si possono creare più database e utenti?
 
-Si. Usate le mappe `users` e `databases` per definire quanti utenti e database necessitate. Ogni database puo avere ruoli `admin` e `readonly` distinti:
+Si. Usate le mappe `users` e `databases` per definire quanti utenti e database necessitate. Ogni database può avere ruoli `admin` e `readonly` distinti:
 
 ```yaml title="postgresql.yaml"
 spec:

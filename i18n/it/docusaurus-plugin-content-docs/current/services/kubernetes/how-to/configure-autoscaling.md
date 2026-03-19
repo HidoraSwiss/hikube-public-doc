@@ -24,7 +24,7 @@ L'autoscaling Hikube funziona a livello dei node group. Ogni gruppo di nodi defi
 Il cluster aggiunge automaticamente nodi quando i pod non possono essere pianificati per mancanza di risorse (CPU, memoria). Rimuove i nodi sottoutilizzati quando il carico diminuisce, rispettando sempre la soglia `minReplicas`.
 
 :::note
-Lo scaling viene attivato dalla pressione sulle risorse: quando dei pod rimangono in stato `Pending` per mancanza di capacita, nuovi nodi vengono provisionati automaticamente.
+Lo scaling viene attivato dalla pressione sulle risorse: quando dei pod rimangono in stato `Pending` per mancanza di capacità, nuovi nodi vengono provisionati automaticamente.
 :::
 
 ### 2. Configurare minReplicas e maxReplicas
@@ -60,12 +60,12 @@ spec:
 ```
 
 :::tip
-Per un ambiente di produzione, fissate `minReplicas` ad almeno 2 per garantire l'alta disponibilita dei vostri workload.
+Per un ambiente di produzione, fissate `minReplicas` ad almeno 2 per garantire l'alta disponibilità dei vostri workload.
 :::
 
 ### 3. Configurare lo scaling a zero
 
-Per gli ambienti di sviluppo o i workload GPU, potete configurare un node group che scende a zero nodi quando non e utilizzato:
+Per gli ambienti di sviluppo o i workload GPU, potete configurare un node group che scende a zero nodi quando non è utilizzato:
 
 ```yaml title="cluster-scale-to-zero.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -196,5 +196,5 @@ my-cluster-compute-wwwww     Ready    <none>   2m    v1.29.0
 ## Per approfondire
 
 - [Riferimento API](../api-reference.md) -- Parametri `minReplicas` e `maxReplicas`
-- [Concetti](../concepts.md) -- Architettura dei node group e scalabilita
+- [Concetti](../concepts.md) -- Architettura dei node group e scalabilità
 - [Come aggiungere e modificare un node group](./manage-node-groups.md) -- Gestione dei node group

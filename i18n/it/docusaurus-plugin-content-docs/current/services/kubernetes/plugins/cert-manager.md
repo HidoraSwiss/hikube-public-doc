@@ -24,8 +24,8 @@ certManager:
 
 ### Descrizione
 
-Indica se il **cert-manager** e attivato (`true`) o disattivato (`false`) nella configurazione del cluster.
-Quando e disattivato, nessun componente legato al cert-manager viene distribuito.
+Indica se il **cert-manager** è attivato (`true`) o disattivato (`false`) nella configurazione del cluster.
+Quando è disattivato, nessun componente legato al cert-manager viene distribuito.
 
 ### Esempio
 
@@ -111,6 +111,6 @@ spec:
 
 - Lasciare `enabled: true` per garantire la gestione automatica dei certificati TLS.
 - Utilizzare `valuesOverride` per regolare i parametri Helm senza modificare i valori predefiniti globali.
-- Verificare la compatibilita delle versioni di `cert-manager` con la versione di Kubernetes utilizzata.
+- Verificare la compatibilità delle versioni di `cert-manager` con la versione di Kubernetes utilizzata.
 - Attivare `installCRDs` solo durante la prima installazione per evitare conflitti di risorse.
-- Disattivare `prometheus.enabled` se il monitoraggio non e richiesto, per ridurre il carico sul cluster.
+- Disattivare `prometheus.enabled` se il monitoraggio non è richiesto, per ridurre il carico sul cluster.

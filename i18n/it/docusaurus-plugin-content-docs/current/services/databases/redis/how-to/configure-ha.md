@@ -1,22 +1,22 @@
 ---
-title: "Come configurare l'alta disponibilita Redis"
+title: "Come configurare l'alta disponibilità Redis"
 ---
 
-# Come configurare l'alta disponibilita Redis
+# Come configurare l'alta disponibilità Redis
 
-Questa guida spiega come distribuire un cluster Redis ad alta disponibilita su Hikube. Il servizio si basa sull'operatore **Spotahome Redis Operator** che utilizza **Redis Sentinel** per assicurare il failover automatico quando sono configurate 3 o piu repliche.
+Questa guida spiega come distribuire un cluster Redis ad alta disponibilità su Hikube. Il servizio si basa sull'operatore **Spotahome Redis Operator** che utilizza **Redis Sentinel** per assicurare il failover automatico quando sono configurate 3 o più repliche.
 
 ## Prerequisiti
 
 - `kubectl` configurato per interagire con l'API Hikube
 - Conoscenza delle basi di Redis (vedere l'[avvio rapido](../quick-start.md))
-- Un ambiente di produzione che necessita di alta disponibilita
+- Un ambiente di produzione che necessità di alta disponibilità
 
 ## Passaggi
 
 ### 1. Configurare il manifesto con 3+ repliche
 
-Per attivare l'alta disponibilita, configurate almeno 3 repliche. Redis Sentinel viene automaticamente distribuito dall'operatore Spotahome per orchestrare l'elezione del leader e il failover:
+Per attivare l'alta disponibilità, configurate almeno 3 repliche. Redis Sentinel viene automaticamente distribuito dall'operatore Spotahome per orchestrare l'elezione del leader e il failover:
 
 ```yaml title="redis-ha.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -75,7 +75,7 @@ Con 3 repliche, Redis Sentinel assicura le seguenti funzioni:
 - **Riconfigurazione**: le repliche rimanenti vengono automaticamente riconfigurate per replicare dal nuovo master
 
 :::tip
-Il failover e completamente automatico. Nessun intervento manuale e necessario. Il tempo di commutazione e generalmente di pochi secondi.
+Il failover è completamente automatico. Nessun intervento manuale è necessario. Il tempo di commutazione e generalmente di pochi secondi.
 :::
 
 ### 5. Recuperare la password
@@ -91,7 +91,7 @@ kubectl get secret my-redis-ha -o jsonpath='{.data.password}' | base64 -d
 ```
 
 :::warning
-Attivate sempre `authEnabled: true` in produzione. Senza autenticazione, qualsiasi applicazione con accesso alla rete del cluster puo leggere e scrivere in Redis.
+Attivate sempre `authEnabled: true` in produzione. Senza autenticazione, qualsiasi applicazione con accesso alla rete del cluster può leggere e scrivere in Redis.
 :::
 
 ## Verifica

@@ -127,7 +127,7 @@ kubectl describe postgres my-database
 ```
 
 :::warning
-Testate regolarmente il ripristino dei vostri backup. Un backup che non e mai stato testato non e un backup affidabile. Consultate la guida [Come ripristinare un backup (PITR)](./restore-backup.md).
+Testate regolarmente il ripristino dei vostri backup. Un backup che non è mai stato testato non è un backup affidabile. Consultate la guida [Come ripristinare un backup (PITR)](./restore-backup.md).
 :::
 
 ## Per approfondire

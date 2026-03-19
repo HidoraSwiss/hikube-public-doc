@@ -15,7 +15,7 @@ title: Risoluzione dei problemi
    ```bash
    kubectl get pvc -l app=redis-<name>
    ```
-2. Se usate una sola replica (`replicas` = 1), passate a `storageClass: replicated` affinche lo storage compensi l'assenza di replica applicativa. Se avete piu repliche (`replicas` >= 3), `storageClass: local` e appropriato perche Redis Sentinel assicura gia l'alta disponibilita:
+2. Se usate una sola replica (`replicas` = 1), passate a `storageClass: replicated` affinche lo storage compensi l'assenza di replica applicativa. Se avete più repliche (`replicas` >= 3), `storageClass: local` e appropriato perché Redis Sentinel assicura già l'alta disponibilità:
    ```yaml title="redis.yaml"
    spec:
      storageClass: replicated    # Se replicas = 1
@@ -26,7 +26,7 @@ title: Risoluzione dei problemi
 
 ### Redis Sentinel non converge
 
-**Causa**: il numero di repliche e pari o inferiore a 3, il che impedisce al quorum Sentinel di funzionare correttamente. Sentinel necessita di una maggioranza per eleggere un nuovo primary.
+**Causa**: il numero di repliche è pari o inferiore a 3, il che impedisce al quorum Sentinel di funzionare correttamente. Sentinel necessità di una maggioranza per eleggere un nuovo primary.
 
 **Soluzione**:
 
@@ -43,7 +43,7 @@ title: Risoluzione dei problemi
    ```bash
    kubectl logs -l app=rfs-redis-<name>
    ```
-4. Verificate la connettivita di rete tra i pod Redis. Problemi di DNS o di rete possono impedire la scoperta dei nodi.
+4. Verificate la connettività di rete tra i pod Redis. Problemi di DNS o di rete possono impedire la scoperta dei nodi.
 
 ### Memoria satura (OOMKilled)
 
@@ -51,7 +51,7 @@ title: Risoluzione dei problemi
 
 **Soluzione**:
 
-1. Verificate se il pod e stato terminato per OOM:
+1. Verificate se il pod è stato terminato per OOM:
    ```bash
    kubectl describe pod rfr-redis-<name>-0 | grep -i oom
    ```
@@ -91,7 +91,7 @@ title: Risoluzione dei problemi
 
 ### Autenticazione fallita
 
-**Causa**: la password utilizzata non corrisponde a quella memorizzata nel Secret Kubernetes, oppure `authEnabled` non e attivato sul server mentre il client invia una password (o viceversa).
+**Causa**: la password utilizzata non corrisponde a quella memorizzata nel Secret Kubernetes, oppure `authEnabled` non è attivato sul server mentre il client invia una password (o viceversa).
 
 **Soluzione**:
 

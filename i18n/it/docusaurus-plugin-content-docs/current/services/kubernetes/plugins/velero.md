@@ -55,8 +55,8 @@ velero:
 
 ### Descrizione
 
-Indica se **Velero** e attivato (`true`) o disattivato (`false`).
-Quando e attivato, Velero distribuisce i suoi componenti (server, controller e CRD) permettendo la gestione dei backup e dei ripristini.
+Indica se **Velero** è attivato (`true`) o disattivato (`false`).
+Quando è attivato, Velero distribuisce i suoi componenti (server, controller e CRD) permettendo la gestione dei backup e dei ripristini.
 
 ### Esempio
 
@@ -98,7 +98,7 @@ valuesOverride:
 - Attivare `enabled: true` per garantire il backup regolare delle risorse critiche del cluster.
 - Utilizzare `valuesOverride` per adattare la configurazione al provider cloud o all'archiviazione scelta (AWS, GCP, Azure, MinIO, ecc.).
 - Configurare delle **schedule** (pianificazioni) automatiche per i backup ricorrenti.
-- Verificare regolarmente l'integrita dei backup e la possibilita di ripristino.
+- Verificare regolarmente l'integrità dei backup e la possibilità di ripristino.
 - Limitare gli accessi alle chiavi di archiviazione per proteggere i dati di backup.
 
 ---

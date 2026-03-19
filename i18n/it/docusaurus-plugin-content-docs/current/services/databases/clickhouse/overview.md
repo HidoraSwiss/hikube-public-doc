@@ -5,7 +5,7 @@ title: Panoramica
 
 # ClickHouse su Hikube
 
-I **database ClickHouse** di Hikube offrono un sistema di gestione SQL open source, ad alte prestazioni e orientato per colonne, progettato per l'elaborazione analitica online (OLAP). Garantiscono l'ingestione rapida di dati massivi, l'esecuzione di query complesse in tempo quasi reale e l'affidabilita necessaria per le applicazioni analitiche critiche delle aziende.
+I **database ClickHouse** di Hikube offrono un sistema di gestione SQL open source, ad alte prestazioni e orientato per colonne, progettato per l'elaborazione analitica online (OLAP). Garantiscono l'ingestione rapida di dati massivi, l'esecuzione di query complesse in tempo quasi reale e l'affidabilità necessaria per le applicazioni analitiche critiche delle aziende.
 
 ---
 
@@ -13,8 +13,8 @@ I **database ClickHouse** di Hikube offrono un sistema di gestione SQL open sour
 
 L'architettura di ClickHouse si basa su due parametri essenziali che permettono di adattare il deployment alle esigenze reali:
 
-- **Shard** --> permettono di **distribuire i dati in piu parti** su diversi nodi. Piu shard ci sono, piu il carico e distribuito, il che migliora la velocita di esecuzione delle query su volumi molto grandi.
-- **Repliche** --> creano **copie ridondanti** degli shard. Questo aumenta la resilienza e la tolleranza ai guasti, permettendo al contempo di distribuire il carico di lettura tra piu nodi.
+- **Shard** --> permettono di **distribuire i dati in più parti** su diversi nodi. Più shard ci sono, più il carico e distribuito, il che migliora la velocità di esecuzione delle query su volumi molto grandi.
+- **Repliche** --> creano **copie ridondanti** degli shard. Questo aumenta la resilienza e la tolleranza ai guasti, permettendo al contempo di distribuire il carico di lettura tra più nodi.
 
 ### 🔎 Esempio illustrativo
 
@@ -35,9 +35,9 @@ Immaginiamo un database di **1 miliardo di record clienti**:
   - Report regolari su ampie basi clienti o transazioni
 
 - **2 shard -- 2 repliche**
-  Ogni shard e duplicato su un altro nodo. Si beneficia sia della rapidita (dati distribuiti) che della sicurezza (tolleranza ai guasti).
+  Ogni shard e duplicato su un altro nodo. Si beneficia sia della rapidità (dati distribuiti) che della sicurezza (tolleranza ai guasti).
   **Casi d'uso:**
   - Applicazioni analitiche critiche in produzione
-  - Esigenze di alta disponibilita
+  - Esigenze di alta disponibilità
   - Piattaforme multi-utente con forte concorrenza di query
   - Piani di ripristino in caso di disastro (DRP)

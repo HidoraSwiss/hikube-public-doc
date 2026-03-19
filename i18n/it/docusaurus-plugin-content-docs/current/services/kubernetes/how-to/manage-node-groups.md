@@ -107,7 +107,7 @@ spec:
 ```
 
 :::warning
-Il cambio di `instanceType` provoca un rolling update dei nodi del gruppo. Assicuratevi che il vostro cluster disponga di capacita sufficiente per assorbire il carico durante l'aggiornamento.
+Il cambio di `instanceType` provoca un rolling update dei nodi del gruppo. Assicuratevi che il vostro cluster disponga di capacità sufficiente per assorbire il carico durante l'aggiornamento.
 :::
 
 ### 4. Rimuovere un node group
@@ -131,7 +131,7 @@ spec:
       ephemeralStorage: 50Gi
       roles:
         - ingress-nginx
-    # Il node group "compute" e stato rimosso
+    # Il node group "compute" è stato rimosso
 ```
 
 :::warning

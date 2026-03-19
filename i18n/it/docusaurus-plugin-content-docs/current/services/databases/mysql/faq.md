@@ -7,9 +7,9 @@ title: FAQ
 
 ### Perche Hikube utilizza MariaDB per il servizio MySQL?
 
-Il servizio MySQL su Hikube e basato su **MariaDB**, distribuito tramite il **MariaDB Operator**. MariaDB e un fork open-source di MySQL, completamente compatibile con il protocollo e la sintassi MySQL. Questa scelta garantisce:
+Il servizio MySQL su Hikube è basato su **MariaDB**, distribuito tramite il **MariaDB Operator**. MariaDB e un fork open-source di MySQL, completamente compatibile con il protocollo e la sintassi MySQL. Questa scelta garantisce:
 
-- Una **compatibilita totale** con i client e le applicazioni MySQL esistenti
+- Una **compatibilità totale** con i client e le applicazioni MySQL esistenti
 - Uno sviluppo **open-source** attivo e trasparente
 - Funzionalita avanzate (compressione delle colonne, motore Aria, ecc.)
 
@@ -46,9 +46,9 @@ La replica MySQL su Hikube utilizza la **replica binlog** (binary log) gestita d
 
 - Un nodo e designato come **primary** (lettura-scrittura)
 - Gli altri nodi sono delle **repliche** (sola lettura)
-- La commutazione automatica (**auto-failover**) e gestita dall'operatore in caso di guasto del primary
+- La commutazione automatica (**auto-failover**) è gestita dall'operatore in caso di guasto del primary
 
-Con 3 repliche, ottenete 1 primary + 2 repliche, il che assicura l'alta disponibilita.
+Con 3 repliche, ottenete 1 primary + 2 repliche, il che assicura l'alta disponibilità.
 
 ### Come configurare i backup con Restic?
 
@@ -94,7 +94,7 @@ Lo switchover comporta una **breve interruzione** delle scritture durante la com
 
 ### Come gestire utenti e database?
 
-Utilizzate le mappe `users` e `databases` per definire i vostri utenti e database. Ogni utente puo avere un limite di connessioni, e ogni database dei ruoli `admin` e `readonly`:
+Utilizzate le mappe `users` e `databases` per definire i vostri utenti e database. Ogni utente può avere un limite di connessioni, e ogni database dei ruoli `admin` e `readonly`:
 
 ```yaml title="mysql.yaml"
 spec:

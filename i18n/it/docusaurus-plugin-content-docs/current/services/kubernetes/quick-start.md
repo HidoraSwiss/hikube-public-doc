@@ -33,7 +33,7 @@ metadata:
 spec:
   # Configurazione del piano di controllo
   controlPlane:
-    replicas: 2  # Alta disponibilita
+    replicas: 2  # Alta disponibilità
 
   # Configurazione dei nodi worker
   nodeGroups:
@@ -262,7 +262,7 @@ kubectl get events --sort-by=.metadata.creationTimestamp
 
 ### **Scaling del Cluster**
 
-Il cluster Hikube puo regolare automaticamente il numero di nodi in base alla domanda:
+Il cluster Hikube può regolare automaticamente il numero di nodi in base alla domanda:
 
 ```bash
 # Verificare il numero di nodi attuale
@@ -272,7 +272,7 @@ kubectl get nodes
 kubectl get kubernetes my-first-cluster -o yaml | grep -A 10 nodeGroups
 
 # Lo scaling automatico si attiva in base alle risorse richieste
-# Esempio: distribuire piu pod richiedera piu nodi
+# Esempio: distribuire più pod richiederà più nodi
 kubectl scale deployment hello-hikube --replicas=6
 ```
 
@@ -283,7 +283,7 @@ kubectl scale deployment hello-hikube --replicas=6
 kubectl get nodes -w
 
 # Verificare le metriche di scaling
-kubectl describe hpa  # Se HPA e configurato
+kubectl describe hpa  # Se HPA è configurato
 ```
 
 ---
@@ -292,7 +292,7 @@ kubectl describe hpa  # Se HPA e configurato
 
 ### **Configurazione Avanzata**
 
-Ora che il vostro cluster funziona, esplorate le funzionalita avanzate:
+Ora che il vostro cluster funziona, esplorate le funzionalità avanzate:
 
 ```bash
 # Per aggiungere node group, modificate il file YAML e ri-applicate

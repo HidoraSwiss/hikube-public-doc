@@ -16,7 +16,7 @@ Questa guida vi spiega come creare e gestire gli utenti, i database e i ruoli di
 
 ### 1. Aggiungere un utente
 
-Gli utenti sono definiti nella sezione `users` del manifesto. Ogni utente e identificato da un nome e puo avere una password e un limite di connessioni:
+Gli utenti sono definiti nella sezione `users` del manifesto. Ogni utente è identificato da un nome e può avere una password e un limite di connessioni:
 
 ```yaml title="mysql-users.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -51,7 +51,7 @@ Limitate il `maxUserConnections` per utente per evitare che un'applicazione cons
 
 ### 2. Creare un database con ruoli
 
-I database sono definiti nella sezione `databases`. Ogni database puo assegnare ruoli **admin** (lettura/scrittura) o **readonly** (sola lettura) agli utenti:
+I database sono definiti nella sezione `databases`. Ogni database può assegnare ruoli **admin** (lettura/scrittura) o **readonly** (sola lettura) agli utenti:
 
 ```yaml title="mysql-databases.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -80,18 +80,18 @@ spec:
         admin:
           - appuser          # appuser ha i diritti completi su "production"
         readonly:
-          - readonly         # readonly puo solo leggere "production"
-          - analytics        # analytics puo anche leggere "production"
+          - readonly         # readonly può solo leggere "production"
+          - analytics        # analytics può anche leggere "production"
     analytics_db:
       roles:
         admin:
           - analytics        # analytics ha i diritti completi su "analytics_db"
         readonly:
-          - readonly         # readonly puo leggere "analytics_db"
+          - readonly         # readonly può leggere "analytics_db"
 ```
 
 :::note
-Uno stesso utente puo avere ruoli diversi su database diversi. Ad esempio, `analytics` e **admin** su `analytics_db` ma **readonly** su `production`.
+Uno stesso utente può avere ruoli diversi su database diversi. Ad esempio, `analytics` e **admin** su `analytics_db` ma **readonly** su `production`.
 :::
 
 ### 3. Applicare le modifiche
@@ -192,7 +192,7 @@ mysql-example   True    Running   mysql-example-1   ReplicasFirstPrimaryLast   8
 ```
 
 :::warning
-La commutazione del primary puo comportare una **breve interruzione delle scritture** durante la promozione del nuovo nodo. Le letture restano disponibili tramite le repliche.
+La commutazione del primary può comportare una **breve interruzione delle scritture** durante la promozione del nuovo nodo. Le letture restano disponibili tramite le repliche.
 :::
 
 ## Verifica

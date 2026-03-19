@@ -7,7 +7,7 @@ title: Risoluzione dei problemi
 
 ### ClickHouse Keeper instabile (numero pari di repliche)
 
-**Causa**: il numero di repliche ClickHouse Keeper e pari (2, 4, ecc.), il che impedisce il mantenimento del quorum. Il protocollo Raft necessita di una maggioranza stretta per eleggere un leader, e un numero pari di nodi non garantisce questa maggioranza in caso di partizione di rete.
+**Causa**: il numero di repliche ClickHouse Keeper è pari (2, 4, ecc.), il che impedisce il mantenimento del quorum. Il protocollo Raft necessità di una maggioranza stretta per eleggere un leader, e un numero pari di nodi non garantisce questa maggioranza in caso di partizione di rete.
 
 **Soluzione**:
 
@@ -33,12 +33,12 @@ title: Risoluzione dei problemi
 
 ### Query lente su grandi volumi
 
-**Causa**: la configurazione di sharding non e ottimale, le tabelle non usano i motori corretti, o le risorse allocate sono insufficienti.
+**Causa**: la configurazione di sharding non è ottimale, le tabelle non usano i motori corretti, o le risorse allocate sono insufficienti.
 
 **Soluzione**:
 
 1. Verificate che usiate tabelle **Distributed** per distribuire le query su tutti gli shard.
-2. Assicuratevi che le tabelle locali usino il motore `ReplicatedMergeTree` con un `ORDER BY` adatto alle vostre query piu frequenti.
+2. Assicuratevi che le tabelle locali usino il motore `ReplicatedMergeTree` con un `ORDER BY` adatto alle vostre query più frequenti.
 3. Aumentate il numero di shard per distribuire il carico:
    ```yaml title="clickhouse.yaml"
    spec:
@@ -103,7 +103,7 @@ title: Risoluzione dei problemi
 
 ### Replica inter-shard fallita
 
-**Causa**: ClickHouse Keeper non e funzionale, la rete tra i pod e instabile, o la configurazione delle repliche per shard e errata.
+**Causa**: ClickHouse Keeper non è funzionale, la rete tra i pod e instabile, o la configurazione delle repliche per shard e errata.
 
 **Soluzione**:
 
@@ -115,7 +115,7 @@ title: Risoluzione dei problemi
    ```bash
    kubectl logs -l app=clickhouse-keeper-<name>
    ```
-3. Verificate la connettivita di rete tra i pod ClickHouse:
+3. Verificate la connettività di rete tra i pod ClickHouse:
    ```bash
    kubectl exec clickhouse-<name>-0-0 -- clickhouse-client --query "SELECT * FROM system.clusters"
    ```

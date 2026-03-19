@@ -4,7 +4,7 @@ title: "Come configurare il networking"
 
 # Come configurare il networking
 
-Questa guida spiega come gestire la configurazione di rete del vostro cluster Kubernetes Hikube, utilizzando le NetworkPolicy Kubernetes e gli strumenti di osservabilita Cilium/Hubble.
+Questa guida spiega come gestire la configurazione di rete del vostro cluster Kubernetes Hikube, utilizzando le NetworkPolicy Kubernetes e gli strumenti di osservabilità Cilium/Hubble.
 
 ## Prerequisiti
 
@@ -17,13 +17,13 @@ Questa guida spiega come gestire la configurazione di rete del vostro cluster Ku
 ### 1. Comprendere la rete Hikube
 
 :::note
-Cilium e il CNI (Container Network Interface) predefinito sui cluster Kubernetes Hikube. Fornisce il networking, la sicurezza di rete e l'osservabilita.
+Cilium e il CNI (Container Network Interface) predefinito sui cluster Kubernetes Hikube. Fornisce il networking, la sicurezza di rete e l'osservabilità.
 :::
 
 I cluster Hikube integrano:
 
 - **Cilium** come CNI: gestione della rete pod-to-pod, dei servizi e dell'applicazione delle NetworkPolicy
-- **Hubble** per l'osservabilita: visualizzazione dei flussi di rete in tempo reale e debugging
+- **Hubble** per l'osservabilità: visualizzazione dei flussi di rete in tempo reale e debugging
 
 Per impostazione predefinita, tutti i pod possono comunicare tra loro senza restrizioni. Le NetworkPolicy permettono di limitare queste comunicazioni.
 
@@ -75,15 +75,15 @@ kubectl apply -f network-policy.yaml
 # Verificare che la policy sia stata creata
 kubectl get networkpolicies
 
-# Testare la connettivita autorizzata
+# Testare la connettività autorizzata
 kubectl exec -it deploy/frontend -- curl -s http://web-service:80
 
-# Testare la connettivita bloccata (dovrebbe fallire)
+# Testare la connettività bloccata (dovrebbe fallire)
 kubectl exec -it deploy/other-app -- curl -s --connect-timeout 3 http://web-service:80
 ```
 
 :::tip
-Iniziate con policy permissive in modalita osservazione, poi restringete progressivamente. Una policy troppo restrittiva puo interrompere la comunicazione tra i vostri servizi.
+Iniziate con policy permissive in modalita osservazione, poi restringete progressivamente. Una policy troppo restrittiva può interrompere la comunicazione tra i vostri servizi.
 :::
 
 **Esempio di policy predefinita per isolare un namespace:**
@@ -106,7 +106,7 @@ La policy `default-deny-all` blocca **tutto il traffico** nel namespace, incluso
 
 ### 4. Utilizzare Hubble per il debugging di rete
 
-Hubble fornisce una visibilita completa sui flussi di rete del cluster. Utilizzatelo per diagnosticare i problemi di connettivita:
+Hubble fornisce una visibilità completa sui flussi di rete del cluster. Utilizzatelo per diagnosticare i problemi di connettività:
 
 ```bash
 # Verificare lo stato di Hubble

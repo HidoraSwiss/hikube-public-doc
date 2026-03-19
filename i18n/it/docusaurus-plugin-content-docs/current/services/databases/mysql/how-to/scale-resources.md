@@ -149,7 +149,7 @@ kubectl get mariadb example -o yaml | grep -A 5 -E "resources:|resourcesPreset"
 ```
 
 :::note
-Lo scaling verticale comporta un **rolling update** dei pod. Le repliche vengono riavviate una alla volta per minimizzare l'impatto sulla disponibilita. Durante questo processo, il cluster resta accessibile in lettura tramite le repliche gia aggiornate.
+Lo scaling verticale comporta un **rolling update** dei pod. Le repliche vengono riavviate una alla volta per minimizzare l'impatto sulla disponibilità. Durante questo processo, il cluster resta accessibile in lettura tramite le repliche già aggiornate.
 :::
 
 ## Per approfondire
