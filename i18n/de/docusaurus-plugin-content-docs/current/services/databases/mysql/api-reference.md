@@ -1,0 +1,288 @@
+---
+sidebar_position: 3
+title: API-Referenz
+---
+
+# API-Referenz MySQL
+
+Cette référence détaille l’utilisation de **MySQL** sur Hikube, en mettant en avant son Deployment en cluster répliqué avec un primary et des réplicas pour la Hochverfügbarkeit, ainsi que la possibilité d’aktiviertr des sauvegardes automatiques vers un stockage compatible S3.
+
+---
+
+## Structure de Base
+
+### **Ressource MySQL**
+
+#### Beispiel de configuration YAML
+
+```yaml
+apiVersion: apps.cozystack.io/v1alpha1
+kind: MySQL
+metadata:
+  name: example
+spec:
+```
+
+---
+
+## Paramètres
+
+### **Paramètres Communs**
+
+| **Paramètre**      | **Type**   | **Description**                                                                 | **Défaut** | **Requis** |
+|---------------------|------------|---------------------------------------------------------------------------------|------------|------------|
+| `replicas`          | `int`      | Nombre de réplicas MariaDB dans le cluster                                      | `2`        | Oui        |
+| `resources`         | `object`   | Configuration explicite CPU et mémoire pour chaque réplica. Si vide, `resourcesPreset` est appliqué | `{}`       | Non        |
+| `resources.cpu`     | `quantity` | CPU disponible pour chaque réplica                                              | `null`     | Non        |
+| `resources.memory`  | `quantity` | Mémoire (RAM) disponible pour chaque réplica                                    | `null`     | Non        |
+| `resourcesPreset`   | `string`   | Profil de ressources par défaut (`nano`, `micro`, `small`, `medium`, `large`, `xlarge`, `2xlarge`) | `nano`     | Oui        |
+| `size`              | `quantity` | Taille du volume persistant (PVC) pour stocker les données                      | `10Gi`     | Oui        |
+| `storageClass`      | `string`   | StorageClass utilisée pour stocker les données                                  | `""`       | Non        |
+| `external`          | `bool`     | Activer un accès externe au cluster (LoadBalancer)                              | `false`    | Non        |
+
+#### Beispiel de configuration YAML
+
+```yaml title="mysql.yaml"
+apiVersion: apps.cozystack.io/v1alpha1
+kind: MySQL
+metadata:
+  name: example              # Nom de l'instance
+spec:
+  replicas: 3                # Nombre de réplicas (1 primary + 2 réplica)
+
+  resources:
+    cpu: 1000m               # CPU par réplica
+    memory: 1Gi              # RAM par réplica
+
+  resourcesPreset: nano      # Profil par défaut si resources est vide
+  size: 10Gi                 # Taille du volume persistant
+  storageClass: ""           # Classe de stockage
+  external: false            # Accès externe (LoadBalancer)
+```
+
+### **Paramètres d'application spécifique**
+
+| **Paramètre**                     | **Type**             | **Description**                                   | **Défaut** | **Requis** |
+|-----------------------------------|----------------------|---------------------------------------------------|------------|------------|
+| `users`                           | `map[string]object`  | Configuration des utilisateurs                    | `{...}`    | Oui        |
+| `users[name].password`            | `string`             | Mot de passe de l’utilisateur                     | `""`       | Oui        |
+| `users[name].maxUserConnections`  | `int`                | Nombre maximum de connexions pour l’utilisateur   | `0`        | Non        |
+| `databases`                       | `map[string]object`  | Configuration des bases de données                | `{...}`    | Oui        |
+| `databases[name].roles`           | `object`             | Rôles associés à la base                          | `null`     | Non        |
+| `databases[name].roles.admin`     | `[]string`           | Liste des utilisateurs avec droits admin          | `[]`       | Non        |
+| `databases[name].roles.readonly`  | `[]string`           | Liste des utilisateurs avec droits en lecture     | `[]`       | Non        |
+
+#### Beispiel de configuration YAML
+
+```yaml title="mysql.yaml"
+apiVersion: apps.cozystack.io/v1alpha1
+kind: MySQL
+metadata:
+  name: example
+spec:
+  replicas: 2
+  size: 10Gi
+  resourcesPreset: nano
+  # Définition des utilisateurs MySQL
+  users:
+    appuser:
+      password: strongpassword     # Mot de passe de l’utilisateur applicatif
+      maxUserConnections: 50       # Limite de connexions simultanées
+    readonly:
+      password: readonlypass       # Utilisateur avec droits restreints
+      maxUserConnections: 10
+
+  # Définition des bases de données
+  databases:
+    myapp:
+      roles:
+        admin:
+          - appuser                # appuser = admin de la base "myapp"
+        readonly:
+          - readonly               # readonly = accès en lecture seule
+    analytics:
+      roles:
+        admin:
+          - appuser                # appuser = admin de la base "analytics"
+```
+
+### **Paramètres de backup**
+
+| **Paramètre**           | **Type**  | **Description**                                        | **Défaut**                              | **Requis** |
+|--------------------------|-----------|--------------------------------------------------------|------------------------------------------|------------|
+| `backup`                 | `object`  | Configuration des sauvegardes                          | `{}`                                     | Non        |
+| `backup.enabled`         | `bool`    | Activer les sauvegardes régulières                     | `false`                                  | Non        |
+| `backup.s3Region`        | `string`  | Région AWS S3 où sont stockées les sauvegardes         | `"us-east-1"`                            | Oui        |
+| `backup.s3Bucket`        | `string`  | Bucket S3 utilisé pour stocker les sauvegardes         | `"s3.example.org/mysql-backups"`         | Oui        |
+| `backup.schedule`        | `string`  | Planification des sauvegardes (cron)                   | `"0 2 * * *"`                            | Non        |
+| `backup.cleanupStrategy` | `string`  | Stratégie de rétention pour nettoyer les anciennes sauvegardes | `"--keep-last=3 --keep-daily=3 --keep-within-weekly=1m"` | Non |
+| `backup.s3AccessKey`     | `string`  | Clé d’accès S3 (authentification)                      | `"<your-access-key>"`                    | Oui        |
+| `backup.s3SecretKey`     | `string`  | Clé secrète S3 (authentification)                      | `"<your-secret-key>"`                    | Oui        |
+| `backup.resticPassword`  | `string`  | Mot de passe utilisé pour le chiffrement Restic        | `"<password>"`                           | Oui        |
+
+#### Beispiel de configuration YAML
+
+```yaml title="mysql.yaml"
+apiVersion: apps.cozystack.io/v1alpha1
+kind: MySQL
+metadata:
+  name: example
+spec:
+  replicas: 2
+  size: 10Gi
+  resourcesPreset: small
+
+  # Configuration des sauvegardes automatiques
+  backup:
+    enabled: true
+    s3Region: eu-central-1
+    s3Bucket: s3.hikube.cloud/mysql-backups
+    schedule: "0 3 * * *"                       # Sauvegarde tous les jours à 3h du matin
+    cleanupStrategy: "--keep-last=7 --keep-daily=7 --keep-weekly=4"
+    s3AccessKey: "HIKUBE123ACCESSKEY"
+    s3SecretKey: "HIKUBE456SECRETKEY"
+    resticPassword: "SuperStrongResticPassword!"
+```
+
+### resources et resourcesPreset  
+
+Le champ `resources` ermöglicht die Definition explicitement la configuration CPU et mémoire de chaque réplique MySQL.  
+Si ce champ est laissé vide, la valeur du paramètre `resourcesPreset` est utilisée.  
+
+#### Beispiel de configuration YAML
+
+```yaml title="mysql.yaml"
+resources:
+  cpu: 4000m
+  memory: 4Gi
+```  
+
+⚠️ Attention : si resources est défini, la valeur de resourcesPreset est ignorée.
+
+| **Preset name** | **CPU** | **Mémoire** |
+|-----------------|---------|-------------|
+| `nano`          | 250m    | 128Mi       |
+| `micro`         | 500m    | 256Mi       |
+| `small`         | 1       | 512Mi       |
+| `medium`        | 1       | 1Gi         |
+| `large`         | 2       | 2Gi         |
+| `xlarge`        | 4       | 4Gi         |
+| `2xlarge`       | 8       | 8Gi         |
+
+## Praktische Anleitungen
+
+Pour les procédures détaillées, consultez les guides dédiés :
+
+- [Konfiguration von les sauvegardes automatiques](./how-to/configure-backups.md)
+- [Comment restaurer une sauvegarde](./how-to/restore-backup.md)
+- [Skalierung von verticalement](./how-to/scale-resources.md)
+- [Verwaltung von les utilisateurs et bases de données](./how-to/manage-users-databases.md)
+
+## Problèmes connus
+
+- La réplication peut échouer avec différentes erreurs
+- La réplication peut échouer si le binlog a été purgé. Tant que `mariadbbackup` n'est pas utilisé pour initialiser un nœud par mariadb-operator (cette fonctionnalité n'est pas encore implémentée), suivez ces étapes manuelles pour corriger le problème : https://github.com/mariadb-operator/mariadb-operator/issues/141#issuecomment-1804760231
+- Les index peuvent parfois être corrompus sur le réplica primaire. Vous pouvez les restaurer depuis un réplica secondaire
+
+```bash
+mysqldump -h <slave> -P 3306 -u<user> -p<password> --column-statistics=0 <database> <table> ~/tmp/fix-table.sql
+mysql -h <master> -P 3306 -u<user> -p<password> <database> < ~/tmp/fix-table.sql
+```
+
+---
+
+## Beispiels Complets
+
+### Cluster de Production
+
+```yaml title="mysql-production.yaml"
+apiVersion: apps.cozystack.io/v1alpha1
+kind: MySQL
+metadata:
+  name: production
+spec:
+  replicas: 3
+  resources:
+    cpu: 4000m
+    memory: 8Gi
+  size: 50Gi
+  storageClass: replicated
+  external: false
+
+  users:
+    admin:
+      password: SecureAdminPassword
+      maxUserConnections: 100
+    appuser:
+      password: SecureAppPassword
+      maxUserConnections: 500
+    readonly:
+      password: SecureReadOnlyPassword
+      maxUserConnections: 50
+
+  databases:
+    production:
+      roles:
+        admin:
+          - admin
+        readonly:
+          - readonly
+    analytics:
+      roles:
+        admin:
+          - admin
+        readonly:
+          - appuser
+
+  backup:
+    enabled: true
+    schedule: "0 3 * * *"
+    cleanupStrategy: "--keep-last=7 --keep-daily=7 --keep-weekly=4"
+    s3Region: eu-central-1
+    s3Bucket: s3.hikube.cloud/mysql-backups
+    s3AccessKey: your-access-key
+    s3SecretKey: your-secret-key
+    resticPassword: SecureResticPassword
+```
+
+### Cluster de Développement
+
+```yaml title="mysql-development.yaml"
+apiVersion: apps.cozystack.io/v1alpha1
+kind: MySQL
+metadata:
+  name: development
+spec:
+  replicas: 1
+  resourcesPreset: nano
+  size: 5Gi
+  external: true
+
+  users:
+    dev:
+      password: devpassword
+      maxUserConnections: 100
+
+  databases:
+    devdb:
+      roles:
+        admin:
+          - dev
+```
+
+---
+
+:::tip Bonnes Pratiques
+
+- **3 réplicas minimum** en production um die ... sicherzustellen Hochverfügbarkeit (1 primary + 2 réplicas)
+- **`maxUserConnections`** : limitez les connexions par utilisateur pour éviter l'épuisement des ressources
+- **Sauvegardes Restic** : aktiviertz les sauvegardes automatiques avec `backup.enabled: true` et conservez le `resticPassword` en lieu sûr
+- **Séparation des bases** : créez une base de données par application avec des rôles distincts (admin, readonly)
+:::
+
+:::warning Achtung
+
+- **Les suppressions sont irréversibles** : la suppression d'une ressource MySQL entraîne la perte définitive des données si aucune sauvegarde n'est configurée
+- **Bascule du primary** : le changement de primary via `spec.replication.primary.podIndex` peut entraîner une brève interruption des écritures
+- **Index corrompus** : les index peuvent parfois être corrompus sur le réplica primaire — restaurez-les depuis un réplica secondaire avec `mysqldump`
+:::
