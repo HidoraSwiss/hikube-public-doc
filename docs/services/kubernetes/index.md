@@ -1,26 +1,26 @@
 ---
-title: Kubernetes manage
+title: Kubernetes managé
 sidebar_position: 0
 ---
 
 import ServiceCardGrid from '@site/src/components/ServiceCardGrid';
 
-# Kubernetes manage
+# Kubernetes managé
 
-Hikube fournit des clusters Kubernetes entierement manages, bases sur Cozystack, avec des plugins preconfigures et une integration native a l'ecosysteme cloud.
+Hikube fournit des clusters Kubernetes entièrement managés, basés sur Cozystack, avec des plugins préconfigurés et une intégration native à l'écosystème cloud.
 
-## Acces rapide
+## Accès rapide
 
 <ServiceCardGrid items={[
   {
     title: "Vue d'ensemble",
-    description: "Architecture, fonctionnalites et positionnement du service Kubernetes manage.",
+    description: "Architecture, fonctionnalités et positionnement du service Kubernetes managé.",
     icon: "/img/services/kubernetes.svg",
     href: "./overview",
   },
   {
-    title: "Demarrage rapide",
-    description: "Deployez votre premier cluster Kubernetes en quelques minutes.",
+    title: "Démarrage rapide",
+    description: "Déployez votre premier cluster Kubernetes en quelques minutes.",
     icon: "/img/services/kubernetes.svg",
     href: "./quick-start",
   },

@@ -276,7 +276,7 @@ Vous avez déployé :
 <NavigationFooter
   nextSteps={[
     {label: "FAQ", href: "../faq"},
-    {label: "Reference API", href: "../api-reference"},
+    {label: "Référence API", href: "../api-reference"},
   ]}
   seeAlso={[
     {label: "Tous les services de messagerie", href: "../../"},

@@ -154,6 +154,6 @@ fluent-bit-xxxxx                     1/1     Running   0          10m
 
 ## Pour aller plus loin
 
-- [Reference API](../api-reference.md) -- Configuration de l'addon `monitoringAgents`
+- [Référence API](../api-reference.md) -- Configuration de l'addon `monitoringAgents`
 - [Concepts](../concepts.md) -- Architecture et observabilite
 - [Acces et outils](./toolbox.md) -- Commandes de debugging et metriques

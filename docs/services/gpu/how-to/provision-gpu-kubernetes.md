@@ -231,7 +231,7 @@ kubectl run gpu-debug --rm -it --image=nvidia/cuda:12.0-runtime-ubuntu22.04 \
 
 ## Pour aller plus loin
 
-- [Reference API GPU](../api-reference.md)
+- [Référence API GPU](../api-reference.md)
 - [Comment provisionner un GPU sur une VM](./provision-gpu-vm.md)
 - [Comment configurer l'autoscaling](../../../services/kubernetes/how-to/configure-autoscaling.md)
 - [Comment gerer les node groups](../../../services/kubernetes/how-to/manage-node-groups.md)

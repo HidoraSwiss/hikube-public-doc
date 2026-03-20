@@ -47,9 +47,9 @@ Imaginons une base de **1 milliard d’enregistrements clients** :
 <NavigationFooter
   nextSteps={[
     {label: "Concepts", href: "../concepts"},
-    {label: "Demarrage rapide", href: "../quick-start"},
+    {label: "Démarrage rapide", href: "../quick-start"},
   ]}
   seeAlso={[
-    {label: "Toutes les bases de donnees", href: "../../"},
+    {label: "Toutes les bases de données", href: "../../"},
   ]}
 />

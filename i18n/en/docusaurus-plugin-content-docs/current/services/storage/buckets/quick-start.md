@@ -169,8 +169,5 @@ Check your backups before proceeding.
     {label: "FAQ", href: "../faq"},
     {label: "API Reference", href: "../api-reference"},
   ]}
-  seeAlso={[
-    {label: "Storage", href: "../../"},
-  ]}
 />
 

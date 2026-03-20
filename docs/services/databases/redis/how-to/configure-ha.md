@@ -119,5 +119,5 @@ my-redis-ha-sentinel     ClusterIP   10.96.xxx.xxx   <none>        26379/TCP   5
 
 ## Pour aller plus loin
 
-- [Reference API](../api-reference.md) -- Parametres `replicas`, `authEnabled` et `storageClass`
+- [Référence API](../api-reference.md) -- Parametres `replicas`, `authEnabled` et `storageClass`
 - [Comment scaler verticalement Redis](./scale-resources.md) -- Ajuster les ressources CPU et memoire

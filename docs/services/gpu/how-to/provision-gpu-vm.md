@@ -184,6 +184,6 @@ virtctl ssh -i ~/.ssh/id_ed25519 ubuntu@gpu-workstation -- nvidia-smi --query-gp
 
 ## Pour aller plus loin
 
-- [Reference API GPU](../api-reference.md)
+- [Référence API GPU](../api-reference.md)
 - [Comment provisionner un GPU sur Kubernetes](./provision-gpu-kubernetes.md)
 - [Comment installer les pilotes CUDA](../../compute/how-to/install-cuda-drivers.md)

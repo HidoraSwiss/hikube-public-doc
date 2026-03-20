@@ -7,13 +7,13 @@ import ServiceCardGrid from '@site/src/components/ServiceCardGrid';
 
 # Services de messagerie
 
-Hikube fournit des services de messagerie manages pour le decouplage d'applications, le streaming d'evenements et la communication asynchrone.
+Hikube fournit des services de messagerie managés pour le découplage d'applications, le streaming d'événements et la communication asynchrone.
 
 ## Comparatif
 
-| Service | Protocole | Modele | Persistance | Cas d'usage |
+| Service | Protocole | Modèle | Persistance | Cas d'usage |
 |---------|-----------|--------|-------------|-------------|
-| Kafka | TCP binaire | Pub/Sub avec log | Oui (log distribue) | Event streaming, pipelines de donnees |
+| Kafka | TCP binaire | Pub/Sub avec log | Oui (log distribué) | Event streaming, pipelines de données |
 | RabbitMQ | AMQP | File d'attente | Oui (optionnel) | Task queues, RPC, routing complexe |
 | NATS | TCP texte | Pub/Sub + Request/Reply | Optionnel (JetStream) | Microservices, IoT, edge |
 
@@ -22,7 +22,7 @@ Hikube fournit des services de messagerie manages pour le decouplage d'applicati
 <ServiceCardGrid items={[
   {
     title: "Kafka",
-    description: "Plateforme de streaming d'evenements distribuee pour pipelines de donnees temps reel.",
+    description: "Plateforme de streaming d'événements distribuée pour pipelines de données temps réel.",
     icon: "/img/services/kafka.svg",
     href: "./kafka/overview",
     tags: ["Streaming", "Pub/Sub"],
@@ -36,9 +36,9 @@ Hikube fournit des services de messagerie manages pour le decouplage d'applicati
   },
   {
     title: "NATS",
-    description: "Systeme de messagerie leger et performant pour les architectures cloud-native.",
+    description: "Système de messagerie léger et performant pour les architectures cloud-native.",
     icon: "/img/services/nats.svg",
     href: "./nats/overview",
-    tags: ["Cloud-native", "Leger"],
+    tags: ["Cloud-native", "Léger"],
   },
 ]} />
