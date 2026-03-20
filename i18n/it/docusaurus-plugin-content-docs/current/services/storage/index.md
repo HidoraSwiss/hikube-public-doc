@@ -13,7 +13,7 @@ Hikube offre soluzioni di archiviazione gestite, crittografate e replicate su pi
 
 | Tipo | Tecnologia | Caso d'uso | Accesso |
 |------|-----------|------------|---------|
-| Object storage (S3) | MinIO | File, backup, asset statici | API compatibile S3 |
+| Object storage (S3) | S3 compatibile | File, backup, asset statici | API S3 |
 | Block storage | LINSTOR/DRBD | Volumi persistenti Kubernetes | PVC nei vostri cluster |
 | Storage locale | NVMe SSD | Workload a bassa latenza | Automatico via StorageClass |
 
@@ -37,6 +37,6 @@ Solo l'object storage S3 viene fornito come servizio indipendente.
     description: "Object storage compatibile S3 per file, backup e asset. Provisioning tramite kubectl apply.",
     icon: "/img/services/s3.svg",
     href: "./buckets/overview",
-    tags: ["Object Storage", "S3", "MinIO"],
+    tags: ["Object Storage", "S3"],
   },
 ]} />

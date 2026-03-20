@@ -13,7 +13,7 @@ Hikube offers managed storage solutions, encrypted and replicated across multipl
 
 | Type | Technology | Use Case | Access |
 |------|-----------|----------|--------|
-| Object storage (S3) | MinIO | Files, backups, static assets | S3-compatible API |
+| Object storage (S3) | S3 compatible | Files, backups, static assets | S3 API |
 | Block storage | LINSTOR/DRBD | Kubernetes persistent volumes | PVC in your clusters |
 | Local storage | NVMe SSD | Low-latency workloads | Automatic via StorageClass |
 
@@ -37,6 +37,6 @@ Only S3 object storage is provisioned as a standalone service.
     description: "S3-compatible object storage for your files, backups and assets. Provisioned via kubectl apply.",
     icon: "/img/services/s3.svg",
     href: "./buckets/overview",
-    tags: ["Object Storage", "S3", "MinIO"],
+    tags: ["Object Storage", "S3"],
   },
 ]} />

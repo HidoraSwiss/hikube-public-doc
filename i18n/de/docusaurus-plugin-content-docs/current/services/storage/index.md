@@ -13,7 +13,7 @@ Hikube bietet verwaltete Speicherlosungen, verschlusselt und uber mehrere Schwei
 
 | Typ | Technologie | Anwendungsfall | Zugriff |
 |-----|-------------|----------------|---------|
-| Objektspeicher (S3) | MinIO | Dateien, Backups, statische Assets | S3-kompatible API |
+| Objektspeicher (S3) | S3-kompatibel | Dateien, Backups, statische Assets | S3 API |
 | Blockspeicher | LINSTOR/DRBD | Kubernetes Persistent Volumes | PVC in Ihren Clustern |
 | Lokaler Speicher | NVMe SSD | Workloads mit niedriger Latenz | Automatisch uber StorageClass |
 
@@ -37,6 +37,6 @@ Nur S3-Objektspeicher wird als eigenstandiger Dienst bereitgestellt.
     description: "S3-kompatibler Objektspeicher fur Ihre Dateien, Backups und Assets. Bereitstellung uber kubectl apply.",
     icon: "/img/services/s3.svg",
     href: "./buckets/overview",
-    tags: ["Objektspeicher", "S3", "MinIO"],
+    tags: ["Objektspeicher", "S3"],
   },
 ]} />
