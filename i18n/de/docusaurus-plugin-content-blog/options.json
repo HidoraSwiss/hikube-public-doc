@@ -1,0 +1,14 @@
+{
+  "title": {
+    "message": "Änderungsprotokoll",
+    "description": "The title for the blog used in SEO"
+  },
+  "description": {
+    "message": "Neuigkeiten und Updates der Hikube-Plattform",
+    "description": "The description for the blog used in SEO"
+  },
+  "sidebar.title": {
+    "message": "Aktuelle Releases",
+    "description": "The label for the left sidebar"
+  }
+}

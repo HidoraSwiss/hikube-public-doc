@@ -7,16 +7,12 @@
     "message": "Dokumentation",
     "description": "Navbar item with label Documentation"
   },
-  "item.label.Hikube": {
-    "message": "Hikube",
-    "description": "Navbar item with label Hikube"
-  },
   "item.label.Changelog": {
     "message": "Änderungsprotokoll",
     "description": "Navbar item with label Changelog"
   },
-  "item.label.Toutes les versions": {
-    "message": "Alle Versionen",
-    "description": "Navbar item with label Toutes les versions"
+  "item.label.Hikube": {
+    "message": "Hikube",
+    "description": "Navbar item with label Hikube"
   }
 }
