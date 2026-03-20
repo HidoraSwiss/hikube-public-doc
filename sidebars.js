@@ -107,6 +107,7 @@ const sidebars = {
         {
           type: "category",
           label: "GPU",
+          link: { type: "doc", id: "services/gpu/index" },
           items: diatasisItems("services/gpu"),
         },
         {
