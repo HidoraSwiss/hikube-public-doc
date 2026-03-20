@@ -3,6 +3,8 @@ sidebar_position: 2
 title: Quick Start
 ---
 
+import NavigationFooter from '@site/src/components/NavigationFooter';
+
 # Deploy ClickHouse in 5 minutes
 
 This guide walks you through deploying your first **ClickHouse** database on Hikube in **just a few minutes**!
@@ -255,3 +257,13 @@ This action deletes the ClickHouse cluster and all associated data. This operati
 
 - **[API Reference](./api-reference.md)**: Complete configuration of all ClickHouse options
 - **[Overview](./overview.md)**: Detailed architecture and ClickHouse use cases on Hikube
+
+<NavigationFooter
+  nextSteps={[
+    {label: "FAQ", href: "../faq"},
+    {label: "API Reference", href: "../api-reference"},
+  ]}
+  seeAlso={[
+    {label: "All databases", href: "../../"},
+  ]}
+/>

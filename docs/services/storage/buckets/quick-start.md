@@ -3,6 +3,8 @@ sidebar_position: 2
 title: Démarrage rapide
 ---
 
+import NavigationFooter from '@site/src/components/NavigationFooter';
+
 # Créer votre premier Bucket S3
 
 Ce guide vous accompagne pas à pas dans la création de votre **premier bucket S3 Hikube** en **5 minutes** chrono.  
@@ -161,3 +163,13 @@ Vérifiez vos sauvegardes avant de procéder.
 - Ciblez toujours `s3://$BUCKET_NAME/` (ou `alias/$BUCKET_NAME/`) dans vos commandes
 - L’endpoint S3 est compatible avec les outils et SDK standards
 - Isolation stricte par tenant et credentials dédiés
+
+<NavigationFooter
+  nextSteps={[
+    {label: "FAQ", href: "../faq"},
+    {label: "Reference API", href: "../api-reference"},
+  ]}
+  seeAlso={[
+    {label: "Stockage", href: "../../"},
+  ]}
+/>

@@ -3,6 +3,8 @@ sidebar_position: 1
 title: Overview
 ---
 
+import NavigationFooter from '@site/src/components/NavigationFooter';
+
 # ClickHouse on Hikube
 
 Hikube **ClickHouse databases** offer an open-source, high-performance, column-oriented SQL management system, designed for online analytical processing (OLAP). They guarantee rapid ingestion of massive data, execution of complex queries in near real-time, and the reliability necessary for critical enterprise analytical applications.
@@ -40,5 +42,15 @@ Imagine a database of **1 billion customer records**:
   - Critical analytical applications in production  
   - High availability needs  
   - Multi-user platforms with high query concurrency  
-  - Disaster recovery plans (DRP)  
+  - Disaster recovery plans (DRP)
+
+<NavigationFooter
+  nextSteps={[
+    {label: "Concepts", href: "../concepts"},
+    {label: "Quick Start", href: "../quick-start"},
+  ]}
+  seeAlso={[
+    {label: "All databases", href: "../../"},
+  ]}
+/>
 

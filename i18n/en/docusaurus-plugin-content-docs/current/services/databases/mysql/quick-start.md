@@ -3,6 +3,8 @@ sidebar_position: 2
 title: Quick Start
 ---
 
+import NavigationFooter from '@site/src/components/NavigationFooter';
+
 # Deploy MySQL in 5 minutes
 
 This guide walks you through deploying your first **MySQL** database on Hikube, from setup to your first connection.
@@ -292,3 +294,13 @@ This action deletes the MySQL cluster and all associated data. This operation is
 
 - **[API Reference](./api-reference.md)**: Complete configuration of all MySQL options
 - **[Overview](./overview.md)**: Detailed architecture and MySQL use cases on Hikube
+
+<NavigationFooter
+  nextSteps={[
+    {label: "FAQ", href: "../faq"},
+    {label: "API Reference", href: "../api-reference"},
+  ]}
+  seeAlso={[
+    {label: "All databases", href: "../../"},
+  ]}
+/>

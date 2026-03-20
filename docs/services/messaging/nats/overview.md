@@ -3,6 +3,8 @@ sidebar_position: 1
 title: Vue d'ensemble
 ---
 
+import NavigationFooter from '@site/src/components/NavigationFooter';
+
 # NATS sur Hikube
 
 Les **clusters NATS** d’Hikube offrent une **plateforme de messagerie moderne, ultra-légère et performante**, conçue pour la **communication en temps réel** entre services, applications et appareils connectés.  
@@ -108,3 +110,13 @@ Grâce à son **design minimaliste** et à ses **outils intégrés (CLI, dashboa
 * Bus d’événements internes pour plateformes distribuées  
 * Orchestration d’automatisations internes  
 * Système de messagerie centralisé et léger pour Kubernetes
+
+<NavigationFooter
+  nextSteps={[
+    {label: "Concepts", href: "../concepts"},
+    {label: "Demarrage rapide", href: "../quick-start"},
+  ]}
+  seeAlso={[
+    {label: "Tous les services de messagerie", href: "../../"},
+  ]}
+/>

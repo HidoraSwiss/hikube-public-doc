@@ -3,6 +3,8 @@ sidebar_position: 2
 title: Démarrage rapide
 ---
 
+import NavigationFooter from '@site/src/components/NavigationFooter';
+
 # Créer votre première Machine Virtuelle
 
 Ce guide vous accompagne dans la création de votre première machine virtuelle Hikube en **5 minutes** chrono !
@@ -250,3 +252,10 @@ La suppression des VMs et disques est **irréversible**. Assurez-vous d'avoir sa
 - Vos **données sont toujours sûres** grâce à la réplication 3 datacenters
 - Votre VM peut être **relocalisée automatiquement** en cas de panne nœud
 - L'**isolation totale** garantit la sécurité entre tenants
+
+<NavigationFooter
+  nextSteps={[
+    {label: "FAQ", href: "../faq"},
+    {label: "Reference API", href: "../api-reference"},
+  ]}
+/>

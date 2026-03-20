@@ -3,6 +3,8 @@ sidebar_position: 1
 title: Vue d'ensemble
 ---
 
+import NavigationFooter from '@site/src/components/NavigationFooter';
+
 # ClickHouse sur Hikube
 
 Les **bases de données ClickHouse** d’Hikube offrent un système de gestion SQL open source, haute performance et orienté colonnes, conçu pour le traitement analytique en ligne (OLAP). Elles garantissent l’ingestion rapide de données massives, l’exécution de requêtes complexes en temps quasi réel et la fiabilité nécessaire aux applications analytiques critiques des entreprises.
@@ -40,4 +42,14 @@ Imaginons une base de **1 milliard d’enregistrements clients** :
   - Applications analytiques critiques en production  
   - Besoins de haute disponibilité  
   - Plateformes multi-utilisateurs avec forte concurrence de requêtes  
-  - Plans de reprise après sinistre (DRP)  
+  - Plans de reprise après sinistre (DRP)
+
+<NavigationFooter
+  nextSteps={[
+    {label: "Concepts", href: "../concepts"},
+    {label: "Demarrage rapide", href: "../quick-start"},
+  ]}
+  seeAlso={[
+    {label: "Toutes les bases de donnees", href: "../../"},
+  ]}
+/>

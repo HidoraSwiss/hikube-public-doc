@@ -3,6 +3,8 @@ sidebar_position: 1
 title: Vue d'ensemble
 ---
 
+import NavigationFooter from '@site/src/components/NavigationFooter';
+
 # Redis sur Hikube
 
 Hikube propose un service **Redis managé**, basé sur l’opérateur **[Spotahome Redis Operator](https://github.com/spotahome/redis-operator)**, largement utilisé dans la communauté.  
@@ -77,4 +79,14 @@ Le service **Redis managé sur Hikube** est particulièrement adapté pour :
 - **Sessions distribuées** : gérer les sessions utilisateurs de manière rapide et fiable dans des environnements multi-instances.  
 - **File d’attente et streaming léger** : utilisation de Redis comme message broker (pub/sub, queues) pour des communications temps réel.  
 - **Analytics temps réel** : traitement rapide de métriques, logs ou évènements en streaming.  
-- **Gaming et IoT** : gestion d’états temporaires, classements et données volatiles avec faible latence.  
+- **Gaming et IoT** : gestion d’états temporaires, classements et données volatiles avec faible latence.
+
+<NavigationFooter
+  nextSteps={[
+    {label: "Concepts", href: "../concepts"},
+    {label: "Demarrage rapide", href: "../quick-start"},
+  ]}
+  seeAlso={[
+    {label: "Toutes les bases de donnees", href: "../../"},
+  ]}
+/>

@@ -3,6 +3,8 @@ sidebar_position: 2
 title: Quick Start
 ---
 
+import NavigationFooter from '@site/src/components/NavigationFooter';
+
 # Create Your First Virtual Machine
 
 This guide walks you through creating your first Hikube virtual machine in **5 minutes**!
@@ -250,4 +252,11 @@ Deletion of VMs and disks is **irreversible**. Make sure you have backed up all 
 - Your **data is always safe** thanks to 3-datacenter replication
 - Your VM can be **automatically relocated** in case of node failure
 - **Complete isolation** guarantees security between tenants
+
+<NavigationFooter
+  nextSteps={[
+    {label: "FAQ", href: "../faq"},
+    {label: "API Reference", href: "../api-reference"},
+  ]}
+/>
 

@@ -3,6 +3,8 @@ sidebar_position: 1
 title: Vue d'ensemble
 ---
 
+import NavigationFooter from '@site/src/components/NavigationFooter';
+
 # Buckets S3 sur Hikube
 
 Les **Buckets S3** d’Hikube offrent une solution de stockage objet **hautement disponible**, **répliquée** et **compatible S3** pour vos applications cloud-native, backups, artefacts CI/CD ou données analytiques.  
@@ -148,3 +150,13 @@ Maintenant que vous comprenez l’architecture des Buckets Hikube :
 :::tip Recommandation Production
 Utilisez un bucket dédié par application ou environnement.
 :::
+
+<NavigationFooter
+  nextSteps={[
+    {label: "Concepts", href: "../concepts"},
+    {label: "Demarrage rapide", href: "../quick-start"},
+  ]}
+  seeAlso={[
+    {label: "Stockage", href: "../../"},
+  ]}
+/>

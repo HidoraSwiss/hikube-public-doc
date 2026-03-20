@@ -1,8 +1,9 @@
 ---
-
 sidebar_position: 5
 title: Quick Start
-------------------
+---
+
+import NavigationFooter from '@site/src/components/NavigationFooter';
 
 # 🚀 Deploy Kubernetes in 5 Minutes
 
@@ -336,5 +337,12 @@ You have created:
 ---
 
 **💡 Tip:** Keep your kubeconfig secure and configure RBAC to control access for your teams and environments.
+
+<NavigationFooter
+  nextSteps={[
+    {label: "FAQ", href: "../faq"},
+    {label: "API Reference", href: "../api-reference"},
+  ]}
+/>
 
 ---

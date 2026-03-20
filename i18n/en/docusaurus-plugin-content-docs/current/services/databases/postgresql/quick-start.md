@@ -3,6 +3,8 @@ sidebar_position: 2
 title: Quick Start
 ---
 
+import NavigationFooter from '@site/src/components/NavigationFooter';
+
 # Deploy PostgreSQL in 5 minutes
 
 This guide walks you through deploying your first **PostgreSQL** database on Hikube, from setup to your first connection.
@@ -317,3 +319,13 @@ This action deletes the PostgreSQL cluster and all associated data. This operati
 
 - **[API Reference](./api-reference.md)**: Complete configuration of all PostgreSQL options
 - **[Overview](./overview.md)**: Detailed architecture and PostgreSQL use cases on Hikube
+
+<NavigationFooter
+  nextSteps={[
+    {label: "FAQ", href: "../faq"},
+    {label: "API Reference", href: "../api-reference"},
+  ]}
+  seeAlso={[
+    {label: "All databases", href: "../../"},
+  ]}
+/>

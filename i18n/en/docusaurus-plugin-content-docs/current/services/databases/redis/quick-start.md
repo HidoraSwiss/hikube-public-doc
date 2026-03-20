@@ -3,6 +3,8 @@ sidebar_position: 2
 title: Quick Start
 ---
 
+import NavigationFooter from '@site/src/components/NavigationFooter';
+
 # Deploy Redis in 5 minutes
 
 This guide walks you step by step through deploying your first **Redis** cluster on Hikube, to use it as a distributed cache or high-performance in-memory database.  
@@ -115,4 +117,14 @@ OK
 ➜  ~ redis-cli -h 91.223.132.41 -p 6379 -a "$REDIS_PASSWORD" GET hello
 "hikube"
 ```
+
+<NavigationFooter
+  nextSteps={[
+    {label: "FAQ", href: "../faq"},
+    {label: "API Reference", href: "../api-reference"},
+  ]}
+  seeAlso={[
+    {label: "All databases", href: "../../"},
+  ]}
+/>
 

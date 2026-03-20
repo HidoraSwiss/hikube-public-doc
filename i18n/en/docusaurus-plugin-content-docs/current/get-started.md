@@ -4,70 +4,82 @@ title: Getting started
 slug: /
 ---
 
+import ServiceCardGrid from '@site/src/components/ServiceCardGrid';
+
 # Get Started with Hikube
 
-## Welcome to Hikube
+Hikube offers a modern cloud solution that simplifies the deployment and orchestration of containerized applications as well as virtual machines. All services are deployed via `kubectl apply` with a native Kubernetes API.
 
-Hikube offers a modern cloud solution that simplifies the deployment and orchestration of containerized applications as well as virtual machines.
+## Services
 
-## Documentation Versions
-
-This documentation is now versioned! You can consult:
-
-- **Version 1.0** : Simplified documentation
-- **Current version (Version 2.0.2)** : Documentation in development with the latest features
-
-## Main Features
-
-### 🚀 **Simplified Deployment**
-
-- Native and compatible Kubernetes API
-- Deployment via `kubectl apply`
-- Infrastructure as Code (IaC) with YAML
-
-### 📦 **Services**
-
-- **Databases** : PostgreSQL, MySQL, Redis, ClickHouse
-- **Messaging services** : Kafka, RabbitMQ, NATS
-- **Storage**: Encrypted, replicated across 3 datacenters
-- **S3 Storage** : S3-compatible buckets
-- **Networking** : TCP load balancers, HTTP caches, VPN
-- **Compute resources** : Virtual machines, GPU
-
-### 🔧 **Infrastructure as Code**
-
-- Declarative resource management
-- Reproducible deployment
-
-### 🏗️ **Multi-tenant Architecture**
-
-- Complete isolation between tenants
-- Sub-tenant creation possible
-- Quota and resource management
-- Enhanced security
+<ServiceCardGrid items={[
+  {
+    title: "Kubernetes",
+    description: "Managed Kubernetes clusters with preconfigured plugins and auto-scaling.",
+    icon: "/img/services/kubernetes.svg",
+    href: "services/kubernetes/overview",
+    tags: ["Clusters", "Managed"],
+  },
+  {
+    title: "Virtual Machines",
+    description: "KubeVirt VMs with instance profiles and persistent disks.",
+    icon: "/img/services/compute.svg",
+    href: "services/compute/overview",
+    tags: ["VMs", "KubeVirt"],
+  },
+  {
+    title: "GPU",
+    description: "Dedicated NVIDIA GPUs for your AI/ML workloads.",
+    icon: "/img/services/gpu.svg",
+    href: "services/gpu/overview",
+    tags: ["GPU", "NVIDIA"],
+  },
+  {
+    title: "Databases",
+    description: "PostgreSQL, MySQL, Redis, ClickHouse — fully managed with replication.",
+    icon: "/img/services/postgresql.svg",
+    href: "services/databases/",
+    tags: ["SQL", "NoSQL"],
+  },
+  {
+    title: "Messaging",
+    description: "Kafka, RabbitMQ, NATS — managed streaming and queues.",
+    icon: "/img/services/kafka.svg",
+    href: "services/messaging/",
+    tags: ["Streaming", "Queues"],
+  },
+  {
+    title: "S3 Storage",
+    description: "S3-compatible buckets, encrypted and replicated.",
+    icon: "/img/services/s3.svg",
+    href: "services/storage/buckets/overview",
+    tags: ["Object Storage", "S3"],
+  },
+  {
+    title: "Terraform",
+    description: "Infrastructure as Code with ready-to-use Terraform templates.",
+    icon: "/img/services/terraform.svg",
+    href: "tools/terraform",
+    tags: ["IaC", "Terraform"],
+  },
+]} />
 
 ## Next Steps
 
 To get started with Hikube, we recommend following this learning path:
 
-### 1. 📚 **Understand Key Concepts**
-
+### 1. Understand Key Concepts
 Familiarize yourself with Hikube's architecture and fundamental concepts:
-
 - **[Hikube Concepts](getting-started/concepts.md)** - Architecture, tenants, resources and security
 
-### 2. 🚀 **Your First Deployment**  
-
+### 2. Your First Deployment
 Follow our practical guide to deploy your first application:
-
 - **[Quick Start](getting-started/quick-start.md)** - Deploy an application in 10 minutes
 
-### 3. 🔧 **Master the APIs**
-
+### 3. Master the APIs
 Explore the APIs for each service for advanced deployments:
-
 - **[Databases](services/databases/postgresql/overview.md)** - PostgreSQL, MySQL, Redis
-- **[Compute Resources](services/compute/overview.md)** - Virtual machines and GPU  
+- **[Compute Resources](services/compute/overview.md)** - Virtual machines and GPU
 - **[Kubernetes](services/kubernetes/overview.md)** - Managed clusters
 - **[Storage](services/storage/buckets/overview.md)** - S3-compatible buckets
 - **[Infrastructure as Code](tools/terraform.md)** - Terraform templates
@@ -75,10 +87,9 @@ Explore the APIs for each service for advanced deployments:
 ## Support
 
 For any questions or assistance:
-
-- 📧 Email : support@hidora.io
-- 🌐 Website : [hikube.cloud](https://hikube.cloud)
-- 💼 LinkedIn : [Hidora](https://www.linkedin.com/company/hidora)
+- Email: support@hidora.io
+- Website: [hikube.cloud](https://hikube.cloud)
+- LinkedIn: [Hidora](https://www.linkedin.com/company/hidora)
 
 ---
 
