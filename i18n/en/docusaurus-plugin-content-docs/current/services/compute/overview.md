@@ -3,6 +3,8 @@ sidebar_position: 1
 title: Overview
 ---
 
+import NavigationFooter from '@site/src/components/NavigationFooter';
+
 # Virtual Machines on Hikube
 
 Hikube **Virtual Machines (VMs)** offer complete hardware infrastructure virtualization, ensuring the execution of heterogeneous operating systems and business applications in isolated environments that meet enterprise security requirements.
@@ -170,4 +172,11 @@ Now that you understand Hikube VM architecture:
 :::tip Recommended Architecture
 For production, always use the `replicated` storage class and size your VMs with at least 2 vCPU to benefit from better performance.
 :::
+
+<NavigationFooter
+  nextSteps={[
+    {label: "Concepts", href: "../concepts"},
+    {label: "Quick Start", href: "../quick-start"},
+  ]}
+/>
 

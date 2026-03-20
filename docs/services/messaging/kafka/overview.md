@@ -3,6 +3,8 @@ sidebar_position: 1
 title: Vue d'ensemble
 ---
 
+import NavigationFooter from '@site/src/components/NavigationFooter';
+
 # Kafka sur Hikube
 
 Les **clusters Kafka** d’Hikube offrent une plateforme de **streaming de données distribuée, scalable et hautement disponible**, conçue pour la **collecte, le traitement et la distribution d’événements en temps réel**.
@@ -67,3 +69,13 @@ Kafka permet une **communication asynchrone** entre microservices, améliorant l
 * Gestion d’événements métiers (commandes, paiements, notifications)
 * File d’attente distribuée pour tâches ou workflows complexes
 * Intégration avec des workers ou consumers spécialisés
+
+<NavigationFooter
+  nextSteps={[
+    {label: "Concepts", href: "../concepts"},
+    {label: "Demarrage rapide", href: "../quick-start"},
+  ]}
+  seeAlso={[
+    {label: "Tous les services de messagerie", href: "../../"},
+  ]}
+/>

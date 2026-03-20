@@ -3,6 +3,8 @@ sidebar_position: 1
 title: Overview
 ---
 
+import NavigationFooter from '@site/src/components/NavigationFooter';
+
 # Kafka on Hikube
 
 Hikube's **Kafka clusters** provide a **distributed, scalable, and highly available data streaming platform**, designed for **real-time event collection, processing, and distribution**.
@@ -67,3 +69,13 @@ Kafka enables **asynchronous communication** between microservices, improving re
 * Business event management (orders, payments, notifications)
 * Distributed queue for complex tasks or workflows
 * Integration with specialized workers or consumers
+
+<NavigationFooter
+  nextSteps={[
+    {label: "Concepts", href: "../concepts"},
+    {label: "Quick Start", href: "../quick-start"},
+  ]}
+  seeAlso={[
+    {label: "All messaging services", href: "../../"},
+  ]}
+/>

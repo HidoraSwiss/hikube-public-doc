@@ -3,6 +3,8 @@ sidebar_position: 5
 title: Démarrage rapide
 ---
 
+import NavigationFooter from '@site/src/components/NavigationFooter';
+
 # 🚀 Déployer Kubernetes en 5 minutes
 
 Ce guide vous accompagne dans la création de votre premier cluster Kubernetes sur Hikube, de la configuration de base au déploiement d'une application de test.
@@ -377,3 +379,10 @@ Vous avez créé :
 ---
 
 **💡 Conseil :** Gardez votre fichier `kubeconfig` en sécurité et pensez à configurer RBAC pour contrôler l'accès à votre cluster selon vos équipes et environnements.
+
+<NavigationFooter
+  nextSteps={[
+    {label: "FAQ", href: "../faq"},
+    {label: "Reference API", href: "../api-reference"},
+  ]}
+/>

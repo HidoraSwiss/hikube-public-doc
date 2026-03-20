@@ -3,6 +3,8 @@ sidebar_position: 1
 title: Vue d'ensemble
 ---
 
+import NavigationFooter from '@site/src/components/NavigationFooter';
+
 <!--- Présentation du Kubernetes Managé sur Hikube
 - Schéma architecture (parlé de la réplication, des controls plane, workers, infra, addons, versionning k8s)
 - Composition des différents éléments de configuration du k8s géré
@@ -198,3 +200,10 @@ nodeGroups:
 - **Scaling automatique** : ajustement dynamique selon la charge
 - **Multi-datacenter** : haute disponibilité native et réplication
 - **Compatibilité totale** : API Kubernetes standard supportée
+
+<NavigationFooter
+  nextSteps={[
+    {label: "Concepts", href: "../concepts"},
+    {label: "Demarrage rapide", href: "../quick-start"},
+  ]}
+/>

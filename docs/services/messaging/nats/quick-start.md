@@ -3,6 +3,8 @@ sidebar_position: 2
 title: Démarrage rapide
 ---
 
+import NavigationFooter from '@site/src/components/NavigationFooter';
+
 # Déployer NATS en 5 minutes
 
 Ce guide vous accompagne pas à pas dans le déploiement de votre premier **cluster NATS** sur Hikube, du manifeste YAML jusqu'aux premiers tests de messagerie.
@@ -248,3 +250,13 @@ Vous avez déployé :
 
 - **[Référence API](./api-reference.md)** : Configuration complète de toutes les options NATS
 - **[Vue d'ensemble](./overview.md)** : Architecture détaillée et cas d'usage NATS sur Hikube
+
+<NavigationFooter
+  nextSteps={[
+    {label: "FAQ", href: "../faq"},
+    {label: "Reference API", href: "../api-reference"},
+  ]}
+  seeAlso={[
+    {label: "Tous les services de messagerie", href: "../../"},
+  ]}
+/>

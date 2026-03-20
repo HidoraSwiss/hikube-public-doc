@@ -3,6 +3,8 @@ sidebar_position: 2
 title: Quick Start
 ---
 
+import NavigationFooter from '@site/src/components/NavigationFooter';
+
 # Create Your First S3 Bucket
 
 This guide walks you step by step through creating your **first Hikube S3 bucket** in **5 minutes**.  
@@ -161,4 +163,14 @@ Check your backups before proceeding.
 - Always target `s3://$BUCKET_NAME/` (or `alias/$BUCKET_NAME/`) in your commands
 - The S3 endpoint is compatible with standard tools and SDKs
 - Strict isolation by tenant and dedicated credentials
+
+<NavigationFooter
+  nextSteps={[
+    {label: "FAQ", href: "../faq"},
+    {label: "API Reference", href: "../api-reference"},
+  ]}
+  seeAlso={[
+    {label: "Storage", href: "../../"},
+  ]}
+/>
 

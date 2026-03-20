@@ -3,6 +3,8 @@ sidebar_position: 2
 title: Quick Start
 ---
 
+import NavigationFooter from '@site/src/components/NavigationFooter';
+
 # Using GPUs on Hikube
 
 This guide presents the two methods of using GPUs: with virtual machines and with Kubernetes clusters.
@@ -264,4 +266,14 @@ kubectl top nodes
 - **Kubernetes GPU** : Recommended for scalable production workloads
 - Start with **L40S** to test before using A100/H100
 - Use `replicated` storage class for production
+
+<NavigationFooter
+  nextSteps={[
+    {label: "FAQ", href: "../faq"},
+    {label: "API Reference", href: "../api-reference"},
+  ]}
+  seeAlso={[
+    {label: "Compute Resources", href: "../../compute/"},
+  ]}
+/>
 

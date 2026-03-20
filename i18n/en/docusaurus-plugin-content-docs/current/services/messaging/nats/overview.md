@@ -3,6 +3,8 @@ sidebar_position: 1
 title: Overview
 ---
 
+import NavigationFooter from '@site/src/components/NavigationFooter';
+
 # NATS on Hikube
 
 Hikube's **NATS clusters** provide a **modern, ultra-lightweight and high-performance messaging platform**, designed for **real-time communication** between services, applications and connected devices.
@@ -108,3 +110,13 @@ Thanks to its **minimalist design** and **built-in tools (CLI, dashboards, Prome
 * Internal event bus for distributed platforms
 * Internal automation orchestration
 * Centralized, lightweight messaging system for Kubernetes
+
+<NavigationFooter
+  nextSteps={[
+    {label: "Concepts", href: "../concepts"},
+    {label: "Quick Start", href: "../quick-start"},
+  ]}
+  seeAlso={[
+    {label: "All messaging services", href: "../../"},
+  ]}
+/>

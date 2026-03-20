@@ -3,6 +3,7 @@ sidebar_position: 1
 title: Vue d'ensemble
 ---
 
+import NavigationFooter from '@site/src/components/NavigationFooter';
 
 # RabbitMQ sur Hikube
 
@@ -75,3 +76,13 @@ Cela garantit qu’aucun message n’est perdu, même en cas de défaillance tem
 * File d’attente transactionnelle pour traitements critiques
 * Traitement garanti des messages financiers ou logistiques
 * Transfert de données entre services avec reprise automatique après erreur
+
+<NavigationFooter
+  nextSteps={[
+    {label: "Concepts", href: "../concepts"},
+    {label: "Demarrage rapide", href: "../quick-start"},
+  ]}
+  seeAlso={[
+    {label: "Tous les services de messagerie", href: "../../"},
+  ]}
+/>

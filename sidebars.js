@@ -62,6 +62,7 @@ const sidebars = {
         {
           type: "category",
           label: "Storage",
+          link: { type: "doc", id: "services/storage/index" },
           items: [
             {
               type: "category",
@@ -73,6 +74,7 @@ const sidebars = {
         {
           type: "category",
           label: "Databases",
+          link: { type: "doc", id: "services/databases/index" },
           items: [
             {
               type: "category",
@@ -99,6 +101,7 @@ const sidebars = {
         {
           type: "category",
           label: "Ressources de calcul",
+          link: { type: "doc", id: "services/compute/index" },
           items: diatasisItems("services/compute"),
         },
         {
@@ -109,6 +112,7 @@ const sidebars = {
         {
           type: "category",
           label: "Kubernetes",
+          link: { type: "doc", id: "services/kubernetes/index" },
           items: diatasisItems("services/kubernetes", [
             {
               type: "category",
@@ -131,6 +135,7 @@ const sidebars = {
         {
           type: "category",
           label: "Messaging",
+          link: { type: "doc", id: "services/messaging/index" },
           items: [
             {
               type: "category",

@@ -3,6 +3,8 @@ sidebar_position: 1
 title: Overview
 ---
 
+import NavigationFooter from '@site/src/components/NavigationFooter';
+
 # Presentation of Managed Kubernetes on Hikube
 
 Hikube provides a **managed Kubernetes service** designed to offer a highly available, secure, and high-performance infrastructure.
@@ -189,5 +191,12 @@ nodeGroups:
 * **Autoscaling** – dynamic adjustment based on load
 * **Multi-datacenter replication** – built-in high availability
 * **Full compatibility** – standard Kubernetes API support
+
+<NavigationFooter
+  nextSteps={[
+    {label: "Concepts", href: "../concepts"},
+    {label: "Quick Start", href: "../quick-start"},
+  ]}
+/>
 
 ---

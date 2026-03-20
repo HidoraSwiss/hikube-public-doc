@@ -3,6 +3,8 @@ sidebar_position: 1
 title: Vue d'ensemble
 ---
 
+import NavigationFooter from '@site/src/components/NavigationFooter';
+
 # PostgreSQL sur Hikube
 
 Hikube propose un service PostgreSQL managé, basé sur l’opérateur **CloudNativePG**, reconnu et largement adopté par la communauté.  
@@ -52,4 +54,14 @@ graph TD
 - **E-commerce et ERP**, où la continuité de service est indispensable  
 - **SaaS multi-tenant**, permettant de répartir les charges entre primaire et réplicas  
 - **Business Intelligence et reporting**, grâce à la lecture optimisée sur les réplicas  
-- **Applications cloud natives**, intégrées dans des environnements Kubernetes  
+- **Applications cloud natives**, intégrées dans des environnements Kubernetes
+
+<NavigationFooter
+  nextSteps={[
+    {label: "Concepts", href: "../concepts"},
+    {label: "Demarrage rapide", href: "../quick-start"},
+  ]}
+  seeAlso={[
+    {label: "Toutes les bases de donnees", href: "../../"},
+  ]}
+/>

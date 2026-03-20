@@ -3,6 +3,8 @@ sidebar_position: 1
 title: Overview
 ---
 
+import NavigationFooter from '@site/src/components/NavigationFooter';
+
 # MySQL on Hikube
 
 Hikube offers a **managed MySQL service**, based on the **MariaDB-Operator**.  
@@ -53,5 +55,15 @@ The **managed MySQL service on Hikube** is particularly suitable for:
 - **Transactional web applications (OLTP)** : e-commerce, ERP, CRM, where transaction reliability and speed are essential.  
 - **Multi-tenant SaaS applications** : each client can have their own isolated database while benefiting from high availability.  
 - **High read-load workloads** : the presence of replicas allows query distribution and improves overall performance.  
-- **Disaster recovery scenarios** : thanks to the auto-failover mechanism and integrated S3 backups.  
+- **Disaster recovery scenarios** : thanks to the auto-failover mechanism and integrated S3 backups.
+
+<NavigationFooter
+  nextSteps={[
+    {label: "Concepts", href: "../concepts"},
+    {label: "Quick Start", href: "../quick-start"},
+  ]}
+  seeAlso={[
+    {label: "All databases", href: "../../"},
+  ]}
+/>
 

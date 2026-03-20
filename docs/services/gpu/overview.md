@@ -3,6 +3,8 @@ sidebar_position: 1
 title: Vue d'ensemble des GPU
 ---
 
+import NavigationFooter from '@site/src/components/NavigationFooter';
+
 # GPUs sur Hikube
 
 Hikube propose l'accès aux accélérateurs **NVIDIA** via GPU Passthrough, permettant l'exécution de workloads nécessitant une accélération matérielle. Les GPU sont disponibles pour deux types de workloads : machines virtuelles et pods Kubernetes.
@@ -189,3 +191,13 @@ spec:
 
 - [Clusters GPU](../kubernetes/overview.md) → Workers avec GPU
   - [Configuration avancée](../kubernetes/api-reference.md) → NodeGroups GPU
+
+<NavigationFooter
+  nextSteps={[
+    {label: "Concepts", href: "../concepts"},
+    {label: "Demarrage rapide", href: "../quick-start"},
+  ]}
+  seeAlso={[
+    {label: "Ressources de calcul", href: "../../compute/"},
+  ]}
+/>

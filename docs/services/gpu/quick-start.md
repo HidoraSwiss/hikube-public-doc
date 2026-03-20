@@ -3,6 +3,8 @@ sidebar_position: 2
 title: Démarrage rapide
 ---
 
+import NavigationFooter from '@site/src/components/NavigationFooter';
+
 # Utiliser les GPU sur Hikube
 
 Ce guide présente les deux méthodes d'utilisation des GPU : avec des machines virtuelles et avec des clusters Kubernetes.
@@ -285,3 +287,13 @@ Ces actions suppriment les ressources GPU et toutes les données associées. Ces
 - **Kubernetes GPU** : Recommandé pour workloads de production scalables
 - Commencez par **L40S** pour tester avant d'utiliser A100/H100
 - Utilisez `replicated` storage class pour la production
+
+<NavigationFooter
+  nextSteps={[
+    {label: "FAQ", href: "../faq"},
+    {label: "Reference API", href: "../api-reference"},
+  ]}
+  seeAlso={[
+    {label: "Ressources de calcul", href: "../../compute/"},
+  ]}
+/>

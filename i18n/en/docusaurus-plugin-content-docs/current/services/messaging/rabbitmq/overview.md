@@ -3,6 +3,7 @@ sidebar_position: 1
 title: Overview
 ---
 
+import NavigationFooter from '@site/src/components/NavigationFooter';
 
 # RabbitMQ on Hikube
 
@@ -75,3 +76,13 @@ This guarantees that no message is lost, even in the event of a temporary node o
 * Transactional queue for critical processing
 * Guaranteed processing of financial or logistics messages
 * Data transfer between services with automatic error recovery
+
+<NavigationFooter
+  nextSteps={[
+    {label: "Concepts", href: "../concepts"},
+    {label: "Quick Start", href: "../quick-start"},
+  ]}
+  seeAlso={[
+    {label: "All messaging services", href: "../../"},
+  ]}
+/>
