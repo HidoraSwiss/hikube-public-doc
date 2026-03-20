@@ -1,0 +1,22 @@
+{
+  "logo.alt": {
+    "message": "Hikube Logo",
+    "description": "The alt text of navbar logo"
+  },
+  "item.label.Documentation": {
+    "message": "Documentazione",
+    "description": "Navbar item with label Documentation"
+  },
+  "item.label.Hikube": {
+    "message": "Hikube",
+    "description": "Navbar item with label Hikube"
+  },
+  "item.label.Changelog": {
+    "message": "Registro delle modifiche",
+    "description": "Navbar item with label Changelog"
+  },
+  "item.label.Toutes les versions": {
+    "message": "Tutte le versioni",
+    "description": "Navbar item with label Toutes les versions"
+  }
+}

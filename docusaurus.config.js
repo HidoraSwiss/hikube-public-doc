@@ -33,7 +33,7 @@ const config = {
   // may want to replace "en" with "zh-Hans".
   i18n: {
     defaultLocale: 'fr',
-    locales: ['fr', 'en'],
+    locales: ['fr', 'en', 'it'],
   },
 
   presets: [
@@ -97,7 +97,7 @@ const config = {
       /** @type {import("@easyops-cn/docusaurus-search-local").PluginOptions} */
       ({
         hashed: true,
-        language: ['fr', 'en'],
+        language: ['fr', 'en', 'it'],
         docsRouteBasePath: '/',
         indexBlog: true,
         highlightSearchTermsOnTargetPage: true,
