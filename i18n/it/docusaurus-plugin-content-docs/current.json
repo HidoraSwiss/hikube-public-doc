@@ -1,0 +1,170 @@
+{
+  "version.label": {
+    "message": "3.0.0-alpha (Diátaxis)",
+    "description": "The label for version current"
+  },
+  "sidebar.docsSidebar.category.🚀 Démarrer": {
+    "message": "🚀 Iniziare",
+    "description": "The label for category '🚀 Démarrer' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.💾 Services": {
+    "message": "💾 Servizi",
+    "description": "The label for category '💾 Services' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Storage": {
+    "message": "Archiviazione",
+    "description": "The label for category 'Storage' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Buckets": {
+    "message": "Buckets",
+    "description": "The label for category 'Buckets' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-storage-buckets": {
+    "message": "Guide pratiche",
+    "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-storage-buckets.link.generated-index.title": {
+    "message": "Guide pratiche",
+    "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Databases": {
+    "message": "Database",
+    "description": "The label for category 'Databases' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.ClickHouse": {
+    "message": "ClickHouse",
+    "description": "The label for category 'ClickHouse' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-databases-clickhouse": {
+    "message": "Guide pratiche",
+    "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-databases-clickhouse.link.generated-index.title": {
+    "message": "Guide pratiche",
+    "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.PostgreSQL": {
+    "message": "PostgreSQL",
+    "description": "The label for category 'PostgreSQL' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-databases-postgresql": {
+    "message": "Guide pratiche",
+    "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-databases-postgresql.link.generated-index.title": {
+    "message": "Guide pratiche",
+    "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.MySQL": {
+    "message": "MySQL",
+    "description": "The label for category 'MySQL' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-databases-mysql": {
+    "message": "Guide pratiche",
+    "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-databases-mysql.link.generated-index.title": {
+    "message": "Guide pratiche",
+    "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Redis": {
+    "message": "Redis",
+    "description": "The label for category 'Redis' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-databases-redis": {
+    "message": "Guide pratiche",
+    "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-databases-redis.link.generated-index.title": {
+    "message": "Guide pratiche",
+    "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Ressources de calcul": {
+    "message": "Risorse di calcolo",
+    "description": "The label for category 'Ressources de calcul' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-compute": {
+    "message": "Guide pratiche",
+    "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-compute.link.generated-index.title": {
+    "message": "Guide pratiche",
+    "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.GPU": {
+    "message": "GPU",
+    "description": "The label for category 'GPU' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-gpu": {
+    "message": "Guide pratiche",
+    "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-gpu.link.generated-index.title": {
+    "message": "Guide pratiche",
+    "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Kubernetes": {
+    "message": "Kubernetes",
+    "description": "The label for category 'Kubernetes' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-kubernetes": {
+    "message": "Guide pratiche",
+    "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-kubernetes.link.generated-index.title": {
+    "message": "Guide pratiche",
+    "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Plugins": {
+    "message": "Plugin",
+    "description": "The label for category 'Plugins' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Messaging": {
+    "message": "Messaggistica",
+    "description": "The label for category 'Messaging' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Kafka": {
+    "message": "Kafka",
+    "description": "The label for category 'Kafka' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-messaging-kafka": {
+    "message": "Guide pratiche",
+    "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-messaging-kafka.link.generated-index.title": {
+    "message": "Guide pratiche",
+    "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.RabbitMQ": {
+    "message": "RabbitMQ",
+    "description": "The label for category 'RabbitMQ' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-messaging-rabbitmq": {
+    "message": "Guide pratiche",
+    "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-messaging-rabbitmq.link.generated-index.title": {
+    "message": "Guide pratiche",
+    "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.NATS": {
+    "message": "NATS",
+    "description": "The label for category 'NATS' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-messaging-nats": {
+    "message": "Guide pratiche",
+    "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-messaging-nats.link.generated-index.title": {
+    "message": "Guide pratiche",
+    "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.📚 Ressources": {
+    "message": "📚 Risorse",
+    "description": "The label for category '📚 Ressources' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.🛠️ Outils": {
+    "message": "🛠️ Strumenti",
+    "description": "The label for category '🛠️ Outils' in sidebar 'docsSidebar'"
+  }
+}
