@@ -1,0 +1,350 @@
+---
+sidebar_position: 3
+title: API-Referenz
+---
+
+## API-Referenz – Virtuelle Maschinen
+
+Diese Referenz beschreibt umfassend die **VMInstance**- und **VMDisk**-APIs von Hikube: verfügbare Parameter, Verwendungsbeispiele und empfohlene Best Practices.
+
+---
+
+## VMInstance
+
+### Übersicht
+
+Die `VMInstance`-API ermöglicht das Erstellen, Konfigurieren und Verwalten von virtuellen Maschinen in Hikube.
+
+```yaml
+apiVersion: apps.cozystack.io/v1alpha1
+kind: VMInstance
+metadata:
+  name: example-vm
+spec:
+  # Detaillierte Konfiguration unten
+```
+
+---
+
+### Vollständige Spezifikation
+
+#### Allgemeine Parameter
+
+| Parameter         | Typ        | Beschreibung                                 | Standard   | Erforderlich |
+| ----------------- | ---------- | -------------------------------------------- | ---------- | ------------ |
+| `external`        | `boolean`  | Aktiviert die externe Netzwerk-Exposition der VM | `false`    | ✅            |
+| `externalMethod`  | `string`   | Expositionsmethode (`PortList`, `WholeIP`)   | `PortList` | ✅            |
+| `externalPorts`   | `[]int`    | Extern exponierte Ports                      | `[]`       | ✅            |
+| `running`         | `boolean`  | Gewünschter Zustand der VM                   | `true`     | ✅            |
+| `instanceType`    | `string`   | CPU/Speicher-Vorlage                         | –          | ✅            |
+| `instanceProfile` | `string`   | OS-Profil der VM                             | –          | ✅            |
+| `disks`           | `[]string` | Liste der angehängten `VMDisk`               | `[]`       | ✅            |
+| `sshKeys`         | `[]string` | Injizierte öffentliche SSH-Schlüssel         | `[]`       | ✅            |
+| `cloudInit`       | `string`   | Cloud-init-Konfiguration (YAML)              | `""`       | ✅            |
+| `cloudInitSeed`   | `string`   | Cloud-init-Seed-Daten                        | `""`       | ✅            |
+
+---
+
+### Netzwerkkonfiguration
+
+```yaml
+spec:
+  external: true
+  externalMethod: PortList
+  externalPorts:
+    - 22
+    - 80
+    - 443
+```
+
+---
+
+### Instanztypen
+
+#### Serie S – Standard (Verhältnis 1:2)
+
+Allgemeine Workloads, geteilte und burstable CPUs.
+
+```yaml
+instanceType: s1.small     # 1 vCPU, 2 GB RAM
+instanceType: s1.medium    # 2 vCPU, 4 GB RAM
+instanceType: s1.large     # 4 vCPU, 8 GB RAM
+instanceType: s1.xlarge    # 8 vCPU, 16 GB RAM
+instanceType: s1.3large    # 12 vCPU, 24 GB RAM
+instanceType: s1.2xlarge   # 16 vCPU, 32 GB RAM
+instanceType: s1.3xlarge   # 24 vCPU, 48 GB RAM
+instanceType: s1.4xlarge   # 32 vCPU, 64 GB RAM
+instanceType: s1.8xlarge   # 64 vCPU, 128 GB RAM
+```
+
+#### Serie U – Universal (Verhältnis 1:4)
+
+```yaml
+instanceType: u1.medium    # 1 vCPU, 4 GB RAM
+instanceType: u1.large     # 2 vCPU, 8 GB RAM
+instanceType: u1.xlarge    # 4 vCPU, 16 GB RAM
+instanceType: u1.2xlarge   # 8 vCPU, 32 GB RAM
+instanceType: u1.4xlarge   # 16 vCPU, 64 GB RAM
+instanceType: u1.8xlarge   # 32 vCPU, 128 GB RAM
+```
+
+#### Serie M – Memory Optimized (Verhältnis 1:8)
+
+```yaml
+instanceType: m1.large     # 2 vCPU, 16 GB RAM
+instanceType: m1.xlarge    # 4 vCPU, 32 GB RAM
+instanceType: m1.2xlarge   # 8 vCPU, 64 GB RAM
+instanceType: m1.4xlarge   # 16 vCPU, 128 GB RAM
+instanceType: m1.8xlarge   # 32 vCPU, 256 GB RAM
+```
+
+---
+
+### Unterstützte OS-Profile
+
+Die folgenden Profile stehen zur Konfiguration des Betriebssystems der VM zur Verfügung:
+
+| Profil | Beschreibung |
+|--------|-------------|
+| `ubuntu` | Ubuntu Server (empfohlen) |
+| `centos` | CentOS Stream |
+| `debian` | Debian |
+| `fedora` | Fedora Server |
+| `windows` | Windows Server |
+
+---
+
+### SSH-Konfiguration
+
+```yaml
+spec:
+  sshKeys:
+    - ssh-rsa AAAA... user@host
+    - ssh-ed25519 AAAA... user2@host
+```
+
+---
+
+### Cloud-init
+
+```yaml
+spec:
+  cloudInit: |
+    #cloud-config
+    users:
+      - name: admin
+        sudo: ALL=(ALL) NOPASSWD:ALL
+        ssh_authorized_keys:
+          - ssh-rsa AAAA...
+
+    packages:
+      - htop
+      - docker.io
+      - curl
+```
+
+---
+
+### Vollständiges VMInstance-Beispiel
+
+```yaml title="production-vm.yaml"
+apiVersion: apps.cozystack.io/v1alpha1
+kind: VMInstance
+metadata:
+  name: vm-example
+spec:
+  external: true
+  externalMethod: PortList
+  externalPorts:
+    - 22
+  running: true
+  instanceType: u1.2xlarge
+  instanceProfile: ubuntu
+  disks:
+    - vm-system-disk
+  sshKeys:
+    - ssh-rsa AAAA...
+```
+
+---
+
+## VMDisk
+
+### Übersicht
+
+Die `VMDisk`-API ermöglicht die Verwaltung virtueller Festplatten, die mit VMs verknüpft sind.
+Sie unterstützt **mehrere Image-Quellen**: HTTP, leere Festplatte und **Golden Images**.
+
+```yaml
+apiVersion: apps.cozystack.io/v1alpha1
+kind: VMDisk
+metadata:
+  name: disk-example
+spec:
+  source:
+    http:
+      url: https://...
+  optical: false
+  storage: 30Gi
+  storageClass: replicated
+```
+
+---
+
+### Hauptparameter
+
+| Parameter      | Typ       | Beschreibung             | Standard     | Erforderlich |
+| -------------- | --------- | ------------------------ | ------------ | ------------ |
+| `source`       | `object`  | Quelle des Festplatten-Images | `{}`         | ✅            |
+| `optical`      | `boolean` | Optische Festplatte (ISO) | `false`      | ✅            |
+| `storage`      | `string`  | Festplattengröße         | –            | ✅            |
+| `storageClass` | `string`  | Speicherklasse           | `replicated` | ✅            |
+
+---
+
+## Image-Quellen
+
+### HTTP/HTTPS-Quelle
+
+```yaml
+spec:
+  source:
+    http:
+      url: https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img
+```
+
+---
+
+### Leere Festplatte
+
+```yaml
+spec:
+  source: {}
+```
+
+---
+
+### Golden Images (vorgeladene Hikube-Images)
+
+**Golden Images** sind Systemimages, die in Hikube gepflegt und vorgeladen werden.
+Sie ermöglichen eine **schnelle**, standardisierte Bereitstellung ohne externe Abhängigkeiten.
+
+:::tip Namenskonvention
+Die Images folgen dem Format `{os}-{version}` (z.B.: `ubuntu-2404`, `rocky-9`).
+Geben Sie immer die Version an, um die Kompatibilität Ihrer Workloads zu gewährleisten.
+:::
+
+#### Verwendung
+
+```yaml
+spec:
+  source:
+    image:
+      name: ubuntu-2404
+```
+
+#### Verfügbare Images
+
+| Name | Betriebssystem | Typ | Min. Speicher |
+| --- | ---------------------- | ---- | :-----------: |
+| `almalinux-8` | AlmaLinux 8 | Cloud | 11 Gi |
+| `almalinux-9` | AlmaLinux 9 | Cloud | 11 Gi |
+| `almalinux-10` | AlmaLinux 10 | Cloud | 11 Gi |
+| `rocky-8` | Rocky Linux 8 | Cloud | 11 Gi |
+| `rocky-9` | Rocky Linux 9 | Cloud | 11 Gi |
+| `rocky-10` | Rocky Linux 10 | Cloud | 11 Gi |
+| `debian-11` | Debian 11 (Bullseye) | Cloud | 4 Gi |
+| `debian-12` | Debian 12 (Bookworm) | Cloud | 4 Gi |
+| `debian-13` | Debian 13 (Trixie) | Cloud | 4 Gi |
+| `ubuntu-2204` | Ubuntu 22.04 LTS (Jammy) | Cloud | 4 Gi |
+| `ubuntu-2404` | Ubuntu 24.04 LTS (Noble) | Cloud | 4 Gi |
+| `centos-stream-9` | CentOS Stream 9 | Cloud | 11 Gi |
+| `centos-stream-10` | CentOS Stream 10 | Cloud | 11 Gi |
+| `oracle-8` | Oracle Linux 8 | Cloud | 40 Gi |
+| `oracle-9` | Oracle Linux 9 | Cloud | 40 Gi |
+| `oracle-10` | Oracle Linux 10 | Cloud | 40 Gi |
+| `opensuse-156` | openSUSE Leap 15.6 | Cloud | 1 Gi |
+| `opensuse-160` | openSUSE Leap 16.0 | Cloud | 2 Gi |
+| `cloudlinux-8` | CloudLinux 8 | Cloud | 8 Gi |
+| `cloudlinux-9` | CloudLinux 9 | Cloud | 9 Gi |
+| `proxmox-8` | Proxmox VE 8 | ISO | 2 Gi |
+| `proxmox-9` | Proxmox VE 9 | ISO | 2 Gi |
+| `talos-112` | Talos Linux 1.12 | Cloud | 8 Gi |
+
+:::warning ISO-Images
+Images vom Typ **ISO** (Proxmox) sind Installer, keine sofort einsatzbereiten Cloud-Images.
+Sie erfordern eine manuelle Installation über die VNC-Konsole.
+:::
+
+---
+
+### VMDisk-Beispiele
+
+#### Systemfestplatte via Golden Image
+
+```yaml title="ubuntu-golden-disk.yaml"
+apiVersion: apps.cozystack.io/v1alpha1
+kind: VMDisk
+metadata:
+  name: ubuntu-system
+spec:
+  source:
+    image:
+      name: ubuntu-2404
+  optical: false
+  storage: 20Gi
+  storageClass: replicated
+```
+
+---
+
+## Speicherklassen
+
+| Klasse       | Beschreibung        | Replikation |
+| ------------ | ------------------- | ----------- |
+| `local`      | Lokaler Knotenspeicher | ❌           |
+| `replicated` | Replizierter Speicher  | ✅           |
+
+---
+
+## Netzwerk-Expositionsmethoden
+
+### PortList
+
+* Automatische Firewall
+* Explizit autorisierte Ports
+* **Empfohlen für Produktion**
+
+### WholeIP
+
+* Alle Ports exponiert
+* Keine Netzwerkfilterung
+* Nur für Entwicklung
+
+:::warning Sicherheit
+Mit `WholeIP` ist die VM vollständig im Internet exponiert.
+Eine OS-Firewall ist unerlässlich.
+:::
+
+---
+
+## Best Practices
+
+### Sicherheit
+
+* Nur SSH-Schlüssel
+* Aktive OS-Firewall
+
+### Speicher
+
+* `replicated` in der Produktion
+* Getrennte Festplatten für System / Daten
+
+### Leistung
+
+* Instanztyp an den Workload anpassen
+* Tatsächliche Nutzung überwachen
+
+:::tip Empfohlene Architektur
+Verwenden Sie in der Produktion mindestens **2 Festplatten** (System + Daten) mit repliziertem Speicher.
+:::
