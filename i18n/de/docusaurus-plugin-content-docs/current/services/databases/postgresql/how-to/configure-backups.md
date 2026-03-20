@@ -10,7 +10,7 @@ Diese Anleitung erklärt, wie Sie automatische Sicherungen Ihrer PostgreSQL-Date
 
 - **kubectl** konfiguriert mit Ihrer Hikube-Kubeconfig
 - Eine **PostgreSQL**-Instanz auf Hikube bereitgestellt (oder ein Manifest zur Bereitstellung)
-- Ein zugänglicher **S3-kompatibler Bucket** (Minio, AWS S3, etc.)
+- Ein zugänglicher **S3-kompatibler Bucket** (Hikube Object Storage, AWS S3, etc.)
 - Die **S3-Anmeldedaten**: Access Key, Secret Key, Endpoint-URL
 
 ## Schritte
@@ -27,7 +27,7 @@ Bevor Sie die Sicherungen aktivieren, sammeln Sie die folgenden Informationen:
 | `s3SecretKey` | S3-Geheimschlüssel | `ju3eum4dekeich9ahM1te8waeGai0oog` |
 
 :::tip
-Wenn Sie den Hikube Object Storage (Minio) verwenden, ist der Standard-Endpoint `http://minio-gateway-service:9000`. Für einen externen Anbieter (AWS S3, Scaleway, etc.) geben Sie die entsprechende URL an.
+Wenn Sie den Hikube Object Storage verwenden, ist der Standard-Endpoint `http://minio-gateway-service:9000`. Für einen externen Anbieter (AWS S3, Scaleway, etc.) geben Sie die entsprechende URL an.
 :::
 
 ### 2. PostgreSQL-Manifest mit aktiviertem Backup erstellen

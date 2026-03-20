@@ -10,7 +10,7 @@ Questa guida spiega come attivare e configurare i backup automatici del vostro d
 
 - **kubectl** configurato con il vostro kubeconfig Hikube
 - Un'istanza **PostgreSQL** distribuita su Hikube (o un manifesto pronto per il deployment)
-- Un **bucket S3-compatible** accessibile (Minio, AWS S3, ecc.)
+- Un **bucket S3-compatible** accessibile (Hikube Object Storage, AWS S3, ecc.)
 - Le **credenziali S3**: access key, secret key, URL dell'endpoint
 
 ## Passaggi
@@ -27,7 +27,7 @@ Prima di attivare i backup, raccogliete le seguenti informazioni:
 | `s3SecretKey` | Chiave segreta S3 | `ju3eum4dekeich9ahM1te8waeGai0oog` |
 
 :::tip
-Se utilizzate lo storage oggetti Hikube (Minio), l'endpoint predefinito e `http://minio-gateway-service:9000`. Per un fornitore esterno (AWS S3, Scaleway, ecc.), inserite l'URL corrispondente.
+Se utilizzate lo storage oggetti Hikube, l'endpoint predefinito e `http://minio-gateway-service:9000`. Per un fornitore esterno (AWS S3, Scaleway, ecc.), inserite l'URL corrispondente.
 :::
 
 ### 2. Creare il manifesto PostgreSQL con backup attivato

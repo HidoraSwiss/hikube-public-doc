@@ -96,7 +96,7 @@ valuesOverride:
 ## 💡 Best Practices
 
 - Aktivieren Sie `enabled: true`, um die regelmäßige Sicherung kritischer Cluster-Ressourcen sicherzustellen.
-- Verwenden Sie `valuesOverride`, um die Konfiguration an den Cloud-Anbieter oder den gewählten Speicher anzupassen (AWS, GCP, Azure, MinIO usw.).
+- Verwenden Sie `valuesOverride`, um die Konfiguration an den Cloud-Anbieter oder den gewählten Speicher anzupassen (AWS, GCP, Azure usw.).
 - Konfigurieren Sie automatische **schedules** (Zeitpläne) für wiederkehrende Sicherungen.
 - Überprüfen Sie regelmäßig die Integrität der Sicherungen und die Wiederherstellungsmöglichkeit.
 - Beschränken Sie den Zugriff auf Speicherschlüssel, um die Sicherungsdaten zu schützen.

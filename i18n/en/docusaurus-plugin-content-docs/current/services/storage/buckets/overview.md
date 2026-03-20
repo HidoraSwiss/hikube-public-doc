@@ -131,7 +131,7 @@ This allows seamless integration into existing CI/CD pipelines, backup tools, an
 
 Thanks to S3 compatibility, your data remains **interoperable** with:
 
-- Existing cloud tools (AWS CLI, MinIO, Velero…)
+- Existing cloud tools (AWS CLI, mc, Velero…)
 - Standard S3 migration pipelines (rclone sync, s3cmd mirror…)
 - External analysis services (Spark, DuckDB, etc.)
 

@@ -110,7 +110,7 @@ Der Wechsel des Primary verursacht eine kurze Unterbrechung der Schreibvorgänge
 MySQL auf Hikube verwendet **Restic** für Sicherungen:
 
 - Die Snapshots werden mit einem Restic-Passwort **verschlüsselt**
-- Gespeichert in einem **S3-kompatiblen Bucket** (Hikube Object Storage, AWS S3, MinIO)
+- Gespeichert in einem **S3-kompatiblen Bucket** (Hikube Object Storage, AWS S3 usw.)
 - Die **Aufbewahrungsstrategie** (`cleanupStrategy`) steuert die Aufbewahrungsdauer
 
 | Parameter | Beschreibung |

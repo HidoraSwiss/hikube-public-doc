@@ -7,7 +7,7 @@ title: Concepts
 
 ## Architecture
 
-Le service Object Storage d'Hikube repose sur **MinIO**, une solution de stockage objet compatible S3. Les données sont **triple-répliquées** automatiquement sur 3 datacenters géographiquement distincts, garantissant une haute disponibilité même en cas de perte complète d'un datacenter.
+Le service Object Storage d'Hikube repose sur **SeaweedFS**, une solution de stockage objet compatible S3. Les données sont **triple-répliquées** automatiquement sur 3 datacenters géographiquement distincts, garantissant une haute disponibilité même en cas de perte complète d'un datacenter.
 
 ```mermaid
 graph TB
@@ -17,7 +17,7 @@ graph TB
             SEC[Secret credentials]
         end
 
-        subgraph "MinIO Gateway"
+        subgraph "S3 Gateway"
             GW[S3 API Endpoint]
         end
 
@@ -55,7 +55,7 @@ graph TB
 | **Bucket** | Ressource Kubernetes (`apps.cozystack.io/v1alpha1`) représentant un bucket S3. Un seul champ requis : le `name`. |
 | **Object Storage** | Stockage non structuré basé sur des objets (fichiers) identifiés par une clé unique. |
 | **S3-compatible** | API compatible avec le protocole Amazon S3, supportée par la majorité des outils et SDKs. |
-| **MinIO** | Serveur de stockage objet open source, compatible S3, utilisé comme backend par Hikube. |
+| **SeaweedFS** | Système de stockage distribué open source, compatible S3, utilisé comme backend par Hikube. |
 | **Access Key / Secret Key** | Paire d'identifiants pour l'authentification S3, générée automatiquement dans un Secret Kubernetes. |
 | **BucketInfo** | Champ JSON dans le Secret contenant l'endpoint S3, le protocole et le port. |
 | **Endpoint** | URL du service S3 Hikube : `https://prod.s3.hikube.cloud` |
@@ -77,7 +77,7 @@ spec: {}
 ```
 
 L'opérateur crée automatiquement :
-1. Le **bucket** dans MinIO
+1. Le **bucket** dans le stockage objet
 2. Un **Secret Kubernetes** contenant les credentials d'accès
 
 ### Credentials automatiques
@@ -120,7 +120,7 @@ Le service est compatible avec tous les outils supportant le protocole S3 :
 | Outil | Cas d'usage |
 |-------|-------------|
 | **AWS CLI** | Gestion de fichiers en ligne de commande |
-| **MinIO Client (mc)** | Client natif MinIO |
+| **MinIO Client (mc)** | Client S3 compatible |
 | **rclone** | Synchronisation et migration de données |
 | **s3cmd** | Gestion S3 alternative |
 | **Velero** | Sauvegarde de clusters Kubernetes |
@@ -144,7 +144,7 @@ Le service est compatible avec tous les outils supportant le protocole S3 :
 
 | Paramètre | Valeur |
 |-----------|--------|
-| Taille max par objet | Selon configuration MinIO |
+| Taille max par objet | Selon configuration du service |
 | Nombre de buckets | Selon quota tenant |
 | Réplication | Triple (3 DC), automatique |
 | Endpoint | `https://prod.s3.hikube.cloud` |

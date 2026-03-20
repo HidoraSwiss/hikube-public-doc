@@ -10,7 +10,7 @@ Diese Anleitung erklärt, wie Sie automatische Sicherungen Ihrer MySQL-Datenbank
 
 - **kubectl** konfiguriert mit Ihrer Hikube-Kubeconfig
 - Eine **MySQL**-Instanz auf Ihrem Tenant bereitgestellt
-- Ein zugänglicher **S3-kompatibler Bucket** (Hikube Object Storage, AWS S3, MinIO, etc.)
+- Ein zugänglicher **S3-kompatibler Bucket** (Hikube Object Storage, AWS S3, etc.)
 - **S3-Zugangsdaten** (Access Key und Secret Key)
 
 ## Schritte

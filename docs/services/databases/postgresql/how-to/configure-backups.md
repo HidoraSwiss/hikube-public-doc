@@ -10,7 +10,7 @@ Ce guide explique comment activer et configurer les sauvegardes automatiques de 
 
 - **kubectl** configuré avec votre kubeconfig Hikube
 - Une instance **PostgreSQL** déployée sur Hikube (ou un manifeste prêt à déployer)
-- Un **bucket S3-compatible** accessible (Minio, AWS S3, etc.)
+- Un **bucket S3-compatible** accessible (Hikube Object Storage, AWS S3, etc.)
 - Les **identifiants S3** : access key, secret key, URL du endpoint
 
 ## Étapes
@@ -27,7 +27,7 @@ Avant d'activer les sauvegardes, rassemblez les informations suivantes :
 | `s3SecretKey` | Clé secrète S3 | `ju3eum4dekeich9ahM1te8waeGai0oog` |
 
 :::tip
-Si vous utilisez le stockage objet Hikube (Minio), l'endpoint par défaut est `http://minio-gateway-service:9000`. Pour un fournisseur externe (AWS S3, Scaleway, etc.), renseignez l'URL correspondante.
+Si vous utilisez le stockage objet Hikube, l'endpoint par défaut est `http://minio-gateway-service:9000`. Pour un fournisseur externe (AWS S3, Scaleway, etc.), renseignez l'URL correspondante.
 :::
 
 ### 2. Créer le manifeste PostgreSQL avec backup activé

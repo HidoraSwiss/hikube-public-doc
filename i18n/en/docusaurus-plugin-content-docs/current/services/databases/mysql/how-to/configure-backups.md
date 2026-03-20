@@ -10,7 +10,7 @@ This guide explains how to enable and configure automatic backups for your MySQL
 
 - **kubectl** configured with your Hikube kubeconfig
 - A **MySQL** instance deployed on your tenant
-- An accessible **S3-compatible bucket** (Hikube Object Storage, AWS S3, MinIO, etc.)
+- An accessible **S3-compatible bucket** (Hikube Object Storage, AWS S3, etc.)
 - **S3 access credentials** (Access Key and Secret Key)
 
 ## Steps
