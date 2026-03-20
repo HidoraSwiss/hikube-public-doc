@@ -5,7 +5,7 @@ title: API Reference
 
 # API Reference - S3 Buckets
 
-This reference details Hikube's `Bucket` API, used to provision S3-compatible [MinIO](https://min.io/) buckets in your Kubernetes tenant.  
+This reference details Hikube's `Bucket` API, used to provision S3-compatible buckets in your Kubernetes tenant.  
 S3 buckets allow storing and serving data (files, objects, backups, logs, etc.) in a durable, highly available, and S3-standard tool compatible way.
 
 ---

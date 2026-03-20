@@ -10,7 +10,7 @@ This guide explains how to enable and configure automatic backups for your Postg
 
 - **kubectl** configured with your Hikube kubeconfig
 - A **PostgreSQL** instance deployed on Hikube (or a manifest ready to deploy)
-- An accessible **S3-compatible bucket** (Minio, AWS S3, etc.)
+- An accessible **S3-compatible bucket** (Hikube Object Storage, AWS S3, etc.)
 - **S3 credentials**: access key, secret key, endpoint URL
 
 ## Steps
@@ -22,12 +22,12 @@ Before enabling backups, gather the following information:
 | Parameter | Description | Example |
 |-----------|-------------|---------|
 | `destinationPath` | S3 destination bucket path | `s3://backups/postgresql/production/` |
-| `endpointURL` | S3 endpoint URL | `http://minio-gateway-service:9000` |
+| `endpointURL` | S3 endpoint URL | `https://prod.s3.hikube.cloud` |
 | `s3AccessKey` | S3 access key | `oobaiRus9pah8PhohL1ThaeTa4UVa7gu` |
 | `s3SecretKey` | S3 secret key | `ju3eum4dekeich9ahM1te8waeGai0oog` |
 
 :::tip
-If you are using Hikube object storage (Minio), the default endpoint is `http://minio-gateway-service:9000`. For an external provider (AWS S3, Scaleway, etc.), enter the corresponding URL.
+If you are using Hikube object storage, the default endpoint is `https://prod.s3.hikube.cloud`. For an external provider (AWS S3, Scaleway, etc.), enter the corresponding URL.
 :::
 
 ### 2. Create the PostgreSQL manifest with backup enabled
@@ -59,7 +59,7 @@ spec:
     schedule: "0 2 * * *"
     retentionPolicy: 30d
     destinationPath: s3://backups/postgresql/my-database/
-    endpointURL: http://minio-gateway-service:9000
+    endpointURL: https://prod.s3.hikube.cloud
     s3AccessKey: oobaiRus9pah8PhohL1ThaeTa4UVa7gu
     s3SecretKey: ju3eum4dekeich9ahM1te8waeGai0oog
 ```
@@ -105,7 +105,7 @@ kubectl get postgres my-database -o yaml | grep -A 10 backup
     schedule: "0 2 * * *"
     retentionPolicy: 30d
     destinationPath: s3://backups/postgresql/my-database/
-    endpointURL: http://minio-gateway-service:9000
+    endpointURL: https://prod.s3.hikube.cloud
 ```
 
 ## Verification

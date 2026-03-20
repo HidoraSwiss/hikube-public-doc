@@ -133,6 +133,6 @@ Si les pods restent en etat `ImagePullBackOff` ou `ErrImagePull`, verifiez :
 
 ## Pour aller plus loin
 
-- [Reference API](../api-reference.md) -- Configuration complete des clusters
+- [Référence API](../api-reference.md) -- Configuration complète des clusters
 - [Concepts](../concepts.md) -- Architecture Kubernetes Hikube
-- [Demarrage rapide](../quick-start.md) -- Deployer un premier cluster
+- [Démarrage rapide](../quick-start.md) -- Déployer un premier cluster

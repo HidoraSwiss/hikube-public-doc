@@ -10,7 +10,7 @@ Questa guida spiega come attivare e configurare i backup automatici del vostro d
 
 - **kubectl** configurato con il vostro kubeconfig Hikube
 - Un'istanza **PostgreSQL** distribuita su Hikube (o un manifesto pronto per il deployment)
-- Un **bucket S3-compatible** accessibile (Minio, AWS S3, ecc.)
+- Un **bucket S3-compatible** accessibile (Hikube Object Storage, AWS S3, ecc.)
 - Le **credenziali S3**: access key, secret key, URL dell'endpoint
 
 ## Passaggi
@@ -22,12 +22,12 @@ Prima di attivare i backup, raccogliete le seguenti informazioni:
 | Parametro | Descrizione | Esempio |
 |-----------|-------------|---------|
 | `destinationPath` | Percorso S3 del bucket di destinazione | `s3://backups/postgresql/production/` |
-| `endpointURL` | URL dell'endpoint S3 | `http://minio-gateway-service:9000` |
+| `endpointURL` | URL dell'endpoint S3 | `https://prod.s3.hikube.cloud` |
 | `s3AccessKey` | Chiave di accesso S3 | `oobaiRus9pah8PhohL1ThaeTa4UVa7gu` |
 | `s3SecretKey` | Chiave segreta S3 | `ju3eum4dekeich9ahM1te8waeGai0oog` |
 
 :::tip
-Se utilizzate lo storage oggetti Hikube (Minio), l'endpoint predefinito e `http://minio-gateway-service:9000`. Per un fornitore esterno (AWS S3, Scaleway, ecc.), inserite l'URL corrispondente.
+Se utilizzate lo storage oggetti Hikube, l'endpoint predefinito e `https://prod.s3.hikube.cloud`. Per un fornitore esterno (AWS S3, Scaleway, ecc.), inserite l'URL corrispondente.
 :::
 
 ### 2. Creare il manifesto PostgreSQL con backup attivato
@@ -59,7 +59,7 @@ spec:
     schedule: "0 2 * * *"
     retentionPolicy: 30d
     destinationPath: s3://backups/postgresql/my-database/
-    endpointURL: http://minio-gateway-service:9000
+    endpointURL: https://prod.s3.hikube.cloud
     s3AccessKey: oobaiRus9pah8PhohL1ThaeTa4UVa7gu
     s3SecretKey: ju3eum4dekeich9ahM1te8waeGai0oog
 ```
@@ -105,7 +105,7 @@ kubectl get postgres my-database -o yaml | grep -A 10 backup
     schedule: "0 2 * * *"
     retentionPolicy: 30d
     destinationPath: s3://backups/postgresql/my-database/
-    endpointURL: http://minio-gateway-service:9000
+    endpointURL: https://prod.s3.hikube.cloud
 ```
 
 ## Verifica

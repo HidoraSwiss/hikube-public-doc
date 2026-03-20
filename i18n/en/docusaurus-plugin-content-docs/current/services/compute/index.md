@@ -7,7 +7,7 @@ import ServiceCardGrid from '@site/src/components/ServiceCardGrid';
 
 # Compute Resources
 
-Hikube lets you deploy virtual machines and GPU resources for your most demanding workloads.
+Hikube lets you deploy virtual machines for your most demanding workloads.
 
 ## Available Services
 
@@ -18,12 +18,5 @@ Hikube lets you deploy virtual machines and GPU resources for your most demandin
     icon: "/img/services/compute.svg",
     href: "./overview",
     tags: ["VMs", "KubeVirt"],
-  },
-  {
-    title: "GPU as a Service",
-    description: "Accelerate your AI/ML workloads with managed, dedicated NVIDIA GPUs.",
-    icon: "/img/services/gpu.svg",
-    href: "../gpu/overview",
-    tags: ["GPU", "NVIDIA"],
   },
 ]} />

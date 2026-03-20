@@ -123,5 +123,5 @@ my-redis-1        1/1     Running   0          2m
 
 ## Pour aller plus loin
 
-- [Reference API](../api-reference.md) -- Parametres `resources`, `resourcesPreset` et `replicas`
+- [Référence API](../api-reference.md) -- Parametres `resources`, `resourcesPreset` et `replicas`
 - [Comment configurer la haute disponibilite](./configure-ha.md) -- Configuration Redis HA avec Sentinel

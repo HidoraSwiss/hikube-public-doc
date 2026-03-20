@@ -203,6 +203,6 @@ Si la synchronisation echoue, verifiez :
 
 ## Pour aller plus loin
 
-- [Reference API](../api-reference.md) -- Configuration de l'addon `fluxcd`
+- [Référence API](../api-reference.md) -- Configuration de l'addon `fluxcd`
 - [Concepts](../concepts.md) -- Architecture du cluster et addons
 - [Comment deployer un Ingress avec TLS](./deploy-ingress-tls.md) -- Exposer vos applications deployees par Flux

@@ -167,9 +167,6 @@ Vérifiez vos sauvegardes avant de procéder.
 <NavigationFooter
   nextSteps={[
     {label: "FAQ", href: "../faq"},
-    {label: "Reference API", href: "../api-reference"},
-  ]}
-  seeAlso={[
-    {label: "Stockage", href: "../../"},
+    {label: "Référence API", href: "../api-reference"},
   ]}
 />

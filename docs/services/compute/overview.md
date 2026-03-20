@@ -176,6 +176,6 @@ Pour la production, utilisez toujours la classe de stockage `replicated` et dime
 <NavigationFooter
   nextSteps={[
     {label: "Concepts", href: "../concepts"},
-    {label: "Demarrage rapide", href: "../quick-start"},
+    {label: "Démarrage rapide", href: "../quick-start"},
   ]}
 />

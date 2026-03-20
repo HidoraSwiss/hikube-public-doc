@@ -49,7 +49,7 @@ spec:
   backup:
     enabled: false
     destinationPath: s3://bucket/path/to/folder/
-    endpointURL: http://minio-gateway-service:9000
+    endpointURL: https://prod.s3.hikube.cloud
     retentionPolicy: 30d
     s3AccessKey: <your-access-key>
     s3SecretKey: <your-secret-key>
@@ -323,9 +323,9 @@ Cette action supprime le cluster PostgreSQL et toutes les données associées. C
 <NavigationFooter
   nextSteps={[
     {label: "FAQ", href: "../faq"},
-    {label: "Reference API", href: "../api-reference"},
+    {label: "Référence API", href: "../api-reference"},
   ]}
   seeAlso={[
-    {label: "Toutes les bases de donnees", href: "../../"},
+    {label: "Toutes les bases de données", href: "../../"},
   ]}
 />

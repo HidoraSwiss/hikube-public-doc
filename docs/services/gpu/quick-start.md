@@ -291,7 +291,7 @@ Ces actions suppriment les ressources GPU et toutes les données associées. Ces
 <NavigationFooter
   nextSteps={[
     {label: "FAQ", href: "../faq"},
-    {label: "Reference API", href: "../api-reference"},
+    {label: "Référence API", href: "../api-reference"},
   ]}
   seeAlso={[
     {label: "Ressources de calcul", href: "../../compute/"},

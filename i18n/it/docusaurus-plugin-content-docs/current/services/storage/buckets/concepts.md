@@ -7,7 +7,7 @@ title: Concetti
 
 ## Architettura
 
-Il servizio Object Storage di Hikube si basa su **MinIO**, una soluzione di archiviazione oggetti compatibile S3. I dati sono **triple-replicati** automaticamente su 3 datacenter geograficamente distinti, garantendo un'alta disponibilità anche in caso di perdita completa di un datacenter.
+Il servizio Object Storage di Hikube si basa su **SeaweedFS**, una soluzione di archiviazione oggetti compatibile S3. I dati sono **triple-replicati** automaticamente su 3 datacenter geograficamente distinti, garantendo un'alta disponibilità anche in caso di perdita completa di un datacenter.
 
 ```mermaid
 graph TB
@@ -17,7 +17,7 @@ graph TB
             SEC[Secret credentials]
         end
 
-        subgraph "MinIO Gateway"
+        subgraph "S3 Gateway"
             GW[S3 API Endpoint]
         end
 
@@ -55,7 +55,7 @@ graph TB
 | **Bucket** | Risorsa Kubernetes (`apps.cozystack.io/v1alpha1`) che rappresenta un bucket S3. Un solo campo richiesto: il `name`. |
 | **Object Storage** | Archiviazione non strutturata basata su oggetti (file) identificati da una chiave unica. |
 | **S3-compatible** | API compatibile con il protocollo Amazon S3, supportata dalla maggior parte degli strumenti e degli SDK. |
-| **MinIO** | Server di archiviazione oggetti open source, compatibile S3, utilizzato come backend da Hikube. |
+| **SeaweedFS** | Server di archiviazione oggetti open source, compatibile S3, utilizzato come backend da Hikube. |
 | **Access Key / Secret Key** | Coppia di credenziali per l'autenticazione S3, generata automaticamente in un Secret Kubernetes. |
 | **BucketInfo** | Campo JSON nel Secret contenente l'endpoint S3, il protocollo e la porta. |
 | **Endpoint** | URL del servizio S3 Hikube: `https://prod.s3.hikube.cloud` |
@@ -77,7 +77,7 @@ spec: {}
 ```
 
 L'operatore crea automaticamente:
-1. Il **bucket** in MinIO
+1. Il **bucket** nell'object store
 2. Un **Secret Kubernetes** contenente le credenziali di accesso
 
 ### Credenziali automatiche
@@ -144,7 +144,7 @@ Il servizio è compatibile con tutti gli strumenti che supportano il protocollo 
 
 | Parametro | Valore |
 |-----------|--------|
-| Dimensione max per oggetto | Secondo configurazione MinIO |
+| Dimensione max per oggetto | Secondo configurazione del servizio |
 | Numero di bucket | Secondo la quota del tenant |
 | Replica | Tripla (3 DC), automatica |
 | Endpoint | `https://prod.s3.hikube.cloud` |

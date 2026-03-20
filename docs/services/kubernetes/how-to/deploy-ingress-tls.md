@@ -172,6 +172,6 @@ Le provisionnement du certificat Let's Encrypt peut prendre quelques minutes. Si
 
 ## Pour aller plus loin
 
-- [Reference API](../api-reference.md) -- Configuration des addons `certManager` et `ingressNginx`
+- [Référence API](../api-reference.md) -- Configuration des addons `certManager` et `ingressNginx`
 - [Concepts](../concepts.md) -- Architecture du cluster et composants reseau
 - [Comment configurer le networking](./configure-networking.md) -- Gestion avancee du reseau

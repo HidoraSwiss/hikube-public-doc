@@ -96,7 +96,7 @@ valuesOverride:
 ## 💡 Buone pratiche
 
 - Attivare `enabled: true` per garantire il backup regolare delle risorse critiche del cluster.
-- Utilizzare `valuesOverride` per adattare la configurazione al provider cloud o all'archiviazione scelta (AWS, GCP, Azure, MinIO, ecc.).
+- Utilizzare `valuesOverride` per adattare la configurazione al provider cloud o all'archiviazione scelta (AWS, GCP, Azure, ecc.).
 - Configurare delle **schedule** (pianificazioni) automatiche per i backup ricorrenti.
 - Verificare regolarmente l'integrità dei backup e la possibilità di ripristino.
 - Limitare gli accessi alle chiavi di archiviazione per proteggere i dati di backup.

@@ -149,7 +149,7 @@ spec:
 | `backup.schedule`           | `string`  | Cron-Zeitplan für automatische Sicherungen              | `"0 2 * * * *"`                   | Nein             |
 | `backup.retentionPolicy`    | `string`  | Aufbewahrungsrichtlinie                                 | `"30d"`                           | Nein             |
 | `backup.destinationPath`    | `string`  | Speicherpfad für die Sicherung (z.B. s3://bucket/path/) | `"s3://bucket/path/to/folder/"`   | Ja               |
-| `backup.endpointURL`        | `string`  | S3-Endpoint zum Hochladen der Daten                     | `"http://minio-gateway-service:9000"` | Ja           |
+| `backup.endpointURL`        | `string`  | S3-Endpoint zum Hochladen der Daten                     | `"https://prod.s3.hikube.cloud"` | Ja           |
 | `backup.s3AccessKey`        | `string`  | Zugriffsschlüssel für S3 zur Authentifizierung          | `<your-access-key>`               | Ja               |
 | `backup.s3SecretKey`        | `string`  | Geheimer Schlüssel für S3 zur Authentifizierung         | `<your-secret-key>`               | Ja               |
 
@@ -175,7 +175,7 @@ backup:
   enabled: false
   retentionPolicy: 30d
   destinationPath: s3://bucket/path/to/folder/
-  endpointURL: http://minio-gateway-service:9000
+  endpointURL: https://prod.s3.hikube.cloud
   schedule: "0 2 * * * *"
   s3AccessKey: oobaiRus9pah8PhohL1ThaeTa4UVa7gu
   s3SecretKey: ju3eum4dekeich9ahM1te8waeGai0oog
@@ -295,7 +295,7 @@ spec:
     schedule: "0 2 * * *"
     retentionPolicy: 30d
     destinationPath: s3://backups/postgresql/production/
-    endpointURL: http://minio-gateway-service:9000
+    endpointURL: https://prod.s3.hikube.cloud
     s3AccessKey: your-access-key
     s3SecretKey: your-secret-key
 ```

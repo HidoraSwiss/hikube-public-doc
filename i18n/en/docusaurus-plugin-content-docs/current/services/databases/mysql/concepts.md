@@ -110,7 +110,7 @@ Switching the primary causes a brief write interruption. Reads remain available 
 MySQL on Hikube uses **Restic** for backups:
 
 - Snapshots are **encrypted** with a Restic password
-- Stored in an **S3-compatible bucket** (Hikube Object Storage, AWS S3, MinIO)
+- Stored in an **S3-compatible bucket** (Hikube Object Storage, AWS S3, etc.)
 - The **retention strategy** (`cleanupStrategy`) controls the retention duration
 
 | Parameter | Description |

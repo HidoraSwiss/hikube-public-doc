@@ -110,7 +110,7 @@ La commutazione del primary comporta una breve interruzione delle scritture. Le 
 MySQL su Hikube utilizza **Restic** per i backup:
 
 - Gli snapshot sono **cifrati** con una password Restic
-- Archiviati in un **bucket S3-compatible** (Hikube Object Storage, AWS S3, MinIO)
+- Archiviati in un **bucket S3-compatible** (Hikube Object Storage, AWS S3, ecc.)
 - La **strategia di retention** (`cleanupStrategy`) controlla la durata di conservazione
 
 | Parametro | Descrizione |

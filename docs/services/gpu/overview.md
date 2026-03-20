@@ -195,7 +195,7 @@ spec:
 <NavigationFooter
   nextSteps={[
     {label: "Concepts", href: "../concepts"},
-    {label: "Demarrage rapide", href: "../quick-start"},
+    {label: "Démarrage rapide", href: "../quick-start"},
   ]}
   seeAlso={[
     {label: "Ressources de calcul", href: "../../compute/"},

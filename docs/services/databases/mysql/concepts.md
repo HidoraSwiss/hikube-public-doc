@@ -110,7 +110,7 @@ La bascule du primary entraîne une brève interruption des écritures. Les lect
 MySQL sur Hikube utilise **Restic** pour les sauvegardes :
 
 - Les snapshots sont **chiffrés** avec un mot de passe Restic
-- Stockés dans un **bucket S3-compatible** (Hikube Object Storage, AWS S3, MinIO)
+- Stockés dans un **bucket S3-compatible** (Hikube Object Storage, AWS S3, etc.)
 - La **stratégie de rétention** (`cleanupStrategy`) contrôle la durée de conservation
 
 | Paramètre | Description |

@@ -114,7 +114,7 @@ Grâce à son **design minimaliste** et à ses **outils intégrés (CLI, dashboa
 <NavigationFooter
   nextSteps={[
     {label: "Concepts", href: "../concepts"},
-    {label: "Demarrage rapide", href: "../quick-start"},
+    {label: "Démarrage rapide", href: "../quick-start"},
   ]}
   seeAlso={[
     {label: "Tous les services de messagerie", href: "../../"},

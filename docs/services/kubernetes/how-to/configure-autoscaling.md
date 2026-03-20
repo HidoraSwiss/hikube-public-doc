@@ -195,6 +195,6 @@ my-cluster-compute-wwwww     Ready    <none>   2m    v1.29.0
 
 ## Pour aller plus loin
 
-- [Reference API](../api-reference.md) -- Parametres `minReplicas` et `maxReplicas`
+- [Référence API](../api-reference.md) -- Parametres `minReplicas` et `maxReplicas`
 - [Concepts](../concepts.md) -- Architecture des node groups et scalabilite
 - [Comment ajouter et modifier un node group](./manage-node-groups.md) -- Gestion des node groups

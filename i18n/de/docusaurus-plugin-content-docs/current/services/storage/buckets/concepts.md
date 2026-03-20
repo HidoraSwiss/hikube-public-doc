@@ -7,7 +7,7 @@ title: Konzepte
 
 ## Architektur
 
-Der Object-Storage-Dienst von Hikube basiert auf **MinIO**, einer S3-kompatiblen Objektspeicherlösung. Die Daten werden **dreifach repliziert** automatisch auf 3 geografisch getrennte Rechenzentren, was Hochverfügbarkeit auch bei vollständigem Ausfall eines Rechenzentrums gewährleistet.
+Der Object-Storage-Dienst von Hikube basiert auf **SeaweedFS**, einer S3-kompatiblen Objektspeicherlösung. Die Daten werden **dreifach repliziert** automatisch auf 3 geografisch getrennte Rechenzentren, was Hochverfügbarkeit auch bei vollständigem Ausfall eines Rechenzentrums gewährleistet.
 
 ```mermaid
 graph TB
@@ -17,7 +17,7 @@ graph TB
             SEC[Secret credentials]
         end
 
-        subgraph "MinIO Gateway"
+        subgraph "S3 Gateway"
             GW[S3 API Endpoint]
         end
 
@@ -55,7 +55,7 @@ graph TB
 | **Bucket** | Kubernetes-Ressource (`apps.cozystack.io/v1alpha1`), die einen S3-Bucket darstellt. Einziges erforderliches Feld: der `name`. |
 | **Object Storage** | Unstrukturierter Speicher basierend auf Objekten (Dateien), die durch einen eindeutigen Schlüssel identifiziert werden. |
 | **S3-kompatibel** | API kompatibel mit dem Amazon-S3-Protokoll, unterstützt von der Mehrheit der Tools und SDKs. |
-| **MinIO** | Open-Source-Objektspeicherserver, S3-kompatibel, wird als Backend von Hikube verwendet. |
+| **SeaweedFS** | Open-Source-Objektspeicherserver, S3-kompatibel, wird als Backend von Hikube verwendet. |
 | **Access Key / Secret Key** | Paar von Zugangsdaten für die S3-Authentifizierung, automatisch in einem Kubernetes Secret generiert. |
 | **BucketInfo** | JSON-Feld im Secret, das den S3-Endpunkt, das Protokoll und den Port enthält. |
 | **Endpoint** | URL des Hikube S3-Dienstes: `https://prod.s3.hikube.cloud` |
@@ -77,7 +77,7 @@ spec: {}
 ```
 
 Der Operator erstellt automatisch:
-1. Den **Bucket** in MinIO
+1. Den **Bucket** im Objektspeicher
 2. Ein **Kubernetes Secret** mit den Zugangsdaten
 
 ### Automatische Zugangsdaten
@@ -144,7 +144,7 @@ Der Dienst ist mit allen Tools kompatibel, die das S3-Protokoll unterstützen:
 
 | Parameter | Wert |
 |-----------|------|
-| Max. Größe pro Objekt | Je nach MinIO-Konfiguration |
+| Max. Größe pro Objekt | Je nach Dienstkonfiguration |
 | Anzahl der Buckets | Je nach Tenant-Kontingent |
 | Replikation | Dreifach (3 DC), automatisch |
 | Endpunkt | `https://prod.s3.hikube.cloud` |

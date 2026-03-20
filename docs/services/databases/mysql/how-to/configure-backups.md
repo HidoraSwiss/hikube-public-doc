@@ -10,7 +10,7 @@ Ce guide vous explique comment activer et configurer les sauvegardes automatique
 
 - **kubectl** configuré avec votre kubeconfig Hikube
 - Une instance **MySQL** déployée sur votre tenant
-- Un **bucket S3-compatible** accessible (Hikube Object Storage, AWS S3, MinIO, etc.)
+- Un **bucket S3-compatible** accessible (Hikube Object Storage, AWS S3, etc.)
 - Les **identifiants d'accès S3** (Access Key et Secret Key)
 
 ## Étapes

@@ -129,7 +129,7 @@ Dies ermöglicht eine nahtlose Integration in CI/CD-Pipelines, Backup-Tools und 
 
 Dank der S3-Kompatibilität bleiben Ihre Daten **interoperabel** mit:
 
-- Bestehenden Cloud-Tools (AWS CLI, MinIO, Velero...)
+- Bestehenden Cloud-Tools (AWS CLI, Velero...)
 - Standard-S3-Migrationspipelines (rclone sync, s3cmd mirror...)
 - Externen Analysediensten (Spark, DuckDB usw.)
 

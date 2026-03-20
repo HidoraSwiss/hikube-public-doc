@@ -10,7 +10,7 @@ Diese Anleitung erklärt, wie Sie automatische Sicherungen Ihrer PostgreSQL-Date
 
 - **kubectl** konfiguriert mit Ihrer Hikube-Kubeconfig
 - Eine **PostgreSQL**-Instanz auf Hikube bereitgestellt (oder ein Manifest zur Bereitstellung)
-- Ein zugänglicher **S3-kompatibler Bucket** (Minio, AWS S3, etc.)
+- Ein zugänglicher **S3-kompatibler Bucket** (Hikube Object Storage, AWS S3, etc.)
 - Die **S3-Anmeldedaten**: Access Key, Secret Key, Endpoint-URL
 
 ## Schritte
@@ -22,12 +22,12 @@ Bevor Sie die Sicherungen aktivieren, sammeln Sie die folgenden Informationen:
 | Parameter | Beschreibung | Beispiel |
 |-----------|-------------|---------|
 | `destinationPath` | S3-Pfad des Ziel-Buckets | `s3://backups/postgresql/production/` |
-| `endpointURL` | URL des S3-Endpoints | `http://minio-gateway-service:9000` |
+| `endpointURL` | URL des S3-Endpoints | `https://prod.s3.hikube.cloud` |
 | `s3AccessKey` | S3-Zugriffsschlüssel | `oobaiRus9pah8PhohL1ThaeTa4UVa7gu` |
 | `s3SecretKey` | S3-Geheimschlüssel | `ju3eum4dekeich9ahM1te8waeGai0oog` |
 
 :::tip
-Wenn Sie den Hikube Object Storage (Minio) verwenden, ist der Standard-Endpoint `http://minio-gateway-service:9000`. Für einen externen Anbieter (AWS S3, Scaleway, etc.) geben Sie die entsprechende URL an.
+Wenn Sie den Hikube Object Storage verwenden, ist der Standard-Endpoint `https://prod.s3.hikube.cloud`. Für einen externen Anbieter (AWS S3, Scaleway, etc.) geben Sie die entsprechende URL an.
 :::
 
 ### 2. PostgreSQL-Manifest mit aktiviertem Backup erstellen
@@ -59,7 +59,7 @@ spec:
     schedule: "0 2 * * *"
     retentionPolicy: 30d
     destinationPath: s3://backups/postgresql/my-database/
-    endpointURL: http://minio-gateway-service:9000
+    endpointURL: https://prod.s3.hikube.cloud
     s3AccessKey: oobaiRus9pah8PhohL1ThaeTa4UVa7gu
     s3SecretKey: ju3eum4dekeich9ahM1te8waeGai0oog
 ```
@@ -105,7 +105,7 @@ kubectl get postgres my-database -o yaml | grep -A 10 backup
     schedule: "0 2 * * *"
     retentionPolicy: 30d
     destinationPath: s3://backups/postgresql/my-database/
-    endpointURL: http://minio-gateway-service:9000
+    endpointURL: https://prod.s3.hikube.cloud
 ```
 
 ## Überprüfung

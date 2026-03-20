@@ -10,7 +10,7 @@ Questa guida vi spiega come attivare e configurare i backup automatici del vostr
 
 - **kubectl** configurato con il vostro kubeconfig Hikube
 - Un'istanza **MySQL** distribuita sul vostro tenant
-- Un **bucket S3-compatible** accessibile (Hikube Object Storage, AWS S3, MinIO, ecc.)
+- Un **bucket S3-compatible** accessibile (Hikube Object Storage, AWS S3, ecc.)
 - Le **credenziali di accesso S3** (Access Key e Secret Key)
 
 ## Passaggi

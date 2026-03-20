@@ -153,6 +153,6 @@ allow-web   app=web        5m
 
 ## Pour aller plus loin
 
-- [Reference API](../api-reference.md) -- Configuration complete du cluster
+- [Référence API](../api-reference.md) -- Configuration complete du cluster
 - [Concepts](../concepts.md) -- Architecture reseau et flux de communication
 - [Comment deployer un Ingress avec TLS](./deploy-ingress-tls.md) -- Exposition HTTPS de vos applications
