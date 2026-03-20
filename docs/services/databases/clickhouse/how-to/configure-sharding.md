@@ -144,6 +144,6 @@ ORDER BY shard_num, replica_num;
 
 ## Pour aller plus loin
 
-- [Reference API](../api-reference.md) -- Parametres `shards`, `replicas` et `clickhouseKeeper`
+- [Référence API](../api-reference.md) -- Parametres `shards`, `replicas` et `clickhouseKeeper`
 - [Comment scaler verticalement ClickHouse](./scale-resources.md) -- Ajuster les ressources CPU et memoire
 - [Comment gerer les utilisateurs et profils](./manage-users.md) -- Gestion des acces utilisateurs

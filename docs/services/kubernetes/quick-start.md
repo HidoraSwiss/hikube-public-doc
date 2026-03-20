@@ -383,6 +383,6 @@ Vous avez créé :
 <NavigationFooter
   nextSteps={[
     {label: "FAQ", href: "../faq"},
-    {label: "Reference API", href: "../api-reference"},
+    {label: "Référence API", href: "../api-reference"},
   ]}
 />

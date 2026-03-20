@@ -228,5 +228,5 @@ Si la commande retourne une liste vide (bucket vide) ou la liste des objets exis
 
 ## Pour aller plus loin
 
-- [Reference API Buckets](../api-reference.md)
+- [Référence API Buckets](../api-reference.md)
 - [Comment connecter un bucket depuis une application](./connect-from-app.md)

@@ -60,9 +60,9 @@ Le service **MySQL managé sur Hikube** est particulièrement adapté pour :
 <NavigationFooter
   nextSteps={[
     {label: "Concepts", href: "../concepts"},
-    {label: "Demarrage rapide", href: "../quick-start"},
+    {label: "Démarrage rapide", href: "../quick-start"},
   ]}
   seeAlso={[
-    {label: "Toutes les bases de donnees", href: "../../"},
+    {label: "Toutes les bases de données", href: "../../"},
   ]}
 />

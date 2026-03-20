@@ -156,8 +156,5 @@ Use a dedicated bucket per application or environment.
     {label: "Concepts", href: "../concepts"},
     {label: "Quick Start", href: "../quick-start"},
   ]}
-  seeAlso={[
-    {label: "Storage", href: "../../"},
-  ]}
 />
 

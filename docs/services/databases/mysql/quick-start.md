@@ -298,9 +298,9 @@ Cette action supprime le cluster MySQL et toutes les données associées. Cette 
 <NavigationFooter
   nextSteps={[
     {label: "FAQ", href: "../faq"},
-    {label: "Reference API", href: "../api-reference"},
+    {label: "Référence API", href: "../api-reference"},
   ]}
   seeAlso={[
-    {label: "Toutes les bases de donnees", href: "../../"},
+    {label: "Toutes les bases de données", href: "../../"},
   ]}
 />

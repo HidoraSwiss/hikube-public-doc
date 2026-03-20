@@ -171,6 +171,6 @@ my-cluster-compute-yyyyy     Ready    <none>   2m    v1.29.0
 
 ## Pour aller plus loin
 
-- [Reference API](../api-reference.md) -- Detail complet des champs `nodeGroups`
+- [Référence API](../api-reference.md) -- Detail complet des champs `nodeGroups`
 - [Concepts](../concepts.md) -- Architecture des node groups Hikube
 - [Comment configurer l'autoscaling](./configure-autoscaling.md) -- Gerer le scaling automatique des node groups

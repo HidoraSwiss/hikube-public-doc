@@ -167,6 +167,6 @@ SELECT name, storage, auth_type FROM system.users;
 
 ## Pour aller plus loin
 
-- [Reference API](../api-reference.md) -- Parametres `users`, `logStorageSize` et `logTTL`
+- [Référence API](../api-reference.md) -- Parametres `users`, `logStorageSize` et `logTTL`
 - [Comment scaler verticalement ClickHouse](./scale-resources.md) -- Ajuster les ressources CPU et memoire
 - [Comment configurer le sharding](./configure-sharding.md) -- Distribution horizontale des donnees

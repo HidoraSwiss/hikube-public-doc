@@ -140,6 +140,6 @@ my-clickhouse-0-1   1/1     Running   0          3m
 
 ## Pour aller plus loin
 
-- [Reference API](../api-reference.md) -- Parametres `resources`, `resourcesPreset`, `size` et `storageClass`
+- [Référence API](../api-reference.md) -- Parametres `resources`, `resourcesPreset`, `size` et `storageClass`
 - [Comment configurer le sharding](./configure-sharding.md) -- Distribution horizontale des donnees
 - [Comment gerer les utilisateurs et profils](./manage-users.md) -- Gestion des acces utilisateurs

@@ -80,7 +80,7 @@ Cela garantit qu’aucun message n’est perdu, même en cas de défaillance tem
 <NavigationFooter
   nextSteps={[
     {label: "Concepts", href: "../concepts"},
-    {label: "Demarrage rapide", href: "../quick-start"},
+    {label: "Démarrage rapide", href: "../quick-start"},
   ]}
   seeAlso={[
     {label: "Tous les services de messagerie", href: "../../"},

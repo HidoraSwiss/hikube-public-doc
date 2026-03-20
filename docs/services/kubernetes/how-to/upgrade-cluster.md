@@ -149,6 +149,6 @@ Si des pods restent en erreur apres la mise a jour, verifiez la compatibilite de
 
 ## Pour aller plus loin
 
-- [Reference API](../api-reference.md) -- Champ `version` et configuration complete
+- [Référence API](../api-reference.md) -- Champ `version` et configuration complete
 - [Concepts](../concepts.md) -- Architecture du plan de controle et rolling updates
 - [Acces et outils](./toolbox.md) -- Commandes de debugging et monitoring

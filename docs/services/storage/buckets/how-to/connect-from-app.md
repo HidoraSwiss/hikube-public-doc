@@ -187,5 +187,5 @@ aws s3 rm s3://$BUCKET_NAME/test.txt --endpoint-url https://prod.s3.hikube.cloud
 
 ## Pour aller plus loin
 
-- [Reference API Buckets](../api-reference.md)
+- [Référence API Buckets](../api-reference.md)
 - [Comment configurer l'acces S3](./configure-access.md)

@@ -154,9 +154,6 @@ Utilisez un bucket dédié par application ou environnement.
 <NavigationFooter
   nextSteps={[
     {label: "Concepts", href: "../concepts"},
-    {label: "Demarrage rapide", href: "../quick-start"},
-  ]}
-  seeAlso={[
-    {label: "Stockage", href: "../../"},
+    {label: "Démarrage rapide", href: "../quick-start"},
   ]}
 />

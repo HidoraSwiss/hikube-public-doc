@@ -73,7 +73,7 @@ Kafka permet une **communication asynchrone** entre microservices, améliorant l
 <NavigationFooter
   nextSteps={[
     {label: "Concepts", href: "../concepts"},
-    {label: "Demarrage rapide", href: "../quick-start"},
+    {label: "Démarrage rapide", href: "../quick-start"},
   ]}
   seeAlso={[
     {label: "Tous les services de messagerie", href: "../../"},

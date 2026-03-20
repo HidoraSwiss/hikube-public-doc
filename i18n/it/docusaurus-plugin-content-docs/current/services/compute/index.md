@@ -7,7 +7,7 @@ import ServiceCardGrid from '@site/src/components/ServiceCardGrid';
 
 # Risorse di calcolo
 
-Hikube consente di distribuire macchine virtuali e risorse GPU per i vostri workload piu esigenti.
+Hikube consente di distribuire macchine virtuali per i vostri workload piu esigenti.
 
 ## Servizi disponibili
 
@@ -18,12 +18,5 @@ Hikube consente di distribuire macchine virtuali e risorse GPU per i vostri work
     icon: "/img/services/compute.svg",
     href: "./overview",
     tags: ["VM", "KubeVirt"],
-  },
-  {
-    title: "GPU as a Service",
-    description: "Accelerate i vostri workload AI/ML con GPU NVIDIA gestite e dedicate.",
-    icon: "/img/services/gpu.svg",
-    href: "../gpu/overview",
-    tags: ["GPU", "NVIDIA"],
   },
 ]} />
