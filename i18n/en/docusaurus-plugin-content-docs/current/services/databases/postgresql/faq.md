@@ -90,7 +90,7 @@ spec:
     schedule: "0 2 * * *"
     retentionPolicy: 30d
     destinationPath: s3://my-bucket/postgresql-backups/
-    endpointURL: http://minio-gateway-service:9000
+    endpointURL: https://prod.s3.hikube.cloud
     s3AccessKey: your-access-key
     s3SecretKey: your-secret-key
 ```

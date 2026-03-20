@@ -71,7 +71,7 @@ spec:
     schedule: "0 2 * * *"
     retentionPolicy: 30d
     destinationPath: s3://backups/postgresql/my-database-restored/
-    endpointURL: http://minio-gateway-service:9000
+    endpointURL: https://prod.s3.hikube.cloud
     s3AccessKey: oobaiRus9pah8PhohL1ThaeTa4UVa7gu
     s3SecretKey: ju3eum4dekeich9ahM1te8waeGai0oog
 

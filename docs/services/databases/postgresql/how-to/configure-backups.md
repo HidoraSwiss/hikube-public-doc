@@ -22,12 +22,12 @@ Avant d'activer les sauvegardes, rassemblez les informations suivantes :
 | Paramètre | Description | Exemple |
 |-----------|-------------|---------|
 | `destinationPath` | Chemin S3 du bucket de destination | `s3://backups/postgresql/production/` |
-| `endpointURL` | URL du endpoint S3 | `http://minio-gateway-service:9000` |
+| `endpointURL` | URL du endpoint S3 | `https://prod.s3.hikube.cloud` |
 | `s3AccessKey` | Clé d'accès S3 | `oobaiRus9pah8PhohL1ThaeTa4UVa7gu` |
 | `s3SecretKey` | Clé secrète S3 | `ju3eum4dekeich9ahM1te8waeGai0oog` |
 
 :::tip
-Si vous utilisez le stockage objet Hikube, l'endpoint par défaut est `http://minio-gateway-service:9000`. Pour un fournisseur externe (AWS S3, Scaleway, etc.), renseignez l'URL correspondante.
+Si vous utilisez le stockage objet Hikube, l'endpoint par défaut est `https://prod.s3.hikube.cloud`. Pour un fournisseur externe (AWS S3, Scaleway, etc.), renseignez l'URL correspondante.
 :::
 
 ### 2. Créer le manifeste PostgreSQL avec backup activé
@@ -59,7 +59,7 @@ spec:
     schedule: "0 2 * * *"
     retentionPolicy: 30d
     destinationPath: s3://backups/postgresql/my-database/
-    endpointURL: http://minio-gateway-service:9000
+    endpointURL: https://prod.s3.hikube.cloud
     s3AccessKey: oobaiRus9pah8PhohL1ThaeTa4UVa7gu
     s3SecretKey: ju3eum4dekeich9ahM1te8waeGai0oog
 ```
@@ -105,7 +105,7 @@ kubectl get postgres my-database -o yaml | grep -A 10 backup
     schedule: "0 2 * * *"
     retentionPolicy: 30d
     destinationPath: s3://backups/postgresql/my-database/
-    endpointURL: http://minio-gateway-service:9000
+    endpointURL: https://prod.s3.hikube.cloud
 ```
 
 ## Vérification
