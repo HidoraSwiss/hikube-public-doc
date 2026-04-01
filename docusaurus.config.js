@@ -48,25 +48,7 @@ const config = {
           // Remove this to remove the "edit this page" links.
           editUrl:
             'https://github.com/HidoraSwiss/hikube-public-doc/edit/main/',
-          // Configuration du versioning
-          includeCurrentVersion: true,
           editLocalizedFiles: true,
-          lastVersion: '2.0',
-          versions: {
-            '1.0': {
-              label: '1.0.0',
-              path: '/1.0',
-              banner: 'unmaintained',
-            },
-            '2.0': {
-              label: '2.0.2',
-            },
-            current: {
-              label: '3.0.0-alpha (Diátaxis)',
-              path: '/next',
-              banner: 'unreleased',
-            },
-          },
         },
         blog: {
           showReadingTime: true,
@@ -133,17 +115,6 @@ const config = {
             to: '/blog',
             label: 'Changelog',
             position: 'left',
-          },
-          {
-            type: 'docsVersionDropdown',
-            position: 'left',
-            dropdownActiveClassDisabled: true,
-            dropdownItemsAfter: [
-              {
-                to: '/versions',
-                label: 'Toutes les versions',
-              },
-            ],
           },
           {
             type: 'localeDropdown',

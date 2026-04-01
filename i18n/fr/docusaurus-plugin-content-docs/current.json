@@ -4,15 +4,15 @@
     "description": "The label for version current"
   },
   "sidebar.docsSidebar.category.🚀 Démarrer": {
-    "message": "🚀 Erste Schritte",
+    "message": "🚀 Démarrer",
     "description": "The label for category '🚀 Démarrer' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.💾 Services": {
-    "message": "💾 Dienste",
+    "message": "💾 Services",
     "description": "The label for category '💾 Services' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.Storage": {
-    "message": "Speicher",
+    "message": "Storage",
     "description": "The label for category 'Storage' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.Buckets": {
@@ -20,15 +20,15 @@
     "description": "The label for category 'Buckets' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.how-to-services-storage-buckets": {
-    "message": "Praktische Anleitungen",
+    "message": "Guides pratiques",
     "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.how-to-services-storage-buckets.link.generated-index.title": {
-    "message": "Praktische Anleitungen",
+    "message": "Guides pratiques",
     "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.Databases": {
-    "message": "Datenbanken",
+    "message": "Databases",
     "description": "The label for category 'Databases' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.ClickHouse": {
@@ -36,11 +36,11 @@
     "description": "The label for category 'ClickHouse' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.how-to-services-databases-clickhouse": {
-    "message": "Praktische Anleitungen",
+    "message": "Guides pratiques",
     "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.how-to-services-databases-clickhouse.link.generated-index.title": {
-    "message": "Praktische Anleitungen",
+    "message": "Guides pratiques",
     "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.PostgreSQL": {
@@ -48,11 +48,11 @@
     "description": "The label for category 'PostgreSQL' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.how-to-services-databases-postgresql": {
-    "message": "Praktische Anleitungen",
+    "message": "Guides pratiques",
     "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.how-to-services-databases-postgresql.link.generated-index.title": {
-    "message": "Praktische Anleitungen",
+    "message": "Guides pratiques",
     "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.MySQL": {
@@ -60,11 +60,11 @@
     "description": "The label for category 'MySQL' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.how-to-services-databases-mysql": {
-    "message": "Praktische Anleitungen",
+    "message": "Guides pratiques",
     "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.how-to-services-databases-mysql.link.generated-index.title": {
-    "message": "Praktische Anleitungen",
+    "message": "Guides pratiques",
     "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.Redis": {
@@ -72,23 +72,23 @@
     "description": "The label for category 'Redis' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.how-to-services-databases-redis": {
-    "message": "Praktische Anleitungen",
+    "message": "Guides pratiques",
     "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.how-to-services-databases-redis.link.generated-index.title": {
-    "message": "Praktische Anleitungen",
+    "message": "Guides pratiques",
     "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.Ressources de calcul": {
-    "message": "Rechenressourcen",
+    "message": "Ressources de calcul",
     "description": "The label for category 'Ressources de calcul' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.how-to-services-compute": {
-    "message": "Praktische Anleitungen",
+    "message": "Guides pratiques",
     "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.how-to-services-compute.link.generated-index.title": {
-    "message": "Praktische Anleitungen",
+    "message": "Guides pratiques",
     "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.GPU": {
@@ -96,11 +96,11 @@
     "description": "The label for category 'GPU' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.how-to-services-gpu": {
-    "message": "Praktische Anleitungen",
+    "message": "Guides pratiques",
     "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.how-to-services-gpu.link.generated-index.title": {
-    "message": "Praktische Anleitungen",
+    "message": "Guides pratiques",
     "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.Kubernetes": {
@@ -108,11 +108,11 @@
     "description": "The label for category 'Kubernetes' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.how-to-services-kubernetes": {
-    "message": "Praktische Anleitungen",
+    "message": "Guides pratiques",
     "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.how-to-services-kubernetes.link.generated-index.title": {
-    "message": "Praktische Anleitungen",
+    "message": "Guides pratiques",
     "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.Plugins": {
@@ -128,11 +128,11 @@
     "description": "The label for category 'Kafka' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.how-to-services-messaging-kafka": {
-    "message": "Praktische Anleitungen",
+    "message": "Guides pratiques",
     "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.how-to-services-messaging-kafka.link.generated-index.title": {
-    "message": "Praktische Anleitungen",
+    "message": "Guides pratiques",
     "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.RabbitMQ": {
@@ -140,11 +140,11 @@
     "description": "The label for category 'RabbitMQ' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.how-to-services-messaging-rabbitmq": {
-    "message": "Praktische Anleitungen",
+    "message": "Guides pratiques",
     "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.how-to-services-messaging-rabbitmq.link.generated-index.title": {
-    "message": "Praktische Anleitungen",
+    "message": "Guides pratiques",
     "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.NATS": {
@@ -152,19 +152,19 @@
     "description": "The label for category 'NATS' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.how-to-services-messaging-nats": {
-    "message": "Praktische Anleitungen",
+    "message": "Guides pratiques",
     "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.how-to-services-messaging-nats.link.generated-index.title": {
-    "message": "Praktische Anleitungen",
+    "message": "Guides pratiques",
     "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.📚 Ressources": {
-    "message": "📚 Ressourcen",
+    "message": "📚 Ressources",
     "description": "The label for category '📚 Ressources' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.🛠️ Outils": {
-    "message": "🛠️ Werkzeuge",
+    "message": "🛠️ Outils",
     "description": "The label for category '🛠️ Outils' in sidebar 'docsSidebar'"
   }
 }

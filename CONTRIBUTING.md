@@ -124,13 +124,8 @@ graph LR
 
 ## Versioning
 
-La documentation utilise le [versioning Docusaurus](https://docusaurus.io/docs/versioning) :
-
-- **v2.0** : version stable actuelle (servie par défaut)
-- **next** (3.0.0-alpha) : version en cours de restructuration Diátaxis
-- **v1.0** : ancienne version, non maintenue
-
-Les modifications courantes vont dans `docs/` (version next). La version stable est dans `versioned_docs/version-2.0/`.
+La documentation est en version unique **3.0.0**, structurée selon le framework Diátaxis.
+Toutes les modifications vont dans le dossier `docs/`.
 
 ## Soumettre une contribution
 
