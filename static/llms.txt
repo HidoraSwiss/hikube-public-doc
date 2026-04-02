@@ -1,6 +1,6 @@
 # Hikube Documentation
 
-> Hikube est une plateforme cloud souveraine suisse proposant du Kubernetes managé, des GPU NVIDIA, des VMs, du stockage S3, des bases de données et du messaging. Triple réplication sur 3 datacenters suisses. Conforme nLPD/RGPD, immunisé au CLOUD Act.
+> Hikube est une plateforme cloud souveraine suisse proposant du Kubernetes managé, des GPU, des VMs, du stockage S3, des bases de données et du messaging. Triple réplication sur 3 datacenters suisses. Conforme nLPD/RGPD, immunisé au CLOUD Act.
 
 ## Démarrer
 
