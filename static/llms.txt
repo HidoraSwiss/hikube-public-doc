@@ -1,6 +1,6 @@
 # Hikube Documentation
 
-> Hikube est une plateforme cloud souveraine suisse proposant du Kubernetes managé, des GPU NVIDIA, des VMs, du stockage S3, des bases de données et du messaging — entièrement déployé via kubectl apply. Triple réplication sur 3 datacenters suisses. Conforme nLPD/RGPD, immunisé au CLOUD Act.
+> Hikube est une plateforme cloud souveraine suisse proposant du Kubernetes managé, des GPU NVIDIA, des VMs, du stockage S3, des bases de données et du messaging. Triple réplication sur 3 datacenters suisses. Conforme nLPD/RGPD, immunisé au CLOUD Act.
 
 ## Démarrer
 
@@ -19,7 +19,7 @@
 - [FAQ](https://docs.hikube.cloud/services/kubernetes/faq/)
 - [Dépannage](https://docs.hikube.cloud/services/kubernetes/troubleshooting/)
 
-## GPU as a Service (NVIDIA)
+## GPU as a Service
 
 - [Vue d'ensemble](https://docs.hikube.cloud/services/gpu/overview/)
 - [Concepts](https://docs.hikube.cloud/services/gpu/concepts/)
@@ -30,7 +30,7 @@
 - [FAQ](https://docs.hikube.cloud/services/gpu/faq/)
 - [Dépannage](https://docs.hikube.cloud/services/gpu/troubleshooting/)
 
-## Machines virtuelles (KubeVirt)
+## Machines virtuelles
 
 - [Vue d'ensemble](https://docs.hikube.cloud/services/compute/overview/)
 - [Concepts](https://docs.hikube.cloud/services/compute/concepts/)
