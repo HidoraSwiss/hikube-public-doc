@@ -1,75 +1,89 @@
 # Hikube Documentation
 
-> Hikube est une plateforme cloud souveraine suisse proposant du Kubernetes managé, des GPU, des VMs, du stockage S3, des bases de données et du messaging. Triple réplication sur 3 datacenters suisses. Conforme nLPD/RGPD, immunisé au CLOUD Act.
+> Hikube is a 100% Swiss sovereign cloud platform offering managed Kubernetes,
+> GPU as a Service, virtual machines, S3 object storage,
+> managed databases and messaging.
+> Triple replication across 3 Swiss datacenters (Geneva, Gland, Lucerne).
+> nLPD/GDPR compliant, CLOUD Act immune, ISO 27001.
 
-## Démarrer
+## Available languages
 
-- [Accueil](https://docs.hikube.cloud/)
-- [Introduction à Hikube](https://docs.hikube.cloud/getting-started/introduction/)
-- [Concepts clés](https://docs.hikube.cloud/getting-started/concepts/)
-- [Démarrage rapide](https://docs.hikube.cloud/getting-started/quick-start/)
+This documentation is available in 4 languages:
 
-## Kubernetes managé
+- [Français](https://docs.hikube.cloud/)
+- [English](https://docs.hikube.cloud/en/)
+- [Italiano](https://docs.hikube.cloud/it/)
+- [Deutsch](https://docs.hikube.cloud/de/)
 
-- [Vue d'ensemble](https://docs.hikube.cloud/services/kubernetes/overview/)
-- [Concepts](https://docs.hikube.cloud/services/kubernetes/concepts/)
-- [Démarrage rapide](https://docs.hikube.cloud/services/kubernetes/quick-start/)
-- [Plugins : Cilium, CoreDNS, Ingress NGINX, Cert-Manager, FluxCD, Velero](https://docs.hikube.cloud/services/kubernetes/plugins/cilium/)
-- [API Reference](https://docs.hikube.cloud/services/kubernetes/api-reference/)
-- [FAQ](https://docs.hikube.cloud/services/kubernetes/faq/)
-- [Dépannage](https://docs.hikube.cloud/services/kubernetes/troubleshooting/)
+## Getting started
+
+- [Home](https://docs.hikube.cloud/en/)
+- [Introduction to Hikube](https://docs.hikube.cloud/en/getting-started/introduction/)
+- [Key concepts](https://docs.hikube.cloud/en/getting-started/concepts/)
+- [Quick start](https://docs.hikube.cloud/en/getting-started/quick-start/)
+
+## Managed Kubernetes
+
+- [Overview](https://docs.hikube.cloud/en/services/kubernetes/overview/)
+- [Concepts](https://docs.hikube.cloud/en/services/kubernetes/concepts/)
+- [Quick start](https://docs.hikube.cloud/en/services/kubernetes/quick-start/)
+- [Plugins: Cilium, CoreDNS, Ingress NGINX, Cert-Manager, FluxCD, Velero](https://docs.hikube.cloud/en/services/kubernetes/plugins/cilium/)
+- [API Reference](https://docs.hikube.cloud/en/services/kubernetes/api-reference/)
+- [FAQ](https://docs.hikube.cloud/en/services/kubernetes/faq/)
+- [Troubleshooting](https://docs.hikube.cloud/en/services/kubernetes/troubleshooting/)
 
 ## GPU as a Service
 
-- [Vue d'ensemble](https://docs.hikube.cloud/services/gpu/overview/)
-- [Concepts](https://docs.hikube.cloud/services/gpu/concepts/)
-- [Démarrage rapide](https://docs.hikube.cloud/services/gpu/quick-start/)
-- [Provisionner un GPU sur Kubernetes](https://docs.hikube.cloud/services/gpu/how-to/provision-gpu-kubernetes/)
-- [Provisionner un GPU sur VM (Passthrough)](https://docs.hikube.cloud/services/gpu/how-to/provision-gpu-vm/)
-- [API Reference](https://docs.hikube.cloud/services/gpu/api-reference/)
-- [FAQ](https://docs.hikube.cloud/services/gpu/faq/)
-- [Dépannage](https://docs.hikube.cloud/services/gpu/troubleshooting/)
+- [Overview](https://docs.hikube.cloud/en/services/gpu/overview/)
+- [Concepts](https://docs.hikube.cloud/en/services/gpu/concepts/)
+- [Quick start](https://docs.hikube.cloud/en/services/gpu/quick-start/)
+- [Provision GPU on Kubernetes](https://docs.hikube.cloud/en/services/gpu/how-to/provision-gpu-kubernetes/)
+- [Provision GPU on VM (Passthrough)](https://docs.hikube.cloud/en/services/gpu/how-to/provision-gpu-vm/)
+- [API Reference](https://docs.hikube.cloud/en/services/gpu/api-reference/)
+- [FAQ](https://docs.hikube.cloud/en/services/gpu/faq/)
+- [Troubleshooting](https://docs.hikube.cloud/en/services/gpu/troubleshooting/)
 
-## Machines virtuelles
+## Virtual Machines
 
-- [Vue d'ensemble](https://docs.hikube.cloud/services/compute/overview/)
-- [Concepts](https://docs.hikube.cloud/services/compute/concepts/)
-- [Démarrage rapide](https://docs.hikube.cloud/services/compute/quick-start/)
-- [API Reference](https://docs.hikube.cloud/services/compute/api-reference/)
-- [FAQ](https://docs.hikube.cloud/services/compute/faq/)
-- [Dépannage](https://docs.hikube.cloud/services/compute/troubleshooting/)
+- [Overview](https://docs.hikube.cloud/en/services/compute/overview/)
+- [Concepts](https://docs.hikube.cloud/en/services/compute/concepts/)
+- [Quick start](https://docs.hikube.cloud/en/services/compute/quick-start/)
+- [API Reference](https://docs.hikube.cloud/en/services/compute/api-reference/)
+- [FAQ](https://docs.hikube.cloud/en/services/compute/faq/)
+- [Troubleshooting](https://docs.hikube.cloud/en/services/compute/troubleshooting/)
 
-## Stockage
+## Storage
 
-- [Vue d'ensemble](https://docs.hikube.cloud/services/storage/)
-- [Buckets S3](https://docs.hikube.cloud/services/storage/buckets/overview/)
+- [Overview](https://docs.hikube.cloud/en/services/storage/)
+- [S3 Buckets](https://docs.hikube.cloud/en/services/storage/buckets/overview/)
 
-## Bases de données managées
+## Managed Databases
 
-- [Vue d'ensemble](https://docs.hikube.cloud/services/databases/)
-- [PostgreSQL](https://docs.hikube.cloud/services/databases/postgresql/overview/)
-- [MySQL](https://docs.hikube.cloud/services/databases/mysql/overview/)
-- [Redis](https://docs.hikube.cloud/services/databases/redis/overview/)
-- [ClickHouse](https://docs.hikube.cloud/services/databases/clickhouse/overview/)
+- [Overview](https://docs.hikube.cloud/en/services/databases/)
+- [PostgreSQL](https://docs.hikube.cloud/en/services/databases/postgresql/overview/)
+- [MySQL](https://docs.hikube.cloud/en/services/databases/mysql/overview/)
+- [Redis](https://docs.hikube.cloud/en/services/databases/redis/overview/)
+- [ClickHouse](https://docs.hikube.cloud/en/services/databases/clickhouse/overview/)
 
-## Messaging managé
+## Managed Messaging
 
-- [Vue d'ensemble](https://docs.hikube.cloud/services/messaging/)
-- [Kafka](https://docs.hikube.cloud/services/messaging/kafka/overview/)
-- [RabbitMQ](https://docs.hikube.cloud/services/messaging/rabbitmq/overview/)
-- [NATS](https://docs.hikube.cloud/services/messaging/nats/overview/)
+- [Overview](https://docs.hikube.cloud/en/services/messaging/)
+- [Kafka](https://docs.hikube.cloud/en/services/messaging/kafka/overview/)
+- [RabbitMQ](https://docs.hikube.cloud/en/services/messaging/rabbitmq/overview/)
+- [NATS](https://docs.hikube.cloud/en/services/messaging/nats/overview/)
 
-## Outils
+## Tools
 
-- [Terraform](https://docs.hikube.cloud/tools/terraform/)
+- [Terraform](https://docs.hikube.cloud/en/tools/terraform/)
 
-## Ressources
+## Resources
 
-- [Dépannage global](https://docs.hikube.cloud/resources/troubleshooting/)
-- [FAQ](https://docs.hikube.cloud/resources/faq/)
-- [Glossaire](https://docs.hikube.cloud/resources/glossary/)
+- [Global troubleshooting](https://docs.hikube.cloud/en/resources/troubleshooting/)
+- [FAQ](https://docs.hikube.cloud/en/resources/faq/)
+- [Glossary](https://docs.hikube.cloud/en/resources/glossary/)
 
 ## Support
 
-- Email : support@hidora.io
-- Site : https://hikube.cloud
+- Email: support@hidora.io
+- Website: https://hikube.cloud
+- LinkedIn: https://www.linkedin.com/company/hidora
