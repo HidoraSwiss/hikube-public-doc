@@ -115,8 +115,8 @@ Der **WholeIP**-Modus weist eine dedizierte öffentliche IP mit allen offenen Po
 stateDiagram-v2
     [*] --> Provisioning: kubectl apply
     Provisioning --> Running: Festplatten bereit + VM gestartet
-    Running --> Stopped: runStrategy: Halted
-    Stopped --> Running: runStrategy: Always
+    Running --> Stopped: runStrategy = Halted
+    Stopped --> Running: runStrategy = Always
     Running --> LiveMigration: Knotenwartung
     LiveMigration --> Running: Migration abgeschlossen
     Running --> [*]: kubectl delete

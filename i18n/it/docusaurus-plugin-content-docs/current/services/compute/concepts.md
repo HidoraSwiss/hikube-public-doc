@@ -115,8 +115,8 @@ La modalità **WholeIP** assegna un IP pubblico dedicato con tutte le porte aper
 stateDiagram-v2
     [*] --> Provisioning: kubectl apply
     Provisioning --> Running: Dischi pronti + VM avviata
-    Running --> Stopped: runStrategy: Halted
-    Stopped --> Running: runStrategy: Always
+    Running --> Stopped: runStrategy = Halted
+    Stopped --> Running: runStrategy = Always
     Running --> LiveMigration: Manutenzione nodo
     LiveMigration --> Running: Migrazione completata
     Running --> [*]: kubectl delete

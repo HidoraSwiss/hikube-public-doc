@@ -115,8 +115,8 @@ The **WholeIP** mode assigns a dedicated public IP with all ports open. Useful w
 stateDiagram-v2
     [*] --> Provisioning: kubectl apply
     Provisioning --> Running: Disks ready + VM started
-    Running --> Stopped: runStrategy: Halted
-    Stopped --> Running: runStrategy: Always
+    Running --> Stopped: runStrategy = Halted
+    Stopped --> Running: runStrategy = Always
     Running --> LiveMigration: Node maintenance
     LiveMigration --> Running: Migration complete
     Running --> [*]: kubectl delete
