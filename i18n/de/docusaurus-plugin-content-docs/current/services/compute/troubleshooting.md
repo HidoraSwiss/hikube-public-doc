@@ -107,7 +107,7 @@ Dieses Problem betrifft alle Distributionen, die `systemd-resolved` verwenden (U
    ```yaml title="vm.yaml"
    spec:
      disks:
-       - data-volume  # Muss mit metadata.name des VMDisk übereinstimmen
+       - name: data-volume  # Muss mit metadata.name des VMDisk übereinstimmen
    ```
 
 2. Überprüfen Sie den Status des VMDisk:
@@ -116,7 +116,7 @@ Dieses Problem betrifft alle Distributionen, die `systemd-resolved` verwenden (U
    kubectl describe vmdisk data-volume
    ```
 
-3. Die auf Hikube verfügbaren storageClasses sind: `local`, `replicated` und `replicated-async`. Für eine VM (isolierte Instanz) wird `replicated` empfohlen.
+3. Die auf Hikube verfügbaren storageClasses sind: `local`, `local-encrypted`, `replicated`, `replicated-encrypted`, `replicated-async`, `replicated-async-encrypted`, `replicated-async-windows` und `replicated-async-windows-encrypted`. Für eine VM (isolierte Instanz) wird `replicated` empfohlen.
 
 ---
 

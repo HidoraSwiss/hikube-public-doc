@@ -68,7 +68,7 @@ kind: VMDisk
 metadata:
   name: data-volume
 spec:
-  size: 100Gi
+  storage: 100Gi
   storageClass: replicated
 ```
 
@@ -81,7 +81,7 @@ spec:
   instanceType: u1.large
   instanceProfile: ubuntu
   disks:
-    - data-volume
+    - name: data-volume
 ```
 
 ---
@@ -149,7 +149,7 @@ Cloud-init viene eseguito al primo avvio della VM e permette di installare pacch
 
 | Parametro | Ruolo | Esempi |
 |-----------|------|----------|
-| `instanceProfile` | Carica i **driver e i kernel** adatti all'OS | `ubuntu`, `centos`, `windows.2k25.virtio` |
+| `instanceProfile` | Carica i **driver e i kernel** adatti all'OS | `ubuntu`, `centos.stream9`, `windows.2k25.virtio` |
 | `instanceType` | Definisce la **dimensione** della VM (CPU/RAM) | `s1.small`, `u1.large`, `m1.2xlarge` |
 
 `instanceProfile` non determina l'immagine OS — questa è definita nella risorsa **VMDisk** tramite `source.image.name`. Il profilo serve a caricare i driver e i kernel ottimizzati per il sistema operativo. È principalmente utile per **Windows** (driver virtio). `instanceType` dimensiona le risorse CPU e memoria allocate alla VM.
