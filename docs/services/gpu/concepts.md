@@ -15,7 +15,7 @@ graph TB
         subgraph "GPU physiques"
             G1[NVIDIA L40S]
             G2[NVIDIA A100]
-            G3[NVIDIA H100]
+            G3[NVIDIA RTX PRO 6000<br/>Blackwell]
         end
 
         subgraph "Allocation VM"
@@ -58,19 +58,20 @@ graph TB
 
 ## Types de GPU disponibles
 
-| GPU | Architecture | Mémoire | Performance (INT8) | Cas d'usage |
-|-----|-------------|---------|-------------------|-------------|
-| **L40S** | Ada Lovelace | 48 GB GDDR6 | 362 TOPS | Inférence, développement, prototypage |
-| **A100** | Ampere | 80 GB HBM2e | 312 TOPS | Entraînement ML, fine-tuning |
-| **H100** | Hopper | 80 GB HBM3 | 1979 TOPS | LLM, calcul exascale, entraînement distribué |
+| GPU | Architecture | Mémoire | Cas d'usage |
+|-----|-------------|---------|-------------|
+| **L40S** | Ada Lovelace | 48 GB GDDR6 | Inférence, développement, prototypage |
+| **A100 (PCIe / SXM4)** | Ampere | 80 GB HBM2e | Entraînement ML, fine-tuning |
+| **RTX PRO 6000 Blackwell** | Blackwell | 96 GB GDDR7 | LLM, calcul intensif, entraînement distribué |
 
 ### Identifiants GPU dans les manifestes
 
-| GPU | Valeur `gpus[].name` / `nvidia.com/` |
-|-----|---------------------------------------|
+| GPU | Valeur `gpus[].name` |
+|-----|----------------------|
 | L40S | `nvidia.com/AD102GL_L40S` |
-| A100 | `nvidia.com/GA100_A100_PCIE_80GB` |
-| H100 | `nvidia.com/H100_94GB` |
+| A100 PCIe 80 Go | `nvidia.com/GA100_A100_PCIE_80GB` |
+| A100 SXM4 80 Go | `nvidia.com/GA100_A100_SXM4_80GB` |
+| RTX PRO 6000 Blackwell | `nvidia.com/GB202GL_RTX_PRO_6000_BLACKWELL_SERVER_EDITION` |
 
 ---
 
@@ -93,8 +94,8 @@ Prévoyez **8 à 16 vCPU par GPU**. Pour un seul GPU, un `u1.2xlarge` (8 vCPU, 3
 
 Les GPU sont exposés aux pods via le **NVIDIA Device Plugin** :
 
-- Le GPU Operator doit être activé sur le cluster (`plugins.gpu-operator.enabled: true`)
-- Les pods demandent un GPU via `resources.limits` (ex: `nvidia.com/AD102GL_L40S: 1`)
+- Le GPU Operator doit être activé sur le cluster (`addons.gpuOperator.enabled: true`)
+- Les pods demandent un GPU via `resources.limits` (`nvidia.com/gpu: 1`)
 - Le scheduler Kubernetes place le pod sur un nœud disposant du GPU demandé
 - Les nœuds GPU sont configurés dans les **node groups** avec le champ `gpus[]`
 
@@ -108,7 +109,7 @@ graph LR
 
     subgraph "Pod"
         C[Container]
-        RL[resources.limits:<br/>nvidia.com/AD102GL_L40S: 1]
+        RL[resources.limits:<br/>nvidia.com/gpu: 1]
     end
 
     GPU --> DP
@@ -136,8 +137,8 @@ graph LR
 |-----------|--------|
 | GPU par VM | Multiples (selon disponibilité) |
 | GPU par pod Kubernetes | Multiples (via `resources.limits`) |
-| Types de GPU | L40S, A100, H100 |
-| Mémoire GPU max | 80 GB (A100/H100) |
+| Types de GPU | L40S, A100 (PCIe/SXM4), RTX PRO 6000 Blackwell |
+| Mémoire GPU max | 96 GB (RTX PRO 6000 Blackwell) |
 
 ---
 
