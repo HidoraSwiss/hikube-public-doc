@@ -41,7 +41,16 @@ spec:
       ephemeralStorage: 100Gi
       gpus:
         - name: "nvidia.com/AD102GL_L40S"
+
+  addons:
+    # Richiesto: installa i driver NVIDIA e il device plugin
+    gpuOperator:
+      enabled: true
 ```
+
+:::warning Addon `gpuOperator` richiesto
+Il collegamento delle GPU ai node group non è sufficiente: senza `addons.gpuOperator.enabled: true`, i driver NVIDIA e il device plugin non sono installati nel cluster tenant, e `nvidia.com/gpu` resta a 0 sui nodi.
+:::
 
 :::tip
 Separate i vostri workload CPU e GPU in node group distinti. Questo permette uno scaling indipendente e un migliore controllo dei costi.
@@ -170,6 +179,10 @@ spec:
       gpus:
         - name: "nvidia.com/GA100_A100_PCIE_80GB"
         - name: "nvidia.com/GA100_A100_PCIE_80GB"
+
+  addons:
+    gpuOperator:
+      enabled: true
 ```
 
 Per indirizzare un node group specifico nei vostri deployment, utilizzate `nodeSelector`:
@@ -202,7 +215,7 @@ spec:
 ```
 
 :::note
-Le GPU disponibili per Kubernetes sono le stesse delle VM: **L40S** (inferenza/dev), **A100** (addestramento ML) e **H100** (LLM/exascale). Consultate il [riferimento API GPU](../api-reference.md) per le specifiche complete.
+Le GPU disponibili per Kubernetes sono le stesse delle VM: **L40S** (inferenza/dev), **A100 PCIe/SXM4** (addestramento ML) e **RTX PRO 6000 Blackwell** (LLM/calcolo intensivo). Consultate il [riferimento API GPU](../api-reference.md) per i nomi di risorsa esatti e le specifiche.
 :::
 
 ## Verifica

@@ -3,6 +3,8 @@ sidebar_position: 1
 title: Panoramica dei GPU
 ---
 
+import NavigationFooter from '@site/src/components/NavigationFooter';
+
 # GPU su Hikube
 
 Hikube propone l'accesso agli acceleratori **NVIDIA** tramite GPU Passthrough, permettendo l'esecuzione di workload che necessitano di accelerazione hardware. Le GPU sono disponibili per due tipi di workload: macchine virtuali e pod Kubernetes.
@@ -37,28 +39,28 @@ Le GPU possono essere allocate ai worker Kubernetes e poi assegnate ai pod trami
 
 ## 🖥️ Hardware Disponibile
 
-Hikube propone tre tipi di GPU NVIDIA:
+Hikube propone diverse GPU NVIDIA:
 
 ### **NVIDIA L40S**
 
 - **Architettura**: Ada Lovelace
 - **Memoria**: 48 GB GDDR6 con ECC
-- **Prestazioni**: 362 TOPS (INT8), 91.6 TFLOPs (FP32)
-- **Uso tipico**: IA generativa, inferenza, rendering tempo reale
+- **Nome di risorsa**: `nvidia.com/AD102GL_L40S`
+- **Uso tipico**: IA generativa, inferenza, rendering in tempo reale
 
-### **NVIDIA A100**
+### **NVIDIA A100 80 GB (PCIe / SXM4)**
 
 - **Architettura**: Ampere
 - **Memoria**: 80 GB HBM2e con ECC
-- **Prestazioni**: 312 TOPS (INT8), 624 TFLOPs (Tensor)
-- **Uso tipico**: Addestramento ML, calcolo ad alte prestazioni
+- **Nomi di risorsa**: `nvidia.com/GA100_A100_PCIE_80GB`, `nvidia.com/GA100_A100_SXM4_80GB`
+- **Uso tipico**: Addestramento ML, calcolo ad alte prestazioni (la variante SXM4 supporta NVLink per il multi-GPU)
 
-### **NVIDIA H100**
+### **NVIDIA RTX PRO 6000 Blackwell**
 
-- **Architettura**: Hopper
-- **Memoria**: 80 GB HBM3 con ECC
-- **Prestazioni**: 1979 TOPS (INT8), 989 TFLOPs (Tensor)
-- **Uso tipico**: LLM, transformer, calcolo exascale
+- **Architettura**: Blackwell (Server Edition)
+- **Memoria**: 96 GB GDDR7 con ECC
+- **Nome di risorsa**: `nvidia.com/GB202GL_RTX_PRO_6000_BLACKWELL_SERVER_EDITION`
+- **Uso tipico**: LLM, transformer, calcolo intensivo
 
 ---
 
@@ -68,21 +70,21 @@ Hikube propone tre tipi di GPU NVIDIA:
 
 ```mermaid
 flowchart TD
-    subgraph HIKUBE["Infrastructure Hikube"]
-        subgraph NODE["Nœud Physique"]
+    subgraph HIKUBE["Infrastruttura Hikube"]
+        subgraph NODE["Nodo Fisico"]
             GPU1["🎮 GPU L40S"]
             GPU2["🎮 GPU A100"]
-            GPU3["🎮 GPU H100"]
+            GPU3["🎮 GPU RTX PRO 6000"]
         end
-
+        
         subgraph VM1["VM Instance"]
-            APP1["Application GPU"]
+            APP1["Applicazione GPU"]
         end
     end
-
+    
     GPU1 --> VM1
     VM1 --> APP1
-
+    
     style GPU1 fill:#90EE90
     style VM1 fill:#FFE4B5
     style APP1 fill:#ADD8E6
@@ -98,23 +100,23 @@ flowchart TD
             GPU2["🎮 GPU A100"]
             KUBELET["kubelet"]
         end
-
+        
         subgraph POD1["Pod"]
             CONTAINER1["Container GPU"]
         end
-
+        
         subgraph POD2["Pod"]
             CONTAINER2["Container GPU"]
         end
     end
-
+    
     GPU1 --> KUBELET
     GPU2 --> KUBELET
     KUBELET --> POD1
     KUBELET --> POD2
     POD1 --> CONTAINER1
     POD2 --> CONTAINER2
-
+    
     style GPU1 fill:#90EE90
     style GPU2 fill:#90EE90
     style POD1 fill:#FFE4B5
@@ -129,11 +131,14 @@ flowchart TD
 
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
-kind: VirtualMachine
+kind: VMInstance
 spec:
+  runStrategy: Always
   instanceType: "u1.xlarge"
   gpus:
     - name: "nvidia.com/AD102GL_L40S"
+  disks:
+    - name: vm-gpu-disk
 ```
 
 ### **GPU su Kubernetes Worker**
@@ -147,6 +152,9 @@ spec:
       instanceType: "u1.xlarge"
       gpus:
         - name: "nvidia.com/AD102GL_L40S"
+  addons:
+    gpuOperator:
+      enabled: true
 ```
 
 ### **GPU in Pod Kubernetes**
@@ -173,7 +181,7 @@ spec:
 | **Prestazioni** | Native (passthrough) | Native (device plugin) |
 | **Gestione** | Manuale | Automatizzata |
 | **Scaling** | Solo verticale | Orizzontale + Verticale |
-| **Condivisione** | No | Si (tra pod) |
+| **Condivisione** | No | Sì (tra pod) |
 | **Complessità** | Semplice | Complessa |
 
 ---
@@ -183,9 +191,19 @@ spec:
 ### **Per le Macchine Virtuali**
 
 - [Creare una VM GPU](./quick-start.md) → Guida pratica
-- [Riferimento API](./api-reference.md) → Configurazione completa
+- [API Reference](./api-reference.md) → Configurazione completa
 
 ### **Per Kubernetes**
 
 - [Cluster GPU](../kubernetes/overview.md) → Worker con GPU
   - [Configurazione avanzata](../kubernetes/api-reference.md) → NodeGroup GPU
+
+<NavigationFooter
+  nextSteps={[
+    {label: "Concetti", href: "../concepts"},
+    {label: "Avvio rapido", href: "../quick-start"},
+  ]}
+  seeAlso={[
+    {label: "Risorse di calcolo", href: "../../compute/"},
+  ]}
+/>

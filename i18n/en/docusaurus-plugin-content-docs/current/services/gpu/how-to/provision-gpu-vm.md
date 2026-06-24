@@ -4,7 +4,7 @@ title: "How to provision a GPU on a VM"
 
 # How to provision a GPU on a VM
 
-Hikube allows you to attach one or more NVIDIA GPUs directly to a virtual machine. This guide explains how to choose the right GPU type for your workload, create a VM with GPU, and verify that hardware acceleration is available.
+Hikube allows you to attach one or more NVIDIA GPUs directly to a virtual machine. This guide explains how to choose the GPU type suited to your workload, create a VM with GPU, and verify that hardware acceleration is available.
 
 ## Prerequisites
 
@@ -16,31 +16,43 @@ Hikube allows you to attach one or more NVIDIA GPUs directly to a virtual machin
 
 ### 1. Choose the GPU type
 
-Hikube offers three NVIDIA GPU families suited to different use cases:
+Hikube offers several NVIDIA GPUs suited to different use cases:
 
-| GPU | Architecture | Memory | Performance | Use case |
-|-----|-------------|---------|-------------|----------|
-| **L40S** | Ada Lovelace | 48 GB GDDR6 | 362 TOPS (INT8) | Inference, development, prototyping |
-| **A100** | Ampere | 80 GB HBM2e | 312 TOPS (INT8) | ML training, fine-tuning |
-| **H100** | Hopper | 80 GB HBM3 | 1979 TOPS (INT8) | LLM, exascale computing, distributed training |
+| GPU | Architecture | Memory | Use case |
+|-----|-------------|---------|-------------|
+| **L40S** | Ada Lovelace | 48 GB GDDR6 | Inference, development, prototyping |
+| **A100 (PCIe / SXM4)** | Ampere | 80 GB HBM2e | ML training, fine-tuning |
+| **RTX PRO 6000 Blackwell** | Blackwell | 96 GB GDDR7 | LLM, intensive computing, distributed training |
 
 :::tip Which GPU to choose?
-Start with an **L40S** for development and prototyping. Move to an **A100** for standard ML model training, and reserve the **H100** for demanding workloads such as LLM training or high-performance computing.
+Start with an **L40S** for development and prototyping. Move to an **A100** for standard ML model training, and reserve the **RTX PRO 6000 (Blackwell)** for the most demanding workloads such as LLM training or high-performance computing.
 :::
 
 The GPU identifiers to use in your manifests are:
 
 | GPU | `gpus[].name` value |
-|-----|---------------------|
+|-----|----------------------|
 | L40S | `nvidia.com/AD102GL_L40S` |
-| A100 | `nvidia.com/GA100_A100_PCIE_80GB` |
-| H100 | `nvidia.com/H100_94GB` |
+| A100 PCIe 80 GB | `nvidia.com/GA100_A100_PCIE_80GB` |
+| A100 SXM4 80 GB | `nvidia.com/GA100_A100_SXM4_80GB` |
+| RTX PRO 6000 Blackwell | `nvidia.com/GB202GL_RTX_PRO_6000_BLACKWELL_SERVER_EDITION` |
 
 ### 2. Create the VM manifest with GPU
 
 Create a manifest that declares the desired GPU in the `spec.gpus` section:
 
 ```yaml title="gpu-vm.yaml"
+apiVersion: apps.cozystack.io/v1alpha1
+kind: VMDisk
+metadata:
+  name: gpu-workstation-disk
+spec:
+  source:
+    image:
+      name: ubuntu-2404
+  storage: 100Gi
+  storageClass: replicated
+---
 apiVersion: apps.cozystack.io/v1alpha1
 kind: VMInstance
 metadata:
@@ -51,9 +63,8 @@ spec:
   instanceType: u1.2xlarge
   gpus:
     - name: "nvidia.com/AD102GL_L40S"
-  systemDisk:
-    size: 100Gi
-    storageClass: replicated
+  disks:
+    - name: gpu-workstation-disk
   external: true
   externalMethod: PortList
   externalPorts:
@@ -132,6 +143,17 @@ For intensive workloads (distributed training, large-scale inference), you can a
 
 ```yaml title="multi-gpu-vm.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
+kind: VMDisk
+metadata:
+  name: multi-gpu-disk
+spec:
+  source:
+    image:
+      name: ubuntu-2404
+  storage: 200Gi
+  storageClass: replicated
+---
+apiVersion: apps.cozystack.io/v1alpha1
 kind: VMInstance
 metadata:
   name: multi-gpu-workstation
@@ -140,13 +162,12 @@ spec:
   instanceProfile: ubuntu
   instanceType: u1.8xlarge
   gpus:
-    - name: "nvidia.com/H100_94GB"
-    - name: "nvidia.com/H100_94GB"
-    - name: "nvidia.com/H100_94GB"
-    - name: "nvidia.com/H100_94GB"
-  systemDisk:
-    size: 200Gi
-    storageClass: replicated
+    - name: "nvidia.com/GA100_A100_SXM4_80GB"
+    - name: "nvidia.com/GA100_A100_SXM4_80GB"
+    - name: "nvidia.com/GA100_A100_SXM4_80GB"
+    - name: "nvidia.com/GA100_A100_SXM4_80GB"
+  disks:
+    - name: multi-gpu-disk
   external: true
   externalMethod: PortList
   externalPorts:
