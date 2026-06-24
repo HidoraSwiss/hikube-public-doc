@@ -47,18 +47,18 @@ provider "kubectl" {
 
 ```hcl title="variables.tf"
 variable "ssh_public_key" {
-  description = "Clé SSH publique pour l'accès aux VMs"
+  description = "Chiave SSH pubblica per l'accesso alle VM"
   type        = string
 }
 
 variable "cluster_name" {
-  description = "Nom du cluster Kubernetes"
+  description = "Nome del cluster Kubernetes"
   type        = string
   default     = "terraform-cluster"
 }
 
 variable "vm_name" {
-  description = "Nom de la machine virtuelle"
+  description = "Nome della macchina virtuale"
   type        = string
   default     = "terraform-vm"
 }
@@ -80,6 +80,9 @@ resource "kubectl_manifest" "kubernetes_cluster" {
       namespace = "default"
     }
     spec = {
+      version      = "v1.34"
+      storageClass = "replicated"
+
       controlPlane = {
         replicas = 2
       }
@@ -90,11 +93,18 @@ resource "kubectl_manifest" "kubernetes_cluster" {
           maxReplicas      = 5
           instanceType     = "s1.large"
           ephemeralStorage = "50Gi"
-          roles = ["ingress-nginx"]
+          roles            = ["ingress-nginx"]
         }
+        # Esempio di gruppo GPU (richiede l'addon gpuOperator qui sotto)
+        # gpu = {
+        #   minReplicas      = 0
+        #   maxReplicas      = 4
+        #   instanceType     = "u1.2xlarge"
+        #   ephemeralStorage = "200Gi"
+        #   gpus             = [{ name = "nvidia.com/AD102GL_L40S" }]
+        #   roles            = []
+        # }
       }
-
-      storageClass = "replicated"
 
       addons = {
         certManager = {
@@ -106,22 +116,26 @@ resource "kubectl_manifest" "kubernetes_cluster" {
             "${var.cluster_name}.example.com"
           ]
         }
+        # Richiesto per esporre le GPU ai pod di un gruppo di nodi GPU
+        # gpuOperator = {
+        #   enabled = true
+        # }
       }
     }
   })
 }
 
-# Récupérer le kubeconfig
+# Recuperare il kubeconfig
 data "kubernetes_secret" "cluster_kubeconfig" {
   depends_on = [kubectl_manifest.kubernetes_cluster]
-
+  
   metadata {
     name      = "${var.cluster_name}-admin-kubeconfig"
     namespace = "default"
   }
 }
 
-# Sauvegarder le kubeconfig
+# Salvare il kubeconfig
 resource "local_file" "kubeconfig" {
   content = base64decode(
     data.kubernetes_secret.cluster_kubeconfig.data["super-admin.conf"]
@@ -134,22 +148,45 @@ resource "local_file" "kubeconfig" {
 ### Distribuire una Macchina Virtuale
 
 ```hcl title="virtual-machine.tf"
-resource "kubectl_manifest" "virtual_machine" {
+# Il disco è una risorsa VMDisk separata, referenziata dalla VM
+resource "kubectl_manifest" "vm_disk" {
   yaml_body = yamlencode({
     apiVersion = "apps.cozystack.io/v1alpha1"
-    kind       = "VirtualMachine"
+    kind       = "VMDisk"
+    metadata = {
+      name = "${var.vm_name}-disk"
+    }
+    spec = {
+      source = {
+        image = {
+          name = "ubuntu-2404"
+        }
+      }
+      storage      = "50Gi"
+      storageClass = "replicated"
+    }
+  })
+}
+
+resource "kubectl_manifest" "virtual_machine" {
+  depends_on = [kubectl_manifest.vm_disk]
+
+  yaml_body = yamlencode({
+    apiVersion = "apps.cozystack.io/v1alpha1"
+    kind       = "VMInstance"
     metadata = {
       name = var.vm_name
     }
     spec = {
-      running         = true
+      runStrategy     = "Always"
       instanceProfile = "ubuntu"
       instanceType    = "u1.xlarge"
 
-      systemDisk = {
-        size         = "50Gi"
-        storageClass = "replicated"
-      }
+      disks = [
+        {
+          name = "${var.vm_name}-disk"
+        }
+      ]
 
       external       = true
       externalMethod = "PortList"
@@ -165,14 +202,14 @@ resource "kubectl_manifest" "virtual_machine" {
             shell: /bin/bash
             ssh_authorized_keys:
               - ${var.ssh_public_key}
-
+        
         package_update: true
         packages:
           - curl
           - wget
           - git
           - docker.io
-
+        
         runcmd:
           - systemctl enable docker
           - systemctl start docker
@@ -186,28 +223,52 @@ resource "kubectl_manifest" "virtual_machine" {
 ### Distribuire una VM con GPU
 
 ```hcl title="vm-gpu.tf"
-resource "kubectl_manifest" "vm_gpu" {
+resource "kubectl_manifest" "vm_gpu_disk" {
   yaml_body = yamlencode({
     apiVersion = "apps.cozystack.io/v1alpha1"
-    kind       = "VirtualMachine"
+    kind       = "VMDisk"
+    metadata = {
+      name = "gpu-vm-disk"
+    }
+    spec = {
+      source = {
+        image = {
+          name = "ubuntu-2404"
+        }
+      }
+      storage      = "100Gi"
+      storageClass = "replicated"
+    }
+  })
+}
+
+resource "kubectl_manifest" "vm_gpu" {
+  depends_on = [kubectl_manifest.vm_gpu_disk]
+
+  yaml_body = yamlencode({
+    apiVersion = "apps.cozystack.io/v1alpha1"
+    kind       = "VMInstance"
     metadata = {
       name = "gpu-vm"
     }
     spec = {
-      running         = true
+      runStrategy     = "Always"
       instanceProfile = "ubuntu"
       instanceType    = "u1.xlarge"
 
       gpus = [
         {
+          # Modelli: nvidia.com/AD102GL_L40S, nvidia.com/GA100_A100_PCIE_80GB,
+          # nvidia.com/GA100_A100_SXM4_80GB, nvidia.com/GB202GL_RTX_PRO_6000_BLACKWELL_SERVER_EDITION
           name = "nvidia.com/AD102GL_L40S"
         }
       ]
 
-      systemDisk = {
-        size         = "100Gi"
-        storageClass = "replicated"
-      }
+      disks = [
+        {
+          name = "gpu-vm-disk"
+        }
+      ]
 
       external       = true
       externalMethod = "PortList"
@@ -221,15 +282,15 @@ resource "kubectl_manifest" "vm_gpu" {
           - name: ubuntu
             sudo: ALL=(ALL) NOPASSWD:ALL
             shell: /bin/bash
-
+        
         package_update: true
         packages:
           - curl
           - wget
           - build-essential
-
+        
         runcmd:
-          # Installation pilotes NVIDIA
+          # Installazione driver NVIDIA
           - wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.0-1_all.deb
           - dpkg -i cuda-keyring_1.0-1_all.deb
           - apt-get update
@@ -256,13 +317,13 @@ resource "kubectl_manifest" "postgres" {
       size         = "20Gi"
       replicas     = 2
       storageClass = "replicated"
-
+      
       users = {
         admin = {
           password = var.postgres_password
         }
       }
-
+      
       databases = {
         myapp = {
           roles = {
@@ -275,7 +336,7 @@ resource "kubectl_manifest" "postgres" {
 }
 
 variable "postgres_password" {
-  description = "Password for PostgreSQL admin user"
+  description = "Password per l'utente admin di PostgreSQL"
   type        = string
   sensitive   = true
 }
@@ -289,17 +350,17 @@ variable "postgres_password" {
 
 ```hcl title="outputs.tf"
 output "cluster_kubeconfig" {
-  description = "Chemin vers le kubeconfig du cluster"
+  description = "Percorso del kubeconfig del cluster"
   value       = local_file.kubeconfig.filename
 }
 
 output "vm_status" {
-  description = "Commande pour vérifier le statut de la VM"
-  value       = "kubectl get virtualmachine ${var.vm_name}"
+  description = "Comando per verificare lo stato della VM"
+  value       = "kubectl get vminstance ${var.vm_name}"
 }
 
 output "postgres_connection" {
-  description = "Commande pour se connecter à PostgreSQL"
+  description = "Comando per connettersi a PostgreSQL"
   value       = "kubectl exec -it postgres-terraform-postgres-0 -- psql -U admin -d myapp"
   sensitive   = true
 }
@@ -308,14 +369,14 @@ output "postgres_connection" {
 ### File terraform.tfvars
 
 ```hcl title="terraform.tfvars"
-# Configuration de base
+# Configurazione di base
 cluster_name = "my-prod-cluster"
 vm_name      = "my-app-vm"
 
-# Votre clé SSH publique
+# La vostra chiave SSH pubblica
 ssh_public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQ... user@hostname"
 
-# Mot de passe PostgreSQL
+# Password PostgreSQL
 postgres_password = "your-secure-password-here"
 ```
 
