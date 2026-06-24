@@ -108,11 +108,6 @@ Voir [Méthodes d’exposition réseau](#méthodes-dexposition-réseau).
 | `s1`  | **Standard** — CPU partagés/burstables, ratio vCPU:RAM 1:2            |
 | `u1`  | **Universal** — usage général, ratio 1:4 (par défaut)                |
 | `m1`  | **Memory optimized** — ratio 1:8                                      |
-| `cx1` | **Compute eXclusive** — vCPU dédiés (pas de surengagement)            |
-| `o1`  | **Overcommit** — basé sur U avec mémoire surengagée                  |
-| `n1`  | **Network** — workloads réseau intensifs (DPDK)                      |
-| `rt1` | **Realtime** — applications temps réel                               |
-| `gn1` | **GPU NVIDIA** — pré-configuré pour GPU (voir note ci-dessous)        |
 
 ```yaml
 # Exemples de la série Universal (ratio 1:4)
@@ -143,7 +138,7 @@ instanceType: m1.8xlarge   # 32 vCPU, 256 Go RAM
 ```
 
 :::tip GPU et `instanceType`
-Pour attacher un GPU, conservez une série généraliste (`u1`, `s1`…) et déclarez le GPU via le champ [`gpus`](#gpu). La série `gn1` référence en interne un device par défaut qui ne correspond pas forcément au matériel Hikube : préférez `u1.*` + `gpus` pour un comportement déterministe. Le pilote NVIDIA requiert **au moins 4 Gio de RAM**.
+Pour attacher un GPU, choisissez une série généraliste (`u1`, `s1`…) et déclarez le GPU via le champ [`gpus`](#gpu). Le pilote NVIDIA requiert **au moins 4 Gio de RAM**.
 :::
 
 ---
@@ -163,7 +158,7 @@ Valeurs disponibles (extrait) :
 | openSUSE    | `opensuse.leap`, `opensuse.tumbleweed`                                                    |
 | SLES        | `sles`                                                                                    |
 | Autres      | `alpine`, `cirros`                                                                        |
-| Windows     | `windows.10`, `windows.11`, `windows.2k16`, `windows.2k19`, `windows.2k22`, `windows.2k25` (+ variantes `.virtio`) |
+| Windows     | `windows.2k22.virtio`, `windows.2k25.virtio`, `windows.10.virtio`, `windows.11.virtio` (variantes `.virtio` **recommandées**) ; variantes sans virtio également disponibles (`windows.2k22`…) |
 
 :::note
 Il n’existe **pas** de profil `debian` ni `rocky`/`almalinux` dédié. Pour ces distributions, utilisez `ubuntu` (base Debian) ou laissez `instanceProfile: ""`. Pour Windows, utilisez toujours une variante `.virtio` (ex : `windows.2k25.virtio`) afin de charger les drivers virtio.
@@ -307,7 +302,7 @@ spec:
 
 ### Vue d’ensemble
 
-L’API `VMDisk` gère les disques virtuels attachés aux VMs. Elle supporte plusieurs sources d’image : **HTTP**, **Golden Image** préchargée, **upload** local, ou disque vide.
+L’API `VMDisk` gère les disques virtuels attachés aux VMs. Elle supporte plusieurs sources d’image : **HTTP**, **Golden Image** préchargée, ou disque vide.
 
 ```yaml title="disk-example.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
@@ -327,14 +322,10 @@ spec:
 
 | Paramètre      | Type            | Description                                  | Défaut       | Requis |
 | -------------- | --------------- | -------------------------------------------- | ------------ | ------ |
+| `storage`      | `int`/`string`  | Taille du disque                             | `5Gi`        | ✅     |
+| `storageClass` | `string`        | Classe de stockage                           | `replicated` | ✅     |
 | `source`       | `object`        | Source de l’image disque (voir ci-dessous)   | `{}`         | non    |
 | `optical`      | `boolean`       | Disque optique / ISO (installeur)            | `false`      | non    |
-| `storage`      | `int`/`string`  | Taille du disque                             | `5Gi`        | non    |
-| `storageClass` | `string`        | Classe de stockage                           | `replicated` | non    |
-
-:::warning Champ `storage`
-Le champ de taille s’appelle **`storage`** (et non `size`).
-:::
 
 ---
 
@@ -393,16 +384,6 @@ spec:
 :::warning Images ISO
 Les images de type **ISO** (Windows, Proxmox) sont des installeurs et non des images cloud prêtes à l’emploi. Prévoyez une installation initiale via la console VNC. Pour Windows, voir le guide [Installer une VM Windows](how-to/install-windows-vm.md).
 :::
-
-### Upload local
-
-```yaml
-spec:
-  source:
-    upload: {}
-```
-
-L’upload se finalise depuis le tableau de bord ou via `virtctl image-upload`.
 
 ### Disque vide
 
