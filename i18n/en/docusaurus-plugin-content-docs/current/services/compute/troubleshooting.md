@@ -107,7 +107,7 @@ This issue affects all distributions using `systemd-resolved` (Ubuntu 22.04+, De
    ```yaml title="vm.yaml"
    spec:
      disks:
-       - data-volume  # Must match the VMDisk metadata.name
+       - name: data-volume  # Must match the VMDisk metadata.name
    ```
 
 2. Check the VMDisk status:
@@ -116,7 +116,7 @@ This issue affects all distributions using `systemd-resolved` (Ubuntu 22.04+, De
    kubectl describe vmdisk data-volume
    ```
 
-3. The available storageClasses on Hikube are: `local`, `replicated`, and `replicated-async`. For a VM (single instance), `replicated` is recommended.
+3. The storageClasses available on Hikube are: `local`, `local-encrypted`, `replicated`, `replicated-encrypted`, `replicated-async`, `replicated-async-encrypted`, `replicated-async-windows`, and `replicated-async-windows-encrypted`. For a VM (single instance), `replicated` is recommended.
 
 ---
 

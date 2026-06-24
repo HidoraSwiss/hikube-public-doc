@@ -80,22 +80,32 @@ resource "kubectl_manifest" "kubernetes_cluster" {
       namespace = "default"
     }
     spec = {
+      version      = "v1.34"
+      storageClass = "replicated"
+
       controlPlane = {
         replicas = 2
       }
-      
+
       nodeGroups = {
         general = {
           minReplicas      = 1
           maxReplicas      = 5
           instanceType     = "s1.large"
           ephemeralStorage = "50Gi"
-          roles = ["ingress-nginx"]
+          roles            = ["ingress-nginx"]
         }
+        # Example GPU node group (requires the gpuOperator addon below)
+        # gpu = {
+        #   minReplicas      = 0
+        #   maxReplicas      = 4
+        #   instanceType     = "u1.2xlarge"
+        #   ephemeralStorage = "200Gi"
+        #   gpus             = [{ name = "nvidia.com/AD102GL_L40S" }]
+        #   roles            = []
+        # }
       }
-      
-      storageClass = "replicated"
-      
+
       addons = {
         certManager = {
           enabled = true
@@ -106,12 +116,16 @@ resource "kubectl_manifest" "kubernetes_cluster" {
             "${var.cluster_name}.example.com"
           ]
         }
+        # Required to expose GPUs to the pods of a GPU node group
+        # gpuOperator = {
+        #   enabled = true
+        # }
       }
     }
   })
 }
 
-# Retrieve kubeconfig
+# Retrieve the kubeconfig
 data "kubernetes_secret" "cluster_kubeconfig" {
   depends_on = [kubectl_manifest.kubernetes_cluster]
   
@@ -121,7 +135,7 @@ data "kubernetes_secret" "cluster_kubeconfig" {
   }
 }
 
-# Save kubeconfig
+# Save the kubeconfig
 resource "local_file" "kubeconfig" {
   content = base64decode(
     data.kubernetes_secret.cluster_kubeconfig.data["super-admin.conf"]
@@ -134,29 +148,52 @@ resource "local_file" "kubeconfig" {
 ### Deploy a Virtual Machine
 
 ```hcl title="virtual-machine.tf"
-resource "kubectl_manifest" "virtual_machine" {
+# The disk is a separate VMDisk resource, referenced by the VM
+resource "kubectl_manifest" "vm_disk" {
   yaml_body = yamlencode({
     apiVersion = "apps.cozystack.io/v1alpha1"
-    kind       = "VirtualMachine"
+    kind       = "VMDisk"
+    metadata = {
+      name = "${var.vm_name}-disk"
+    }
+    spec = {
+      source = {
+        image = {
+          name = "ubuntu-2404"
+        }
+      }
+      storage      = "50Gi"
+      storageClass = "replicated"
+    }
+  })
+}
+
+resource "kubectl_manifest" "virtual_machine" {
+  depends_on = [kubectl_manifest.vm_disk]
+
+  yaml_body = yamlencode({
+    apiVersion = "apps.cozystack.io/v1alpha1"
+    kind       = "VMInstance"
     metadata = {
       name = var.vm_name
     }
     spec = {
-      running         = true
+      runStrategy     = "Always"
       instanceProfile = "ubuntu"
       instanceType    = "u1.xlarge"
-      
-      systemDisk = {
-        size         = "50Gi"
-        storageClass = "replicated"
-      }
-      
+
+      disks = [
+        {
+          name = "${var.vm_name}-disk"
+        }
+      ]
+
       external       = true
       externalMethod = "PortList"
       externalPorts  = [22, 80, 443]
-      
+
       sshKeys = [var.ssh_public_key]
-      
+
       cloudInit = <<-EOT
         #cloud-config
         users:
@@ -186,35 +223,59 @@ resource "kubectl_manifest" "virtual_machine" {
 ### Deploy a VM with GPU
 
 ```hcl title="vm-gpu.tf"
-resource "kubectl_manifest" "vm_gpu" {
+resource "kubectl_manifest" "vm_gpu_disk" {
   yaml_body = yamlencode({
     apiVersion = "apps.cozystack.io/v1alpha1"
-    kind       = "VirtualMachine"
+    kind       = "VMDisk"
+    metadata = {
+      name = "gpu-vm-disk"
+    }
+    spec = {
+      source = {
+        image = {
+          name = "ubuntu-2404"
+        }
+      }
+      storage      = "100Gi"
+      storageClass = "replicated"
+    }
+  })
+}
+
+resource "kubectl_manifest" "vm_gpu" {
+  depends_on = [kubectl_manifest.vm_gpu_disk]
+
+  yaml_body = yamlencode({
+    apiVersion = "apps.cozystack.io/v1alpha1"
+    kind       = "VMInstance"
     metadata = {
       name = "gpu-vm"
     }
     spec = {
-      running         = true
+      runStrategy     = "Always"
       instanceProfile = "ubuntu"
       instanceType    = "u1.xlarge"
-      
+
       gpus = [
         {
+          # Models: nvidia.com/AD102GL_L40S, nvidia.com/GA100_A100_PCIE_80GB,
+          # nvidia.com/GA100_A100_SXM4_80GB, nvidia.com/GB202GL_RTX_PRO_6000_BLACKWELL_SERVER_EDITION
           name = "nvidia.com/AD102GL_L40S"
         }
       ]
-      
-      systemDisk = {
-        size         = "100Gi"
-        storageClass = "replicated"
-      }
-      
+
+      disks = [
+        {
+          name = "gpu-vm-disk"
+        }
+      ]
+
       external       = true
       externalMethod = "PortList"
       externalPorts  = [22, 8888]
-      
+
       sshKeys = [var.ssh_public_key]
-      
+
       cloudInit = <<-EOT
         #cloud-config
         users:
@@ -295,7 +356,7 @@ output "cluster_kubeconfig" {
 
 output "vm_status" {
   description = "Command to check VM status"
-  value       = "kubectl get virtualmachine ${var.vm_name}"
+  value       = "kubectl get vminstance ${var.vm_name}"
 }
 
 output "postgres_connection" {
@@ -366,4 +427,3 @@ terraform destroy
 - [Kubernetes Provider](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs)
 - [kubectl Provider](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs)
 - [Terraform Documentation](https://developer.hashicorp.com/terraform/docs)
-

@@ -7,21 +7,22 @@ title: FAQ
 
 ### Quali modelli di GPU sono disponibili?
 
-Hikube propone tre famiglie di GPU NVIDIA:
+Hikube propone diverse GPU NVIDIA:
 
 | GPU | Architettura | Memoria | Caso d'uso |
 |-----|-------------|---------|-------------|
 | **L40S** | Ada Lovelace | 48 GB GDDR6 | Inferenza, rendering grafico |
-| **A100** | Ampere | 80 GB HBM2e | Addestramento ML, calcolo scientifico |
-| **H100** | Hopper | 80 GB HBM3 | LLM, calcolo exascale |
+| **A100 (PCIe / SXM4)** | Ampere | 80 GB HBM2e | Addestramento ML, calcolo scientifico |
+| **RTX PRO 6000 Blackwell** | Blackwell | 96 GB GDDR7 | LLM, calcolo intensivo |
 
 Gli identificativi da utilizzare nei manifest:
 
 ```yaml
 gpus:
-  - name: "nvidia.com/AD102GL_L40S"       # L40S
-  - name: "nvidia.com/GA100_A100_PCIE_80GB" # A100
-  - name: "nvidia.com/H100_94GB"           # H100
+  - name: "nvidia.com/AD102GL_L40S"                                  # L40S
+  - name: "nvidia.com/GA100_A100_PCIE_80GB"                          # A100 PCIe
+  - name: "nvidia.com/GA100_A100_SXM4_80GB"                          # A100 SXM4
+  - name: "nvidia.com/GB202GL_RTX_PRO_6000_BLACKWELL_SERVER_EDITION" # RTX PRO 6000 Blackwell
 ```
 
 ---

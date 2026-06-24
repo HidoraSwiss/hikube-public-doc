@@ -38,7 +38,7 @@ The diagram below illustrates the structure and main interactions of the **Hikub
 - Each group contains multiple **worker nodes**.
 - Workloads (pods) are deployed on these nodes.
 - Nodes communicate with the Control Plane to receive their tasks.
-- They read and write their data to **Kubernetes Persistent Volumes (PV)**.
+- They read and write their data to the Kubernetes **Persistent Volumes (PV)**.
 
 #### Kubernetes PV Data
 
@@ -55,7 +55,7 @@ The diagram below illustrates the structure and main interactions of the **Hikub
 - Serves as an interface between Kubernetes and the **regional storage systems**.
 - Automatically replicates PV data to multiple regions for:
   - **high availability**,
-  - **regional failure resilience**,
+  - **resilience to regional failures**,
   - and **service continuity**.
 
 #### Regional storage
@@ -73,7 +73,7 @@ Each region has its own storage backend, all synchronized through the Hikube lay
 1. **Etcd nodes** synchronize with each other to maintain a consistent global state.
 2. The **Control Plane** reads/writes to etcd to store the cluster state.
 3. The **Control Plane** schedules workloads on the **Node Groups**.
-4. The **Node Groups** interact with **Kubernetes PVs** to store or retrieve data.
+4. The **Node Groups** interact with the **Kubernetes PVs** to store or retrieve data.
 5. **PV Data** is replicated through the **Hikube Replication Data Layer** to the **3 regions**.
 
 ---
@@ -216,13 +216,12 @@ The `nodeGroup` field defines the configuration of a node group (workers) within
 It allows specifying the instance type, resources, number of replicas, as well as roles and associated GPUs.
 
 ```yaml title="node-group.yaml"
-nodeGroup:
+nodeGroups:
   <name>:
-    ephemeralStorage:
-      size: 100Gi
+    ephemeralStorage: 100Gi
     gpus:
       - name: nvidia.com/AD102GL_L40S
-    instanceType: m5.large
+    instanceType: u1.xlarge
     maxReplicas: 5
     minReplicas: 2
     resources:
@@ -234,10 +233,10 @@ nodeGroup:
 
 ---
 
-### `ephemeralStorage` (Object)
+### `ephemeralStorage` (string)
 
-Defines the **ephemeral storage** configuration associated with the group's nodes.
-This storage is used for temporary data, caches, or log files.
+Defines the size of the **ephemeral storage** per node in the group (e.g., `100Gi`).
+This storage is used for temporary data, caches, or log files. It is a scalar value (not an object `{size: …}`).
 
 ### `gpus` (Array)
 

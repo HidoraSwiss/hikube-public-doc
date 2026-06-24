@@ -3,6 +3,8 @@ sidebar_position: 2
 title: Schnellstart
 ---
 
+import NavigationFooter from '@site/src/components/NavigationFooter';
+
 # Erstellen Sie Ihre erste Virtuelle Maschine
 
 Diese Anleitung begleitet Sie bei der Erstellung Ihrer ersten virtuellen Maschine auf Hikube in **5 Minuten**!
@@ -96,14 +98,11 @@ spec:
   externalMethod: PortList
   externalPorts:
     - 22
-  running: true
+  runStrategy: Always
   instanceType: u1.xlarge
   instanceProfile: "ubuntu"
   disks:
-    - name: disk-example #Den Namen Ihrer Festplatte angeben
-  resources:
-    cpu: ""
-    memory: ""
+    - name: disk-example # Name des anzuhängenden VMDisk
   sshKeys:
     - ihr-oeffentlicher-schluessel-hier
   cloudInit: |
@@ -235,10 +234,10 @@ Das Löschen von VMs und Festplatten ist **unwiderruflich**. Stellen Sie sicher,
 
 <div style={{display: 'flex', gap: '20px', flexWrap: 'wrap'}}>
 
-**📚 Erweiterte Konfiguration**
+**📚 Erweiterte Konfiguration**  
 → [Vollständige API-Referenz](./api-reference.md)
 
-**📖 Technische Architektur**
+**📖 Technische Architektur**  
 → [Funktionsweise verstehen](./overview.md)
 
 </div>
@@ -250,3 +249,10 @@ Das Löschen von VMs und Festplatten ist **unwiderruflich**. Stellen Sie sicher,
 - Ihre **Daten sind immer sicher** dank der Replikation über 3 Rechenzentren
 - Ihre VM kann bei einem Knotenausfall **automatisch verlagert** werden
 - Die **vollständige Isolation** gewährleistet die Sicherheit zwischen Tenants
+
+<NavigationFooter
+  nextSteps={[
+    {label: "FAQ", href: "../faq"},
+    {label: "API-Referenz", href: "../api-reference"},
+  ]}
+/>

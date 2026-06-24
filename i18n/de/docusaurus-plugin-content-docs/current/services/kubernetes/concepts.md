@@ -216,13 +216,12 @@ Das Feld `nodeGroup` definiert die Konfiguration einer Knotengruppe (Workers) in
 Es ermöglicht die Angabe des Instanztyps, der Ressourcen, der Anzahl der Replikas sowie der zugehörigen Rollen und GPUs.
 
 ```yaml title="node-group.yaml"
-nodeGroup:
+nodeGroups:
   <name>:
-    ephemeralStorage:
-      size: 100Gi
+    ephemeralStorage: 100Gi
     gpus:
       - name: nvidia.com/AD102GL_L40S
-    instanceType: m5.large
+    instanceType: u1.xlarge
     maxReplicas: 5
     minReplicas: 2
     resources:
@@ -234,10 +233,10 @@ nodeGroup:
 
 ---
 
-### `ephemeralStorage` (Object)
+### `ephemeralStorage` (string)
 
-Definiert die Konfiguration des **ephemeren Speichers**, der den Knoten der Gruppe zugeordnet ist.
-Dieser Speicher wird für temporäre Daten, Caches oder Logdateien verwendet.
+Definiert die Größe des **ephemeren Speichers** pro Knoten der Gruppe (z.B.: `100Gi`).
+Dieser Speicher wird für temporäre Daten, Caches oder Logdateien verwendet. Es ist ein Skalarwert (kein Objekt `{size: …}`).
 
 ### `gpus` (Array)
 

@@ -97,8 +97,8 @@ Questa architettura garantisce:
 
 - **Alta disponibilità** del cluster Kubernetes.
 - **Resilienza geografica** grazie alla replica inter-regioni.
-- **Integrita dei dati** tramite etcd e l'archiviazione persistente.
-- **Scalabilita** orizzontale con i Node Groups.
+- **Integrità dei dati** tramite etcd e l'archiviazione persistente.
+- **Scalabilità** orizzontale con i Node Groups.
 
 ---
 
@@ -137,15 +137,15 @@ controlPlane:
 
 ### `apiServer` (Object)
 
-L'`apiServer` e il componente centrale del piano di controllo Kubernetes.
+L'`apiServer` è il componente centrale del piano di controllo Kubernetes.
 Gestisce tutte le richieste verso l'API Kubernetes e garantisce la comunicazione tra i componenti interni del cluster.
 
 | Campo | Tipo | Obbligatorio | Descrizione |
 |-------|------|--------------|-------------|
-| `resources` | Object | Si | Definisce le risorse CPU e memoria allocate all'API Server |
+| `resources` | Object | Sì | Definisce le risorse CPU e memoria allocate all'API Server |
 | `resources.cpu` | string | No | Numero di vCPU attribuiti (es: `2`) |
-| `resources.memory` | string | No | Quantita di memoria allocata (es: `4Gi`) |
-| `resourcesPreset` | string | Si | Profilo di risorse predefinito (`nano`, `micro`, `small`, `medium`, `large`, `xlarge`, `2xlarge`) |
+| `resources.memory` | string | No | Quantità di memoria allocata (es: `4Gi`) |
+| `resourcesPreset` | string | Sì | Profilo di risorse predefinito (`nano`, `micro`, `small`, `medium`, `large`, `xlarge`, `2xlarge`) |
 
 ### `controllerManager` (Object)
 
@@ -154,10 +154,10 @@ Garantisce la creazione, l'aggiornamento e l'eliminazione delle risorse (pod, se
 
 | Campo | Tipo | Obbligatorio | Descrizione |
 |-------|------|--------------|-------------|
-| `resources` | Object | Si | Specifica le risorse CPU/memoria per il Controller Manager |
+| `resources` | Object | Sì | Specifica le risorse CPU/memoria per il Controller Manager |
 | `resources.cpu` | string | No | Numero di vCPU riservati |
-| `resources.memory` | string | No | Quantita di memoria allocata |
-| `resourcesPreset` | string | Si | Dimensione predefinita (`nano`, `micro`, `small`, `medium`, ecc.) |
+| `resources.memory` | string | No | Quantità di memoria allocata |
+| `resourcesPreset` | string | Sì | Dimensione predefinita (`nano`, `micro`, `small`, `medium`, ecc.) |
 
 ### `konnectivity` (Object)
 
@@ -166,21 +166,21 @@ Sostituisce il vecchio `kube-proxy` per le connessioni in uscita dei nodi e otti
 
 | Campo | Tipo | Obbligatorio | Descrizione |
 |-------|------|--------------|-------------|
-| `server.resources` | Object | Si | Specifica le risorse CPU/memoria del server Konnectivity |
+| `server.resources` | Object | Sì | Specifica le risorse CPU/memoria del server Konnectivity |
 | `server.resources.cpu` | string | No | Numero di vCPU |
-| `server.resources.memory` | string | No | Quantita di memoria |
-| `server.resourcesPreset` | string | Si | Profilo predefinito (`nano`, `micro`, `small`, `medium`, ecc.) |
+| `server.resources.memory` | string | No | Quantità di memoria |
+| `server.resourcesPreset` | string | Sì | Profilo predefinito (`nano`, `micro`, `small`, `medium`, ecc.) |
 
 ### `scheduler` (Object)
 
-Lo `scheduler` determina su quale nodo ogni pod deve essere eseguito in base ai vincoli di risorse, affinita e topologie.
+Lo `scheduler` determina su quale nodo ogni pod deve essere eseguito in base ai vincoli di risorse, affinità e topologie.
 
 | Campo | Tipo | Obbligatorio | Descrizione |
 |-------|------|--------------|-------------|
-| `resources` | Object | Si | Definisce le risorse allocate allo Scheduler |
+| `resources` | Object | Sì | Definisce le risorse allocate allo Scheduler |
 | `resources.cpu` | string | No | Numero di vCPU |
-| `resources.memory` | string | No | Quantita di memoria |
-| `resourcesPreset` | string | Si | Dimensione predefinita (`nano`, `micro`, `small`, `medium`, ecc.) |
+| `resources.memory` | string | No | Quantità di memoria |
+| `resourcesPreset` | string | Sì | Dimensione predefinita (`nano`, `micro`, `small`, `medium`, ecc.) |
 
 ### `replicas` (integer)
 
@@ -205,7 +205,7 @@ resourcesPreset: "2xlarge"  # 4 CPU, 8 GiB RAM
 - Definire sempre `replicas: 3` per la ridondanza.
 - Utilizzare `resourcesPreset` coerenti tra i componenti.
 - Adattare le risorse in base al carico (cluster di produzione → `medium` o `large`).
-- Non sottodimensionare `apiServer`, e il componente più sollecitato.
+- Non sottodimensionare `apiServer`, è il componente più sollecitato.
 :::
 
 ---
@@ -213,16 +213,15 @@ resourcesPreset: "2xlarge"  # 4 CPU, 8 GiB RAM
 ## Node Groups
 
 Il campo `nodeGroup` definisce la configurazione di un gruppo di nodi (worker) all'interno del cluster Kubernetes.
-Permette di specificare il tipo di istanza, le risorse, il numero di repliche, nonche i ruoli e le GPU associate.
+Permette di specificare il tipo di istanza, le risorse, il numero di repliche, nonché i ruoli e le GPU associate.
 
 ```yaml title="node-group.yaml"
-nodeGroup:
+nodeGroups:
   <name>:
-    ephemeralStorage:
-      size: 100Gi
+    ephemeralStorage: 100Gi
     gpus:
       - name: nvidia.com/AD102GL_L40S
-    instanceType: m5.large
+    instanceType: u1.xlarge
     maxReplicas: 5
     minReplicas: 2
     resources:
@@ -234,10 +233,10 @@ nodeGroup:
 
 ---
 
-### `ephemeralStorage` (Object)
+### `ephemeralStorage` (string)
 
-Definisce la configurazione dell'**archiviazione effimera** associata ai nodi del gruppo.
-Questa archiviazione e utilizzata per dati temporanei, cache o file di log.
+Definisce la dimensione dell'**archiviazione effimera** per nodo del gruppo (es: `100Gi`).
+Questa archiviazione è utilizzata per dati temporanei, cache o file di log. È un valore scalare (non un oggetto `{size: …}`).
 
 ### `gpus` (Array)
 
@@ -245,7 +244,7 @@ Elenca le **GPU** disponibili sui nodi del gruppo, utilizzate per carichi di lav
 
 | Campo | Tipo | Obbligatorio | Descrizione |
 |-------|------|--------------|-------------|
-| `name` | string | Si | Nome della GPU o tipo di scheda (`nvidia.com/AD102GL_L40S` o `nvidia.com/GA100_A100_PCIE_80GB`) |
+| `name` | string | Sì | Nome della GPU o tipo di scheda (`nvidia.com/AD102GL_L40S` o `nvidia.com/GA100_A100_PCIE_80GB`) |
 
 ### `instanceType` (string)
 
@@ -304,7 +303,7 @@ Definisce le **risorse allocate** a ciascun nodo del gruppo (CPU e memoria).
 | Campo | Tipo | Obbligatorio | Descrizione |
 |-------|------|--------------|-------------|
 | `cpu` | string | No | Numero di vCPU attribuiti per nodo (es: `4`) |
-| `memory` | string | No | Quantita di memoria allocata per nodo (es: `16Gi`) |
+| `memory` | string | No | Quantità di memoria allocata per nodo (es: `16Gi`) |
 
 ### `roles` (Array)
 

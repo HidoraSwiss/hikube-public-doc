@@ -3,6 +3,8 @@ sidebar_position: 2
 title: Avvio rapido
 ---
 
+import NavigationFooter from '@site/src/components/NavigationFooter';
+
 # Utilizzare le GPU su Hikube
 
 Questa guida presenta i due metodi di utilizzo delle GPU: con macchine virtuali e con cluster Kubernetes.
@@ -40,18 +42,17 @@ spec:
 
 ```yaml title="vm-gpu.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
-kind: VirtualMachine
+kind: VMInstance
 metadata:
   name: vm-gpu-example
 spec:
-  running: true
+  runStrategy: Always
   instanceProfile: ubuntu
   instanceType: u1.xlarge  # 4 vCPU, 16 GB RAM
   gpus:
     - name: "nvidia.com/AD102GL_L40S"
-  systemDisk:
-    size: 50Gi
-    storageClass: replicated
+  disks:
+    - name: ubuntu-gpu-disk
   external: true
   externalMethod: PortList
   externalPorts:
@@ -64,13 +65,13 @@ spec:
       - name: ubuntu
         sudo: ALL=(ALL) NOPASSWD:ALL
         shell: /bin/bash
-
+    
     package_update: true
     packages:
       - curl
       - wget
       - build-essential
-
+    
     runcmd:
       # Installazione driver NVIDIA
       - wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.0-1_all.deb
@@ -87,7 +88,7 @@ kubectl apply -f vm-disk.yaml
 kubectl apply -f vm-gpu.yaml
 
 # Verificare lo stato
-kubectl get virtualmachine vm-gpu-example
+kubectl get vminstance vm-gpu-example
 ```
 
 ### **Passo 4: Accedere e testare**
@@ -114,7 +115,7 @@ metadata:
 spec:
   controlPlane:
     replicas: 1
-
+  
   nodeGroups:
     # Worker GPU
     gpu-nodes:
@@ -124,7 +125,7 @@ spec:
       ephemeralStorage: 100Gi
       gpus:
         - name: "nvidia.com/AD102GL_L40S"
-
+    
     # Worker standard (opzionale)
     standard-nodes:
       minReplicas: 1
@@ -133,7 +134,17 @@ spec:
       ephemeralStorage: 50Gi
 
   storageClass: "replicated"
+
+  addons:
+    # Indispensabile: installa i driver NVIDIA e il device plugin
+    # che espongono nvidia.com/gpu ai pod del cluster tenant
+    gpuOperator:
+      enabled: true
 ```
+
+:::warning Addon `gpuOperator` richiesto
+Senza l'addon `gpuOperator` attivato, le GPU collegate ai worker **non** sono esposte ai pod (`nvidia.com/gpu` resta a 0). Esso installa i driver NVIDIA e il device plugin nel cluster tenant.
+:::
 
 ### **Passo 2: Distribuire il cluster**
 
@@ -209,13 +220,15 @@ kubectl exec -it gpu-test -- nvidia-smi
 gpus:
   - name: "nvidia.com/AD102GL_L40S"  # 48 GB GDDR6
 
-# Per addestramento ML
+# Per addestramento ML (A100, due varianti secondo l'hardware)
 gpus:
-  - name: "nvidia.com/GA100_A100_PCIE_80GB"  # 80 GB HBM2e
+  - name: "nvidia.com/GA100_A100_PCIE_80GB"  # 80 GB HBM2e (PCIe)
+  # oppure
+  - name: "nvidia.com/GA100_A100_SXM4_80GB"  # 80 GB HBM2e (SXM4)
 
 # Per LLM/calcolo exascale
 gpus:
-  - name: "nvidia.com/H100_94GB"  # 80 GB HBM3
+  - name: "nvidia.com/GB202GL_RTX_PRO_6000_BLACKWELL_SERVER_EDITION"  # 96 GB GDDR7
 ```
 
 ---
@@ -283,5 +296,15 @@ Queste azioni eliminano le risorse GPU e tutti i dati associati. Queste operazio
 
 - **VM GPU**: Ideale per prototipazione e applicazioni legacy
 - **Kubernetes GPU**: Raccomandato per workload di produzione scalabili
-- Iniziate con **L40S** per testare prima di utilizzare A100/H100
+- Iniziate con **L40S** per testare prima di utilizzare A100 o RTX PRO 6000 (Blackwell)
 - Utilizzate la storage class `replicated` per la produzione
+
+<NavigationFooter
+  nextSteps={[
+    {label: "FAQ", href: "../faq"},
+    {label: "Riferimento API", href: "../api-reference"},
+  ]}
+  seeAlso={[
+    {label: "Risorse di calcolo", href: "../../compute/"},
+  ]}
+/>
