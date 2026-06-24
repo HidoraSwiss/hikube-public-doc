@@ -4,7 +4,7 @@ title: "How to provision a GPU on Kubernetes"
 
 # How to provision a GPU on Kubernetes
 
-Hikube allows you to add NVIDIA GPU-equipped node groups to your Kubernetes clusters. This guide explains how to configure a cluster with GPU workers, deploy pods that leverage GPU acceleration, and set up specialized node groups.
+Hikube allows you to add node groups equipped with NVIDIA GPUs to your Kubernetes clusters. This guide explains how to configure a cluster with GPU workers, deploy pods that leverage GPU acceleration, and set up specialized node groups.
 
 ## Prerequisites
 
@@ -41,7 +41,16 @@ spec:
       ephemeralStorage: 100Gi
       gpus:
         - name: "nvidia.com/AD102GL_L40S"
+
+  addons:
+    # Required: installs the NVIDIA drivers and the device plugin
+    gpuOperator:
+      enabled: true
 ```
+
+:::warning `gpuOperator` addon required
+Attaching GPUs to the node groups is not enough: without `addons.gpuOperator.enabled: true`, the NVIDIA drivers and the device plugin are not installed in the tenant cluster, and `nvidia.com/gpu` stays at 0 on the nodes.
+:::
 
 :::tip
 Separate your CPU and GPU workloads into distinct node groups. This allows independent scaling and better cost control.
@@ -170,6 +179,10 @@ spec:
       gpus:
         - name: "nvidia.com/GA100_A100_PCIE_80GB"
         - name: "nvidia.com/GA100_A100_PCIE_80GB"
+
+  addons:
+    gpuOperator:
+      enabled: true
 ```
 
 To target a specific node group in your deployments, use `nodeSelector`:
@@ -202,7 +215,7 @@ spec:
 ```
 
 :::note
-The GPUs available for Kubernetes are the same as for VMs: **L40S** (inference/dev), **A100** (ML training), and **H100** (LLM/exascale). See the [GPU API reference](../api-reference.md) for full specifications.
+The GPUs available for Kubernetes are the same as for VMs: **L40S** (inference/dev), **A100 PCIe/SXM4** (ML training), and **RTX PRO 6000 Blackwell** (LLM/intensive computing). See the [GPU API reference](../api-reference.md) for the exact resource names and specifications.
 :::
 
 ## Verification

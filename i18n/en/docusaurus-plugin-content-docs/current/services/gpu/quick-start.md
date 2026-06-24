@@ -15,8 +15,8 @@ This guide presents the two methods of using GPUs: with virtual machines and wit
 
 Hikube offers two approaches for using GPUs:
 
-1. **GPU with VM** : Direct attachment of a GPU to a virtual machine
-2. **GPU with Kubernetes** : GPU allocation to workers for use by pods
+1. **GPU with VM**: Direct attachment of a GPU to a virtual machine
+2. **GPU with Kubernetes**: GPU allocation to workers for use by pods
 
 ---
 
@@ -42,18 +42,17 @@ spec:
 
 ```yaml title="vm-gpu.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
-kind: VirtualMachine
+kind: VMInstance
 metadata:
   name: vm-gpu-example
 spec:
-  running: true
+  runStrategy: Always
   instanceProfile: ubuntu
   instanceType: u1.xlarge  # 4 vCPU, 16 GB RAM
   gpus:
     - name: "nvidia.com/AD102GL_L40S"
-  systemDisk:
-    size: 50Gi
-    storageClass: replicated
+  disks:
+    - name: ubuntu-gpu-disk
   external: true
   externalMethod: PortList
   externalPorts:
@@ -89,7 +88,7 @@ kubectl apply -f vm-disk.yaml
 kubectl apply -f vm-gpu.yaml
 
 # Check status
-kubectl get virtualmachine vm-gpu-example
+kubectl get vminstance vm-gpu-example
 ```
 
 ### **Step 4: Access and test**
@@ -133,9 +132,19 @@ spec:
       maxReplicas: 2
       instanceType: "s1.medium"
       ephemeralStorage: 50Gi
-  
+
   storageClass: "replicated"
+
+  addons:
+    # Essential: installs the NVIDIA drivers and the device plugin
+    # that expose nvidia.com/gpu to the pods of the tenant cluster
+    gpuOperator:
+      enabled: true
 ```
+
+:::warning `gpuOperator` addon required
+Without the `gpuOperator` addon enabled, the GPUs attached to the workers are **not** exposed to pods (`nvidia.com/gpu` stays at 0). It installs the NVIDIA drivers and the device plugin in the tenant cluster.
+:::
 
 ### **Step 2: Deploy the cluster**
 
@@ -211,13 +220,15 @@ kubectl exec -it gpu-test -- nvidia-smi
 gpus:
   - name: "nvidia.com/AD102GL_L40S"  # 48 GB GDDR6
 
-# For ML training
+# For ML training (A100, two variants depending on the hardware)
 gpus:
-  - name: "nvidia.com/GA100_A100_PCIE_80GB"  # 80 GB HBM2e
+  - name: "nvidia.com/GA100_A100_PCIE_80GB"  # 80 GB HBM2e (PCIe)
+  # or
+  - name: "nvidia.com/GA100_A100_SXM4_80GB"  # 80 GB HBM2e (SXM4)
 
 # For LLM/exascale computing
 gpus:
-  - name: "nvidia.com/H100_94GB"  # 80 GB HBM3
+  - name: "nvidia.com/GB202GL_RTX_PRO_6000_BLACKWELL_SERVER_EDITION"  # 96 GB GDDR7
 ```
 
 ---
@@ -246,6 +257,27 @@ kubectl top nodes
 
 ---
 
+## Cleanup
+
+### Delete a GPU VM
+
+```bash
+kubectl delete -f vm-gpu.yaml
+kubectl delete -f vm-disk.yaml
+```
+
+### Delete a GPU Kubernetes cluster
+
+```bash
+kubectl delete -f cluster-gpu.yaml
+```
+
+:::warning
+These actions delete the GPU resources and all associated data. These operations are **irreversible**.
+:::
+
+---
+
 ## 🚀 Next Steps
 
 ### **To deepen VM GPU:**
@@ -262,9 +294,9 @@ kubectl top nodes
 
 ## 💡 Tips
 
-- **VM GPU** : Ideal for prototyping and legacy applications
-- **Kubernetes GPU** : Recommended for scalable production workloads
-- Start with **L40S** to test before using A100/H100
+- **VM GPU**: Ideal for prototyping and legacy applications
+- **Kubernetes GPU**: Recommended for scalable production workloads
+- Start with **L40S** to test before using A100 or RTX PRO 6000 (Blackwell)
 - Use `replicated` storage class for production
 
 <NavigationFooter
@@ -276,4 +308,3 @@ kubectl top nodes
     {label: "Compute Resources", href: "../../compute/"},
   ]}
 />
-

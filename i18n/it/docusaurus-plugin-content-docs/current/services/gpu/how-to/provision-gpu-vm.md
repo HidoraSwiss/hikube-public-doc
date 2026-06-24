@@ -16,16 +16,16 @@ Hikube permette di collegare una o più GPU NVIDIA direttamente a una macchina v
 
 ### 1. Scegliere il tipo di GPU
 
-Hikube propone tre famiglie di GPU NVIDIA adatte a diversi casi d'uso:
+Hikube propone diverse GPU NVIDIA adatte a diversi casi d'uso:
 
-| GPU | Architettura | Memoria | Prestazioni | Caso d'uso |
-|-----|-------------|---------|-------------|-------------|
-| **L40S** | Ada Lovelace | 48 GB GDDR6 | 362 TOPS (INT8) | Inferenza, sviluppo, prototipazione |
-| **A100** | Ampere | 80 GB HBM2e | 312 TOPS (INT8) | Addestramento ML, fine-tuning |
-| **H100** | Hopper | 80 GB HBM3 | 1979 TOPS (INT8) | LLM, calcolo exascale, addestramento distribuito |
+| GPU | Architettura | Memoria | Caso d'uso |
+|-----|-------------|---------|-------------|
+| **L40S** | Ada Lovelace | 48 GB GDDR6 | Inferenza, sviluppo, prototipazione |
+| **A100 (PCIe / SXM4)** | Ampere | 80 GB HBM2e | Addestramento ML, fine-tuning |
+| **RTX PRO 6000 Blackwell** | Blackwell | 96 GB GDDR7 | LLM, calcolo intensivo, addestramento distribuito |
 
 :::tip Quale GPU scegliere?
-Iniziate con un **L40S** per lo sviluppo e la prototipazione. Passate a un **A100** per l'addestramento di modelli ML standard, e riservate l'**H100** per i workload esigenti come l'addestramento di LLM o il calcolo ad alte prestazioni.
+Iniziate con un **L40S** per lo sviluppo e la prototipazione. Passate a un **A100** per l'addestramento di modelli ML standard, e riservate l'**RTX PRO 6000 (Blackwell)** per i workload più esigenti come l'addestramento di LLM o il calcolo ad alte prestazioni.
 :::
 
 Gli identificativi GPU da utilizzare nei vostri manifest sono:
@@ -33,14 +33,26 @@ Gli identificativi GPU da utilizzare nei vostri manifest sono:
 | GPU | Valore `gpus[].name` |
 |-----|----------------------|
 | L40S | `nvidia.com/AD102GL_L40S` |
-| A100 | `nvidia.com/GA100_A100_PCIE_80GB` |
-| H100 | `nvidia.com/H100_94GB` |
+| A100 PCIe 80 GB | `nvidia.com/GA100_A100_PCIE_80GB` |
+| A100 SXM4 80 GB | `nvidia.com/GA100_A100_SXM4_80GB` |
+| RTX PRO 6000 Blackwell | `nvidia.com/GB202GL_RTX_PRO_6000_BLACKWELL_SERVER_EDITION` |
 
 ### 2. Creare il manifest della VM con GPU
 
 Create un manifest che dichiara la GPU desiderata nella sezione `spec.gpus`:
 
 ```yaml title="gpu-vm.yaml"
+apiVersion: apps.cozystack.io/v1alpha1
+kind: VMDisk
+metadata:
+  name: gpu-workstation-disk
+spec:
+  source:
+    image:
+      name: ubuntu-2404
+  storage: 100Gi
+  storageClass: replicated
+---
 apiVersion: apps.cozystack.io/v1alpha1
 kind: VMInstance
 metadata:
@@ -51,9 +63,8 @@ spec:
   instanceType: u1.2xlarge
   gpus:
     - name: "nvidia.com/AD102GL_L40S"
-  systemDisk:
-    size: 100Gi
-    storageClass: replicated
+  disks:
+    - name: gpu-workstation-disk
   external: true
   externalMethod: PortList
   externalPorts:
@@ -132,6 +143,17 @@ Per i workload intensivi (addestramento distribuito, inferenza su larga scala), 
 
 ```yaml title="multi-gpu-vm.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
+kind: VMDisk
+metadata:
+  name: multi-gpu-disk
+spec:
+  source:
+    image:
+      name: ubuntu-2404
+  storage: 200Gi
+  storageClass: replicated
+---
+apiVersion: apps.cozystack.io/v1alpha1
 kind: VMInstance
 metadata:
   name: multi-gpu-workstation
@@ -140,13 +162,12 @@ spec:
   instanceProfile: ubuntu
   instanceType: u1.8xlarge
   gpus:
-    - name: "nvidia.com/H100_94GB"
-    - name: "nvidia.com/H100_94GB"
-    - name: "nvidia.com/H100_94GB"
-    - name: "nvidia.com/H100_94GB"
-  systemDisk:
-    size: 200Gi
-    storageClass: replicated
+    - name: "nvidia.com/GA100_A100_SXM4_80GB"
+    - name: "nvidia.com/GA100_A100_SXM4_80GB"
+    - name: "nvidia.com/GA100_A100_SXM4_80GB"
+    - name: "nvidia.com/GA100_A100_SXM4_80GB"
+  disks:
+    - name: multi-gpu-disk
   external: true
   externalMethod: PortList
   externalPorts:
