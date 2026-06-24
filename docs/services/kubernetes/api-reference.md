@@ -73,7 +73,7 @@ Voir le guide [Mettre à jour un cluster](how-to/upgrade-cluster.md) pour la mon
 | `instanceType`     | `string`        | Gabarit des nœuds (voir [types d'instances](../compute/api-reference.md#types-dinstances)) | `u1.medium` |
 | `ephemeralStorage` | `int`/`string`  | Taille du stockage éphémère par nœud (ex : `20Gi`)               | `20Gi`      |
 | `resources`        | `object`        | Surcharge explicite `cpu` / `memory` par nœud                    | `{}`        |
-| `gpus`             | `[]object`      | GPU attachés aux nœuds (`gpus[].name`) — voir [GPU](../gpu/api-reference.md#-gpu-avec-kubernetes) | `[]` |
+| `gpus`             | `[]object`      | GPU attachés aux nœuds (`gpus[].name`) — voir [GPU avec Kubernetes](../gpu/api-reference.md) | `[]` |
 | `roles`            | `[]string`      | Rôles des nœuds (ex : `ingress-nginx`)                            | `[]`        |
 
 :::note `ephemeralStorage` est un scalaire
