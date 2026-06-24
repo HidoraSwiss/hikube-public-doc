@@ -107,7 +107,7 @@ Ce problème affecte toutes les distributions utilisant `systemd-resolved` (Ubun
    ```yaml title="vm.yaml"
    spec:
      disks:
-       - data-volume  # Doit correspondre à metadata.name du VMDisk
+       - name: data-volume  # Doit correspondre à metadata.name du VMDisk
    ```
 
 2. Vérifiez le statut du VMDisk :
@@ -116,7 +116,7 @@ Ce problème affecte toutes les distributions utilisant `systemd-resolved` (Ubun
    kubectl describe vmdisk data-volume
    ```
 
-3. Les storageClasses disponibles sur Hikube sont : `local`, `replicated` et `replicated-async`. Pour une VM (instance isolée), `replicated` est recommandé.
+3. Les storageClasses disponibles sur Hikube sont : `local`, `local-encrypted`, `replicated`, `replicated-encrypted`, `replicated-async`, `replicated-async-encrypted`, `replicated-async-windows` et `replicated-async-windows-encrypted`. Pour une VM (instance isolée), `replicated` est recommandé.
 
 ---
 

@@ -67,8 +67,8 @@ spec:
   externalPorts:
     - 22
   disks:
-    - vm-system-disk
-    - vm-data-disk
+    - name: vm-system-disk
+    - name: vm-data-disk
   sshKeys:
     - ssh-ed25519 AAAA... user@host
 ```
