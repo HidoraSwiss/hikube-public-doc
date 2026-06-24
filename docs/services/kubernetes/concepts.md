@@ -216,13 +216,12 @@ Le champ `nodeGroup` définit la configuration d'un groupe de nœuds (workers) a
 Il permet de spécifier le type d'instance, les ressources, le nombre de réplicas, ainsi que les rôles et les GPU associés.
 
 ```yaml title="node-group.yaml"
-nodeGroup:
+nodeGroups:
   <name>:
-    ephemeralStorage:
-      size: 100Gi
+    ephemeralStorage: 100Gi
     gpus:
       - name: nvidia.com/AD102GL_L40S
-    instanceType: m5.large
+    instanceType: u1.xlarge
     maxReplicas: 5
     minReplicas: 2
     resources:
@@ -234,10 +233,10 @@ nodeGroup:
 
 ---
 
-### `ephemeralStorage` (Object)
+### `ephemeralStorage` (string)
 
-Définit la configuration du **stockage éphémère** associé aux nœuds du groupe.
-Ce stockage est utilisé pour les données temporaires, les caches ou les fichiers de logs.
+Définit la taille du **stockage éphémère** par nœud du groupe (ex : `100Gi`).
+Ce stockage est utilisé pour les données temporaires, les caches ou les fichiers de logs. C'est une valeur scalaire (pas un objet `{size: …}`).
 
 ### `gpus` (Array)
 
