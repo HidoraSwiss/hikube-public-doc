@@ -39,28 +39,28 @@ Les GPU peuvent être alloués aux workers Kubernetes et ensuite assignés aux p
 
 ## 🖥️ Hardware Disponible
 
-Hikube propose trois types de GPU NVIDIA :
+Hikube propose plusieurs GPU NVIDIA :
 
 ### **NVIDIA L40S**
 
 - **Architecture** : Ada Lovelace
 - **Mémoire** : 48 GB GDDR6 avec ECC
-- **Performance** : 362 TOPS (INT8), 91.6 TFLOPs (FP32)
+- **Nom de ressource** : `nvidia.com/AD102GL_L40S`
 - **Usage typique** : IA générative, inférence, rendu temps réel
 
-### **NVIDIA A100**
+### **NVIDIA A100 80 Go (PCIe / SXM4)**
 
 - **Architecture** : Ampere
 - **Mémoire** : 80 GB HBM2e avec ECC
-- **Performance** : 312 TOPS (INT8), 624 TFLOPs (Tensor)
-- **Usage typique** : Entraînement ML, calcul haute performance
+- **Noms de ressource** : `nvidia.com/GA100_A100_PCIE_80GB`, `nvidia.com/GA100_A100_SXM4_80GB`
+- **Usage typique** : Entraînement ML, calcul haute performance (la variante SXM4 supporte NVLink pour le multi-GPU)
 
-### **NVIDIA H100**
+### **NVIDIA RTX PRO 6000 Blackwell**
 
-- **Architecture** : Hopper
-- **Mémoire** : 80 GB HBM3 avec ECC
-- **Performance** : 1979 TOPS (INT8), 989 TFLOPs (Tensor)
-- **Usage typique** : LLM, transformers, calcul exascale
+- **Architecture** : Blackwell (Server Edition)
+- **Mémoire** : 96 GB GDDR7 avec ECC
+- **Nom de ressource** : `nvidia.com/GB202GL_RTX_PRO_6000_BLACKWELL_SERVER_EDITION`
+- **Usage typique** : LLM, transformers, calcul intensif
 
 ---
 
@@ -74,7 +74,7 @@ flowchart TD
         subgraph NODE["Nœud Physique"]
             GPU1["🎮 GPU L40S"]
             GPU2["🎮 GPU A100"]
-            GPU3["🎮 GPU H100"]
+            GPU3["🎮 GPU RTX PRO 6000"]
         end
         
         subgraph VM1["VM Instance"]
@@ -131,11 +131,14 @@ flowchart TD
 
 ```yaml
 apiVersion: apps.cozystack.io/v1alpha1
-kind: VirtualMachine
+kind: VMInstance
 spec:
+  runStrategy: Always
   instanceType: "u1.xlarge"
   gpus:
     - name: "nvidia.com/AD102GL_L40S"
+  disks:
+    - name: vm-gpu-disk
 ```
 
 ### **GPU sur Kubernetes Worker**
@@ -149,6 +152,9 @@ spec:
       instanceType: "u1.xlarge"
       gpus:
         - name: "nvidia.com/AD102GL_L40S"
+  addons:
+    gpuOperator:
+      enabled: true
 ```
 
 ### **GPU dans Pod Kubernetes**

@@ -42,18 +42,17 @@ spec:
 
 ```yaml title="vm-gpu.yaml"
 apiVersion: apps.cozystack.io/v1alpha1
-kind: VirtualMachine
+kind: VMInstance
 metadata:
   name: vm-gpu-example
 spec:
-  running: true
+  runStrategy: Always
   instanceProfile: ubuntu
   instanceType: u1.xlarge  # 4 vCPU, 16 GB RAM
   gpus:
     - name: "nvidia.com/AD102GL_L40S"
-  systemDisk:
-    size: 50Gi
-    storageClass: replicated
+  disks:
+    - name: ubuntu-gpu-disk
   external: true
   externalMethod: PortList
   externalPorts:
@@ -89,7 +88,7 @@ kubectl apply -f vm-disk.yaml
 kubectl apply -f vm-gpu.yaml
 
 # Vérifier l'état
-kubectl get virtualmachine vm-gpu-example
+kubectl get vminstance vm-gpu-example
 ```
 
 ### **Étape 4 : Accéder et tester**
@@ -133,9 +132,19 @@ spec:
       maxReplicas: 2
       instanceType: "s1.medium"
       ephemeralStorage: 50Gi
-  
+
   storageClass: "replicated"
+
+  addons:
+    # Indispensable : installe les pilotes NVIDIA et le device plugin
+    # qui exposent nvidia.com/gpu aux pods du cluster tenant
+    gpuOperator:
+      enabled: true
 ```
+
+:::warning Addon `gpuOperator` requis
+Sans l'addon `gpuOperator` activé, les GPU attachés aux workers ne sont **pas** exposés aux pods (`nvidia.com/gpu` reste à 0). Il installe les pilotes NVIDIA et le device plugin dans le cluster tenant.
+:::
 
 ### **Étape 2 : Déployer le cluster**
 
@@ -211,13 +220,15 @@ kubectl exec -it gpu-test -- nvidia-smi
 gpus:
   - name: "nvidia.com/AD102GL_L40S"  # 48 GB GDDR6
 
-# Pour entraînement ML
+# Pour entraînement ML (A100, deux variantes selon le matériel)
 gpus:
-  - name: "nvidia.com/GA100_A100_PCIE_80GB"  # 80 GB HBM2e
+  - name: "nvidia.com/GA100_A100_PCIE_80GB"  # 80 GB HBM2e (PCIe)
+  # ou
+  - name: "nvidia.com/GA100_A100_SXM4_80GB"  # 80 GB HBM2e (SXM4)
 
 # Pour LLM/calcul exascale
 gpus:
-  - name: "nvidia.com/H100_94GB"  # 80 GB HBM3
+  - name: "nvidia.com/GB202GL_RTX_PRO_6000_BLACKWELL_SERVER_EDITION"  # 96 GB GDDR7
 ```
 
 ---
@@ -285,7 +296,7 @@ Ces actions suppriment les ressources GPU et toutes les données associées. Ces
 
 - **VM GPU** : Idéal pour prototypage et applications legacy
 - **Kubernetes GPU** : Recommandé pour workloads de production scalables
-- Commencez par **L40S** pour tester avant d'utiliser A100/H100
+- Commencez par **L40S** pour tester avant d'utiliser A100 ou RTX PRO 6000 (Blackwell)
 - Utilisez `replicated` storage class pour la production
 
 <NavigationFooter
