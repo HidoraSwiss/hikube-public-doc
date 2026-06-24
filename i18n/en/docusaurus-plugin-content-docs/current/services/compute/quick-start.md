@@ -98,14 +98,11 @@ spec:
   externalMethod: PortList
   externalPorts:
     - 22
-  running: true
+  runStrategy: Always
   instanceType: u1.xlarge
   instanceProfile: "ubuntu"
   disks:
-    - name: disk-example # Specify your disk name
-  resources:
-    cpu: ""
-    memory: ""
+    - name: disk-example # Name of the VMDisk to attach
   sshKeys:
     - your-public-key-here
   cloudInit: |

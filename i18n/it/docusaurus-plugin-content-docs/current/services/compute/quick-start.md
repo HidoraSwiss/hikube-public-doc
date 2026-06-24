@@ -3,6 +3,8 @@ sidebar_position: 2
 title: Avvio rapido
 ---
 
+import NavigationFooter from '@site/src/components/NavigationFooter';
+
 # Creare la vostra prima Macchina Virtuale
 
 Questa guida vi accompagna nella creazione della vostra prima macchina virtuale Hikube in **5 minuti** cronometro!
@@ -96,14 +98,11 @@ spec:
   externalMethod: PortList
   externalPorts:
     - 22
-  running: true
+  runStrategy: Always
   instanceType: u1.xlarge
   instanceProfile: "ubuntu"
   disks:
-    - name: disk-example #Specificare il nome del vostro disco
-  resources:
-    cpu: ""
-    memory: ""
+    - name: disk-example # Nome del VMDisk da collegare
   sshKeys:
     - vostra-chiave-pubblica-qui
   cloudInit: |
@@ -235,10 +234,10 @@ L'eliminazione delle VM e dei dischi è **irreversibile**. Assicuratevi di aver 
 
 <div style={{display: 'flex', gap: '20px', flexWrap: 'wrap'}}>
 
-**📚 Configurazione Avanzata**
+**📚 Configurazione Avanzata**  
 → [API Reference completa](./api-reference.md)
 
-**📖 Architettura Tecnica**
+**📖 Architettura Tecnica**  
 → [Comprendere il funzionamento](./overview.md)
 
 </div>
@@ -250,3 +249,10 @@ L'eliminazione delle VM e dei dischi è **irreversibile**. Assicuratevi di aver 
 - I vostri **dati sono sempre al sicuro** grazie alla replica su 3 datacenter
 - La vostra VM può essere **rilocalizzata automaticamente** in caso di guasto del nodo
 - L'**isolamento totale** garantisce la sicurezza tra tenant
+
+<NavigationFooter
+  nextSteps={[
+    {label: "FAQ", href: "../faq"},
+    {label: "Riferimento API", href: "../api-reference"},
+  ]}
+/>
