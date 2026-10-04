@@ -7,7 +7,7 @@ Documentation publique Hikube, basée sur **Docusaurus** (v3). Hébergée sur `h
 - **Build** : `npm run build`
 - **Dev** : `npm run start`
 - **Servir le build** : `npm run serve`
-- **Vérification** : le build échoue sur les broken links (`onBrokenLinks: 'warn'` dans `docusaurus.config.js`)
+- **Vérification** : le build ne casse pas sur les liens cassés (`onBrokenLinks: 'warn'` dans `docusaurus.config.js`) ; lire les warnings du build
 
 ## Structure du projet
 
@@ -50,7 +50,7 @@ Le `sidebar_position` dans le frontmatter sert de convention de numérotation ma
 
 ### Langue
 - Contenu principal en **français** (locale par défaut)
-- Traductions anglaises dans `i18n/en/`
+- Traductions dans `i18n/<locale>/` (`en`, `it`, `de`)
 
 ### Manifestes YAML
 - **Ne jamais inclure `namespace: default`** dans les exemples YAML : le namespace est implicite, déterminé par le contexte du tenant
