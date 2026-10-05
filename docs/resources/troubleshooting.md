@@ -138,9 +138,9 @@ Voir : [PostgreSQL](../services/databases/postgresql/troubleshooting.md), [Maria
 
 ## 6. Stockage
 
-### Impossible de supprimer un bucket
+### Supprimer un bucket sans perdre de données
 
-Un bucket qui contient encore des objets, ou qui est encore utilisé, ne peut pas être supprimé. Videz-le avec votre client S3, puis réessayez.
+La suppression d'un bucket est définitive et emporte tous ses objets : la console ne vérifie pas qu'il est vide. Copiez d'abord les données à conserver avec votre client S3 (par exemple `aws s3 sync`). Si la suppression échoue, réessayez puis contactez le support.
 
 ### Accès S3 refusé (`AccessDenied`)
 
