@@ -1,0 +1,42 @@
+{
+  "theme.SearchBar.label": {
+    "message": "Rechercher",
+    "description": "Search plugin (@easyops-cn/docusaurus-search-local)"
+  },
+  "theme.SearchBar.noResultsText": {
+    "message": "Aucun résultat",
+    "description": "Search plugin (@easyops-cn/docusaurus-search-local)"
+  },
+  "theme.SearchBar.seeAll": {
+    "message": "Voir tous les résultats",
+    "description": "Search plugin (@easyops-cn/docusaurus-search-local)"
+  },
+  "theme.SearchBar.seeAllOutsideContext": {
+    "message": "Voir tous les résultats hors de « {context} »",
+    "description": "Search plugin (@easyops-cn/docusaurus-search-local)"
+  },
+  "theme.SearchBar.searchInContext": {
+    "message": "Voir tous les résultats dans « {context} »",
+    "description": "Search plugin (@easyops-cn/docusaurus-search-local)"
+  },
+  "theme.SearchPage.existingResultsTitle": {
+    "message": "Résultats de recherche pour « {query} »",
+    "description": "Search plugin (@easyops-cn/docusaurus-search-local)"
+  },
+  "theme.SearchPage.emptyResultsTitle": {
+    "message": "Rechercher dans la documentation",
+    "description": "Search plugin (@easyops-cn/docusaurus-search-local)"
+  },
+  "theme.SearchPage.searchContext.everywhere": {
+    "message": "Partout",
+    "description": "Search plugin (@easyops-cn/docusaurus-search-local)"
+  },
+  "theme.SearchPage.documentsFound.plurals": {
+    "message": "1 document trouvé|{count} documents trouvés",
+    "description": "Search plugin (@easyops-cn/docusaurus-search-local)"
+  },
+  "theme.SearchPage.noResultsText": {
+    "message": "Aucun document trouvé",
+    "description": "Search plugin (@easyops-cn/docusaurus-search-local)"
+  }
+}

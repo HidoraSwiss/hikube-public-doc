@@ -325,5 +325,17 @@
   "theme.tags.tagsPageTitle": {
     "message": "Tags",
     "description": "The title of the tag list page"
+  },
+  "hikube.navigationFooter.nextSteps": {
+    "message": "Next steps",
+    "description": "Heading of the 'next steps' column at the bottom of a doc page"
+  },
+  "hikube.navigationFooter.seeAlso": {
+    "message": "See also",
+    "description": "Heading of the 'see also' column at the bottom of a doc page"
+  },
+  "hikube.navigationFooter.ariaLabel": {
+    "message": "Further reading",
+    "description": "Accessible label of the navigation block at the bottom of a doc page"
   }
 }

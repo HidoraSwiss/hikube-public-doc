@@ -325,5 +325,57 @@
   "theme.tags.tagsPageTitle": {
     "message": "Tags",
     "description": "The title of the tag list page"
+  },
+  "hikube.navigationFooter.nextSteps": {
+    "message": "Nächste Schritte",
+    "description": "Heading of the 'next steps' column at the bottom of a doc page"
+  },
+  "hikube.navigationFooter.seeAlso": {
+    "message": "Siehe auch",
+    "description": "Heading of the 'see also' column at the bottom of a doc page"
+  },
+  "hikube.navigationFooter.ariaLabel": {
+    "message": "Weiterführende Seiten",
+    "description": "Accessible label of the navigation block at the bottom of a doc page"
+  },
+  "theme.SearchBar.label": {
+    "message": "Suchen",
+    "description": "Search plugin (@easyops-cn/docusaurus-search-local)"
+  },
+  "theme.SearchBar.noResultsText": {
+    "message": "Keine Ergebnisse",
+    "description": "Search plugin (@easyops-cn/docusaurus-search-local)"
+  },
+  "theme.SearchBar.seeAll": {
+    "message": "Alle Ergebnisse anzeigen",
+    "description": "Search plugin (@easyops-cn/docusaurus-search-local)"
+  },
+  "theme.SearchBar.seeAllOutsideContext": {
+    "message": "Alle Ergebnisse außerhalb von „{context}“ anzeigen",
+    "description": "Search plugin (@easyops-cn/docusaurus-search-local)"
+  },
+  "theme.SearchBar.searchInContext": {
+    "message": "Alle Ergebnisse in „{context}“ anzeigen",
+    "description": "Search plugin (@easyops-cn/docusaurus-search-local)"
+  },
+  "theme.SearchPage.existingResultsTitle": {
+    "message": "Suchergebnisse für „{query}“",
+    "description": "Search plugin (@easyops-cn/docusaurus-search-local)"
+  },
+  "theme.SearchPage.emptyResultsTitle": {
+    "message": "Dokumentation durchsuchen",
+    "description": "Search plugin (@easyops-cn/docusaurus-search-local)"
+  },
+  "theme.SearchPage.searchContext.everywhere": {
+    "message": "Überall",
+    "description": "Search plugin (@easyops-cn/docusaurus-search-local)"
+  },
+  "theme.SearchPage.documentsFound.plurals": {
+    "message": "1 Dokument gefunden|{count} Dokumente gefunden",
+    "description": "Search plugin (@easyops-cn/docusaurus-search-local)"
+  },
+  "theme.SearchPage.noResultsText": {
+    "message": "Keine Dokumente gefunden",
+    "description": "Search plugin (@easyops-cn/docusaurus-search-local)"
   }
 }
