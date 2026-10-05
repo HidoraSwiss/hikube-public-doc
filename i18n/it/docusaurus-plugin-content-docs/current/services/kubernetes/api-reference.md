@@ -1,4 +1,5 @@
 ---
+unlisted: true
 sidebar_position: 6
 title: Riferimento API
 ---

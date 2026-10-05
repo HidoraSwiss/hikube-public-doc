@@ -166,5 +166,41 @@
   "sidebar.docsSidebar.category.Outils": {
     "message": "Tools",
     "description": "The label for category 'Outils' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Disques": {
+    "message": "Disks",
+    "description": "The label for category 'Disques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Réseau": {
+    "message": "Networking",
+    "description": "The label for category 'Réseau' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.MongoDB": {
+    "message": "MongoDB",
+    "description": "The label for category 'MongoDB' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-storage-disks": {
+    "message": "How-to Guides",
+    "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-storage-disks.link.generated-index.title": {
+    "message": "How-to Guides",
+    "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-networking": {
+    "message": "How-to Guides",
+    "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-networking.link.generated-index.title": {
+    "message": "How-to Guides",
+    "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-databases-mongodb": {
+    "message": "How-to Guides",
+    "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-databases-mongodb.link.generated-index.title": {
+    "message": "How-to Guides",
+    "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
   }
 }

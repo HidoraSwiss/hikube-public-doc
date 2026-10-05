@@ -166,5 +166,41 @@
   "sidebar.docsSidebar.category.Outils": {
     "message": "Strumenti",
     "description": "The label for category 'Outils' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Disques": {
+    "message": "Dischi",
+    "description": "The label for category 'Disques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Réseau": {
+    "message": "Rete",
+    "description": "The label for category 'Réseau' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.MongoDB": {
+    "message": "MongoDB",
+    "description": "The label for category 'MongoDB' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-storage-disks": {
+    "message": "Guide pratiche",
+    "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-storage-disks.link.generated-index.title": {
+    "message": "Guide pratiche",
+    "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-networking": {
+    "message": "Guide pratiche",
+    "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-networking.link.generated-index.title": {
+    "message": "Guide pratiche",
+    "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-databases-mongodb": {
+    "message": "Guide pratiche",
+    "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-databases-mongodb.link.generated-index.title": {
+    "message": "Guide pratiche",
+    "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
   }
 }
