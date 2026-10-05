@@ -27,6 +27,24 @@ const HIKUBE_API_URL = 'https://api.demo.hikube.cloud';
 const onlyApiKeyScheme = (schemes) =>
   schemes && schemes.ApiKey ? {ApiKey: schemes.ApiKey} : schemes;
 
+// Certaines descriptions de la spécification renvoient aux fichiers de valeurs
+// d'un dépôt interne de la plateforme : on retire ces renvois des pages.
+const INTERNAL_REF = /\s*See https:\/\/raw\.githubusercontent\.com\/\S+/g;
+const stripInternalRefs = (node) => {
+  if (Array.isArray(node)) {
+    node.forEach(stripInternalRefs);
+  } else if (node && typeof node === 'object') {
+    for (const [key, value] of Object.entries(node)) {
+      if (key === 'description' && typeof value === 'string') {
+        node[key] = value.replace(INTERNAL_REF, '');
+      } else {
+        stripInternalRefs(value);
+      }
+    }
+  }
+  return node;
+};
+
 /**
  * Coloration syntaxique « graphite » : les blocs de code gardent le fond
  * #14110e de hikube.cloud dans les deux thèmes. Toutes les teintes tiennent
@@ -157,6 +175,7 @@ const config = {
                 item.api.securitySchemes = onlyApiKeyScheme(
                   item.api.securitySchemes,
                 );
+                stripInternalRefs(item.api);
                 return createApiPageMD(item);
               },
               createInfoPageMD: (item) =>
