@@ -4,6 +4,8 @@ title: Démarrage rapide
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
 # Créer un cluster Kubernetes en quelques minutes
 
@@ -17,18 +19,43 @@ Ce guide vous accompagne dans la création de votre premier cluster Kubernetes d
 - **Un projet** disposant de quotas suffisants (CPU, mémoire, stockage)
 - **`kubectl` installé sur votre poste**, pour travailler dans le cluster une fois créé
 - **Notions de base Kubernetes** (pods, services, deployments)
+- Pour l'onglet **API** : une clé d'API `admin` du projet et les variables `HIKUBE_API`, `HIKUBE_API_KEY` et `PROJECT_ID` (voir [Préparer l'environnement](../../api/quick-start.md#environnement)) ; les exemples utilisent `curl` et `jq`
 
 ---
 
 ## Étape 1 : Créer le cluster
 
+<Tabs groupId="interface">
+<TabItem value="console" label="Console" default>
+
 1. Connectez-vous à la [console Hikube](https://console.hikube.cloud) et sélectionnez votre projet.
 2. Dans le menu latéral, ouvrez **Infrastructure** > **Kubernetes**. La page **Clusters Kubernetes** s'affiche.
 3. Cliquez sur **Créer un cluster**. L'assistant **Créer un nouveau cluster** s'ouvre sur l'étape **Général**.
 
+</TabItem>
+<TabItem value="api" label="API">
+
+Avec l'API, il n'y a pas d'assistant. Consultez d'abord les versions et les tailles de control plane proposées :
+
+```bash
+curl -sS "$HIKUBE_API/kubernetes/v1alpha1/versions" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY"
+
+curl -sS "$HIKUBE_API/kubernetes/v1alpha1/presets" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" | jq '.presets'
+```
+
+Les versions s'écrivent `v1.XX`. Les types d'instance des nœuds sont ceux de `GET /instance/v1alpha1/instance-types`.
+
+</TabItem>
+</Tabs>
+
 ---
 
 ## Étape 2 : Configurer et valider
+
+<Tabs groupId="interface">
+<TabItem value="console" label="Console" default>
 
 L'assistant comporte quatre étapes : **Général**, **Nœuds**, **Addons** et **Vérification**. Les jauges **Quotas du projet** indiquent en permanence la part du quota que le cluster réservera.
 
@@ -77,10 +104,53 @@ Le **Récapitulatif** reprend l'identité du cluster, le control plane, les grou
 
 ![Assistant Kubernetes, étape Vérification : récapitulatif du cluster](/img/console/kubernetes/wizard-review.fr.png)
 
+</TabItem>
+<TabItem value="api" label="API">
+
+Créez le cluster avec `POST /kubernetes/v1alpha1/projects/{projectId}/clusters`. L'exemple reprend la configuration de l'onglet Console ; remplacez la version par l'une de celles renvoyées à l'étape 1 :
+
+```bash
+curl -sS -X POST "$HIKUBE_API/kubernetes/v1alpha1/projects/$PROJECT_ID/clusters" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "democluster",
+    "version": "v1.31",
+    "controlPlane": {"preset": "small", "replicas": 3},
+    "nodeGroups": {
+      "worker-pool-1": {
+        "instanceType": "s1.large",
+        "storage": 20,
+        "minReplicas": 1,
+        "maxReplicas": 3,
+        "isExposed": true
+      }
+    },
+    "addons": {
+      "certManager": {"enabled": true},
+      "ingressNginx": {"enabled": true},
+      "monitoringAgents": {"enabled": true}
+    }
+  }'
+```
+
+- `name` : 16 caractères maximum, en minuscules ; ce nom identifie le cluster dans les chemins de l'API ;
+- `host` (facultatif) : omis, l'adresse de l'API du cluster est générée automatiquement ;
+- `controlPlane.replicas` : de 1 à 5 ; `3` correspond à **3 (HA)** ;
+- `nodeGroups` : un objet dont chaque clé est le nom d'un groupe ; au moins un groupe. `storage` est la taille du stockage éphémère en Go (20 par défaut), `minReplicas` et `maxReplicas` bornent l'auto-scaling (0 à 128) ;
+- `addons` : un addon absent n'est pas installé.
+
+La réponse décrit le cluster créé, avec son `id` et son `status`.
+
+</TabItem>
+</Tabs>
 
 ---
 
 ## Étape 3 : Vérifier l'état
+
+<Tabs groupId="interface">
+<TabItem value="console" label="Console" default>
 
 Après le déploiement, la console revient sur la liste **Clusters Kubernetes**. Le cluster `demo-cluster` y apparaît avec le statut **En création**.
 
@@ -94,9 +164,25 @@ Cliquez sur le cluster (ou **Voir les détails** dans son menu **Actions**) pour
 
 **Résultat attendu** : statut **Prêt**, et au moins un nœud actif dans `worker-pool-1`.
 
+</TabItem>
+<TabItem value="api" label="API">
+
+```bash
+curl -sS "$HIKUBE_API/kubernetes/v1alpha1/projects/$PROJECT_ID/clusters/democluster" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" | jq '{name, status, version, controlPlane, nodeGroups}'
+```
+
+**Résultat attendu :** `status` passe de `provisioning` à `ready` (**Prêt** dans la console) au bout de quelques minutes ; `error` signale un échec. Pour suivre les nœuds actifs eux-mêmes, utilisez `kubectl get nodes` à l'étape 5.
+
+</TabItem>
+</Tabs>
+
 ---
 
 ## Étape 4 : Récupérer les identifiants
+
+<Tabs groupId="interface">
+<TabItem value="console" label="Console" default>
 
 Sur la page de détail du cluster, section **Actions**, cliquez sur **Kubeconfig**. Le navigateur télécharge le fichier `kubeconfig-demo-cluster.yaml` et la console confirme : « Le fichier kubeconfig a été téléchargé. »
 
@@ -106,6 +192,26 @@ Sur la page de détail du cluster, section **Actions**, cliquez sur **Kubeconfig
 :::warning
 Ce kubeconfig donne un accès administrateur complet au cluster. Conservez-le en lieu sûr et ne le versionnez pas.
 :::
+
+</TabItem>
+<TabItem value="api" label="API">
+
+Le kubeconfig du cluster est renvoyé dans le champ `kubeconfig` de la réponse :
+
+```bash
+curl -sS "$HIKUBE_API/kubernetes/v1alpha1/projects/$PROJECT_ID/clusters/democluster/kubeconfig" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" | jq -r '.kubeconfig' > ~/Downloads/kubeconfig-demo-cluster.yaml
+chmod 600 ~/Downloads/kubeconfig-demo-cluster.yaml
+```
+
+:::warning
+Ce kubeconfig donne un accès administrateur complet au cluster. Conservez-le en lieu sûr et ne le versionnez pas.
+:::
+
+Si le cluster n'est pas encore `ready`, la requête échoue : attendez la fin du provisionnement, puis réessayez.
+
+</TabItem>
+</Tabs>
 
 ---
 
@@ -248,11 +354,29 @@ Supprimez d'abord l'application de test :
 kubectl delete -f demo-app.yaml
 ```
 
+<Tabs groupId="interface">
+<TabItem value="console" label="Console" default>
+
 Puis supprimez le cluster depuis la console :
 
 1. Dans **Infrastructure** > **Kubernetes**, ouvrez le menu **Actions** du cluster et choisissez **Supprimer** (ou cliquez sur **Supprimer** depuis sa page de détail).
 2. Dans la fenêtre « Supprimer demo-cluster ? », saisissez le nom exact du cluster pour confirmer.
 3. Cliquez sur **Supprimer définitivement**.
+
+</TabItem>
+<TabItem value="api" label="API">
+
+Puis supprimez le cluster :
+
+```bash
+curl -sS -X DELETE "$HIKUBE_API/kubernetes/v1alpha1/projects/$PROJECT_ID/clusters/democluster" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY"
+```
+
+Une réponse `200` avec un objet vide `{}` confirme la demande ; le cluster disparaît ensuite de la liste `GET /kubernetes/v1alpha1/projects/{projectId}/clusters`.
+
+</TabItem>
+</Tabs>
 
 :::warning
 La suppression est irréversible : toutes les données associées au cluster sont définitivement perdues.
