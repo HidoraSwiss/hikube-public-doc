@@ -1,12 +1,12 @@
 ---
 sidebar_position: 1
-title: Get started
+title: Home
 slug: /
 ---
 
 import ServiceCardGrid from '@site/src/components/ServiceCardGrid';
 
-# Get started with Hikube
+# Hikube documentation
 
 Hikube is a sovereign cloud platform, hosted in Switzerland, for deploying virtual machines, Kubernetes clusters, databases and storage. All resources are managed from the web console: **[console.hikube.cloud](https://console.hikube.cloud)**.
 

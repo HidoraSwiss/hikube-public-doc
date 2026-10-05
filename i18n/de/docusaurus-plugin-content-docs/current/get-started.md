@@ -1,12 +1,12 @@
 ---
 sidebar_position: 1
-title: Erste Schritte
+title: Startseite
 slug: /
 ---
 
 import ServiceCardGrid from '@site/src/components/ServiceCardGrid';
 
-# Erste Schritte mit Hikube
+# Hikube-Dokumentation
 
 Hikube ist eine souveräne Cloud-Plattform mit Hosting in der Schweiz, auf der Sie virtuelle Maschinen, Kubernetes-Cluster, Datenbanken und Speicher bereitstellen. Alle Ressourcen verwalten Sie über die Webkonsole: **[console.hikube.cloud](https://console.hikube.cloud)**.
 
