@@ -11,8 +11,12 @@
     "message": "Änderungsprotokoll",
     "description": "Navbar item with label Changelog"
   },
-  "item.label.Hikube": {
-    "message": "Hikube",
-    "description": "Navbar item with label Hikube"
+  "item.label.hikube.cloud": {
+    "message": "hikube.cloud",
+    "description": "Navbar item with label hikube.cloud"
+  },
+  "item.label.Console": {
+    "message": "Console",
+    "description": "Navbar item with label Console"
   }
 }
