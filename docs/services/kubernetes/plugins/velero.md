@@ -14,7 +14,7 @@ L'addon **Velero** installe l'outil de **sauvegarde et de restauration** des res
 
 La page de détail du cluster affiche **Velero** dans la section **Extensions** lorsqu'il est actif.
 
-Velero s'installe dans le namespace `cozy-velero` du cluster, avec le plugin AWS (`velero-plugin-for-aws`, pour le stockage S3) déjà installé. Aucun emplacement de sauvegarde n'est configuré par défaut.
+Velero s'installe dans le cluster avec le plugin AWS (`velero-plugin-for-aws`, pour le stockage S3) déjà installé. Aucun emplacement de sauvegarde n'est configuré par défaut.
 
 ## Configurer le stockage des sauvegardes
 
@@ -61,9 +61,11 @@ kubectl get backups -A
 kubectl get restores -A
 ```
 
-Avec la CLI `velero` (configurée sur le kubeconfig du cluster) :
+Avec la CLI `velero` (configurée sur le kubeconfig du cluster). Indiquez-lui d'abord le namespace où l'addon est installé :
 
 ```bash
+velero client config set namespace=$(kubectl get deploy -A -l app.kubernetes.io/name=velero -o jsonpath='{.items[0].metadata.namespace}')
+
 velero backup create my-backup --include-namespaces production
 velero backup describe my-backup
 velero restore create --from-backup my-backup

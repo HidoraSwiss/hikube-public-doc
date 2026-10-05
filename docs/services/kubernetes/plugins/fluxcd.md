@@ -16,7 +16,7 @@ La page de détail du cluster affiche **Flux CD** dans la section **Extensions**
 
 ## Surcharger la configuration
 
-L'addon installe Flux 2.8 avec le **Flux Operator**, dans le namespace `cozy-fluxcd` du cluster. Une fois l'addon coché, le champ **Configuration Helm (YAML) — optionnel** apparaît. La valeur est transmise au chart `flux-instance`, sous la clé `flux-instance` ; les options disponibles sont celles de la ressource [FluxInstance](https://fluxcd.control-plane.io/operator/fluxinstance/). Dans la plupart des cas, aucune surcharge n'est nécessaire.
+L'addon installe Flux 2.8 avec le **Flux Operator** dans le cluster. Une fois l'addon coché, le champ **Configuration Helm (YAML) — optionnel** apparaît. La valeur est transmise au chart `flux-instance`, sous la clé `flux-instance` ; les options disponibles sont celles de la ressource [FluxInstance](https://fluxcd.control-plane.io/operator/fluxinstance/). Dans la plupart des cas, aucune surcharge n'est nécessaire.
 
 :::note
 L'addon installe Flux, mais ne déclare aucun dépôt. Les sources Git et les synchronisations se créent dans le cluster, comme décrit ci-dessous.

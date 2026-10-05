@@ -122,20 +122,23 @@ cilium:
 Une fois Cilium redéployé, utilisez la CLI Hubble embarquée dans les pods Cilium :
 
 ```bash
-# Pods Cilium (namespace cozy-cilium)
+# Pods Cilium (un par nœud)
 kubectl get pods -A -l k8s-app=cilium
 
+# Namespace de Cilium, utilisé par les commandes suivantes
+CILIUM_NS=$(kubectl get ds -A -l k8s-app=cilium -o jsonpath='{.items[0].metadata.namespace}')
+
 # Vérifier le statut de Hubble
-kubectl exec -n cozy-cilium -it ds/cilium -- hubble status
+kubectl exec -n "$CILIUM_NS" -it ds/cilium -- hubble status
 
 # Observer les flux réseau en temps réel
-kubectl exec -n cozy-cilium -it ds/cilium -- hubble observe
+kubectl exec -n "$CILIUM_NS" -it ds/cilium -- hubble observe
 
 # Voir les flux refusés par les NetworkPolicies
-kubectl exec -n cozy-cilium -it ds/cilium -- hubble observe --verdict DROPPED
+kubectl exec -n "$CILIUM_NS" -it ds/cilium -- hubble observe --verdict DROPPED
 
 # Filtrer par namespace
-kubectl exec -n cozy-cilium -it ds/cilium -- hubble observe --namespace production
+kubectl exec -n "$CILIUM_NS" -it ds/cilium -- hubble observe --namespace production
 ```
 
 :::tip
@@ -152,7 +155,8 @@ kubectl get networkpolicies -A
 kubectl describe networkpolicy allow-web
 
 # Vérifier l'état de Cilium
-kubectl exec -n cozy-cilium -it ds/cilium -- cilium status
+CILIUM_NS=$(kubectl get ds -A -l k8s-app=cilium -o jsonpath='{.items[0].metadata.namespace}')
+kubectl exec -n "$CILIUM_NS" -it ds/cilium -- cilium status
 ```
 
 **Résultat attendu pour `kubectl get networkpolicies` :**

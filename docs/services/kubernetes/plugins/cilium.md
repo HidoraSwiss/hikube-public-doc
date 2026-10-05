@@ -40,7 +40,8 @@ Le réseau du cluster dépend de Cilium. Une surcharge erronée peut couper la c
 kubectl get pods -A -l k8s-app=cilium
 
 # État de l'agent Cilium
-kubectl exec -n cozy-cilium -it ds/cilium -- cilium status
+CILIUM_NS=$(kubectl get ds -A -l k8s-app=cilium -o jsonpath='{.items[0].metadata.namespace}')
+kubectl exec -n "$CILIUM_NS" -it ds/cilium -- cilium status
 ```
 
 Voir [Comment configurer le networking](../how-to/configure-networking.md) pour les `NetworkPolicy` et Hubble.

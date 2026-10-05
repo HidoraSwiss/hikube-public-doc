@@ -52,8 +52,8 @@ export KUBECONFIG=~/Downloads/kubeconfig-<nom-du-cluster>.yaml
 # CRDs Flux installées
 kubectl get crds | grep toolkit.fluxcd.io
 
-# Contrôleurs Flux (namespace cozy-fluxcd)
-kubectl get pods -n cozy-fluxcd
+# Contrôleurs Flux
+kubectl get deploy -A -l app.kubernetes.io/part-of=flux
 ```
 
 ### 4. Déclarer le dépôt et la synchronisation

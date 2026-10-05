@@ -32,8 +32,9 @@ Une fois l'addon coché, le champ **Configuration Helm (YAML) — optionnel** ap
 ## Utilisation dans le cluster
 
 ```bash
-# Pods des agents (namespace cozy-monitoring)
-kubectl get pods -n cozy-monitoring
+# Pods des agents
+kubectl get pods -A -l app.kubernetes.io/name=vmagent
+kubectl get pods -A -l app.kubernetes.io/name=fluent-bit
 
 # Métriques de ressources
 kubectl top nodes
