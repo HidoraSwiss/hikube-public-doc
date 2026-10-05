@@ -204,7 +204,7 @@ const config = {
           {
             title: 'Documentation',
             items: [
-              {label: 'Bien démarrer', to: '/'},
+              {label: 'Accueil', to: '/'},
               {label: 'Kubernetes', to: '/services/kubernetes/overview'},
               {label: 'Machines virtuelles', to: '/services/compute/overview'},
               {label: 'Bases de données', to: '/services/databases/'},

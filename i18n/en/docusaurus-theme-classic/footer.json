@@ -11,10 +11,6 @@
     "message": "Hidora",
     "description": "The title of the footer links column with title=Hidora in the footer"
   },
-  "link.item.label.Bien démarrer": {
-    "message": "Get started",
-    "description": "The label of footer link with label=Bien démarrer linking to /"
-  },
   "link.item.label.Kubernetes": {
     "message": "Kubernetes",
     "description": "The label of footer link with label=Kubernetes linking to /services/kubernetes/overview"
@@ -66,5 +62,9 @@
   "link.item.label.Bases de données": {
     "message": "Databases",
     "description": "The label of footer link with label=Bases de données linking to /services/databases/"
+  },
+  "link.item.label.Accueil": {
+    "message": "Home",
+    "description": "The label of footer link with label=Accueil linking to /"
   }
 }
