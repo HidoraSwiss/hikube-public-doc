@@ -27,7 +27,7 @@ spec:
 
 ---
 
-## 🏗️ Architektur und Funktionsweise
+## Architektur und Funktionsweise
 
 Der verwaltete Redis-Dienst auf Hikube ist für **Hochverfügbarkeit** und **Resilienz** durch eine replizierte Architektur konzipiert.
 
@@ -68,7 +68,7 @@ graph TD
     S3 -.->|Überwachung + Auto-Failover| R2
 ```
 
-## 🎯 Anwendungsfälle
+## Anwendungsfälle
 
 Der **verwaltete Redis-Dienst auf Hikube** eignet sich besonders für:
 

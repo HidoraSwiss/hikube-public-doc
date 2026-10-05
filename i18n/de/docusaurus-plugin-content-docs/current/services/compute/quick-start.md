@@ -31,7 +31,7 @@ Stellen Sie vor Beginn sicher, dass Sie haben:
 
 ---
 
-## 🚀 Schritt 1: VM-Festplatte erstellen (2 Minuten)
+## Schritt 1: VM-Festplatte erstellen (2 Minuten)
 
 ### **Manifest-Datei vorbereiten**
 
@@ -154,7 +154,7 @@ Hikube bietet zwei externe Expositionsmethoden, jede mit ihren Besonderheiten:
 
 ---
 
-## 🔌 Schritt 3: Auf Ihre VM zugreifen (1 Minute)
+## Schritt 3: Auf Ihre VM zugreifen (1 Minute)
 
 ### **Installation von virtctl**
 
@@ -198,7 +198,7 @@ virtctl vnc vm-example
 
 ---
 
-## 🎉 Herzlichen Glückwunsch
+## Herzlichen Glückwunsch
 
 Ihre Hikube-VM ist **betriebsbereit**!
 
@@ -230,21 +230,21 @@ Das Löschen von VMs und Festplatten ist **unwiderruflich**. Stellen Sie sicher,
 
 ---
 
-## 🎯 Nächste Schritte
+## Nächste Schritte
 
 <div style={{display: 'flex', gap: '20px', flexWrap: 'wrap'}}>
 
-**📚 Erweiterte Konfiguration**  
+**Erweiterte Konfiguration**  
 → [Vollständige API-Referenz](./api-reference.md)
 
-**📖 Technische Architektur**  
+**Technische Architektur**  
 → [Funktionsweise verstehen](./overview.md)
 
 </div>
 
 ---
 
-**💡 Wichtige Punkte:**
+**Wichtige Punkte:**
 
 - Ihre **Daten sind immer sicher** dank der Replikation über 3 Rechenzentren
 - Ihre VM kann bei einem Knotenausfall **automatisch verlagert** werden

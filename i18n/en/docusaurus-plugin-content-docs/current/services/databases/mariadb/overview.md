@@ -12,7 +12,7 @@ It ensures the deployment of a replicated and self-healing cluster, guaranteeing
 
 ---
 
-## 🏗️ Architecture and Operation
+## Architecture and Operation
 
 The **managed MySQL service** on Hikube is based on the **MariaDB-Operator**, which automates the complete lifecycle management of the database: deployment, update, replication, and disaster recovery.  
 
@@ -48,7 +48,7 @@ graph TD
 
 ---
 
-## 💡 Use Cases
+## Use Cases
 
 The **managed MySQL service on Hikube** is particularly suitable for:  
 

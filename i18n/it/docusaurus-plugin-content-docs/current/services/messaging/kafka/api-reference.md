@@ -148,7 +148,7 @@ resources:
   memory: 4Gi
 ```
 
-⚠️ Attenzione: se `resources` è definito, il valore di `resourcesPreset` viene ignorato.
+Attenzione: se `resources` è definito, il valore di `resourcesPreset` viene ignorato.
 
 | **Nome Preset** | **CPU** | **Memoria** |
 | --------------- | ------- | ----------- |

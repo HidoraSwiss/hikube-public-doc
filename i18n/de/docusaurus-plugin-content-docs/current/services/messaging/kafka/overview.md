@@ -10,7 +10,7 @@ Dank der nativen Integration mit **ZooKeeper** profitiert jeder Kafka-Cluster au
 
 ---
 
-## 🏗️ Architektur und Funktionsweise
+## Architektur und Funktionsweise
 
 Ein Kafka-Deployment auf Hikube basiert auf zwei Schlüsselkomponenten:
 
@@ -24,9 +24,9 @@ Ein Kafka-Deployment auf Hikube basiert auf zwei Schlüsselkomponenten:
 
 ---
 
-## 🚀 Typische Anwendungsfälle
+## Typische Anwendungsfälle
 
-### 📡 Integration und Synchronisation von Systemen
+### Integration und Synchronisation von Systemen
 
 Kafka fungiert als **zentraler Event-Bus** zwischen den verschiedenen Anwendungen einer Organisation.
 **Beispiele:**
@@ -37,7 +37,7 @@ Kafka fungiert als **zentraler Event-Bus** zwischen den verschiedenen Anwendunge
 
 ---
 
-### ⚙️ Echtzeit-Verarbeitung und Analytics
+### Echtzeit-Verarbeitung und Analytics
 
 Kafka ermöglicht die Analyse und Transformation von Daten **zum Zeitpunkt ihrer Erzeugung**.
 **Beispiele:**
@@ -48,7 +48,7 @@ Kafka ermöglicht die Analyse und Transformation von Daten **zum Zeitpunkt ihrer
 
 ---
 
-### 🛰️ IoT- und Log-Datenerfassung
+### IoT- und Log-Datenerfassung
 
 Kafka vereinfacht die **massive Erfassung heterogener Daten** von Sensoren, Anwendungen oder Servern.
 **Beispiele:**
@@ -59,7 +59,7 @@ Kafka vereinfacht die **massive Erfassung heterogener Daten** von Sensoren, Anwe
 
 ---
 
-### 💬 Inter-Service-Kommunikation
+### Inter-Service-Kommunikation
 
 Kafka ermöglicht eine **asynchrone Kommunikation** zwischen Microservices, verbessert die Resilienz und reduziert die Abhängigkeit zwischen Komponenten.
 **Beispiele:**

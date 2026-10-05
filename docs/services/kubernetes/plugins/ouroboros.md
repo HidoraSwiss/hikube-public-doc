@@ -7,6 +7,10 @@ title: Ouroboros
 
 L'addon **Ouroboros** corrige le **NAT en épingle** (*hairpin NAT*) d'Ingress NGINX lorsque le PROXY protocol est utilisé. Sans lui, un pod du cluster qui appelle un domaine public servi par l'Ingress du même cluster peut voir sa requête échouer.
 
+:::note
+L'addon [Ingress NGINX](./ingress-nginx.md) n'active pas le PROXY protocol par défaut. Ouroboros n'a d'utilité que si vous l'avez activé, via la surcharge d'Ingress NGINX, sur toute la chaîne d'entrée.
+:::
+
 ## Dans la console
 
 Ouroboros nécessite l'addon [Ingress NGINX](./ingress-nginx.md).
@@ -32,4 +36,4 @@ kubectl run hairpin-test --rm -it --image=curlimages/curl --restart=Never -- cur
 
 ## Bonnes pratiques
 
-- Activez Ouroboros dès que des applications du cluster s'appellent entre elles par leurs domaines publics.
+- Activez Ouroboros lorsque le PROXY protocol est actif sur Ingress NGINX et que des applications du cluster s'appellent entre elles par leurs domaines publics.

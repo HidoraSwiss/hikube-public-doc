@@ -3,7 +3,7 @@ sidebar_position: 5
 title: Schnellstart
 ---
 
-# 🚀 Kubernetes in 5 Minuten bereitstellen
+# Kubernetes in 5 Minuten bereitstellen
 
 Diese Anleitung begleitet Sie bei der Erstellung Ihres ersten Kubernetes-Clusters auf Hikube, von der Basiskonfiguration bis zur Bereitstellung einer Testanwendung.
 
@@ -77,7 +77,7 @@ kubectl get kubernetes my-first-cluster -w
 
 ---
 
-## 🔐 Schritt 2: Zugriff auf den Cluster
+## Schritt 2: Zugriff auf den Cluster
 
 ### **Kubeconfig abrufen**
 
@@ -105,7 +105,7 @@ my-first-cluster-md0-xxxxx   Ready    <none>   2m    v1.29.0
 
 ---
 
-## 🚀 Schritt 3: Bereitstellung einer Anwendung
+## Schritt 3: Bereitstellung einer Anwendung
 
 ### **Demo-Anwendung**
 
@@ -198,7 +198,7 @@ kubectl get ingress
 
 ---
 
-## ✅ Schritt 4: Überprüfung und Tests
+## Schritt 4: Überprüfung und Tests
 
 ### **Prüfen, ob alles funktioniert**
 
@@ -229,7 +229,7 @@ curl http://localhost:8080
 
 ---
 
-## 📊 Schritt 5: Monitoring und Observability
+## Schritt 5: Monitoring und Observability
 
 ### **Integrierte Dashboards**
 
@@ -258,7 +258,7 @@ kubectl get events --sort-by=.metadata.creationTimestamp
 
 ---
 
-## 🎛️ Schritt 6: Verwaltung und Skalierung
+## Schritt 6: Verwaltung und Skalierung
 
 ### **Cluster-Skalierung**
 
@@ -288,7 +288,7 @@ kubectl describe hpa  # Wenn HPA konfiguriert ist
 
 ---
 
-## 🔧 Schritt 7: Nächste Schritte
+## Schritt 7: Nächste Schritte
 
 ### **Erweiterte Konfiguration**
 
@@ -328,7 +328,7 @@ spec:
 
 ---
 
-## 🚨 Schnelle Fehlerbehebung
+## Schnelle Fehlerbehebung
 
 ### **Häufige Probleme**
 
@@ -360,7 +360,7 @@ kubectl delete kubernetes my-first-cluster
 
 ---
 
-## 📋 Zusammenfassung
+## Zusammenfassung
 
 Sie haben erstellt:
 
@@ -369,11 +369,11 @@ Sie haben erstellt:
 - Eine Beispielanwendung mit Ingress
 - Ein automatisches SSL-Zertifikat über cert-manager
 
-## 🚀 Nächste Schritte
+## Nächste Schritte
 
 - **[API-Referenz](./api-reference.md)** → Vollständige Cluster-Konfiguration
 - **[GPU](../gpu/overview.md)** → GPUs mit Kubernetes verwenden
 
 ---
 
-**💡 Tipp:** Bewahren Sie Ihre `kubeconfig`-Datei sicher auf und denken Sie daran, RBAC zu konfigurieren, um den Zugriff auf Ihren Cluster je nach Teams und Umgebungen zu steuern.
+**Tipp:** Bewahren Sie Ihre `kubeconfig`-Datei sicher auf und denken Sie daran, RBAC zu konfigurieren, um den Zugriff auf Ihren Cluster je nach Teams und Umgebungen zu steuern.

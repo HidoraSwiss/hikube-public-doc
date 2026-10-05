@@ -10,7 +10,7 @@ Al termine di questo tutorial, disporrete di un bucket pronto all'uso, con crede
 
 ---
 
-## 🎯 Obiettivo
+## Obiettivo
 
 Al termine di questa guida, avrete:
 
@@ -20,7 +20,7 @@ Al termine di questa guida, avrete:
 
 ---
 
-## 🧰 Prerequisiti
+## Prerequisiti
 
 Prima di iniziare, assicuratevi di avere:
 
@@ -30,7 +30,7 @@ Prima di iniziare, assicuratevi di avere:
 
 ---
 
-## 🚀 Passo 1: Creare il Bucket (1 minuto)
+## Passo 1: Creare il Bucket (1 minuto)
 
 ### **Preparate il file manifest**
 
@@ -43,7 +43,7 @@ metadata:
   name: example-bucket
 ```
 
-> 📌 Il nome indicato in `metadata.name` identifica la risorsa Kubernetes.
+> Il nome indicato in `metadata.name` identifica la risorsa Kubernetes.
 > Il nome reale del bucket S3 viene generato automaticamente.
 
 ---
@@ -67,7 +67,7 @@ example-bucket   True    15s
 
 ---
 
-## 🔐 Passo 2: Recuperare le credenziali (2 minuti)
+## Passo 2: Recuperare le credenziali (2 minuti)
 
 La creazione del bucket genera un `Secret` contenente una chiave `BucketInfo` (JSON).
 
@@ -86,7 +86,7 @@ export BUCKET_NAME="$(echo "$INFO" | jq -r '.spec.bucketName')"
 
 ---
 
-## 🌐 Passo 3: Testare la connessione S3 (2 minuti)
+## Passo 3: Testare la connessione S3 (2 minuti)
 
 :::warning Accesso root S3
 Con queste credenziali, **non avete** il permesso di elencare tutti i bucket dell'endpoint.
@@ -121,8 +121,8 @@ aws s3 ls "s3://$BUCKET_NAME/" --endpoint-url "$S3_ENDPOINT" --profile hikube
 # Definire un alias per l'endpoint
 mc alias set hikube "$S3_ENDPOINT" "$S3_ACCESS_KEY" "$S3_SECRET_KEY"
 
-# ⚠️ NON fare: `mc ls hikube`  -> AccessDenied
-# ✅ Puntare direttamente al vostro bucket:
+# NON fare: `mc ls hikube`  -> AccessDenied
+# Puntare direttamente al vostro bucket:
 mc ls "hikube/$BUCKET_NAME/"
 
 # Inviare un file di test
@@ -134,7 +134,7 @@ mc ls "hikube/$BUCKET_NAME/"
 
 ---
 
-## 🧹 Pulizia (opzionale)
+## Pulizia (opzionale)
 
 ```bash
 # Eliminare il bucket (cancella anche il suo contenuto)
@@ -148,14 +148,14 @@ Verificate i vostri backup prima di procedere.
 
 ---
 
-## 🚀 Prossimi passi
+## Prossimi passi
 
-**📚 Riferimento API** → [Specifica completa](./api-reference.md)
-**📖 Architettura** → [Panoramica](./overview.md)
+**Riferimento API** → [Specifica completa](./api-reference.md)
+**Architettura** → [Panoramica](./overview.md)
 
 ---
 
-## 💡 Da ricordare
+## Da ricordare
 
 - Le credenziali fornite danno accesso **unicamente** al vostro bucket
 - Puntate sempre a `s3://$BUCKET_NAME/` (o `alias/$BUCKET_NAME/`) nei vostri comandi

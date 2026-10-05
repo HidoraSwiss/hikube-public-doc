@@ -12,7 +12,7 @@ The control plane is fully managed by the platform, while **worker nodes** are d
 
 ---
 
-## 🏗️ Architecture Diagram
+## Architecture Diagram
 
 ### **High-Level Overview**
 
@@ -33,7 +33,7 @@ Hikube Kubernetes clusters rely on a **multi-datacenter infrastructure** (3 Swis
 
 ---
 
-## ⚙️ Cluster Composition and Configuration
+## Cluster Composition and Configuration
 
 Clusters are fully declarative and configurable via API or YAML manifests.
 The main configuration elements include:
@@ -48,16 +48,16 @@ The main configuration elements include:
 
 ---
 
-## ⚙️ How the Platform Works
+## How the Platform Works
 
-### 🧠 **Control Plane**
+###**Control Plane**
 
 * Managed entirely by Hikube — no customer maintenance required
 * Critical components replicated across multiple sites
 * High availability, monitoring, and automated patching included
 * Access via the standard Kubernetes API (`kubectl`, SDK clients, etc.)
 
-### 🧩 **Worker Nodes / NodeGroups**
+###**Worker Nodes / NodeGroups**
 
 NodeGroups allow you to adapt compute resources to your needs.
 Each group can define instance type, roles, and autoscaling parameters.
@@ -81,7 +81,7 @@ nodeGroups:
 
 ---
 
-## 💾 Persistent Storage
+## Persistent Storage
 
 ### **Storage Class: `replicated`**
 
@@ -100,7 +100,7 @@ resources:
 
 ---
 
-## 🔢 Kubernetes Versioning
+## Kubernetes Versioning
 
 * Clusters can be created with a **specific Kubernetes version**
 * Hikube handles minor and patch upgrades in a controlled manner
@@ -114,7 +114,7 @@ version: "1.30.3"
 
 ---
 
-## 🧩 Integrated Add-ons
+## Integrated Add-ons
 
 ### **Cert-Manager**
 
@@ -139,7 +139,7 @@ version: "1.30.3"
 
 ---
 
-## 🚀 Example Use Cases
+## Example Use Cases
 
 ### **Web Applications**
 
@@ -176,7 +176,7 @@ nodeGroups:
 
 ---
 
-## 📚 Resources
+## Resources
 
 * **[Concepts & Architecture](./concepts.md)** → Learn how a Hikube Kubernetes cluster is built
 * **[Quick Start](./quick-start.md)** → Create your first Hikube cluster
@@ -184,7 +184,7 @@ nodeGroups:
 
 ---
 
-## 💡 Key Takeaways
+## Key Takeaways
 
 * **Managed control plane** – no master maintenance required
 * **Workers in your tenant** – full control over compute resources

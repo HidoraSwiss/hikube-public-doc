@@ -3,7 +3,7 @@ sidebar_position: 6
 title: Cert-manager
 ---
 
-# 🧩 Dettagli del campo `certManager`
+# Dettagli del campo `certManager`
 
 Il campo `certManager` definisce la configurazione del gestore di certificati integrato nel cluster Kubernetes.
 Permette di attivare o disattivare il componente e di personalizzarne il comportamento tramite valori specifici.
@@ -107,7 +107,7 @@ spec:
 
 ---
 
-## 💡 Buone pratiche
+## Buone pratiche
 
 - Lasciare `enabled: true` per garantire la gestione automatica dei certificati TLS.
 - Utilizzare `valuesOverride` per regolare i parametri Helm senza modificare i valori predefiniti globali.

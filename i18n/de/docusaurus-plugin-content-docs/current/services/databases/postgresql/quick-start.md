@@ -286,7 +286,7 @@ kubectl describe postgres example
 
 ---
 
-## 📋 Zusammenfassung
+## Zusammenfassung
 
 Sie haben bereitgestellt:
 

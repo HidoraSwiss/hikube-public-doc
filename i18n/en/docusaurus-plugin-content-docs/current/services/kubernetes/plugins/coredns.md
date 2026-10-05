@@ -7,7 +7,7 @@ title: CoreDNS
   <!--coredns     <Object> -required-
     valuesOverride    <Object> -required--->
 
-# 🧩 Details of the `addons.coredns` Field
+# Details of the `addons.coredns` Field
 
 The `addons.coredns` field defines the configuration of the **CoreDNS** add-on, used as the cluster’s **DNS service**.
 CoreDNS handles name resolution for services and internal pods within the cluster, and can be customized through Helm parameters.
@@ -90,7 +90,7 @@ valuesOverride:
 
 ---
 
-## 💡 Best Practices
+## Best Practices
 
 * Always define `valuesOverride` to adjust resources according to the cluster size.
 * Set `replicaCount` to **at least 2** to ensure high availability of the DNS service.

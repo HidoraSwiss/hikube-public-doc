@@ -5,7 +5,7 @@ title: FluxCD
 
 <!--Link zu valuesoverride-->
 
-# 🧩 Details zum Feld `addons.fluxcd`
+# Details zum Feld `addons.fluxcd`
 
 Das Feld `addons.fluxcd` definiert die Konfiguration des Add-ons **FluxCD**, das für die **GitOps-Verwaltung** des Kubernetes-Clusters verwendet wird.
 FluxCD synchronisiert automatisch den Cluster-Zustand mit Git-Repositories und stellt sicher, dass die im Code deklarierte Konfiguration stets angewendet wird.
@@ -101,7 +101,7 @@ valuesOverride:
 
 ---
 
-## 💡 Best Practices
+## Best Practices
 
 - Aktivieren Sie `enabled: true`, um vom kontinuierlichen GitOps-basierten Deployment zu profitieren.
 - Verwenden Sie `valuesOverride`, um die Ressourcen anzupassen und die Synchronisationsfrequenz je nach Bedarf einzustellen.

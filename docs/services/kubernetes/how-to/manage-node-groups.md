@@ -53,7 +53,7 @@ Choisissez un nom descriptif pour vos groupes (`compute`, `web`, `monitoring`, `
 Dans la section **Groupes de nœuds**, dépliez la carte du groupe, modifiez les champs souhaités (type d'instance, stockage éphémère, nombre minimum ou maximum de nœuds, exposition) puis cliquez sur **Enregistrer**.
 
 :::warning
-Le changement de type d'instance remplace les nœuds du groupe. Assurez-vous que votre cluster dispose de suffisamment de capacité pour absorber la charge pendant le remplacement.
+Le changement de type d'instance remplace les nœuds du groupe progressivement : de nouveaux nœuds sont créés, puis les anciens sont retirés un par un. Le quota du projet doit pouvoir accueillir les nœuds supplémentaires pendant le remplacement.
 :::
 
 :::note

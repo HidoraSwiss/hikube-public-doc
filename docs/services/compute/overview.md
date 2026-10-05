@@ -20,7 +20,7 @@ Dans la [console Hikube](https://console.hikube.cloud), les VM se gèrent depuis
 | Créer une VM (image, gabarit, disques, réseau, clés SSH, cloud-init, GPU) | **Instances VM** > **Créer une Instance** |
 | Démarrer, arrêter, redémarrer | Menu **Actions** de la liste, ou section **Actions** de la page de détail |
 | Changer de gabarit, ajouter un disque ou un GPU, modifier les ports ouverts | Page de détail > **Modifier** |
-| Rejouer le script cloud-init | **Recharger UserData** |
+| Rejouer le script cloud-init | **Recharger UserData**, puis **Redémarrer** |
 | Obtenir la commande SSH prête à copier | Page de détail, section **Réseau et Sécurité** > **Connexion SSH** |
 | Relier la VM à un réseau privé | Étape **Réseau** de l'assistant, ou menu **Réseau** (voir [VPC et sous-réseaux](../networking/overview.md)) |
 

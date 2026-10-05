@@ -9,14 +9,14 @@ Die **ClickHouse-Datenbanken** von Hikube bieten ein leistungsstarkes, spaltenor
 
 ---
 
-## 🏗️ Architektur und Funktionsweise
+## Architektur und Funktionsweise
 
 Die ClickHouse-Architektur basiert auf zwei wesentlichen Parametern, die die Bereitstellung an die tatsächlichen Bedürfnisse anpassen:
 
 - **Shards** → ermöglichen die **Aufteilung der Daten in mehrere Teile** auf verschiedenen Knoten. Je mehr Shards, desto besser wird die Last verteilt, was die Ausführungsgeschwindigkeit von Abfragen über sehr große Volumen verbessert.
 - **Replikas** → erstellen **redundante Kopien** der Shards. Dies erhöht die Resilienz und Fehlertoleranz und ermöglicht gleichzeitig die Verteilung der Leselast auf mehrere Knoten.
 
-### 🔎 Anschauliches Beispiel
+### Anschauliches Beispiel
 
 Stellen Sie sich eine Datenbank mit **1 Milliarde Kundendatensätzen** vor:
 

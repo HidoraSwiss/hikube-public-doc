@@ -24,6 +24,8 @@ Une VM Hikube peut être exposée sur Internet via une IP publique IPv4, filtré
 
 :::tip Recommandation
 Gardez le pare-feu activé en production et n'ouvrez que les ports nécessaires.
+
+Le pare-feu ne filtre que le trafic qui arrive par l'IP publique. Le trafic entre les VM du projet, sur un VPC comme sur le réseau principal, n'est pas filtré : utilisez pour cela le pare-feu de l'OS (ufw, firewalld, nftables).
 :::
 
 ### 2. Régler les options à la création
@@ -43,11 +45,11 @@ Le **Récapitulatif** affiche **IP Publique**, **Pare-feu** et **Ports Ouverts**
 2. Dans **Réseau & Sécurité**, ajustez **Adresse IPv4 Publique**, **Activer le Pare-feu** et les **Ports Autorisés**.
 3. Cliquez sur **Enregistrer**.
 
-Contrairement à un changement de gabarit, de disques ou de GPU, la console n'annonce pas de redémarrage pour ces changements.
+Ces changements s'appliquent en quelques secondes, sans redémarrer la VM, contrairement à un changement de gabarit, de disques ou de GPU.
 
 ### 4. Relier la VM à un réseau privé (optionnel)
 
-Sous **Réseaux VPC (Secondaires)**, cochez un VPC puis un ou plusieurs de ses **Sous-réseaux**. Chaque sous-réseau ajoute une interface privée à la VM. Le bouton **+ VPC** crée un VPC sans quitter l'écran, et **Ajouter un sous-réseau** crée un sous-réseau dans le VPC coché. Le détail est dans [Réseau : démarrage rapide](../../networking/quick-start.md).
+Sous **Réseaux VPC (Secondaires)**, cochez un VPC puis un ou plusieurs de ses **Sous-réseaux**. Chaque sous-réseau ajoute une interface privée à la VM, que l'OS ne configure pas automatiquement (voir [Relier une VM à un VPC](../../networking/how-to/attach-vm-to-vpc.md#4-vérifier-dans-los)). Le bouton **+ VPC** crée un VPC sans quitter l'écran, et **Ajouter un sous-réseau** crée un sous-réseau dans le VPC coché. Le détail est dans [Réseau : démarrage rapide](../../networking/quick-start.md).
 
 ## Vérification
 

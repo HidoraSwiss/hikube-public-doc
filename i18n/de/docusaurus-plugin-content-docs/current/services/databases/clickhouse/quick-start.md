@@ -223,7 +223,7 @@ kubectl describe clickhouse example
 
 ---
 
-## 📋 Zusammenfassung
+## Zusammenfassung
 
 Sie haben bereitgestellt:
 

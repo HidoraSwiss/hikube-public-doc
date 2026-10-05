@@ -6,7 +6,7 @@ title: CoreDNS
   <!--coredns     <Object> -required-
     valuesOverride    <Object> -required--->
 
-# 🧩 Dettagli del campo `addons.coredns`
+# Dettagli del campo `addons.coredns`
 
 Il campo `addons.coredns` definisce la configurazione dell'add-on **CoreDNS**, utilizzato come **servizio DNS** del cluster Kubernetes.
 CoreDNS gestisce la risoluzione dei nomi dei servizi e dei pod interni al cluster, e può essere personalizzato tramite parametri Helm.
@@ -89,7 +89,7 @@ valuesOverride:
 
 ---
 
-## 💡 Buone pratiche
+## Buone pratiche
 
 - Definire sempre `valuesOverride` per regolare le risorse in base alla dimensione del cluster.
 - Configurare `replicaCount` ad **almeno 2** per garantire l'alta disponibilità del servizio DNS.

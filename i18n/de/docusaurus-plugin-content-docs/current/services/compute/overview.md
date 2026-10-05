@@ -9,20 +9,20 @@ Die **Virtuellen Maschinen (VMs)** von Hikube bieten eine vollständige Virtuali
 
 ---
 
-## 🏗️ Architektur und Funktionsweise
+## Architektur und Funktionsweise
 
 ### **Trennung von Compute und Speicher**
 
 Hikube verwendet eine **entkoppelte** Architektur zwischen Compute und Speicher, die eine optimale Resilienz gewährleistet:
 
-**💻 Compute-Schicht**
+**Compute-Schicht**
 
 - Die VM läuft auf **physischen Servern** in einem der 3 Rechenzentren
 - Wenn ein Knoten ausfällt, wird die VM **automatisch** auf einem anderen Knoten **neu gestartet**
 - Wenn ein Rechenzentrum ausfällt, wird die VM **automatisch** auf einem anderen Knoten in einem der 2 verbleibenden Rechenzentren **neu gestartet**
 - Die Ausfallzeit beschränkt sich auf den Neustart (in der Regel < 2 Minuten)
 
-**💾 Speicherschicht (Persistent)**
+**Speicherschicht (Persistent)**
 
 - Die VM-Festplatten werden **automatisch repliziert** über mehrere physische Knoten mit dem "replicated"-Speicher
 - **Kein Datenverlust** selbst bei mehrfachem Hardware-Ausfall
@@ -35,17 +35,17 @@ Wir garantieren die Ressourcen!
 
 ```mermaid
 flowchart TD
-    subgraph DC1["🏢 Datacenter Genève"]
-        VM1["🖥️ VM-Production"]
-        STORAGE1["💾 Storage"]
+    subgraph DC1["Datacenter Genève"]
+        VM1["VM-Production"]
+        STORAGE1["Storage"]
     end
 
-    subgraph DC2["🏢 Datacenter Lucerne"]
-        STORAGE2["💾 Storage"]
+    subgraph DC2["Datacenter Lucerne"]
+        STORAGE2["Storage"]
     end
 
-    subgraph DC3["🏢 Datacenter Gland"]
-        STORAGE3["💾 Storage"]
+    subgraph DC3["Datacenter Gland"]
+        STORAGE3["Storage"]
     end
 
     %% VM nutzt den lokalen Speicher
@@ -65,7 +65,7 @@ flowchart TD
 
 ---
 
-## ⚙️ Instanztypen
+## Instanztypen
 
 ### **Vollständige Palette für alle Anforderungen**
 
@@ -121,7 +121,7 @@ Hikube bietet drei Instanzserien, die für verschiedene Nutzungsprofile optimier
 
 ---
 
-## 🔒 Isolation und Sicherheit
+## Isolation und Sicherheit
 
 ### **Multi-Tenant by Design**
 
@@ -133,7 +133,7 @@ Jede VM profitiert von einer **vollständigen Isolation** dank einer sicheren Ar
 
 ---
 
-## 🌐 Konnektivität und Zugang
+## Konnektivität und Zugang
 
 ### **Native Zugriffsmethoden**
 
@@ -145,7 +145,7 @@ Die Netzwerkarchitektur von Hikube basiert auf einem Software-Defined-Ansatz, de
 
 ---
 
-## 📦 Migration und Portabilität
+## Migration und Portabilität
 
 ### **Import bestehender Workloads**
 
@@ -157,14 +157,14 @@ Das Lifecycle-Management-System integriert automatisierte Mechanismen, die die B
 
 ---
 
-## 🚀 Nächste Schritte
+## Nächste Schritte
 
 Jetzt, da Sie die Architektur der Hikube-VMs verstehen:
 
-**🏃‍♂️ Sofortiger Start**
+**Sofortiger Start**
 → [Erstellen Sie Ihre erste VM in 5 Minuten](./quick-start.md)
 
-**📖 Erweiterte Konfiguration**
+**Erweiterte Konfiguration**
 → [Vollständige API-Referenz](./api-reference.md)
 
 :::tip Empfohlene Architektur

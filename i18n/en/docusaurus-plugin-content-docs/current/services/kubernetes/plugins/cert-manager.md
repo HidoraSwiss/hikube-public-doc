@@ -3,7 +3,7 @@ sidebar_position: 6
 title: Cert-manager
 ---
 
-# 🧩 Details of the `certManager` Field
+# Details of the `certManager` Field
 
 The `certManager` field defines the configuration of the certificate manager integrated into the Kubernetes cluster.
 It allows enabling or disabling the component and customizing its behavior through specific values.
@@ -46,8 +46,8 @@ This field is generally used to inject custom Helm parameters (such as images, r
 
 | Field                | Type    | Required | Description                                                       |
 | -------------------- | ------- | -------- | ----------------------------------------------------------------- |
-| `installCRDs`        | boolean | ❌        | Installs the Custom Resource Definitions required by cert-manager |
-| `prometheus.enabled` | boolean | ❌        | Enables or disables Prometheus metrics export                     |
+| `installCRDs`        | boolean | No        | Installs the Custom Resource Definitions required by cert-manager |
+| `prometheus.enabled` | boolean | No        | Enables or disables Prometheus metrics export                     |
 
 ### Example
 
@@ -107,7 +107,7 @@ spec:
 
 ---
 
-## 💡 Best Practices
+## Best Practices
 
 * Keep `enabled: true` to ensure automatic TLS certificate management.
 * Use `valuesOverride` to adjust Helm parameters without modifying global default values.

@@ -12,7 +12,7 @@ Thanks to its native integration with **ZooKeeper**, each Kafka cluster on Hikub
 
 ---
 
-## 🏗️ Architecture and Operation
+## Architecture and Operation
 
 A Kafka deployment on Hikube relies on two key components:
 
@@ -26,9 +26,9 @@ A Kafka deployment on Hikube relies on two key components:
 
 ---
 
-## 🚀 Typical Use Cases
+## Typical Use Cases
 
-### 📡 System Integration and Synchronization
+### System Integration and Synchronization
 
 Kafka serves as a **central event bus** between an organization's various applications.
 **Examples:**
@@ -39,7 +39,7 @@ Kafka serves as a **central event bus** between an organization's various applic
 
 ---
 
-### ⚙️ Real-time Processing and Analytics
+### Real-time Processing and Analytics
 
 Kafka enables data analysis and transformation **at the moment it is produced**.
 **Examples:**
@@ -50,7 +50,7 @@ Kafka enables data analysis and transformation **at the moment it is produced**.
 
 ---
 
-### 🛰️ IoT Data and Log Collection
+### IoT Data and Log Collection
 
 Kafka simplifies the **massive collection of heterogeneous data** from sensors, applications, or servers.
 **Examples:**
@@ -61,7 +61,7 @@ Kafka simplifies the **massive collection of heterogeneous data** from sensors, 
 
 ---
 
-### 💬 Inter-service Communication
+### Inter-service Communication
 
 Kafka enables **asynchronous communication** between microservices, improving resilience and reducing dependency between components.
 **Examples:**

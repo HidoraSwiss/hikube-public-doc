@@ -122,20 +122,20 @@ cilium:
 Une fois Cilium redéployé, utilisez la CLI Hubble embarquée dans les pods Cilium :
 
 ```bash
-# Repérer le namespace et un pod Cilium
+# Pods Cilium (namespace cozy-cilium)
 kubectl get pods -A -l k8s-app=cilium
 
 # Vérifier le statut de Hubble
-kubectl exec -n <namespace-cilium> -it ds/cilium -- hubble status
+kubectl exec -n cozy-cilium -it ds/cilium -- hubble status
 
 # Observer les flux réseau en temps réel
-kubectl exec -n <namespace-cilium> -it ds/cilium -- hubble observe
+kubectl exec -n cozy-cilium -it ds/cilium -- hubble observe
 
 # Voir les flux refusés par les NetworkPolicies
-kubectl exec -n <namespace-cilium> -it ds/cilium -- hubble observe --verdict DROPPED
+kubectl exec -n cozy-cilium -it ds/cilium -- hubble observe --verdict DROPPED
 
 # Filtrer par namespace
-kubectl exec -n <namespace-cilium> -it ds/cilium -- hubble observe --namespace production
+kubectl exec -n cozy-cilium -it ds/cilium -- hubble observe --namespace production
 ```
 
 :::tip
@@ -152,7 +152,7 @@ kubectl get networkpolicies -A
 kubectl describe networkpolicy allow-web
 
 # Vérifier l'état de Cilium
-kubectl exec -n <namespace-cilium> -it ds/cilium -- cilium status
+kubectl exec -n cozy-cilium -it ds/cilium -- cilium status
 ```
 
 **Résultat attendu pour `kubectl get networkpolicies` :**

@@ -12,20 +12,20 @@ The platform provides a sovereign and performant alternative to Amazon S3, with 
 
 ---
 
-## 🏗️ Architecture and Operation
+## Architecture and Operation
 
 ### **Distributed Object Storage**
 
 Hikube buckets are based on a **100% distributed and replicated** S3 architecture across multiple datacenters.  
 Unlike block volumes used for VMs, object storage is not attached to a machine: it is accessible via **standardized S3 APIs** from any authorized application or service.
 
-#### 📦 Storage Layer
+#### Storage Layer
 
 - Each bucket is hosted on a **multi-node infrastructure** distributed across several Swiss datacenters  
 - Objects are **automatically replicated** across 3 distinct physical zones to guarantee maximum durability  
 - The system is designed to tolerate the failure of an entire datacenter without data loss or unavailability
 
-#### 🌐 Access Layer
+#### Access Layer
 
 - Buckets are accessible via a **unique HTTPS endpoint** compatible with S3 v4 signature  
 - Access is authenticated by **S3 Access Keys** automatically generated when creating the bucket  
@@ -37,17 +37,17 @@ Unlike block volumes used for VMs, object storage is not attached to a machine: 
 
 ```mermaid
 flowchart TD
-    subgraph DC1["🏢 Geneva Datacenter"]
-        B1["🪣 Bucket Data"]
-        S1["📦 Objects"]
+    subgraph DC1["Geneva Datacenter"]
+        B1["Bucket Data"]
+        S1["Objects"]
     end
 
-    subgraph DC2["🏢 Lucerne Datacenter"]
-        S2["📦 Objects (Replica)"]
+    subgraph DC2["Lucerne Datacenter"]
+        S2["Objects (Replica)"]
     end
 
-    subgraph DC3["🏢 Gland Datacenter"]
-        S3["📦 Objects (Replica)"]
+    subgraph DC3["Gland Datacenter"]
+        S3["Objects (Replica)"]
     end
 
     B1 --> S1
@@ -61,11 +61,11 @@ flowchart TD
     style B1 fill:#f3e5f5
 ```
 
-This architecture guarantees **availability and durability** of data, while remaining entirely operated in Switzerland 🇨🇭.
+This architecture guarantees **availability and durability** of data, while remaining entirely operated in Switzerland.
 
 ---
 
-## ⚙️ Typical Use Cases
+## Typical Use Cases
 
 Hikube buckets are designed to cover a wide range of cloud storage scenarios:
 
@@ -81,7 +81,7 @@ Hikube buckets are designed to cover a wide range of cloud storage scenarios:
 
 ---
 
-## 🔒 Isolation and Security
+## Isolation and Security
 
 ### **Separation by Tenant**
 
@@ -97,7 +97,7 @@ Each bucket is **provisioned in a specific Kubernetes namespace**, ensuring stri
 
 ---
 
-## 🌐 Connectivity and Integration
+## Connectivity and Integration
 
 ### **Unique S3 Endpoint**
 
@@ -119,7 +119,7 @@ This allows seamless integration into existing CI/CD pipelines, backup tools, an
 
 ---
 
-## 📦 Management and Portability
+## Management and Portability
 
 ### **Simple Lifecycle**
 
@@ -137,14 +137,14 @@ Thanks to S3 compatibility, your data remains **interoperable** with:
 
 ---
 
-## 🚀 Next Steps
+## Next Steps
 
 Now that you understand Hikube Buckets architecture:
 
-**🏃‍♂️ Immediate Start**
+**Immediate Start**
 → [Create your first bucket](./quick-start.md)
 
-**📖 Advanced Configuration**
+**Advanced Configuration**
 → [Complete API Reference](./api-reference.md)
 
 :::tip Production Recommendation

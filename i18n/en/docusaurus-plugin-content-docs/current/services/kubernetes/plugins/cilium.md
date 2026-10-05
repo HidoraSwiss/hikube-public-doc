@@ -4,7 +4,7 @@ sidebar_position: 1
 title: Cilium
 -------------
 
-# 🧩 Details of the `addons.cilium` Field
+# Details of the `addons.cilium` Field
 
 The `addons.cilium` field defines the configuration of the **Cilium** add-on, used as the cluster’s **CNI (Container Network Interface)**.
 Cilium manages networking, security, and observability for Pods using **BPF (Berkeley Packet Filter)**.
@@ -64,7 +64,7 @@ valuesOverride:
 
 ---
 
-## 💡 Best Practices
+## Best Practices
 
 * Always define `valuesOverride` to maintain full control over network configuration.
 * Enable **Hubble** (`hubble.enabled: true`) to gain network visibility and traffic flow tracking.

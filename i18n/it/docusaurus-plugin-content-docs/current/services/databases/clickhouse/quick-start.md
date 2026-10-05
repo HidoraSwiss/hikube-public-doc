@@ -223,7 +223,7 @@ kubectl describe clickhouse example
 
 ---
 
-## 📋 Riepilogo
+## Riepilogo
 
 Avete distribuito:
 

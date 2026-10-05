@@ -11,7 +11,7 @@ Basato sul protocollo **AMQP (Advanced Message Queuing Protocol)**, RabbitMQ gar
 
 ---
 
-## 🏗️ Architettura e Funzionamento
+## Architettura e Funzionamento
 
 Un deployment RabbitMQ su Hikube si basa su diversi concetti fondamentali:
 
@@ -22,13 +22,13 @@ Un deployment RabbitMQ su Hikube si basa su diversi concetti fondamentali:
 
 I cluster RabbitMQ su Hikube sono configurati in **modalità alta disponibilità (HA)**, con una **replica delle code di messaggi** tra più nodi per garantire la continuità del servizio in caso di guasto.
 
-> ⚙️ I cluster Hikube utilizzano la **funzionalità quorum queue** per offrire un comportamento simile a quello dei consensi distribuiti (basato su Raft), garantendo **integrità e tolleranza ai guasti**.
+> I cluster Hikube utilizzano la **funzionalità quorum queue** per offrire un comportamento simile a quello dei consensi distribuiti (basato su Raft), garantendo **integrità e tolleranza ai guasti**.
 
 ---
 
-## 🚀 Casi d'uso tipici
+## Casi d'uso tipici
 
-### 💬 Comunicazione inter-servizi
+### Comunicazione inter-servizi
 
 RabbitMQ è spesso utilizzato come **bus di messaggi interno** tra applicazioni o microservizi.
 Consente di **disaccoppiare le elaborazioni**, ridurre la latenza percepita e migliorare la **resilienza globale**.
@@ -41,7 +41,7 @@ Consente di **disaccoppiare le elaborazioni**, ridurre la latenza percepita e mi
 
 ---
 
-### ⚙️ Gestione di flussi asincroni
+### Gestione di flussi asincroni
 
 RabbitMQ semplifica l'implementazione di **workflow asincroni** in cui ogni componente lavora indipendentemente dagli altri.
 
@@ -53,7 +53,7 @@ RabbitMQ semplifica l'implementazione di **workflow asincroni** in cui ogni comp
 
 ---
 
-### 📡 Integrazione di applicazioni e interconnessione di sistemi
+### Integrazione di applicazioni e interconnessione di sistemi
 
 RabbitMQ funge da **ponte di comunicazione universale** tra applicazioni, linguaggi o ambienti eterogenei.
 
@@ -65,7 +65,7 @@ RabbitMQ funge da **ponte di comunicazione universale** tra applicazioni, lingua
 
 ---
 
-### 🔒 Affidabilità e persistenza
+### Affidabilità e persistenza
 
 RabbitMQ garantisce la **durabilità dei messaggi** grazie alla persistenza su disco e alla gestione degli **acknowledgement** (ACK/NACK).
 Questo garantisce che nessun messaggio venga perso, anche in caso di guasto temporaneo di un nodo o della rete.

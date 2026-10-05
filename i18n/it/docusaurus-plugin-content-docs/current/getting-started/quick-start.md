@@ -3,7 +3,7 @@ sidebar_position: 3
 title: Avvio rapido
 ---
 
-# 🚀 Avvio rapido con Hikube
+# Avvio rapido con Hikube
 
 Benvenuti! Questa guida vi accompagna passo dopo passo per creare il vostro primo progetto su Hikube. Al termine di questo tutorial, avrete distribuito la vostra prima applicazione in un ambiente completamente sicuro.
 
@@ -47,7 +47,7 @@ choco install kubernetes-cli
 winget install Kubernetes.kubectl
 ```
 
-📖 **Documentazione ufficiale**: [Install kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)
+**Documentazione ufficiale**: [Install kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)
 
 #### **kubelogin** (richiesto per l'autenticazione OIDC)
 
@@ -68,7 +68,7 @@ kubectl krew install oidc-login
 choco install kubelogin
 ```
 
-📖 **Documentazione ufficiale**: [int128/kubelogin](https://github.com/int128/kubelogin)
+**Documentazione ufficiale**: [int128/kubelogin](https://github.com/int128/kubelogin)
 
 :::warning Attenzione
 **Non** utilizzate il kubelogin di Azure (`Azure/kubelogin`). Hikube utilizza l'autenticazione OIDC standard e richiede il plugin [int128/kubelogin](https://github.com/int128/kubelogin).
@@ -183,14 +183,14 @@ spec:
    kubectl apply -f my-kubernetes-cluster.yaml
    ```
 
-### **⏳ Monitoraggio del deployment**
+### **Monitoraggio del deployment**
 - Il cluster sarà pronto in **1-3 minuti**
 - Seguite lo stato con kubectl:
   ```bash
   kubectl get kubernetes
   kubectl describe kubernetes kube
   ```
-- Status "Ready" = Cluster operativo ✅
+- Status "Ready" = Cluster operativo
 
 ---
 
@@ -286,10 +286,10 @@ Avete creato:
 - **Documentazione:** Questa piattaforma
 - **Community:** Forum e chat in tempo reale
 
-:::tip Bravi! 🎊
+:::tip Bravi!
 Avete appena fatto i vostri primi passi su Hikube. La vostra infrastruttura è ora pronta per accogliere tutti i vostri progetti più ambiziosi!
 :::
 
 ---
 
-**Prossimo passo raccomandato:** [📖 Concetti chiave](./concepts.md) → Padroneggiate i fondamentali di Hikube
+**Prossimo passo raccomandato:** [Concetti chiave](./concepts.md) → Padroneggiate i fondamentali di Hikube

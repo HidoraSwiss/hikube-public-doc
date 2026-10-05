@@ -21,7 +21,7 @@ Il piano di controllo e interamente gestito dalla piattaforma, mentre i **nodi w
 
 ---
 
-## 🏗️ Schema di Architettura
+## Schema di Architettura
 
 ### **Panoramica**
 
@@ -41,7 +41,7 @@ I cluster Kubernetes Hikube si basano su un'**infrastruttura multi-datacenter** 
 
 ---
 
-## ⚙️ Composizione e Configurazione del Cluster
+## Composizione e Configurazione del Cluster
 
 I cluster sono interamente dichiarativi e configurabili tramite API o manifesto YAML.
 I principali elementi di configurazione includono:
@@ -56,16 +56,16 @@ I principali elementi di configurazione includono:
 
 ---
 
-## ⚙️ Funzionamento Dettagliato
+## Funzionamento Dettagliato
 
-### 🧠 **Control Plane**
+###**Control Plane**
 
 - Gestito da Hikube, senza manutenzione necessaria lato cliente
 - Componenti critici replicati su più siti
 - Gestione dell'alta disponibilità, del monitoring e degli aggiornamenti automatici
 - Accesso tramite l'API standard Kubernetes (`kubectl`, client SDK, ecc.)
 
-### 🧩 **Worker Nodes / NodeGroups**
+###**Worker Nodes / NodeGroups**
 
 I **NodeGroups** permettono di adattare le risorse alle vostre esigenze. Ogni gruppo può essere configurato con un tipo di istanza, dei ruoli e uno scaling automatico.
 
@@ -88,7 +88,7 @@ nodeGroups:
 
 ---
 
-## 💾 Archiviazione Persistente
+## Archiviazione Persistente
 
 ### **Classe di archiviazione: `replicated`**
 
@@ -107,7 +107,7 @@ resources:
 
 ---
 
-## 🔢 Versioning Kubernetes
+## Versioning Kubernetes
 
 - I cluster possono essere creati con una **versione Kubernetes specifica**
 - Hikube garantisce gli aggiornamenti minori e correttivi in modo controllato
@@ -121,7 +121,7 @@ version: "1.30.3"
 
 ---
 
-## 🧩 Add-on Integrati
+## Add-on Integrati
 
 ### **Cert-Manager**
 
@@ -146,7 +146,7 @@ version: "1.30.3"
 
 ---
 
-## 🚀 Esempi di Casi d'Uso
+## Esempi di Casi d'Uso
 
 ### **Applicazioni Web**
 
@@ -183,7 +183,7 @@ nodeGroups:
 
 ---
 
-## 📚 Risorse
+## Risorse
 
 - **[Concetti e Architettura](./concepts.md)** → Comprendere come viene distribuito un cluster Kubernetes Hikube
 - **[Avvio rapido](./quick-start.md)** → Create il vostro primo cluster Hikube
@@ -191,7 +191,7 @@ nodeGroups:
 
 ---
 
-## 💡 Punti Chiave
+## Punti Chiave
 
 - **Piano di controllo gestito**: nessuna manutenzione dei master necessaria
 - **Nodi nel vostro tenant**: controllo completo sui worker

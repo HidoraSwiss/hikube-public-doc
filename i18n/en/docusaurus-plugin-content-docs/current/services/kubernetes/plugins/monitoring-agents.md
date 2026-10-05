@@ -4,7 +4,7 @@ sidebar_position: 10
 title: Monitoring Agents
 ------------------------
 
-# 🧩 Details of the `addons.monitoringAgents` Field
+# Details of the `addons.monitoringAgents` Field
 
 The `addons.monitoringAgents` field defines the configuration of the **Monitoring Agents** add-on, responsible for collecting metrics and logs within the Kubernetes cluster.
 This add-on bundles monitoring agents (Prometheus Node Exporter, kube-state-metrics, or other collectors) deployed on the cluster nodes.
@@ -136,7 +136,7 @@ valuesOverride:
 
 ---
 
-## 💡 Best Practices
+## Best Practices
 
 * Enable `enabled: true` to ensure continuous collection of system and application metrics.
 * Use `valuesOverride` to fine-tune agent configuration depending on the environment (e.g., limit collection on specific nodes).

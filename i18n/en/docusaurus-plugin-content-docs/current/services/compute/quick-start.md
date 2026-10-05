@@ -31,7 +31,7 @@ Before starting, make sure you have:
 
 ---
 
-## 🚀 Step 1: Create the VM Disk (2 minutes)
+## Step 1: Create the VM Disk (2 minutes)
 
 ### **Prepare the manifest file**
 
@@ -154,7 +154,7 @@ Hikube offers two external exposure methods, each with its specificities:
 
 ---
 
-## 🔌 Step 3: Access Your VM (1 minute)
+## Step 3: Access Your VM (1 minute)
 
 ### **virtctl Installation**
 
@@ -198,7 +198,7 @@ virtctl vnc vm-example
 
 ---
 
-## 🎉 Congratulations
+## Congratulations
 
 Your Hikube virtual machine is **operational**!
 
@@ -230,21 +230,21 @@ Deletion of VMs and disks is **irreversible**. Make sure you have backed up all 
 
 ---
 
-## 🎯 Next Steps
+## Next Steps
 
 <div style={{display: 'flex', gap: '20px', flexWrap: 'wrap'}}>
 
-**📚 Advanced Configuration**  
+**Advanced Configuration**  
 → [Complete API Reference](./api-reference.md)
 
-**📖 Technical Architecture**  
+**Technical Architecture**  
 → [Understand how it works](./overview.md)
 
 </div>
 
 ---
 
-**💡 Key Points to Remember:**
+**Key Points to Remember:**
 
 - Your **data is always safe** thanks to 3-datacenter replication
 - Your VM can be **automatically relocated** in case of node failure

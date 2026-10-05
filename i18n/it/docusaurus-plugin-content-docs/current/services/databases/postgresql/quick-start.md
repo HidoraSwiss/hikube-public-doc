@@ -286,7 +286,7 @@ kubectl describe postgres example
 
 ---
 
-## 📋 Riepilogo
+## Riepilogo
 
 Avete distribuito:
 

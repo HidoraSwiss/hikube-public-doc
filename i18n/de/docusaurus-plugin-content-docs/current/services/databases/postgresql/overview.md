@@ -10,7 +10,7 @@ Die Plattform unterstützt die Bereitstellung und Verwaltung eines **replizierte
 
 ---
 
-## 🏗️ Architektur und Funktionsweise
+## Architektur und Funktionsweise
 
 Der verwaltete PostgreSQL-Dienst auf Hikube basiert auf dem Operator **CloudNativePG**, der die vollständige Verwaltung des Datenbank-Lebenszyklus automatisiert: Erstellung, Aktualisierung, Replikation und Wiederherstellung nach Ausfällen.
 
@@ -46,7 +46,7 @@ graph TD
 
 ---
 
-## 💡 Anwendungsfälle
+## Anwendungsfälle
 
 - **Geschäftskritische Anwendungen**, die eine zuverlässige und hochverfügbare Datenbank erfordern
 - **E-Commerce und ERP**, wo Servicekontinuität unverzichtbar ist

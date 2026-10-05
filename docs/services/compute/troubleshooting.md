@@ -70,7 +70,7 @@ Si la console indique que les quotas du projet sont indisponibles, la création 
 
 1. Utilisez l'utilisateur indiqué dans le bloc **Connexion SSH** (ou sous **Image Système** > **Utilisateur**).
 2. Vérifiez que la clé publique correspondant à votre clé privée figure dans **Configuration avancée** > **Clés SSH**.
-3. Si vous venez d'ajouter la clé via **Modifier**, choisissez **Reload user-data** dans la boîte de dialogue **Clés SSH modifiées**, ou lancez **Recharger UserData** depuis la section **Actions**.
+3. Si vous venez d'ajouter la clé via **Modifier**, choisissez **Reload user-data** dans la boîte de dialogue **Clés SSH modifiées**, ou lancez **Recharger UserData** depuis la section **Actions**, puis **Redémarrer** : la clé n'est installée qu'au redémarrage.
 
 ---
 
@@ -113,5 +113,5 @@ Si la console indique que les quotas du projet sont indisponibles, la création 
 **Solution** :
 
 1. Lancez **Redémarrer** depuis la section **Actions** de la page de détail.
-2. Si une modification récente du cloud-init est en cause, corrigez le script dans **Modifier** > **Configuration avancée**, puis **Recharger UserData**.
+2. Si une modification récente du cloud-init est en cause, corrigez le script dans **Modifier** > **Configuration avancée**, puis lancez **Recharger UserData** et **Redémarrer**.
 3. L'accès console série ou VNC n'est pas proposé dans la console ; contactez le [support](mailto:support@hidora.io) pour un diagnostic de bas niveau.

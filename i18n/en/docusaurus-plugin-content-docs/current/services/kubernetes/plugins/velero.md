@@ -4,7 +4,7 @@ sidebar_position: 9
 title: Velero
 -------------
 
-# 🧩 Details of the `addons.velero` Field
+# Details of the `addons.velero` Field
 
 The `addons.velero` field defines the configuration of the **Velero** add-on, used for **backup and restoration** of Kubernetes resources and persistent volumes.
 Velero ensures cluster resiliency in case of data loss or migration between environments.
@@ -94,7 +94,7 @@ valuesOverride:
 
 ---
 
-## 💡 Best Practices
+## Best Practices
 
 * Enable `enabled: true` to ensure regular backups of critical cluster resources.
 * Use `valuesOverride` to adapt the configuration to your cloud provider or storage backend (AWS, GCP, Azure, MinIO, etc.).

@@ -274,9 +274,9 @@ Chaque addon (sauf Gateway API) accepte un champ **Configuration Helm (YAML) —
 
 ## Accès au cluster
 
-Une fois le cluster prêt, le bouton **Kubeconfig** de la section **Actions** de la page de détail télécharge le fichier `kubeconfig-<nom-du-cluster>.yaml`. Ce fichier donne un accès administrateur au cluster avec `kubectl`, `helm` ou tout client Kubernetes. Voir [Accès et outils](./how-to/toolbox.md).
+Une fois le cluster prêt, le bouton **Kubeconfig** de la section **Actions** de la page de détail télécharge le fichier `kubeconfig-<nom-du-cluster>.yaml`. Ce fichier donne un accès administrateur au cluster avec `kubectl`, `helm` ou tout client Kubernetes. Le certificat client qu'il contient est valable un an à partir de la création du cluster. Voir [Accès et outils](./how-to/toolbox.md).
 
-L'adresse de l'API du cluster est définie par le champ **Endpoint API (Host)** de l'étape **Général**. Il est optionnel : laissé vide, il est généré automatiquement par la plateforme.
+L'adresse de l'API du cluster est définie par le champ **Endpoint API (Host)** de l'étape **Général**. Il est optionnel : laissé vide, il est généré automatiquement par la plateforme et se résout sans action de votre part. Si vous saisissez votre propre nom de domaine, le certificat du serveur API le couvre, mais l'enregistrement DNS reste à créer chez votre fournisseur DNS : demandez au [support](mailto:support@hidora.io) l'adresse vers laquelle le faire pointer.
 
 ---
 

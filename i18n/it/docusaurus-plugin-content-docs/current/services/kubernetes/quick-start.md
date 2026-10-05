@@ -3,7 +3,7 @@ sidebar_position: 5
 title: Avvio rapido
 ---
 
-# 🚀 Distribuire Kubernetes in 5 minuti
+# Distribuire Kubernetes in 5 minuti
 
 Questa guida vi accompagna nella creazione del vostro primo cluster Kubernetes su Hikube, dalla configurazione di base alla distribuzione di un'applicazione di test.
 
@@ -77,7 +77,7 @@ kubectl get kubernetes my-first-cluster -w
 
 ---
 
-## 🔐 Fase 2: Accesso al Cluster
+## Fase 2: Accesso al Cluster
 
 ### **Recuperare il Kubeconfig**
 
@@ -105,7 +105,7 @@ my-first-cluster-md0-xxxxx   Ready    <none>   2m    v1.29.0
 
 ---
 
-## 🚀 Fase 3: Distribuzione di un'Applicazione
+## Fase 3: Distribuzione di un'Applicazione
 
 ### **Applicazione dimostrativa**
 
@@ -198,7 +198,7 @@ kubectl get ingress
 
 ---
 
-## ✅ Fase 4: Verifica e Test
+## Fase 4: Verifica e Test
 
 ### **Verificare che tutto funzioni**
 
@@ -229,7 +229,7 @@ curl http://localhost:8080
 
 ---
 
-## 📊 Fase 5: Monitoring e Osservabilita
+## Fase 5: Monitoring e Osservabilita
 
 ### **Dashboard Integrate**
 
@@ -258,7 +258,7 @@ kubectl get events --sort-by=.metadata.creationTimestamp
 
 ---
 
-## 🎛️ Fase 6: Gestione e Scaling
+## Fase 6: Gestione e Scaling
 
 ### **Scaling del Cluster**
 
@@ -288,7 +288,7 @@ kubectl describe hpa  # Se HPA è configurato
 
 ---
 
-## 🔧 Fase 7: Prossime Azioni
+## Fase 7: Prossime Azioni
 
 ### **Configurazione Avanzata**
 
@@ -328,7 +328,7 @@ spec:
 
 ---
 
-## 🚨 Risoluzione Rapida dei Problemi
+## Risoluzione Rapida dei Problemi
 
 ### **Problemi Comuni**
 
@@ -360,7 +360,7 @@ kubectl delete kubernetes my-first-cluster
 
 ---
 
-## 📋 Riepilogo
+## Riepilogo
 
 Avete creato:
 
@@ -369,11 +369,11 @@ Avete creato:
 - Un'applicazione d'esempio con Ingress
 - Un certificato SSL automatico tramite cert-manager
 
-## 🚀 Prossimi Passi
+## Prossimi Passi
 
 - **[Riferimento API](./api-reference.md)** → Configurazione completa dei cluster
 - **[GPU](../gpu/overview.md)** → Utilizzare GPU con Kubernetes
 
 ---
 
-**💡 Consiglio:** Conservate il vostro file `kubeconfig` in modo sicuro e pensate a configurare RBAC per controllare l'accesso al vostro cluster secondo i vostri team e ambienti.
+**Consiglio:** Conservate il vostro file `kubeconfig` in modo sicuro e pensate a configurare RBAC per controllare l'accesso al vostro cluster secondo i vostri team e ambienti.

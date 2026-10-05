@@ -5,7 +5,7 @@ title: Quick Start
 
 import NavigationFooter from '@site/src/components/NavigationFooter';
 
-# 🚀 Deploy Kubernetes in 5 Minutes
+# Deploy Kubernetes in 5 Minutes
 
 This guide walks you through creating your first Kubernetes cluster on Hikube — from the basic configuration to deploying a test application.
 
@@ -79,7 +79,7 @@ kubectl get kubernetes my-first-cluster -w
 
 ---
 
-## 🔐 Step 2: Access the Cluster
+## Step 2: Access the Cluster
 
 ### **Retrieve the Kubeconfig**
 
@@ -107,7 +107,7 @@ my-first-cluster-md0-xxxxx   Ready    <none>   2m    v1.29.0
 
 ---
 
-## 🚀 Step 3: Deploy an Application
+## Step 3: Deploy an Application
 
 ### **Demo Application**
 
@@ -198,7 +198,7 @@ kubectl get ingress
 
 ---
 
-## ✅ Step 4: Verification & Testing
+## Step 4: Verification & Testing
 
 ### **Check that everything is running**
 
@@ -227,7 +227,7 @@ curl http://localhost:8080
 
 ---
 
-## 📊 Step 5: Monitoring & Observability
+## Step 5: Monitoring & Observability
 
 ### **Built-in Dashboards**
 
@@ -248,7 +248,7 @@ kubectl get events --sort-by=.metadata.creationTimestamp
 
 ---
 
-## 🎛️ Step 6: Management & Scaling
+## Step 6: Management & Scaling
 
 ### **Cluster Scaling**
 
@@ -271,7 +271,7 @@ kubectl describe hpa
 
 ---
 
-## 🔧 Step 7: Next Steps
+## Step 7: Next Steps
 
 ### **Advanced Configuration**
 
@@ -298,7 +298,7 @@ spec:
 
 ---
 
-## 🚨 Troubleshooting
+## Troubleshooting
 
 ### **Common Issues**
 
@@ -320,7 +320,7 @@ kubectl delete kubernetes my-first-cluster
 
 ---
 
-## 📋 Summary
+## Summary
 
 You have created:
 
@@ -329,14 +329,14 @@ You have created:
 * A sample application with Ingress
 * Automatic SSL certificates via cert-manager
 
-## 🚀 Next Steps
+## Next Steps
 
 * **[API Reference](./api-reference.md)** → Full cluster configuration
 * **[GPU](../gpu/overview.md)** → Using GPUs with Kubernetes
 
 ---
 
-**💡 Tip:** Keep your kubeconfig secure and configure RBAC to control access for your teams and environments.
+**Tip:** Keep your kubeconfig secure and configure RBAC to control access for your teams and environments.
 
 <NavigationFooter
   nextSteps={[

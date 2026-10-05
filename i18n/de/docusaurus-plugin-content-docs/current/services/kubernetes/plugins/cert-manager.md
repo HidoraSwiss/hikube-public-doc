@@ -3,7 +3,7 @@ sidebar_position: 6
 title: Cert-manager
 ---
 
-# 🧩 Details zum Feld `certManager`
+# Details zum Feld `certManager`
 
 Das Feld `certManager` definiert die Konfiguration des im Kubernetes-Cluster integrierten Zertifikatsmanagers.
 Es ermöglicht die Aktivierung oder Deaktivierung der Komponente und die Anpassung ihres Verhaltens über spezifische Werte.
@@ -107,7 +107,7 @@ spec:
 
 ---
 
-## 💡 Best Practices
+## Best Practices
 
 - Belassen Sie `enabled: true`, um die automatische Verwaltung von TLS-Zertifikaten sicherzustellen.
 - Verwenden Sie `valuesOverride`, um Helm-Parameter anzupassen, ohne die globalen Standardwerte zu ändern.

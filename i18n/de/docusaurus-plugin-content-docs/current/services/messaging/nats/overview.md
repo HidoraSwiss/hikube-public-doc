@@ -10,7 +10,7 @@ Entwickelt für **Cloud-native- und Microservice-Architekturen**, kombiniert NAT
 
 ---
 
-## 🏗️ Architektur und Funktionsweise
+## Architektur und Funktionsweise
 
 NATS verwendet eine **Pub/Sub**-Architektur (Publish–Subscribe) ohne komplexen Broker: Jede Nachricht wird an ein **Subject** gesendet, das andere Anwendungen **abonnieren** können.
 
@@ -21,7 +21,7 @@ NATS verwendet eine **Pub/Sub**-Architektur (Publish–Subscribe) ohne komplexen
 
 ---
 
-## 🌿 Leichtgewichtigkeit und Performance
+## Leichtgewichtigkeit und Performance
 
 NATS ist bekannt für seine **außergewöhnliche Geschwindigkeit** und seinen **minimalen Ressourcenverbrauch**, was es zu einer idealen Komponente für verteilte Architekturen macht.
 
@@ -37,7 +37,7 @@ NATS ist bekannt für seine **außergewöhnliche Geschwindigkeit** und seinen **
 
 ---
 
-## 🧩 Für Microservice-Architekturen konzipiert
+## Für Microservice-Architekturen konzipiert
 
 Jeder Dienst kann Ereignisse veröffentlichen oder konsumieren, ohne vom Rest des Systems abhängig zu sein, was eine **starke Entkopplung** und **bessere Resilienz** fördert.
 
@@ -50,7 +50,7 @@ Jeder Dienst kann Ereignisse veröffentlichen oder konsumieren, ohne vom Rest de
 
 ---
 
-## 🔗 Unterstützte Protokolle
+## Unterstützte Protokolle
 
 NATS ist ein **optimiertes Binärprotokoll**, aber kompatibel mit vielen Umgebungen und Standards:
 
@@ -63,9 +63,9 @@ NATS ist ein **optimiertes Binärprotokoll**, aber kompatibel mit vielen Umgebun
 
 ---
 
-## 🚀 Typische Anwendungsfälle
+## Typische Anwendungsfälle
 
-### ⚡ Echtzeit-Kommunikation
+### Echtzeit-Kommunikation
 
 NATS zeichnet sich durch die **sofortige Übertragung von Ereignissen** zwischen verteilten Anwendungen aus.
 
@@ -77,7 +77,7 @@ NATS zeichnet sich durch die **sofortige Übertragung von Ereignissen** zwischen
 
 ---
 
-### 📦 Event-Streaming und Persistenz
+### Event-Streaming und Persistenz
 
 Mit **JetStream** wird NATS zu einem **dauerhaften Streaming-System**:
 
@@ -87,7 +87,7 @@ Mit **JetStream** wird NATS zu einem **dauerhaften Streaming-System**:
 
 ---
 
-### 🔒 Sicherheit und Zuverlässigkeit
+### Sicherheit und Zuverlässigkeit
 
 Die NATS-Cluster von Hikube integrieren fortschrittliche Sicherheitsmechanismen:
 
@@ -99,7 +99,7 @@ Dies gewährleistet eine **zuverlässige, sichere und isolierte Kommunikation** 
 
 ---
 
-### 🧠 Einfache Administration
+### Einfache Administration
 
 Dank seines **minimalistischen Designs** und seiner **integrierten Tools (CLI, Dashboards, Prometheus-Metriken)** ist NATS einfach zu betreiben und zu überwachen, auch in großem Maßstab.
 

@@ -261,7 +261,7 @@ kubectl describe mysql example
 
 ---
 
-## 📋 Riepilogo
+## Riepilogo
 
 Avete distribuito:
 

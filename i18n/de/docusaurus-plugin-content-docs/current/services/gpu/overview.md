@@ -11,7 +11,7 @@ Hikube bietet Zugang zu **NVIDIA**-Beschleunigern über GPU Passthrough, was die
 
 ---
 
-## 🎯 Nutzungsarten
+## Nutzungsarten
 
 ### **GPU mit Virtuellen Maschinen**
 
@@ -37,7 +37,7 @@ GPUs können Kubernetes-Workern zugewiesen und dann über Resource Requests/Limi
 
 ---
 
-## 🖥️ Verfügbare Hardware
+## Verfügbare Hardware
 
 Hikube bietet mehrere NVIDIA-GPUs:
 
@@ -64,7 +64,7 @@ Hikube bietet mehrere NVIDIA-GPUs:
 
 ---
 
-## 🏗️ Architektur
+## Architektur
 
 ### **GPU-Zuweisung mit VMs**
 
@@ -72,9 +72,9 @@ Hikube bietet mehrere NVIDIA-GPUs:
 flowchart TD
     subgraph HIKUBE["Hikube-Infrastruktur"]
         subgraph NODE["Physischer Knoten"]
-            GPU1["🎮 GPU L40S"]
-            GPU2["🎮 GPU A100"]
-            GPU3["🎮 GPU RTX PRO 6000"]
+            GPU1["GPU L40S"]
+            GPU2["GPU A100"]
+            GPU3["GPU RTX PRO 6000"]
         end
         
         subgraph VM1["VM Instance"]
@@ -96,8 +96,8 @@ flowchart TD
 flowchart TD
     subgraph CLUSTER["Kubernetes-Cluster"]
         subgraph WORKER["Worker Node"]
-            GPU1["🎮 GPU L40S"]
-            GPU2["🎮 GPU A100"]
+            GPU1["GPU L40S"]
+            GPU2["GPU A100"]
             KUBELET["kubelet"]
         end
         
@@ -125,7 +125,7 @@ flowchart TD
 
 ---
 
-## ⚙️ Konfiguration
+## Konfiguration
 
 ### **GPU auf VM**
 
@@ -173,7 +173,7 @@ spec:
 
 ---
 
-## 📋 Vergleich der Ansätze
+## Vergleich der Ansätze
 
 | **Aspekt** | **GPU auf VM** | **GPU auf Kubernetes** |
 |------------|----------------|------------------------|
@@ -186,7 +186,7 @@ spec:
 
 ---
 
-## 🚀 Nächste Schritte
+## Nächste Schritte
 
 ### **Für Virtuelle Maschinen**
 

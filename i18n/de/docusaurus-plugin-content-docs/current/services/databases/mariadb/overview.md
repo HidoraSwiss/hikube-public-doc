@@ -10,7 +10,7 @@ Er gewährleistet die Bereitstellung eines replizierten und selbstheilenden Clus
 
 ---
 
-## 🏗️ Architektur und Funktionsweise
+## Architektur und Funktionsweise
 
 Der **verwaltete MySQL-Dienst** auf Hikube basiert auf dem Operator **MariaDB-Operator**, der die vollständige Verwaltung des Datenbank-Lebenszyklus automatisiert: Bereitstellung, Aktualisierung, Replikation und Wiederherstellung nach Ausfällen.
 
@@ -46,7 +46,7 @@ graph TD
 
 ---
 
-## 💡 Anwendungsfälle
+## Anwendungsfälle
 
 Der **verwaltete MySQL-Dienst auf Hikube** eignet sich besonders für:
 

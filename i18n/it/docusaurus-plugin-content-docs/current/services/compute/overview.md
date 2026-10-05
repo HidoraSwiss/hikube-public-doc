@@ -9,20 +9,20 @@ Le **Macchine Virtuali (VM)** di Hikube offrono una virtualizzazione completa de
 
 ---
 
-## 🏗️ Architettura e Funzionamento
+## Architettura e Funzionamento
 
 ### **Separazione Compute e Storage**
 
 Hikube utilizza un'architettura **disaccoppiata** tra calcolo e archiviazione che garantisce una resilienza ottimale:
 
-**💻 Livello Compute**
+**Livello Compute**
 
 - La VM viene eseguita su **server fisici** in uno dei 3 datacenter
 - Se un nodo si guasta, la VM viene **automaticamente riavviata** su un altro nodo
 - Se un datacenter si guasta, la VM viene **automaticamente riavviata** su un altro nodo in uno dei 2 datacenter rimanenti
 - Il tempo di indisponibilità si limita al riavvio (generalmente < 2 minuti)
 
-**💾 Livello Storage (Persistente)**
+**Livello Storage (Persistente)**
 
 - I dischi delle VM sono **replicati automaticamente** su più nodi fisici con lo storage "replicated"
 - **Nessuna perdita di dati** anche in caso di guasto hardware multiplo
@@ -35,17 +35,17 @@ Garantiamo le risorse!
 
 ```mermaid
 flowchart TD
-    subgraph DC1["🏢 Datacenter Ginevra"]
-        VM1["🖥️ VM-Production"]
-        STORAGE1["💾 Storage"]
+    subgraph DC1["Datacenter Ginevra"]
+        VM1["VM-Production"]
+        STORAGE1["Storage"]
     end
 
-    subgraph DC2["🏢 Datacenter Lucerna"]
-        STORAGE2["💾 Storage"]
+    subgraph DC2["Datacenter Lucerna"]
+        STORAGE2["Storage"]
     end
 
-    subgraph DC3["🏢 Datacenter Gland"]
-        STORAGE3["💾 Storage"]
+    subgraph DC3["Datacenter Gland"]
+        STORAGE3["Storage"]
     end
 
     %% La VM utilizza lo storage locale
@@ -65,7 +65,7 @@ flowchart TD
 
 ---
 
-## ⚙️ Tipi di Istanze
+## Tipi di Istanze
 
 ### **Gamma Completa per Tutte le Esigenze**
 
@@ -121,7 +121,7 @@ Istanze **ad alta memoria** con un rapporto CPU/memoria di 1:8 per le applicazio
 
 ---
 
-## 🔒 Isolamento e Sicurezza
+## Isolamento e Sicurezza
 
 ### **Multi-Tenant by Design**
 
@@ -133,7 +133,7 @@ Ogni VM beneficia di un **isolamento completo** grazie a un'architettura sicura 
 
 ---
 
-## 🌐 Connettività e Accesso
+## Connettività e Accesso
 
 ### **Metodi di Accesso Nativi**
 
@@ -145,7 +145,7 @@ L'architettura di rete di Hikube si basa su un approccio Software-Defined che vi
 
 ---
 
-## 📦 Migrazione e Portabilità
+## Migrazione e Portabilità
 
 ### **Import di Workload Esistenti**
 
@@ -157,14 +157,14 @@ Il sistema di gestione del ciclo di vita integra meccanismi automatizzati che as
 
 ---
 
-## 🚀 Prossimi Passi
+## Prossimi Passi
 
 Ora che comprendete l'architettura delle VM Hikube:
 
-**🏃‍♂️ Avvio Immediato**
+**Avvio Immediato**
 → [Creare la vostra prima VM in 5 minuti](./quick-start.md)
 
-**📖 Configurazione Avanzata**
+**Configurazione Avanzata**
 → [Riferimento API completo](./api-reference.md)
 
 :::tip Architettura Raccomandata

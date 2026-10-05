@@ -10,7 +10,7 @@ La piattaforma supporta il deployment e la gestione di un cluster PostgreSQL **r
 
 ---
 
-## 🏗️ Architettura e Funzionamento
+## Architettura e Funzionamento
 
 Il servizio PostgreSQL gestito su Hikube si basa sull'operatore **CloudNativePG**, che automatizza la gestione completa del ciclo di vita del database: creazione, aggiornamento, replica e ripristino dopo un incidente.
 
@@ -46,7 +46,7 @@ graph TD
 
 ---
 
-## 💡 Casi d'uso
+## Casi d'uso
 
 - **Applicazioni aziendali critiche** che necessitano di un database affidabile e ad alta disponibilità
 - **E-commerce ed ERP**, dove la continuità del servizio e indispensabile

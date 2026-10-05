@@ -21,7 +21,7 @@ Die Steuerungsebene wird vollständig von der Plattform verwaltet, während die 
 
 ---
 
-## 🏗️ Architekturschema
+## Architekturschema
 
 ### **Übersicht**
 
@@ -41,7 +41,7 @@ Die Kubernetes-Cluster von Hikube basieren auf einer **Multi-Datacenter-Infrastr
 
 ---
 
-## ⚙️ Zusammensetzung und Konfiguration des Clusters
+## Zusammensetzung und Konfiguration des Clusters
 
 Die Cluster sind vollständig deklarativ und über API oder YAML-Manifest konfigurierbar.
 Die wichtigsten Konfigurationselemente umfassen:
@@ -56,16 +56,16 @@ Die wichtigsten Konfigurationselemente umfassen:
 
 ---
 
-## ⚙️ Detaillierte Funktionsweise
+## Detaillierte Funktionsweise
 
-### 🧠 **Control Plane**
+###**Control Plane**
 
 - Von Hikube verwaltet, keine clientseitige Wartung erforderlich
 - Kritische Komponenten über mehrere Standorte repliziert
 - Verwaltung der Hochverfügbarkeit, des Monitorings und automatischer Updates
 - Zugriff über die Standard-Kubernetes-API (`kubectl`, Client SDK usw.)
 
-### 🧩 **Worker Nodes / NodeGroups**
+###**Worker Nodes / NodeGroups**
 
 Die **NodeGroups** ermöglichen es, die Ressourcen an Ihre Bedürfnisse anzupassen. Jede Gruppe kann mit einem Instanztyp, Rollen und automatischer Skalierung konfiguriert werden.
 
@@ -88,7 +88,7 @@ nodeGroups:
 
 ---
 
-## 💾 Persistenter Speicher
+## Persistenter Speicher
 
 ### **Speicherklasse: `replicated`**
 
@@ -107,7 +107,7 @@ resources:
 
 ---
 
-## 🔢 Kubernetes-Versionierung
+## Kubernetes-Versionierung
 
 - Cluster können mit einer **bestimmten Kubernetes-Version** erstellt werden
 - Hikube führt Minor- und Patch-Updates kontrolliert durch
@@ -121,7 +121,7 @@ version: "1.30.3"
 
 ---
 
-## 🧩 Integrierte Add-ons
+## Integrierte Add-ons
 
 ### **Cert-Manager**
 
@@ -146,7 +146,7 @@ version: "1.30.3"
 
 ---
 
-## 🚀 Anwendungsbeispiele
+## Anwendungsbeispiele
 
 ### **Webanwendungen**
 
@@ -183,7 +183,7 @@ nodeGroups:
 
 ---
 
-## 📚 Ressourcen
+## Ressourcen
 
 - **[Konzepte und Architektur](./concepts.md)** → Verstehen, wie ein Kubernetes-Cluster bei Hikube bereitgestellt wird
 - **[Schnellstart](./quick-start.md)** → Erstellen Sie Ihren ersten Hikube-Cluster
@@ -191,7 +191,7 @@ nodeGroups:
 
 ---
 
-## 💡 Kernpunkte
+## Kernpunkte
 
 - **Verwaltete Steuerungsebene**: keine Wartung der Master erforderlich
 - **Knoten in Ihrem Tenant**: volle Kontrolle über die Worker

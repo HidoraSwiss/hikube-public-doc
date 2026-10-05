@@ -5,7 +5,7 @@ title: Monitoring Agents
 
 # Monitoring Agents
 
-L'addon **Monitoring Agents** déploie dans le cluster les agents de collecte des **métriques** et des **logs**, qui transmettent les données à la plateforme de supervision de votre projet.
+L'addon **Monitoring Agents** déploie dans le cluster les agents de collecte des **métriques** et des **logs**, qui transmettent les données à la supervision de la plateforme Hikube. Aucune option n'est à activer dans le projet.
 
 | Composant | Rôle |
 |-----------|------|
@@ -27,13 +27,13 @@ L'accès aux tableaux de bord de supervision du projet n'est pas proposé dans l
 
 ## Surcharger la configuration
 
-Une fois l'addon coché, le champ **Configuration Helm (YAML) — optionnel** apparaît. Les destinations des métriques et des logs sont définies par la plateforme : pour adapter le comportement des agents (ressources, filtres de collecte), contactez le support plutôt que de surcharger la configuration.
+Une fois l'addon coché, le champ **Configuration Helm (YAML) — optionnel** apparaît, mais la plateforme ne l'applique pas pour cet addon : une surcharge saisie ici reste sans effet. Les destinations des métriques et des logs sont définies par la plateforme. Pour adapter le comportement des agents (ressources, filtres de collecte), contactez le support.
 
 ## Utilisation dans le cluster
 
 ```bash
-# Pods des agents
-kubectl get pods -A | grep -E "vmagent|fluent-bit|kube-state-metrics|node-exporter"
+# Pods des agents (namespace cozy-monitoring)
+kubectl get pods -n cozy-monitoring
 
 # Métriques de ressources
 kubectl top nodes

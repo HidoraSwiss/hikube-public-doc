@@ -11,14 +11,14 @@ Hikube **ClickHouse databases** offer an open-source, high-performance, column-o
 
 ---
 
-## 🏗️ Architecture and Operation
+## Architecture and Operation
 
 ClickHouse architecture is based on two essential parameters that allow adapting deployment to real needs:  
 
 - **Shards** → they allow **distributing data into multiple pieces** across different nodes. The more shards there are, the more the load is distributed, which improves query execution speed on very large volumes.  
 - **Replicas** → they create **redundant copies** of shards. This increases resilience and fault tolerance, while allowing read load distribution across multiple nodes.  
 
-### 🔎 Illustrative Example
+### Illustrative Example
 
 Imagine a database of **1 billion customer records**:  
 

@@ -3,7 +3,7 @@ sidebar_position: 7
 title: GPU Operator
 ---
 
-# 🧩 Dettagli del campo `addons.gpuOperator`
+# Dettagli del campo `addons.gpuOperator`
 
 Il campo `addons.gpuOperator` definisce la configurazione dell'add-on **NVIDIA GPU Operator**, utilizzato per gestire automaticamente le **GPU** in un cluster Kubernetes.
 Questo componente installa e mantiene i driver NVIDIA, i plugin di esecuzione, il `device plugin`, nonche gli strumenti di monitoring necessari all'utilizzo delle GPU.
@@ -81,7 +81,7 @@ valuesOverride:
 
 ---
 
-## 💡 Buone pratiche
+## Buone pratiche
 
 - Attivare `enabled: true` sui nodi dotati di GPU affinche l'operatore gestisca automaticamente i componenti NVIDIA.
 - Utilizzare `valuesOverride` per adattare la configurazione alle esigenze specifiche (es. attivare o disattivare il `driver` se già installato manualmente).

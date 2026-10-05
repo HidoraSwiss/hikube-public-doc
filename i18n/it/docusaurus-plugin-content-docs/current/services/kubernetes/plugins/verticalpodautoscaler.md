@@ -3,7 +3,7 @@ sidebar_position: 4
 title: Pod Auto Scaler
 ---
 
-# 🧩 Dettagli del campo `addons.verticalPodAutoscaler`
+# Dettagli del campo `addons.verticalPodAutoscaler`
 
 Il campo `addons.verticalPodAutoscaler` definisce la configurazione dell'add-on **Vertical Pod Autoscaler (VPA)**, responsabile della regolazione automatica delle risorse CPU e memoria dei Pod.
 Analizza in modo continuo il consumo reale dei workload e raccomanda o applica regolazioni per ottimizzare le prestazioni e l'utilizzo delle risorse.
@@ -70,7 +70,7 @@ valuesOverride:
 
 ---
 
-## 💡 Buone pratiche
+## Buone pratiche
 
 - Attivare sempre `recommender` per beneficiare dei suggerimenti automatici sulle risorse.
 - Utilizzare `updater.enabled: false` inizialmente per osservare le raccomandazioni prima di applicare le modifiche.

@@ -12,7 +12,7 @@ The platform supports the deployment and management of a **replicated and self-h
 
 ---
 
-## 🏗️ Architecture and Operation
+## Architecture and Operation
 
 The managed PostgreSQL service on Hikube is based on the **CloudNativePG** operator, which automates the complete lifecycle management of the database: creation, update, replication, and disaster recovery.  
 
@@ -48,7 +48,7 @@ graph TD
 
 ---
 
-## 💡 Use Cases
+## Use Cases
 
 - **Critical business applications** requiring a reliable and highly available database  
 - **E-commerce and ERP**, where service continuity is essential  

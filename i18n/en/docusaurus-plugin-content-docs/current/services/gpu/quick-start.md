@@ -11,7 +11,7 @@ This guide presents the two methods of using GPUs: with virtual machines and wit
 
 ---
 
-## 🎯 Usage Methods
+## Usage Methods
 
 Hikube offers two approaches for using GPUs:
 
@@ -20,7 +20,7 @@ Hikube offers two approaches for using GPUs:
 
 ---
 
-## 🖥️ Method 1: GPU with Virtual Machine
+## Method 1: GPU with Virtual Machine
 
 ### **Step 1: Create the disk**
 
@@ -103,7 +103,7 @@ nvidia-smi
 
 ---
 
-## ☸️ Method 2: GPU with Kubernetes
+## Method 2: GPU with Kubernetes
 
 ### **Step 1: Create a cluster with GPU workers**
 
@@ -199,7 +199,7 @@ kubectl exec -it gpu-test -- nvidia-smi
 
 ---
 
-## 📋 Practical Comparison
+## Practical Comparison
 
 | **Aspect** | **VM GPU** | **Kubernetes GPU** |
 |------------|------------|-------------------|
@@ -211,7 +211,7 @@ kubectl exec -it gpu-test -- nvidia-smi
 
 ---
 
-## 🔧 Available GPU Types
+## Available GPU Types
 
 ### **Configuration by usage**
 
@@ -233,7 +233,7 @@ gpus:
 
 ---
 
-## ✅ Post-Deployment Verification
+## Post-Deployment Verification
 
 ### **VM GPU**
 
@@ -278,7 +278,7 @@ These actions delete the GPU resources and all associated data. These operations
 
 ---
 
-## 🚀 Next Steps
+## Next Steps
 
 ### **To deepen VM GPU:**
 
@@ -292,7 +292,7 @@ These actions delete the GPU resources and all associated data. These operations
 
 ---
 
-## 💡 Tips
+## Tips
 
 - **VM GPU**: Ideal for prototyping and legacy applications
 - **Kubernetes GPU**: Recommended for scalable production workloads

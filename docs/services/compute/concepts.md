@@ -126,9 +126,9 @@ L'option **Redémarrage Automatique** (étape **Configuration** de l'assistant, 
 | Type d'instance | Oui | Redémarrage de la VM |
 | Disques (ajout, détachement) | Oui | Redémarrage de la VM |
 | GPU | Oui | Redémarrage de la VM |
-| IP publique, pare-feu, ports, VPC | Oui | — |
-| Clés SSH | Oui | Proposition de recharger le user-data |
-| Script cloud-init, redémarrage automatique | Oui | — |
+| IP publique, pare-feu, ports, VPC | Oui | Appliqué sans redémarrage |
+| Clés SSH | Oui | Proposition de recharger le user-data, appliqué au redémarrage suivant |
+| Script cloud-init, redémarrage automatique | Oui | Script rejoué après **Recharger UserData** et redémarrage |
 
 ---
 

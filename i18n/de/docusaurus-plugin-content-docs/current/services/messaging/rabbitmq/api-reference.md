@@ -121,7 +121,7 @@ resources:
   memory: 4Gi
 ```
 
-⚠️ Wenn `resources` definiert ist, wird der Wert von `resourcesPreset` ignoriert.
+Wenn `resources` definiert ist, wird der Wert von `resourcesPreset` ignoriert.
 
 | **Preset-Name** | **CPU** | **Speicher** |
 | --------------- | ------- | ------------ |

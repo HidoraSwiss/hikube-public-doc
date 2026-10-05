@@ -10,7 +10,7 @@ Grazie alla sua integrazione nativa con **ZooKeeper**, ogni cluster Kafka su Hik
 
 ---
 
-## 🏗️ Architettura e Funzionamento
+## Architettura e Funzionamento
 
 Un deployment Kafka su Hikube si basa su due componenti chiave:
 
@@ -24,9 +24,9 @@ Un deployment Kafka su Hikube si basa su due componenti chiave:
 
 ---
 
-## 🚀 Casi d'uso tipici
+## Casi d'uso tipici
 
-### 📡 Integrazione e sincronizzazione di sistemi
+### Integrazione e sincronizzazione di sistemi
 
 Kafka svolge il ruolo di **bus di eventi centrale** tra le diverse applicazioni di un'organizzazione.
 **Esempi:**
@@ -37,7 +37,7 @@ Kafka svolge il ruolo di **bus di eventi centrale** tra le diverse applicazioni 
 
 ---
 
-### ⚙️ Elaborazione in tempo reale e analytics
+### Elaborazione in tempo reale e analytics
 
 Kafka permette di analizzare e trasformare i dati **nel momento in cui vengono prodotti**.
 **Esempi:**
@@ -48,7 +48,7 @@ Kafka permette di analizzare e trasformare i dati **nel momento in cui vengono p
 
 ---
 
-### 🛰️ Raccolta dati IoT e log
+### Raccolta dati IoT e log
 
 Kafka semplifica la **raccolta massiva di dati eterogenei** provenienti da sensori, applicazioni o server.
 **Esempi:**
@@ -59,7 +59,7 @@ Kafka semplifica la **raccolta massiva di dati eterogenei** provenienti da senso
 
 ---
 
-### 💬 Comunicazione inter-servizi
+### Comunicazione inter-servizi
 
 Kafka consente una **comunicazione asincrona** tra microservizi, migliorando la resilienza e riducendo la dipendenza tra componenti.
 **Esempi:**

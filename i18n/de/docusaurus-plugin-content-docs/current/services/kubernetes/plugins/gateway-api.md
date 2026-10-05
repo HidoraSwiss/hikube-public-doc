@@ -3,7 +3,7 @@ sidebar_position: 3
 title: GatewayAPI
 ---
 
-# 🧩 Details zum Feld `addons.gatewayAPI`
+# Details zum Feld `addons.gatewayAPI`
 
 Das Feld `addons.gatewayAPI` definiert die Konfiguration des Add-ons **Gateway API**, einer modernen Kubernetes-Erweiterung für die Verwaltung von **Netzwerk-Eingängen** (Ingress, Routes, Gateways).
 Sie ersetzt schrittweise die traditionellen `Ingress`-Objekte durch ein flexibleres und erweiterbares Modell.
@@ -31,7 +31,7 @@ enabled: true
 
 ---
 
-## 💡 Best Practices
+## Best Practices
 
 - Aktivieren Sie `enabled: true`, um die neue, von der CNCF standardisierte Netzwerk-API zu nutzen.
 - Testen Sie die Kompatibilität der Ressourcen (`HTTPRoute`, `TCPRoute`, `ReferencePolicy` usw.) vor der Migration von `Ingress`.

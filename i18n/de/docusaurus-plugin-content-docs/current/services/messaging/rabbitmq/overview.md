@@ -11,7 +11,7 @@ Basierend auf dem Protokoll **AMQP (Advanced Message Queuing Protocol)** gewähr
 
 ---
 
-## 🏗️ Architektur und Funktionsweise
+## Architektur und Funktionsweise
 
 Ein RabbitMQ-Deployment auf Hikube basiert auf mehreren grundlegenden Konzepten:
 
@@ -22,13 +22,13 @@ Ein RabbitMQ-Deployment auf Hikube basiert auf mehreren grundlegenden Konzepten:
 
 Die RabbitMQ-Cluster auf Hikube sind im **Hochverfügbarkeitsmodus (HA)** konfiguriert, mit einer **Replikation der Nachrichtenwarteschlangen** über mehrere Knoten, um die Dienstkontinuität bei Ausfällen zu gewährleisten.
 
-> ⚙️ Die Hikube-Cluster verwenden die **Quorum-Queues-Funktionalität**, um ein Verhalten ähnlich dem verteilter Konsensverfahren (basierend auf Raft) zu bieten, das **Integrität und Fehlertoleranz** gewährleistet.
+> Die Hikube-Cluster verwenden die **Quorum-Queues-Funktionalität**, um ein Verhalten ähnlich dem verteilter Konsensverfahren (basierend auf Raft) zu bieten, das **Integrität und Fehlertoleranz** gewährleistet.
 
 ---
 
-## 🚀 Typische Anwendungsfälle
+## Typische Anwendungsfälle
 
-### 💬 Inter-Service-Kommunikation
+### Inter-Service-Kommunikation
 
 RabbitMQ wird häufig als **interner Nachrichtenbus** zwischen Anwendungen oder Microservices verwendet.
 Es ermöglicht die **Entkopplung der Verarbeitungen**, reduziert die wahrgenommene Latenz und verbessert die **Gesamtresilienz**.
@@ -41,7 +41,7 @@ Es ermöglicht die **Entkopplung der Verarbeitungen**, reduziert die wahrgenomme
 
 ---
 
-### ⚙️ Verwaltung asynchroner Abläufe
+### Verwaltung asynchroner Abläufe
 
 RabbitMQ vereinfacht die Implementierung **asynchroner Workflows**, bei denen jede Komponente unabhängig von den anderen arbeitet.
 
@@ -53,7 +53,7 @@ RabbitMQ vereinfacht die Implementierung **asynchroner Workflows**, bei denen je
 
 ---
 
-### 📡 Anwendungsintegration und Systemvernetzung
+### Anwendungsintegration und Systemvernetzung
 
 RabbitMQ fungiert als **universelle Kommunikationsbrücke** zwischen Anwendungen, Sprachen oder heterogenen Umgebungen.
 
@@ -65,7 +65,7 @@ RabbitMQ fungiert als **universelle Kommunikationsbrücke** zwischen Anwendungen
 
 ---
 
-### 🔒 Zuverlässigkeit und Persistenz
+### Zuverlässigkeit und Persistenz
 
 RabbitMQ gewährleistet die **Nachrichtenhaltbarkeit** durch Festplattenpersistenz und die Verwaltung von **Acknowledgements** (ACK/NACK).
 Dies stellt sicher, dass keine Nachricht verloren geht, selbst bei vorübergehendem Ausfall eines Knotens oder Netzwerks.

@@ -30,7 +30,7 @@ spec:
 
 ---
 
-## 🏗️ Architecture and Operation
+## Architecture and Operation
 
 The managed Redis service on Hikube is designed to offer **high availability** and **resilience** through a replicated architecture.  
 
@@ -71,7 +71,7 @@ graph TD
     S3 -.->|Monitoring + Auto-failover| R2
 ```
 
-## 🎯 Use Cases
+## Use Cases
 
 The **managed Redis service on Hikube** is particularly suitable for:  
 

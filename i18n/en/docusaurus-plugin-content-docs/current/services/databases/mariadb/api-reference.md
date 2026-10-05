@@ -157,7 +157,7 @@ cpu: 4000m
 memory: 4Gi
 ```  
 
-⚠️ Attention: if resources is defined, the resourcesPreset value is ignored.
+Attention: if resources is defined, the resourcesPreset value is ignored.
 
 | **Preset name** | **CPU** | **Memory** |
 |-----------------|---------|-------------|
@@ -194,13 +194,13 @@ spec:
 2. **Check cluster status**  
 
 ```bash
-➜  ~ kubectl get mariadb
+→  ~ kubectl get mariadb
 NAME            READY   STATUS    PRIMARY           UPDATES                    AGE
 mysql-example   True    Running   mysql-example-1   ReplicasFirstPrimaryLast   84m
-➜  ~ 
+→  ~ 
 ```
 
-### ♻️ Restore a MariaDB/MySQL Backup
+### Restore a MariaDB/MySQL Backup
 
 Backups are managed with **Restic** and stored in an S3-compatible bucket.  
 Restoration allows recovering a database from an existing snapshot.

@@ -25,7 +25,7 @@ La page de détail du cluster affiche alors **Monitoring Agents** dans la sectio
 
 ### 2. Comprendre ce qui est déployé
 
-L'addon installe dans le cluster des agents de collecte, qui transmettent les données à la plateforme de supervision de votre projet :
+L'addon installe dans le cluster, dans le namespace `cozy-monitoring`, des agents de collecte qui transmettent les données à la supervision de la plateforme Hikube. Aucune option n'est à activer dans le projet :
 
 | Composant | Rôle |
 |-----------|------|
@@ -77,7 +77,7 @@ my-cluster-general-yyyyy      310m         7%     1350Mi          17%
 ```bash
 # Logs d'un agent Fluent Bit, en cas de doute sur l'envoi des logs
 kubectl get pods -A | grep fluent-bit
-kubectl logs -n <namespace> <nom-du-pod-fluent-bit> --tail=20
+kubectl logs -n cozy-monitoring <nom-du-pod-fluent-bit> --tail=20
 ```
 
 :::warning

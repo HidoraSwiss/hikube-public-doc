@@ -4,7 +4,7 @@ sidebar_position: 5
 title: Ingress Nginx
 --------------------
 
-# 🧩 Details of the `addons.ingressNginx` Field
+# Details of the `addons.ingressNginx` Field
 
 The `addons.ingressNginx` field defines the configuration of the **Ingress NGINX** add-on, used to manage the HTTP(S) entry points of the Kubernetes cluster.
 It deploys an NGINX controller that exposes internal applications through Ingress routes, with full support for TLS, load balancing, and Kubernetes annotations.
@@ -169,7 +169,7 @@ spec:
 
 ---
 
-## 💡 Best Practices
+## Best Practices
 
 * Prefer `Proxied` for on-premises environments where access is managed through an external reverse proxy.
 * Define multiple `hosts` for multi-domain applications.

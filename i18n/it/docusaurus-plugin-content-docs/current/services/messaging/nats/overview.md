@@ -10,7 +10,7 @@ Pensato per le **architetture cloud native e microservizi**, NATS combina **semp
 
 ---
 
-## 🏗️ Architettura e Funzionamento
+## Architettura e Funzionamento
 
 NATS adotta un'architettura **pub/sub** (publish-subscribe) senza broker complesso: ogni messaggio viene inviato a un **subject** che altre applicazioni possono **ascoltare**.
 
@@ -21,7 +21,7 @@ NATS adotta un'architettura **pub/sub** (publish-subscribe) senza broker comples
 
 ---
 
-## 🌿 Leggerezza e prestazioni
+## Leggerezza e prestazioni
 
 NATS è riconosciuto per la sua **velocità eccezionale** e la sua **impronta minima**, il che lo rende un componente ideale per le architetture distribuite.
 
@@ -37,7 +37,7 @@ NATS è riconosciuto per la sua **velocità eccezionale** e la sua **impronta mi
 
 ---
 
-## 🧩 Progettato per le architetture microservizi
+## Progettato per le architetture microservizi
 
 Ogni servizio può pubblicare o consumare eventi senza dipendere dal resto del sistema, favorendo un **forte disaccoppiamento** e una **migliore resilienza**.
 
@@ -50,7 +50,7 @@ Ogni servizio può pubblicare o consumare eventi senza dipendere dal resto del s
 
 ---
 
-## 🔗 Protocolli supportati
+## Protocolli supportati
 
 NATS è un protocollo **binario ottimizzato** ma resta compatibile con numerosi ambienti e standard:
 
@@ -63,9 +63,9 @@ NATS è un protocollo **binario ottimizzato** ma resta compatibile con numerosi 
 
 ---
 
-## 🚀 Casi d'uso tipici
+## Casi d'uso tipici
 
-### ⚡ Comunicazione in tempo reale
+### Comunicazione in tempo reale
 
 NATS eccelle nella **trasmissione istantanea di eventi** tra applicazioni distribuite.
 
@@ -77,7 +77,7 @@ NATS eccelle nella **trasmissione istantanea di eventi** tra applicazioni distri
 
 ---
 
-### 📦 Streaming di eventi e persistenza
+### Streaming di eventi e persistenza
 
 Con **JetStream**, NATS diventa un **sistema di streaming durevole**:
 
@@ -87,7 +87,7 @@ Con **JetStream**, NATS diventa un **sistema di streaming durevole**:
 
 ---
 
-### 🔒 Sicurezza e affidabilità
+### Sicurezza e affidabilità
 
 I cluster NATS Hikube integrano meccanismi di sicurezza avanzati:
 
@@ -99,7 +99,7 @@ Questo garantisce una **comunicazione affidabile, sicura e isolata** tra servizi
 
 ---
 
-### 🧠 Semplicità di amministrazione
+### Semplicità di amministrazione
 
 Grazie al suo **design minimalista** e ai suoi **strumenti integrati (CLI, dashboard, metriche Prometheus)**, NATS è semplice da gestire e monitorare, anche su larga scala.
 

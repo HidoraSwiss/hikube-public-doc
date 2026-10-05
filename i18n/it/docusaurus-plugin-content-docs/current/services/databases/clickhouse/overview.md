@@ -9,14 +9,14 @@ I **database ClickHouse** di Hikube offrono un sistema di gestione SQL open sour
 
 ---
 
-## 🏗️ Architettura e Funzionamento
+## Architettura e Funzionamento
 
 L'architettura di ClickHouse si basa su due parametri essenziali che permettono di adattare il deployment alle esigenze reali:
 
 - **Shard** --> permettono di **distribuire i dati in più parti** su diversi nodi. Più shard ci sono, più il carico e distribuito, il che migliora la velocità di esecuzione delle query su volumi molto grandi.
 - **Repliche** --> creano **copie ridondanti** degli shard. Questo aumenta la resilienza e la tolleranza ai guasti, permettendo al contempo di distribuire il carico di lettura tra più nodi.
 
-### 🔎 Esempio illustrativo
+### Esempio illustrativo
 
 Immaginiamo un database di **1 miliardo di record clienti**:
 

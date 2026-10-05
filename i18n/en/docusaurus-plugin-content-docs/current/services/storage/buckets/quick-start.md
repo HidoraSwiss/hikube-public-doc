@@ -12,7 +12,7 @@ By the end of this tutorial, you will have a ready-to-use bucket, with valid S3 
 
 ---
 
-## 🎯 Objective
+## Objective
 
 By the end of this guide, you will have:
 
@@ -22,7 +22,7 @@ By the end of this guide, you will have:
 
 ---
 
-## 🧰 Prerequisites
+## Prerequisites
 
 Before starting, make sure you have:
 
@@ -32,7 +32,7 @@ Before starting, make sure you have:
 
 ---
 
-## 🚀 Step 1: Create the Bucket (1 minute)
+## Step 1: Create the Bucket (1 minute)
 
 ### **Prepare the manifest file**
 
@@ -45,7 +45,7 @@ metadata:
   name: example-bucket
 ```
 
-> 📌 The name indicated in `metadata.name` identifies the Kubernetes resource.
+> The name indicated in `metadata.name` identifies the Kubernetes resource.
 > The actual S3 bucket name is automatically generated.
 
 ---
@@ -69,7 +69,7 @@ example-bucket   True    15s
 
 ---
 
-## 🔐 Step 2: Retrieve Credentials (2 minutes)
+## Step 2: Retrieve Credentials (2 minutes)
 
 Bucket creation generates a `Secret` containing a `BucketInfo` key (JSON).
 
@@ -88,7 +88,7 @@ export BUCKET_NAME="$(echo "$INFO" | jq -r '.spec.bucketName')"
 
 ---
 
-## 🌐 Step 3: Test S3 Connection (2 minutes)
+## Step 3: Test S3 Connection (2 minutes)
 
 :::warning S3 Root Access
 With these credentials, you **do not have** permission to list all buckets on the endpoint.
@@ -123,8 +123,8 @@ aws s3 ls "s3://$BUCKET_NAME/" --endpoint-url "$S3_ENDPOINT" --profile hikube
 # Define an alias for the endpoint
 mc alias set hikube "$S3_ENDPOINT" "$S3_ACCESS_KEY" "$S3_SECRET_KEY"
 
-# ⚠️ Do NOT do: `mc ls hikube`  -> AccessDenied
-# ✅ Target your bucket directly:
+# Do NOT do: `mc ls hikube`  -> AccessDenied
+# Target your bucket directly:
 mc ls "hikube/$BUCKET_NAME/"
 
 # Upload a test file
@@ -136,7 +136,7 @@ mc ls "hikube/$BUCKET_NAME/"
 
 ---
 
-## 🧹 Cleanup (optional)
+## Cleanup (optional)
 
 ```bash
 # Delete the bucket (also erases its content)
@@ -150,14 +150,14 @@ Check your backups before proceeding.
 
 ---
 
-## 🚀 Next Steps
+## Next Steps
 
-**📚 API Reference** → [Complete specification](./api-reference.md)
-**📖 Architecture** → [Overview](./overview.md)
+**API Reference** → [Complete specification](./api-reference.md)
+**Architecture** → [Overview](./overview.md)
 
 ---
 
-## 💡 To Remember
+## To Remember
 
 - The provided credentials give access **only** to your bucket
 - Always target `s3://$BUCKET_NAME/` (or `alias/$BUCKET_NAME/`) in your commands

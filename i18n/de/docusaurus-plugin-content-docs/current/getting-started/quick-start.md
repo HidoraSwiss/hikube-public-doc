@@ -3,7 +3,7 @@ sidebar_position: 3
 title: Schnellstart
 ---
 
-# 🚀 Schnellstart mit Hikube
+# Schnellstart mit Hikube
 
 Willkommen! Dieser Leitfaden begleitet Sie Schritt für Schritt bei der Erstellung Ihres ersten Projekts auf Hikube. Am Ende dieses Tutorials haben Sie Ihre erste Anwendung in einer vollständig gesicherten Umgebung bereitgestellt.
 
@@ -47,7 +47,7 @@ choco install kubernetes-cli
 winget install Kubernetes.kubectl
 ```
 
-📖 **Offizielle Dokumentation**: [Install kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)
+**Offizielle Dokumentation**: [Install kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)
 
 #### **kubelogin** (erforderlich für OIDC-Authentifizierung)
 
@@ -68,7 +68,7 @@ kubectl krew install oidc-login
 choco install kubelogin
 ```
 
-📖 **Offizielle Dokumentation**: [int128/kubelogin](https://github.com/int128/kubelogin)
+**Offizielle Dokumentation**: [int128/kubelogin](https://github.com/int128/kubelogin)
 
 :::warning Achtung
 Verwenden Sie **nicht** das Azure-kubelogin (`Azure/kubelogin`). Hikube verwendet die standardmässige OIDC-Authentifizierung und benötigt das Plugin [int128/kubelogin](https://github.com/int128/kubelogin).
@@ -183,14 +183,14 @@ spec:
    kubectl apply -f my-kubernetes-cluster.yaml
    ```
 
-### **⏳ Bereitstellung verfolgen**
+### **Bereitstellung verfolgen**
 - Der Cluster ist in **1-3 Minuten** bereit
 - Verfolgen Sie den Status mit kubectl:
   ```bash
   kubectl get kubernetes
   kubectl describe kubernetes kube
   ```
-- Status "Ready" = Cluster betriebsbereit ✅
+- Status "Ready" = Cluster betriebsbereit
 
 ---
 
@@ -286,10 +286,10 @@ Sie haben erstellt:
 - **Dokumentation:** Diese Plattform
 - **Community:** Foren und Echtzeit-Chat
 
-:::tip Bravo! 🎊
+:::tip Bravo!
 Sie haben Ihre ersten Schritte auf Hikube gemacht. Ihre Infrastruktur ist jetzt bereit, all Ihre ambitioniertesten Projekte aufzunehmen!
 :::
 
 ---
 
-**Empfohlener nächster Schritt:** [📖 Schlüsselkonzepte](./concepts.md) → Beherrschen Sie die Grundlagen von Hikube
+**Empfohlener nächster Schritt:** [Schlüsselkonzepte](./concepts.md) → Beherrschen Sie die Grundlagen von Hikube

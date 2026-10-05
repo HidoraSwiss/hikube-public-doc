@@ -27,7 +27,7 @@ spec:
 
 ---
 
-## 🏗️ Architettura e Funzionamento
+## Architettura e Funzionamento
 
 Il servizio Redis gestito su Hikube è progettato per offrire **alta disponibilità** e **resilienza** grazie a un'architettura replicata.
 
@@ -68,7 +68,7 @@ graph TD
     S3 -.->|Sorveglianza + Auto-failover| R2
 ```
 
-## 🎯 Casi d'uso
+## Casi d'uso
 
 Il servizio **Redis gestito su Hikube** e particolarmente adatto per:
 

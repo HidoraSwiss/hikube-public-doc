@@ -10,7 +10,7 @@ Am Ende dieses Tutorials verfügen Sie über einen einsatzbereiten Bucket mit g�
 
 ---
 
-## 🎯 Ziel
+## Ziel
 
 Am Ende dieser Anleitung haben Sie:
 
@@ -20,7 +20,7 @@ Am Ende dieser Anleitung haben Sie:
 
 ---
 
-## 🧰 Voraussetzungen
+## Voraussetzungen
 
 Stellen Sie vor Beginn sicher, dass Sie Folgendes haben:
 
@@ -30,7 +30,7 @@ Stellen Sie vor Beginn sicher, dass Sie Folgendes haben:
 
 ---
 
-## 🚀 Schritt 1: Bucket erstellen (1 Minute)
+## Schritt 1: Bucket erstellen (1 Minute)
 
 ### **Manifest-Datei vorbereiten**
 
@@ -43,7 +43,7 @@ metadata:
   name: example-bucket
 ```
 
-> 📌 Der in `metadata.name` angegebene Name identifiziert die Kubernetes-Ressource.
+> Der in `metadata.name` angegebene Name identifiziert die Kubernetes-Ressource.
 > Der tatsächliche S3-Bucket-Name wird automatisch generiert.
 
 ---
@@ -67,7 +67,7 @@ example-bucket   True    15s
 
 ---
 
-## 🔐 Schritt 2: Zugangsdaten abrufen (2 Minuten)
+## Schritt 2: Zugangsdaten abrufen (2 Minuten)
 
 Die Bucket-Erstellung generiert ein `Secret` mit einem `BucketInfo`-Schlüssel (JSON).
 
@@ -86,7 +86,7 @@ export BUCKET_NAME="$(echo "$INFO" | jq -r '.spec.bucketName')"
 
 ---
 
-## 🌐 Schritt 3: S3-Verbindung testen (2 Minuten)
+## Schritt 3: S3-Verbindung testen (2 Minuten)
 
 :::warning S3-Root-Zugriff
 Mit diesen Zugangsdaten haben Sie **keine** Berechtigung, alle Buckets des Endpunkts aufzulisten.
@@ -121,8 +121,8 @@ aws s3 ls "s3://$BUCKET_NAME/" --endpoint-url "$S3_ENDPOINT" --profile hikube
 # Alias für den Endpunkt definieren
 mc alias set hikube "$S3_ENDPOINT" "$S3_ACCESS_KEY" "$S3_SECRET_KEY"
 
-# ⚠️ NICHT machen: `mc ls hikube`  -> AccessDenied
-# ✅ Direkt auf Ihren Bucket abzielen:
+# NICHT machen: `mc ls hikube`  -> AccessDenied
+# Direkt auf Ihren Bucket abzielen:
 mc ls "hikube/$BUCKET_NAME/"
 
 # Testdatei senden
@@ -134,7 +134,7 @@ mc ls "hikube/$BUCKET_NAME/"
 
 ---
 
-## 🧹 Bereinigung (optional)
+## Bereinigung (optional)
 
 ```bash
 # Bucket löschen (löscht auch seinen Inhalt)
@@ -148,14 +148,14 @@ Das Löschen des Buckets löscht **endgültig** alle enthaltenen Daten.
 
 ---
 
-## 🚀 Nächste Schritte
+## Nächste Schritte
 
-**📚 API-Referenz** → [Vollständige Spezifikation](./api-reference.md)
-**📖 Architektur** → [Übersicht](./overview.md)
+**API-Referenz** → [Vollständige Spezifikation](./api-reference.md)
+**Architektur** → [Übersicht](./overview.md)
 
 ---
 
-## 💡 Wichtig zu beachten
+## Wichtig zu beachten
 
 - Die bereitgestellten Zugangsdaten ermöglichen **ausschließlich** den Zugriff auf Ihren Bucket
 - Zielen Sie immer auf `s3://$BUCKET_NAME/` (oder `alias/$BUCKET_NAME/`) in Ihren Befehlen ab

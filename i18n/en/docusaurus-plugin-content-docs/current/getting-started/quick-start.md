@@ -3,7 +3,7 @@ sidebar_position: 3
 title: Quick Start
 ---
 
-# 🚀 Quick Start with Hikube
+# Quick Start with Hikube
 
 Welcome! This guide will walk you through creating your first project on Hikube. By the end of this tutorial, you will have deployed your first application in a completely secure environment.
 
@@ -47,7 +47,7 @@ choco install kubernetes-cli
 winget install Kubernetes.kubectl
 ```
 
-📖 **Official documentation** : [Install kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)
+**Official documentation** : [Install kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)
 
 #### **kubelogin** (required for OIDC authentication)
 
@@ -68,7 +68,7 @@ kubectl krew install oidc-login
 choco install kubelogin
 ```
 
-📖 **Official documentation**: [int128/kubelogin](https://github.com/int128/kubelogin)
+**Official documentation**: [int128/kubelogin](https://github.com/int128/kubelogin)
 
 :::warning Warning
 Do **not** use the Azure kubelogin (`Azure/kubelogin`). Hikube uses standard OIDC authentication and requires the [int128/kubelogin](https://github.com/int128/kubelogin) plugin.
@@ -183,14 +183,14 @@ spec:
    kubectl apply -f my-kubernetes-cluster.yaml
    ```
 
-### **⏳ Deployment Monitoring**
+### **Deployment Monitoring**
 - The cluster will be ready in **1-3 minutes**
 - Monitor the status with kubectl:
   ```bash
   kubectl get kubernetes
   kubectl describe kubernetes kube
   ```
-- Status "Ready" = Cluster operational ✅
+- Status "Ready" = Cluster operational
 
 ---
 
@@ -286,11 +286,11 @@ You have created:
 - **Documentation:** This platform
 - **Community:** Forums and real-time chat
 
-:::tip Well Done! 🎊
+:::tip Well Done!
 You've just taken your first steps on Hikube. Your infrastructure is now ready to host all your most ambitious projects!
 :::
 
 ---
 
-**Recommended next step:** [📖 Key Concepts](./concepts.md) → Master Hikube fundamentals
+**Recommended next step:** [Key Concepts](./concepts.md) → Master Hikube fundamentals
 

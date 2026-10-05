@@ -3,7 +3,7 @@ sidebar_position: 9
 title: Velero
 ---
 
-# 🧩 Details zum Feld `addons.velero`
+# Details zum Feld `addons.velero`
 
 Das Feld `addons.velero` definiert die Konfiguration des Add-ons **Velero**, das für die **Sicherung und Wiederherstellung** von Kubernetes-Ressourcen sowie persistenten Volumes verwendet wird.
 Velero gewährleistet die Resilienz des Clusters bei Datenverlust oder Migration zwischen Umgebungen.
@@ -93,7 +93,7 @@ valuesOverride:
 
 ---
 
-## 💡 Best Practices
+## Best Practices
 
 - Aktivieren Sie `enabled: true`, um die regelmäßige Sicherung kritischer Cluster-Ressourcen sicherzustellen.
 - Verwenden Sie `valuesOverride`, um die Konfiguration an den Cloud-Anbieter oder den gewählten Speicher anzupassen (AWS, GCP, Azure usw.).

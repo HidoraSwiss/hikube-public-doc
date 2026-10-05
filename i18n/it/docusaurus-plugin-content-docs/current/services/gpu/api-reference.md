@@ -9,7 +9,7 @@ Questo riferimento dettaglia l'utilizzo delle GPU su Hikube, sia con macchine vi
 
 ---
 
-## 🎮 GPU disponibili
+## GPU disponibili
 
 Le GPU sono collegate tramite il loro **nome di risorsa** (`nvidia.com/<modello>`). I modelli disponibili su Hikube:
 
@@ -26,7 +26,7 @@ L'hardware GPU disponibile varia in base alla zona. Verificate le risorse alloca
 
 ---
 
-## 🖥️ GPU con Macchine Virtuali
+## GPU con Macchine Virtuali
 
 Su una VM, la GPU è collegata in **passthrough PCI** (allocazione esclusiva) tramite il campo `gpus` di una risorsa [`VMInstance`](../compute/api-reference.md). Il disco è definito separatamente da una risorsa [`VMDisk`](../compute/api-reference.md#vmdisk).
 
@@ -121,7 +121,7 @@ spec:
 
 ---
 
-## ☸️ GPU con Kubernetes
+## GPU con Kubernetes
 
 Su un cluster Kubernetes gestito, le GPU sono collegate ai **node group**, e l'addon **`gpuOperator`** deve essere attivato per esporre le GPU ai pod.
 
@@ -199,7 +199,7 @@ spec:
 
 ---
 
-## 📋 VM GPU vs Kubernetes GPU
+## VM GPU vs Kubernetes GPU
 
 | **Aspetto** | **VM GPU** | **Kubernetes GPU** |
 |------------|------------|-------------------|
@@ -216,7 +216,7 @@ spec:
 
 ---
 
-## ✅ Verifica
+## Verifica
 
 ### VM GPU
 
@@ -238,7 +238,7 @@ kubectl exec -it <pod-name> -- nvidia-smi
 
 ---
 
-## 💡 Buone Pratiche
+## Buone Pratiche
 
 - **L40S** per l'inferenza e lo sviluppo, **A100** per l'addestramento ML, **RTX PRO 6000 (Blackwell)** per i workload più esigenti.
 - Testate con un L40S prima di riservare le GPU più costose.

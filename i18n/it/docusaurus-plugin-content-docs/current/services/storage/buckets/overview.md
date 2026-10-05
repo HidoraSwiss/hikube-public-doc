@@ -10,20 +10,20 @@ La piattaforma fornisce un'alternativa sovrana e performante ad Amazon S3, con u
 
 ---
 
-## 🏗️ Architettura e Funzionamento
+## Architettura e Funzionamento
 
 ### **Archiviazione Oggetti Distribuita**
 
 I bucket Hikube si basano su un'architettura S3 **100% distribuita e replicata** su più datacenter.
 A differenza dei volumi block utilizzati per le VM, l'archiviazione oggetti non è collegata a una macchina: è accessibile tramite **API S3 standardizzate** da qualsiasi applicazione o servizio autorizzato.
 
-#### 📦 Livello di Archiviazione
+#### Livello di Archiviazione
 
 - Ogni bucket è ospitato su un'**infrastruttura multi-nodo** distribuita tra più datacenter svizzeri
 - Gli oggetti sono **replicati automaticamente** su 3 zone fisiche distinte per garantire la massima durabilità
 - Il sistema è progettato per tollerare il guasto di un datacenter completo senza perdita di dati né indisponibilità
 
-#### 🌐 Livello di Accesso
+#### Livello di Accesso
 
 - I bucket sono accessibili tramite un **endpoint HTTPS unico** compatibile con la firma S3 v4
 - L'accesso è autenticato tramite **Access Key S3** generate automaticamente alla creazione del bucket
@@ -35,17 +35,17 @@ A differenza dei volumi block utilizzati per le VM, l'archiviazione oggetti non 
 
 ```mermaid
 flowchart TD
-    subgraph DC1["🏢 Datacenter Ginevra"]
-        B1["🪣 Bucket Data"]
-        S1["📦 Oggetti"]
+    subgraph DC1["Datacenter Ginevra"]
+        B1["Bucket Data"]
+        S1["Oggetti"]
     end
 
-    subgraph DC2["🏢 Datacenter Lucerna"]
-        S2["📦 Oggetti (Replica)"]
+    subgraph DC2["Datacenter Lucerna"]
+        S2["Oggetti (Replica)"]
     end
 
-    subgraph DC3["🏢 Datacenter Gland"]
-        S3["📦 Oggetti (Replica)"]
+    subgraph DC3["Datacenter Gland"]
+        S3["Oggetti (Replica)"]
     end
 
     B1 --> S1
@@ -59,11 +59,11 @@ flowchart TD
     style B1 fill:#f3e5f5
 ```
 
-Questa architettura garantisce la **disponibilità e la durabilità** dei dati, pur essendo interamente gestita in Svizzera 🇨🇭.
+Questa architettura garantisce la **disponibilità e la durabilità** dei dati, pur essendo interamente gestita in Svizzera.
 
 ---
 
-## ⚙️ Casi d'Uso Tipici
+## Casi d'Uso Tipici
 
 I bucket Hikube sono progettati per coprire un ampio ventaglio di scenari di archiviazione cloud:
 
@@ -79,7 +79,7 @@ I bucket Hikube sono progettati per coprire un ampio ventaglio di scenari di arc
 
 ---
 
-## 🔒 Isolamento e Sicurezza
+## Isolamento e Sicurezza
 
 ### **Separazione per Tenant**
 
@@ -95,7 +95,7 @@ Ogni bucket è **provisionato in un namespace Kubernetes specifico**, garantendo
 
 ---
 
-## 🌐 Connettività e Integrazione
+## Connettività e Integrazione
 
 ### **Endpoint S3 Unico**
 
@@ -117,7 +117,7 @@ Questo consente un'integrazione fluida nelle pipeline CI/CD, negli strumenti di 
 
 ---
 
-## 📦 Gestione e Portabilità
+## Gestione e Portabilità
 
 ### **Ciclo di Vita Semplice**
 
@@ -135,14 +135,14 @@ Grazie alla compatibilità S3, i vostri dati restano **interoperabili** con:
 
 ---
 
-## 🚀 Prossimi Passi
+## Prossimi Passi
 
 Ora che comprendete l'architettura dei Bucket Hikube:
 
-**🏃‍♂️ Avvio Immediato**
+**Avvio Immediato**
 → [Creare il vostro primo bucket](./quick-start.md)
 
-**📖 Configurazione Avanzata**
+**Configurazione Avanzata**
 → [Riferimento API completo](./api-reference.md)
 
 :::tip Raccomandazione Produzione

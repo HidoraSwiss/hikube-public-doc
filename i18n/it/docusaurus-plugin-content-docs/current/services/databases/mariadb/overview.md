@@ -10,7 +10,7 @@ Assicura il deployment di un cluster replicato e auto-riparante, garantendo **al
 
 ---
 
-## 🏗️ Architettura e Funzionamento
+## Architettura e Funzionamento
 
 Il servizio **MySQL gestito** su Hikube si basa sull'operatore **MariaDB-Operator**, che automatizza la gestione completa del ciclo di vita del database: deployment, aggiornamento, replica e ripristino dopo un incidente.
 
@@ -46,7 +46,7 @@ graph TD
 
 ---
 
-## 💡 Casi d'uso
+## Casi d'uso
 
 Il servizio **MySQL gestito su Hikube** e particolarmente adatto per:
 

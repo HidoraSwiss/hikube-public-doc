@@ -261,7 +261,7 @@ kubectl describe mysql example
 
 ---
 
-## 📋 Zusammenfassung
+## Zusammenfassung
 
 Sie haben bereitgestellt:
 

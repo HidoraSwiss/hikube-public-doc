@@ -7,7 +7,7 @@ title: Gateway API
 
 **Gateway API** est une extension de Kubernetes pour la gestion des **entrées réseau** (gateways, routes). Elle offre un modèle plus flexible et extensible que les objets `Ingress` traditionnels.
 
-L'addon installe les **CRDs Kubernetes Gateway API** (canal experimental) : `GatewayClass`, `Gateway`, `HTTPRoute`, etc.
+L'addon installe les **CRDs Kubernetes Gateway API** (canal experimental) : `GatewayClass`, `Gateway`, `HTTPRoute`, etc. Il active aussi la prise en charge de Gateway API dans [Cilium](./cilium.md) (avec son proxy Envoy) et, s'ils sont cochés, dans [Cert-Manager](./cert-manager.md) et [Ouroboros](./ouroboros.md).
 
 ## Dans la console
 

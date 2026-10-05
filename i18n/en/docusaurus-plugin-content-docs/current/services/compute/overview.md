@@ -11,20 +11,20 @@ Hikube **Virtual Machines (VMs)** offer complete hardware infrastructure virtual
 
 ---
 
-## 🏗️ Architecture and Operation
+## Architecture and Operation
 
 ### **Compute and Storage Separation**
 
 Hikube uses a **decoupled** architecture between compute and storage that ensures optimal resilience:
 
-**💻 Compute Layer**
+**Compute Layer**
 
 - The VM runs on **physical servers** in one of the 3 datacenters
 - If a node fails, the VM is **automatically restarted** on another node
 - If a datacenter fails, the VM is **automatically restarted** on another node in one of the 2 remaining datacenters
 - Downtime is limited to restart time (generally < 2 minutes)
 
-**💾 Storage Layer (Persistent)**
+**Storage Layer (Persistent)**
 
 - VM disks are **automatically replicated** across multiple physical nodes with "replicated" storage
 - **No data loss** even in case of multiple hardware failures
@@ -37,17 +37,17 @@ We guarantee the resources!
 
 ```mermaid
 flowchart TD
-    subgraph DC1["🏢 Geneva Datacenter"]
-        VM1["🖥️ VM-Production"]
-        STORAGE1["💾 Storage"]
+    subgraph DC1["Geneva Datacenter"]
+        VM1["VM-Production"]
+        STORAGE1["Storage"]
     end
     
-    subgraph DC2["🏢 Lucerne Datacenter"]
-        STORAGE2["💾 Storage"]
+    subgraph DC2["Lucerne Datacenter"]
+        STORAGE2["Storage"]
     end
     
-    subgraph DC3["🏢 Gland Datacenter"]
-        STORAGE3["💾 Storage"]
+    subgraph DC3["Gland Datacenter"]
+        STORAGE3["Storage"]
     end
     
     %% VM uses local storage
@@ -67,7 +67,7 @@ flowchart TD
 
 ---
 
-## ⚙️ Instance Types
+## Instance Types
 
 ### **Complete Range for All Needs**
 
@@ -123,7 +123,7 @@ Hikube offers three instance series optimized for different usage profiles, ensu
 
 ---
 
-## 🔒 Isolation and Security
+## Isolation and Security
 
 ### **Multi-Tenant by Design**
 
@@ -135,7 +135,7 @@ Each VM benefits from **complete isolation** thanks to a secure architecture tha
 
 ---
 
-## 🌐 Connectivity and Access
+## Connectivity and Access
 
 ### **Native Access Methods**
 
@@ -147,7 +147,7 @@ Hikube's network architecture is based on a Software-Defined approach that compl
 
 ---
 
-## 📦 Migration and Portability
+## Migration and Portability
 
 ### **Import of Existing Workloads**
 
@@ -159,14 +159,14 @@ The lifecycle management system integrates automated mechanisms that ensure oper
 
 ---
 
-## 🚀 Next Steps
+## Next Steps
 
 Now that you understand Hikube VM architecture:
 
-**🏃‍♂️ Immediate Start**  
+**Immediate Start**  
 → [Create your first VM in 5 minutes](./quick-start.md)
 
-**📖 Advanced Configuration**  
+**Advanced Configuration**  
 → [Complete API Reference](./api-reference.md)
 
 :::tip Recommended Architecture

@@ -16,7 +16,7 @@ La page de détail du cluster affiche **Ingress NGINX** dans la section **Extens
 
 ### Exposition
 
-Le contrôleur est exposé par un Service de type `LoadBalancer` et s'exécute sur les nœuds des groupes marqués **Exposé sur internet (IP Publique)** (étape **Nœuds**). Le premier groupe du cluster est toujours exposé.
+Le contrôleur est exposé par un Service de type `LoadBalancer` et s'exécute, dans le namespace `cozy-ingress-nginx`, sur les nœuds des groupes marqués **Exposé sur internet (IP Publique)** (étape **Nœuds**). Le premier groupe du cluster est toujours exposé. Le PROXY protocol n'est pas activé par défaut.
 
 :::note
 Le choix de la méthode d'exposition (`LoadBalancer` ou `Proxied`) et la déclaration de noms d'hôtes au niveau de l'addon ne sont pas proposés dans la console ; contactez le support.
@@ -46,7 +46,7 @@ Les options disponibles sont décrites dans le [chart Helm d'Ingress NGINX](http
 
 ```bash
 # IP externe du contrôleur (colonne EXTERNAL-IP)
-kubectl get svc -A | grep ingress-nginx-controller
+kubectl get svc -n cozy-ingress-nginx
 
 # Classe d'Ingress à utiliser dans vos manifestes
 kubectl get ingressclass
