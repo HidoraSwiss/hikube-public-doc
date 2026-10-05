@@ -1,0 +1,70 @@
+---
+id: postgres-service-list-users
+title: "List users"
+description: "List users"
+sidebar_label: "List users"
+hide_title: true
+hide_table_of_contents: true
+api: eJy9V1tv2zYU/iuEXpoAsZVsWYEZRTAvS1NjQRfkgg1IgoCWaIsNRWok5cYz/N/3HVJy5Nhphz3YL6alc/m+c+PxIjGVsNxLo0d5MkgujfNTK9y1sDOZiccL6fytE9YlBwkeV0Y74ZLBIvnh8JC+cuEyKyvSh/aQuTrLhHOTWrFWvA/VzGgvtCcNXlVKZsFj+sWR2iJxWSFKTic/rwQMmfEXkXkoVpbweRmdeuO5OjV1tNTISpieCgvhibEl9/HR++NkeZDUAfqLLLeWzyEpvSjd9/2Ruual6Eg6b6Wekm1wmsjp941UVs6kAkS3GTAKLXsRYNFmHRMCS9+2bMUqlB0YY2OU4KS97uvccu1ZR6fjuH+v7/VQKfPVMV8IRsSZN4N73WOnRmt4Z1KvKZcmF/QaFBiCIniJuKxJTGqd0cGR2JXIhJwJ9ufwgiFPrCrmDoKK4azMNBw7yoTnSvxdSyvyID/m2VNdAZNRjnGdQ5jnrYbrJ8slUpJzz8e8qdDXseN5Lsk0V5frRfXtGCOYm+l/HdsrSAWYvpCOtTBCVNFRTo7xesZVLVwI6TueI1rvBgiRUoyHlmF7xCj9alGbaYYzvnJAYbClhDtgDuEQOqPjKrL7wRopGq3mMEjHHp1XVq/PLs5Obxjy0Rq6vR6en9GDlcX0lcF3bE+UlZ/vD5g2jEIQ9LvcmoCvReFS2F77PmpxcJ/qEq0PJKtX1FKsdxJE9slQ+zlIjreNlV+RaSoG4TzrsZFGJGWOeqxqzypuYc3HCfVfxwwciWdeVqrtozip6ByyFB8Gh4+SxiJsl4gmn8aB8yaAXHguFYzePbwwOtrS95rXvjBW/oPy7rEhfgB32zi2KfydMeJv+t9K6MdNQh+NHcs8FzokyNWTicwkTDK0UilRBUCzwwS9CWArn+NNPp+NZx9x0VB2roQztc0Eyw1GtMYb8YxrcWd0bOufXE8I1FtEft4kguk9ATDf5cEVjYl5pLG7tNg3/W8h89O2QTACTFzIitF6ghvqzFpjd1hWjXcXvYvG+1b0W3qk2akYmn8GBZrGyMql4p4WF4bhiq2kMpZbifldv0jtjKFrEK773uAHJ52pN7hbJHFJoquTLtERFagkyhX3Rdgcm4Ey8LYWB5v7XrtVLQ9WtjJVO9j/TL/+r7UHbFB8ShBXi23y8PrWohWX1c2OC06FobhMRdgFyOMgSatGO50dcVUV/ChtqLp0sSK9TBvMeNhBv0xb47FuYsRqq2C48L5ygzTlleznojT9Qj7VY9HPlKnzhPA7kdVYCeZBaVjJ38U8JKLz6pr4x3y3Ai8Lb3ywcVNHzAyve09izvbc02Px9PgB51F+8vgBpq3wJ/thpyl5VkgtWKZooLo+O+UqVu/qvwNWMiuwIBjc7mYSVsiqHqNMMTOzmu5/+hfQZPav3qfAsge0vYgupLfAUMAeT+Ul9cQEFtLT+pVEBTa8HG1QuaGtBC+of6hDdY4r1Rug1ihq1g4dR7gaM23LESZKSDQ0O+wf9Q+bXuNZ6LUGcaPXY59Gv/1xNYTMevrWsoYOLNEvVMLR0C+FzNHVfWkCN6olgOuYX6vANXarPHrx7NNKcQRq2XhfNNV5l7TVSXSa+ox7bKhQHAfdxmyLlJ6vN1mEgMpCHj0ZXixoX7u1armkxxgbNlQf/GBIhfFAZZlLR2e0zYQrJzY4rIZXstfu9Pvs5d/NOre2cDXVRTOzaEo9UV13JgyNih067kZq+QDxplqJf5QYYuGufEd3Y1BT064GzPnZDcrhX/qubms=
+sidebar_class_name: "get api-method"
+info_path: api/reference/hikube-api
+custom_edit_url: null
+hide_send_button: true
+---
+
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import ParamsDetails from "@theme/ParamsDetails";
+import RequestSchema from "@theme/RequestSchema";
+import StatusCodes from "@theme/StatusCodes";
+import OperationTabs from "@theme/OperationTabs";
+import TabItem from "@theme/TabItem";
+import Heading from "@theme/Heading";
+import Translate from "@docusaurus/Translate";
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"List users"}
+>
+</Heading>
+
+<MethodEndpoint
+  method={"get"}
+  path={"/postgres/v1alpha1/projects/{projectId}/clusters/{clusterName}/users"}
+  context={"endpoint"}
+>
+  
+</MethodEndpoint>
+
+
+
+List users
+
+<Heading
+  id={"request"}
+  as={"h2"}
+  className={"openapi-tabs__heading"}
+>
+  <Translate id="theme.openapi.request.title">Request</Translate>
+</Heading>
+
+<ParamsDetails
+  {...require("./postgres-service-list-users.ParamsDetails.json")}
+>
+  
+</ParamsDetails>
+
+<RequestSchema
+  {...require("./postgres-service-list-users.RequestSchema.json")}
+>
+  
+</RequestSchema>
+
+<StatusCodes
+  {...require("./postgres-service-list-users.StatusCodes.json")}
+>
+  
+</StatusCodes>
+
+
+      

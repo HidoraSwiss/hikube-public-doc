@@ -1,0 +1,70 @@
+---
+id: rabbit-mq-service-create-user
+title: "Create user"
+description: "Create user"
+sidebar_label: "Create user"
+hide_title: true
+hide_table_of_contents: true
+api: eJztV21v2zYQ/iuEviQBIitZuwEzimBu1q7GusZzEmBAEgS0dLbYUKRKUk48w/99dyTll9hpsQEz9mH5kEgUeXfP3XP3MPNE12C4E1r1i6SbDPloJNxvv1+CmYoc7s8NcAfXFkxynBiwtVYWbNKdJ9+dnNCfAmxuRE0G8HiP2SbPwdpxI1m7vYNHc60cKEcneF1LkXuX2WdLx+aJzUuoOD25WQ1oSI8+Q+7wYG0oQCeC0wYDUbyCtZ3WGaEmycL7GIvJt41MS22d3bWPF4WguLgcbJz4uj2j5Y6Ajp+lZoi72Fgb5kphmY+hc6tu1UBbK0b4bcplA7Z7q1J2wItKqIMuwzRKxn1G2WHA1xjIHo1wkGFpCqYV49LnWjcG9x358/RJKzlDE/SY0nO0478fsEOoajc76jKlGQEgQ6vIksVi8RzAAEzqP4b9HMOeqAqLiqGFdaoMS8/896NgosZtj9oU387PL6CIiFCw9kyHXVDYBlxjFBDUHI6ZddoAs5BjIuSsQ268p9e7+PgWMzSEL5hXx1LWV5hjUTCh6sahG4PxOjD2b/ATHcETr2oZSx8p7mlF9QuL3uG9oIZC2xVmnU8Iung5gAIcFxKN3tytEJ1uI7pWvHGlNuJPzEjKeviCccd4GbkWBoq9IeIv+t8J6NU2oPfajERRgPIFss14LHKBJhl2WCWQZBjNHgv0YgA78bzexvNJO/ZeN4qqM4xdyQoNFjvNMXgS1u0NTjsVvOsxBfUSkB+3gZzjuMHA3DoOLmmczAKM/ZXFvOh/B5jvdw2CPoaJyiEZCRsY9s4YbfZIq+jdBu8Qve+MfkePRDVm2PxTPMBJLlI2kNyhoFQMp7bDca4NNwIHZrPatTeENka46XsLn1eE5dTr3syToOakqKStfSKoIMg1d6W/csSB0nWmgePti0Ir/4vjpa1cNhbtf6K3f2rt7rgF+1YXM9rxr99gngvidbsT88yfPoKaIIbuD6/wVaj29fT/e89/796zq5KsReFpk8Rm2CQkLjg+ob5Y3sOTu+fGwo2cNeFKjp1UaurGWntd8UTvJpnx56sv2fSUy7rkp1nsMJvNl722yGKr4OJa0ywyMk7TNYyr0KiNkWi4dK623SzjtegUUOlOKR6aEXRyqZsiobbxNzPhZv5Qrxa/wsz3/9qnS+qVwKF2w5JFPCxsFSHEzPBz+gAzdmgf7suH+zf43C/O7t+gabwnnh15plU8L4UClkvScdth50gVPzSX/+xYxvEWibmzuDjGB2B1M8KuRqnOG6ou/dcSB8of6QePMsVo0xCdnyolUgyrQIWkMTBcDYx3YZJuNvyqQ1Ydu+xJTwehxtrnQjg6nAS3rDfobyXkijiLH2j4k7yoAu+DTiN2hRN51ReELppp9YKQUVmDoelJ57RzEoWC537AxXjjuZR96P98Mezhnk0SbNQe5aPCYU/zNxj6qRQFSlJHaJ8hIigGt2Z+k8kb8JZ0cPDkslpyzPciup9Hkt8kLckJT6R5GFKe6PjYXZeVluu0vikRge5IUD8C0PB8PuIWro1cLGgZy2o8idEPSqwXN2J3ISw9Y/uNubSwhWEpGcnhMDb6EUN/O7G1/FdEr6i4pLEP1B5r+khCt0fH65la3OH2SHrCH3acB2fpFdlZWdgSSQo8nOjhQK7dV/ferY22wcXlFW4eRSGudOHvhPyRFB1/+2i1Bx90idbmieRq0oTbSbBJP38BmY3r/A==
+sidebar_class_name: "post api-method"
+info_path: api/reference/hikube-api
+custom_edit_url: null
+hide_send_button: true
+---
+
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import ParamsDetails from "@theme/ParamsDetails";
+import RequestSchema from "@theme/RequestSchema";
+import StatusCodes from "@theme/StatusCodes";
+import OperationTabs from "@theme/OperationTabs";
+import TabItem from "@theme/TabItem";
+import Heading from "@theme/Heading";
+import Translate from "@docusaurus/Translate";
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Create user"}
+>
+</Heading>
+
+<MethodEndpoint
+  method={"post"}
+  path={"/rabbitmq/v1alpha1/projects/{projectId}/clusters/{clusterName}/users"}
+  context={"endpoint"}
+>
+  
+</MethodEndpoint>
+
+
+
+Create user
+
+<Heading
+  id={"request"}
+  as={"h2"}
+  className={"openapi-tabs__heading"}
+>
+  <Translate id="theme.openapi.request.title">Request</Translate>
+</Heading>
+
+<ParamsDetails
+  {...require("./rabbit-mq-service-create-user.ParamsDetails.json")}
+>
+  
+</ParamsDetails>
+
+<RequestSchema
+  {...require("./rabbit-mq-service-create-user.RequestSchema.json")}
+>
+  
+</RequestSchema>
+
+<StatusCodes
+  {...require("./rabbit-mq-service-create-user.StatusCodes.json")}
+>
+  
+</StatusCodes>
+
+
+      

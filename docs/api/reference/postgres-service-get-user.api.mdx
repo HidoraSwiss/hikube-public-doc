@@ -1,0 +1,70 @@
+---
+id: postgres-service-get-user
+title: "Get user"
+description: "Get user"
+sidebar_label: "Get user"
+hide_title: true
+hide_table_of_contents: true
+api: eJy9V9tuGzcQ/RViX2IDltZu04cKgVE1dRyhQWrYCVrAMQxqd6RlTJFbkqtYFfTvPcO9eBXJDdoC8ospknM5M2eGs+vEluRkUNZM8mSUXFkf5o78Dbmlyuj+ksJHTy45SbBZWuPJJ6N18t3pKf/LyWdOlSwN2bHwVZaR97NKi/b6EKKZNYFMYAlZllpl0V762bPYOvFZQQvJq7AqCYrs9DNlAYKlY++Cqo1WcMTIBfVu+uCUmSebaGOm5t9WUjq1VJrm9a9tAIxUPF0Qtc6qDg80/bNmRx20nhtTazVJlt62demkCaIn0zM8/GQ+mbHW9osXoSDBwEWwo09mIF5bY2BdKLMlvLA58TEgCASF5AJx2boxq0zGC8/XrikjtSTx+/idmFmALlYeF7XAWtt5XPaE2Z9r+rNSjvJ4fyqzh6qET1Z7IU2OyzJvJfww2WyQklwGOZUNY76OncxzxaqlvtqK4jdijGDupv/r2F7jVnQzFMqL1o0YVfDbqymOl1JX5GNIX8gc0XoxQoi0FjJSWBwxovSLU4HSDGv8y+GKgC5N/kR4hINMxssussdRGwtao1dQyMsBrzutNxfvLl5/EMhHq+jjzfjygjc6jelXCl+II1qUYXU8EsYKDkGU72NrAr4VhStyg/a8lpLAPjcLlCI86Y64pMTgPF45ZkXx7yR5ua/Gf0aamQnkgxiIiUEYVQ4yllUQpXRQFcj5f1HzMESPclHqtojqtsHrmKJ6Mxq8V9yhoHuBUMo5E0A970BOQSoNpbd3T4jO9hS9kVUorFN/gdsDMcYP+N1WjWtYfzBE8ln7ewF9vwvojXVTledkYoJ8NZupTEGlQB0tFCgAbw6YoGcd2Ivn5S6e9zaIN7YynJ1r8rZyGYncoj8bnNCj8uFgcFxrn03P2KnngPy4CwStewbHQh+H1NwjVjWMw6XFPWt/D5gf9jWCCdzEa6wFTwp4ni6cs+6AtGqs+9o6Ndb3er+nRprxRqD4lxDgVoysXGkZ8GwsBDprQMu1TjqF5l093ToYQt94uG17Bx+M9Lre6Had1BMSv5v8gk6YoIohlzIUcYxrGsoouIpOdoevdqTanHS6Ml156H/Pv/6/tm6M+6+q7jCJyTmj7cbV5G5nvqIQ56YYVPR3DvCc4kTB9kZJWjay6fJM6rKQZ2kTM5+uu+ht0gY8Nnth2KSsG3stmA0U11yss1A5DRtFCKUfpaks1TCnhR0W6qGa0jDTtsoTBuIpqzBjrKLQuFS/0iomt3d0w4GoOdRe6GIi642dp792X+B48EArceQf7ouH+1dYT/Lz+1dQ7SicH8chaSGzQhkSmeYm7YfitdR1RXSfBpjxHGHisBgX7CzOpGU1BfXRh7OKBwoe85v8/jF4G1EO4O2g9i7muUCjQT6YssrMbEShAs9zSS0gxleTHSgfeMzBAdckV73J8UwHC68NCkW0jcyzX42atozZJ05IrWh5Ojwbnjb1K7NYv43HjdxAvJ388tv1GHe207eVNVT1AjXIZVEr+qlQOTrFUNmIjWkF53rqe1TcwtZlMdBjSEstEaZNY3vd0PQ2aWnKYBqi1mNxpCqWo36pt2zl/e2yjYTl7a7+wDFkNLCR9ZpHwY9Obza8jabkIg9hEy0wNh8maK48r1FLM6k97eDpWmNy1H4uHIunD6dtnC2FDTOk6YjcAx+Y4b3+xa3jgIb7UTuw6S4zmzvcbeqF414fj/ENUYae4M7zw22j63aXFx9AyL8BwhmOBw==
+sidebar_class_name: "get api-method"
+info_path: api/reference/hikube-api
+custom_edit_url: null
+hide_send_button: true
+---
+
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import ParamsDetails from "@theme/ParamsDetails";
+import RequestSchema from "@theme/RequestSchema";
+import StatusCodes from "@theme/StatusCodes";
+import OperationTabs from "@theme/OperationTabs";
+import TabItem from "@theme/TabItem";
+import Heading from "@theme/Heading";
+import Translate from "@docusaurus/Translate";
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Get user"}
+>
+</Heading>
+
+<MethodEndpoint
+  method={"get"}
+  path={"/postgres/v1alpha1/projects/{projectId}/clusters/{clusterName}/users/{username}"}
+  context={"endpoint"}
+>
+  
+</MethodEndpoint>
+
+
+
+Get user
+
+<Heading
+  id={"request"}
+  as={"h2"}
+  className={"openapi-tabs__heading"}
+>
+  <Translate id="theme.openapi.request.title">Request</Translate>
+</Heading>
+
+<ParamsDetails
+  {...require("./postgres-service-get-user.ParamsDetails.json")}
+>
+  
+</ParamsDetails>
+
+<RequestSchema
+  {...require("./postgres-service-get-user.RequestSchema.json")}
+>
+  
+</RequestSchema>
+
+<StatusCodes
+  {...require("./postgres-service-get-user.StatusCodes.json")}
+>
+  
+</StatusCodes>
+
+
+      

@@ -1,0 +1,1 @@
+{"title":"Body","body":{"content":{"application/json":{"schema":{"type":"object","properties":{"vhostName":{"type":"string","description":"Vhost name","maxLength":255,"minLength":1}}}}},"required":true}}

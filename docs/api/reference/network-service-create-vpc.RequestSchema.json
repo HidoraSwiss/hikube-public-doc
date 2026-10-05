@@ -1,0 +1,1 @@
+{"title":"Body","body":{"content":{"application/json":{"schema":{"type":"object","properties":{"name":{"type":"string","description":"VPC name (lowercase alphanumeric only). Must be unique within the project.","maxLength":16,"minLength":3}}}}},"required":true}}

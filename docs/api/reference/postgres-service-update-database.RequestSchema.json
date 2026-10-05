@@ -1,0 +1,1 @@
+{"title":"Body","body":{"content":{"application/json":{"schema":{"type":"object","properties":{"extensions":{"type":"array","items":{"type":"string"},"description":"List of PostgreSQL extensions to enable"}}}}},"required":true}}

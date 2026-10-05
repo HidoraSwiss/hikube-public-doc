@@ -1,0 +1,1 @@
+{"parameters":[{"name":"currency","description":"ISO 4217 currency code, required: CHF or EUR","in":"query","required":false,"schema":{"type":"string"}}]}

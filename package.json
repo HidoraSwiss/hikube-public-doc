@@ -11,7 +11,9 @@
     "clear": "docusaurus clear",
     "serve": "docusaurus serve",
     "write-translations": "docusaurus write-translations",
-    "write-heading-ids": "docusaurus write-heading-ids"
+    "write-heading-ids": "docusaurus write-heading-ids",
+    "gen-api-docs": "docusaurus gen-api-docs all",
+    "clean-api-docs": "docusaurus clean-api-docs all"
   },
   "dependencies": {
     "@docusaurus/core": "^3.10.2",
@@ -21,6 +23,9 @@
     "@easyops-cn/docusaurus-search-local": "^0.55.3",
     "@mdx-js/react": "^3.1.1",
     "clsx": "^2.0.0",
+    "docusaurus-plugin-openapi-docs": "4.7.1",
+    "docusaurus-theme-openapi-docs": "4.7.1",
+    "path-browserify": "1.0.1",
     "prism-react-renderer": "^2.3.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0"

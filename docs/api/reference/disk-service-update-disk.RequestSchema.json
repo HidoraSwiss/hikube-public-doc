@@ -1,0 +1,1 @@
+{"title":"Body","body":{"content":{"application/json":{"schema":{"type":"object","properties":{"size":{"type":"integer","format":"int64","description":"Define storage capacity in GB","maximum":4096,"minimum":20}}}}},"required":true}}

@@ -1,0 +1,70 @@
+---
+id: maria-db-service-update-maria-db-cluster
+title: "Update cluster"
+description: "Update cluster"
+sidebar_label: "Update cluster"
+hide_title: true
+hide_table_of_contents: true
+api: eJy9V21v2zYQ/iuEPjWAX7ssyIyumJOmi9G1C/ICDEiNgBbPFhuJ1EjKi2f4v++OpBwlVoplGOwPkUIe7+453t1zWie6BMOd1GoiklHymRvJP5xcgVnKFO5uSsEdxMXTvLIOTNJJDNhSKws2Ga2Tt4MBPQTY1MiSNKGeMbNVmoK18ypntXgPj6ZaOVCOTvCyzGXqbfe/WTq2TmyaQcHpza1KQEV69g1ShwdLQ546GYxK0ZCxzki1SDZeiMQn7buKF9C6kRpAmGLsdnc7yVybguNOQqHoOok68EjlI/OqI0swVgaYOx4Y8LGwjU2JgVr4cG/V4dLRIYnDA16E4nlDfKZ1DlzRrpV/w79UlGnbgoB0OO4q27Llf53ksO3WT7hgl/BnBdaxLpuoJc+lYFKVlWMlNxh+dNu+Igs8VF6Uebj1OpHoHXVXEBa9wTtKiQR1F5h1fBGAv+iAAMdljkpvp4+IhruIbhSvXKYNRlQgpDH+g35HfxmZlgbE3hDxF+23AvphF9BHbWZSCFD+gmw1n8tUokqGxVVISwm6zwt60YFWPIe7eL5oxz7qStHtXILVlUmBCQ2WKdyBB2nd3uCY2j6ZnpNTLwH5aRfIqVZzdMw1cfAcG5NYBRj7uxbzov0WMD+2NYKJCv2JEZGAYWfGaLPHtIrWbbAO0Xqr9y01EtmPYfEv8QCf5YC3cpFzRw2UScscFKU2SIv5ilWPUntDaKOHT23v4CNGfOx6o9t1pMAGT3YwWrTAXeaJPTaUkTMVdHbpeMsCna0u//ivaqadGuWJFiuS+J8GhBfJdht3XFoOh71jH7jm9cdxh0UV7I2tSrxtZPsRWw4HvaOOfwyH9Bz2DsPj+OC1PP7c7peqmGG26jmrtfS+qiH7mSEXK8FzrYAVWgA65DD5FtDNYQl5LU1aDr6qt91jPJKGWS3KNwLZeuYzSaVcUd+a4VvG1QL5js9JhR+OUI6mt4I/yKIqktExvksV3offH0iewzxTvqDqE4z7OZEtJWe/aS5OeM5VivF6xSDz3MRViA9CKnkq3QonAPbrSdN/bMFHTyCEanmauLjg+IIKp86JZPrcVJiQ63j7IsV5QYRaSKkYfE2Mkn5BKsSsvxzyvMz4sB+L0PbX23Lc9KMiXKS62uD50MRC+VYGI5xkzpV21O/zUvYEFLqXyftqBr0015VIqKYspJVB4P7QuJSfYOW7QmPrigop1EotsA00DwvPsV4ENxlud+9hhXl4f5fd373D94l4f/cOVRtw7w+Q+zDzeJpJRZEhdrc9dsrz0Eq3XxyWcQMMw2WBsh5HG1ZWM8xLJPC0KvAY5VxsM390zz3KLnrbDd75lpMhQ1G24GVRj7h87CZndZ03usG25B8LddDM3tivfN4NNmRirn1gpPMdI/jAxheTnehcZ0gMuEH8QJmqBJaQ0xgIRblYk6olqFFNTSkEs+Ei9pbeIHIJT30rjEGI57rsfPLh98sxyjzNiCeJgLgK5APcjop+yaTAwuhJ7cNV4uyPzjXU7yTzE4Tb9HAYr36Zc+m/NrwH65jmt0lMc0IUEz3ZfpfRCDFqck+d7bTufZjWnyS3yXo94xZuTL7Z0DJeq/FJjIrJBFEeZbeQlt6x4uY8t7Dj85ZPkjeXsboPGNprxVLnv6L0ijxMzHtP5dFgTaK/PRr2odlM6XstZDsBD1unwUr3mhQ8Ht2hTvI4nBhjvy3dd2WnjTZ2Mb4+PUfpWeRnYhSaEflfVEX41/upPewwytDaOsEuvqjCtBKU0u8fAZKsyA==
+sidebar_class_name: "patch api-method"
+info_path: api/reference/hikube-api
+custom_edit_url: null
+hide_send_button: true
+---
+
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import ParamsDetails from "@theme/ParamsDetails";
+import RequestSchema from "@theme/RequestSchema";
+import StatusCodes from "@theme/StatusCodes";
+import OperationTabs from "@theme/OperationTabs";
+import TabItem from "@theme/TabItem";
+import Heading from "@theme/Heading";
+import Translate from "@docusaurus/Translate";
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Update cluster"}
+>
+</Heading>
+
+<MethodEndpoint
+  method={"patch"}
+  path={"/mariadb/v1alpha1/projects/{projectId}/clusters/{name}"}
+  context={"endpoint"}
+>
+  
+</MethodEndpoint>
+
+
+
+Update cluster
+
+<Heading
+  id={"request"}
+  as={"h2"}
+  className={"openapi-tabs__heading"}
+>
+  <Translate id="theme.openapi.request.title">Request</Translate>
+</Heading>
+
+<ParamsDetails
+  {...require("./maria-db-service-update-maria-db-cluster.ParamsDetails.json")}
+>
+  
+</ParamsDetails>
+
+<RequestSchema
+  {...require("./maria-db-service-update-maria-db-cluster.RequestSchema.json")}
+>
+  
+</RequestSchema>
+
+<StatusCodes
+  {...require("./maria-db-service-update-maria-db-cluster.StatusCodes.json")}
+>
+  
+</StatusCodes>
+
+
+      

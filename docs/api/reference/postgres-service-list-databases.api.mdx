@@ -1,0 +1,70 @@
+---
+id: postgres-service-list-databases
+title: "List databases"
+description: "List databases"
+sidebar_label: "List databases"
+hide_title: true
+hide_table_of_contents: true
+api: eJy9V2Fv2zYQ/SuEPrWAbSVbNmBGUcxL29XY0AVpCxQIAoMWzxZritRIyq1n+L/vjqRkubaxbBicL1Eo8t17und3zDYzNVjupdFTkY2zO+P80oJ7D3YtC5j9Lp1/xT2fcwcuG2T4qjaansfb7LurK/olwBVW1oSBCBPmmqIA5xaNYu32ER4tjPagPZ3gda1kEaLmnx0d22auKKHi9OQ3NSCQmX+GwuPB2hJHL2NQbzxXt6aJSGmvROglWNy8MLbiPi79eJPtBpno6O/3c2v5BndLD5X755gtxDteQW+381bqJcWwRsETcLiopH4CjT3w4belbDCzYI0D69gX6UsWIBnFZ0YzX0rHWraBGHBhtNr8v0Fb1HNxdwgCXzHbDiGe8t3b2N3PILs5Za5fuGD38GcDSGnIpnrNlRRM6rrxrOYW0+OR5L8wWyDKqzqlr/UrPSN2A3ExBJxJKhDErtDcfBltd5aAAM+lQtCHx72i62NFHzVvfGms/AsESprgH8g78WUUWloQF1PEz8Y/Kej7Y0FvjJ1LIUCHBLlmsZCFREiGdVBJFx1xuQSdJXBSz82xnnfGszfYbig79+BMYwtgwoBjGt/AV6yOi8mxbXwKvSBS54T8dCzk1ugFEvN9HVxRKW+ijMulxZ6Nf0LMD6cawRRpWs0Vo0EFlr221tgL2ipFdzE6pOgn2Z+okTRdGRb/Gg/wOXbRIbtT3NP4YthLsT/WxnIrsck2+10XU+gSw8PYR/owSK/rjR+2mQ4jkuYeTcApGZRGHm7zZbg/pIYy9raBwfHU7ybBoMMqVOMQPwzf/4r2OMg8XxLF7oqTPZ6cdKJ320FdpaFvs4QwzCnqOMvrhJCvr7mqS36dJ7ku33bCd3nijYs9Bbu8HyD6J365xioEL72v3TjPeS1HAiozKuWqmcOoUKYRGelwUDRW+k04NKnlb7AJCem9ek/fIea93bAfwXHhW+13kTfD18MVbNgzt5qVq9kLfJ6Kl7MXCG3Bv3yObceyihel1MAKRY3VjdgtV9HF3W3SMW4B7wXGAV0ecKqwupmjXbF3Fk2Fx+hOmDL8afg2qBwi22FkF9JcYnPAWx3ZTOqFCSqkV3QkHmCTu+mRlA90GcEXVEdUqVrgaPUGWWs0N2ubjyNeCaYtPeJECYlA66vR9egq1RwvQs0lxunckL2dvvrjfoJ7DtN3kDWsxArrhqwcgX4upcDqHkkTtJGfkFwP/siJBwq7XHq8ZOW14vixdonBNrn0IWtdSpKST+OFNDgVH8f9Im3NSuuHBbengQ7DfHoC325p6aNVux0tYxuxwYUYC5tWaBdkTyEdPWMJLbhycKSja2bZs/tUy88ZxjyprzWwJn+kHkZda0X+7nUcah0XDNz/WrtH3J5cS/rjjgn+P1T73tmjxk3F2zWbX19/QFv8DdfVvho=
+sidebar_class_name: "get api-method"
+info_path: api/reference/hikube-api
+custom_edit_url: null
+hide_send_button: true
+---
+
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import ParamsDetails from "@theme/ParamsDetails";
+import RequestSchema from "@theme/RequestSchema";
+import StatusCodes from "@theme/StatusCodes";
+import OperationTabs from "@theme/OperationTabs";
+import TabItem from "@theme/TabItem";
+import Heading from "@theme/Heading";
+import Translate from "@docusaurus/Translate";
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"List databases"}
+>
+</Heading>
+
+<MethodEndpoint
+  method={"get"}
+  path={"/postgres/v1alpha1/projects/{projectId}/clusters/{clusterName}/databases"}
+  context={"endpoint"}
+>
+  
+</MethodEndpoint>
+
+
+
+List databases
+
+<Heading
+  id={"request"}
+  as={"h2"}
+  className={"openapi-tabs__heading"}
+>
+  <Translate id="theme.openapi.request.title">Request</Translate>
+</Heading>
+
+<ParamsDetails
+  {...require("./postgres-service-list-databases.ParamsDetails.json")}
+>
+  
+</ParamsDetails>
+
+<RequestSchema
+  {...require("./postgres-service-list-databases.RequestSchema.json")}
+>
+  
+</RequestSchema>
+
+<StatusCodes
+  {...require("./postgres-service-list-databases.StatusCodes.json")}
+>
+  
+</StatusCodes>
+
+
+      

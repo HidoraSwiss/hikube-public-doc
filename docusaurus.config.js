@@ -4,6 +4,29 @@
 // There are various equivalent ways to declare your Docusaurus config.
 // See: https://docusaurus.io/docs/api/docusaurus-config
 
+import {themes as prismThemes} from 'prism-react-renderer';
+import {createRequire} from 'node:module';
+import {
+  createApiPageMD,
+  createInfoPageMD,
+} from 'docusaurus-plugin-openapi-docs/lib/markdown/index.js';
+
+const require = createRequire(import.meta.url);
+
+// URL de base de l'API publique Hikube. C'est le SEUL endroit où elle est
+// définie : les pages la lisent via `customFields.hikubeApiUrl` (composant
+// <HikubeApiUrl /> et <ApiEnv />), et la référence générée l'utilise comme
+// serveur à la place du `host` déclaré par la spécification OpenAPI.
+// api.demo.hikube.cloud dans un premier temps ; la migration vers
+// api.hikube.cloud (nom aujourd'hui pris par l'API Kubernetes de la
+// plateforme) est suivie à part. Le jour J, ne changer que cette ligne.
+const HIKUBE_API_URL = 'https://api.demo.hikube.cloud';
+
+// La surface publique s'appelle avec une clé d'API. La spécification déclare
+// aussi le schéma OAuth2 de la session console : on ne l'affiche pas.
+const onlyApiKeyScheme = (schemes) =>
+  schemes && schemes.ApiKey ? {ApiKey: schemes.ApiKey} : schemes;
+
 /**
  * Coloration syntaxique « graphite » : les blocs de code gardent le fond
  * #14110e de hikube.cloud dans les deux thèmes. Toutes les teintes tiennent
@@ -50,6 +73,10 @@ const config = {
 
   onBrokenLinks: 'warn',
 
+  customFields: {
+    hikubeApiUrl: HIKUBE_API_URL,
+  },
+
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
   // may want to replace "en" with "zh-Hans".
@@ -71,6 +98,9 @@ const config = {
           editUrl:
             'https://github.com/HidoraSwiss/hikube-public-doc/edit/main/',
           editLocalizedFiles: true,
+          // Requis par docusaurus-theme-openapi-docs pour les pages de la
+          // référence API ; les autres pages gardent le rendu standard.
+          docItemComponent: '@theme/ApiItem',
         },
         blog: {
           showReadingTime: true,
@@ -92,10 +122,58 @@ const config = {
     ],
   ],
 
-  plugins: [],
+  plugins: [
+    // Les générateurs d'exemples de code du thème OpenAPI importent le module
+    // Node `path`, que webpack 5 ne fournit plus côté navigateur.
+    () => ({
+      name: 'webpack-path-fallback',
+      configureWebpack: () => ({
+        resolve: {fallback: {path: require.resolve('path-browserify')}},
+      }),
+    }),
+    [
+      'docusaurus-plugin-openapi-docs',
+      {
+        id: 'openapi',
+        docsPluginId: 'classic',
+        config: {
+          hikube: {
+            // Surface publique uniquement (opérations appelables avec une clé
+            // d'API). Ne jamais y mettre frontend.swagger.json.
+            specPath: 'static/openapi/hikube-public.swagger.json',
+            outputDir: 'docs/api/reference',
+            downloadUrl: '/openapi/hikube-public.swagger.json',
+            hideSendButton: true,
+            showSchemas: false,
+            sidebarOptions: {
+              groupPathsBy: 'tag',
+              categoryLinkSource: 'tag',
+            },
+            markdownGenerators: {
+              // Serveur = URL centralisée ; authentification = clé d'API.
+              createApiPageMD: (item) => {
+                item.api.servers = [{url: HIKUBE_API_URL}];
+                item.api.security = [{ApiKey: []}];
+                item.api.securitySchemes = onlyApiKeyScheme(
+                  item.api.securitySchemes,
+                );
+                return createApiPageMD(item);
+              },
+              createInfoPageMD: (item) =>
+                createInfoPageMD({
+                  ...item,
+                  securitySchemes: onlyApiKeyScheme(item.securitySchemes),
+                }),
+            },
+          },
+        },
+      },
+    ],
+  ],
 
   themes: [
     '@docusaurus/theme-mermaid',
+    'docusaurus-theme-openapi-docs',
     [
       '@easyops-cn/docusaurus-search-local',
       /** @type {import("@easyops-cn/docusaurus-search-local").PluginOptions} */

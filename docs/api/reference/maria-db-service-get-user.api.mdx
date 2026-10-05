@@ -1,0 +1,70 @@
+---
+id: maria-db-service-get-user
+title: "Get user"
+description: "Get user"
+sidebar_label: "Get user"
+hide_title: true
+hide_table_of_contents: true
+api: eJy9V21vIjcQ/ivWfkmQgCVtWqnoGpXL5XKovWuUF6lSEkVmPYAvXnvrlzQU7X/vjPclSyCt2krwBWN7npln3jysE1OA5V4aPRXJOPnMreQf3l+BfZIZPJyDv3Fgk35iwRVGO3DJeJ18MxrRlwCXWVmQMIpOmAtZBs7Ng2LN9SGKZkZ70J4keFEomUV16VdHYuvEZUvIOa38qgAEMrOvkHkULCwZ52WlNKAhmufQuem8lXqRlFHHXC7+GSTnz0To1GiNx2iG68hItHMR2c6Nzbmvtr4/xo1Nqp/5s8xDznTIZ2CZmTOHv5XnGkxwLHtBZ4jE/FI6RuazwxH7kQWtZC49iB4C5xVUMj4a4QeZCO75jNeOfk2GCyEJl6uLDVp/T9oatcNrr0ld4q0Xcxszhnf6Tl8Y5+QMj5+4CuDGd3rADrjIpT4YMwy3YjxGnh1a4CL9wyK7NMM1fgk0hSGWAtdnDn4PoDNazoOuXNSLaCRotFohIC0HtG5Rr85+OTu9Zka3QDdXk/Mz2mgRK5gDdgh54Ve9MdOGEfEo1WWUlGX5mvsF2EFzXklxZLzQOeYt6m+PKP/Y4CRe6RFQ/PST410F8Z4LdknmOc8GbKrReVIwqYvgWcEtQnmw7l8UCCqCZ54Xqg5rXWO0joGpNqPCB0nVTPmFDuSLKrvfNECA51Ih6O39C6OjbUY3mge/NFb+CQIpTfAH2l3by0i1tCD2xoi/qX8noW+3CX00diaFAB0D5MJ8LjOJkAyrJ5eYAtQg9hegNw3Yyed4m88X49lHEzRF5xKcCTYDJgw4rAbP4Fk6vzc6ttFPqudk1FtEftgmgg16job5Lg+uqDOsKhr7C4t9U/8OMt/tagRTNBOfLsXoWcVX4MxaY/eYVrV2V2mHWvtO63fUSD0LMCz+JxSgBoxRuVDc0yvJsLN6bLnG4uSALTu83NobQ1dbuKl7ix8q6XS98e06qcYJei3p3ZxSgkqiXHC/jDNP3VDG3gbob08qzfxR9lusTAWH+F/o1/9Ha2ee/wp13088XxDbZrRL7l8/fjjkxekk+hTbO/l3AXGMIHXjJM1JVMzSpyOuiiU/SmuPuXTd+q5Ma+q42XFCmRI07jVUSsStMrGKQbAKVSy9L9w4TXkhhwJyM1zKxzCDYaZMEAnRcJAFnCtWUWhSyJ9hFUPbOboiN1QZ1FxoPcKrja2HvzKf4fHgEVbs0D0+LB8f3uF6Kk4e3iG0BX/Si4NRzrOl1MAyRS3aDdkpV1U9tEO0Y9wCzhsGhwUcC/F9YkWYYeJjF84CjRM0EdfR/W3wKbIcoLWDyroY5SW2GQwHJazUcxNZSE8zXFIJsMnFdIvKNQ05eEAVSTWvBT7S3qDVGsuENW3MkV01TFPEZBMFpAJ6Gg2PhqO6enkWq7e2uJYbsE/TD79eTvDOZvg2ooY1nWMFUlFUQD8tpcA+MZQmciuM82hcB76TiRvc2ih6ePZpoTi6qax1r+ssvU3qLCUudZ5Wk3DMVFyOu3XeJCvtb9ZszFfabosPUwwD6knHek1z4I1VZUnb2JFsTEPUSdqp81B+CulojZU058rBFp22LyaHl3Ut9xjq3EmzyWBNCVK3Q2qAj5TgneZFfWOPirte27PqNjLlPd6ty4X8Xh1P8G9D4TuCW28PdY22152fXWM+/gWFyzoS
+sidebar_class_name: "get api-method"
+info_path: api/reference/hikube-api
+custom_edit_url: null
+hide_send_button: true
+---
+
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import ParamsDetails from "@theme/ParamsDetails";
+import RequestSchema from "@theme/RequestSchema";
+import StatusCodes from "@theme/StatusCodes";
+import OperationTabs from "@theme/OperationTabs";
+import TabItem from "@theme/TabItem";
+import Heading from "@theme/Heading";
+import Translate from "@docusaurus/Translate";
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Get user"}
+>
+</Heading>
+
+<MethodEndpoint
+  method={"get"}
+  path={"/mariadb/v1alpha1/projects/{projectId}/clusters/{clusterName}/users/{username}"}
+  context={"endpoint"}
+>
+  
+</MethodEndpoint>
+
+
+
+Get user
+
+<Heading
+  id={"request"}
+  as={"h2"}
+  className={"openapi-tabs__heading"}
+>
+  <Translate id="theme.openapi.request.title">Request</Translate>
+</Heading>
+
+<ParamsDetails
+  {...require("./maria-db-service-get-user.ParamsDetails.json")}
+>
+  
+</ParamsDetails>
+
+<RequestSchema
+  {...require("./maria-db-service-get-user.RequestSchema.json")}
+>
+  
+</RequestSchema>
+
+<StatusCodes
+  {...require("./maria-db-service-get-user.StatusCodes.json")}
+>
+  
+</StatusCodes>
+
+
+      

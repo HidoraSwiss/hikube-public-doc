@@ -1,0 +1,1 @@
+{"parameters":[{"name":"projectId","in":"path","required":true,"schema":{"type":"string"}},{"name":"clusterName","in":"path","required":true,"schema":{"type":"string"}}]}
