@@ -49,7 +49,7 @@ Hikube è una piattaforma cloud sovrana, ospitata in Svizzera, per distribuire m
     tags: ["Streaming", "Code"],
   },
   {
-    title: "Storage S3",
+    title: "Storage",
     description: "Dischi persistenti e bucket compatibili S3, replicati.",
     icon: "/img/services/s3.svg",
     href: "services/storage/",

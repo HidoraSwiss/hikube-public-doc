@@ -49,7 +49,7 @@ Hikube is a sovereign cloud platform, hosted in Switzerland, for deploying virtu
     tags: ["Streaming", "Queues"],
   },
   {
-    title: "S3 storage",
+    title: "Storage",
     description: "Persistent disks and replicated S3-compatible buckets.",
     icon: "/img/services/s3.svg",
     href: "services/storage/",
