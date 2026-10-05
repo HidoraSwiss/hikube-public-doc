@@ -207,7 +207,7 @@ const config = {
               {label: 'Bien démarrer', to: '/'},
               {label: 'Kubernetes', to: '/services/kubernetes/overview'},
               {label: 'Machines virtuelles', to: '/services/compute/overview'},
-              {label: 'Terraform', to: '/tools/terraform'},
+              {label: 'Bases de données', to: '/services/databases/'},
               {label: 'Changelog', to: '/blog'},
             ],
           },

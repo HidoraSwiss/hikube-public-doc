@@ -23,10 +23,6 @@
     "message": "Virtuelle Maschinen",
     "description": "The label of footer link with label=Machines virtuelles linking to /services/compute/overview"
   },
-  "link.item.label.Terraform": {
-    "message": "Terraform",
-    "description": "The label of footer link with label=Terraform linking to /tools/terraform"
-  },
   "link.item.label.Changelog": {
     "message": "Änderungsprotokoll",
     "description": "The label of footer link with label=Changelog linking to /blog"
@@ -66,5 +62,9 @@
   "logo.alt": {
     "message": "Hikube",
     "description": "The alt text of footer logo"
+  },
+  "link.item.label.Bases de données": {
+    "message": "Datenbanken",
+    "description": "The label of footer link with label=Bases de données linking to /services/databases/"
   }
 }
