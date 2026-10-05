@@ -1616,3 +1616,10 @@ main mark {
     border-color: #999 !important;
   }
 }
+
+/* Cartes des pages d'index générées (« Guides pratiques », catégories) :
+   Docusaurus place un emoji (📄️, 🗃️, 🔗) devant chaque titre, peu lisible sur
+   la charte. Depuis Docusaurus 3.10, il est rendu dans un span dédié. */
+.theme-doc-card-icon {
+  display: none;
+}
