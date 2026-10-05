@@ -53,7 +53,7 @@ Les images Hikube ne contiennent pas les drivers NVIDIA. Suivez [Installer CUDA 
 
 ## Vérification
 
-1. **Dans la console** : la page de détail affiche le statut **Actif** et le GPU sous **GPUs** (section **Ressources & Caractéristiques**).
+1. **Dans la console** : la page de détail affiche le statut **Actif** et le GPU sous **GPUs** (section **Ressources & Caractéristiques**), sous son nom technique : `l40s`, `a100-80gb`, `h100-80gb` ou `rtx-6000-pro`.
 2. **Dans la VM** :
 
 ```bash

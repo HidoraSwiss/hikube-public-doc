@@ -58,6 +58,6 @@ title: Dépannage
 
 ### Le failover ne se produit pas
 
-**Cause** : le cluster compte moins de 3 réplicas ; le quorum Sentinel ne peut pas être atteint.
+**Cause** : le cluster ne compte qu'un réplica ; aucun réplica ne peut être promu master.
 
-**Solution** : le nombre de réplicas ne peut pas être modifié après la création. Créez un nouveau cluster avec au moins 3 réplicas et migrez vos données, ou [contactez le support](mailto:support@hidora.io). Voir [Configurer la haute disponibilité](./how-to/configure-ha.md).
+**Solution** : le nombre de réplicas ne peut pas être modifié après la création. Créez un nouveau cluster avec au moins 2 réplicas (3 en production) et migrez vos données, ou [contactez le support](mailto:support@hidora.io). Voir [Configurer la haute disponibilité](./how-to/configure-ha.md).

@@ -62,7 +62,7 @@ Un utilisateur sans accès à un vhost ne peut pas s'y connecter.
 
 ### Comment accéder à l'interface de management RabbitMQ ?
 
-La console Hikube ne propose pas d'accès à l'interface web de management de RabbitMQ. Les vhosts et utilisateurs se gèrent depuis la console ; les exchanges et queues, depuis vos applications. Pour un besoin spécifique, [contactez le support](mailto:support@hidora.io).
+La console Hikube ne propose pas d'accès à l'interface web de management de RabbitMQ. Avec l'**Accès externe**, le port 15672 de cette interface est joignable sur l'adresse du cluster, en HTTP non chiffré, mais les utilisateurs créés depuis la console n'ont pas le tag d'administration RabbitMQ qu'elle exige : ils ne peuvent pas s'y connecter. Les vhosts et utilisateurs se gèrent depuis la console ; les exchanges et queues, depuis vos applications. Pour un besoin spécifique, [contactez le support](mailto:support@hidora.io).
 
 ### Comment le coût d'un cluster est-il estimé ?
 

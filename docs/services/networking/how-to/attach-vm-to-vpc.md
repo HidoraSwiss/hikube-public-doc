@@ -42,15 +42,15 @@ Sur la page de détail de la VM, section **Réseau et Sécurité** :
 ip -br addr
 ```
 
-**Résultat attendu :** une interface par sous-réseau relié, avec l'adresse affichée dans la console, par exemple :
+**Résultat attendu :** une interface supplémentaire par sous-réseau relié. L'OS ne la configure pas automatiquement : elle apparaît d'abord sans adresse, par exemple :
 
 ```
 lo               UNKNOWN        127.0.0.1/8 ::1/128
 enp1s0           UP             10.x.x.x/xx ...
-enp2s0           UP             172.16.0.11/24 ...
+enp2s0           DOWN
 ```
 
-Si l'interface secondaire est présente mais sans adresse, activez DHCP dessus. Exemple avec netplan (Ubuntu) :
+Activez DHCP sur l'interface secondaire. Exemple avec netplan (Ubuntu) :
 
 ```yaml title="/etc/netplan/60-vpc.yaml"
 network:
@@ -67,6 +67,8 @@ sudo chmod 600 /etc/netplan/60-vpc.yaml
 sudo netplan apply
 ip -br addr show enp2s0
 ```
+
+**Résultat attendu :** `enp2s0` est `UP` avec l'adresse **Secondaire** affichée dans la console, par exemple `172.16.0.11/24`.
 
 `use-routes: false` évite que l'interface VPC ne remplace la route par défaut : l'accès Internet continue de passer par l'interface principale.
 

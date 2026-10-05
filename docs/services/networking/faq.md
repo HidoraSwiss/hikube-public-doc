@@ -49,7 +49,7 @@ Pas depuis la console : la section **Réseaux VPC (Secondaires)** n'existe que p
 
 ### Le pare-feu de la VM s'applique-t-il au trafic VPC ?
 
-Le pare-feu Hikube (**Activer le Pare-feu**, **Ports Autorisés**) porte sur l'exposition de la VM par son IP publique. Ne comptez pas sur lui pour filtrer le trafic entre VM d'un VPC : configurez pour cela un pare-feu dans l'OS (ufw, firewalld, nftables).
+Non. Le pare-feu Hikube (**Activer le Pare-feu**, **Ports Autorisés**) ne filtre que le trafic qui arrive par l'IP publique de la VM. Le trafic entre VM d'un VPC n'est pas filtré, quels que soient les ports autorisés : configurez pour cela un pare-feu dans l'OS (ufw, firewalld, nftables).
 
 ---
 

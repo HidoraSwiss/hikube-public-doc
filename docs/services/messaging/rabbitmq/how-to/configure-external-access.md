@@ -33,13 +33,15 @@ Vos clients se connectent ensuite sur cet hôte, port **5672** :
 amqp://<utilisateur>:<password>@<hôte>:5672/<vhost>
 ```
 
+La connexion AMQP n'est pas chiffrée : le TLS (AMQPS, port 5671) n'est pas proposé. L'adresse publique expose aussi les ports 15672 (interface de management) et 15692 (métriques Prometheus).
+
 ## Bonnes pratiques de sécurité
 
 :::warning
 Un cluster avec accès externe est joignable depuis Internet. Ne partagez pas un même utilisateur entre plusieurs applications et renouvelez son mot de passe avec **Changer le mot de passe** en cas de doute.
 :::
 
-- Désactivez l'**Accès externe** si seules des applications internes à votre projet utilisent le cluster.
+- Désactivez l'**Accès externe** si seules des applications internes à votre projet utilisent le cluster : les identifiants et les messages circulent en clair sur Internet.
 - Attribuez le droit **Lecture seule** aux applications qui ne font que consommer.
 - Supprimez les utilisateurs inutilisés.
 

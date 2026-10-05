@@ -37,7 +37,7 @@ La liste affichée par l'assistant fait foi. La préconfiguration ne peut pas ê
 
 ### Où trouver l'adresse de connexion ?
 
-Dans la carte **Connexion et réseau** de la page du cluster, champ **Hôte (Host)**, lorsque l'**Accès externe** est activé. Le port est `27017`. Sans accès externe, le champ affiche **Non défini** ; [contactez le support](mailto:support@hidora.io) pour connaître l'adresse à utiliser depuis vos autres ressources du projet.
+Dans la carte **Connexion et réseau** de la page du cluster, champ **Hôte (Host)**, lorsque l'**Accès externe** est activé. Le port est `27017`. Sans accès externe, le champ affiche **Non défini** : le cluster reste joignable depuis les VM du projet par une adresse interne, que la console n'affiche pas ; [contactez le support](mailto:support@hidora.io) pour l'obtenir.
 
 ### Pourquoi l'utilisateur créé dans l'assistant n'a-t-il pas accès à ma base ?
 

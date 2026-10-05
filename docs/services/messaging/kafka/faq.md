@@ -77,7 +77,7 @@ Des valeurs CPU/mémoire explicites peuvent aussi être demandées ; elles rempl
 L'accès externe est une option de l'instance : lorsqu'elle est activée, les brokers deviennent joignables depuis l'extérieur de la plateforme. Cette option n'est pas proposée dans la console ; contactez le support.
 
 :::warning
-L'exposition externe rend vos brokers accessibles sur Internet. Vérifiez avec le support les mécanismes d'authentification et de chiffrement applicables avant d'activer cette option.
+L'exposition externe rend vos brokers accessibles sur Internet, sur le port `9094`. Ce listener est chiffré en TLS par défaut, mais aucune authentification des clients n'est configurée : toute personne qui connaît l'adresse peut produire et consommer des messages. Voyez avec le support la mise en place d'une authentification (SCRAM ou mTLS) avant d'activer cette option.
 :::
 
 ### Comment configurer `min.insync.replicas` ?

@@ -56,7 +56,7 @@ graph TB
 | **Endpoint S3** | Adresse du service S3 (par exemple `prod.s3.hikube.cloud`), affichée sur la page du bucket. |
 | **Utilisateur S3** | Identité rattachée à un bucket, avec un droit **Lecture seule** ou **Lecture / Écriture**. Un bucket peut avoir plusieurs utilisateurs. |
 | **Access Key ID / Secret Access Key** | Paire de clés d'authentification S3 d'un utilisateur, générée à sa création. La clé secrète n'est affichée qu'une seule fois. |
-| **Verrouillage (WORM)** | Object Lock : empêche la suppression ou la modification des objets pendant une durée définie (*Write Once, Read Many*). |
+| **Verrouillage (WORM)** | Object Lock : empêche la suppression ou la modification des objets pendant 365 jours, en mode `COMPLIANCE` (*Write Once, Read Many*). |
 | **Chiffrement au repos (LUKS)** | Chiffrement des données stockées sur disque. |
 
 ---

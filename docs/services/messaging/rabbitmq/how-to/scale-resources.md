@@ -33,11 +33,11 @@ La page **Modifier RabbitMQ** affiche la carte **Paramètres du cluster**. Les c
 ### 2. Ajuster les paramètres
 
 - **Version RabbitMQ** : sélectionnez la version cible.
-- **Taille du disque (Go)** : saisissez la nouvelle capacité par nœud.
+- **Taille du disque (Go)** : saisissez la nouvelle capacité par nœud. La taille ne peut qu'augmenter : une valeur inférieure est acceptée par le formulaire mais refusée par la plateforme, et le cluster garde sa taille actuelle.
 - **Accès externe** : activez ou désactivez l'interrupteur.
 
 :::warning Changement de version
-Testez le changement de version sur un cluster hors production avant de l'appliquer à un cluster de production, et vérifiez la compatibilité de vos clients avec la version cible.
+Le changement de version recrée les nœuds RabbitMQ un par un : avec un seul réplica, le cluster est indisponible pendant le redémarrage (de l'ordre d'une à deux minutes) et les clients doivent se reconnecter. L'adresse du champ **Hôte (Host)** ne change pas. Testez le changement de version sur un cluster hors production avant de l'appliquer à un cluster de production, et vérifiez la compatibilité de vos clients avec la version cible.
 :::
 
 ### 3. Enregistrer

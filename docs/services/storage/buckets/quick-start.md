@@ -44,7 +44,7 @@ L'assistant comporte trois étapes.
 
 1. Saisissez le **Nom du bucket** (un nom est proposé par défaut). Règles : minuscules, chiffres et tirets ; commence par une lettre et se termine par une lettre ou un chiffre ; 16 caractères maximum. Exemple : `demo-assets`.
 2. Laissez décochées pour ce guide les options :
-   - **Activer le verrouillage (Object Lock / WORM)** : empêche la suppression ou la modification des objets pendant une durée définie ;
+   - **Activer le verrouillage (Object Lock / WORM)** : empêche la suppression ou la modification des objets pendant 365 jours (rétention fixée par la plateforme) ;
    - **Activer le chiffrement au repos (LUKS)** : chiffre les données stockées ; ne peut pas être modifié après la création.
 3. Cliquez sur **Suivant**.
 

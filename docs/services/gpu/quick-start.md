@@ -60,7 +60,7 @@ Le **Récapitulatif** affiche une ligne **Accélération Matérielle (GPU)** ave
 
 Dans la liste **Instances VM**, attendez le statut **Actif**. Sur la page de détail, la section **Ressources & Caractéristiques** liste le GPU sous **GPUs**.
 
-**Résultat attendu :** statut **Actif** et un badge par GPU sous **GPUs**, dans **Ressources & Caractéristiques**.
+**Résultat attendu :** statut **Actif** et un badge par GPU sous **GPUs**, dans **Ressources & Caractéristiques**. Le badge porte le nom technique du modèle (par exemple `l40s` pour un NVIDIA L40S).
 
 ---
 

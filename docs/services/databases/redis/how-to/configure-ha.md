@@ -5,7 +5,7 @@ sidebar_position: 1
 
 # Comment configurer la haute disponibilité Redis
 
-Ce guide explique comment créer un cluster Redis hautement disponible depuis la [console Hikube](https://console.hikube.cloud). Le service utilise **Redis Sentinel** pour assurer le failover automatique lorsque 3 réplicas ou plus sont configurés.
+Ce guide explique comment créer un cluster Redis hautement disponible depuis la [console Hikube](https://console.hikube.cloud). Le service utilise **Redis Sentinel** pour assurer le failover automatique dès que le cluster compte au moins 2 réplicas. Trois sentinelles sont toujours déployées, quel que soit le nombre de réplicas.
 
 ## Prérequis
 
@@ -35,7 +35,7 @@ Ouvrez **DB & Messaging** → **Redis**, puis cliquez sur **Créer un cluster**.
 | **Réseau public** | Désactivé, sauf besoin d'accès depuis Internet |
 
 :::tip
-Préférez un nombre **impair** de réplicas (3, 5, 7) : le quorum Sentinel repose sur une majorité.
+Le quorum repose sur les trois sentinelles, pas sur le nombre de réplicas : 2 réplicas suffisent au failover, 3 ou plus permettent de tolérer davantage de pannes.
 :::
 
 ### 3. Créer le cluster

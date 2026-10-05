@@ -52,11 +52,11 @@ La console affiche **VPC créé** et revient à la liste.
 
 ## Étape 3 : Vérifier l'état
 
-Dans la liste des VPC, le statut de `vpc-demo` (colonne **État** en vue tableau) doit passer à **Disponible** (ou **Prêt**).
+Dans la liste des VPC, le statut de `vpc-demo` (colonne **État** en vue tableau) doit passer de **En cours de provisionnement** à **Prêt**.
 
 Ouvrez le menu **Actions** du VPC et cliquez sur **Voir les sous-réseaux** : la page **Sous-réseaux pour vpc-demo** liste `app` avec son **Bloc CIDR** `172.16.0.0/24`.
 
-**Résultat attendu :** VPC **Disponible**, sous-réseau `app` listé.
+**Résultat attendu :** VPC **Prêt**, sous-réseau `app` listé.
 
 ---
 
@@ -86,7 +86,27 @@ Connectez-vous à la première VM en SSH (commande du bloc **Connexion SSH**), p
 ip -br addr
 ```
 
-**Résultat attendu :** une interface supplémentaire porte une adresse en `172.16.0.x/24`.
+**Résultat attendu :** une interface supplémentaire apparaît (par exemple `enp2s0`), sans adresse : l'OS ne la configure pas automatiquement.
+
+Activez DHCP sur cette interface. Exemple avec netplan (Ubuntu) :
+
+```yaml title="/etc/netplan/60-vpc.yaml"
+network:
+  version: 2
+  ethernets:
+    enp2s0:
+      dhcp4: true
+      dhcp4-overrides:
+        use-routes: false
+```
+
+```bash
+sudo chmod 600 /etc/netplan/60-vpc.yaml
+sudo netplan apply
+ip -br addr show enp2s0
+```
+
+**Résultat attendu :** `enp2s0` est `UP` avec une adresse en `172.16.0.x/24`, celle affichée comme **Secondaire** dans la console. Faites de même sur la seconde VM.
 
 Testez la communication avec la seconde VM sur son adresse privée :
 

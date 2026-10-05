@@ -36,7 +36,7 @@ La page **Modifier MariaDB** affiche la carte **Paramètres du cluster** et l'im
 ### 2. Ajuster les paramètres
 
 - **Taille du disque (Go)** : saisissez la nouvelle capacité.
-- **Version MariaDB** : sélectionnez la version cible (10.6, 10.11, 11.4 ou 11.8).
+- **Version MariaDB** : sélectionnez la version cible (10.6, 10.11, 11.4 ou 11.8). Le formulaire propose aussi les versions inférieures à la version actuelle : ne revenez pas à une version antérieure, MariaDB ne prend pas en charge la rétrogradation.
 - **Accès externe** : activez ou désactivez l'exposition sur l'Internet public.
 
 ### 3. Enregistrer

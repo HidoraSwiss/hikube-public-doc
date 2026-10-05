@@ -60,7 +60,7 @@ Le support vous communique en retour les informations de connexion :
 - le cas échéant, les identifiants et paramètres de sécurité à utiliser côté client.
 
 :::note
-Le port Kafka standard est `9092`. Utilisez toujours l'adresse et le port communiqués par le support.
+À l'intérieur du projet, les brokers écoutent sur le port `9092` (sans chiffrement) et `9093` (TLS). Avec l'accès externe, l'adresse publique utilise le port `9094`, chiffré en TLS par défaut : vos clients doivent alors faire confiance au certificat d'autorité du cluster, que le support vous transmet (par exemple `-X security.protocol=SSL -X ssl.ca.location=ca.crt` avec kcat). Aucune authentification des clients n'est configurée par défaut. Utilisez toujours l'adresse et le port communiqués par le support.
 :::
 
 ---

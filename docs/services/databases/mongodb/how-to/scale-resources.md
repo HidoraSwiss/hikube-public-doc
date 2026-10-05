@@ -41,7 +41,7 @@ La page **Modifier MongoDB** affiche la carte **Paramètres du cluster** et l'im
 - **Accès externe** : activez ou désactivez l'exposition sur l'Internet public.
 
 :::tip
-MongoDB ne prend en charge les montées de version majeure que d'une version à la suivante (6.0 → 7.0 → 8.0). Ne sautez pas de version.
+MongoDB ne prend en charge les montées de version majeure que d'une version à la suivante (6.0 → 7.0 → 8.0). Le formulaire propose toutes les versions, y compris un saut de version ou une version inférieure : ne sautez pas de version et ne revenez pas en arrière.
 :::
 
 ### 3. Enregistrer

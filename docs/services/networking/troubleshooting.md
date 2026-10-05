@@ -31,17 +31,17 @@ title: Dépannage
 
 ---
 
-### Le VPC reste En création ou En attente
+### Le VPC reste En cours de provisionnement
 
 **Cause** : la plateforme n'a pas fini de provisionner le réseau.
 
-**Solution** : la liste se met à jour automatiquement ; patientez quelques instants. Si l'état passe à **Erreur** ou **Échec**, ou reste bloqué, contactez le [support](mailto:support@hidora.io) en indiquant le nom du VPC.
+**Solution** : la liste se met à jour automatiquement ; patientez quelques instants. Si l'état ne passe pas à **Prêt** après quelques minutes, contactez le [support](mailto:support@hidora.io) en indiquant le nom du VPC.
 
 ---
 
 ### L'interface secondaire n'a pas d'adresse dans la VM
 
-**Cause** : l'OS de la VM n'a pas configuré automatiquement la nouvelle interface, ou la VM n'a pas encore pris en compte la modification.
+**Cause** : la plateforme ajoute l'interface à la VM, mais l'OS ne la configure pas automatiquement (c'est le cas sur Ubuntu 24.04) ; ou la VM n'a pas encore pris en compte la modification.
 
 **Solution** :
 

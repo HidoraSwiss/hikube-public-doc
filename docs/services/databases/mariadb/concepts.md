@@ -95,7 +95,11 @@ La page d'un cluster MariaDB comporte une section **Utilisateurs** ; il n'y a pa
 - **Rôle Global (Optionnel)** : **Aucun rôle global**, **Administrateur** ou **Lecture seule (globale)** ;
 - **Accès spécifiques (Bases de données)** : une liste de couples **Nom de la base** / **Droits** (**Administrateur (Admin)** ou **Lecture seule (Read-only)**). Accorder un accès sur une base qui n'existe pas encore la crée.
 
-Les utilisateurs déclarés dans l'assistant de création du cluster reçoivent le **Rôle** choisi sur la base système `mysql`, visible dans la colonne **Bases de données** de la liste des utilisateurs. Accordez-leur ensuite l'accès à vos bases applicatives via **Gérer les accès**.
+Les utilisateurs déclarés dans l'assistant de création du cluster reçoivent le **Rôle** choisi sur la base système `mysql`, visible dans la colonne **Bases de données** de la liste des utilisateurs : **Administrateur** y donne tous les privilèges (`ALL`, avec droit de délégation), **Lecture seule** le droit `SELECT`. Accordez-leur ensuite l'accès à vos bases applicatives via **Gérer les accès**.
+
+:::warning
+La base `mysql` contient les comptes et les droits du serveur. Un accès **Administrateur** sur cette base permet de modifier les droits de tous les utilisateurs, et un accès **Lecture seule** permet de lire les empreintes de mots de passe. Réservez ces accès à un compte d'administration et retirez-les des comptes applicatifs via **Gérer les accès**.
+:::
 
 Le mot de passe d'un utilisateur est généré par la plateforme et affiché **une seule fois**. En cas de perte, générez-en un nouveau avec **Changer le mot de passe**.
 

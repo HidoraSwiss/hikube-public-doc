@@ -113,7 +113,7 @@ Pour vous connecter, il vous faut :
 Tant que l'adresse n'est pas attribuée, le champ **Hôte (Host)** affiche « Non disponible / En création ». Une fois l'adresse attribuée, copiez-la avec le bouton de copie.
 
 :::note
-Le champ **Hôte (Host)** est renseigné lorsque l'**Accès externe** est activé. Si vous avez créé un cluster sans accès externe et souhaitez y connecter une application, [contactez le support](mailto:support@hidora.io) pour obtenir l'adresse à utiliser.
+Le champ **Hôte (Host)** est renseigné lorsque l'**Accès externe** est activé. Sans accès externe, le cluster reste joignable depuis les VM du projet par une adresse interne, que la console n'affiche pas : [contactez le support](mailto:support@hidora.io) pour l'obtenir.
 :::
 
 L'écran **Résumé** de l'assistant affiche aussi, lorsque l'hôte est déjà connu, une chaîne de connexion de la forme :

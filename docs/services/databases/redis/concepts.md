@@ -83,7 +83,7 @@ sequenceDiagram
 Le **Nombre de réplicas** se choisit à la création (de 1 à 8).
 
 :::tip
-Choisissez au moins **3 réplicas** pour la production : c'est le minimum qui permet au quorum Sentinel de fonctionner et au failover d'être automatique.
+Le failover automatique fonctionne dès **2 réplicas** : trois sentinelles sont toujours déployées et forment le quorum. Choisissez **3 réplicas** ou plus pour la production, afin de tolérer davantage de pannes.
 :::
 
 :::warning
@@ -112,7 +112,7 @@ Redis sur Hikube n'expose pas de gestion d'utilisateurs multiples (ACL) dans la 
 ## Accès réseau
 
 - **Réseau public désactivé** (par défaut, « Privé » dans le récapitulatif) : le cluster n'est pas exposé sur Internet. La section **Connexion** de la page du cluster affiche « En attente d'attribution... » à la place de l'hôte.
-- **Réseau public activé** (« Public ») : la plateforme attribue une adresse IP publique, affichée dans le champ **Hôte**. Elle donne accès au master sur le port Redis standard, `6379`.
+- **Réseau public activé** (« Public ») : la plateforme attribue une adresse IP publique, affichée dans le champ **Hôte**. Elle donne accès au master sur le port Redis standard, `6379`, et suit le master après un basculement.
 
 ---
 

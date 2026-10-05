@@ -51,7 +51,7 @@ La page **Modifier PostgreSQL** affiche la carte **Paramètres du cluster** et l
 
 - **Préconfiguration (Preset)** : sélectionnez un preset supérieur pour augmenter le CPU et la mémoire de chaque nœud.
 - **Taille du disque (Go)** : saisissez la nouvelle capacité.
-- **Version PostgreSQL** : sélectionnez la version cible.
+- **Version PostgreSQL** : sélectionnez la version cible. Le formulaire propose toutes les versions, mais seule une montée de version est possible : une version inférieure est refusée par la plateforme, le cluster reste sur sa version actuelle et la configuration demeure en échec jusqu'à ce que vous sélectionniez de nouveau une version supérieure ou égale. Une montée de version majeure (par exemple 17 → 18) se fait en place : l'instance est arrêtée pendant la migration des données.
 - **Accès externe** : activez ou désactivez l'exposition sur l'Internet public.
 
 ### 3. Enregistrer
@@ -59,7 +59,7 @@ La page **Modifier PostgreSQL** affiche la carte **Paramètres du cluster** et l
 Cliquez sur **Sauvegarder**. Le message « Cluster mis à jour » confirme la prise en compte. Si la nouvelle configuration dépasse les quotas du projet, le bouton reste inactif.
 
 :::warning
-Un changement de preset ou de version entraîne le redémarrage des instances. Sur un cluster à 1 réplica, la base est indisponible pendant le redémarrage ; planifiez l'opération en dehors des heures de forte charge.
+Un changement de preset ou de version entraîne le redémarrage des instances. Sur un cluster à 1 réplica, la base est indisponible pendant le redémarrage, et pendant toute la migration lors d'une montée de version majeure ; planifiez l'opération en dehors des heures de forte charge.
 :::
 
 :::tip

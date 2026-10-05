@@ -60,7 +60,7 @@ Le support vous communique en retour :
 - les **identifiants** des utilisateurs demandés.
 
 :::note
-Le port client NATS standard est `4222`. Utilisez toujours l'adresse et le port communiqués par le support.
+Le port client NATS standard est `4222`. Avec l'accès externe, TLS est activé automatiquement : connectez-vous en `tls://` et faites confiance au certificat d'autorité que le support vous transmet. Les mots de passe des utilisateurs sont générés par la plateforme. Utilisez toujours l'adresse et le port communiqués par le support.
 :::
 
 Pour éviter de répéter l'URL et les identifiants, enregistrez un contexte dans le CLI :

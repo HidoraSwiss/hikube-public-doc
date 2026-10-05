@@ -196,9 +196,9 @@ La préconfiguration **Small** est sélectionnée par défaut. Elle **ne peut pa
 | Nom du cluster | 3 à 16 caractères : minuscules, chiffres et tirets ; commence par une lettre, se termine par une lettre ou un chiffre |
 | Versions proposées | 4.2, 4.1, 4.0, 3.13 |
 | Réplicas | 1, 3 ou 5 (fixé à la création) |
-| Taille du disque | 1 à 4096 Go par nœud, dans la limite du quota de stockage du projet |
+| Taille du disque | 1 à 4096 Go par nœud, dans la limite du quota de stockage du projet ; augmentation seulement |
 | Accès externe | Activable à la création ou ensuite |
-| Port AMQP | 5672 |
+| Port AMQP | 5672, sans TLS |
 
 ---
 

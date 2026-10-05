@@ -64,7 +64,7 @@ Non. Les clés d'un utilisateur sont limitées à son bucket : `aws s3 ls` sans 
 
 ### À quoi sert le verrouillage (WORM) ?
 
-L'option **Activer le verrouillage (Object Lock / WORM)** empêche la suppression ou la modification des objets pendant une durée définie. Elle sert à l'archivage réglementaire ou à la protection des sauvegardes contre une suppression accidentelle ou malveillante. Elle se choisit à la création du bucket.
+L'option **Activer le verrouillage (Object Lock / WORM)** empêche la suppression ou la modification des objets pendant 365 jours. La plateforme applique cette rétention par défaut en mode `COMPLIANCE` : personne ne peut supprimer un objet ni raccourcir sa rétention avant l'échéance. Cette durée par défaut n'est pas réglable dans la console ; contactez le support pour un autre besoin. L'option sert à l'archivage réglementaire ou à la protection des sauvegardes contre une suppression accidentelle ou malveillante. Elle se choisit à la création du bucket.
 
 ---
 

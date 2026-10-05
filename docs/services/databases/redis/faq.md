@@ -10,7 +10,8 @@ title: FAQ
 Redis sur Hikube est déployé en architecture **Redis Sentinel** pour la haute disponibilité :
 
 - **Redis Sentinel** surveille les instances Redis et effectue un **basculement automatique** (failover) en cas de panne du master.
-- Un **quorum** est nécessaire pour décider du failover : il faut au minimum **3 réplicas** pour garantir un quorum fonctionnel (majorité de 2 sur 3).
+- Un **quorum** de sentinelles décide du failover. Trois sentinelles sont toujours déployées, quel que soit le nombre de réplicas Redis : le basculement fonctionne dès **2 réplicas**.
+- L'adresse du champ **Hôte** suit le master : après un basculement, elle pointe automatiquement vers le nouveau master, sans changement d'adresse.
 
 :::tip
 En production, choisissez au moins 3 réplicas à la création : ce nombre ne peut plus être modifié ensuite.
@@ -61,7 +62,7 @@ Avec le réseau public activé, utilisez l'adresse du champ **Hôte** (section *
 REDISCLI_AUTH='<mot de passe>' redis-cli -h <hôte> -p 6379 ping
 ```
 
-Sans réseau public, la console n'affiche pas d'adresse interne. [Contactez le support](mailto:support@hidora.io) pour connaître l'adresse à utiliser depuis vos autres ressources du projet.
+Sans réseau public, l'instance reste joignable depuis les VM du projet par une adresse interne, que la console n'affiche pas. [Contactez le support](mailto:support@hidora.io) pour l'obtenir.
 
 ### Peut-on créer plusieurs utilisateurs Redis (ACL) ?
 

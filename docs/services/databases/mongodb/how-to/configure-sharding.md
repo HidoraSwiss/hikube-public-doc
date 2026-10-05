@@ -10,7 +10,7 @@ Ce guide explique comment créer un cluster MongoDB shardé depuis la [console H
 ## Prérequis
 
 - Un **projet** Hikube disposant de quotas suffisants : une topologie shardée consomme nettement plus de ressources qu'un replica set (voir ci-dessous)
-- Le shell **`mongosh`** et un utilisateur disposant du droit **Administrateur** pour configurer les collections
+- Le shell **`mongosh`** et un utilisateur disposant du droit **Administrateur** sur la base concernée
 
 :::warning
 Le sharding se décide **à la création** : il ne peut pas être activé ou désactivé ensuite. Pour transformer un cluster existant, [contactez le support](mailto:support@hidora.io).
@@ -49,15 +49,15 @@ graph TB
 
 ### 2. Vérifier la topologie
 
-Une fois le cluster au statut **Prêt**, la carte **Connexion et réseau** de sa page indique **Sharding** : **Activé**. Connectez-vous avec un utilisateur administrateur et listez les shards :
-
-```javascript
-sh.status()
-```
+Une fois le cluster au statut **Prêt**, la carte **Connexion et réseau** de sa page indique **Sharding** : **Activé**.
 
 ### 3. Activer le sharding sur une collection
 
-Le sharding se configure collection par collection, en choisissant une **clé de sharding** :
+:::warning Droits nécessaires
+Le droit **Administrateur** attribué depuis la console correspond aux rôles MongoDB `readWrite` et `dbAdmin` sur une base. Il ne donne pas les privilèges de cluster qu'exigent `sh.status()` et `sh.shardCollection()` (actions `listShards` et `enableSharding`). Pour sharder une collection, [contactez le support](mailto:support@hidora.io) en indiquant la collection et la clé de sharding voulue.
+:::
+
+Le sharding se configure collection par collection, en choisissant une **clé de sharding**. Exemples des commandes exécutées par un compte disposant de ces privilèges :
 
 ```javascript
 // Clé hachée : répartition uniforme des écritures
@@ -66,8 +66,6 @@ sh.shardCollection("myapp.events", { deviceId: "hashed" })
 // Clé par plage : efficace pour les requêtes par intervalle
 sh.shardCollection("myapp.orders", { customerId: 1, createdAt: 1 })
 ```
-
-Si la commande est refusée faute de droits (`not authorized`), [contactez le support](mailto:support@hidora.io).
 
 :::tip
 Choisissez une clé à forte cardinalité, présente dans la plupart de vos requêtes. Une clé monotone (date de création seule, identifiant incrémental) concentre les écritures sur un seul shard.

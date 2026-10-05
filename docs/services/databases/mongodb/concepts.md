@@ -84,7 +84,7 @@ La page d'un cluster MongoDB comporte une section **Utilisateurs** ; il n'y a pa
 
 Un utilisateur doit avoir au moins un rôle : sans rôle global ni accès spécifique, la console affiche « Veuillez attribuer au moins un rôle (global ou spécifique) à l'utilisateur. » et refuse l'enregistrement.
 
-Les utilisateurs déclarés dans l'assistant de création du cluster reçoivent le **Rôle** choisi sur la base `admin`, visible dans la colonne **Bases de données** de la liste des utilisateurs. Accordez-leur ensuite l'accès à vos bases applicatives via **Gérer les accès**.
+Les utilisateurs déclarés dans l'assistant de création du cluster reçoivent le **Rôle** choisi sur la base `admin`, visible dans la colonne **Bases de données** de la liste des utilisateurs : **Administrateur** correspond aux rôles MongoDB `readWrite` et `dbAdmin` sur cette base, **Lecture seule** au rôle `read`. Ces rôles ne donnent accès à aucune autre base : accordez ensuite l'accès à vos bases applicatives via **Gérer les accès**. Tous les utilisateurs sont créés dans la base `admin`, qui sert de base d'authentification (`authSource=admin`).
 
 Le mot de passe d'un utilisateur est généré par la plateforme et affiché **une seule fois**. En cas de perte, générez-en un nouveau avec **Changer le mot de passe**.
 

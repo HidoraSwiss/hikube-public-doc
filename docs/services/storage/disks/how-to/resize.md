@@ -34,13 +34,13 @@ La console confirme : « Le disque a été redimensionné avec succès à N Go. 
 
 ### 3. Étendre le système de fichiers dans la VM
 
-Le redimensionnement agrandit le périphérique bloc ; le système de fichiers doit ensuite être étendu depuis la VM. Connectez-vous en SSH et vérifiez la nouvelle taille du périphérique :
+Le redimensionnement agrandit le périphérique bloc à chaud, sans redémarrer la VM ; la partition et le système de fichiers doivent ensuite être étendus depuis la VM, sans redémarrage non plus. Connectez-vous en SSH et vérifiez la nouvelle taille du périphérique :
 
 ```bash
 lsblk
 ```
 
-Si la nouvelle taille n'est pas encore visible, redémarrez la VM depuis la console.
+Si la nouvelle taille n'est toujours pas visible au bout de quelques minutes, redémarrez la VM depuis la console.
 
 **Disque formaté sans partition** (par exemple `/dev/vdb` monté directement) :
 
@@ -64,7 +64,7 @@ sudo xfs_growfs /             # XFS
 ```
 
 :::tip
-Beaucoup d'images cloud étendent automatiquement la partition racine au démarrage (cloud-init). Après l'agrandissement d'un disque système, un redémarrage suffit souvent.
+Beaucoup d'images cloud étendent automatiquement la partition racine au démarrage (cloud-init). Si vous préférez ne pas lancer `growpart` vous-même, un redémarrage suffit souvent pour un disque système.
 :::
 
 ## Vérification
