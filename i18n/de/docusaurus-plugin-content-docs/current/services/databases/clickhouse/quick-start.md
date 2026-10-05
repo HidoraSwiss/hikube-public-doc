@@ -1,164 +1,91 @@
 ---
-sidebar_position: 2
+sidebar_position: 3
 title: Schnellstart
 ---
 
-# ClickHouse in 5 Minuten bereitstellen
+import NavigationFooter from '@site/src/components/NavigationFooter';
 
-Diese Anleitung begleitet Sie bei der Bereitstellung Ihrer ersten **ClickHouse**-Datenbank auf Hikube in **wenigen Minuten**!
+# Erste Schritte mit ClickHouse
+
+:::info Verfügbarkeit
+ClickHouse ist in der [Hikube-Konsole](https://console.hikube.cloud) noch nicht als Self-Service verfügbar.
+Um eine Instanz bereitzustellen oder ihre Konfiguration zu ändern, [wenden Sie sich an den Support](mailto:support@hidora.io).
+:::
+
+Diese Anleitung beschreibt, welche Informationen Sie für die Anfrage einer **ClickHouse**-Instanz vorbereiten müssen, und anschließend den Einstieg mit `clickhouse-client`, sobald die Instanz bereitgestellt ist.
 
 ---
 
 ## Ziele
 
-Am Ende dieser Anleitung haben Sie:
+Am Ende dieser Anleitung verfügen Sie über:
 
-- Eine **ClickHouse**-Datenbank auf Hikube bereitgestellt
-- Eine Anfangskonfiguration mit **Shards** und **Replikas** entsprechend Ihren Bedürfnissen
-- Einen Benutzer und ein Passwort für die Verbindung
-- Einen persistenten Speicher zur Aufbewahrung Ihrer Daten
+- Eine vollständige Bereitstellungsanfrage mit der für Ihren Bedarf passenden Topologie
+- Eine funktionierende Verbindung mit `clickhouse-client`
+- Eine erste Analysetabelle
 
 ---
 
 ## Voraussetzungen
 
-Stellen Sie vor dem Start sicher, dass Sie Folgendes haben:
-
-- **kubectl** konfiguriert mit Ihrer Hikube-Kubeconfig
-- **Administratorrechte** auf Ihrem Tenant
-- Einen verfügbaren **Namespace** für Ihre Datenbank
-- (Optional) Einen **S3-kompatiblen** Bucket, wenn Sie automatische Sicherungen aktivieren möchten
+- Ein **Hikube-Konto** und ein **Projekt** mit ausreichenden Quotas
+- Den Client **`clickhouse-client`**, auf Ihrem Rechner installiert
 
 ---
 
-## Schritt 1: ClickHouse-Manifest erstellen
+## Schritt 1: Topologie festlegen
 
-### **Manifest-Datei vorbereiten**
+Wählen Sie die Anzahl der **Shards** und **Replicas** entsprechend Ihrer Nutzung (siehe [Übersicht](./overview.md)):
 
-Erstellen Sie eine Datei `clickhouse.yaml` wie folgt:
+| Nutzung | Shards | Replicas pro Shard |
+|-------|--------|--------------------|
+| POC, Entwicklung | 1 | 1 |
+| Produktion, moderates Volumen | 1 | 2 |
+| Produktion, große Volumen | 2 oder mehr | 2 |
 
-```yaml title="clickhouse.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: ClickHouse
-metadata:
-  name: example
-spec:
-#   backup:
-#     cleanupStrategy: --keep-last=3 --keep-daily=3 --keep-within-weekly=1m
-#     enabled: false
-#     resticPassword: <password>
-#     s3AccessKey: <your-access-key>
-#     s3Bucket: s3.example.org/clickhouse-backups
-#     s3Region: us-east-1
-#     s3SecretKey: <your-secret-key>
-#     schedule: 0 2 * * *
-  clickhouseKeeper:
-    enabled: true
-    replicas: 3
-    resourcesPreset: micro
-    size: 1Gi
-  logStorageSize: 2Gi
-  logTTL: 15
-  replicas: 2
-  resources:
-    cpu: 3000m
-    memory: 3Gi
-  resourcesPreset: small
-  shards: 1
-  size: 10Gi
-  storageClass: ""
-  users:
-    user1:
-      password: strongpassword
-    user2:
-      readonly: true
-      password: hackme
-```
-
-### **ClickHouse-YAML bereitstellen**
-
-```bash
-# YAML anwenden
-kubectl apply -f clickhouse.yaml
-```
+Eine replizierte Konfiguration stützt sich für die Koordination auf **ClickHouse Keeper** (3 Instanzen empfohlen).
 
 ---
 
-## Schritt 2: Überprüfung der Bereitstellung
+## Schritt 2: Instanz anfragen
 
-Überprüfen Sie den Status Ihres ClickHouse-Clusters (kann 1-2 Minuten dauern):
+[Wenden Sie sich an den Support](mailto:support@hidora.io) und geben Sie Folgendes an:
 
-```bash
-kubectl get clickhouse
-```
-
-**Erwartetes Ergebnis:**
-
-```console
-NAME      READY   AGE     VERSION
-example   True    2m48s   0.13.0
-```
-
----
-
-## Schritt 3: Überprüfung der Pods
-
-Überprüfen Sie, dass die Anwendungs-Pods den Status `Running` haben:
-
-```bash
-kubectl get po | grep clickhouse
-```
-
-**Erwartetes Ergebnis:**
-
-```console
-chi-clickhouse-example-clickhouse-0-0-0           1/1     Running     0             3m43s
-chi-clickhouse-example-clickhouse-0-1-0           1/1     Running     0             2m28s
-chk-clickhouse-example-keeper-cluster1-0-0-0      1/1     Running     0             3m17s
-chk-clickhouse-example-keeper-cluster1-0-1-0      1/1     Running     0             2m50s
-chk-clickhouse-example-keeper-cluster1-0-2-0      1/1     Running     0             2m28s
-```
-
-Mit `replicas: 2` und `shards: 1` erhalten Sie **2 ClickHouse-Pods** (Replicas des Shards) und **3 ClickHouse-Keeper-Pods** für die Cluster-Koordination.
+| Information | Beispiel |
+|-------------|---------|
+| Projekt | `analytics` |
+| Name der Instanz | `events-ch` |
+| Shards / Replicas pro Shard | `1` / `2` |
+| Preset pro Replica | `large` (2 CPU, 2Gi) |
+| Speichergröße pro Replica | `50 GB` |
+| Benutzer und Rechte | `app` (Vollzugriff), `analyst` (nur Lesen) |
+| Zugriff aus dem Internet | Ja / Nein |
+| Backups | Ja / Nein, mit der gewünschten Aufbewahrungsdauer |
 
 ---
 
-## Schritt 4: Anmeldedaten abrufen
+## Schritt 3: Bereitstellung prüfen
 
-Die Passwörter sind in einem Kubernetes-Secret gespeichert:
+Der Support bestätigt Ihnen die Bereitstellung der Instanz sowie die Verbindungsinformationen: Adresse, Ports und Zugangsdaten.
 
-```bash
-kubectl get secret clickhouse-example-credentials -o json | jq -r '.data | to_entries[] | "\(.key): \(.value|@base64d)"'
-```
+---
 
-**Erwartetes Ergebnis:**
+## Schritt 4: Zugangsdaten abrufen
 
-```console
-backup: vIdZUNiaLKaVbIvl
-user1: strongpassword
-user2: hackme
-```
+Bewahren Sie die übermittelten Passwörter in einem Passwort-Manager auf. Um ein Passwort zu ändern, wenden Sie sich an den Support.
 
 ---
 
 ## Schritt 5: Verbindung und Tests
 
-### Port-Forward des ClickHouse-Services
-
-```bash
-kubectl port-forward svc/chendpoint-clickhouse-example 9000:9000
-```
-
-### Verbindungstest mit clickhouse-client
-
-Verbinden Sie sich in einem anderen Terminal und überprüfen Sie die ClickHouse-Version:
+ClickHouse stellt das native Protokoll (standardmäßig Port `9000`) und die HTTP-Schnittstelle (standardmäßig Port `8123`) bereit.
 
 ```bash
 clickhouse-client \
-  --host 127.0.0.1 \
+  --host <host> \
   --port 9000 \
-  --user user1 \
-  --password 'strongpassword' \
+  --user app \
+  --password \
   --query "SHOW DATABASES;"
 ```
 
@@ -171,87 +98,56 @@ information_schema
 system
 ```
 
+Erstellen Sie anschließend eine erste Tabelle:
+
+```sql
+CREATE TABLE default.events
+(
+    ts DateTime,
+    user_id UInt64,
+    action String
+)
+ENGINE = MergeTree
+ORDER BY (ts, user_id);
+
+INSERT INTO default.events VALUES (now(), 1, 'login');
+SELECT action, count() FROM default.events GROUP BY action;
+```
+
 ---
 
 ## Schritt 6: Schnelle Fehlerbehebung
 
-### Pods im CrashLoopBackOff
+### Verbindung nicht möglich
 
-```bash
-# Logs des fehlerhaften ClickHouse-Pods prüfen
-kubectl logs chi-clickhouse-example-clickhouse-0-0-0
+Prüfen Sie Adresse und Port: `9000` für das native Protokoll (`clickhouse-client`), `8123` für HTTP. Wenn die Instanz nicht im Internet erreichbar ist, verbinden Sie sich von einer Ressource im selben Projekt aus.
 
-# Events des Pods prüfen
-kubectl describe pod chi-clickhouse-example-clickhouse-0-0-0
-```
+### Authentifizierung abgelehnt
 
-**Häufige Ursachen:** Unzureichender Speicher (`resources.memory` zu niedrig), Speichervolumen voll, Fehler in der Shard- oder Replika-Konfiguration.
+Prüfen Sie den übermittelten Benutzer und das Passwort. Um ein Passwort zurückzusetzen, wenden Sie sich an den Support.
 
-### ClickHouse nicht erreichbar
+### Langsame Abfragen
 
-```bash
-# Prüfen, ob die Services existieren
-kubectl get svc | grep clickhouse
-
-# Endpoint-Service prüfen
-kubectl describe svc chendpoint-clickhouse-example
-```
-
-**Häufige Ursachen:** Port-Forward nicht aktiv, falscher Port (9000 für natives Protokoll, 8123 für HTTP), Service nicht bereit.
-
-### ClickHouse Keeper nicht funktionsfähig
-
-```bash
-# Keeper-Logs prüfen
-kubectl logs chk-clickhouse-example-keeper-cluster1-0-0-0
-
-# Status der Keeper-Pods prüfen
-kubectl get pods | grep keeper
-```
-
-**Häufige Ursachen:** Das Keeper-Quorum erfordert eine ungerade Anzahl von Replikas (mindestens 3 empfohlen), unzureichender Keeper-Festplattenplatz (`clickhouseKeeper.size` zu niedrig).
-
-### Allgemeine Diagnosebefehle
-
-```bash
-# Letzte Events im Namespace
-kubectl get events --sort-by=.metadata.creationTimestamp
-
-# Detaillierter Status des ClickHouse-Clusters
-kubectl describe clickhouse example
-```
+Prüfen Sie, ob das `ORDER BY` Ihrer Tabellen zu Ihren häufigsten Filtern passt. Siehe [Fehlerbehebung](./troubleshooting.md).
 
 ---
 
-## Zusammenfassung
+## Schritt 7: Bereinigung
 
-Sie haben bereitgestellt:
-
-- Eine **ClickHouse**-Datenbank auf Ihrem Hikube-Tenant
-- Eine Anfangskonfiguration mit **Shards** und **Replikas**
-- Eine **ClickHouse Keeper**-Komponente für die Cluster-Koordination
-- Einen persistenten Speicher für Ihre Daten und Logs
-- Benutzer mit generierten Passwörtern, gespeichert in einem Kubernetes-Secret
-- Einen Zugriff auf Ihre Datenbank über `clickhouse-client`
-- Die Möglichkeit, automatische **S3-Sicherungen** zu konfigurieren
-
----
-
-## Bereinigung
-
-Um die Testressourcen zu entfernen:
-
-```bash
-kubectl delete -f clickhouse.yaml
-```
+Um eine ClickHouse-Instanz zu löschen, [wenden Sie sich an den Support](mailto:support@hidora.io) und geben Sie das Projekt und den Namen der Instanz an.
 
 :::warning
-Diese Aktion löscht den ClickHouse-Cluster und alle zugehörigen Daten. Dieser Vorgang ist **unwiderruflich**.
+Das Löschen einer Instanz entfernt alle zugehörigen Daten. Es ist **unwiderruflich**.
 :::
 
 ---
 
-## Nächste Schritte
-
-- **[API-Referenz](./api-reference.md)**: Vollständige Konfiguration aller ClickHouse-Optionen
-- **[Übersicht](./overview.md)**: Detaillierte Architektur und Anwendungsfälle für ClickHouse auf Hikube
+<NavigationFooter
+  nextSteps={[
+    {label: "Konzepte", href: "../concepts"},
+    {label: "FAQ", href: "../faq"},
+  ]}
+  seeAlso={[
+    {label: "Alle Datenbanken", href: "../../"},
+  ]}
+/>

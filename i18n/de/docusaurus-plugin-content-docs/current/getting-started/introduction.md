@@ -5,80 +5,72 @@ title: Einführung in Hikube
 
 # Einführung in Hikube
 
-## **Was ist Hikube?**
+## Was ist Hikube?
 
-**Hikube** ist eine private Enterprise-Cloud-Plattform, die eine moderne Infrastruktur mit höchsten Souveränitäts- und Sicherheitsgarantien bietet.
+**Hikube** ist eine souveräne Enterprise-Cloud-Plattform mit Hosting in der Schweiz. Sie stellen dort virtuelle Maschinen, Kubernetes-Cluster, Datenbanken und Speicher über eine einzige Webkonsole bereit: [console.hikube.cloud](https://console.hikube.cloud).
 
-### **Infrastruktur und Verfügbarkeit**
+### Infrastruktur und Verfügbarkeit
 
-**Souveräne Cloud mit Daten in der Schweiz gehostet**
-- Alle Ihre Daten verbleiben strikt auf Schweizer Territorium, was die Einhaltung lokaler Vorschriften gewährleistet und maximale Sicherheit beim Datenschutz bietet.
+**Souveräne Cloud, Daten in der Schweiz gehostet**
+- Alle Ihre Daten bleiben auf Schweizer Staatsgebiet, im Einklang mit den lokalen Datenschutzvorschriften.
 
-**Sehr hohe Verfügbarkeit mit Replikation über 3 Rechenzentren**
-- Stellen Sie sicher, dass Ihre Anwendungen dank unserer redundanten Infrastruktur, die über drei geografisch getrennte Rechenzentren in der Schweiz verteilt ist, dauerhaft erreichbar bleiben.
+**Hochverfügbarkeit über drei Rechenzentren**
+- Der replizierte Speicher ist auf drei geografisch getrennte Rechenzentren in der Schweiz verteilt.
 
-**Rechenzentrum 100% Green IT**
-- Engagieren Sie sich für die Umwelt mit unserem Rechenzentrum, das mit erneuerbaren Energien betrieben wird und den CO2-Fussabdruck Ihrer IT-Operationen minimiert.
+**Green-IT-Rechenzentrum**
+- Rechenzentrum, das mit erneuerbaren Energien betrieben wird.
 
-### **Compute-Dienste**
+### Services
 
-**Kubernetes as a Service**
-- Stellen Sie Ihre containerisierten Anwendungen einfach bereit und verwalten Sie sie dank unseres Kubernetes-Dienstes, der automatisierte Orchestrierung, Skalierbarkeit und vereinfachte Verwaltung bietet.
+**Verwaltetes Kubernetes**
+- Erstellen Sie Kubernetes-Cluster mit wenigen Klicks, mit Node-Gruppen, Autoscaling und vorkonfigurierten Erweiterungen.
 
-**Linux- und Windows-VM-Instanzen**
-- Hosten Sie Ihre Anwendungen auf Linux- oder Windows-Instanzen, die auf Ihre spezifischen Bedürfnisse zugeschnitten und für maximale Leistung optimiert sind.
+**Virtuelle Maschinen mit Linux und Windows**
+- Stellen Sie VMs aus einsatzbereiten Images bereit, mit persistenten Disks und bei Bedarf einer öffentlichen IP.
 
-**GPU as a Service**
-- Nutzen Sie die Leistung des Hochleistungsrechnens mit unserem GPU-as-a-Service-Angebot, ideal für anspruchsvolle Workloads wie künstliche Intelligenz, maschinelles Lernen und komplexe Simulationen.
+**GPU**
+- Fügen Sie Ihren VMs oder Ihren Kubernetes-Node-Gruppen NVIDIA-GPUs für KI, Machine Learning oder rechenintensive Workloads hinzu.
 
-### **Sicherheit und Isolation**
+**Verwaltete Datenbanken und Messaging**
+- PostgreSQL, MariaDB, MongoDB, Redis und RabbitMQ, mit Benutzern, Datenbanken und Zugriffen, die über die Konsole verwaltet werden.
 
-**Datenverschlüsselung**
-- Alle gespeicherten Daten werden bei Bedarf verschlüsselt, um sicherzustellen, dass Ihre sensiblen Informationen auch im Ruhezustand geschützt sind.
+**Speicher**
+- Persistente Disks für Ihre VMs und S3-kompatible Buckets.
 
-### **Automatisierung und Integration**
+### Sicherheit und Isolation
 
-**Steuerbar über API und Terraform**
-- Automatisieren und verwalten Sie Ihre Cloud-Infrastruktur effizient dank unserer API- und Terraform-Unterstützung, die die Integration und Verwaltung Ihrer Ressourcen erleichtert.
-
-**Unternehmensorientiert und qualitätsfokussiert**
-- Unser Angebot ist speziell darauf ausgelegt, den Anforderungen von Unternehmen gerecht zu werden, und bietet robuste, zuverlässige und hochwertige Lösungen für Ihre professionellen Bedürfnisse.
+- Jedes **Projekt** ist von den anderen isoliert: eigenes Netzwerk, eigene Ressourcen und eigene Quotas.
+- Gespeicherte Daten können verschlüsselt werden.
 
 ---
 
-## **Verfügbare Dokumentation**
+## Verfügbare Dokumentation
 
-**Zum Einstieg**
-- **[Schnellstart](./quick-start.md)** → Stellen Sie Ihre erste Anwendung bereit
-- **[Konzepte](./concepts.md)** → Architektur und detaillierte Funktionen
+**Für den Einstieg**
+- **[Schnellstart](./quick-start.md)**: von der ersten Anmeldung bis zum ersten Cluster
+- **[Konzepte](./concepts.md)**: Organisation, Projekte, Quotas, Services
 
-**Dienste und Integrationen**
-- **[Dienstkatalog](../services/kubernetes/overview.md)** → Verfügbare Funktionen
-- **APIs und Automatisierung** → Erweiterte Integrationen
+**Services**
+- **[Kubernetes](../services/kubernetes/overview.md)**, **[Virtuelle Maschinen](../services/compute/overview.md)**, **[Datenbanken](../services/databases/index.md)**, **[Speicher](../services/storage/index.md)**
 
 ---
 
-## **Technische Voraussetzungen**
+## Voraussetzungen
 
-### **Empfohlene Kenntnisse:**
-- **Kubernetes**: Grundkonzepte (Pods, Services, Deployments)
-- **Cloud-Infrastruktur**: VMs, Netzwerke, Speicher
-- **DevOps**: CI/CD, Monitoring, Logs
-- **REST-APIs**: Für erweiterte Automatisierung
+### Zugang
+- Ein **Hikube-Konto**, das Ihrer Organisation zugeordnet ist. Um eines zu erhalten, wenden Sie sich an **sales@hidora.io**.
+- Ein aktueller Webbrowser.
 
-### **Erforderlicher Zugang:**
-- **Aktiver Hikube-Tenant** mit Ihren Zugangsdaten
-- **Entsprechende Berechtigungen** je nach Rolle (Dev/Admin/Viewer)
+### Hilfreiche Kenntnisse
+- **Cloud-Infrastruktur**: VMs, Netzwerke, Speicher.
+- **Kubernetes** (für den Kubernetes-Service): Pods, Services, Deployments.
 
 :::tip Erste Anmeldung?
-Falls Sie noch keinen Zugang haben, kontaktieren Sie das Hikube-Team unter **support@hidora.io**
-:::
----
-
-:::info **Empfohlener nächster Schritt**
-**[Quick Start](./quick-start.md)** → Stellen Sie Ihre erste Kubernetes-Anwendung in 5 Minuten bereit!
+Wenn Sie noch keinen Zugang haben, wenden Sie sich an das Hikube-Team unter **support@hidora.io**.
 :::
 
 ---
 
-*Diese Dokumentation wird laufend aktualisiert. Letzte Aktualisierung: Version 2.0*
+:::info Empfohlener nächster Schritt
+**[Schnellstart](./quick-start.md)**: Erstellen Sie Ihr erstes Projekt und Ihren ersten Kubernetes-Cluster.
+:::

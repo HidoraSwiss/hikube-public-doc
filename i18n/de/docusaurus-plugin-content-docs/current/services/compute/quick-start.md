@@ -1,258 +1,173 @@
 ---
-sidebar_position: 2
+sidebar_position: 3
 title: Schnellstart
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';
 
-# Erstellen Sie Ihre erste Virtuelle Maschine
+# Ihre erste virtuelle Maschine erstellen
 
-Diese Anleitung begleitet Sie bei der Erstellung Ihrer ersten virtuellen Maschine auf Hikube in **5 Minuten**!
+Diese Anleitung begleitet Sie bei der Erstellung einer Ubuntu-VM in der [Hikube-Konsole](https://console.hikube.cloud) bis zur ersten SSH-Verbindung.
 
 ---
 
 ## Ziel
 
-Am Ende dieser Anleitung werden Sie haben:
+Am Ende dieser Anleitung verfügen Sie über:
 
-- Eine funktionierende Ubuntu-VM
-- SSH-Zugang konfiguriert
-- Funktionierende Netzwerkverbindung
-- Persistenter Speicher angehängt
+- eine Ubuntu-VM im Status **Running**;
+- eine öffentliche IP mit geöffnetem Port 22;
+- einen SSH-Zugang per Schlüssel;
+- eine replizierte System-Disk.
 
 ---
 
 ## Voraussetzungen
 
-Stellen Sie vor Beginn sicher, dass Sie haben:
-
-- **kubectl** konfiguriert mit Ihrem Hikube-Kubeconfig
-- **Administratorrechte** auf Ihrem Tenant
-
----
-
-## Schritt 1: VM-Festplatte erstellen (2 Minuten)
-
-### **Manifest-Datei vorbereiten**
-
-Erstellen Sie eine Datei `vm-disk.yaml` mit einem Ubuntu Cloud Image:
-
-```yaml title="vm-disk.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: VMDisk
-metadata:
-  name: disk-example
-spec:
-  source:
-    http:
-      url: https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img
-  optical: false
-  storage: 20Gi
-  storageClass: "replicated"
-```
-
-### **Festplatte bereitstellen**
+- Ein Hikube-Konto und ein **Projekt** (siehe [Hikube-Schnellstart](../../getting-started/quick-start.md)).
+- Verfügbare Quotas in diesem Projekt: mindestens 4 vCPU, 16 GB Arbeitsspeicher und 20 GB Speicher für das folgende Beispiel.
+- Ein SSH-Schlüsselpaar. Falls Sie keines haben:
 
 ```bash
-# VM-Festplatte erstellen
-kubectl apply -f vm-disk.yaml
-
-# Status überprüfen (kann 1-2 Minuten dauern)
-kubectl get vmdisk disk-example -w
-```
-
-**Erwartetes Ergebnis:**
-
-```
-NAME          STATUS   SIZE   STORAGECLASS   AGE
-disk-example  Ready    20Gi   replicated     90s
-```
-
----
-
-## Schritt 2: Virtuelle Maschine erstellen (2 Minuten)
-
-### **SSH-Schlüssel generieren**
-
-Falls Sie noch keinen SSH-Schlüssel haben:
-
-```bash
-# Ed25519 SSH-Schlüssel generieren (modern und sicher)
 ssh-keygen -t ed25519 -f ~/.ssh/hikube-vm
-
-# Öffentlichen Schlüssel anzeigen
 cat ~/.ssh/hikube-vm.pub
 ```
 
-### **VM-Manifest vorbereiten**
-
-Erstellen Sie eine Datei `vm-instance.yaml`:
-
-```yaml title="vm-instance.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: VMInstance
-metadata:
-  name: vm-example
-spec:
-  external: true
-  externalMethod: PortList
-  externalPorts:
-    - 22
-  runStrategy: Always
-  instanceType: u1.xlarge
-  instanceProfile: "ubuntu"
-  disks:
-    - name: disk-example # Name des anzuhängenden VMDisk
-  sshKeys:
-    - ihr-oeffentlicher-schluessel-hier
-  cloudInit: |
-    #cloud-config
-  cloudInitSeed: ""
-```
-
-:::warning Achtung
-Ersetzen Sie `ihr-oeffentlicher-schluessel-hier` durch Ihren echten öffentlichen SSH-Schlüssel!
-:::
-
-### **VM bereitstellen**
-
-```bash
-# Virtuelle Maschine erstellen
-kubectl apply -f vm-instance.yaml
-
-# Startvorgang verfolgen
-kubectl get vminstance vm-example -w
-```
+Bewahren Sie den angezeigten öffentlichen Schlüssel auf (Zeile, die mit `ssh-ed25519` beginnt): Sie fügen ihn in den Assistenten ein.
 
 ---
 
-## Expositionsmethoden verstehen
+## Schritt 1: Den Erstellungsassistenten öffnen
 
-### **PortList vs WholeIP: Was ist der Unterschied?**
+1. Melden Sie sich bei [https://console.hikube.cloud](https://console.hikube.cloud) an und wählen Sie Ihr Projekt aus.
+2. Öffnen Sie im Seitenmenü **Infrastructure** > **VM Instances**.
+3. Klicken Sie auf **Create an Instance**.
 
-Hikube bietet zwei externe Expositionsmethoden, jede mit ihren Besonderheiten:
-
-#### **PortList (Empfohlen)**
-
-- **Kontrollierte Firewall**: Nur die in `externalPorts` angegebenen Ports sind erreichbar
-- **Verstärkte Sicherheit**: Automatischer Schutz gegen unbefugten Zugriff
-- **Verwendung**: Produktion, gesicherte Umgebungen
-- **Konfiguration**: `externalMethod: PortList` + `externalPorts: [22, 80, 443]`
-
-#### **WholeIP**
-
-- **Vollständiger Zugang**: Alle Ports der VM sind direkt erreichbar
-- **Keine Firewall**: Kein Netzwerkschutz über den Service konfiguriert
-- **Verwendung**: Entwicklung, vollständiger administrativer Zugang
-- **Konfiguration**: `externalMethod: WholeIP` (kein `externalPorts` erforderlich)
-
-:::tip Methodenwahl
-
-- **Produktion/Gesichert** → `PortList` mit spezifischen Ports
-- **Entwicklung/Debug** → `WholeIP` für vollständigen Zugang
-:::
+Der Assistent **Create a new instance** öffnet sich. Er umfasst fünf Schritte: **General**, **Configuration**, **Storage**, **Network** und **Summary**.
 
 ---
 
-## Schritt 3: Auf Ihre VM zugreifen (1 Minute)
+## Schritt 2: Konfigurieren und bestätigen
 
-### **Installation von virtctl**
+### General
 
-Falls Sie `virtctl` noch nicht installiert haben:
+Geben Sie den **Instance name** ein, zum Beispiel `vm-demo`. Der Name muss 3 bis 16 Zeichen lang sein, mit einem Buchstaben beginnen, mit einem Buchstaben oder einer Ziffer enden und darf nur Kleinbuchstaben, Ziffern und Bindestriche enthalten. Klicken Sie auf **Next**.
 
-```bash
-# Installation von virtctl
-export VERSION=$(curl https://storage.googleapis.com/kubevirt-prow/release/kubevirt/kubevirt/stable.txt)
-wget https://github.com/kubevirt/kubevirt/releases/download/${VERSION}/virtctl-${VERSION}-linux-amd64
-chmod +x virtctl
-sudo mv virtctl /usr/local/bin/
+### Configuration
 
-# Installation überprüfen
-virtctl version
-```
+1. Wählen Sie unter **Resources (CPU / RAM)** die Serie **Universal (U)** und dann die Größe **XLarge** (4 vCPU, 16 GB).
+2. Lassen Sie den Abschnitt **Hardware Acceleration (GPU)** leer (siehe [GPU](../gpu/overview.md) für eine VM mit GPU).
+3. Lassen Sie **Automatic Restart** deaktiviert oder aktivieren Sie die Option nach Bedarf.
+4. Klicken Sie auf **Next**.
 
-### **Zugriffsmethoden**
+Das Banner oben im Schritt zeigt die geschätzten Kosten und den Quota-Verbrauch des Projekts an.
 
-#### **Option 1: Direktes SSH**
+### Storage
 
-```bash
-# SSH via virtctl (mit benutzerdefiniertem Schlüssel)
-virtctl ssh -i ~/.ssh/hikube-vm ubuntu@vm-example
-# oder SSH über die öffentliche IP (mit benutzerdefiniertem Schlüssel)
-ssh -i ~/.ssh/hikube-vm ubuntu@public-ip
-```
+Die **System Disk (Boot)** ist vorausgefüllt: Sie trägt den Namen der VM und ist 20 GB groß.
 
-#### **Option 2: Serielle Konsole (immer verfügbar)**
+1. Wählen Sie unter **Operating System** die Karte **ubuntu** und die Version **24.04**.
+2. Belassen Sie **Size (GB)** bei `20`.
+3. Belassen Sie **Asynchronous Replication** (Recommended).
+4. Aktivieren Sie **Disk Encryption**, wenn Sie die Daten im Ruhezustand verschlüsseln möchten.
+5. Klicken Sie auf **Next**.
 
-```bash
-# Direkter Konsolenzugriff
-virtctl console vm-example
-```
+### Network
 
-#### **Option 3: VNC-Interface**
+1. Prüfen Sie, dass **Public IPv4 Address** aktiviert ist.
+2. Prüfen Sie, dass **Enable Firewall** angehakt und **SSH (22)** unter **Allowed Ports** ausgewählt ist.
+3. Fügen Sie unter **Authorized SSH keys** Ihren öffentlichen Schlüssel in das Feld **Add a public SSH key** ein und bestätigen Sie mit der Eingabetaste oder der Schaltfläche zum Hinzufügen. Das erwartete Format ist `<algorithm> <base64-key> [comment]`.
+4. Klicken Sie auf **Next**.
 
-```bash
-# Grafischer Zugriff
-virtctl vnc vm-example
-```
+### Summary
+
+Die **Summary** fasst die Instanz, den Speicher und den Abschnitt **Network & Security** zusammen (öffentliche IP, Firewall, offene Ports, SSH-Schlüssel). Klicken Sie auf **Create instance**.
+
+Die Konsole zeigt **Instance created** an und kehrt zur Liste der Instanzen zurück.
 
 ---
 
-## Herzlichen Glückwunsch
+## Schritt 3: Den Zustand prüfen
 
-Ihre Hikube-VM ist **betriebsbereit**!
+In der Liste **VM Instances** wechselt die VM von **Creating** zu **Running**. Die Aktualisierung erfolgt automatisch, ohne die Seite neu zu laden.
 
-### **Was Sie erreicht haben:**
+Klicken Sie auf den Namen der VM, um ihre Detailseite zu öffnen. Dort finden Sie:
 
-- **Ubuntu-VM** bereitgestellt mit 4 vCPU / 16 GB RAM
-- **Persistenter Speicher** von 20 GB repliziert
-- **SSH-Zugang** sicher konfiguriert
-- **Externe Konnektivität** aktiviert
-- **Resiliente Infrastruktur** mit Compute/Speicher-Trennung
+- **Resources & Characteristics**: Instanztyp, System-Image, Standardbenutzer, vCPU und RAM;
+- **Storage & Disks**: angebundene Disks, Größe, Replikation, Verschlüsselung;
+- **Network & Security**: **Public IP**, **SSH Connection**, **IP Addresses**, **Firewall & Ports**.
+
+**Erwartetes Ergebnis:** Status **Running**, **Public IP** auf **Active**, Port **22** unter **Firewall & Ports** aufgeführt.
 
 ---
 
-## Bereinigung (Optional)
+## Schritt 4: Die Verbindungsinformationen abrufen
 
-Wenn Sie die erstellten Ressourcen löschen möchten:
+Im Abschnitt **Network & Security** der Detailseite zeigt der Block **SSH Connection** den einsatzbereiten Befehl an, zum Beispiel:
 
 ```bash
-# VM löschen (Vorsicht!)
-kubectl delete vminstance vm-example
-
-# Festplatte löschen (Vorsicht!)
-kubectl delete vmdisk disk-example
+ssh ubuntu@203.0.113.10
 ```
 
-:::warning Unwiderrufliche Löschung
-Das Löschen von VMs und Festplatten ist **unwiderruflich**. Stellen Sie sicher, dass Sie alle wichtigen Daten gesichert haben, bevor Sie fortfahren.
+Klicken Sie auf das Kopiersymbol, um ihn in die Zwischenablage zu kopieren. Der Standardbenutzer hängt vom Image ab; er wird auch unter **System Image** (**User**) angezeigt.
+
+---
+
+## Schritt 5: Verbindung und Tests
+
+Verbinden Sie sich mit Ihrem privaten Schlüssel:
+
+```bash
+ssh -i ~/.ssh/hikube-vm ubuntu@203.0.113.10
+```
+
+Prüfen Sie nach der Anmeldung die Ressourcen und die Disk:
+
+```bash
+nproc
+free -h
+lsblk
+```
+
+**Erwartetes Ergebnis:** 4 Prozessoren, etwa 16 GB Arbeitsspeicher und eine Disk `vda` von etwa 20 GB.
+
+---
+
+## Schritt 6: Schnelle Fehlerbehebung
+
+| Symptom | Prüfung |
+|----------|--------------|
+| **Next** bleibt im Schritt Configuration oder Storage ausgegraut | Ein Quota des Projekts ist überschritten: Verkleinern Sie den Instanztyp oder die Disk-Größe oder lassen Sie die Quotas des Projekts erhöhen. |
+| `Connection timed out` bei SSH | Prüfen Sie auf der Detailseite, dass **Public IP** auf **Active** steht und Port 22 unter **Firewall & Ports** aufgeführt ist. |
+| `Permission denied (publickey)` | Prüfen Sie den Benutzer (Block **SSH Connection**) und dass der verwendete private Schlüssel zum öffentlichen Schlüssel passt, der unter **Advanced Configuration** > **SSH Keys** aufgeführt ist. |
+| Status **Error** oder **Failed** | Siehe [Fehlerbehebung](./troubleshooting.md). |
+
+---
+
+## Schritt 7: Aufräumen
+
+1. Öffnen Sie die Detailseite der VM oder das Menü **Actions** der Zeile in der Liste.
+2. Klicken Sie auf **Delete**.
+3. Geben Sie zur Bestätigung den genauen Namen der VM ein und klicken Sie dann auf **Permanently delete**.
+
+Die System-Disk wird getrennt, aber **nicht gelöscht**: Sie bleibt im Menü **Disks** und verbraucht weiterhin Speicher-Quota. Löschen Sie sie unter **Disks**, wenn Sie sie nicht mehr benötigen (siehe [Disks](../storage/disks/overview.md)).
+
+:::warning Unwiderrufliches Löschen
+Das Löschen einer VM und anschließend ihrer Disks ist endgültig. Sichern Sie wichtige Daten vorher.
 :::
 
 ---
 
 ## Nächste Schritte
 
-<div style={{display: 'flex', gap: '20px', flexWrap: 'wrap'}}>
-
-**Erweiterte Konfiguration**  
-→ [Vollständige API-Referenz](./api-reference.md)
-
-**Technische Architektur**  
-→ [Funktionsweise verstehen](./overview.md)
-
-</div>
-
----
-
-**Wichtige Punkte:**
-
-- Ihre **Daten sind immer sicher** dank der Replikation über 3 Rechenzentren
-- Ihre VM kann bei einem Knotenausfall **automatisch verlagert** werden
-- Die **vollständige Isolation** gewährleistet die Sicherheit zwischen Tenants
+- [Eine Daten-Disk anbinden](./how-to/attach-extra-disk.md)
+- [cloud-init konfigurieren](./how-to/configure-cloud-init.md)
+- [Netzwerk und Firewall konfigurieren](./how-to/configure-network.md)
+- [Die VM mit einem privaten Netzwerk (VPC) verbinden](../networking/quick-start.md)
 
 <NavigationFooter
   nextSteps={[
+    {label: "Praktische Anleitungen", href: "../how-to/attach-extra-disk"},
     {label: "FAQ", href: "../faq"},
-    {label: "API-Referenz", href: "../api-reference"},
   ]}
 />

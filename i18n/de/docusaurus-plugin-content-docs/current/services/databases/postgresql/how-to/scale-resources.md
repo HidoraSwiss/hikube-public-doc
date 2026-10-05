@@ -1,22 +1,33 @@
 ---
-title: "Vertikal skalieren"
+title: "Die Ressourcen eines Clusters ändern"
+sidebar_position: 2
 ---
 
-# Vertikal skalieren
+# Die Ressourcen eines Clusters ändern
 
-Diese Anleitung erklärt, wie Sie die CPU- und Speicherressourcen Ihrer PostgreSQL-Instanz auf Hikube anpassen, entweder über ein vordefiniertes Preset oder mit expliziten Werten.
+Diese Anleitung erklärt, wie Sie einen bestehenden PostgreSQL-Cluster in der [Hikube-Konsole](https://console.hikube.cloud) anpassen: Instanz-Preset (CPU und Arbeitsspeicher), Disk-Größe, Version und externer Zugriff.
 
 ## Voraussetzungen
 
-- **kubectl** konfiguriert mit Ihrer Hikube-Kubeconfig
-- Eine **PostgreSQL**-Instanz auf Hikube bereitgestellt
+- Ein bestehender **PostgreSQL**-Cluster in Ihrem Projekt
+- Ausreichende Projekt-Quotas für die neue Konfiguration
+
+## Was geändert werden kann
+
+| Parameter | Nach der Erstellung änderbar |
+|-----------|---------------------------|
+| **PostgreSQL Version** | Ja |
+| **Preset** | Ja |
+| **Disk size (GB)** | Ja |
+| **External access** | Ja |
+| **Number of replicas** | Nein, „The mode cannot be changed after creation“ |
+
+Um die Anzahl der Replicas eines bestehenden Clusters zu ändern, [wenden Sie sich an den Support](mailto:support@hidora.io).
 
 ## Verfügbare Presets
 
-Hikube bietet vordefinierte Ressourcen-Presets zur Vereinfachung der Dimensionierung:
-
-| Preset | CPU | Speicher |
-|--------|-----|----------|
+| Preset | CPU | Arbeitsspeicher |
+|--------|-----|---------|
 | `nano` | 250m | 128Mi |
 | `micro` | 500m | 256Mi |
 | `small` | 1 | 512Mi |
@@ -25,176 +36,41 @@ Hikube bietet vordefinierte Ressourcen-Presets zur Vereinfachung der Dimensionie
 | `xlarge` | 4 | 4Gi |
 | `2xlarge` | 8 | 8Gi |
 
-:::warning
-Wenn das Feld `resources` (explizite CPU/Speicher) definiert ist, wird der Wert von `resourcesPreset` **vollständig ignoriert**. Stellen Sie sicher, dass das Feld `resources` leer ist, wenn Sie ein Preset verwenden möchten.
-:::
+Maßgeblich ist die im Formular angezeigte Liste. Die Ressourcen gelten für jeden Knoten des Clusters.
 
 ## Schritte
 
-### 1. Aktuelle Ressourcen überprüfen
+### 1. Das Änderungsformular öffnen
 
-Überprüfen Sie die aktuelle Konfiguration Ihrer Instanz:
+1. Öffnen Sie **DB & Messaging** → **PostgreSQL**.
+2. Öffnen Sie in der Liste **PostgreSQL Clusters** das Menü **Actions** des Clusters und wählen Sie **Edit**, oder öffnen Sie die Seite des Clusters und klicken Sie auf **Edit**.
 
-```bash
-kubectl get postgres my-database -o yaml | grep -A 5 -E "resources:|resourcesPreset"
-```
+Die Seite **Edit PostgreSQL cluster** zeigt die Karte **Cluster settings** und die Auswirkung der Konfiguration auf die Quotas des Projekts an.
 
-**Beispielergebnis mit einem Preset:**
+### 2. Die Parameter anpassen
 
-```console
-  resourcesPreset: micro
-  resources: {}
-```
+- **Preset**: Wählen Sie ein größeres Preset, um CPU und Arbeitsspeicher jedes Knotens zu erhöhen.
+- **Disk size (GB)**: Geben Sie die neue Kapazität ein.
+- **PostgreSQL Version**: Wählen Sie die Zielversion aus. Das Formular bietet alle Versionen an, es ist jedoch nur ein Versions-Upgrade möglich: Eine niedrigere Version wird von der Plattform abgelehnt, der Cluster bleibt auf seiner aktuellen Version, und die Konfiguration bleibt fehlerhaft, bis Sie wieder eine höhere oder gleiche Version auswählen. Ein Major-Upgrade (zum Beispiel 17 → 18) erfolgt in-place: Die Instanz wird während der Datenmigration angehalten.
+- **External access**: Aktivieren oder deaktivieren Sie die Verfügbarkeit im öffentlichen Internet.
 
-**Beispielergebnis mit expliziten Ressourcen:**
+### 3. Speichern
 
-```console
-  resourcesPreset: micro
-  resources:
-    cpu: 2000m
-    memory: 2Gi
-```
+Klicken Sie auf **Save**. Die Meldung „Cluster updated“ bestätigt die Übernahme. Überschreitet die neue Konfiguration die Quotas des Projekts, bleibt die Schaltfläche inaktiv.
 
-### 2. Option A: Ressourcen-Preset ändern
-
-Um von einem Preset zu einem anderen zu wechseln (z.B. von `micro` zu `large`), wenden Sie einen Patch an:
-
-```bash
-kubectl patch postgres my-database --type='merge' -p='
-spec:
-  resourcesPreset: large
-  resources: {}
-'
-```
-
-:::note
-Es ist wichtig, `resources: {}` beim Wechsel zu einem Preset zurückzusetzen, damit das Preset berücksichtigt wird. Wenn `resources` explizite Werte enthält, wird das Preset ignoriert.
+:::warning
+Eine Änderung des Presets oder der Version führt zum Neustart der Instanzen. Bei einem Cluster mit 1 Replica ist die Datenbank während des Neustarts nicht verfügbar, bei einem Major-Upgrade während der gesamten Migration; planen Sie den Vorgang außerhalb der Spitzenlastzeiten.
 :::
-
-Sie können auch das vollständige YAML-Manifest ändern:
-
-```yaml title="postgresql-scaled.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Postgres
-metadata:
-  name: my-database
-spec:
-  replicas: 3
-  resourcesPreset: large
-  size: 20Gi
-
-  users:
-    admin:
-      password: SecureAdminPassword
-
-  databases:
-    myapp:
-      roles:
-        admin:
-          - admin
-```
-
-Dann anwenden:
-
-```bash
-kubectl apply -f postgresql-scaled.yaml
-```
-
-### 3. Option B: Explizite Ressourcen definieren
-
-Für eine feine Steuerung definieren Sie die CPU- und Speicherwerte direkt:
-
-```bash
-kubectl patch postgres my-database --type='merge' -p='
-spec:
-  resources:
-    cpu: 4000m
-    memory: 4Gi
-'
-```
-
-Oder über das vollständige Manifest:
-
-```yaml title="postgresql-custom-resources.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Postgres
-metadata:
-  name: my-database
-spec:
-  replicas: 3
-  resources:
-    cpu: 4000m
-    memory: 4Gi
-  size: 20Gi
-
-  users:
-    admin:
-      password: SecureAdminPassword
-
-  databases:
-    myapp:
-      roles:
-        admin:
-          - admin
-```
-
-```bash
-kubectl apply -f postgresql-custom-resources.yaml
-```
 
 :::tip
-Für die PostgreSQL-Dimensionierung ist eine gute Faustregel, `shared_buffers` auf etwa 25% des Gesamtspeichers zuzuweisen. Passen Sie die PostgreSQL-Parameter entsprechend über den Abschnitt `postgresql.parameters` an.
+Vergrößern Sie die Disk, bevor sie voll ist. Überwachen Sie den belegten Speicherplatz mit `SELECT pg_size_pretty(pg_database_size(current_database()));`.
 :::
-
-### 4. Rolling Update überprüfen
-
-Nach der Ressourcenänderung führt der Operator ein **Rolling Update** der PostgreSQL-Pods durch. Überwachen Sie den Fortschritt:
-
-```bash
-kubectl get po -w | grep postgres-my-database
-```
-
-**Erwartetes Ergebnis (während des Rolling Updates):**
-
-```console
-postgres-my-database-2   1/1     Terminating   0   45m
-postgres-my-database-2   0/1     Pending       0   0s
-postgres-my-database-2   1/1     Running       0   30s
-```
-
-Warten Sie, bis alle Pods den Status `Running` haben:
-
-```bash
-kubectl get po | grep postgres-my-database
-```
-
-```console
-postgres-my-database-1   1/1     Running   0   2m
-postgres-my-database-2   1/1     Running   0   4m
-postgres-my-database-3   1/1     Running   0   6m
-```
 
 ## Überprüfung
 
-Bestätigen Sie, dass die neuen Ressourcen angewendet wurden:
-
-```bash
-kubectl get postgres my-database -o yaml | grep -A 5 -E "resources:|resourcesPreset"
-```
-
-Überprüfen Sie, dass die Instanz funktionsfähig ist:
-
-```bash
-kubectl get postgres my-database
-```
-
-**Erwartetes Ergebnis:**
-
-```console
-NAME          READY   AGE   VERSION
-my-database   True    1h    0.18.0
-```
+Die Seite des Clusters zeigt die neuen Werte in den Karten **PostgreSQL Version**, **Allocated Size** und **External Access** an, und der Status kehrt zu **Ready** zurück, sobald die Aktualisierung angewendet wurde.
 
 ## Weiterführende Informationen
 
-- **[API-Referenz PostgreSQL](../api-reference.md)**: Vollständige Dokumentation der Parameter `resources`, `resourcesPreset` und Preset-Tabelle
+- [PostgreSQL-Konzepte](../concepts.md): Replikation, Presets, Netzwerkzugriff
+- [Benutzer und Datenbanken verwalten](./manage-users-databases.md)

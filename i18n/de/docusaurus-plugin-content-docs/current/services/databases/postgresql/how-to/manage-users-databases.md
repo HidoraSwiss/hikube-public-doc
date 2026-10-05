@@ -1,266 +1,106 @@
 ---
 title: "Benutzer und Datenbanken verwalten"
+sidebar_position: 1
 ---
 
 # Benutzer und Datenbanken verwalten
 
-Diese Anleitung erklärt, wie Sie Benutzer, Datenbanken, Rollen und PostgreSQL-Erweiterungen auf Hikube deklarativ über Kubernetes-Manifeste erstellen und verwalten.
+Diese Anleitung erklärt, wie Sie auf einem PostgreSQL-Cluster in der [Hikube-Konsole](https://console.hikube.cloud) Datenbanken erstellen, Erweiterungen aktivieren, Benutzer anlegen, ihre Rechte verwalten und ihre Passwörter erneuern.
 
 ## Voraussetzungen
 
-- **kubectl** konfiguriert mit Ihrer Hikube-Kubeconfig
-- Eine **PostgreSQL**-Instanz auf Hikube bereitgestellt (oder ein Manifest zur Bereitstellung)
-- (Optional) **psql** lokal installiert zum Testen der Verbindung
+- Ein **PostgreSQL**-Cluster im Status **Ready** in Ihrem Projekt (siehe [Schnellstart](../quick-start.md))
+- Der Client **`psql`**, um die Verbindungen zu testen
+
+Alle Vorgänge erfolgen auf der Seite des Clusters: **DB & Messaging** → **PostgreSQL** → Name des Clusters. Die Seite hat zwei Registerkarten, **Databases** und **Users**.
 
 ## Schritte
 
-### 1. Benutzer hinzufügen
+### 1. Eine Datenbank erstellen
 
-Benutzer werden im Abschnitt `users` des Manifests deklariert. Jeder Benutzer wird durch einen Namen identifiziert und hat ein Passwort.
+1. Klicken Sie in der Registerkarte **Databases** auf **Create**.
+2. Geben Sie den **Database name** ein (Kleinbuchstaben, Ziffern und Unterstriche, höchstens 63 Zeichen), zum Beispiel `analytics`.
+3. Wählen Sie unter **PostgreSQL Extensions** die Erweiterungen aus, die bei der Erstellung aktiviert werden sollen.
+4. Klicken Sie auf **Create**.
 
-```yaml title="postgresql-users.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Postgres
-metadata:
-  name: my-database
-spec:
-  replicas: 2
-  resourcesPreset: medium
-  size: 10Gi
-
-  users:
-    admin:
-      password: SecureAdminPassword
-    appuser:
-      password: AppUserPassword456
-    readonly:
-      password: ReadOnlyPassword789
-    replicator:
-      password: ReplicatorPassword
-      replication: true
-```
-
-**Benutzerparameter:**
-
-| Parameter | Typ | Beschreibung |
-|-----------|------|-------------|
-| `users[name].password` | `string` | Passwort des Benutzers |
-| `users[name].replication` | `bool` | Gewährt dem Benutzer das Replikationsrecht |
-
-:::note
-Das `replication`-Recht wird für Benutzer benötigt, die von Change Data Capture (CDC)-Tools wie Debezium oder für die logische PostgreSQL-Replikation verwendet werden. Aktivieren Sie es nur, wenn Sie es benötigen.
-:::
-
-### 2. Datenbanken mit Rollen erstellen
-
-Datenbanken werden im Abschnitt `databases` deklariert. Jede Datenbank kann die Rollen `admin` und `readonly` definieren, die den in `users` deklarierten Benutzern zugewiesen werden.
-
-```yaml title="postgresql-databases.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Postgres
-metadata:
-  name: my-database
-spec:
-  replicas: 2
-  resourcesPreset: medium
-  size: 10Gi
-
-  users:
-    admin:
-      password: SecureAdminPassword
-    appuser:
-      password: AppUserPassword456
-    readonly:
-      password: ReadOnlyPassword789
-
-  databases:
-    myapp:
-      roles:
-        admin:
-          - admin
-          - appuser
-        readonly:
-          - readonly
-    analytics:
-      roles:
-        admin:
-          - admin
-        readonly:
-          - appuser
-          - readonly
-```
-
-**Verfügbare Rollen:**
-
-| Rolle | Beschreibung |
-|------|-------------|
-| `admin` | Vollständiger Lese-/Schreibzugriff auf die Datenbank |
-| `readonly` | Nur-Lese-Zugriff auf die Datenbank |
+Die Datenbank erscheint mit ihren Erweiterungen in der Liste. Sie wird auch in der Karte **Connection and Databases** unter **Initial Databases** aufgeführt.
 
 :::tip
-Befolgen Sie das Prinzip der geringsten Rechte: Gewähren Sie die Rolle `admin` nur Benutzern, die sie wirklich benötigen. Verwenden Sie `readonly` für Reporting- oder Monitoring-Dienste.
+Sie können Datenbanken auch bereits bei der Erstellung des Clusters im Schritt **Databases** des Assistenten anlegen. Die Datenbank **`postgres`** wird immer automatisch erstellt.
 :::
 
-### 3. Erweiterungen aktivieren
+### 2. Die Erweiterungen einer Datenbank verwalten
 
-PostgreSQL-Erweiterungen werden pro Datenbank über das Feld `extensions` aktiviert:
+1. Öffnen Sie in der Registerkarte **Databases** das Menü **Actions** der Datenbank.
+2. Wählen Sie **Manage extensions**.
+3. Aktivieren oder deaktivieren Sie die Erweiterungen und klicken Sie dann auf **Save**.
 
-```yaml title="postgresql-extensions.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Postgres
-metadata:
-  name: my-database
-spec:
-  replicas: 2
-  resourcesPreset: medium
-  size: 10Gi
+Die angebotene Liste entspricht den auf der Plattform verfügbaren Erweiterungen, unter anderem `pg_stat_statements`, `pgcrypto`, `uuid-ossp`, `pg_trgm`, `hstore`, `citext`, `postgres_fdw`, `pgaudit` und `vector` (pgvector).
 
-  users:
-    admin:
-      password: SecureAdminPassword
+### 3. Einen Benutzer anlegen
 
-  databases:
-    myapp:
-      roles:
-        admin:
-          - admin
-      extensions:
-        - hstore
-        - uuid-ossp
-        - pgcrypto
-```
+1. Klicken Sie in der Registerkarte **Users** auf **Create a user**.
+2. Geben Sie den **Username** ein: 3 bis 16 Zeichen, Kleinbuchstaben, Ziffern und Unterstriche, beginnend mit einem Buchstaben oder einem Unterstrich (zum Beispiel `report_reader`).
+3. Klicken Sie unter **Databases** für jede Datenbank, auf die der Benutzer zugreifen soll, auf **Add access**:
+   - **Database name**: Wählen Sie die Datenbank aus;
+   - **Rights**: **Administrator (Admin)** (Lesen und Schreiben) oder **Read-only**.
+4. Klicken Sie auf **Create user**.
 
-**Gängige Erweiterungen:**
+Der Bildschirm „User created successfully!“ zeigt das generierte Passwort an.
 
-| Erweiterung | Beschreibung |
-|-----------|-------------|
-| `hstore` | Schlüssel-Wert-Datentyp |
-| `uuid-ossp` | Generierung von UUID-Identifikatoren |
-| `pgcrypto` | Kryptografische Funktionen (Hashing, Verschlüsselung) |
-
-### 4. Änderungen anwenden
-
-Kombinieren Sie alle Elemente in einem einzigen Manifest und wenden Sie es an:
-
-```yaml title="postgresql-complete.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Postgres
-metadata:
-  name: my-database
-spec:
-  replicas: 2
-  resourcesPreset: medium
-  size: 10Gi
-
-  users:
-    admin:
-      password: SecureAdminPassword
-      replication: true
-    appuser:
-      password: AppUserPassword456
-    readonly:
-      password: ReadOnlyPassword789
-
-  databases:
-    myapp:
-      roles:
-        admin:
-          - admin
-          - appuser
-        readonly:
-          - readonly
-      extensions:
-        - hstore
-        - uuid-ossp
-    analytics:
-      roles:
-        admin:
-          - admin
-        readonly:
-          - appuser
-          - readonly
-      extensions:
-        - pgcrypto
-```
-
-```bash
-kubectl apply -f postgresql-complete.yaml
-```
-
-### 5. Anmeldedaten abrufen
-
-Die Benutzerpasswörter sind in einem Kubernetes-Secret gespeichert. Rufen Sie sie ab mit:
-
-```bash
-kubectl get secret postgres-my-database-credentials -o json | jq -r '.data | to_entries[] | "\(.key): \(.value|@base64d)"'
-```
-
-**Erwartetes Ergebnis:**
-
-```console
-admin: SecureAdminPassword
-appuser: AppUserPassword456
-readonly: ReadOnlyPassword789
-```
-
-:::note
-Wenn Sie kein Passwort für einen Benutzer angeben, generiert der Operator automatisch eines. Verwenden Sie den obigen Befehl, um es abzurufen.
+:::warning
+Kopieren Sie dieses Passwort sofort und bewahren Sie es sicher auf: Es wird nach dem Verlassen dieses Bildschirms nicht mehr angezeigt.
 :::
 
-### 6. Verbindung testen
+Klicken Sie anschließend auf **Done and return to cluster**.
 
-Öffnen Sie einen Port-Forward zum PostgreSQL-Service:
+### 4. Die Rechte eines Benutzers ändern
+
+1. Öffnen Sie in der Registerkarte **Users** das Menü **Actions** des Benutzers.
+2. Wählen Sie **Manage Access**.
+3. Fügen Sie mit **Add** Zugriffe hinzu, ändern Sie die **Rights** oder entfernen Sie eine Zeile.
+4. Klicken Sie auf **Save**.
+
+Der Benutzername kann nicht geändert werden.
+
+### 5. Das Passwort eines Benutzers erneuern
+
+1. Öffnen Sie das Menü **Actions** des Benutzers und wählen Sie **Change Password**.
+2. Klicken Sie im Fenster **Rotate password** auf **Perform rotation**.
+3. Kopieren Sie das angezeigte neue Passwort und klicken Sie dann auf **Done**.
+
+:::warning
+Die Rotation widerruft das alte Passwort sofort. Aktualisieren Sie Ihre Anwendungen umgehend, um eine Unterbrechung zu vermeiden.
+:::
+
+### 6. Eine Datenbank oder einen Benutzer löschen
+
+- Datenbank: Menü **Actions** → **Delete database**.
+- Benutzer: Menü **Actions** → **Delete user**.
+
+Bestätigen Sie, indem Sie den exakten Namen des Elements eingeben, und klicken Sie dann auf **Permanently delete**. Beim Löschen einer Datenbank werden ihre Daten gelöscht.
+
+### 7. Die Verbindung testen
 
 ```bash
-kubectl port-forward svc/postgres-my-database-rw 5432:5432
+# Benutzer mit Nur-Lese-Recht
+psql "host=<host> port=5432 dbname=analytics user=report_reader sslmode=require"
 ```
-
-Verbinden Sie sich mit `psql`:
-
-```bash
-psql -h 127.0.0.1 -U appuser myapp
-```
-
-Überprüfen Sie die Benutzer und Rollen:
 
 ```sql
--- Benutzer auflisten
-\du
+-- Muss erfolgreich sein
+SELECT current_user, current_database();
 
--- Datenbanken auflisten
-\l
-
--- Installierte Erweiterungen überprüfen
-\dx
-```
-
-**Erwartetes Ergebnis für `\du`:**
-
-```console
-                                 List of roles
-     Role name      |                         Attributes
---------------------+------------------------------------------------------------
- admin              | Replication
- appuser            |
- myapp_admin        | No inheritance, Cannot login
- myapp_readonly     | No inheritance, Cannot login
- analytics_admin    | No inheritance, Cannot login
- analytics_readonly | No inheritance, Cannot login
- postgres           | Superuser, Create role, Create DB, Replication, Bypass RLS
- readonly           |
+-- Muss für einen Benutzer mit Nur-Lese-Recht fehlschlagen
+CREATE TABLE test (id int);
 ```
 
 ## Überprüfung
 
-Die Konfiguration ist erfolgreich, wenn:
-
-- Die Benutzer in `\du` mit den korrekten Attributen erscheinen
-- Die Datenbanken in `\l` aufgelistet sind
-- Die Erweiterungen aktiv sind (überprüfbar mit `\dx` in jeder Datenbank)
-- Jeder Benutzer sich mit seinem Passwort verbinden kann
-- Die `readonly`-Benutzer keine Daten ändern können
+- Die Registerkarte **Databases** listet Ihre Datenbanken und deren Erweiterungen auf.
+- Die Registerkarte **Users** listet Ihre Benutzer auf, jeweils mit den zugänglichen Datenbanken und dem zugehörigen Recht (zum Beispiel `analytics (Read-only)`).
 
 ## Weiterführende Informationen
 
-- **[API-Referenz PostgreSQL](../api-reference.md)**: Vollständige Dokumentation der Parameter `users`, `databases` und `extensions`
-- **[Schnellstart PostgreSQL](../quick-start.md)**: Eine vollständige PostgreSQL-Instanz bereitstellen
+- [PostgreSQL-Konzepte](../concepts.md): Rechte, Benennungsregeln
+- [Ressourcen ändern](./scale-resources.md): Preset, Disk, externer Zugriff

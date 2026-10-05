@@ -7,43 +7,28 @@ title: Konzepte
 
 ## Architektur
 
-Hikube stellt virtuelle Maschinen (VM) dank **KubeVirt** bereit, einer Technologie, die es ermöglicht, VMs direkt innerhalb der Kubernetes-Infrastruktur auszuführen. Jede VM wird als native Kubernetes-Ressource verwaltet und bietet eine nahtlose Integration mit dem Cloud-nativen Ökosystem.
+Eine Hikube-**VM-Instanz** fasst eine Rechenvorlage (vCPU und RAM), eine oder mehrere Disks, eine Netzwerkkonfiguration und optional GPUs zusammen. Sie steuern diese über die Konsole.
 
 ```mermaid
 graph TB
-    subgraph "Hikube Platform"
-        subgraph "Tenant namespace"
-            VMI[VMInstance CRD]
-            VMD[VMDisk CRD]
-        end
-
-        subgraph "KubeVirt"
-            VP[virt-handler]
-            VL[virt-launcher Pod]
-            QEMU[QEMU/KVM]
-        end
-
-        subgraph "Speicher"
-            LS[Local Storage]
-            RS[Replicated Storage]
-        end
-
-        subgraph "Netzwerk"
-            PL[PortList Exposure]
-            WI[WholeIP Exposure]
-            FW[Distributed Firewall]
-        end
+    subgraph "Hikube-Projekt"
+        VM[VM-Instanz]
+        SYS[System-Disk]
+        DATA[Daten-Disks]
+        VPC[VPC / Subnetze]
+        GPU[NVIDIA-GPU]
     end
 
-    VMI --> VP
-    VMD --> LS
-    VMD --> RS
-    VP --> VL
-    VL --> QEMU
-    VMI --> PL
-    VMI --> WI
-    PL --> FW
-    WI --> FW
+    subgraph "Zugriff"
+        PUB[Öffentliche IPv4-IP]
+        FW[Firewall: erlaubte Ports]
+    end
+
+    VM --> SYS
+    VM --> DATA
+    VM --> VPC
+    VM -.optional.-> GPU
+    PUB --> FW --> VM
 ```
 
 ---
@@ -51,107 +36,113 @@ graph TB
 ## Terminologie
 
 | Begriff | Beschreibung |
-|---------|-------------|
-| **VMInstance** | Kubernetes-Ressource (`apps.cozystack.io/v1alpha1`), die eine virtuelle Maschine repräsentiert. Verwaltet den Lebenszyklus, Festplatten, Netzwerk und cloud-init. |
-| **VMDisk** | Kubernetes-Ressource, die eine virtuelle Festplatte repräsentiert. Kann aus einem Golden Image, einer HTTP-Quelle oder leer erstellt werden. |
-| **Golden Image** | Vorkonfiguriertes und für KubeVirt optimiertes OS-Image (AlmaLinux, Rocky, Debian, Ubuntu, usw.). |
-| **Instance Type** | CPU/RAM-Ressourcenprofil, definiert durch eine Serie (S, U, M) und eine Größe. |
-| **cloud-init** | Mechanismus zur automatischen Initialisierung von VMs beim ersten Start (Benutzer, Pakete, Skripte). |
-| **PortList** | Netzwerk-Expositionsmethode, die spezifische Ports mit automatischem Firewalling auf der dedizierten IP exponiert (empfohlen). |
-| **WholeIP** | Netzwerk-Expositionsmethode, die der VM eine dedizierte öffentliche IP zuweist. |
+|-------|-------------|
+| **Projekt** | Isolierter Bereich, der Ihre Ressourcen zusammenfasst und Quotas trägt (CPU, Memory, Storage). Früher *Tenant* genannt. |
+| **VM-Instanz** | Virtuelle Maschine. Ihr Name (3 bis 16 Zeichen, Kleinbuchstaben, Ziffern und Bindestriche, beginnend mit einem Buchstaben) kann nach der Erstellung nicht mehr geändert werden. |
+| **Instanztyp** | CPU/RAM-Vorlage, definiert durch eine Serie (S, U, M) und eine Größe (zum Beispiel `u1.xlarge`). |
+| **System-Image** | Auf der System-Disk installiertes Betriebssystem (Ubuntu, Debian, Rocky Linux, Windows Server…). |
+| **System-Disk** | Erste Disk der VM, von der gebootet wird. Sie trägt standardmäßig den Namen der VM. |
+| **Daten-Disk** | Zusätzliche Disk, bei der Erstellung leer. Sie erscheint im Betriebssystem als zusätzliches Blockgerät (`/dev/vdb`, `/dev/vdc`…). |
+| **Replikation** | Modus, in dem die Daten einer Disk auf mehrere Knoten kopiert werden: **Asynchronous** oder **Synchronous**. |
+| **Firewall** | Filterung des eingehenden Datenverkehrs auf der öffentlichen IP: Nur die erlaubten Ports sind geöffnet. |
+| **VPC** | Privates Netzwerk des Projekts, in Subnetze unterteilt, mit dem eine VM verbunden werden kann. Siehe [Netzwerk](../networking/concepts.md). |
+| **cloud-init (User Data)** | Initialisierungsskript, das beim Start der VM ausgeführt wird (Pakete, Benutzer, Befehle). Für Windows nicht verfügbar. |
 
 ---
 
 ## Instanztypen
 
-Hikube bietet drei Instanzserien mit unterschiedlichen CPU/RAM-Verhältnissen:
+| Serie | Bezeichnung in der Konsole | Verhältnis vCPU:RAM | Größen |
+|-------|-------------------------|----------------|---------|
+| `s1` | **Standard (S)** | 1:2 | `small` (1 vCPU) bis `8xlarge` (64 vCPU) |
+| `u1` | **Universal (U)** | 1:4 | `medium` (1 vCPU) bis `8xlarge` (32 vCPU) |
+| `m1` | **Memory (M)** | 1:8 | `large` (2 vCPU) bis `8xlarge` (32 vCPU) |
 
-| Serie | CPU:RAM-Verhältnis | Anwendungsfall |
-|-------|---------------|-------------|
-| **S (Standard)** | 1:2 | Allgemeine Workloads, geteilte CPU, burstable |
-| **U (Universal)** | 1:4 | Ausgewogene Workloads, mehr Speicher |
-| **M (Memory)** | 1:8 | Speicherintensive Anwendungen (Caches, Datenbanken) |
-
-Jede Serie reicht von `small` (1-2 vCPU) bis `8xlarge` (32-64 vCPU).
+Die Einzelheiten zu den Größen finden Sie in der [Übersicht](./overview.md#instanztypen).
 
 ---
 
 ## Speicher
 
-Zwei Speicherklassen stehen für VM-Festplatten zur Verfügung:
+Jede mit der VM erstellte Disk wird im Schritt **Storage** des Assistenten konfiguriert:
 
-| Klasse | Eigenschaft | Anwendungsfall |
-|--------|-----------------|-------------|
-| **local** | Speicher auf dem physischen Knoten, maximale Leistung | Ephemere Daten, Caches, Tests |
-| **replicated** | Replikation über mehrere Knoten/Regionen | Produktionsdaten, Hochverfügbarkeit |
+| Parameter | Werte | Hinweise |
+|-----------|---------|-----------|
+| **Volume Name** | Aus dem Namen der VM generiert (`ma-vm`, `ma-vm-2`…) | Änderbar |
+| **Size (GB)** | Mindestens 20 GB, höchstens 4096 GB | Mindestens 50 GB für Windows, 40 GB für Oracle Linux |
+| **Replication Type** | **Asynchronous Replication** (Recommended) oder **Synchronous Replication** | Siehe unten |
+| **Disk Encryption** | Aktiviert / deaktiviert | LUKS-Verschlüsselung der Daten im Ruhezustand |
 
-:::tip
-Verwenden Sie `storageClass: replicated` für Systemfestplatten in der Produktion. Der `local`-Speicher bietet bessere I/O-Leistung, übersteht aber keinen Knotenausfall.
-:::
+| Modus | RTO | RPO | Verwendung |
+|------|-----|-----|-------|
+| **Asynchronous Replication** | < 5 min | < 5 min | Standardauswahl, für die meisten Anwendungsfälle geeignet |
+| **Synchronous Replication** | < 5 min | < 1 min | Daten, bei denen der maximal tolerierte Verlust minimal sein muss |
 
----
+Eine Disk kann auch **Existing** sein: Sie wird dann aus den Disks des Projekts ausgewählt, die an keine VM angebunden sind. Die System-Disk kann nur eine Disk sein, die ein Image enthält; Daten-Disks können nur Disks ohne Image sein.
 
-## Netzwerk und Exposition
-
-### PortList (empfohlen)
-
-Der **PortList**-Modus exponiert nur die angegebenen Ports über eine dedizierte IP der VM mit automatischem Firewalling auf dem Service. Dies ist die empfohlene Methode, da sie:
-- Die Angriffsfläche begrenzt
-- Der VM eine dedizierte IP zuweist
-- Standard-TCP-Ports unterstützt (22, 80, 443, usw.)
-
-### WholeIP
-
-Der **WholeIP**-Modus weist eine dedizierte öffentliche IP mit allen offenen Ports zu. Nützlich wenn:
-- Die VM über dynamische Ports erreichbar sein muss
-- Ein Protokoll eine dedizierte IP erfordert (VPN, SIP, usw.)
-- Die VM als Gateway oder VPN dient
+Disks sind eigenständige Ressourcen, die im Menü **Disks** verwaltet werden: siehe [Disks](../storage/disks/concepts.md).
 
 ---
 
-## Lebenszyklus einer VM
+## Netzwerk
+
+| Option des Assistenten | Standard | Wirkung |
+|-----------------------|--------|-------|
+| **Public IPv4 Address** | Aktiviert | Die VM erhält eine öffentliche IP, die aus dem Internet erreichbar ist. |
+| **Enable Firewall** | Aktiviert | Eingehend sind nur die **Allowed Ports** geöffnet (SSH 22 standardmäßig angehakt; HTTP 80, HTTPS 443 und eigene Ports optional). |
+| Firewall deaktiviert | — | Alle Ports der öffentlichen IP sind geöffnet. Schützen Sie die VM dann mit einer Firewall im Betriebssystem. |
+| **VPC Networks (Secondary)** | Keine | Jedes ausgewählte Subnetz fügt der VM eine private Netzwerkschnittstelle hinzu. |
+
+---
+
+## Lebenszyklus
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Provisioning: kubectl apply
-    Provisioning --> Running: Festplatten bereit + VM gestartet
-    Running --> Stopped: runStrategy = Halted
-    Stopped --> Running: runStrategy = Always
-    Running --> LiveMigration: Knotenwartung
-    LiveMigration --> Running: Migration abgeschlossen
-    Running --> [*]: kubectl delete
+    [*] --> EnCreation: Create instance
+    EnCreation --> Actif
+    Actif --> ArretEnCours: Stop
+    ArretEnCours --> Arrete
+    Arrete --> DemarrageEnCours: Start
+    DemarrageEnCours --> Actif
+    Actif --> RedemarrageEnCours: Restart / Änderung von Instanztyp, Disks oder GPUs
+    RedemarrageEnCours --> Actif
+    Actif --> SuppressionEnCours: Delete
+    Arrete --> SuppressionEnCours: Delete
+    SuppressionEnCours --> [*]
 ```
 
-Hikube-VMs unterstützen:
-- **Starten/Stoppen** über das Feld `spec.runStrategy`
-- **Live Migration** transparent während Wartungsarbeiten
-- **Auto-Restart** bei Ausfall des Host-Knotens
-- **Snapshots** für punktuelle Sicherungen
+In der Konsole angezeigte Status: **Creating**, **Running**, **Starting**, **Stopping**, **Stopped**, **Restarting**, **Deleting**, **Error**, **Failed**, **Unknown**.
+
+Die Option **Automatic Restart** (Schritt **Configuration** des Assistenten oder **Advanced Configuration** beim Bearbeiten) startet die VM bei einem unerwarteten Absturz automatisch neu. Sie ist standardmäßig deaktiviert.
 
 ---
 
-## Isolation und Sicherheit
+## Was nach der Erstellung änderbar ist
 
-Jede VM profitiert von einer mehrstufigen Isolation:
-
-- **Kernel-Isolation**: KubeVirt führt jede VM in ihrem eigenen QEMU/KVM-Prozess aus
-- **Netzwerk-Isolation**: Verteilte Firewall zwischen den Tenants
-- **Speicher-Isolation**: Jede Festplatte ist ein dediziertes Volume
+| Element | Änderbar | Wirkung |
+|---------|-----------|-------|
+| Name, System-Image | Nein | — |
+| Instanztyp | Ja | Neustart der VM |
+| Disks (Hinzufügen, Trennen) | Ja | Neustart der VM |
+| GPU | Ja | Neustart der VM |
+| Öffentliche IP, Firewall, Ports, VPC | Ja | Ohne Neustart angewendet |
+| SSH-Schlüssel | Ja | Angebot, die User Data neu zu laden; beim nächsten Neustart angewendet |
+| cloud-init-Skript, automatischer Neustart | Ja | Skript wird nach **Reload UserData** und Neustart erneut ausgeführt |
 
 ---
 
-## Limits und Quotas
+## Quotas
 
-| Parameter | Limit |
-|-----------|--------|
-| vCPU pro VM | Bis zu 64 (Serie S `s1.8xlarge`) |
-| RAM pro VM | Bis zu 256 GB (Serie M `m1.8xlarge`) |
-| Festplatten pro VM | Mehrere (System + Daten) |
-| Festplattengröße | Variabel, abhängig vom Tenant-Quota |
+Jedes Projekt verfügt über Quotas für **CPU**, **Memory** und **Storage**. Der Assistent zeigt den aktuellen Verbrauch, den geplanten Zuwachs und die Summe an; die Schaltfläche **Next** bleibt deaktiviert, solange die neue VM ein Quota überschreitet. Dieselbe Prüfung gilt für die Schaltfläche **Save** beim Bearbeiten.
+
+Der Assistent zeigt außerdem eine Kostenschätzung für die VM an: Instanztyp, neue Disks, GPUs, gegebenenfalls Windows-Lizenz und öffentliche IP.
 
 ---
 
 ## Weiterführende Informationen
 
-- [Übersicht](./overview.md): Detaillierte Vorstellung des Dienstes
-- [API-Referenz](./api-reference.md): Vollständige Liste der VMInstance- und VMDisk-Parameter
+- [Übersicht](./overview.md)
+- [Schnellstart](./quick-start.md)
+- [Disks](../storage/disks/overview.md)
+- [Netzwerk: VPC und Subnetze](../networking/overview.md)

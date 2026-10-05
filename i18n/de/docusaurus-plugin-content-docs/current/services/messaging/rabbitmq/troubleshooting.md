@@ -5,114 +5,86 @@ title: Fehlerbehebung
 
 # Fehlerbehebung — RabbitMQ
 
-### Queue blockiert (Flow Control)
+### Der Cluster bleibt im Status „Creating“ oder wechselt zu „Error“
 
-**Ursache**: RabbitMQ hat einen **Speicheralarm** oder **Festplattenalarm** ausgelöst und blockiert die Veröffentlichungen, um das System zu schützen. Dies tritt auf, wenn der Speicherverbrauch den Schwellenwert (High Watermark) überschreitet oder der Speicherplatz unzureichend ist.
-
-**Lösung**:
-
-1. Überprüfen Sie den Cluster-Status und die aktiven Alarme:
-   ```bash
-   kubectl exec <pod-rabbitmq> -- rabbitmqctl status | grep -A 10 "alarms"
-   ```
-2. Identifizieren Sie die betroffene Ressource (Speicher oder Festplatte):
-   ```bash
-   kubectl exec <pod-rabbitmq> -- rabbitmqctl status | grep -E "mem_|disk_"
-   ```
-3. Erhöhen Sie die zugewiesenen Ressourcen in Ihrem Manifest:
-   ```yaml title="rabbitmq.yaml"
-   replicas: 3
-   resources:
-     cpu: 1
-     memory: 2Gi
-   size: 20Gi
-   ```
-4. Löschen Sie bei Bedarf ungenutzte Queues:
-   ```bash
-   kubectl exec <pod-rabbitmq> -- rabbitmqctl purge_queue <queue-name>
-   ```
-
-### RabbitMQ-Knoten nicht dem Cluster beigetreten
-
-**Ursache**: Ein RabbitMQ-Knoten kann dem Cluster nicht beitreten, oft aufgrund eines DNS-Auflösungsproblems, einer Inkonsistenz des Erlang-Cookies oder restriktiver Netzwerkrichtlinien.
+**Ursache**: Die Bereitstellung läuft noch oder ist fehlgeschlagen (zum Beispiel mangels verfügbarer Ressourcen).
 
 **Lösung**:
 
-1. Überprüfen Sie den Cluster-Status von einem funktionierenden Knoten aus:
-   ```bash
-   kubectl exec <pod-rabbitmq> -- rabbitmqctl cluster_status
-   ```
-2. Überprüfen Sie die Logs des fehlerhaften Pods:
-   ```bash
-   kubectl logs <pod-rabbitmq-problematisch>
-   ```
-3. Überprüfen Sie, ob die DNS-Auflösung zwischen den Pods funktioniert:
-   ```bash
-   kubectl exec <pod-rabbitmq> -- nslookup <pod-rabbitmq-problematisch>.<headless-service>
-   ```
-4. Wenn das Problem weiterhin besteht, löschen Sie den fehlerhaften Pod, um seine Neuerstellung zu erzwingen:
-   ```bash
-   kubectl delete pod <pod-rabbitmq-problematisch>
-   ```
+1. Warten Sie einige Minuten: Detailseite und Liste werden automatisch aktualisiert.
+2. Bleibt der Status ungewöhnlich lange **Creating** oder wechselt er zu **Error** / **Failed**, [wenden Sie sich an den Support](mailto:support@hidora.io) und geben Sie den Namen des Projekts, den Namen des Clusters und seine Kennung an (unter dem Namen des Clusters angezeigt, mit einer Kopierschaltfläche).
 
-### Nachrichten nicht geroutet (Exchange falsch konfiguriert)
+### „Storage quota exceeded for this project“ im Assistenten
 
-**Ursache**: Die veröffentlichten Nachrichten erreichen die Queues nicht, in der Regel aufgrund eines falschen Exchange-Typs, eines falschen Routing Keys oder eines fehlenden Bindings zwischen Exchange und Queue.
+**Ursache**: Die Disk-Größe multipliziert mit der Anzahl der Replicas übersteigt den verbleibenden Speicher der Projekt-Quota.
 
 **Lösung**:
 
-1. Listen Sie die vorhandenen Bindings auf, um die konfigurierten Routen zu identifizieren:
-   ```bash
-   kubectl exec <pod-rabbitmq> -- rabbitmqctl list_bindings -p <vhost>
-   ```
-2. Überprüfen Sie den Exchange-Typ und den erwarteten Routing Key:
-   ```bash
-   kubectl exec <pod-rabbitmq> -- rabbitmqctl list_exchanges -p <vhost>
-   ```
-3. Konfigurieren Sie einen **Dead Letter Exchange**, um nicht geroutete Nachrichten zu erfassen und die Diagnose zu erleichtern:
-   ```bash
-   kubectl exec <pod-rabbitmq> -- rabbitmqctl set_policy DLX ".*" '{"dead-letter-exchange":"dlx"}' -p <vhost>
-   ```
-4. Überprüfen Sie, ob der Produzent den richtigen Exchange und den richtigen Routing Key in seiner Konfiguration verwendet
+1. Verringern Sie **Disk size (GB)** oder **Number of replicas**.
+2. Geben Sie bei Bedarf Speicher im Projekt frei oder lassen Sie die Quota des Projekts erhöhen.
 
-### Speicher gesättigt (Memory Alarm)
+### „A cluster with this name already exists.“
 
-**Ursache**: RabbitMQ hat den Speicherschwellenwert erreicht (**High Watermark**, standardmäßig 40% des verfügbaren Speichers). Alle Veröffentlichungen werden blockiert, bis der Speicher unter den Schwellenwert fällt.
+**Ursache**: Ein RabbitMQ-Cluster des Projekts trägt bereits diesen Namen.
+
+**Lösung**: Kehren Sie zum Schritt **General** zurück und wählen Sie einen anderen **Cluster Name**.
+
+### Das Feld „Host“ zeigt „Not available / Creating“ an
+
+**Ursache**: Die öffentliche Adresse ist noch nicht zugewiesen oder der **External Access** ist deaktiviert.
 
 **Lösung**:
 
-1. Überprüfen Sie den Speicherverbrauch:
-   ```bash
-   kubectl exec <pod-rabbitmq> -- rabbitmqctl status | grep "mem_used"
-   ```
-2. Identifizieren Sie die größten Queues:
-   ```bash
-   kubectl exec <pod-rabbitmq> -- rabbitmqctl list_queues name messages memory -p <vhost> --formatter table
-   ```
-3. Erhöhen Sie den RabbitMQ zugewiesenen Speicher:
-   ```yaml title="rabbitmq.yaml"
-   resources:
-     cpu: 1
-     memory: 4Gi
-   ```
-4. Löschen Sie ungenutzte Queues oder Queues mit einer großen Anzahl nicht konsumierter Nachrichten
+1. Prüfen Sie im Abschnitt **Connection**, ob **External Access** den Wert **Enabled** anzeigt. Falls nicht, aktivieren Sie ihn (siehe [Externen Zugriff konfigurieren](./how-to/configure-external-access.md)).
+2. Wenn der externe Zugriff aktiviert ist, warten Sie und laden Sie die Seite anschließend neu.
 
-### AMQP-Verbindung abgelehnt
+### AMQP-Verbindung abgelehnt (`ACCESS_REFUSED`)
 
-**Ursache**: Der Client kann keine Verbindung zum RabbitMQ-Broker herstellen. Dies kann an falschen Zugangsdaten, fehlenden Vhost-Berechtigungen oder einem Netzwerk-Erreichbarkeitsproblem liegen.
+**Ursache**: falsche Zugangsdaten oder der Benutzer hat keine Rechte auf dem angeforderten VHost.
 
 **Lösung**:
 
-1. Überprüfen Sie die Verbindungszugangsdaten im Kubernetes Secret:
+1. Prüfen Sie in der Tabelle **Users** (Spalte **VHosts**), ob der Benutzer ein Recht auf dem vom Client verwendeten VHost hat.
+2. Fügen Sie den Zugriff bei Bedarf über **Manage Access** hinzu.
+3. Wenn das Passwort verloren gegangen oder zweifelhaft ist, generieren Sie mit **Change Password** ein neues und aktualisieren Sie den Client.
+4. Prüfen Sie, ob der Client den richtigen VHost angibt (exakter Name, Groß- und Kleinschreibung beachten).
+
+### Verbindung nicht möglich (Timeout, Verbindung abgelehnt)
+
+**Ursache**: externer Zugriff deaktiviert, falsche Adresse oder falscher Port oder Netzwerkfilterung auf Client-Seite.
+
+**Lösung**:
+
+1. Prüfen Sie den **Host** und den Status des **External Access** im Abschnitt **Connection**.
+2. Verwenden Sie den Port **5672**.
+3. Testen Sie von der Client-Maschine aus, ob der Port offen ist:
    ```bash
-   kubectl get tenantsecret <rabbitmq-name>-credentials -o jsonpath='{.data}' | base64 -d
+   nc -zv <host> 5672
    ```
-2. Überprüfen Sie, ob der Benutzer die erforderlichen Berechtigungen auf dem Vhost hat:
-   ```bash
-   kubectl exec <pod-rabbitmq> -- rabbitmqctl list_permissions -p <vhost>
-   ```
-3. Testen Sie die Konnektivität zum AMQP-Port (5672):
-   ```bash
-   kubectl exec <pod-rabbitmq> -- rabbitmq-diagnostics check_port_connectivity
-   ```
-4. Wenn Sie sich von außerhalb des Clusters verbinden, stellen Sie sicher, dass `external: true` in Ihrem Manifest konfiguriert ist
+4. Prüfen Sie, ob Ihr Netzwerk oder Ihre lokale Firewall ausgehende Verbindungen zu diesem Port zulässt.
+
+### Blockierte Veröffentlichungen (Flow Control, Speicher- oder Disk-Alarm)
+
+**Ursache**: RabbitMQ blockiert Veröffentlichungen, wenn der Schwellenwert für den Arbeitsspeicher (High Watermark) erreicht wird oder der Speicherplatz auf der Disk nicht ausreicht, um den Broker zu schützen. Die Clients erhalten dann eine Benachrichtigung `connection.blocked`.
+
+**Lösung**:
+
+1. Prüfen Sie auf Anwendungsseite, ob die Consumer mit den Producern Schritt halten, und leeren Sie Queues, in denen sich nicht konsumierte Nachrichten ansammeln.
+2. Erhöhen Sie **Disk size (GB)** über **Edit**, wenn der Alarm die Disk betrifft (siehe [Die Konfiguration eines Clusters ändern](./how-to/scale-resources.md)).
+3. Das Preset (Arbeitsspeicher) ist nach der Erstellung nicht änderbar: Erstellen Sie einen Cluster mit einem größeren Preset oder [wenden Sie sich an den Support](mailto:support@hidora.io).
+
+### Nicht geroutete Nachrichten
+
+**Ursache**: Der Producer veröffentlicht an einen Exchange ohne passendes Binding (falscher Exchange-Typ, falscher Routing Key, fehlendes Binding). Die Nachricht wird dann verworfen.
+
+**Lösung**:
+
+1. Prüfen Sie im Code des Producers den Namen des Exchanges und den Routing Key.
+2. Prüfen Sie, ob der Consumer das Binding zwischen Queue und Exchange deklariert.
+3. Veröffentlichen Sie mit dem Flag `mandatory`, um über nicht geroutete Nachrichten benachrichtigt zu werden, oder deklarieren Sie einen *Alternate Exchange*, um sie aufzufangen.
+
+### Das Löschen des Clusters schlägt fehl
+
+**Ursache**: Ein Konflikt verhindert das Löschen („Cannot delete this cluster (conflict).“) oder der Dienst ist vorübergehend nicht verfügbar.
+
+**Lösung**: Versuchen Sie es einige Minuten später erneut. Besteht der Fehler weiterhin, [wenden Sie sich an den Support](mailto:support@hidora.io).

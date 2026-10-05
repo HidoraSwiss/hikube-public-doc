@@ -1,127 +1,65 @@
 ---
-title: "Redis vertikal skalieren"
+title: "Die Ressourcen eines Redis-Clusters ändern"
+sidebar_position: 2
 ---
 
-# Redis vertikal skalieren
+# Die Ressourcen eines Redis-Clusters ändern
 
-Diese Anleitung erklärt, wie Sie die CPU-, Speicher- und Storage-Ressourcen Ihrer Redis-Instanz auf Hikube anpassen, entweder über ein vordefiniertes Preset oder durch Definition expliziter Werte.
+Diese Anleitung erklärt, wie Sie einen bestehenden Redis-Cluster über die [Hikube-Konsole](https://console.hikube.cloud) anpassen: Preset (CPU und Arbeitsspeicher), Volume-Größe, Version, externer Zugriff und Authentifizierung.
 
 ## Voraussetzungen
 
-- Eine Redis-Instanz auf Hikube bereitgestellt (siehe [Schnellstart](../quick-start.md))
-- `kubectl` konfiguriert für die Interaktion mit der Hikube-API
-- Die YAML-Konfigurationsdatei Ihrer Redis-Instanz
+- Ein bestehender **Redis**-Cluster in Ihrem Projekt
+- Ausreichende Projekt-Quotas für die neue Konfiguration
+
+## Was geändert werden kann
+
+| Parameter | Nach der Erstellung änderbar |
+|-----------|---------------------------|
+| **Redis Version** | Ja |
+| **Preset** | Ja |
+| **Volume Size (GB)** | Ja |
+| **External access** | Ja |
+| **Authentication required** | Ja |
+| **Number of replicas** | Nein, „The mode cannot be changed after creation“ |
+
+Um die Anzahl der Replicas zu ändern, [wenden Sie sich an den Support](mailto:support@hidora.io).
 
 ## Schritte
 
-### 1. Aktuelle Ressourcen überprüfen
+### 1. Das Änderungsformular öffnen
 
-Überprüfen Sie die aktuelle Konfiguration Ihrer Redis-Instanz:
+1. Öffnen Sie **DB & Messaging** → **Redis**.
+2. Öffnen Sie den Cluster und klicken Sie dann auf **Edit** (oder verwenden Sie **Actions** → **Edit** in der Liste).
 
-```bash
-kubectl get redis my-redis -o yaml
-```
+Die Seite **Edit cluster** zeigt die Karte **Cluster settings** und die Auswirkung auf die Quotas des Projekts an.
 
-Notieren Sie die Werte von `resourcesPreset`, `resources`, `replicas` und `size` im Abschnitt `spec`.
+### 2. Die Parameter anpassen
 
-### 2. Option A: resourcesPreset ändern
+- **Preset**: Wählen Sie ein größeres Preset, wenn der Arbeitsspeicher erschöpft ist. Der Arbeitsspeicher des Presets begrenzt das Datenvolumen, das Redis im Arbeitsspeicher halten kann.
+- **Volume Size (GB)**: „Storage capacity allocated to each node in the cluster.“
+- **Redis Version**: `8 (Latest)` oder `7`.
+- **External access**: „Allow access to the cluster from outside the private network.“
+- **Authentication required**: „Enable password protection.“
 
-Der einfachste Weg zu skalieren ist die Verwendung eines vordefinierten Presets. Hier sind die verfügbaren Presets:
+### 3. Speichern
 
-| **Preset** | **CPU** | **Speicher** |
-|------------|---------|-------------|
-| `nano`     | 250m    | 128Mi       |
-| `micro`    | 500m    | 256Mi       |
-| `small`    | 1       | 512Mi       |
-| `medium`   | 1       | 1Gi         |
-| `large`    | 2       | 2Gi         |
-| `xlarge`   | 4       | 4Gi         |
-| `2xlarge`  | 8       | 8Gi         |
-
-Zum Beispiel, um von `nano` auf `medium` zu wechseln:
-
-```yaml title="redis-medium.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Redis
-metadata:
-  name: my-redis
-spec:
-  replicas: 2
-  resourcesPreset: medium
-  size: 2Gi
-  authEnabled: true
-```
-
-### 3. Option B: Explizite Ressourcen definieren
-
-Für eine präzise Steuerung geben Sie CPU und Speicher direkt über das Feld `resources` an:
-
-```yaml title="redis-custom-resources.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Redis
-metadata:
-  name: my-redis
-spec:
-  replicas: 2
-  resources:
-    cpu: 2000m
-    memory: 4Gi
-  size: 5Gi
-  authEnabled: true
-```
+Klicken Sie auf **Save changes**. Die Meldung „Changes saved“ bestätigt die Übernahme.
 
 :::warning
-Wenn das Feld `resources` definiert ist, wird der Wert von `resourcesPreset` vollständig ignoriert. Entfernen Sie `resourcesPreset` aus dem Manifest, um Verwirrung zu vermeiden.
-:::
-
-### 4. Anzahl der Replikas bei Bedarf anpassen
-
-Sie können auch die Anzahl der Replikas erhöhen, um die Leselast zu verteilen:
-
-```yaml title="redis-scaled.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Redis
-metadata:
-  name: my-redis
-spec:
-  replicas: 3
-  resourcesPreset: large
-  size: 5Gi
-  storageClass: replicated
-  authEnabled: true
-```
-
-### 5. Update anwenden
-
-```bash
-kubectl apply -f redis-medium.yaml
-```
-
-:::tip
-Redis ist ein In-Memory Data Store: Der zugewiesene Speicher (`resources.memory` oder der des Presets) muss ausreichend sein, um Ihr gesamtes Dataset aufzunehmen. Überwachen Sie die Speichernutzung vor dem Skalieren.
+Wenn Sie die Authentifizierung auf einem Cluster deaktivieren, der im öffentlichen Netzwerk erreichbar ist, werden Ihre Daten für jeden zugänglich, der die Adresse kennt. Lassen Sie die Authentifizierung aktiviert.
 :::
 
 ## Überprüfung
 
-Überprüfen Sie, dass die Ressourcen aktualisiert wurden:
+- Die Cluster-Seite zeigt im Abschnitt **General** die neue **Version** und die neue **Size** an.
+- Prüfen Sie von einem Client aus den verfügbaren Arbeitsspeicher:
 
 ```bash
-# Redis-Ressourcenkonfiguration prüfen
-kubectl get redis my-redis -o yaml | grep -A 5 resources
-
-# Status der Redis-Pods prüfen
-kubectl get pods -l app.kubernetes.io/instance=my-redis
-```
-
-**Erwartetes Ergebnis:**
-
-```console
-NAME              READY   STATUS    RESTARTS   AGE
-my-redis-0        1/1     Running   0          2m
-my-redis-1        1/1     Running   0          2m
+redis-cli -h <host> -p 6379 INFO memory | grep -E 'used_memory_human|maxmemory_human'
 ```
 
 ## Weiterführende Informationen
 
-- [API-Referenz](../api-reference.md) -- Parameter `resources`, `resourcesPreset` und `replicas`
-- [Hochverfügbarkeit konfigurieren](./configure-ha.md) -- Redis HA-Konfiguration mit Sentinel
+- [Hochverfügbarkeit konfigurieren](./configure-ha.md)
+- [Passwort erneuern](./rotate-password.md)

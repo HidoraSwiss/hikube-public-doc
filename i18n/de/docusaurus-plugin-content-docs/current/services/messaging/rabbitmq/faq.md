@@ -7,110 +7,63 @@ title: FAQ
 
 ### Was ist der Unterschied zwischen Quorum Queues und Classic Queues?
 
-RabbitMQ bietet zwei Haupttypen von Queues:
+RabbitMQ bietet zwei Haupttypen von Queues an:
 
-- **Quorum Queues**: Basieren auf dem **Raft**-Protokoll, die Daten werden auf mehrere Cluster-Knoten repliziert. Sie gewährleisten die **Haltbarkeit** und **Hochverfügbarkeit** der Nachrichten. Empfohlen für die Produktion.
-- **Classic Queues**: Auf einem einzigen Knoten gespeichert, schneller beim Schreiben, aber **ohne Replikation**. Bei Ausfall des Knotens gehen die Nachrichten verloren.
+- **Quorum Queues**: Auf Basis des Protokolls **Raft** werden die Daten auf mehrere Knoten des Clusters repliziert. Sie gewährleisten die **Dauerhaftigkeit** und **Hochverfügbarkeit** der Nachrichten. Für die Produktion empfohlen.
+- **Classic Queues**: auf einem einzigen Knoten gespeichert, ohne Replikation zwischen Knoten. Fällt dieser Knoten aus, sind die Nachrichten nicht mehr verfügbar.
+
+Der Queue-Typ wird von der Anwendung bei der Deklaration gewählt (Argument `x-queue-type: quorum`).
 
 :::tip
-Mit 3 oder mehr Replikaten (`replicas: 3`) verwendet RabbitMQ standardmäßig die Quorum Queues, die die Nachrichtenhaltbarkeit bei Ausfall eines Knotens gewährleisten.
+Um von der Replikation der Quorum Queues zu profitieren, erstellen Sie den Cluster mit **3 (Max High Availability)** oder **5 (Ultra High Availability)** Replicas.
 :::
 
-### Wozu dienen Virtual Hosts (Vhosts)?
+### Wozu dienen Virtual Hosts (VHosts)?
 
-Die **Virtual Hosts** (Vhosts) bieten eine **logische Isolation** innerhalb desselben RabbitMQ-Clusters:
+**Virtual Hosts** (VHosts) bieten eine **logische Isolation** innerhalb eines RabbitMQ-Clusters:
 
-- Jeder Vhost besitzt seine eigenen Exchanges, Queues und Bindings
-- Berechtigungen werden **pro Vhost** verwaltet, was die Zugriffskontrolle pro Anwendung ermöglicht
-- Ein Benutzer kann je nach Vhost unterschiedliche Rollen haben (Admin auf dem einen, Readonly auf dem anderen)
+- Jeder VHost besitzt eigene Exchanges, Queues und Bindings
+- Die Rechte werden **pro VHost** verwaltet, sodass sich der Zugriff pro Anwendung steuern lässt
+- Ein Benutzer kann je nach VHost unterschiedliche Rechte haben (**Administrator** auf dem einen, **Read-only** auf dem anderen)
 
-Konfigurationsbeispiel mit mehreren Vhosts:
+VHosts werden im Erstellungsassistenten (Schritt **VHosts**) oder später über **Add a VHost** auf der Clusterseite erstellt. Siehe [VHosts und Benutzer verwalten](./how-to/manage-vhosts-users.md).
 
-```yaml title="rabbitmq.yaml"
-vhosts:
-  production:
-    roles:
-      admin: ["admin"]
-      readonly: ["monitoring"]
-  staging:
-    roles:
-      admin: ["admin", "dev"]
-```
+### Wie funktionieren Exchanges in RabbitMQ?
 
-### Wie funktionieren die Exchanges in RabbitMQ?
+Ein **Exchange** empfängt die Nachrichten der Producer und leitet sie gemäß **Binding**-Regeln an die Queues weiter:
 
-Ein **Exchange** empfängt Nachrichten von Produzenten und routet sie an Queues gemäß **Binding**-Regeln:
+| **Typ**    | **Verhalten**                                                              |
+| ----------- | ----------------------------------------------------------------------------- |
+| `direct`    | Leitet die Nachricht an die Queue weiter, deren **Routing Key** exakt übereinstimmt  |
+| `fanout`    | Verteilt die Nachricht ohne Filter an **alle gebundenen Queues**                 |
+| `topic`     | Leitet anhand eines **Musters** des Routing Keys weiter (z. B. `orders.*`, `logs.#`)          |
+| `headers`   | Leitet anhand der **Header** der Nachricht statt des Routing Keys weiter              |
 
-| **Typ** | **Verhalten** |
-| ------- | ------------- |
-| `direct` | Routet die Nachricht an die Queue, deren **Routing Key** genau übereinstimmt |
-| `fanout` | Verbreitet die Nachricht an **alle gebundenen Queues** ohne Filter |
-| `topic` | Routet nach einem **Pattern** des Routing Keys (z.B. `orders.*`, `logs.#`) |
-| `headers` | Routet nach den **Headers** der Nachricht anstelle des Routing Keys |
+Der Producer veröffentlicht an einen Exchange, nie direkt an eine Queue. Exchanges und Bindings werden von Ihren Anwendungen deklariert.
 
-Der Produzent veröffentlicht an einen Exchange, nie direkt an eine Queue.
+### Über welchen Port verbinde ich mich?
 
-### Welche Protokolle werden unterstützt?
+AMQP-Clients verbinden sich über den Port **5672** mit der Adresse, die im Feld **Host** des Abschnitts **Connection** des Clusters angezeigt wird (wenn der **External Access** aktiviert ist).
 
-RabbitMQ auf Hikube unterstützt folgende Protokolle:
+### Kann ich die Anzahl der Replicas oder das Preset nach der Erstellung ändern?
 
-| **Protokoll** | **Port** | **Verwendung** |
-| ------------- | -------- | -------------- |
-| AMQP | 5672 | Hauptprotokoll für Nachrichten |
-| Management HTTP API | 15672 | Web-Oberfläche und Management-API |
+Nein. Die **Number of replicas** (und damit der Standalone- oder Cluster-Modus) und das **Preset** werden bei der Erstellung festgelegt. Version, Disk-Größe und externer Zugriff bleiben änderbar. Siehe [Die Konfiguration eines Clusters ändern](./how-to/scale-resources.md).
 
-### Was ist der Unterschied zwischen `resourcesPreset` und `resources`?
+### Ich habe das Passwort eines Benutzers verloren. Wie kann ich es wiederherstellen?
 
-Das Feld `resourcesPreset` wendet eine vordefinierte CPU-/Speicherkonfiguration an, während `resources` die Angabe expliziter Werte ermöglicht. Wenn `resources` definiert ist, wird `resourcesPreset` **ignoriert**.
+Das Passwort wird nur einmal angezeigt und kann nicht erneut ausgelesen werden. Generieren Sie mit der Aktion **Change Password** des Benutzers ein neues und aktualisieren Sie anschließend Ihre Anwendungen: Das alte Passwort wird sofort widerrufen.
 
-| **Preset** | **CPU** | **Speicher** |
-| ---------- | ------- | ------------ |
-| `nano` | 100m | 128Mi |
-| `micro` | 250m | 256Mi |
-| `small` | 500m | 512Mi |
-| `medium` | 500m | 1Gi |
-| `large` | 1 | 2Gi |
-| `xlarge` | 2 | 4Gi |
-| `2xlarge` | 4 | 8Gi |
+### Welche Rechte gewähren „Administrator“ und „Read-only“?
 
-Beispiel mit expliziten Ressourcen:
+- **Administrator**: Lesen, Schreiben und Konfigurieren auf dem VHost (Exchanges und Queues deklarieren, veröffentlichen, konsumieren).
+- **Read-only**: Nur Lesen auf dem VHost.
 
-```yaml title="rabbitmq.yaml"
-replicas: 3
-resources:
-  cpu: 2000m
-  memory: 4Gi
-size: 20Gi
-```
+Ein Benutzer ohne Zugriff auf einen VHost kann sich nicht mit ihm verbinden.
 
-### Wie greift man auf die Management-Oberfläche zu?
+### Wie greife ich auf die RabbitMQ-Management-Oberfläche zu?
 
-Die RabbitMQ Management-Oberfläche ist über Port **15672** zugänglich. Zwei Optionen:
+Die Hikube-Konsole bietet keinen Zugriff auf die Web-Management-Oberfläche von RabbitMQ. Mit **External Access** ist der Port 15672 dieser Oberfläche unter der Adresse des Clusters über unverschlüsseltes HTTP erreichbar, doch die in der Konsole erstellten Benutzer haben nicht das RabbitMQ-Administrations-Tag, das sie voraussetzt: Sie können sich dort nicht anmelden. VHosts und Benutzer verwalten Sie in der Konsole, Exchanges und Queues über Ihre Anwendungen. Für einen spezifischen Bedarf [wenden Sie sich an den Support](mailto:support@hidora.io).
 
-**Option 1 — Port-Forward (lokaler Zugang)**:
+### Wie werden die Kosten eines Clusters geschätzt?
 
-```bash
-kubectl port-forward svc/<rabbitmq-name> 15672:15672
-```
-
-Dann öffnen Sie `http://localhost:15672` in Ihrem Browser.
-
-**Option 2 — Externer Zugang**:
-
-Aktivieren Sie `external: true` in Ihrem Manifest, um den Service über einen LoadBalancer zu exponieren:
-
-```yaml title="rabbitmq.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: RabbitMQ
-metadata:
-  name: rabbitmq
-spec:
-  external: true
-  replicas: 3
-  resourcesPreset: small
-  size: 10Gi
-```
-
-:::warning
-Der externe Zugang exponiert die Ports AMQP (5672) und Management (15672) im Internet. Stellen Sie sicher, dass Sie starke Passwörter für alle Benutzer verwenden.
-:::
+Der Erstellungsassistent zeigt **Estimated Cost** monatlich und stündlich an, berechnet aus Preset, Anzahl der Replicas, Disk-Größe und externem Zugriff. Die tatsächliche Abrechnung erfolgt nach Nutzungsstunden.

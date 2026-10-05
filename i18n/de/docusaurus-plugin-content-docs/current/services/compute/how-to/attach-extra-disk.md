@@ -1,108 +1,56 @@
 ---
-title: "Zusätzliche Festplatte anhängen"
+title: "Eine zusätzliche Disk anbinden"
 ---
 
-# Zusätzliche Festplatte anhängen
+# Eine zusätzliche Disk anbinden
 
-Die Trennung von Anwendungsdaten und Systemfestplatte ist eine bewährte Praxis für die Zuverlässigkeit und Flexibilität Ihrer VMs. Diese Anleitung erklärt, wie Sie eine zusätzliche Festplatte erstellen, an eine bestehende VMInstance anhängen und anschließend im Betriebssystem formatieren und einhängen.
+Die Trennung der Anwendungsdaten von der System-Disk erleichtert Backups, Migrationen und Größenänderungen. Diese Anleitung erklärt, wie Sie einer VM in der Konsole eine Daten-Disk hinzufügen und sie anschließend im Betriebssystem formatieren und einhängen.
 
 ## Voraussetzungen
 
-- **kubectl** konfiguriert mit Ihrem Hikube-Kubeconfig
-- Eine bestehende und funktionsfähige **VMInstance**
-- Ein **SSH**- oder **Konsolen**-Zugang zur VM
+- Ein Hikube-Konto und ein Projekt mit verfügbarem **Storage**-Quota
+- Eine bestehende **VM-Instanz**
+- Ein **SSH**-Zugang zur VM
 
 ## Schritte
 
-### 1. Zusätzlichen VMDisk erstellen
+### 1. Die Bearbeitung der VM öffnen
 
-Erstellen Sie eine leere Festplatte in der gewünschten Größe. Eine leere Festplatte verwendet `source: {}` ohne URL oder Image:
+1. Öffnen Sie **Infrastructure** > **VM Instances** und klicken Sie auf den Namen der VM.
+2. Klicken Sie auf **Edit**.
 
-```yaml title="data-disk.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: VMDisk
-metadata:
-  name: vm-data-disk
-spec:
-  source: {}
-  optical: false
-  storage: 50Gi
-  storageClass: replicated
-```
+### 2. Die Disk hinzufügen
 
-Wenden Sie das Manifest an:
+Klicken Sie im Abschnitt **Storage** auf **Add a disk**. Ein Block **Storage Volume #1** erscheint. Zwei Optionen:
 
-```bash
-kubectl apply -f data-disk.yaml
-```
+**Neue Disk** (Registerkarte **New**):
 
-Überprüfen Sie, ob die Festplatte bereit ist:
+1. **Volume Name**: Behalten Sie den vorgeschlagenen Namen bei oder geben Sie Ihren eigenen ein (Kleinbuchstaben, Ziffern und Bindestriche).
+2. **Size (GB)**: mindestens 20 GB, zum Beispiel `50`.
+3. **Replication Type**: **Asynchronous Replication** (Recommended) oder **Synchronous Replication**.
+4. **Disk Encryption**: Aktivieren Sie diese Option, um die Daten im Ruhezustand zu verschlüsseln.
 
-```bash
-kubectl get vmdisk vm-data-disk -w
-```
+**Bestehende Disk** (Registerkarte **Existing**): Wählen Sie unter **Select an existing volume** eine Daten-Disk des Projekts, die an keine VM angebunden ist. Disks lassen sich auch unabhängig im Menü **Disks** erstellen (siehe [Disks](../../storage/disks/quick-start.md)).
 
-**Erwartetes Ergebnis:**
+### 3. Speichern
 
-```
-NAME            STATUS   SIZE   STORAGECLASS   AGE
-vm-data-disk    Ready    50Gi   replicated     30s
-```
+Prüfen Sie die Quota-Übersicht oben auf der Seite und klicken Sie dann auf **Save**.
 
-### 2. Festplatte in der VMInstance referenzieren
+Die Konsole zeigt **Restart required** an: Die VM wird neu gestartet, um die neue Disk zu übernehmen. Warten Sie, bis sie wieder den Status **Running** hat. Die Disk erscheint im Abschnitt **Storage & Disks** der Detailseite.
 
-Fügen Sie den Namen der neuen Festplatte in die Liste `spec.disks[]` Ihrer VMInstance ein. Zum Beispiel, wenn Ihre VM bereits eine Systemfestplatte `vm-system-disk` verwendet:
-
-```yaml title="vm-instance.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: VMInstance
-metadata:
-  name: my-vm
-spec:
-  runStrategy: Always
-  instanceType: u1.xlarge
-  instanceProfile: ubuntu
-  external: true
-  externalMethod: PortList
-  externalPorts:
-    - 22
-  disks:
-    - name: vm-system-disk
-    - name: vm-data-disk
-  sshKeys:
-    - ssh-ed25519 AAAA... user@host
-```
-
-### 3. Änderungen anwenden
-
-```bash
-kubectl apply -f vm-instance.yaml
-```
-
-:::warning
-Die VM startet nach dem Hinzufügen einer Festplatte nicht automatisch neu. Sie müssen sie manuell neu starten:
-
-```bash
-# Option 1: über virtctl
-virtctl restart my-vm
-
-# Option 2: über runStrategy
-kubectl patch vminstance my-vm --type='merge' -p '{"spec":{"runStrategy":"Halted"}}'
-kubectl patch vminstance my-vm --type='merge' -p '{"spec":{"runStrategy":"Always"}}'
-```
-
-Warten Sie, bis die VM wieder im Zustand `Running` ist, bevor Sie fortfahren.
+:::note Bei der Erstellung hinzugefügte Disk
+Sie können Disks auch direkt bei der Erstellung der VM hinzufügen, mit **Add a disk** im Schritt **Storage** des Assistenten. Sie erhalten dann den Namen der VM mit einem Suffix (`ma-vm-2`, `ma-vm-3`…).
 :::
 
-### 4. Festplatte in der VM formatieren und einhängen
+### 4. Die Disk in der VM formatieren und einhängen
 
-Verbinden Sie sich mit der VM:
+Verbinden Sie sich mit dem Befehl aus dem Block **SSH Connection** mit der VM:
 
 ```bash
-virtctl ssh -i ~/.ssh/id_ed25519 ubuntu@my-vm
+ssh -i ~/.ssh/hikube-vm ubuntu@<public-ip>
 ```
 
-Identifizieren Sie die neue Festplatte mit `lsblk`:
+Identifizieren Sie die neue Disk:
 
 ```bash
 lsblk
@@ -118,30 +66,29 @@ vda     252:0    0   20G  0 disk
 vdb     252:16   0   50G  0 disk
 ```
 
-Die neue Festplatte erscheint als `vdb` (ohne Partition und ohne Einhängepunkt).
+Die neue Disk erscheint als `vdb`, ohne Partition und ohne Einhängepunkt.
 
-Formatieren Sie die Festplatte mit ext4:
+Formatieren Sie sie mit ext4:
 
 ```bash
 sudo mkfs.ext4 /dev/vdb
 ```
 
-Erstellen Sie den Einhängepunkt und hängen Sie die Festplatte ein:
+Hängen Sie sie ein:
 
 ```bash
 sudo mkdir -p /mnt/data
 sudo mount /dev/vdb /mnt/data
 ```
 
-Um das Einhängen beim Neustart persistent zu machen, fügen Sie einen Eintrag in `/etc/fstab` hinzu:
+Machen Sie die Einhängung dauerhaft, indem Sie die UUID des Dateisystems verwenden, die stabiler ist als der Gerätename:
 
 ```bash
-echo '/dev/vdb /mnt/data ext4 defaults 0 2' | sudo tee -a /etc/fstab
+UUID=$(sudo blkid -s UUID -o value /dev/vdb)
+echo "UUID=$UUID /mnt/data ext4 defaults,nofail 0 2" | sudo tee -a /etc/fstab
 ```
 
 ## Überprüfung
-
-Überprüfen Sie, ob die Festplatte korrekt eingehängt und zugänglich ist:
 
 ```bash
 df -h /mnt/data
@@ -154,17 +101,19 @@ Filesystem      Size  Used Avail Use% Mounted on
 /dev/vdb         49G   24K   47G   1% /mnt/data
 ```
 
-Testen Sie den Schreibzugriff:
+Testen Sie das Schreiben:
 
 ```bash
 sudo touch /mnt/data/test.txt && echo "OK"
 ```
 
-:::tip Replizierter Speicher
-Verwenden Sie für Datenfestplatten in der Produktion immer `storageClass: replicated`. Dies gewährleistet die Replikation über mehrere Rechenzentren.
-:::
+## Eine Disk trennen
+
+Klicken Sie unter **Edit** > **Storage** auf das Löschsymbol des Volumes, bestätigen Sie durch Eingabe seines Namens und klicken Sie dann auf **Save**. Die Disk wird von der VM getrennt (die neu gestartet wird) und bleibt im Menü **Disks** verfügbar. Hängen Sie sie vorher im Betriebssystem aus und entfernen Sie ihre Zeile aus `/etc/fstab`.
 
 ## Weiterführende Informationen
 
-- [API-Referenz](../api-reference.md)
-- [Schnellstart](../quick-start.md)
+- [Disks: Übersicht](../../storage/disks/overview.md)
+- [Eine bestehende Disk an eine VM anbinden](../../storage/disks/how-to/attach-to-vm.md)
+- [Die Größe einer Disk ändern](../../storage/disks/how-to/resize.md)
+- [VM-Schnellstart](../quick-start.md)

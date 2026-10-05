@@ -3,111 +3,63 @@ sidebar_position: 7
 title: Fehlerbehebung
 ---
 
-# Fehlerbehebung — MySQL
+# Fehlerbehebung — MariaDB
 
-### Defekte Replikation (Binlog gelöscht)
+### Der Cluster bleibt im Status „Creating“
 
-**Ursache**: Das Binary Log (Binlog) wurde auf dem Primary gelöscht, bevor das Replika es lesen konnte. Dies ist ein bekanntes Problem des MariaDB Operators, wenn `mariadbbackup` noch nicht zur Initialisierung der Knoten verwendet wird.
-
-**Lösung**:
-
-1. Identifizieren Sie das desynchronisierte Replika:
-   ```bash
-   kubectl get pods -l app=mysql-<name>
-   ```
-2. Führen Sie einen Dump von einem funktionierenden Replika durch und stellen Sie ihn auf dem Primary wieder her:
-   ```bash
-   mysqldump -h <replica-host> -P 3306 -u<user> -p<password> --column-statistics=0 <database> <table> > fix-table.sql
-   mysql -h <primary-host> -P 3306 -u<user> -p<password> <database> < fix-table.sql
-   ```
-3. Überprüfen Sie, dass die Replikation nach der Wiederherstellung korrekt fortgesetzt wird.
-
-:::note
-Dieses Problem ist im [MariaDB Operator](https://github.com/mariadb-operator/mariadb-operator/issues/141) referenziert. Eine automatische Korrektur ist in zukünftigen Versionen des Operators geplant.
-:::
-
-### Restic-Backup fehlgeschlagen
-
-**Ursache**: Die S3-Anmeldedaten sind falsch, der Endpoint ist nicht erreichbar oder das `resticPassword` stimmt nicht mit dem bei der Initialisierung des Repositories verwendeten überein.
+**Ursache**: Die Bereitstellung der Knoten und ihrer Volumes läuft noch. Sie kann mehrere Minuten dauern, mit 3 oder 5 Replicas länger.
 
 **Lösung**:
 
-1. Überprüfen Sie die Logs des Backup-Pods:
-   ```bash
-   kubectl logs -l app=mysql-<name>-backup
-   ```
-2. Stellen Sie sicher, dass die S3-Parameter in Ihrem Manifest korrekt sind:
-   - `s3Bucket`: Der Bucket existiert und ist zugänglich
-   - `s3AccessKey` / `s3SecretKey`: Die Schlüssel sind gültig
-   - `s3Region`: Die Region entspricht der des Buckets
-3. Überprüfen Sie, dass das `resticPassword` identisch mit dem bei der ersten Sicherung verwendeten ist. Eine Passwortänderung macht alte Sicherungen unzugänglich.
-4. Testen Sie die Verbindung zum S3-Endpoint vom Cluster aus.
+1. Warten Sie einige Minuten und aktualisieren Sie die Seite des Clusters.
+2. Wenn sich der Status nach etwa fünfzehn Minuten nicht ändert oder zu **Error** oder **Failed** wechselt, [wenden Sie sich an den Support](mailto:support@hidora.io) und geben Sie dabei das Projekt und den Namen des Clusters an.
 
-### Verbindung verweigert
+### Verbindung abgelehnt oder Zeitüberschreitung
 
-**Ursache**: Die MySQL-Pods laufen nicht, der Secret-Name ist falsch oder das `maxUserConnections`-Limit ist erreicht.
+**Ursache**: Der externe Zugriff ist deaktiviert, die IP-Adresse ist noch nicht zugewiesen, oder der Client verwendet eine falsche Adresse oder einen falschen Port.
 
 **Lösung**:
 
-1. Überprüfen Sie, dass die Pods den Status `Running` haben:
+1. Prüfen Sie in der Karte **Connection and network**, ob der **External Access** **Enabled** ist und das Feld **Host** eine Adresse enthält.
+2. Verwenden Sie den Port `3306` und testen Sie die Konnektivität:
    ```bash
-   kubectl get pods -l app=mysql-<name>
+   mysqladmin -h <host> -P 3306 -u <user> -p ping
    ```
-2. Rufen Sie die Anmeldedaten aus dem Secret ab. Das Muster ist `mysql-<name>-auth`:
-   ```bash
-   kubectl get tenantsecret mysql-<name>-auth -o jsonpath='{.data.password}' | base64 -d
-   ```
-3. Überprüfen Sie, dass das `maxUserConnections`-Limit für den betreffenden Benutzer nicht erreicht ist.
-4. Testen Sie die Verbindung von einem Pod im Cluster:
-   ```bash
-   kubectl run test-mysql --rm -it --image=mariadb:11 -- mysql -h mysql-<name> -P 3306 -u<user> -p
-   ```
+3. Prüfen Sie, ob keine ausgehende Firewall Ihres Netzwerks den Port `3306` blockiert.
 
-### Pod im CrashLoopBackOff
+### `Access denied for user`
 
-**Ursache**: Der Pod startet in einer Schleife neu, üblicherweise wegen Speichermangel (OOMKilled) oder einer ungültigen Konfiguration.
+**Ursache**: falsches oder durch eine Rotation widerrufenes Passwort, oder ein Benutzer ohne Recht auf der angegebenen Datenbank.
 
 **Lösung**:
 
-1. Prüfen Sie die Logs des vorherigen Pods, um den Fehler zu identifizieren:
-   ```bash
-   kubectl logs mysql-<name>-0 --previous
-   ```
-2. Prüfen Sie, ob der Pod wegen Speicherüberschreitung (OOMKilled) beendet wurde:
-   ```bash
-   kubectl describe pod mysql-<name>-0 | grep -i oom
-   ```
-3. Bei einem Speicherproblem erhöhen Sie den `resourcesPreset` oder definieren Sie explizite `resources`:
-   ```yaml title="mysql.yaml"
-   spec:
-     resourcesPreset: medium    # Von nano/micro auf medium oder höher wechseln
-   ```
-4. Wenden Sie die Änderung an und warten Sie auf den Neustart:
-   ```bash
-   kubectl apply -f mysql.yaml
-   ```
+1. Prüfen Sie in der Benutzerliste die Spalte **Databases**: Der Benutzer muss Zugriff auf die verwendete Datenbank haben.
+2. Fügen Sie den Zugriff bei Bedarf über **Actions** → **Manage Access** hinzu.
+3. Wenn Sie beim Passwort unsicher sind, generieren Sie über **Actions** → **Change Password** ein neues und aktualisieren Sie Ihre Anwendungen.
 
-### Festplatte voll
+### Fehler beim Hinzufügen eines Zugriffs oder eines Benutzers
 
-**Ursache**: Das persistente Volume ist durch Daten, Binary Logs oder temporäre Dateien gesättigt.
+**Ursache**: Der Name der Datenbank oder des Benutzers entspricht nicht den Benennungsregeln.
+
+**Lösung**: Verwenden Sie nur Kleinbuchstaben, Ziffern und Bindestriche, beginnend mit einem Buchstaben und endend mit einem Buchstaben oder einer Ziffer. Unterstriche (`_`) und Großbuchstaben werden nicht akzeptiert. Siehe [MariaDB-Konzepte](./concepts.md#benennungsregeln).
+
+### Disk-Speicherplatz voll
+
+**Ursache**: Das Datenvolumen (einschließlich der Binary Logs) hat die **Allocated Size** erreicht.
 
 **Lösung**:
 
-1. Überprüfen Sie die Festplattennutzung im Pod:
-   ```bash
-   kubectl exec mysql-<name>-0 -- df -h /var/lib/mysql
+1. Messen Sie den belegten Speicherplatz pro Datenbank:
+   ```sql
+   SELECT table_schema, ROUND(SUM(data_length + index_length) / 1024 / 1024, 1) AS size_mb
+   FROM information_schema.tables
+   GROUP BY table_schema;
    ```
-2. Erhöhen Sie die Volume-Größe in Ihrem Manifest:
-   ```yaml title="mysql.yaml"
-   spec:
-     size: 20Gi    # Vom aktuellen Wert erhöhen
-   ```
-3. Wenden Sie die Änderung an:
-   ```bash
-   kubectl apply -f mysql.yaml
-   ```
-4. Bei dringendem Bedarf bereinigen Sie veraltete Daten über einen MySQL-Client.
+2. Erhöhen Sie die **Disk size (GB)** über **Edit**, im Rahmen des Speicher-Quotas des Projekts. Siehe [Ressourcen ändern](./how-to/scale-resources.md).
+3. Löschen Sie veraltete Daten und optimieren Sie anschließend die betroffenen Tabellen (`OPTIMIZE TABLE`).
 
-:::warning
-Verringern Sie niemals den Wert von `size`. Die Volume-Vergrößerung wird unterstützt, die Verkleinerung jedoch nicht.
-:::
+### Replikation nicht synchron
+
+**Ursache**: Eine Replica kann dem Primary nicht mehr folgen (hohe Schreiblast, unzureichende Ressourcen, Infrastrukturvorfall).
+
+**Lösung**: Die Resynchronisierung einer Replica wird in der Konsole nicht angeboten. [Wenden Sie sich an den Support](mailto:support@hidora.io) und geben Sie dabei das Projekt und den Namen des Clusters an.

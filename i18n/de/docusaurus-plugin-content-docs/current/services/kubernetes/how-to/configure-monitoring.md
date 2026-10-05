@@ -1,159 +1,91 @@
 ---
-title: "Monitoring konfigurieren"
+title: "Das Monitoring konfigurieren"
 ---
 
-# Monitoring konfigurieren
+# Das Monitoring konfigurieren
 
-Diese Anleitung erklärt, wie Sie das Monitoring auf einem Kubernetes-Hikube-Cluster aktivieren und konfigurieren, einschließlich der Erfassung von Metriken, Logs und Visualisierungs-Dashboards.
+Diese Anleitung erklärt, wie Sie auf einem Hikube-Kubernetes-Cluster die Erfassung von Metriken und Logs mit dem Addon **Monitoring Agents** aktivieren und seine Funktion im Cluster prüfen.
 
 ## Voraussetzungen
 
-- Ein bereitgestellter Kubernetes-Hikube-Cluster (siehe [Schnellstart](../quick-start.md))
-- `kubectl` konfiguriert für die Interaktion mit der Hikube-API
-- Die YAML-Konfigurationsdatei Ihres Clusters
+- Ein bereitgestellter Hikube-Kubernetes-Cluster (siehe [Schnellstart](../quick-start.md))
+- Die über die Konsole heruntergeladene kubeconfig des Clusters (Schaltfläche **Kubeconfig**)
 
 ## Schritte
 
-### 1. Addon monitoringAgents aktivieren
+### 1. Das Addon Monitoring Agents aktivieren
 
-Ändern Sie die Konfiguration Ihres Clusters, um das Monitoring-Addon zu aktivieren:
+Das Addon **Monitoring Agents** („Monitoring agents for logs and metrics“) ist bei der Erstellung eines Clusters standardmäßig ausgewählt. Um es auf einem bestehenden Cluster zu aktivieren:
 
-```yaml title="cluster-monitoring.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Kubernetes
-metadata:
-  name: my-cluster
-spec:
-  controlPlane:
-    replicas: 3
+1. Öffnen Sie unter **Infrastructure** > **Kubernetes** das Menü **Actions** des Clusters und wählen Sie **Edit**.
+2. Aktivieren Sie im Abschnitt **Extensions & Addons** das Kontrollkästchen **Monitoring Agents**.
+3. Klicken Sie auf **Save**.
 
-  nodeGroups:
-    general:
-      minReplicas: 2
-      maxReplicas: 5
-      instanceType: "s1.large"
-      ephemeralStorage: 50Gi
-      roles:
-        - ingress-nginx
+Die Detailseite des Clusters zeigt dann **Monitoring Agents** im Abschnitt **Extensions** an.
 
-    monitoring:
-      minReplicas: 2
-      maxReplicas: 4
-      instanceType: "m1.xlarge"
-      ephemeralStorage: 200Gi
-      roles:
-        - monitoring
+### 2. Verstehen, was bereitgestellt wird
 
-  addons:
-    monitoringAgents:
-      enabled: true
-      valuesOverride:
-        fluentbit:
-          enabled: true
-```
+Das Addon installiert im Cluster Erfassungs-Agents, die die Daten an das Monitoring der Hikube-Plattform übermitteln. Im Projekt muss keine Option aktiviert werden:
+
+| Komponente | Aufgabe |
+|------------|---------|
+| **VictoriaMetrics Agent** (`vmagent`) | Erfasst und sendet die Metriken |
+| **Fluent Bit** | Erfasst und sendet die Logs der Container |
+| **kube-state-metrics** | Stellt den Zustand der Kubernetes-Objekte als Metriken bereit |
+| **Node exporter** | Stellt die Systemmetriken der Nodes bereit |
+
+Die Agents laufen auf den Nodes des Clusters; die Speicherung der Metriken und Logs belegt Ihre Nodes nicht.
 
 :::note
-Die Aktivierung von Fluent Bit (`fluentbit.enabled: true`) ermöglicht die Erfassung und Weiterleitung der Logs Ihrer Anwendungen an den Observability-Stack.
+Der Zugriff auf die Monitoring-Dashboards des Projekts wird in der Konsole nicht angeboten; wenden Sie sich an den Support.
 :::
 
-### 2. Dedizierte Node Group für Monitoring erstellen
-
-Die Monitoring-Komponenten (VictoriaMetrics, Grafana, Fluent Bit) verbrauchen erhebliche Ressourcen. Es wird empfohlen, eine dedizierte Node Group mit speicheroptimierten Instanzen bereitzustellen:
-
-```yaml title="cluster-monitoring.yaml"
-nodeGroups:
-  monitoring:
-    minReplicas: 2
-    maxReplicas: 4
-    instanceType: "m1.xlarge"    # 4 vCPU, 32 GB RAM
-    ephemeralStorage: 200Gi       # Großer Speicher für Metriken und Logs
-    roles:
-      - monitoring
-```
-
-:::tip
-Die M-Serie (Memory Optimized) ist ideal für Monitoring, da Metriken-Datenbanken (VictoriaMetrics) und Log-Indexierungsengines viel Speicher benötigen.
-:::
-
-### 3. Konfiguration anwenden
+### 3. Die Agents im Cluster prüfen
 
 ```bash
-kubectl apply -f cluster-monitoring.yaml
+export KUBECONFIG=~/Downloads/kubeconfig-<cluster-name>.yaml
 
-# Warten, bis der Cluster bereit ist
-kubectl get kubernetes my-cluster -w
+# Pods der Monitoring-Agents auflisten
+kubectl get pods -A | grep -E "vmagent|fluent-bit|kube-state-metrics|node-exporter"
 ```
 
-### 4. Zugriff auf die Monitoring-Tools
+**Erwartetes Ergebnis**: Die Pods der Agents sind im Zustand `Running`, mit je einem Fluent-Bit-Pod und einem node-exporter-Pod pro Node.
 
-Sobald der Cluster aktualisiert ist, prüfen Sie, ob die Monitoring-Komponenten im Child-Cluster bereitgestellt sind:
-
-```bash
-export KUBECONFIG=cluster-admin.yaml
-
-# Monitoring-Pods auflisten
-kubectl get pods -n monitoring
-
-# Verfügbare Services prüfen
-kubectl get svc -n monitoring
-
-# Zugriff auf Grafana (falls über Ingress verfügbar)
-kubectl get ingress -n monitoring
-```
-
-Für lokalen Zugriff auf Grafana:
+### 4. Die Metriken im Cluster einsehen
 
 ```bash
-kubectl port-forward -n monitoring svc/grafana 3000:80 &
-# http://localhost:3000 im Browser öffnen
-```
-
-### 5. Metriken überprüfen
-
-Bestätigen Sie, dass die Metriken korrekt erfasst werden:
-
-```bash
-# Knoten-Metriken
+# Metriken der Nodes
 kubectl top nodes
 
-# Pod-Metriken
+# Metriken der Pods
 kubectl top pods -A
 
-# Cluster-Events
-kubectl get events --sort-by=.metadata.creationTimestamp
+# Events des Clusters
+kubectl get events -A --sort-by=.metadata.creationTimestamp
 ```
 
-**Erwartetes Ergebnis für `kubectl top nodes`:**
+**Beispielergebnis für `kubectl top nodes`:**
 
 ```console
 NAME                          CPU(cores)   CPU%   MEMORY(bytes)   MEMORY%
 my-cluster-general-xxxxx      250m         6%     1200Mi          15%
-my-cluster-monitoring-yyyyy   800m         20%    4500Mi          14%
+my-cluster-general-yyyyy      310m         7%     1350Mi          17%
 ```
 
 ## Überprüfung
 
-Prüfen Sie, ob der gesamte Monitoring-Stack funktionsfähig ist:
-
 ```bash
-# Alle Monitoring-Komponenten prüfen
-kubectl get pods -n monitoring
-
-# Fluent Bit Logs prüfen
-kubectl logs -n monitoring -l app.kubernetes.io/name=fluent-bit --tail=20
+# Logs eines Fluent-Bit-Agents, falls Zweifel am Versand der Logs bestehen
+# Namespace der Fluent-Bit-Agenten
+FLUENTBIT_NS=$(kubectl get ds -A -l app.kubernetes.io/name=fluent-bit -o jsonpath='{.items[0].metadata.namespace}')
+kubectl logs -n "$FLUENTBIT_NS" -l app.kubernetes.io/name=fluent-bit --tail=20 --prefix
 ```
 
-**Erwartetes Ergebnis:**
-
-```console
-NAME                                 READY   STATUS    RESTARTS   AGE
-grafana-xxxxx-yyyyy                  1/1     Running   0          10m
-vmagent-xxxxx-yyyyy                  1/1     Running   0          10m
-fluent-bit-xxxxx                     1/1     Running   0          10m
-```
+:::warning
+Die Ziele der Metriken und Logs werden von der Plattform konfiguriert. Um das Verhalten der Agents zu ändern (Ressourcen, Erfassungsfilter), wenden Sie sich an den Support.
+:::
 
 ## Weiterführende Informationen
 
-- [API-Referenz](../api-reference.md) -- Konfiguration des Addons `monitoringAgents`
-- [Konzepte](../concepts.md) -- Architektur und Observability
-- [Zugang und Tools](./toolbox.md) -- Debugging-Befehle und Metriken
+- [Monitoring Agents](../plugins/monitoring-agents.md): Details zum Addon
+- [Zugriff und Werkzeuge](./toolbox.md): Diagnosebefehle und Metriken

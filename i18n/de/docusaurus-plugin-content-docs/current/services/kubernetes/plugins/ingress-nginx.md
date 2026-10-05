@@ -1,176 +1,83 @@
 ---
 sidebar_position: 5
-title: Ingress Nginx
+title: Ingress NGINX
 ---
 
-# Details zum Feld `addons.ingressNginx`
+# Ingress NGINX
 
-Das Feld `addons.ingressNginx` definiert die Konfiguration des Add-ons **Ingress NGINX**, das zur Verwaltung der HTTP(S)-Eingangspunkte des Kubernetes-Clusters verwendet wird.
-Es stellt einen NGINX-Controller bereit, der interne Anwendungen über Ingress-Routen exponiert, mit vollständiger Unterstützung für TLS, Load Balancing und Kubernetes-Annotations.
+Das Addon **Ingress NGINX** stellt einen auf NGINX basierenden Ingress-Controller bereit. Es macht die Anwendungen des Clusters über `Ingress`-Ressourcen erreichbar, mit Unterstützung für TLS, Load Balancing und NGINX-Annotationen.
 
-```yaml
-addons:
-  ingressNginx:
-    enabled: true
-    exposeMethod: LoadBalancer
-    hosts:
-      - app.example.com
-      - api.example.com
-    valuesOverride:
-      ingressNginx:
-        controller:
-          replicaCount: 2
-          service:
-            type: LoadBalancer
+## In der Konsole
+
+1. Bei der Erstellung ist **Ingress NGINX** im Schritt **Addons** standardmäßig ausgewählt.
+2. Auf einem bestehenden Cluster: **Edit** > **Extensions & Addons**, **Ingress NGINX** aktivieren oder deaktivieren, dann **Save**.
+
+Die Detailseite des Clusters zeigt **Ingress NGINX** im Abschnitt **Extensions** an, wenn es aktiv ist.
+
+### Erreichbarkeit
+
+Der Controller wird über einen Service vom Typ `LoadBalancer` bereitgestellt und läuft auf den Nodes der Gruppen, die als **Exposed on the internet (Public IP)** markiert sind (Schritt **Nodes**). Die erste Gruppe des Clusters ist immer erreichbar. Das PROXY-Protokoll ist standardmäßig nicht aktiviert.
+
+:::note
+Die Wahl der Bereitstellungsmethode (`LoadBalancer` oder `Proxied`) und die Deklaration von Hostnamen auf Ebene des Addons werden in der Konsole nicht angeboten; wenden Sie sich an den Support.
+:::
+
+## Die Konfiguration überschreiben
+
+Sobald das Addon ausgewählt ist, erscheint das Feld **Helm Configuration (YAML) — optional**. Der Wert wird unter dem Schlüssel `ingress-nginx` an das Helm-Chart von Ingress NGINX übergeben. Zum Beispiel, um die Ressourcen und die NGINX-Konfiguration anzupassen:
+
+```yaml title="ingress-nginx-override.yaml"
+ingress-nginx:
+  controller:
+    resources:
+      requests:
+        cpu: 100m
+        memory: 90Mi
+      limits:
+        cpu: 500m
+        memory: 500Mi
+    config:
+      ssl-protocols: "TLSv1.2 TLSv1.3"
 ```
 
----
+Die verfügbaren Optionen sind im [Helm-Chart von Ingress NGINX](https://artifacthub.io/packages/helm/ingress-nginx/ingress-nginx) beschrieben.
 
-## `ingressNginx` (Object) — **Erforderlich**
+## Nutzung im Cluster
 
-### Beschreibung
+```bash
+# Externe IP des Controllers (Spalte EXTERNAL-IP)
+kubectl get svc -A -l app.kubernetes.io/name=ingress-nginx
 
-Das Feld `ingressNginx` gruppiert die Hauptkonfiguration des auf NGINX basierenden Ingress Controllers.
-Es ermöglicht die Aktivierung der Controller-Bereitstellung, die Wahl der Expositionsmethode und die Definition der zugehörigen öffentlichen Hosts.
-
-### Beispiel
-
-```yaml
-ingressNginx:
-  enabled: true
-  exposeMethod: Proxied
-  hosts:
-    - app.example.com
+# In Ihren Manifesten zu verwendende Ingress-Klasse
+kubectl get ingressclass
 ```
 
----
+Beispiel für einen Ingress:
 
-## `enabled` (boolean) — **Erforderlich**
-
-### Beschreibung
-
-Gibt an, ob der **Ingress NGINX** Controller aktiviert (`true`) oder deaktiviert (`false`) ist.
-Wenn er aktiviert ist, werden ein oder mehrere NGINX-Pods bereitgestellt, um die Eingangsregeln des Clusters zu verwalten.
-
-### Beispiel
-
-```yaml
-enabled: true
-```
-
----
-
-## `exposeMethod` (string) — **Erforderlich**
-
-### Beschreibung
-
-Bestimmt die **Expositionsmethode** des Ingress NGINX Controllers.
-Dieses Feld akzeptiert folgende Werte:
-
-| Wert | Beschreibung |
-|--------|--------------|
-| `Proxied` | Der Controller wird über einen internen Proxy oder einen bestehenden Ingress exponiert. |
-| `LoadBalancer` | Der NGINX-Service wird über einen `Service` vom Typ `LoadBalancer` exponiert. |
-
-### Beispiel
-
-```yaml
-exposeMethod: LoadBalancer
-```
-
----
-
-## `hosts` (Array)
-
-### Beschreibung
-
-Listet die dem Ingress NGINX Controller zugeordneten **Domainnamen** auf.
-Diese Hosts definieren die öffentlichen Routen, die von außerhalb des Clusters erreichbar sind.
-
-### Beispiel
-
-```yaml
-hosts:
-  - app.example.com
-  - api.example.com
-```
-
----
-
-## `valuesOverride` (Object) — **Erforderlich**
-
-### Beschreibung
-
-Das Feld `valuesOverride` ermöglicht das **Überschreiben der Helm-Werte** der Ingress NGINX-Bereitstellung.
-Es wird verwendet, um die Controller-Konfiguration anzupassen (Anzahl der Replikas, Service-Typ, Ressourcen, Annotations usw.).
-
-#### **Ingress NGINX**
-
-Ingress-Controller für HTTP/HTTPS-Exposition.
-
-```yaml
+```yaml title="ingress.yaml"
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: my-app
 spec:
-  addons:
-    ingressNginx:
-      enabled: true
-      hosts:
-        - "app1.example.com"
-        - "app2.example.com"
-        - "*.api.example.com"  # Wildcard-Unterstützung
-      valuesOverride: {}
+  ingressClassName: nginx
+  rules:
+    - host: app.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: my-app
+                port:
+                  number: 80
 ```
 
-#### **Erweiterte Ingress NGINX-Konfiguration**
-
-```yaml
-spec:
-  addons:
-    ingressNginx:
-      enabled: true
-      hosts:
-        - "production.company.com"
-        - "*.apps.company.com"
-      valuesOverride:
-        ingressNginx:
-          controller:
-            # Replikation für Hochverfügbarkeit
-            replicaCount: 3
-
-            # Ressourcen-Konfiguration
-            resources:
-              requests:
-                cpu: 100m
-                memory: 90Mi
-              limits:
-                cpu: 500m
-                memory: 500Mi
-
-            # LoadBalancer-Service-Konfiguration
-            service:
-              type: LoadBalancer
-              annotations:
-                service.beta.kubernetes.io/aws-load-balancer-type: nlb
-
-            # Metriken
-            metrics:
-              enabled: true
-              serviceMonitor:
-                enabled: true
-
-            # SSL-Konfiguration
-            config:
-              ssl-protocols: "TLSv1.2 TLSv1.3"
-              ssl-ciphers: "ECDHE-ECDSA-AES128-GCM-SHA256,ECDHE-RSA-AES128-GCM-SHA256"
-
-            # Logging
-            enableSnippets: true
-```
-
----
+Lassen Sie dann Ihre Domainnamen (DNS-Eintrag `A`) auf die externe IP des Controllers zeigen. Für HTTPS siehe [Einen Ingress mit TLS bereitstellen](../how-to/deploy-ingress-tls.md).
 
 ## Best Practices
 
-- Bevorzugen Sie `Proxied` für On-Premises-Umgebungen, in denen der Zugriff über einen externen Reverse Proxy verwaltet wird.
-- Definieren Sie mehrere `hosts` für Multi-Domain-Anwendungen.
-- Verwenden Sie `valuesOverride`, um Ressourcen, Anzahl der Replikas und TLS-Konfiguration anzupassen.
-- Konfigurieren Sie die Annotations (`nginx.ingress.kubernetes.io/*`) direkt über die `Ingress`-Manifeste für eine bessere Anwendungskontrolle.
+- Widmen Sie dem eingehenden Traffic eine erreichbare Node-Gruppe, um ihn von Ihren Rechen-Workloads zu isolieren.
+- Konfigurieren Sie die Annotationen `nginx.ingress.kubernetes.io/*` direkt in Ihren `Ingress`-Manifesten, um sie pro Anwendung zu steuern.
+- Aktivieren Sie [Ouroboros](./ouroboros.md), wenn Pods des Clusters die öffentlichen Domains erreichen müssen, die von diesem Ingress ausgeliefert werden.

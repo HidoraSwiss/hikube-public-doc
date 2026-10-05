@@ -5,44 +5,54 @@ title: FAQ
 
 # FAQ — GPU
 
-### Welche GPU-Modelle sind verfügbar?
+### Wo befindet sich die GPU-Seite in der Konsole?
 
-Hikube bietet mehrere NVIDIA-GPUs:
+Es gibt keine: Die GPU wird im Assistenten der Ressource gewählt, die sie nutzt.
 
-| GPU | Architektur | Speicher | Anwendungsfall |
-|-----|-------------|---------|-------------|
-| **L40S** | Ada Lovelace | 48 GB GDDR6 | Inferenz, Grafik-Rendering |
-| **A100 (PCIe / SXM4)** | Ampere | 80 GB HBM2e | ML-Training, wissenschaftliches Rechnen |
-| **RTX PRO 6000 Blackwell** | Blackwell | 96 GB GDDR7 | LLM, intensives Rechnen |
-
-Die in den Manifesten zu verwendenden Bezeichner:
-
-```yaml
-gpus:
-  - name: "nvidia.com/AD102GL_L40S"                                  # L40S
-  - name: "nvidia.com/GA100_A100_PCIE_80GB"                          # A100 PCIe
-  - name: "nvidia.com/GA100_A100_SXM4_80GB"                          # A100 SXM4
-  - name: "nvidia.com/GB202GL_RTX_PRO_6000_BLACKWELL_SERVER_EDITION" # RTX PRO 6000 Blackwell
-```
+- **VM**: **VM Instances** > **Create an Instance**, Schritt **Configuration**, Abschnitt **Hardware Acceleration (GPU)**; oder **Edit** bei einer bestehenden VM.
+- **Kubernetes**: **Kubernetes** > **Create cluster** (oder **Edit**), Schritt **Nodes**, Abschnitt **GPU** einer Node-Gruppe.
 
 ---
 
-### Was ist der Unterschied zwischen GPU in VM und GPU in Kubernetes?
+### Welche GPU-Modelle sind verfügbar?
+
+| Modell | Speicher | Anwendungsfall |
+|--------|---------|-------------|
+| **NVIDIA L40S** | 48 GB | Inferenz, Rendering, Prototyping |
+| **NVIDIA A100 80GB** | 80 GB | ML-Training, wissenschaftliches Rechnen |
+| **NVIDIA H100 80GB** | 80 GB | Training und Inferenz großer Modelle |
+| **NVIDIA RTX 6000 Pro** | 96 GB | LLM, rechenintensive Aufgaben |
+
+Die Auswahl zeigt alle Modelle an; diejenigen ohne freie Einheit sind als **Unavailable** markiert.
+
+---
+
+### Warum ist ein Modell als Unavailable markiert?
+
+Alle seine Einheiten sind anderen Workloads zugewiesen. Die Konsole gibt die Anzahl freier Einheiten nicht an. Versuchen Sie es später erneut, wählen Sie ein anderes Modell oder wenden Sie sich bei Kapazitätsbedarf an [sales@hidora.io](mailto:sales@hidora.io).
+
+---
+
+### Kann ich mehrere GPUs in eine VM einbauen?
+
+Ja: Klicken Sie auf eine Karte und verwenden Sie dann **+**, um GPUs desselben Modells hinzuzufügen, oder wählen Sie mehrere Modelle aus. Alle müssen auf demselben physischen Server frei sein; andernfalls schlägt die Bereitstellung mit **The following GPUs are not available: …** fehl.
+
+---
+
+### Was ist der Unterschied zwischen GPU in einer VM und GPU in Kubernetes?
 
 | Aspekt | GPU in VM | GPU in Kubernetes |
 |--------|----------|-------------------|
-| **Zugriffsmodus** | Exklusiver PCI Passthrough | Geteiltes Device Plugin |
-| **Isolation** | GPU dediziert für die VM | Durch K8s orchestriertes Scheduling |
-| **Treiberinstallation** | Manuell (cloud-init) | Automatisch (GPU Operator) |
-| **Anwendungsfall** | Dedizierte Workstation, CUDA-Entwicklung | Containerisierte Workloads, Batch |
-
-In der VM wird der GPU direkt über PCI Passthrough angehängt: die VM hat exklusiven Zugriff auf die Hardware. In Kubernetes verwaltet der GPU Operator die Treiber und das Scheduling ermöglicht die Teilung der GPU-Ressourcen zwischen mehreren Pods.
+| **Zugriff** | GPU der VM fest zugeordnet | GPU vom Scheduler den Pods zugewiesen |
+| **Treiber** | Im Betriebssystem zu installieren (cloud-init oder manuell) | Vom Addon GPU Operator installiert |
+| **Teilen** | Nein | Ja, mit dem Addon HAMi |
+| **Anwendungsfall** | Workstation, CUDA-Entwicklung | Containerisierte Workloads, Batch, Inferenz |
 
 ---
 
 ### Welches CPU/GPU-Verhältnis wird empfohlen?
 
-Für eine optimale Nutzung planen Sie **8 bis 16 vCPU pro GPU**. Die Instanzen der **Universal (u1)**-Serie mit einem Verhältnis von 1:4 werden empfohlen:
+Planen Sie **8 bis 16 vCPU pro GPU** ein, vorzugsweise in der Serie **Universal (U)**:
 
 | Konfiguration | Instanz | vCPU | RAM |
 |--------------|----------|------|-----|
@@ -54,58 +64,25 @@ Für eine optimale Nutzung planen Sie **8 bis 16 vCPU pro GPU**. Die Instanzen d
 
 ### Wie werden die NVIDIA-Treiber installiert?
 
-Die Installation hängt vom Nutzungsmodus ab:
+**In einer VM**: von Ihnen, im Betriebssystem. Folgen Sie [CUDA und die GPU-Treiber installieren](../compute/how-to/install-cuda-drivers.md); dort finden Sie auch ein cloud-init-Skript zum Einfügen in **Cloud-Init script (User Data)**.
 
-**In der VM**: Manuell über cloud-init beim Start installieren:
-
-```yaml title="vm-gpu.yaml"
-spec:
-  cloudInit: |
-    #cloud-config
-    runcmd:
-      - apt-get update
-      - apt-get install -y linux-headers-$(uname -r)
-      - apt-get install -y nvidia-driver-550 nvidia-utils-550
-```
-
-**In Kubernetes**: Den GPU Operator-Addon aktivieren, der die Treiber automatisch auf den GPU-Knoten installiert:
-
-```yaml title="cluster-gpu.yaml"
-spec:
-  addons:
-    gpuOperator:
-      enabled: true
-```
+**In Kubernetes**: durch das Addon **GPU Operator**, das automatisch aktiviert wird, sobald eine Node-Gruppe GPUs hat.
 
 ---
 
-### Wie überprüfe ich, ob der GPU erkannt wird?
+### Was passiert, wenn ich eine VM mit GPU stoppe?
 
-**In der VM**:
-
-```bash
-nvidia-smi
-```
-
-Dieser Befehl zeigt die erkannten GPUs, ihre Speichernutzung und die aktiven Prozesse an.
-
-**In Kubernetes**:
-
-```bash
-kubectl get nodes -o json | jq '.items[].status.allocatable["nvidia.com/gpu"]'
-```
-
-Sie können auch aus einem Pod heraus überprüfen:
-
-```bash
-kubectl exec -it <pod-name> -- nvidia-smi
-```
+Die GPU wird freigegeben und kann einem anderen Workload zugewiesen werden. Die Konsole weist Sie in der Bestätigung zum Stoppen darauf hin. Ist die GPU beim Start nicht mehr verfügbar, schlägt Ihnen der Dialog **Select an alternative GPU** ein anderes Modell vor.
 
 ---
 
-### Wie fordere ich einen GPU in einem Kubernetes-Pod an?
+### Kann ich einer bestehenden Kubernetes-Node-Gruppe GPUs hinzufügen?
 
-Geben Sie die Ressource `nvidia.com/gpu` in den Container-Limits an:
+Nicht einer Gruppe, die ohne GPU erstellt wurde: Fügen Sie eine neue Node-Gruppe mit GPU hinzu. Eine mit GPU erstellte Gruppe kann Modell oder Anzahl ändern, behält aber mindestens eine GPU.
+
+---
+
+### Wie fordere ich in einem Kubernetes-Pod eine GPU an?
 
 ```yaml title="pod-gpu.yaml"
 apiVersion: v1
@@ -115,12 +92,31 @@ metadata:
 spec:
   containers:
     - name: cuda-app
-      image: nvidia/cuda:12.0-base
+      image: nvidia/cuda:12.4.1-base-ubuntu22.04
+      command: ["sleep", "infinity"]
       resources:
         limits:
           nvidia.com/gpu: 1
 ```
 
 :::note
-Die in `limits` angeforderte GPU-Anzahl muss den physisch auf den Knoten verfügbaren GPUs entsprechen. Ein Pod kann keinen Bruchteil eines GPU anfordern.
+Ohne das Addon HAMi kann ein Pod keinen Bruchteil einer GPU anfordern: Der Wert von `nvidia.com/gpu` ist eine ganze Zahl physischer GPUs.
 :::
+
+---
+
+### Wie prüfe ich, ob die GPU erkannt wird?
+
+**In einer VM**:
+
+```bash
+lspci | grep -i nvidia   # die GPU ist sichtbar
+nvidia-smi               # die Treiber sind installiert
+```
+
+**In Kubernetes** (mit dem Kubeconfig des Clusters, Schaltfläche **Kubeconfig** auf der Seite des Clusters):
+
+```bash
+kubectl get nodes -o custom-columns=NAME:.metadata.name,GPU:.status.allocatable.'nvidia\.com/gpu'
+kubectl exec -it <pod> -- nvidia-smi
+```

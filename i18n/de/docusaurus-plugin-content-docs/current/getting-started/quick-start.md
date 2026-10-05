@@ -5,291 +5,111 @@ title: Schnellstart
 
 # Schnellstart mit Hikube
 
-Willkommen! Dieser Leitfaden begleitet Sie Schritt für Schritt bei der Erstellung Ihres ersten Projekts auf Hikube. Am Ende dieses Tutorials haben Sie Ihre erste Anwendung in einer vollständig gesicherten Umgebung bereitgestellt.
+Dieser Leitfaden begleitet Sie von der ersten Anmeldung bis zu Ihrem ersten Kubernetes-Cluster, vollständig über die [Hikube-Konsole](https://console.hikube.cloud). Rechnen Sie mit etwa zehn Minuten.
 
 ---
 
 ## Voraussetzungen
 
-### **Zugang zur Plattform**
-Falls Sie noch kein Hikube-Konto haben, kontaktieren Sie unser Team unter **sales@hidora.io**, um Ihre Zugangsdaten zu erhalten.
+- **Ein Hikube-Konto.** Falls Sie noch keines haben, wenden Sie sich an unser Team unter **sales@hidora.io**.
+- **Ein aktueller Webbrowser.**
+- **kubectl**, nur für den letzten Schritt, der Ihren Kubernetes-Cluster abfragt. Siehe [Install kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl).
 
-### **Installation der erforderlichen Tools**
-
-#### **kubectl** (erforderlich)
-
-**macOS**
-```bash
-# Homebrew
-brew install kubectl
-```
-
-**Linux**
-```bash
-# Ubuntu/Debian
-sudo apt-get update && sudo apt-get install -y kubectl
-
-# RHEL/CentOS/Fedora
-sudo dnf install kubectl
-# oder für ältere Versionen
-sudo yum install kubectl
-
-# Alpine Linux
-sudo apk add kubectl
-```
-
-**Windows**
-```powershell
-# Chocolatey
-choco install kubernetes-cli
-
-# winget
-winget install Kubernetes.kubectl
-```
-
-**Offizielle Dokumentation**: [Install kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)
-
-#### **kubelogin** (erforderlich für OIDC-Authentifizierung)
-
-[kubelogin](https://github.com/int128/kubelogin) ist ein kubectl-Plugin für die OpenID-Connect-Authentifizierung (OIDC).
-
-**macOS / Linux (Homebrew)**
-```bash
-brew install kubelogin
-```
-
-**Krew (macOS, Linux, Windows)**
-```bash
-kubectl krew install oidc-login
-```
-
-**Windows (Chocolatey)**
-```powershell
-choco install kubelogin
-```
-
-**Offizielle Dokumentation**: [int128/kubelogin](https://github.com/int128/kubelogin)
-
-:::warning Achtung
-Verwenden Sie **nicht** das Azure-kubelogin (`Azure/kubelogin`). Hikube verwendet die standardmässige OIDC-Authentifizierung und benötigt das Plugin [int128/kubelogin](https://github.com/int128/kubelogin).
-:::
-
-### **Optionale empfohlene Tools**
-
-Für eine bessere Kubernetes-Verwaltungserfahrung:
-
-- **[Lens](https://k8slens.dev/)** - Moderne grafische Oberfläche für Kubernetes
-- **[K9s](https://k9scli.io/)** - Interaktive Terminal-Oberfläche für Kubernetes
-- **[Helm](https://helm.sh/)** - Paketmanager für Kubernetes
-- **[kubectx + kubens](https://github.com/ahmetb/kubectx)** - Tools zum schnellen Wechseln von Kontext und Namespace
-
----
-
-## Schritt 1: Auf Ihren Tenant zugreifen
-
-### **kubectl-Konfiguration**
-1. **Holen Sie Ihre kubeconfig** von Ihrem Hikube-Administrator
-2. **Konfigurieren Sie kubectl** mit Ihrer Konfigurationsdatei:
-   ```bash
-   # Option 1: Umgebungsvariable
-   export KUBECONFIG=/path/to/your/hikube-kubeconfig.yaml
-
-   # Option 2: Kopie in das Standardverzeichnis
-   cp hikube-kubeconfig.yaml ~/.kube/config
-   ```
-3. **Überprüfen Sie die Verbindung**:
-   ```bash
-   kubectl get pods
-   ```
-
-:::tip Mehrere Konfigurationen
-Sie können mehrere Cluster mit `kubectl config get-contexts` und `kubectl config use-context <context-name>` verwalten
-:::
-
-### **Überprüfung Ihres Tenants**
-Ihr Tenant ist Ihr **isolierter Arbeitsbereich**. Überprüfen Sie, dass Sie sich im richtigen Kontext befinden:
-```bash
-kubectl config current-context
-```
-
-:::warning -A / --all-namespaces nicht verwenden
-Das Flag `-A` (`--all-namespaces`) führt eine Abfrage auf Cluster-Ebene durch, was für einen Tenant-Benutzer nicht erlaubt ist. Verwenden Sie Befehle immer ohne `-A`: Ihre kubeconfig zielt bereits auf Ihren Namespace ab.
+:::note
+Die Konsole ist auf Französisch und Englisch verfügbar. Diese Dokumentation zitiert die englischen Beschriftungen: Wählen Sie Englisch im Profilmenü → **Language**.
 :::
 
 ---
 
-## Schritt 2: Ihren ersten Kubernetes-Cluster erstellen
+## Schritt 1: Bei der Konsole anmelden
 
-### **Bereitstellung über kubectl**
-1. **Erstellen Sie eine YAML-Datei** für Ihren Kubernetes-Cluster
-2. **Passen Sie die Konfiguration** an Ihre Bedürfnisse an
-3. **Stellen Sie mit kubectl bereit**:
+1. Öffnen Sie [https://console.hikube.cloud](https://console.hikube.cloud).
+2. Melden Sie sich mit den von Hidora bereitgestellten Zugangsdaten an.
+3. Sie gelangen zu Ihrer **Organisation**. Ihr Name wird im Profilmenü unter **Current Organization** angezeigt.
 
-```yaml
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Kubernetes
-metadata:
-  name: kube
-spec:
-  addons:
-    certManager:
-      enabled: true
-      valuesOverride: {}
-    fluxcd:
-      enabled: false
-      valuesOverride: {}
-    ingressNginx:
-      enabled: true
-      hosts:
-      - mon-app.example.com
-      valuesOverride: {}
-    monitoringAgents:
-      enabled: false
-      valuesOverride: {}
-    verticalPodAutoscaler:
-      valuesOverride: {}
-  controlPlane:
-    replicas: 3
-  host: k8s-api.example.com
-  kamajiControlPlane:
-    addons:
-      konnectivity:
-        server:
-          resources: {}
-          resourcesPreset: small
-    apiServer:
-      resources: {}
-      resourcesPreset: small
-    controllerManager:
-      resources: {}
-      resourcesPreset: small
-    scheduler:
-      resources: {}
-      resourcesPreset: small
-  nodeGroups:
-    md0:
-      ephemeralStorage: 30Gi
-      instanceType: u1.large
-      maxReplicas: 6
-      minReplicas: 3
-      roles:
-      - ingress-nginx
-  storageClass: replicated
-```
-
-4. **Stellen Sie den Cluster bereit**:
-   ```bash
-   # Konfiguration in einer Datei speichern
-   kubectl apply -f my-kubernetes-cluster.yaml
-   ```
-
-### **Bereitstellung verfolgen**
-- Der Cluster ist in **1-3 Minuten** bereit
-- Verfolgen Sie den Status mit kubectl:
-  ```bash
-  kubectl get kubernetes
-  kubectl describe kubernetes kube
-  ```
-- Status "Ready" = Cluster betriebsbereit
+:::note Keine Organisation?
+Zeigt die Konsole **No organization** an, ist Ihr Konto noch keiner Organisation zugeordnet. Aktualisieren Sie die Seite, falls Sie gerade eine erhalten haben, andernfalls [wenden Sie sich an den Support](mailto:support@hidora.io).
+:::
 
 ---
 
-## DNS-Konfiguration
+## Schritt 2: Ein Projekt erstellen
 
-### **Erforderliche DNS-Einträge**
+Ein **Projekt** ist ein isolierter Bereich, der Ihre Ressourcen (VMs, Cluster, Datenbanken …) bündelt und eigene Quotas hat.
 
-Damit Ihr Cluster erreichbar ist, müssen Sie die folgenden DNS-Einträge bei Ihrem DNS-Anbieter erstellen:
+1. Öffnen Sie die Projektauswahl und klicken Sie auf **Create a project**. Bei Ihrer ersten Anmeldung öffnet sich direkt der Assistent **Welcome to Hikube**.
+2. Schritt **General**: Geben Sie den **Project Name** ein. Er muss mit einem Buchstaben beginnen und darf nur Kleinbuchstaben und Ziffern enthalten, ohne Bindestrich, mit 3 bis 16 Zeichen (Beispiel: `demo01`).
+3. Schritt **Quotas** (optional): Legen Sie die Limits für **CPU** (vCPU), **Memory** (GB) und **Storage** (GB) des Projekts fest.
+4. Schritt **Summary**: Prüfen Sie die Zusammenfassung und klicken Sie dann auf **Create project**.
+
+Das Dashboard zeigt **Setting up your project…** an, während das Projekt vorbereitet wird, und öffnet sich dann automatisch.
+
+---
+
+## Schritt 3: Einen Kubernetes-Cluster erstellen
+
+1. Öffnen Sie im Seitenmenü **Infrastructure** → **Kubernetes** und klicken Sie dann auf **Create cluster**.
+2. Schritt **General**: Wählen Sie einen **Cluster name**, eine **Kubernetes Version** und die **Control Plane Instance Size**. Lassen Sie **API Endpoint (Host)** leer: Die Plattform erzeugt ihn für Sie.
+3. Schritt **Nodes**: Konfigurieren Sie mindestens eine Node-Gruppe (Instanztyp, Anzahl der Nodes, ephemerer Speicher).
+4. Schritt **Addons**: Aktivieren Sie die Erweiterungen, die Sie benötigen (zum Beispiel cert-manager oder ingress-nginx).
+5. Schritt **Summary**: Prüfen Sie die Zusammenfassung und die geschätzten Kosten und starten Sie dann die Erstellung.
+
+Die einzelnen Felder sind im [Kubernetes-Schnellstart](../services/kubernetes/quick-start.md) beschrieben.
+
+---
+
+## Schritt 4: Die Bereitstellung verfolgen
+
+Die Liste **Kubernetes Clusters** zeigt den Status des Clusters an:
+
+- **Creating**: Control Plane und Nodes werden bereitgestellt;
+- **Ready** / **Running**: Der Cluster ist betriebsbereit.
+
+Der Wechsel zu **Ready** dauert in der Regel einige Minuten.
+
+---
+
+## Schritt 5: Die kubeconfig des Clusters abrufen
+
+1. Klicken Sie auf den Cluster, um seine Seite **Cluster Details** zu öffnen.
+2. Klicken Sie auf **Kubeconfig**. Die Konsole lädt eine Datei `kubeconfig-<cluster-name>.yaml` herunter.
+
+:::warning Sensible Datei
+Diese Datei gewährt administrativen Zugriff auf Ihren Cluster. Versionieren Sie sie nicht und speichern Sie sie an einem geschützten Ort (zum Beispiel `~/.kube/`).
+:::
+
+---
+
+## Schritt 6: Den Cluster abfragen
 
 ```bash
-# Öffentliche IP Ihres Clusters über die Ingress-Ressourcen abrufen
-kubectl get ingress
+export KUBECONFIG=~/.kube/kubeconfig-<cluster-name>.yaml
+kubectl get nodes
 ```
 
 **Erwartetes Ergebnis:**
 
 ```console
-NAME                            CLASS           HOSTS                 ADDRESS        PORTS   AGE
-kubernetes-kube                 tenant-myco     k8s-api.example.com   91.x.x.x      80      2m
-kubernetes-kube-ingress-nginx   tenant-myco     mon-app.example.com   91.x.x.x      80      2m
+NAME                       STATUS   ROLES    AGE   VERSION
+<cluster-name>-<group>-xxxxx   Ready    <none>   3m    v1.xx.x
 ```
 
-Erstellen Sie die DNS-Einträge bei Ihrem Anbieter:
-
-```
-Type A : k8s-api.example.com → <ADDRESS>
-Type A : mon-app.example.com → <ADDRESS>
-```
-
-:::tip DNS-Konfiguration
-- **k8s-api.example.com**: Zugangspunkt zur Kubernetes-API
-- **mon-app.example.com**: Domain für Ihre Anwendungen über Ingress
-- Ersetzen Sie `example.com` durch Ihre tatsächliche DNS-Zone
-:::
-
----
-
-## Schritt 3: Kubeconfig abrufen
-
-### **Kubeconfig des Clusters extrahieren**
-Sobald Ihr Cluster bereitgestellt und bereit ist, rufen Sie die Zugangsdaten mit diesem Befehl ab:
-
-```bash
-# Kubeconfig des erstellten Clusters abrufen (Clusternamen anpassen)
-kubectl get secret kubernetes-<clusterName>-admin-kubeconfig \
-  -o go-template='{{ printf "%s\n" (index .data "admin.conf" | base64decode) }}' > admin.conf
-
-# Konkretes Beispiel mit dem Cluster "kube":
-kubectl get secret kubernetes-kube-admin-kubeconfig \
-  -o go-template='{{ printf "%s\n" (index .data "admin.conf" | base64decode) }}' > admin.conf
-```
-
-:::info Anzupassende Variable
-- `<clusterName>`: Ersetzen Sie durch den Namen Ihres Clusters (z.B. `kube` gemäss dem YAML-Manifest)
-:::
-
-### **Lokale Konfiguration**
-```bash
-# Kubeconfig des neuen Clusters verwenden
-export KUBECONFIG=./admin.conf
-
-# Verbindung zum erstellten Cluster überprüfen
-kubectl get nodes
-```
-
-:::note
-Dieser Befehl funktioniert erst, nachdem die DNS-Einträge konfiguriert wurden (vorheriger Abschnitt). Die Worker-Knoten können einige zusätzliche Minuten benötigen, um zu erscheinen.
-:::
-
-:::success Herzlichen Glückwunsch!
-Ihr Kubernetes-Cluster ist jetzt betriebsbereit mit **nativer Hochverfügbarkeit**!
-:::
+Die Worker-Nodes können nach dem Wechsel des Clusters zu **Ready** noch einige Minuten länger brauchen, bis sie erscheinen.
 
 ---
 
 ## Zusammenfassung
 
-Sie haben erstellt:
+Sie haben:
 
-- Einen **hochverfügbaren Kubernetes-Cluster**
-- Eine **vollständig gesicherte Umgebung** (Netzwerkisolation)
-- Einen **resilienten Speicher** (automatische Replikation)
----
+- ein isoliertes **Projekt** mit eigenen Quotas erstellt;
+- einen **verwalteten Kubernetes-Cluster** über die Konsole bereitgestellt;
+- seine kubeconfig abgerufen und den Zugriff mit `kubectl` überprüft.
 
 ## Brauchen Sie Hilfe?
 
-### **Dokumentation**
-- **[FAQ](../resources/faq.md)** → Antworten auf häufige Fragen
-- **[Troubleshooting](../resources/troubleshooting.md)** → Problemlösungen
+- **[FAQ](../resources/faq.md)**: Antworten auf häufige Fragen
+- **[Fehlerbehebung](../resources/troubleshooting.md)**: Lösungen für häufige Probleme
+- **Support**: Schaltfläche **Contact support** im Profilmenü der Konsole oder **support@hidora.io**
 
-### **Support**
-- **E-Mail:** support@hidora.io
-- **Dokumentation:** Diese Plattform
-- **Community:** Foren und Echtzeit-Chat
-
-:::tip Bravo!
-Sie haben Ihre ersten Schritte auf Hikube gemacht. Ihre Infrastruktur ist jetzt bereit, all Ihre ambitioniertesten Projekte aufzunehmen!
-:::
-
----
-
-**Empfohlener nächster Schritt:** [Schlüsselkonzepte](./concepts.md) → Beherrschen Sie die Grundlagen von Hikube
+**Empfohlener nächster Schritt:** [Schlüsselkonzepte](./concepts.md)

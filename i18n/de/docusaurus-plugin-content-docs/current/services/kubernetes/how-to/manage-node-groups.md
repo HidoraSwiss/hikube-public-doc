@@ -1,176 +1,106 @@
 ---
-title: "Node Group hinzufügen und ändern"
+title: "Eine Node-Gruppe hinzufügen und ändern"
 ---
 
-# Node Group hinzufügen und ändern
+# Eine Node-Gruppe hinzufügen und ändern
 
-Node Groups ermöglichen es, die Knoten Ihres Kubernetes-Clusters nach den Bedürfnissen Ihrer Workloads zu segmentieren. Diese Anleitung erklärt, wie Sie Node Groups in Ihrer Hikube-Konfiguration hinzufügen, ändern und entfernen.
+Mit Node-Gruppen unterteilen Sie die Nodes Ihres Kubernetes-Clusters nach den Anforderungen Ihrer Workloads. Diese Anleitung erklärt, wie Sie Node-Gruppen über die Hikube-Konsole hinzufügen, ändern und löschen.
 
 ## Voraussetzungen
 
-- Ein bereitgestellter Kubernetes-Hikube-Cluster (siehe [Schnellstart](../quick-start.md))
-- `kubectl` konfiguriert für die Interaktion mit der Hikube-API
-- Die YAML-Konfigurationsdatei Ihres Clusters
+- Ein bereitgestellter Hikube-Kubernetes-Cluster (siehe [Schnellstart](../quick-start.md))
+- Die über die Konsole heruntergeladene kubeconfig des Clusters (Schaltfläche **Kubeconfig**), um die Nodes mit `kubectl` zu prüfen
 
 ## Schritte
 
-### 1. Instanztypen verstehen
+### 1. Die Instanztypen verstehen
 
-Hikube bietet drei Instanzreihen für verschiedene Anwendungsfälle:
+Hikube bietet drei Instanzserien für unterschiedliche Anwendungsfälle an:
 
-| Reihe | Verhältnis CPU:RAM | Anwendungsfall |
-|-------|---------------|-------------|
-| **S (Standard)** | 1:2 | Allgemeine Workloads, Webanwendungen |
-| **U (Universal)** | 1:4 | Ausgewogene Workloads, Datenbanken |
-| **M (Memory Optimized)** | 1:8 | Speicherintensive Anwendungen, Caches |
+| Serie | Verhältnis CPU:RAM | Anwendungsfall |
+|-------|--------------------|----------------|
+| **Standard (S)** | 1:2 | Kostengünstige Nutzung, Entwicklung, Tests |
+| **Universal (U)** | 1:4 | Allgemeine Nutzung: Webserver, Anwendungen |
+| **Memory (M)** | 1:8 | Speicheroptimiert: Datenbanken, Caches |
 
-**Details der verfügbaren Instanzen:**
+Die Größen jeder Serie finden Sie in den [Konzepten](../concepts.md#instanztypen).
 
-| Instanz | vCPU | RAM |
-|----------|------|-----|
-| `s1.small` | 1 | 2 GB |
-| `s1.medium` | 2 | 4 GB |
-| `s1.large` | 4 | 8 GB |
-| `s1.xlarge` | 8 | 16 GB |
-| `s1.2xlarge` | 16 | 32 GB |
-| `s1.4xlarge` | 32 | 64 GB |
-| `s1.8xlarge` | 64 | 128 GB |
-| `u1.medium` | 1 | 4 GB |
-| `u1.large` | 2 | 8 GB |
-| `u1.xlarge` | 4 | 16 GB |
-| `u1.2xlarge` | 8 | 32 GB |
-| `u1.4xlarge` | 16 | 64 GB |
-| `u1.8xlarge` | 32 | 128 GB |
-| `m1.large` | 2 | 16 GB |
-| `m1.xlarge` | 4 | 32 GB |
-| `m1.2xlarge` | 8 | 64 GB |
-| `m1.4xlarge` | 16 | 128 GB |
-| `m1.8xlarge` | 32 | 256 GB |
+### 2. Die Bearbeitungsseite des Clusters öffnen
 
-### 2. Node Group hinzufügen
+1. Öffnen Sie in der Konsole **Infrastructure** > **Kubernetes**.
+2. Öffnen Sie das Menü **Actions** des Clusters und wählen Sie **Edit** (oder klicken Sie auf der Detailseite des Clusters auf **Edit**).
 
-Um eine neue Node Group hinzuzufügen, fügen Sie einen Eintrag unter `spec.nodeGroups` in Ihrer Cluster-Konfigurationsdatei hinzu:
+Die Bearbeitungsseite enthält die Abschnitte **General information**, **Node groups** und **Extensions & Addons** sowie die Quota-Anzeigen des Projekts.
 
-```yaml title="cluster-with-compute.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Kubernetes
-metadata:
-  name: my-cluster
-spec:
-  controlPlane:
-    replicas: 3
+### 3. Eine Node-Gruppe hinzufügen
 
-  nodeGroups:
-    # Bestehende Node Group
-    general:
-      minReplicas: 2
-      maxReplicas: 5
-      instanceType: "s1.large"
-      ephemeralStorage: 50Gi
-      roles:
-        - ingress-nginx
-
-    # Neue Node Group für rechenintensive Aufgaben
-    compute:
-      minReplicas: 1
-      maxReplicas: 10
-      instanceType: "u1.4xlarge"
-      ephemeralStorage: 100Gi
-      roles: []
-```
+1. Klicken Sie im Abschnitt **Node groups** auf **Add node group**. Eine neue Karte öffnet sich.
+2. Füllen Sie die Felder aus:
+   - **Group name**: zum Beispiel `compute` (3 bis 16 Zeichen: Kleinbuchstaben, Ziffern und Bindestriche);
+   - **Ephemeral storage size**: zum Beispiel 100 GB;
+   - **Minimum nodes** und **Maximum nodes**: zum Beispiel 1 und 10;
+   - **Instance type**: zum Beispiel Serie **Universal (U)**, Größe **4XLarge** (`u1.4xlarge`);
+   - **Exposed on the internet (Public IP)**: nur aktivieren, wenn diese Gruppe eingehenden Traffic empfangen soll (Ingress NGINX);
+   - **GPU**: bei Bedarf, siehe [GPUs hinzufügen](#5-gpus-hinzufügen).
+3. Klicken Sie auf **Save**.
 
 :::tip
-Wählen Sie beschreibende Namen für Ihre Node Groups (`compute`, `web`, `monitoring`, `gpu`), um die Cluster-Verwaltung zu erleichtern.
+Wählen Sie aussagekräftige Namen für Ihre Gruppen (`compute`, `web`, `monitoring`, `gpu`), um die Verwaltung des Clusters zu erleichtern.
 :::
 
-### 3. Bestehende Node Group ändern
+### 4. Eine bestehende Gruppe ändern
 
-Um eine Node Group zu ändern, aktualisieren Sie die gewünschten Felder in Ihrer YAML-Datei. Zum Beispiel, um den Instanztyp zu ändern und den ephemeren Speicher zu erhöhen:
-
-```yaml title="cluster-updated.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Kubernetes
-metadata:
-  name: my-cluster
-spec:
-  controlPlane:
-    replicas: 3
-
-  nodeGroups:
-    general:
-      minReplicas: 2
-      maxReplicas: 5
-      instanceType: "u1.xlarge"       # Geändert: von s1.large zu u1.xlarge
-      ephemeralStorage: 100Gi          # Geändert: von 50Gi zu 100Gi
-      roles:
-        - ingress-nginx
-```
+Klappen Sie im Abschnitt **Node groups** die Karte der Gruppe auf, ändern Sie die gewünschten Felder (Instanztyp, ephemerer Speicher, minimale oder maximale Anzahl der Nodes, Erreichbarkeit) und klicken Sie dann auf **Save**.
 
 :::warning
-Die Änderung des `instanceType` löst ein Rolling Update der Knoten der Gruppe aus. Stellen Sie sicher, dass Ihr Cluster über ausreichend Kapazität verfügt, um die Last während des Updates aufzufangen.
+Eine Änderung des Instanztyps ersetzt die Nodes der Gruppe schrittweise: Neue Nodes werden erstellt, danach werden die alten einzeln entfernt. Die Quota des Projekts muss die zusätzlichen Nodes während des Austauschs aufnehmen können.
 :::
 
-### 4. Node Group entfernen
+:::note
+Vermeiden Sie es, eine bestehende Gruppe umzubenennen: Eine umbenannte Gruppe wird als neue Gruppe behandelt.
+:::
 
-Um eine Node Group zu entfernen, entfernen Sie einfach ihren Block aus der Konfiguration und wenden Sie sie erneut an:
+### 5. GPUs hinzufügen
 
-```yaml title="cluster-simplified.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Kubernetes
-metadata:
-  name: my-cluster
-spec:
-  controlPlane:
-    replicas: 3
+Der Abschnitt **GPU** einer Karte erscheint nur, wenn für Ihr Projekt GPUs verfügbar sind.
 
-  nodeGroups:
-    general:
-      minReplicas: 2
-      maxReplicas: 5
-      instanceType: "s1.large"
-      ephemeralStorage: 50Gi
-      roles:
-        - ingress-nginx
-    # Die Node Group "compute" wurde entfernt
-```
+- Wählen Sie für eine **neue** Gruppe das Modell und die Anzahl der GPUs pro Node. Das Addon **GPU Operator** wird dann automatisch aktiviert und kann nicht mehr abgewählt werden.
+- Eine **ohne GPU erstellte** Gruppe kann keine erhalten: Fügen Sie eine neue GPU-Node-Gruppe hinzu.
+- Eine **mit GPUs erstellte** Gruppe kann Modell oder Anzahl ändern, muss aber mindestens eine GPU behalten: Um zu Nodes ohne GPU zurückzukehren, fügen Sie stattdessen eine neue Gruppe ohne GPU hinzu.
+
+Siehe auch [GPUs in Kubernetes bereitstellen](../../gpu/how-to/provision-gpu-kubernetes.md).
+
+### 6. Eine Node-Gruppe löschen
 
 :::warning
-Bevor Sie eine Node Group entfernen, stellen Sie sicher, dass die darauf laufenden Workloads auf andere Gruppen umgeplant werden können. Verwenden Sie bei Bedarf `kubectl drain` auf den betroffenen Knoten.
+Stellen Sie vor dem Löschen einer Gruppe sicher, dass die darauf laufenden Workloads auf andere Gruppen umgeplant werden können. Verwenden Sie bei Bedarf `kubectl drain` auf den betroffenen Nodes.
 :::
 
-### 5. Änderungen anwenden
+1. Klicken Sie im Abschnitt **Node groups** auf das Symbol **Remove this group** der betreffenden Karte.
+2. Klicken Sie auf **Save**.
 
-Wenden Sie die Änderungen mit `kubectl` an:
-
-```bash
-kubectl apply -f cluster-updated.yaml
-```
+Die erste Gruppe des Clusters kann nicht gelöscht werden; ein Cluster muss immer mindestens eine Node-Gruppe behalten.
 
 ## Überprüfung
 
-Prüfen Sie, ob die Änderungen übernommen wurden:
+Nach dem Speichern zeigt die Konsole „Cluster updated“ an und kehrt zur Detailseite zurück. Der Abschnitt **Node Pools** listet jede Gruppe mit ihrem Instanztyp und der Anzahl aktiver Nodes auf.
+
+Beobachten Sie im Cluster, wie die neuen Nodes hinzukommen:
 
 ```bash
-# Cluster-Konfiguration prüfen
-kubectl get kubernetes my-cluster -o yaml | grep -A 15 nodeGroups
-
-# Knoten des Child-Clusters beobachten
-kubectl --kubeconfig=cluster-admin.yaml get nodes -w
-
-# Maschinen prüfen, die gerade bereitgestellt werden
-kubectl get machines -l cluster.x-k8s.io/cluster-name=my-cluster
+export KUBECONFIG=~/Downloads/kubeconfig-<cluster-name>.yaml
+kubectl get nodes -w
 ```
 
 **Erwartetes Ergebnis:**
 
 ```console
-NAME                         STATUS   ROLES    AGE   VERSION
-my-cluster-general-xxxxx     Ready    <none>   10m   v1.29.0
-my-cluster-compute-yyyyy     Ready    <none>   2m    v1.29.0
+NAME                        STATUS   ROLES    AGE   VERSION
+my-cluster-general-xxxxx    Ready    <none>   10m   v1.xx.x
+my-cluster-compute-yyyyy    Ready    <none>   2m    v1.xx.x
 ```
 
 ## Weiterführende Informationen
 
-- [API-Referenz](../api-reference.md) -- Vollständige Details zu den `nodeGroups`-Feldern
-- [Konzepte](../concepts.md) -- Architektur der Hikube Node Groups
-- [Autoscaling konfigurieren](./configure-autoscaling.md) -- Automatische Skalierung der Node Groups verwalten
+- [Konzepte](../concepts.md): Beschreibung aller Felder einer Node-Gruppe
+- [Autoscaling konfigurieren](./configure-autoscaling.md): die automatische Skalierung der Gruppen verwalten

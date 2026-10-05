@@ -3,41 +3,48 @@ sidebar_position: 1
 title: Übersicht
 ---
 
-# MySQL auf Hikube
+import NavigationFooter from '@site/src/components/NavigationFooter';
 
-Hikube bietet einen **verwalteten MySQL-Dienst**, basierend auf dem Operator **MariaDB-Operator**.
-Er gewährleistet die Bereitstellung eines replizierten und selbstheilenden Clusters und garantiert **Hochverfügbarkeit**, **einfache Verwaltung** und **zuverlässige Leistung**, ohne Aufwand seitens des Benutzers.
+# MariaDB auf Hikube
+
+Hikube bietet einen **verwalteten MariaDB**-Service an. MariaDB ist mit dem MySQL-Protokoll und den MySQL-Clients kompatibel: Ihre bestehenden MySQL-Anwendungen und -Werkzeuge (`mysql`, `mysqldump`, JDBC-Konnektoren, PDO usw.) funktionieren ohne Änderungen.
+
+Der Service übernimmt die Bereitstellung eines replizierten und selbstheilenden Clusters, den Sie in der [Hikube-Konsole](https://console.hikube.cloud) erstellen und verwalten (Menü **DB & Messaging** → **MariaDB**).
+
+:::note
+Dieser Service wurde in dieser Dokumentation früher unter dem Namen „MySQL“ vorgestellt. Die Engine, MariaDB, ist unverändert.
+:::
 
 ---
 
 ## Architektur und Funktionsweise
 
-Der **verwaltete MySQL-Dienst** auf Hikube basiert auf dem Operator **MariaDB-Operator**, der die vollständige Verwaltung des Datenbank-Lebenszyklus automatisiert: Bereitstellung, Aktualisierung, Replikation und Wiederherstellung nach Ausfällen.
+Die Plattform automatisiert die Verwaltung des Lebenszyklus der Datenbank: Bereitstellung, Aktualisierung, Replikation und Wiederherstellung nach einem Vorfall.
 
-Die Architektur basiert auf einem **replizierten Cluster**:
+Die Architektur beruht auf einem **replizierten Cluster**:
 
-- Ein **Primary-Knoten** (Primary) verwaltet alle Schreibvorgänge und gewährleistet die Datenkonsistenz.
-- Ein oder mehrere **Replikas** (Standby) empfangen Transaktionen in Echtzeit über asynchrone oder semi-synchrone Replikation.
-- Ein **Auto-Failover**-Mechanismus befördert automatisch ein Replika zum neuen Primary bei einem Ausfall und garantiert **Hochverfügbarkeit**.
+- Ein **Primärknoten** (Primary) verarbeitet alle Schreibvorgänge und gewährleistet die Datenkonsistenz.
+- Eine oder mehrere **Replicas** erhalten die Transaktionen fortlaufend per Replikation.
+- Ein **Auto-Failover**-Mechanismus befördert bei einem Ausfall automatisch eine Replica zum neuen Primary.
 
 Dieser Ansatz bietet:
 
 - **Resilienz** bei Hardware- oder Softwareausfällen
-- **Lese-Skalierbarkeit** dank der Verteilung von Anfragen auf die Replikas
+- **Lese-Skalierbarkeit** durch die Verteilung der Anfragen auf die Replicas
 - **Einfache Verwaltung**, da die Plattform die Koordination und Wartung des Clusters übernimmt
 
 ```mermaid
 graph TD
     subgraph Gland
-        P1[Pod MySQL Primary] --> PVC1[(PVC - Storage)]
+        P1[MariaDB Primary] --> PVC1[(Speicher)]
     end
 
-    subgraph Lucerne
-        P2[Pod MySQL Replica] --> PVC2[(PVC - Storage)]
+    subgraph Luzern
+        P2[MariaDB Replica] --> PVC2[(Speicher)]
     end
 
-    subgraph Genève
-        P3[Pod MySQL Replica] --> PVC3[(PVC - Storage)]
+    subgraph Genf
+        P3[MariaDB Replica] --> PVC3[(Speicher)]
     end
 
     P1 -->|Replikation| P2
@@ -46,11 +53,31 @@ graph TD
 
 ---
 
+## Was Sie in der Konsole verwalten
+
+| Funktion | Verfügbar |
+|----------|------------|
+| Erstellung eines Clusters (Version 10.6, 10.11, 11.4 oder 11.8, Preset, Disk-Größe, 1, 3 oder 5 Replicas, externer Zugriff) | Ja |
+| Benutzer, globale Rolle und Zugriff pro Datenbank (Admin / nur Lesen), Passwortrotation | Ja |
+| Änderung der Version, der Disk-Größe und des externen Zugriffs | Ja |
+| Änderung des Presets oder der Anzahl der Replicas nach der Erstellung | Nein, [wenden Sie sich an den Support](mailto:support@hidora.io) |
+| Backups und Wiederherstellung | Nein, [wenden Sie sich an den Support](mailto:support@hidora.io) |
+
+---
+
 ## Anwendungsfälle
 
-Der **verwaltete MySQL-Dienst auf Hikube** eignet sich besonders für:
+- **Transaktionale Webanwendungen (OLTP)**: E-Commerce, ERP, CRM, bei denen Zuverlässigkeit und Geschwindigkeit der Transaktionen entscheidend sind.
+- **CMS und PHP-Anwendungen**: WordPress, Drupal, Magento und allgemein jede für MySQL konzipierte Anwendung.
+- **Mandantenfähige SaaS-Anwendungen**: eine isolierte Datenbank pro Kunde, mit der Hochverfügbarkeit der Plattform.
+- **Leseintensive Workloads**: Die Replicas ermöglichen es, die Anfragen zu verteilen.
 
-- **Transaktionale Webanwendungen (OLTP)**: E-Commerce, ERP, CRM, bei denen Zuverlässigkeit und Transaktionsgeschwindigkeit wesentlich sind.
-- **Multi-Client-SaaS-Anwendungen**: Jeder Client kann über eine eigene isolierte Datenbank verfügen und gleichzeitig von der Hochverfügbarkeit profitieren.
-- **Workloads mit hoher Leselast**: Die Replikas ermöglichen die Verteilung von Anfragen und verbessern die Gesamtleistung.
-- **Disaster-Recovery-Szenarien**: Dank des Auto-Failover-Mechanismus und der integrierten S3-Sicherungen.
+<NavigationFooter
+  nextSteps={[
+    {label: "Konzepte", href: "../concepts"},
+    {label: "Schnellstart", href: "../quick-start"},
+  ]}
+  seeAlso={[
+    {label: "Alle Datenbanken", href: "../../"},
+  ]}
+/>

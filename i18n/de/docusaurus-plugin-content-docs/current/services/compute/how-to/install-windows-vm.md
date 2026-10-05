@@ -1,239 +1,95 @@
 ---
-title: "Windows-VM installieren"
+title: "Eine Windows-VM erstellen"
 ---
 
-# Windows-VM installieren
+# Eine Windows-VM erstellen
 
-Die Installation einer Windows Server-VM auf Hikube erfordert mehrere manuelle Schritte: ISO-Festplatten vorbereiten, VM erstellen, Windows über VNC installieren und dann die virtio-Treiber laden. Diese Anleitung beschreibt den gesamten Prozess.
+Die Hikube-Konsole bietet sofort einsatzbereite **Windows Server**-Images. Diese Anleitung erklärt, wie Sie eine Windows-Server-VM erstellen, das generierte Administratorpasswort abrufen und sich per RDP verbinden.
 
 ## Voraussetzungen
 
-- **kubectl** konfiguriert mit Ihrem Hikube-Kubeconfig
-- **virtctl** installiert für den VNC-Zugang
-- Lizenz oder Evaluierung von **Windows Server 2025** (in dieser Anleitung wird die Evaluierungs-ISO verwendet)
-- Ausreichend Speicherplatz (insgesamt ca. 70 Gi)
+- Ein Hikube-Konto und ein Projekt mit mindestens 4 vCPU, 16 GB Arbeitsspeicher und 50 GB verfügbarem Speicher
+- Ein RDP-Client (Remotedesktopverbindung unter Windows, Windows App unter macOS, `xfreerdp` oder Remmina unter Linux)
+- Ein Passwortmanager, um das Administratorpasswort aufzubewahren
 
 ## Schritte
 
-### 1. Windows Server 2025 ISO-Festplatte erstellen
+### 1. Den Assistenten starten
 
-Erstellen Sie einen VMDisk vom Typ optisch mit der Windows Server-Installations-ISO:
+Öffnen Sie **Infrastructure** > **VM Instances** und klicken Sie auf **Create an Instance**. Geben Sie im Schritt **General** den **Instance name** ein (zum Beispiel `win-srv01`) und klicken Sie dann auf **Next**.
 
-```yaml title="win-iso-disk.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: VMDisk
-metadata:
-  name: win2k25-iso
-spec:
-  source:
-    http:
-      url: https://software-static.download.prss.microsoft.com/dbazure/888969d5-f34g-4e03-ac9d-1f9786c66749/SERVER_EVAL_x64FRE_en-us.iso
-  optical: true
-  storage: 7Gi
-  storageClass: replicated
-```
+### 2. Den Instanztyp wählen
 
-```bash
-kubectl apply -f win-iso-disk.yaml
-```
+Wählen Sie im Schritt **Configuration** mindestens **Universal (U)** > **XLarge** (4 vCPU, 16 GB). Klicken Sie auf **Next**.
 
-### 2. Virtio-Treiber ISO-Festplatte erstellen
-
-Die virtio-Treiber sind unerlässlich, damit Windows die Festplatten und das Netzwerk in einer KubeVirt-Umgebung erkennt:
-
-```yaml title="virtio-drivers-disk.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: VMDisk
-metadata:
-  name: virtio-drivers
-spec:
-  source:
-    http:
-      url: https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso
-  optical: true
-  storage: 1Gi
-  storageClass: replicated
-```
-
-```bash
-kubectl apply -f virtio-drivers-disk.yaml
-```
-
-### 3. Systemfestplatte erstellen
-
-Erstellen Sie eine leere Festplatte, die als Systemfestplatte für Windows dient:
-
-```yaml title="win-system-disk.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: VMDisk
-metadata:
-  name: win-system
-spec:
-  source: {}
-  optical: false
-  storage: 60Gi
-  storageClass: replicated
-```
-
-```bash
-kubectl apply -f win-system-disk.yaml
-```
-
-### 4. Überprüfen, dass alle drei Festplatten bereit sind
-
-```bash
-kubectl get vmdisk win2k25-iso virtio-drivers win-system
-```
-
-**Erwartetes Ergebnis:**
-
-```
-NAME              STATUS   SIZE   STORAGECLASS   AGE
-win2k25-iso       Ready    7Gi    replicated     2m
-virtio-drivers    Ready    1Gi    replicated     2m
-win-system        Ready    60Gi   replicated     1m
-```
-
-:::note Download-Zeit
-Der Download der Windows-ISO (~5 GB) kann je nach Bandbreite mehrere Minuten dauern. Warten Sie, bis alle Festplatten den Status `Ready` haben.
+:::note Windows-Lizenz
+Die Windows-Lizenz wird nach der Anzahl der vCPU abgerechnet. Sie ist in den geschätzten Kosten enthalten, die oben im Assistenten angezeigt werden.
 :::
 
-### 5. VMInstance erstellen
+### 3. Image und System-Disk wählen
 
-Erstellen Sie die VM mit den drei angehängten Festplatten. Die Systemfestplatte muss an erster Position stehen:
+Im Schritt **Storage**:
 
-```yaml title="windows-vm.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: VMInstance
-metadata:
-  name: windows-server
-spec:
-  runStrategy: Always
-  instanceProfile: windows.2k25.virtio
-  instanceType: u1.xlarge
-  external: true
-  externalMethod: PortList
-  externalPorts:
-    - 3389
-  disks:
-    - win-system
-    - win2k25-iso
-    - virtio-drivers
-```
+1. Wählen Sie unter **Operating System** die Karte **windows-server** und die Version **2022** oder **2025**.
+2. Setzen Sie **Size (GB)** auf mindestens `50`: Das ist das Minimum für Windows (Meldung **Min. 50 GB required** darunter).
+3. Wählen Sie den **Replication Type** und aktivieren Sie bei Bedarf **Disk Encryption**.
+4. Klicken Sie auf **Next**.
 
-```bash
-kubectl apply -f windows-vm.yaml
-```
+### 4. Den RDP-Port öffnen
 
-Warten Sie, bis die VM startet:
+Im Schritt **Network**:
 
-```bash
-kubectl get vminstance windows-server -w
-```
+1. Lassen Sie **Public IPv4 Address** aktiviert und **Enable Firewall** angehakt.
+2. Geben Sie in **Custom port...** den Wert `3389` ein und klicken Sie auf die Schaltfläche zum Hinzufügen.
+3. Entfernen Sie den Haken bei **SSH (22)**, wenn Sie OpenSSH auf dem Server nicht verwenden.
 
-### 6. Über VNC für die Installation zugreifen
+Das Feld **Cloud-Init script (User Data)** wird für Windows nicht angeboten.
 
-Öffnen Sie eine VNC-Sitzung zur VM:
+### 5. Bereitstellen und das Passwort kopieren
 
-```bash
-virtctl vnc windows-server
-```
+Klicken Sie im Schritt **Summary** auf **Create instance**. Der Dialog **Windows Instance Credentials** öffnet sich und zeigt an:
 
-Das Windows-Installationsprogramm sollte automatisch von der ISO starten. Folgen Sie den klassischen Installationsschritten:
+- **Default Username**;
+- **Administrator Password**.
 
-1. Wählen Sie Sprache und Tastatur
-2. Klicken Sie auf **Jetzt installieren**
-3. Wählen Sie die gewünschte Windows Server-Edition
-4. Akzeptieren Sie den Lizenzvertrag
-5. Wählen Sie **Benutzerdefinierte Installation**
+Kopieren Sie beide Werte mit den Kopierschaltflächen, speichern Sie sie in Ihrem Passwortmanager und klicken Sie dann auf **I copied the password and continue**.
 
-### 7. Virtio-Treiber während der Installation laden
-
-Beim Schritt der Auswahl der Installationsfestplatte erkennt Windows keine Festplatte. Sie müssen die virtio-Treiber laden:
-
-1. Klicken Sie auf **Treiber laden** (Load driver)
-2. Klicken Sie auf **Durchsuchen** (Browse)
-3. Navigieren Sie zum CD-Laufwerk der virtio-Treiber (in der Regel `E:\`)
-4. Wählen Sie den Ordner `vioscsi\2k25\amd64` (Storage Controller)
-5. Klicken Sie auf **OK** und dann **Weiter**
-
-Die 60-GB-Festplatte sollte nun erscheinen. Wählen Sie sie aus und setzen Sie die Installation fort.
-
-:::warning Netzwerktreiber
-Installieren Sie nach der Installation auch die Netzwerktreiber (NetKVM) und den Memory Balloon (Balloon) von der virtio-CD für optimale Leistung. Navigieren Sie zu den Ordnern `NetKVM\2k25\amd64` und `Balloon\2k25\amd64`.
+:::warning Passwort wird nur einmal angezeigt
+Das Passwort wird bei der Erstellung generiert und **nicht erneut angezeigt**. Wenn Sie es verlieren, kann es in der Konsole nicht wiederhergestellt werden.
 :::
 
-### 8. Nach der Installation: ISO-Festplatten entfernen
+### 6. Den Start abwarten
 
-Sobald Windows installiert und funktionsfähig ist, entfernen Sie die ISO-Festplatten aus dem Manifest, um Ressourcen freizugeben und einen Start von der ISO zu vermeiden:
+Warten Sie in der Liste **VM Instances** auf den Status **Running**. Der erste Start von Windows (Initialisierung und Konfiguration) dauert mehrere Minuten länger als bei einer Linux-VM: Warten Sie vor der ersten RDP-Verbindung.
 
-```yaml title="windows-vm.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: VMInstance
-metadata:
-  name: windows-server
-spec:
-  runStrategy: Always
-  instanceProfile: windows.2k25.virtio
-  instanceType: u1.xlarge
-  external: true
-  externalMethod: PortList
-  externalPorts:
-    - 3389
-  disks:
-    - win-system
-```
+### 7. Sich per RDP verbinden
+
+Notieren Sie die öffentliche IP-Adresse auf der Detailseite: Sie steht im Block **SSH Connection** des Abschnitts **Network & Security**. Verbinden Sie sich anschließend:
 
 ```bash
-kubectl apply -f windows-vm.yaml
+# Linux
+xfreerdp /v:<public-ip> /u:<username>
 ```
 
-Sie können dann die ISO-VMDisks löschen, wenn Sie sie nicht mehr benötigen:
-
-```bash
-kubectl delete vmdisk win2k25-iso virtio-drivers
-```
-
-### 9. RDP-Zugang konfigurieren (optional)
-
-Die VM exponiert bereits Port 3389 (RDP). Rufen Sie die externe IP-Adresse ab:
-
-```bash
-kubectl get vminstance windows-server -o yaml
-```
-
-Verbinden Sie sich mit Ihrem RDP-Client:
-
-```bash
-# Von Linux
-xfreerdp /v:<IP-EXTERNE> /u:Administrator
-
-# Von macOS (Microsoft Remote Desktop)
-# Fügen Sie einen PC mit der Adresse <IP-EXTERNE> hinzu
-```
+Unter Windows oder macOS fügen Sie in Ihrem Remotedesktop-Client einen PC mit der Adresse `<public-ip>` hinzu und verwenden die in Schritt 5 kopierten Anmeldedaten.
 
 ## Überprüfung
 
-Überprüfen Sie, ob die Windows-VM korrekt funktioniert:
+Testen Sie von Ihrem Rechner aus, ob der RDP-Port geöffnet ist:
 
 ```bash
-kubectl get vminstance windows-server
+nc -zv -w 5 <public-ip> 3389
 ```
 
-**Erwartetes Ergebnis:**
+**Erwartetes Ergebnis:** `Connection to <public-ip> 3389 port [tcp/ms-wbt-server] succeeded!`
 
-```
-NAME              STATUS    AGE
-windows-server    Running   15m
-```
+Ändern Sie nach der Anmeldung das Passwort und spielen Sie die Windows-Updates ein.
 
-Testen Sie den RDP-Zugang auf Port 3389:
-
-```bash
-nc -zv <IP-EXTERNE> 3389
-```
+:::note Installation von Ihrem eigenen ISO
+Die Installation von Windows von einem eigenen ISO erfordert während der Installation einen grafischen Konsolenzugriff (VNC). Diese Option wird in der Konsole nicht angeboten; wenden Sie sich an den [Support](mailto:support@hidora.io).
+:::
 
 ## Weiterführende Informationen
 
-- [API-Referenz](../api-reference.md)
-- [Externes Netzwerk konfigurieren](./configure-network.md)
+- [Netzwerk und Firewall konfigurieren](./configure-network.md)
+- [Eine zusätzliche Disk anbinden](./attach-extra-disk.md)

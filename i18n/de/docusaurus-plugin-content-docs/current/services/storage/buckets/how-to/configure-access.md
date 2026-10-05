@@ -1,76 +1,73 @@
 ---
-title: "S3-Zugang konfigurieren"
+title: "Benutzer und Zugriffsschlüssel verwalten"
 ---
 
-# S3-Zugang konfigurieren
+# Benutzer und Zugriffsschlüssel verwalten
 
-Jeder auf Hikube erstellte Bucket generiert automatisch ein eindeutiges S3-Zugriffsschlüsselpaar. Diese Anleitung erklärt, wie Sie diese Zugangsdaten abrufen, verschiedene S3-Clients (AWS CLI, MinIO Client, rclone) konfigurieren und die Schlüssel sicher in Ihre Kubernetes-Pods injizieren.
+Jeder Hikube-Bucket kann mehrere **S3-Benutzer** haben, jeder mit seinem eigenen Schlüsselpaar und seinem Recht (**Read-only** oder **Read / Write**). Diese Anleitung erklärt, wie Sie diese Benutzer in der [Hikube-Konsole](https://console.hikube.cloud) verwalten und die gängigen S3-Clients konfigurieren (AWS CLI, MinIO Client, rclone).
 
 ## Voraussetzungen
 
-- **kubectl** konfiguriert mit Ihrer Hikube-Kubeconfig
-- Ein auf Hikube erstellter **Bucket**
-- **jq** lokal installiert
-- Ein oder mehrere S3-Clients installiert: **AWS CLI**, **mc** (MinIO Client) oder **rclone**
+- Ein in Ihrem Projekt erstellter **Bucket** (siehe [Schnellstart](../quick-start.md)) im Status **Ready**
+- Ein oder mehrere installierte S3-Clients: **AWS CLI**, **mc** (MinIO Client) oder **rclone**
 
-## Schritte
+## Das Zugriffsmodell verstehen
 
-### 1. Zugriffsmodell verstehen
+- Ein Bucket kann **mehrere Benutzer** haben; jeder hat seine eigene **Access Key ID** und seinen **Secret Access Key**.
+- Die Schlüssel eines Benutzers gewähren **nur Zugriff auf diesen Bucket**.
+- Der **tatsächliche S3-Name** des Buckets und der **Endpunkt** sind allen seinen Benutzern gemeinsam; sie werden in der Karte **Access & Configuration** auf der Seite des Buckets angezeigt.
+- Der **geheime Schlüssel wird nur einmal angezeigt**, bei der Erstellung des Benutzers.
 
-Auf Hikube verfügt jeder Bucket über sein eigenes Zugriffsschlüsselpaar:
+## Einen Benutzer erstellen
 
-- **1 Bucket = 1 Schlüsselpaar** (accessKeyID + accessSecretKey)
-- Die Schlüssel werden bei der Bucket-Erstellung automatisch generiert
-- Die Zugangsdaten werden in einem Kubernetes Secret namens `bucket-<bucket-name>` gespeichert
-- Der S3-Endpunkt ist für alle Buckets gleich: `https://prod.s3.hikube.cloud`
+1. Öffnen Sie **Infrastructure** → **S3 Buckets** und klicken Sie dann auf den Bucket.
+2. Klicken Sie in der Karte **Users & Access** auf **Add User**.
+3. Im Fenster **New User**:
+   - Geben Sie den **Username** ein (3 bis 16 Zeichen: Kleinbuchstaben, Ziffern und Bindestriche; muss mit einem Buchstaben beginnen);
+   - Haken Sie **Read-only access** an, wenn der Benutzer die Objekte nur lesen soll.
+4. Klicken Sie auf **Create User**.
 
-:::tip
-Jeder Bucket profitiert von einem **dreifach replizierten** Hochverfügbarkeitsspeicher. Ihre Daten werden automatisch verteilt, um die Haltbarkeit zu gewährleisten.
+Das Fenster **Generated Credentials** zeigt **S3 Bucket**, **S3 Endpoint**, **Access Key ID** und **Secret Access Key** an.
+
+:::warning
+Kopieren Sie diese Werte, bevor Sie auf **I have saved these keys** klicken: Der geheime Schlüssel kann danach nicht wiederhergestellt werden.
 :::
 
-### 2. Zugangsdaten abrufen
+## Das Recht eines Benutzers ändern
 
-Extrahieren Sie die Verbindungsinformationen aus dem Kubernetes Secret:
+1. Öffnen Sie in der Karte **Users & Access** das Aktionsmenü des Benutzers.
+2. Wählen Sie **Edit access**.
+3. Setzen oder entfernen Sie den Haken bei **Read-only access** und klicken Sie dann auf **Save changes**.
 
-```bash
-kubectl get secret bucket-<bucket-name> -o jsonpath='{.data.BucketInfo}' | base64 -d | jq
-```
+Die Spalte **Access** der Tabelle zeigt dann **Read-only** oder **Read / Write** an. Die Schlüssel des Benutzers ändern sich nicht.
 
-Um die Werte einzeln zu extrahieren:
+## Schlüssel erneuern
 
-```bash
-# S3-Endpunkt
-kubectl get secret bucket-<bucket-name> -o jsonpath='{.data.BucketInfo}' | base64 -d | jq -r '.spec.secretS3.endpoint'
+Die Konsole bietet keine Rotation der Schlüssel eines bestehenden Benutzers an. Um Schlüssel zu erneuern (Verlust des geheimen Schlüssels, Verdacht auf ein Leck):
 
-# Access Key
-kubectl get secret bucket-<bucket-name> -o jsonpath='{.data.BucketInfo}' | base64 -d | jq -r '.spec.secretS3.accessKeyID'
+1. Erstellen Sie einen **neuen Benutzer** mit demselben Recht und rufen Sie seine Schlüssel ab.
+2. Aktualisieren Sie Ihre Anwendungen mit den neuen Schlüsseln.
+3. Löschen Sie den alten Benutzer: Aktionsmenü → **Delete**, dann bestätigen.
 
-# Secret Key
-kubectl get secret bucket-<bucket-name> -o jsonpath='{.data.BucketInfo}' | base64 -d | jq -r '.spec.secretS3.accessSecretKey'
+## Die S3-Clients konfigurieren
 
-# Tatsaechlicher Bucket-Name
-kubectl get secret bucket-<bucket-name> -o jsonpath='{.data.BucketInfo}' | base64 -d | jq -r '.spec.bucketName'
-```
+Ersetzen Sie in den folgenden Beispielen:
 
-:::note
-Der vom Secret zurückgegebene `bucketName` ist eine interne Kennung (z.B. `bucket-1df67984-321d-492d-bb06-2f4527bb0f5b`). Er unterscheidet sich vom `metadata.name` Ihres Manifests. Verwenden Sie immer diesen Wert für S3-Operationen.
-:::
+- `<endpoint>` durch den **Endpoint**, mit vorangestelltem `https://` (zum Beispiel `https://prod.s3.hikube.cloud`);
+- `<bucket>` durch den S3-**Bucket name**, der unter **Access & Configuration** angezeigt wird;
+- `<access-key>` und `<secret-key>` durch die Schlüssel des Benutzers.
 
-### 3. S3-Clients konfigurieren
+### AWS CLI
 
-#### AWS CLI
-
-Konfigurieren Sie ein dediziertes Profil für Hikube:
+Konfigurieren Sie ein eigenes Profil:
 
 ```bash
 aws configure --profile hikube
 ```
 
-Geben Sie die folgenden Werte ein:
-
-```
-AWS Access Key ID: <accessKeyID>
-AWS Secret Access Key: <accessSecretKey>
+```text
+AWS Access Key ID: <access-key>
+AWS Secret Access Key: <secret-key>
 Default region name: (leer lassen)
 Default output format: json
 ```
@@ -78,155 +75,65 @@ Default output format: json
 Verwenden Sie das Profil mit dem Hikube-Endpunkt:
 
 ```bash
-aws s3 ls s3://$BUCKET_NAME --endpoint-url https://prod.s3.hikube.cloud --profile hikube
+aws s3 ls s3://<bucket>/ --endpoint-url <endpoint> --profile hikube
 ```
 
-#### MinIO Client (mc)
-
-Erstellen Sie einen Alias für den Hikube-Endpunkt:
+### MinIO Client (mc)
 
 ```bash
-mc alias set hikube https://prod.s3.hikube.cloud ACCESS_KEY SECRET_KEY
+mc alias set hikube <endpoint> <access-key> <secret-key>
+
+# Auflisten, hochladen und herunterladen
+mc ls hikube/<bucket>/
+mc cp fichier.txt hikube/<bucket>/
+mc cp hikube/<bucket>/fichier.txt ./
 ```
 
-Testen Sie die Verbindung:
+### rclone
 
-```bash
-# Objekte auflisten
-mc ls hikube/$BUCKET_NAME
-
-# Datei hochladen
-mc cp datei.txt hikube/$BUCKET_NAME/
-
-# Datei herunterladen
-mc cp hikube/$BUCKET_NAME/datei.txt ./
-```
-
-#### rclone
-
-Fügen Sie eine rclone-Konfiguration für Hikube hinzu. Erstellen oder bearbeiten Sie die Datei `~/.config/rclone/rclone.conf`:
+Fügen Sie in `~/.config/rclone/rclone.conf` ein Remote hinzu:
 
 ```ini title="rclone.conf"
 [hikube]
 type = s3
 provider = Minio
-endpoint = https://prod.s3.hikube.cloud
-access_key_id = ACCESS_KEY
-secret_access_key = SECRET_KEY
+endpoint = <endpoint>
+access_key_id = <access-key>
+secret_access_key = <secret-key>
 acl = private
 ```
 
-Testen Sie die Verbindung:
-
 ```bash
-# Objekte auflisten
-rclone ls hikube:$BUCKET_NAME
+# Die Objekte auflisten
+rclone ls hikube:<bucket>
 
-# Lokales Verzeichnis synchronisieren
-rclone sync ./mein-ordner hikube:$BUCKET_NAME/mein-ordner
-
-# Datei kopieren
-rclone copy datei.txt hikube:$BUCKET_NAME/
+# Ein lokales Verzeichnis synchronisieren
+rclone sync ./mon-dossier hikube:<bucket>/mon-dossier
 ```
 
-### 4. Bucket in einem Kubernetes-Pod verwenden
-
-Um die S3-Zugangsdaten in einen Pod zu injizieren, verwenden Sie einen `initContainer`, der das Secret liest und die Werte als Umgebungsvariablen bereitstellt, oder mounten Sie das Secret direkt:
-
-```yaml title="app-with-bucket.yaml"
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: my-app
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: my-app
-  template:
-    metadata:
-      labels:
-        app: my-app
-    spec:
-      initContainers:
-      - name: extract-s3-creds
-        image: bitnami/kubectl:latest
-        command:
-        - sh
-        - -c
-        - |
-          SECRET=$(cat /secrets/BucketInfo)
-          echo "export AWS_ACCESS_KEY_ID=$(echo $SECRET | jq -r '.spec.secretS3.accessKeyID')" > /env/s3.env
-          echo "export AWS_SECRET_ACCESS_KEY=$(echo $SECRET | jq -r '.spec.secretS3.accessSecretKey')" >> /env/s3.env
-          echo "export S3_ENDPOINT=$(echo $SECRET | jq -r '.spec.secretS3.endpoint')" >> /env/s3.env
-          echo "export BUCKET_NAME=$(echo $SECRET | jq -r '.spec.bucketName')" >> /env/s3.env
-        volumeMounts:
-        - name: bucket-secret
-          mountPath: /secrets
-        - name: env-vars
-          mountPath: /env
-      containers:
-      - name: app
-        image: my-app:latest
-        command:
-        - sh
-        - -c
-        - |
-          source /env/s3.env
-          exec my-app-binary
-        volumeMounts:
-        - name: env-vars
-          mountPath: /env
-      volumes:
-      - name: bucket-secret
-        secret:
-          secretName: bucket-app-data
-      - name: env-vars
-        emptyDir: {}
-```
-
-:::tip
-Für einen einfacheren Ansatz können Sie auch das vollständige Secret mounten und das JSON beim Start direkt in Ihrer Anwendung lesen.
-:::
-
-### 5. Best Practices für Sicherheit
+## Bewährte Sicherheitspraktiken
 
 :::warning
-Speichern Sie Ihre S3-Schlüssel niemals im Klartext in Ihren Manifesten oder Git-Repositories. Verwenden Sie immer Kubernetes Secrets zur Verwaltung der Zugangsdaten.
+Speichern Sie Ihre S3-Schlüssel niemals im Klartext in Ihren Git-Repositories oder Container-Images. Verwenden Sie einen Secret-Manager, Umgebungsvariablen oder, in einem Kubernetes-Cluster, ein Secret (siehe [Eine Anwendung verbinden](./connect-from-app.md)).
 :::
 
-Empfehlungen:
-
-- **Verwenden Sie Kubernetes Secrets**: Die Zugangsdaten sind bereits in einem automatisch generierten Secret gespeichert. Referenzieren Sie es, anstatt die Schlüssel im Klartext zu kopieren.
-- **Committen Sie niemals Schlüssel**: Fügen Sie Dateien mit Zugangsdaten zu Ihrer `.gitignore` hinzu.
-- **Beschränken Sie den Zugriff auf Secrets**: Konfigurieren Sie Kubernetes RBAC, um die Namespaces und Benutzer einzuschränken, die Bucket-Secrets lesen können.
-- **Schlüsselrotation**: Bei Verdacht auf Kompromittierung löschen Sie den Bucket und erstellen Sie ihn neu, um neue Schlüssel zu erhalten.
+- **Ein Benutzer pro Anwendung**: Sie können den Zugriff einer Anwendung widerrufen, ohne die anderen zu beeinträchtigen.
+- **Standardmäßig Nur-Lesen** für Anwendungen, die nur lesen.
+- **Löschen Sie nicht verwendete Benutzer.**
 
 ## Überprüfung
 
-Bestätigen Sie, dass Ihre Konfiguration mit jedem Client funktioniert:
-
-1. **AWS CLI**:
+Listen Sie mit jedem konfigurierten Client den Bucket auf:
 
 ```bash
-aws s3 ls s3://$BUCKET_NAME --endpoint-url https://prod.s3.hikube.cloud
+aws s3 ls s3://<bucket>/ --endpoint-url <endpoint> --profile hikube
+mc ls hikube/<bucket>/
+rclone ls hikube:<bucket>
 ```
 
-2. **MinIO Client**:
-
-```bash
-mc ls hikube/$BUCKET_NAME
-```
-
-3. **rclone**:
-
-```bash
-rclone ls hikube:$BUCKET_NAME
-```
-
-Wenn der Befehl eine leere Liste (leerer Bucket) oder die Liste der vorhandenen Objekte ohne Fehler zurückgibt, ist die Konfiguration korrekt.
+Gibt der Befehl eine leere Liste (leerer Bucket) oder die Liste der Objekte ohne Fehler zurück, ist die Konfiguration korrekt. Mit einem Benutzer mit **Read-only** muss ein Hochladen mit `AccessDenied` fehlschlagen.
 
 ## Weiterführende Informationen
 
-- [Bucket API-Referenz](../api-reference.md)
-- [Bucket von einer Anwendung aus verbinden](./connect-from-app.md)
+- [Einen Bucket aus einer Anwendung verbinden](./connect-from-app.md)
+- [Konzepte](../concepts.md)
