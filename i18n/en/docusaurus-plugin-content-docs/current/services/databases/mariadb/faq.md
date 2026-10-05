@@ -3,120 +3,58 @@ sidebar_position: 6
 title: FAQ
 ---
 
-# FAQ — MySQL
+# FAQ — MariaDB
 
-### Why does Hikube use MariaDB for the MySQL service?
+### Are my MySQL applications compatible?
 
-The MySQL service on Hikube is based on **MariaDB**, deployed via the **MariaDB Operator**. MariaDB is an open-source fork of MySQL, fully compatible with the MySQL protocol and syntax. This choice guarantees:
+Yes. **MariaDB** is an open source fork of MySQL, compatible with the MySQL protocol and syntax. The `mysql` and `mysqldump` clients and MySQL connectors (JDBC, PDO, `mysql2`, etc.) work without modification. This service was previously presented in this documentation under the name "MySQL".
 
-- **Full compatibility** with existing MySQL clients and applications
-- An active and transparent **open-source** development
-- Advanced features (column compression, Aria engine, etc.)
+### Which version should I choose?
 
-Your MySQL applications work without modification with the Hikube MySQL service.
+The wizard offers versions **10.6**, **10.11**, **11.4** and **11.8**. Choose the most recent one for a new project, or the version closest to your current environment for a migration. The version can be changed after creation from **Edit**.
 
-### What is the difference between `resourcesPreset` and `resources`?
+### Which presets are available?
 
-The `resourcesPreset` field lets you choose a predetermined resource profile for each MySQL replica. If the `resources` field (explicit CPU/memory) is defined, `resourcesPreset` is **completely ignored**.
+The **Preset** sets the CPU and memory of each node. The list displayed by the wizard is authoritative; for reference:
 
 | **Preset** | **CPU** | **Memory** |
-|------------|---------|------------|
-| `nano`     | 250m    | 128Mi      |
-| `micro`    | 500m    | 256Mi      |
-| `small`    | 1       | 512Mi      |
-| `medium`   | 1       | 1Gi        |
-| `large`    | 2       | 2Gi        |
-| `xlarge`   | 4       | 4Gi        |
-| `2xlarge`  | 8       | 8Gi        |
-
-```yaml title="mysql.yaml"
-spec:
-  # Using a preset
-  resourcesPreset: small
-
-  # OR explicit configuration (the preset is then ignored)
-  resources:
-    cpu: 2000m
-    memory: 2Gi
-```
-
-### How does MySQL replication work on Hikube?
-
-MySQL replication on Hikube uses **binlog replication** (binary log) managed by the MariaDB Operator:
-
-- One node is designated as the **primary** (read-write)
-- Other nodes are **replicas** (read-only)
-- Automatic failover (**auto-failover**) is managed by the operator in case of primary failure
-
-With 3 replicas, you get 1 primary + 2 replicas, which ensures high availability.
-
-### How to configure backups with Restic?
-
-MySQL backups use **Restic** for encryption and compression. Configure the `backup` section with S3-compatible storage:
-
-```yaml title="mysql.yaml"
-spec:
-  backup:
-    enabled: true
-    s3Region: eu-central-1
-    s3Bucket: s3.example.com/mysql-backups
-    schedule: "0 3 * * *"
-    cleanupStrategy: "--keep-last=7 --keep-daily=7 --keep-weekly=4"
-    s3AccessKey: your-access-key
-    s3SecretKey: your-secret-key
-    resticPassword: your-restic-password
-```
+|------------|---------|-------------|
+| `nano`     | 250m    | 128Mi       |
+| `micro`    | 500m    | 256Mi       |
+| `small`    | 1       | 512Mi       |
+| `medium`   | 1       | 1Gi         |
+| `large`    | 2       | 2Gi         |
+| `xlarge`   | 4       | 4Gi         |
+| `2xlarge`  | 8       | 8Gi         |
 
 :::warning
-Keep the `resticPassword` in a safe place. Without this password, backups cannot be decrypted.
+The preset cannot be changed after creation. Size it accordingly, or contact support to change it.
 :::
 
-### How to perform a primary switchover?
+### How does replication work?
 
-To switch the primary role to another replica, modify the `spec.replication.primary.podIndex` field in your manifest:
+The primary writes its changes to the binary log, which the replicas replay. If the primary fails, the platform automatically promotes a replica. Choose **3 (Max High Availability)** or **5 (Ultra High Availability)** replicas at creation to benefit from this: this number cannot be changed afterwards.
 
-```yaml title="mysql.yaml"
-spec:
-  replication:
-    primary:
-      podIndex: 1    # Index of the pod that will become the new primary
-```
+### Where can I find the connection address?
 
-Then apply the change:
+In the **Connection and network** card of the cluster page, **Host** field, when **External Access** is enabled. The port is `3306`. Without external access, the field shows **Not defined**: the cluster remains reachable from the project's VMs through an internal address, which the console does not display; [contact support](mailto:support@hidora.io) to obtain it.
 
-```bash
-kubectl apply -f mysql.yaml
-```
+### How do I create a database?
 
-:::note
-The switchover causes a **brief interruption** of writes during the failover. Reads remain available on replicas.
-:::
+Grant a user access to the database name (**Manage Access** → **Specific Access (Databases)** → **Add**). The database is created if it does not exist. See [Manage users and databases](./how-to/manage-users-databases.md).
 
-### How to manage users and databases?
+### Why does the user created in the wizard not have access to my database?
 
-Use the `users` and `databases` maps to define your users and databases. Each user can have a connection limit, and each database can have `admin` and `readonly` roles:
+The **Role** chosen in the cluster creation wizard applies to the `mysql` system database. Then grant access to your application databases via **Manage Access**.
 
-```yaml title="mysql.yaml"
-spec:
-  users:
-    appuser:
-      password: SecurePassword123
-      maxUserConnections: 100
-    analyst:
-      password: AnalystPassword456
-      maxUserConnections: 20
+### I lost a user's password. How do I recover it?
 
-  databases:
-    production:
-      roles:
-        admin:
-          - appuser
-        readonly:
-          - analyst
-    analytics:
-      roles:
-        admin:
-          - appuser
-        readonly:
-          - analyst
-```
+It cannot be read again. Generate a new one: **Actions** → **Change Password** → **Perform rotation**. The old password is revoked immediately.
+
+### Can I limit the number of connections per user or change server parameters?
+
+These settings are not offered in the console; contact support.
+
+### Are backups available?
+
+Backup configuration and restore are not offered in the console; contact support. See [Configure backups](./how-to/configure-backups.md).

@@ -5,104 +5,59 @@ title: Troubleshooting
 
 # Troubleshooting — Redis
 
-### Data loss after restart
+### The cluster stays in "Creating" status
 
-**Cause**: the `storageClass` used is `local`, which means data is stored only on the physical node where the pod was running. If the pod is rescheduled on another node, the previous data is lost.
-
-**Solution**:
-
-1. Check the `storageClass` being used:
-   ```bash
-   kubectl get pvc -l app=redis-<name>
-   ```
-2. If you are using a single replica (`replicas` = 1), switch to `storageClass: replicated` so that storage compensates for the lack of application replication. If you have multiple replicas (`replicas` >= 3), `storageClass: local` is appropriate since Redis Sentinel already ensures high availability:
-   ```yaml title="redis.yaml"
-   spec:
-     storageClass: replicated    # If replicas = 1
-     # storageClass: local       # If replicas >= 3 (Sentinel ensures HA)
-   ```
-3. Apply the change. Note that changing `storageClass` typically requires recreating the PVCs.
-4. Also ensure that `replicas` >= 3 to benefit from Redis Sentinel replication.
-
-### Redis Sentinel not converging
-
-**Cause**: the number of replicas is even or less than 3, which prevents the Sentinel quorum from working correctly. Sentinel requires a majority to elect a new primary.
+**Cause**: the Redis nodes, the Sentinels and their volumes are still being provisioned.
 
 **Solution**:
 
-1. Check the number of replicas:
-   ```bash
-   kubectl get pods -l app=redis-<name>
-   ```
-2. Make sure to use an **odd** number >= 3:
-   ```yaml title="redis.yaml"
-   spec:
-     replicas: 3    # Or 5, never 2 or 4
-   ```
-3. Check the Sentinel logs to identify convergence issues:
-   ```bash
-   kubectl logs -l app=rfs-redis-<name>
-   ```
-4. Verify network connectivity between Redis pods. DNS or network issues can prevent node discovery.
+1. Wait a few minutes and refresh the cluster page.
+2. If the status has not changed after about fifteen minutes, or changes to **Error** or **Failed**, [contact support](mailto:support@hidora.io), stating the project and the cluster name.
 
-### Memory saturated (OOMKilled)
+### The host shows "Waiting for allocation..."
 
-**Cause**: the Redis dataset exceeds the memory allocated to the container. Kubernetes kills the pod when it exceeds its memory limit.
+**Cause**: the public network is disabled, or the public IP address has not been assigned yet.
 
 **Solution**:
 
-1. Check if the pod was killed due to OOM:
-   ```bash
-   kubectl describe pod rfr-redis-<name>-0 | grep -i oom
-   ```
-2. Increase the allocated memory via `resources.memory` or a higher `resourcesPreset`:
-   ```yaml title="redis.yaml"
-   spec:
-     resources:
-       cpu: 1000m
-       memory: 2Gi    # Increase memory
-   ```
-3. Check the Redis eviction policy (`maxmemory-policy`). By default, Redis returns an error when memory is full. Consider using `allkeys-lru` if Redis is used as a cache.
-4. Monitor the dataset size:
-   ```bash
-   redis-cli -h rfr-redis-<name> -p 6379 -a <password> INFO memory
-   ```
+1. Open **Edit** and check the **External access** option. Enable it if you need to connect from the Internet, then click **Save changes**.
+2. Wait a few moments and refresh the cluster page.
 
 ### Connection timeout
 
-**Cause**: Redis pods are not running, service endpoints are empty, or the client-side authentication configuration does not match the server configuration.
+**Cause**: the address or port used is incorrect, the cluster is not ready, or a firewall is blocking port `6379`.
 
 **Solution**:
 
-1. Check that pods are in `Running` state:
-   ```bash
-   kubectl get pods -l app=redis-<name>
-   ```
-2. Check that services have endpoints:
-   ```bash
-   kubectl get endpoints rfr-redis-<name>
-   kubectl get endpoints rfs-redis-<name>
-   ```
-3. If `authEnabled: true`, make sure your client provides the correct password.
-4. Test the connection from a debug pod:
-   ```bash
-   kubectl run test-redis --rm -it --image=redis:7 -- redis-cli -h rfr-redis-<name> -p 6379 -a <password> PING
-   ```
+1. Check that the **Status** in the **Connection** section is **Ready**.
+2. Copy the **Host** with the copy button to avoid typing errors.
+3. Check that no outbound firewall on your network is blocking port `6379`.
 
-### Authentication fails
+### Authentication fails (`NOAUTH` or `WRONGPASS`)
 
-**Cause**: the password used does not match the one stored in the Kubernetes Secret, or `authEnabled` is not enabled on the server while the client sends a password (or vice versa).
+**Cause**: the client does not send a password, uses a wrong password, or a password revoked by a rotation.
 
 **Solution**:
 
-1. Get the correct password from the Secret:
+1. Check the value passed to the client (`REDISCLI_AUTH`, `-a` option or application configuration).
+2. If in doubt, generate a new password from the **Security** section (**Rotate password**) and update your applications. See [Renew the password](./how-to/rotate-password.md).
+3. If the **Authentication required** option has been changed, update the clients accordingly.
+
+### Memory saturated (`OOM command not allowed`)
+
+**Cause**: the dataset exceeds the memory allocated by the preset.
+
+**Solution**:
+
+1. Check memory usage:
    ```bash
-   kubectl get tenantsecret redis-<name>-auth -o jsonpath='{.data.password}' | base64 -d
+   redis-cli -h <host> -p 6379 INFO memory
    ```
-2. Verify that `authEnabled: true` is configured in your manifest:
-   ```yaml title="redis.yaml"
-   spec:
-     authEnabled: true
-   ```
-3. Make sure your client uses exactly the password retrieved in step 1.
-4. If you changed the `authEnabled` configuration, existing clients must be updated to reflect the change.
+2. Switch to a larger **Preset** via **Edit**. See [Change resources](./how-to/scale-resources.md).
+3. If Redis is used as a cache, set expiration times (`EXPIRE`) on your keys to limit dataset growth.
+
+### Failover does not happen
+
+**Cause**: the cluster has only one replica; no replica can be promoted to master.
+
+**Solution**: the number of replicas cannot be changed after creation. Create a new cluster with at least 2 replicas (3 in production) and migrate your data, or [contact support](mailto:support@hidora.io). See [Configure high availability](./how-to/configure-ha.md).

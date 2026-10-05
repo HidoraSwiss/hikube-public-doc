@@ -7,50 +7,54 @@ import NavigationFooter from '@site/src/components/NavigationFooter';
 
 # ClickHouse on Hikube
 
-Hikube **ClickHouse databases** offer an open-source, high-performance, column-oriented SQL management system, designed for online analytical processing (OLAP). They guarantee rapid ingestion of massive data, execution of complex queries in near real-time, and the reliability necessary for critical enterprise analytical applications.
+:::info Availability
+ClickHouse is not yet available as self-service in the [Hikube console](https://console.hikube.cloud).
+To provision an instance or change its configuration, [contact support](mailto:support@hidora.io).
+:::
+
+Hikube **ClickHouse databases** provide an open source, high-performance, column-oriented SQL management system designed for online analytical processing (OLAP). They ensure fast ingestion of massive data, execution of complex queries in near real time, and the reliability required by critical enterprise analytics applications.
 
 ---
 
-## Architecture and Operation
+## Architecture and operation
 
-ClickHouse architecture is based on two essential parameters that allow adapting deployment to real needs:  
+The ClickHouse architecture relies on two key parameters that let you adapt the deployment to your actual needs:
 
-- **Shards** → they allow **distributing data into multiple pieces** across different nodes. The more shards there are, the more the load is distributed, which improves query execution speed on very large volumes.  
-- **Replicas** → they create **redundant copies** of shards. This increases resilience and fault tolerance, while allowing read load distribution across multiple nodes.  
+- **Shards** → they **split the data into several pieces** across different nodes. The more shards, the more the load is distributed, which improves query execution speed on very large volumes.
+- **Replicas** → they create **redundant copies** of the shards. This increases resilience and fault tolerance, while allowing read load to be spread across several nodes.
 
-### Illustrative Example
+### Illustrative example
 
-Imagine a database of **1 billion customer records**:  
+Consider a database of **1 billion customer records**:
 
-- **1 shard – 1 replica**  
-  All data is stored in a single space.  
-  **Use cases:**  
-  - Proof of concept (POC)  
-  - Development environments  
-  - Occasional analytical workloads  
+- **1 shard – 1 replica**
+  All the data is stored in a single space.
+  **Use cases:**
+  - Pilot projects (POC)
+  - Development environments
+  - Occasional analytical workloads
 
-- **2 shards – 1 replica**  
-  Data is divided into two parts (e.g., customers A–M and N–Z). Queries are executed in parallel, which significantly speeds up analysis.  
-  **Use cases:**  
-  - Analysis on large data volumes  
-  - Applications requiring better performance  
-  - Regular reports on large customer bases or transactions  
+- **2 shards – 1 replica**
+  The data is split into two parts (e.g. customers A–M and N–Z). Queries run in parallel, which speeds up analysis considerably.
+  **Use cases:**
+  - Analysis of large data volumes
+  - Applications requiring better performance
+  - Regular reports on large customer or transaction bases
 
-- **2 shards – 2 replicas**  
-  Each shard is duplicated on another node. You benefit from both speed (distributed data) and security (fault tolerance).  
-  **Use cases:**  
-  - Critical analytical applications in production  
-  - High availability needs  
-  - Multi-user platforms with high query concurrency  
+- **2 shards – 2 replicas**
+  Each shard is duplicated on another node. You get both speed (distributed data) and safety (fault tolerance).
+  **Use cases:**
+  - Critical analytical applications in production
+  - High availability requirements
+  - Multi-user platforms with high query concurrency
   - Disaster recovery plans (DRP)
 
 <NavigationFooter
   nextSteps={[
     {label: "Concepts", href: "../concepts"},
-    {label: "Quick Start", href: "../quick-start"},
+    {label: "Quick start", href: "../quick-start"},
   ]}
   seeAlso={[
     {label: "All databases", href: "../../"},
   ]}
 />
-

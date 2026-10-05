@@ -1,130 +1,125 @@
 ---
-title: Access & Tools
+title: Access and tools
 ---
 
-# Access & Tools
+# Access and tools
 
-## Retrieve the Kubeconfig
+This guide explains how to access a Hikube Kubernetes cluster once it is created, and gathers useful commands for operating it. The cluster lifecycle (creation, modification, deletion) is managed in the console; everything else is done in the cluster with your usual tools.
 
-Once the cluster is deployed, retrieve the access credentials:
+## Download the kubeconfig
 
-```bash
-# Full admin kubeconfig
-kubectl get secret <cluster-name>-admin-kubeconfig \
-  -o go-template='{{ printf "%s\n" (index .data "super-admin.conf" | base64decode) }}' \
-  > cluster-admin.yaml
+1. In the console, open **Infrastructure** > **Kubernetes** and click the cluster.
+2. Wait until the cluster has the **Ready** status.
+3. In the **Actions** section of the detail page, click **Kubeconfig**.
 
-# Read-only kubeconfig (if configured)
-kubectl get secret <cluster-name>-readonly-kubeconfig \
-  -o go-template='{{ printf "%s\n" (index .data "readonly.conf" | base64decode) }}' \
-  > cluster-readonly.yaml
-```
+The browser downloads the `kubeconfig-<cluster-name>.yaml` file. It grants administrator access to the cluster.
 
-## RBAC Configuration
+:::warning
+Keep this file in a safe place (secrets manager, vault) and never commit it to version control. To give access to other people, create dedicated permissions for them with RBAC rather than sharing this file.
+:::
 
-After deployment, configure user access:
+## Use the kubeconfig
 
 ```bash
-# Connect to the cluster
-export KUBECONFIG=cluster-admin.yaml
+# For the current session
+export KUBECONFIG=~/Downloads/kubeconfig-<cluster-name>.yaml
 
-# Create roles and bindings
-kubectl apply -f rbac-config.yaml
+# Or for a single command
+kubectl --kubeconfig ~/Downloads/kubeconfig-<cluster-name>.yaml get nodes
+
+# Check the connection
+kubectl cluster-info
+kubectl get nodes
 ```
 
+The same file works with `helm`, `k9s`, `flux` or any Kubernetes client.
+
+## Configure RBAC
+
+Create dedicated roles and accounts for your teams and pipelines, for example read-only access to a namespace:
+
+```yaml title="rbac-readonly.yaml"
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: production
 ---
-
-## Monitoring & Observability
-
-### Cluster Metrics
-
-```bash
-# General Hikube cluster status
-kubectl get kubernetes <cluster-name> -o yaml
-
-# Kubernetes cluster nodes
-kubectl --kubeconfig=cluster-admin.yaml get nodes
-
-# Resource metrics
-kubectl --kubeconfig=cluster-admin.yaml top nodes
-kubectl --kubeconfig=cluster-admin.yaml top pods
-```
-
-### Logs & Debugging
-
-```bash
-# Cluster events
-kubectl describe kubernetes <cluster-name>
-
-# Component logs
-kubectl logs -n kamaji -l app.kubernetes.io/instance=<cluster-name>
-
-# Detailed machine status
-kubectl get machines -l cluster.x-k8s.io/cluster-name=<cluster-name>
-```
-
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: viewer
+  namespace: production
 ---
-
-## Lifecycle Management
-
-### Upgrade
-
-```bash
-# Cluster upgrade
-kubectl patch kubernetes <cluster-name> --type='merge' -p='
-spec:
-  version: "v1.29.0"  # New Kubernetes version
-'
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: viewer-view
+  namespace: production
+subjects:
+  - kind: ServiceAccount
+    name: viewer
+    namespace: production
+roleRef:
+  kind: ClusterRole
+  name: view
+  apiGroup: rbac.authorization.k8s.io
 ```
 
-### Scaling
-
 ```bash
-# Scale a node group
-kubectl patch kubernetes <cluster-name> --type='merge' -p='
-spec:
-  nodeGroups:
-    compute:
-      maxReplicas: 20  # Increase limit
-'
-```
-
-### Deletion
-
-```bash
-# WARNING: Irreversible cluster deletion
-kubectl delete kubernetes <cluster-name>
+kubectl apply -f rbac-readonly.yaml
 ```
 
 ---
 
-## Troubleshooting
+## Monitoring and observability
 
-### Common Issues
+### In the console
+
+The cluster detail page shows the status, the version, the control plane, the **Node Pools** (number of active nodes per group) and the enabled extensions.
+
+### In the cluster
 
 ```bash
-# Cluster stuck during creation
-kubectl describe kubernetes <cluster-name>
-kubectl get events --field-selector involvedObject.name=<cluster-name>
+# Cluster nodes
+kubectl get nodes -o wide
 
+# Resource consumption
+kubectl top nodes
+kubectl top pods -A
+
+# Recent events
+kubectl get events -A --sort-by=.metadata.creationTimestamp
+```
+
+---
+
+## Lifecycle management
+
+These operations are done in the console:
+
+| Operation | Where |
+|-----------|----|
+| Upgrade the version | **Edit** > **Kubernetes Version** ([guide](./upgrade-cluster.md)) |
+| Add, modify or delete a node group | **Edit** > **Node groups** ([guide](./manage-node-groups.md)) |
+| Adjust scaling | **Edit** > **Minimum nodes** / **Maximum nodes** ([guide](./configure-autoscaling.md)) |
+| Enable or configure an addon | **Edit** > **Extensions & Addons** |
+| Delete the cluster | **Delete**, then confirm the name ([quick start](../quick-start.md), step 7) |
+
+---
+
+## Diagnostics
+
+```bash
 # Nodes not ready
-kubectl --kubeconfig=cluster-admin.yaml describe nodes
-kubectl get machines -l cluster.x-k8s.io/cluster-name=<cluster-name>
+kubectl describe node <node-name>
 
-# Add-ons failing
-kubectl --kubeconfig=cluster-admin.yaml get pods -A
-kubectl --kubeconfig=cluster-admin.yaml describe helmreleases -A
+# Pods in error
+kubectl get pods -A --field-selector=status.phase!=Running
+kubectl describe pod <pod-name> -n <namespace>
+kubectl logs <pod-name> -n <namespace> --previous
+
+# Addon components (Cilium, CoreDNS, Ingress NGINX, etc.)
+kubectl get pods -A | grep -E "cilium|coredns|ingress-nginx|cert-manager"
 ```
 
-### Detailed Logs
-
-```bash
-# Cluster API logs
-kubectl logs -n capi-system -l control-plane=controller-manager
-
-# Kamaji logs (control plane)
-kubectl logs -n kamaji-system -l app.kubernetes.io/name=kamaji
-
-# KubeVirt logs (workers)
-kubectl logs -n kubevirt -l kubevirt.io=virt-controller
-```
+If a cluster stays **Creating**, if an addon does not deploy or if a node never joins the cluster, [contact support](mailto:support@hidora.io), specifying the cluster name and the project.

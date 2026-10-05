@@ -7,24 +7,19 @@ title: FAQ
 
 ### How does Redis Sentinel work on Hikube?
 
-Redis on Hikube is deployed via the **Spotahome Redis Operator**, which sets up a **Redis Sentinel** architecture for high availability:
+Redis on Hikube is deployed with a **Redis Sentinel** architecture for high availability:
 
-- **Redis Sentinel** monitors Redis instances and performs **automatic failover** when the primary fails.
-- A **quorum** is required to decide on failover: you need at least **3 replicas** to guarantee a working quorum (majority of 2 out of 3).
-- Clients should connect via the **Sentinel service** to benefit from automatic failover.
-
-```yaml title="redis.yaml"
-spec:
-  replicas: 3    # Minimum recommended for Sentinel quorum
-```
+- **Redis Sentinel** monitors the Redis instances and performs an **automatic switchover** (failover) if the master fails.
+- A **quorum** of sentinels decides on the failover. Three sentinels are always deployed, whatever the number of Redis replicas: switchover works from **2 replicas**.
+- The address in the **Host** field follows the master: after a switchover, it automatically points to the new master, with no change of address.
 
 :::tip
-In production, always use at least 3 replicas to ensure proper Sentinel quorum operation.
+In production, choose at least 3 replicas at creation: this number cannot be changed afterwards.
 :::
 
-### What is the difference between `resourcesPreset` and `resources`?
+### Which presets are available?
 
-The `resourcesPreset` field lets you choose a predetermined resource profile for each Redis replica. If the `resources` field (explicit CPU/memory) is defined, `resourcesPreset` is **completely ignored**.
+The **Preset** sets the CPU and memory of each node. The list displayed by the wizard is authoritative; for reference:
 
 | **Preset** | **CPU** | **Memory** |
 |------------|---------|------------|
@@ -36,79 +31,39 @@ The `resourcesPreset` field lets you choose a predetermined resource profile for
 | `xlarge`   | 4       | 4Gi        |
 | `2xlarge`  | 8       | 8Gi        |
 
-```yaml title="redis.yaml"
-spec:
-  # Using a preset
-  resourcesPreset: small
-
-  # OR explicit configuration (the preset is then ignored)
-  resources:
-    cpu: 1000m
-    memory: 1Gi
-```
+It can be changed after creation from **Edit**.
 
 ### Does Redis persist data?
 
-Yes. Redis on Hikube uses **RDB/AOF persistence** combined with persistent volumes (PVC). Data is written to disk and survives pod restarts.
+Yes. Each node has a persistent volume (**Volume size (GB)**) to which Redis writes its data through its native mechanisms. The data survives restarts.
 
-The `storageClass` choice affects durability:
+### What is the "Enable authentication" option for?
 
-- **`local`**: data persisted on the physical node. Fast but vulnerable to node failure. Recommended if `replicas` > 1 (Redis Sentinel replication already ensures HA).
-- **`replicated`**: data replicated across multiple nodes. Slower but resilient to failures. Recommended if `replicas` = 1 (replicated storage compensates for the lack of application replication).
-
-```yaml title="redis.yaml"
-spec:
-  size: 2Gi
-  storageClass: local    # If replicas > 1 (Sentinel ensures HA)
-```
-
-### What is the `authEnabled` parameter for?
-
-When `authEnabled` is set to `true` (default value), a password is **automatically generated** and stored in a Kubernetes Secret. This password is required for any connection to Redis.
-
-```yaml title="redis.yaml"
-spec:
-  authEnabled: true    # Default value
-```
+When enabled (the default), it protects the cluster with an automatically generated password, displayed only once at creation together with the `default` user. This password is required for every connection.
 
 :::warning
-Always enable `authEnabled: true` in production. Disabling authentication exposes your data to any pod that can access the Redis service.
+Always keep authentication enabled, especially if the public network is enabled.
 :::
 
-### How to scale Redis?
+### I lost the password. How can I recover it?
 
-To increase the number of Redis replicas, modify the `replicas` field in your manifest and apply the change:
+It cannot be read back. Generate a new one from the **Security** section of the cluster page (**Rotate password**). See [Renew the password](./how-to/rotate-password.md).
 
-```yaml title="redis.yaml"
-spec:
-  replicas: 5    # Increase the number of replicas
-```
+### How do I scale Redis?
+
+- **Vertically**: change the **Preset** and the **Volume size (GB)** via **Edit**. See [Change resources](./how-to/scale-resources.md).
+- **Horizontally**: the number of replicas is set at creation. To change it, [contact support](mailto:support@hidora.io).
+
+### How do I connect to Redis?
+
+With the public network enabled, use the address in the **Host** field (**Connection** section of the cluster page) on port `6379`:
 
 ```bash
-kubectl apply -f redis.yaml
+REDISCLI_AUTH='<password>' redis-cli -h <host> -p 6379 ping
 ```
 
-Redis Sentinel **automatically reconfigures** the cluster to integrate the new replicas. No manual intervention is required.
+Without the public network, the instance remains reachable from the project's VMs through an internal address, which the console does not display. [Contact support](mailto:support@hidora.io) to obtain it.
 
-### How to connect to Redis from a pod?
+### Can I create several Redis users (ACL)?
 
-1. Get the password from the Secret (if `authEnabled: true`):
-   ```bash
-   kubectl get tenantsecret redis-<name>-auth -o jsonpath='{.data.password}' | base64 -d
-   ```
-
-2. Connect via the **Sentinel** service (recommended for automatic failover):
-   ```bash
-   # Sentinel service
-   redis-cli -h rfs-redis-<name> -p 26379 SENTINEL get-master-addr-by-name mymaster
-   ```
-
-3. Or connect directly to the Redis service:
-   ```bash
-   # Direct service
-   redis-cli -h rfr-redis-<name> -p 6379 -a <password>
-   ```
-
-:::tip
-Prefer connecting via the Sentinel service (`rfs-redis-<name>`) so your applications automatically follow the primary during failover.
-:::
+No, the console does not offer Redis user management: access relies on a cluster-wide password.

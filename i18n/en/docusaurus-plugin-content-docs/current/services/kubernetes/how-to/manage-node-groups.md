@@ -4,173 +4,103 @@ title: "How to add and modify a node group"
 
 # How to add and modify a node group
 
-Node groups allow you to segment your Kubernetes cluster nodes according to your workload needs. This guide explains how to add, modify, and remove node groups in your Hikube configuration.
+Node groups let you segment the nodes of your Kubernetes cluster according to the needs of your workloads. This guide explains how to add, modify and delete node groups from the Hikube console.
 
 ## Prerequisites
 
 - A deployed Hikube Kubernetes cluster (see the [quick start](../quick-start.md))
-- `kubectl` configured to interact with the Hikube API
-- Your cluster YAML configuration file
+- The cluster kubeconfig downloaded from the console (**Kubeconfig** button), to check the nodes with `kubectl`
 
 ## Steps
 
-### 1. Understand instance types
+### 1. Understand the instance types
 
 Hikube offers three instance series suited to different use cases:
 
 | Series | CPU:RAM ratio | Use case |
-|--------|---------------|----------|
-| **S (Standard)** | 1:2 | General workloads, web applications |
-| **U (Universal)** | 1:4 | Balanced workloads, databases |
-| **M (Memory Optimized)** | 1:8 | Memory-intensive applications, caches |
+|-------|---------------|-------------|
+| **Standard (S)** | 1:2 | Economical use, development, testing |
+| **Universal (U)** | 1:4 | General use: web servers, applications |
+| **Memory (M)** | 1:8 | Memory-optimized: databases, caches |
 
-**Available instance details:**
+The flavors of each series are detailed in the [concepts](../concepts.md#instance-types).
 
-| Instance | vCPU | RAM |
-|----------|------|-----|
-| `s1.small` | 1 | 2 GB |
-| `s1.medium` | 2 | 4 GB |
-| `s1.large` | 4 | 8 GB |
-| `s1.xlarge` | 8 | 16 GB |
-| `s1.2xlarge` | 16 | 32 GB |
-| `s1.4xlarge` | 32 | 64 GB |
-| `s1.8xlarge` | 64 | 128 GB |
-| `u1.medium` | 1 | 4 GB |
-| `u1.large` | 2 | 8 GB |
-| `u1.xlarge` | 4 | 16 GB |
-| `u1.2xlarge` | 8 | 32 GB |
-| `u1.4xlarge` | 16 | 64 GB |
-| `u1.8xlarge` | 32 | 128 GB |
-| `m1.large` | 2 | 16 GB |
-| `m1.xlarge` | 4 | 32 GB |
-| `m1.2xlarge` | 8 | 64 GB |
-| `m1.4xlarge` | 16 | 128 GB |
-| `m1.8xlarge` | 32 | 256 GB |
+### 2. Open the cluster edit page
 
-### 2. Add a node group
+1. In the console, open **Infrastructure** > **Kubernetes**.
+2. Open the cluster's **Actions** menu and choose **Edit** (or click **Edit** on the cluster detail page).
 
-To add a new node group, add an entry under `spec.nodeGroups` in your cluster configuration file:
+The edit page shows the **General information**, **Node groups** and **Extensions & Addons** sections, as well as the project quota gauges.
 
-```yaml title="cluster-with-compute.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Kubernetes
-metadata:
-  name: my-cluster
-spec:
-  controlPlane:
-    replicas: 3
+### 3. Add a node group
 
-  nodeGroups:
-    # Existing node group
-    general:
-      minReplicas: 2
-      maxReplicas: 5
-      instanceType: "s1.large"
-      ephemeralStorage: 50Gi
-      roles:
-        - ingress-nginx
-
-    # New node group for intensive compute
-    compute:
-      minReplicas: 1
-      maxReplicas: 10
-      instanceType: "u1.4xlarge"
-      ephemeralStorage: 100Gi
-      roles: []
-```
+1. In the **Node groups** section, click **Add node group**. A new card opens.
+2. Fill in the fields:
+   - **Group name**: for example `compute` (3 to 16 characters: lowercase letters, digits and hyphens);
+   - **Ephemeral storage size**: for example 100 GB;
+   - **Minimum nodes** and **Maximum nodes**: for example 1 and 10;
+   - **Instance type**: for example **Universal (U)** series, size **4XLarge** (`u1.4xlarge`);
+   - **Exposed on the internet (Public IP)**: enable only if this group must receive incoming traffic (Ingress NGINX);
+   - **GPU**: if needed, see [Add GPUs](#5-add-gpus).
+3. Click **Save**.
 
 :::tip
-Choose a descriptive name for your node groups (`compute`, `web`, `monitoring`, `gpu`) to make cluster management easier.
+Choose a descriptive name for your groups (`compute`, `web`, `monitoring`, `gpu`) to make cluster management easier.
 :::
 
-### 3. Modify an existing node group
+### 4. Modify an existing group
 
-To modify a node group, update the desired fields in your YAML file. For example, to change the instance type and increase ephemeral storage:
-
-```yaml title="cluster-updated.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Kubernetes
-metadata:
-  name: my-cluster
-spec:
-  controlPlane:
-    replicas: 3
-
-  nodeGroups:
-    general:
-      minReplicas: 2
-      maxReplicas: 5
-      instanceType: "u1.xlarge"       # Modified: from s1.large to u1.xlarge
-      ephemeralStorage: 100Gi          # Modified: from 50Gi to 100Gi
-      roles:
-        - ingress-nginx
-```
+In the **Node groups** section, expand the group's card, change the desired fields (instance type, ephemeral storage, minimum or maximum number of nodes, exposure), then click **Save**.
 
 :::warning
-Changing `instanceType` triggers a rolling update of the group's nodes. Ensure your cluster has enough capacity to absorb the load during the update.
+Changing the instance type replaces the group's nodes progressively: new nodes are created, then the old ones are removed one by one. The project quota must be able to accommodate the additional nodes during the replacement.
 :::
 
-### 4. Remove a node group
+:::note
+Avoid renaming an existing group: a renamed group is treated as a new group.
+:::
 
-To remove a node group, simply delete its block from the configuration and re-apply:
+### 5. Add GPUs
 
-```yaml title="cluster-simplified.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Kubernetes
-metadata:
-  name: my-cluster
-spec:
-  controlPlane:
-    replicas: 3
+A card's **GPU** section only appears if GPUs are available for your project.
 
-  nodeGroups:
-    general:
-      minReplicas: 2
-      maxReplicas: 5
-      instanceType: "s1.large"
-      ephemeralStorage: 50Gi
-      roles:
-        - ingress-nginx
-    # The "compute" node group has been removed
-```
+- For a **new** group, select the GPU model and number per node. The **GPU Operator** addon is then enabled automatically and can no longer be unchecked.
+- A group **created without GPUs** cannot receive any: add a new GPU node group.
+- A group **created with GPUs** can change model or number, but must keep at least one GPU: to go back to nodes without GPUs, add a new group without GPUs instead.
+
+See also [Provision GPUs in Kubernetes](../../gpu/how-to/provision-gpu-kubernetes.md).
+
+### 6. Delete a node group
 
 :::warning
-Before removing a node group, ensure that the workloads running on it can be rescheduled on other groups. Use `kubectl drain` on the affected nodes if necessary.
+Before deleting a group, make sure the workloads running on it can be rescheduled on other groups. Use `kubectl drain` on the relevant nodes if necessary.
 :::
 
-### 5. Apply the changes
+1. In the **Node groups** section, click the **Remove this group** icon on the relevant card.
+2. Click **Save**.
 
-Apply the changes with `kubectl`:
-
-```bash
-kubectl apply -f cluster-updated.yaml
-```
+The first group of the cluster cannot be deleted; a cluster must always keep at least one node group.
 
 ## Verification
 
-Verify that the changes have been applied:
+After saving, the console shows "Cluster updated" and returns to the detail page. The **Node Pools** section lists each group with its instance type and its number of active nodes.
+
+In the cluster, watch the new nodes arrive:
 
 ```bash
-# Check the cluster configuration
-kubectl get kubernetes my-cluster -o yaml | grep -A 15 nodeGroups
-
-# Watch the child cluster nodes
-kubectl --kubeconfig=cluster-admin.yaml get nodes -w
-
-# Check machines being provisioned
-kubectl get machines -l cluster.x-k8s.io/cluster-name=my-cluster
+export KUBECONFIG=~/Downloads/kubeconfig-<cluster-name>.yaml
+kubectl get nodes -w
 ```
 
-**Expected output:**
+**Expected result:**
 
 ```console
-NAME                         STATUS   ROLES    AGE   VERSION
-my-cluster-general-xxxxx     Ready    <none>   10m   v1.29.0
-my-cluster-compute-yyyyy     Ready    <none>   2m    v1.29.0
+NAME                        STATUS   ROLES    AGE   VERSION
+my-cluster-general-xxxxx    Ready    <none>   10m   v1.xx.x
+my-cluster-compute-yyyyy    Ready    <none>   2m    v1.xx.x
 ```
 
-## Next steps
+## Going further
 
-- [API reference](../api-reference.md) -- Full details of `nodeGroups` fields
-- [Concepts](../concepts.md) -- Hikube node group architecture
-- [How to configure autoscaling](./configure-autoscaling.md) -- Manage automatic scaling of node groups
+- [Concepts](../concepts.md): description of each field of a node group
+- [How to configure autoscaling](./configure-autoscaling.md): manage automatic scaling of the groups

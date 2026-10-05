@@ -3,238 +3,107 @@ sidebar_position: 2
 title: FAQ
 ---
 
-# Frequently Asked Questions
+# Frequently asked questions
 
-Find here the answers to the most common questions about using Hikube.
+Find here the answers to the most common questions about using Hikube. Each service also has its own FAQ.
 
 ---
 
-## 1. How do I retrieve my kubeconfig?
+## 1. How do I access Hikube?
 
-Once your Kubernetes cluster is deployed, retrieve the kubeconfig with:
+Sign in to the console: [https://console.hikube.cloud](https://console.hikube.cloud), with the credentials provided by Hidora. If you do not have an account yet, contact **sales@hidora.io**.
+
+See: [Quick start](../getting-started/quick-start.md)
+
+---
+
+## 2. What is the difference between an organization and a project?
+
+The **organization** represents your company; it is created by Hidora. **Projects** are the isolated spaces you create within the organization to group your resources, each with its own quotas. In older versions of the documentation, a project was called a **tenant**.
+
+See: [Key concepts](../getting-started/concepts.md)
+
+---
+
+## 3. How do I retrieve the kubeconfig of my Kubernetes cluster?
+
+Open **Infrastructure** → **Kubernetes**, click your cluster, then **Kubeconfig**. The console downloads the `kubeconfig-<cluster-name>.yaml` file.
 
 ```bash
-kubectl get secret <cluster-name>-admin-kubeconfig \
-  -o go-template='{{ printf "%s\n" (index .data "super-admin.conf" | base64decode) }}' \
-  > my-cluster-kubeconfig.yaml
-
-export KUBECONFIG=my-cluster-kubeconfig.yaml
+export KUBECONFIG=~/.kube/kubeconfig-<cluster-name>.yaml
 kubectl get nodes
 ```
 
-See: [Kubernetes - Quick Start](../services/kubernetes/quick-start.md)
+See: [Kubernetes - Quick start](../services/kubernetes/quick-start.md)
 
 ---
 
-## 2. How do I retrieve my database credentials?
+## 4. Do I still need a kubeconfig to manage my Hikube resources?
 
-Credentials are stored in a Kubernetes Secret. The command varies depending on the service:
+No. VMs, disks, buckets, networks, Kubernetes clusters and databases are created and managed from the console. The project kubeconfig is no longer issued by default; it remains available on request from support for legacy uses such as [Terraform](../tools/terraform.md).
 
-```bash
-# Redis
-kubectl get secret redis-<name>-auth -o json | jq -r '.data | to_entries[] | "\(.key): \(.value|@base64d)"'
-
-# PostgreSQL
-kubectl get secret pg-<name>-app -o json | jq -r '.data | to_entries[] | "\(.key): \(.value|@base64d)"'
-
-# MySQL
-kubectl get secret mysql-<name>-auth -o json | jq -r '.data | to_entries[] | "\(.key): \(.value|@base64d)"'
-```
-
-See: [Redis - Quick Start](../services/databases/redis/quick-start.md), [PostgreSQL - Quick Start](../services/databases/postgresql/quick-start.md), [MariaDB - Quick Start](../services/databases/mariadb/quick-start.md)
+The kubeconfig of a **Kubernetes cluster** (question 3), on the other hand, remains the normal way to access that cluster.
 
 ---
 
-## 3. How do I expose a service externally?
+## 5. Where do I find my database credentials?
 
-Two options are available:
+On the detail page of the database cluster in the console (**DB & Messaging** → service → cluster). The users, their passwords and the connection host are shown there.
 
-**Option 1: External access via LoadBalancer** (recommended for production)
+See: [PostgreSQL](../services/databases/postgresql/quick-start.md), [MariaDB](../services/databases/mariadb/quick-start.md), [MongoDB](../services/databases/mongodb/quick-start.md), [Redis](../services/databases/redis/quick-start.md), [RabbitMQ](../services/messaging/rabbitmq/quick-start.md)
 
-Add `external: true` in your service's YAML manifest. A LoadBalancer with a public IP will be created automatically.
+---
 
-```yaml
-spec:
-  external: true
-```
+## 6. How do I expose a database to the Internet?
 
-**Option 2: Port-forward** (recommended for development)
+Enable the **External access** option when creating the cluster or in **Edit**. A public IP is then assigned and shown in the **Host** field of the detail page.
 
-```bash
-kubectl port-forward svc/<service-name> <local-port>:<service-port>
-```
-
-:::note
-It is recommended not to expose databases externally unless you specifically need to.
+:::warning
+Only expose a database if necessary, and use strong passwords.
 :::
 
 ---
 
-## 4. What is the difference between `resources` and `resourcesPreset`?
+## 7. How do I choose the size of my resources?
 
-- **`resourcesPreset`**: a predefined profile (nano, micro, small, medium, large, xlarge, 2xlarge) that automatically allocates CPU and memory.
-- **`resources`**: allows you to **explicitly** define CPU and memory values.
+The creation wizards offer predefined sizes:
 
-If `resources` is defined, `resourcesPreset` is **ignored**.
+- **VMs and Kubernetes nodes**: instance types from the `s1`, `u1` and `m1` series (from 1 to 64 vCPU). See [Kubernetes concepts](../services/kubernetes/concepts.md) and [Virtual machine concepts](../services/compute/concepts.md).
+- **Databases**: presets from `nano` to `2xlarge`. See the Concepts page of each service.
 
-| Preset | CPU | Memory |
-|--------|-----|--------|
-| `nano` | 250m | 128Mi |
-| `micro` | 500m | 256Mi |
-| `small` | 1 | 512Mi |
-| `medium` | 1 | 1Gi |
-| `large` | 2 | 2Gi |
-| `xlarge` | 4 | 4Gi |
-| `2xlarge` | 8 | 8Gi |
-
-See: [Redis - API Reference](../services/databases/redis/api-reference.md)
+Each wizard shows the impact on the project quota and the estimated cost before creation.
 
 ---
 
-## 5. How do I choose my instanceType for Kubernetes?
+## 8. How do I increase a project's quotas?
 
-The `instanceType` parameter in `nodeGroups` determines the resources for each worker node:
+Project or organization administrators change the quotas in the project settings. A quota cannot be lowered below current consumption. If your organization's capacity is insufficient, contact support.
 
-| Instance Type | vCPU | RAM |
-|---------------|------|-----|
-| `s1.small` | 1 | 2 GB |
-| `s1.medium` | 2 | 4 GB |
-| `s1.large` | 4 | 8 GB |
-| `s1.xlarge` | 8 | 16 GB |
-| `s1.2xlarge` | 16 | 32 GB |
-
-Choose based on your workloads:
-- **Standard web applications**: `s1.large` (good cost/performance balance)
-- **Memory-intensive applications**: `s1.xlarge` or `s1.2xlarge`
-- **Development environments**: `s1.small` or `s1.medium`
-
-See: [Kubernetes - API Reference](../services/kubernetes/api-reference.md)
+See: [Key concepts - Quotas](../getting-started/concepts.md#quotas)
 
 ---
 
-## 6. How do I enable S3 backups?
+## 9. How do I scale my resources?
 
-For databases that support it (PostgreSQL, ClickHouse), add the `backup` section in your manifest:
-
-```yaml
-spec:
-  backup:
-    enabled: true
-    s3:
-      endpoint: "https://s3.example.com"
-      bucket: "my-backups"
-      accessKey: "ACCESS_KEY"
-      secretKey: "SECRET_KEY"
-```
-
-See: [PostgreSQL - API Reference](../services/databases/postgresql/api-reference.md)
+- **Kubernetes cluster**: change the minimum and maximum bounds of the node groups in **Edit**. Nodes adjust automatically to the load between these bounds. See [Manage node groups](../services/kubernetes/how-to/manage-node-groups.md).
+- **Databases**: depending on the service, the preset and the storage can be changed in **Edit**. See the "scaling" guide of each service.
 
 ---
 
-## 7. How do I access Grafana and my dashboards?
+## 10. How does database high availability work?
 
-If monitoring is enabled on your tenant, Grafana is accessible via a dedicated URL. To find it:
+With several replicas, each managed service automatically fails over to a healthy replica if the primary instance fails. The number of replicas is chosen at creation.
 
-```bash
-# Check monitoring Ingresses
-kubectl get ingress -n monitoring
-
-# Or check services
-kubectl get svc -n monitoring | grep grafana
-```
-
-Dashboards are preconfigured for each resource type (Kubernetes, databases, VMs, etc.).
-
-See: [Key Concepts - Observability](../getting-started/concepts.md)
+See: [PostgreSQL - Concepts](../services/databases/postgresql/concepts.md), [Redis - Concepts](../services/databases/redis/concepts.md)
 
 ---
 
-## 8. How do I scale my cluster?
+## 11. Are database backups available in the console?
 
-### Scaling database replicas
-
-Modify the `replicas` field in your manifest and reapply:
-
-```yaml
-spec:
-  replicas: 5  # Increase the number of replicas
-```
-
-```bash
-kubectl apply -f <manifest>.yaml
-```
-
-### Scaling Kubernetes nodes
-
-Nodes scale automatically between `minReplicas` and `maxReplicas` based on load. To modify the limits, adjust the `nodeGroup` configuration:
-
-```yaml
-spec:
-  nodeGroups:
-    general:
-      minReplicas: 2
-      maxReplicas: 10
-```
-
-See: [Kubernetes - Quick Start](../services/kubernetes/quick-start.md)
+Not yet. Backup configuration and restores are currently handled by support. See for example [PostgreSQL - Backups](../services/databases/postgresql/how-to/configure-backups.md).
 
 ---
 
-## 9. What storageClasses are available?
+## 12. How do I contact support?
 
-| StorageClass | Description |
-|-------------|-------------|
-| `""` (default) | Standard storage, data on a single datacenter |
-| `replicated` | Replicated storage across multiple datacenters, high availability |
-
-Use `replicated` for production workloads requiring hardware fault tolerance.
-
-```yaml
-spec:
-  storageClass: replicated
-```
-
-See: [Kubernetes - API Reference](../services/kubernetes/api-reference.md)
-
----
-
-## 10. How does auto-failover work on databases?
-
-Each managed database service has an auto-failover mechanism:
-
-| Service | Mechanism | How it works |
-|---------|-----------|--------------|
-| **Redis** | Redis Sentinel | Monitors the master, automatically promotes a replica in case of failure |
-| **PostgreSQL** | CloudNativePG | Failure detection and automatic promotion of a standby |
-| **MySQL** | MySQL Operator | Semi-synchronous replication with automatic failover |
-| **ClickHouse** | ClickHouse Keeper | Distributed consensus for shard and replica coordination |
-| **RabbitMQ** | Quorum Queues | Raft replication for message fault tolerance |
-
-Auto-failover is **enabled by default** when `replicas > 1`. No additional configuration is required.
-
-See: [Redis - Overview](../services/databases/redis/overview.md), [PostgreSQL - Overview](../services/databases/postgresql/overview.md)
-
----
-
-## 11. Why does `kubectl get ... -A` return "Forbidden"?
-
-The `-A` (`--all-namespaces`) flag performs a **cluster-scoped** request. However, tenant users only have **roles scoped to their namespace**. Kubernetes does not automatically filter to authorized namespaces: the cluster-scoped request is denied entirely.
-
-**Solution:** do not use `-A`. Your kubeconfig already defines your target namespace, so commands work directly:
-
-```bash
-# Correct
-kubectl get pods
-kubectl get kubernetes
-
-# Incorrect (Forbidden)
-kubectl get pods -A
-kubectl get kubernetes -A
-```
-
-`kubectl config` commands (local) are not affected:
-```bash
-# Always works
-kubectl config current-context
-kubectl config get-contexts
-```
+From the console, open the profile menu and click **Contact support**: the technical context of the page is attached to your request. You can also write to **support@hidora.io**.

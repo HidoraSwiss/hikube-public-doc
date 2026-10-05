@@ -3,54 +3,36 @@ sidebar_position: 2
 title: Concepts
 ---
 
-# Concepts — MySQL
+# Concepts — MariaDB
 
 ## Architecture
 
-MySQL on Hikube is a managed service based on the **MariaDB-Operator**. Although the operator uses MariaDB (a compatible fork of MySQL), the service is fully compatible with MySQL clients and protocols. Each instance deployed via the `MariaDB` resource creates a replicated cluster with a primary and replicas for high availability.
+MariaDB on Hikube is a managed service. MariaDB is a fork of MySQL, compatible with its clients and protocol. Each cluster created from the console is a replicated set made up of a primary and optional replicas. It belongs to a **project** and consumes that project's quotas.
 
 ```mermaid
 graph TB
-    subgraph "Hikube Platform"
-        subgraph "Tenant namespace"
-            CR[MariaDB CRD]
-            SEC[Secret credentials]
-        end
-
-        subgraph "MariaDB Operator"
-            OP[Controller]
-        end
-
-        subgraph "MySQL Cluster"
-            P[Primary - R/W]
-            R1[Replica 1 - RO]
-            R2[Replica 2 - RO]
-        end
-
-        subgraph "Storage"
-            PV1[PV Primary]
-            PV2[PV Replica 1]
-            PV3[PV Replica 2]
-        end
-
-        subgraph "Backup"
-            S3[S3 Bucket]
-            RES[Restic]
-        end
+    subgraph "Hikube console"
+        UI[Project → DB & Messaging → MariaDB]
     end
 
-    CR --> OP
-    OP --> P
-    OP --> R1
-    OP --> R2
+    subgraph "MariaDB cluster"
+        P[Primary - R/W]
+        R1[Replica 1 - RO]
+        R2[Replica 2 - RO]
+    end
+
+    subgraph "Storage"
+        PV1[Primary volume]
+        PV2[Replica 1 volume]
+        PV3[Replica 2 volume]
+    end
+
+    UI -->|creation / update| P
     P -->|binlog replication| R1
     P -->|binlog replication| R2
     P --> PV1
     R1 --> PV2
     R2 --> PV3
-    RES -->|encrypted backup| S3
-    P --> RES
-    OP --> SEC
 ```
 
 ---
@@ -58,24 +40,24 @@ graph TB
 ## Terminology
 
 | Term | Description |
-|------|-------------|
-| **MariaDB** | Kubernetes resource (`apps.cozystack.io/v1alpha1`) representing a managed MySQL cluster. The CRD is named `MariaDB` because the service relies on MariaDB-Operator. |
+|-------|-------------|
+| **MariaDB Cluster** | Managed instance created from the console, made up of a primary and optional replicas. |
+| **Project** | Isolated space that groups your resources and carries the quotas. |
 | **Primary** | Main node that accepts reads and writes. |
-| **Replica** | Read-only node, synchronized from the primary via binlog replication. |
-| **MariaDB-Operator** | Kubernetes operator that manages deployment, replication, failover, and backups. |
-| **Restic** | Backup tool used to create encrypted snapshots to S3 storage. |
-| **Switchover** | Planned switch of the primary role to another node in the cluster. |
-| **resourcesPreset** | Predefined resource profile (nano to 2xlarge). |
+| **Replica** | Read-only node, synchronized from the primary through binlog replication. |
+| **Preset** | Resource template (CPU, memory) allocated to each node of the cluster. |
+| **External access** | Option that exposes the cluster on the Internet through a public IP address. |
+| **Role** | A user's right on a database: **Administrator** or **Read-only**. |
 
 ---
 
 ## Replication and high availability
 
-The MySQL cluster uses MariaDB's **binlog replication**:
+The cluster uses MariaDB **binlog replication**:
 
 1. **The primary** writes all changes to the binary log
 2. **The replicas** consume the binlog and apply the changes
-3. **In case of failure** of the primary, the operator automatically promotes a replica
+3. **If the primary fails**, the platform automatically promotes a replica
 
 ```mermaid
 sequenceDiagram
@@ -87,61 +69,60 @@ sequenceDiagram
     Primary->>Primary: Binlog write
     Primary-->>Client: OK
     Primary->>Replica: Binlog event
-    Replica->>Replica: Apply change
+    Replica->>Replica: Applies the change
 ```
 
-### Manual switchover
+The **Number of replicas** is chosen at creation:
 
-You can switch the primary to another node for maintenance:
-
-```bash
-kubectl edit mariadb <instance-name>
-# Modify spec.replication.primary.podIndex
-```
+| Offered value | Use |
+|-----------------|-------|
+| **1 (Standalone)** | Development, testing |
+| **3 (Max High Availability)** | Production |
+| **5 (Ultra High Availability)** | Critical production |
 
 :::warning
-Switching the primary causes a brief write interruption. Reads remain available through replicas.
+The number of replicas and the preset cannot be changed after creation. To change them, [contact support](mailto:support@hidora.io).
+:::
+
+Manual primary switchover is not offered in the console; contact support.
+
+---
+
+## Users, databases and roles
+
+A MariaDB cluster page has a **Users** section; there is no tab dedicated to databases. Rights are managed per user:
+
+- **Global Role (Optional)**: **No global role**, **Administrator** or **Read-only (global)**;
+- **Specific Access (Databases)**: a list of **Database name** / **Rights** pairs (**Administrator (Admin)** or **Read-only**). Granting access to a database that does not exist yet creates it.
+
+Users declared in the cluster creation wizard are granted the chosen **Role** on the `mysql` system database, visible in the **Databases** column of the user list: **Administrator** grants all privileges there (`ALL`, with grant option), **Read-only** grants `SELECT`. Then give them access to your application databases via **Manage Access**.
+
+:::warning
+The `mysql` database contains the server's accounts and privileges. **Administrator** access to this database makes it possible to change every user's rights, and **Read-only** access makes it possible to read password hashes. Reserve these accesses for an administration account and remove them from application accounts via **Manage Access**.
+:::
+
+A user's password is generated by the platform and displayed **only once**. If it is lost, generate a new one with **Change Password**.
+
+### Naming rules
+
+| Item | Rule |
+|---------|-------|
+| Cluster name | 3 to 16 characters: lowercase letters, digits and hyphens; starts with a letter, ends with a letter or a digit |
+| Username | Lowercase letters, digits and hyphens; starts with a letter, ends with a letter or a digit (3 to 16 characters in the cluster creation wizard) |
+| Database name | 1 to 63 characters: lowercase letters, digits and hyphens; starts with a letter, ends with a letter or a digit |
+
+:::note
+Underscores (`_`) are not accepted in database names or usernames.
 :::
 
 ---
 
-## Backup
+## Presets
 
-MySQL on Hikube uses **Restic** for backups:
-
-- Snapshots are **encrypted** with a Restic password
-- Stored in an **S3-compatible bucket** (Hikube Object Storage, AWS S3, etc.)
-- The **retention strategy** (`cleanupStrategy`) controls the retention duration
-
-| Parameter | Description |
-|-----------|-------------|
-| `backup.schedule` | Cron schedule (e.g., `0 2 * * *`) |
-| `backup.cleanupStrategy` | Restic retention options (e.g., `--keep-last=3 --keep-daily=7`) |
-| `backup.resticPassword` | Backup encryption password |
-| `backup.s3*` | S3 credentials and bucket |
-
-:::tip
-Regularly test the restore procedure. An untested backup does not guarantee a successful restore.
-:::
-
----
-
-## User and database management
-
-The manifest allows declaring:
-
-- **Users**: name, password, connection limit (`maxUserConnections`)
-- **Databases**: name and role assignment
-- **Roles**: `admin` (full read/write), `readonly` (SELECT only)
-
-A `root` password is automatically generated by the operator and stored in the Secret `<instance>-credentials`.
-
----
-
-## Resource presets
+The **Preset** defines the capacity allocated to **each node** of the cluster. The list displayed by the wizard is authoritative; for reference:
 
 | Preset | CPU | Memory |
-|--------|-----|--------|
+|--------|-----|---------|
 | `nano` | 250m | 128Mi |
 | `micro` | 500m | 256Mi |
 | `small` | 1 | 512Mi |
@@ -150,23 +131,36 @@ A `root` password is automatically generated by the operator and stored in the S
 | `xlarge` | 4 | 4Gi |
 | `2xlarge` | 8 | 8Gi |
 
-:::warning
-If the `resources` field (explicit CPU/memory) is set, `resourcesPreset` is ignored.
-:::
+Defining custom CPU/memory resources is not offered in the console; contact support.
 
 ---
 
-## Limits and quotas
+## Network access
+
+- **External access disabled** (default): the cluster is not exposed on the Internet. The **Host** field of the **Connection and network** card shows **Not defined**.
+- **External access enabled**: the platform assigns a public IP address, shown in the **Host** field. The port is the standard MySQL port, `3306`.
+
+---
+
+## Backup and restore
+
+Backup configuration and restore are not offered in the console; contact support. See [Configure backups](./how-to/configure-backups.md).
+
+---
+
+## Quotas and cost
+
+The wizard displays the **Estimated Cost** and the cluster's impact on the project quotas. If the cluster exceeds the available quotas, the **Next** button stays disabled.
 
 | Parameter | Value |
-|-----------|-------|
-| Max replicas | Depending on tenant quota |
-| Storage size (`size`) | Variable (in Gi) |
-| `maxUserConnections` | Configurable per user (0 = unlimited) |
+|-----------|--------|
+| Versions | 10.6, 10.11, 11.4, 11.8 |
+| Replicas | 1, 3 or 5 |
+| Disk size | 1 to 4,096 GB, within the project's storage quota |
 
 ---
 
-## Further reading
+## Going further
 
 - [Overview](./overview.md): service presentation
-- [API Reference](./api-reference.md): all parameters of the MariaDB resource
+- [Quick start](./quick-start.md): create your first cluster

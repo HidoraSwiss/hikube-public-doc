@@ -5,19 +5,19 @@ title: Concepts
 
 # Concepts — NATS
 
+:::info Availability
+NATS is not yet available as self-service in the [Hikube console](https://console.hikube.cloud).
+To provision an instance or change its configuration, [contact support](mailto:support@hidora.io).
+:::
+
 ## Architecture
 
-NATS on Hikube is a managed messaging service, ultra-lightweight and high-performance. Each instance deployed via the `NATS` resource creates a cluster of servers with optional **JetStream** support for message persistence.
+NATS on Hikube is a managed, ultra-lightweight, high-performance messaging service. Each instance is a cluster of NATS servers attached to a Hikube project, with optional **JetStream** support for message persistence.
 
 ```mermaid
 graph TB
-    subgraph "Hikube Platform"
-        subgraph "Tenant namespace"
-            CR[NATS CRD]
-            SEC[Secret credentials]
-        end
-
-        subgraph "NATS Cluster"
+    subgraph "Hikube project"
+        subgraph "NATS cluster"
             N1[NATS Server 1]
             N2[NATS Server 2]
             N3[NATS Server 3]
@@ -25,19 +25,16 @@ graph TB
 
         subgraph "JetStream"
             JS[Stream Storage]
-            PV[Persistent Volume]
-        end
-
-        subgraph "Clients"
-            PUB[Publisher]
-            SUB[Subscriber]
-            REQ[Request/Reply]
+            PV[Persistent volume]
         end
     end
 
-    CR --> N1
-    CR --> N2
-    CR --> N3
+    subgraph "Clients"
+        PUB[Publisher]
+        SUB[Subscriber]
+        REQ[Request/Reply]
+    end
+
     N1 <-->|cluster routing| N2
     N2 <-->|cluster routing| N3
     N1 --> JS
@@ -45,7 +42,6 @@ graph TB
     PUB --> N1
     N2 --> SUB
     REQ --> N3
-    CR --> SEC
 ```
 
 ---
@@ -53,15 +49,15 @@ graph TB
 ## Terminology
 
 | Term | Description |
-|------|-------------|
-| **NATS** | Kubernetes resource (`apps.cozystack.io/v1alpha1`) representing a managed NATS cluster. |
-| **Subject** | Message routing address (e.g., `orders.created`). Supports wildcards (`*`, `>`). |
-| **Publish/Subscribe** | Communication model where publishers send messages to a subject and subscribers receive them. |
-| **JetStream** | NATS persistence extension — durable message storage with replay, acknowledgment, and consumers. |
-| **Stream** | Persistent collection of messages in JetStream, with configurable retention policy. |
-| **Consumer** | Durable subscription in JetStream with position (offset) tracking and acknowledgment. |
-| **Request/Reply** | Synchronous communication model — a client sends a request and waits for a response. |
-| **resourcesPreset** | Predefined resource profile (nano to 2xlarge). |
+|-------|-------------|
+| **NATS (instance)** | NATS cluster managed by Hikube, attached to a project. Its configuration is set at creation and changed on request from support. |
+| **Subject** | Message routing address (e.g. `orders.created`). Supports wildcards (`*`, `>`). |
+| **Publish/Subscribe** | Communication model in which publishers send messages to a subject and subscribers receive them. |
+| **JetStream** | NATS persistence extension — durable message storage with replay, acknowledgment and consumers. |
+| **Stream** | Persistent collection of messages in JetStream, with a configurable retention policy. |
+| **Consumer** | Durable subscription in JetStream with position tracking (offset) and acknowledgment. |
+| **Request/Reply** | Synchronous communication model — a client sends a request and waits for a reply. |
+| **Resource preset** | Predefined CPU/memory profile (nano to 2xlarge). |
 
 ---
 
@@ -71,7 +67,7 @@ NATS supports three communication models:
 
 ### Publish/Subscribe
 
-The simplest model — a publisher sends a message, all subscribers receive a copy:
+The simplest model — a publisher sends a message, and every subscriber receives a copy:
 
 ```mermaid
 graph LR
@@ -83,7 +79,7 @@ graph LR
 
 ### Queue Groups
 
-Subscribers in the same queue group share messages (load balancing):
+Subscribers in the same queue group share the messages between them (load balancing):
 
 ```mermaid
 graph LR
@@ -95,7 +91,7 @@ graph LR
 
 ### Request/Reply
 
-Synchronous communication with an expected response:
+Synchronous communication with an expected reply:
 
 ```mermaid
 sequenceDiagram
@@ -117,18 +113,20 @@ JetStream adds **persistence** to NATS:
 
 - Messages are stored on disk in **streams**
 - **Consumers** track their position and can replay messages
-- Supports **at-least-once** and **exactly-once** delivery
-- Configurable retention by duration, message count, or size
+- Support for **at-least-once** and **exactly-once** delivery
+- Retention configurable by duration, number of messages or size
+
+Enabling JetStream and the size of its volume are part of the instance configuration. Streams and consumers are then created from your clients (`nats` CLI or SDK).
 
 :::tip
-Enable JetStream only if you need persistence. For ephemeral pub/sub, core NATS is lighter (< 10 MB of RAM per instance).
+JetStream is only useful if you need persistence. For ephemeral pub/sub, core NATS is lighter.
 :::
 
 ---
 
 ## User management
 
-NATS users are declared in the manifest with a password. Credentials are stored in the Secret `<instance>-credentials`.
+NATS users (name and password) are part of the instance configuration. To create or change them, ask support, who will send you the credentials.
 
 ---
 
@@ -149,10 +147,10 @@ NATS users are declared in the manifest with a password. Credentials are stored 
 ## Limits and quotas
 
 | Parameter | Value |
-|-----------|-------|
-| Max replicas | Depending on tenant quota |
-| Minimum memory footprint | < 10 MB per instance (without JetStream) |
-| JetStream storage size | Variable (in Gi) |
+|-----------|--------|
+| Max replicas | Depends on the project quotas |
+| Minimum memory footprint | Low (a few MB per instance without JetStream) |
+| JetStream storage size | Set when the instance is created |
 | Typical latency | < 1 ms (same datacenter) |
 
 ---
@@ -160,4 +158,4 @@ NATS users are declared in the manifest with a password. Credentials are stored 
 ## Further reading
 
 - [Overview](./overview.md): service presentation
-- [API Reference](./api-reference.md): all parameters of the NATS resource
+- [Quick start](./quick-start.md): request an instance and test it

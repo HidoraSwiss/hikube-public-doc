@@ -1,13 +1,13 @@
 ---
-sidebar_position: 2
-title: Quick Start
+sidebar_position: 3
+title: Quick start
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';
 
-# Deploy MySQL in 5 minutes
+# Deploy MariaDB in 5 minutes
 
-This guide walks you through deploying your first **MySQL** database on Hikube, from setup to your first connection.
+This guide walks you through creating your first **MariaDB** cluster from the [Hikube console](https://console.hikube.cloud), up to the first connection with the `mysql` (or `mariadb`) client.
 
 ---
 
@@ -15,290 +15,178 @@ This guide walks you through deploying your first **MySQL** database on Hikube, 
 
 By the end of this guide, you will have:
 
-- An operational **MySQL** database on Hikube
-- A replicated cluster with a **primary** and **replicas** for high availability
-- **Users and passwords** to access your applications
-- **Persistent storage** attached to each instance to ensure data durability
-- (Optional) The option to enable **automatic backups** to S3-compatible storage
+- A **MariaDB** cluster deployed in your Hikube project
+- A user with rights on an application database
+- A working connection with a MySQL client
 
 ---
 
 ## Prerequisites
 
-Before starting, make sure you have:
-
-- **kubectl** configured with your Hikube kubeconfig
-- **Administrator rights** on your tenant
-- A **namespace** available to host your database
-- (Optional) An **S3-compatible** bucket if you want to enable automatic backups via MariaDB-Operator
+- A **Hikube account** and a **project** with sufficient quotas (CPU, memory, storage)
+- The **`mysql`** or **`mariadb`** client installed on your workstation, if you want to test a connection from the Internet
 
 ---
 
-## Step 1: Create the MySQL manifest
+## Step 1: Create the cluster
 
-### **Prepare the manifest file**
-
-Create a `mysql.yaml` file as shown below:
-
-```yaml title="mysql.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: MySQL
-metadata:
-  name: example
-spec:
-  backup:
-    cleanupStrategy: --keep-last=3 --keep-daily=3 --keep-within-weekly=1m
-    enabled: false
-    resticPassword: <password>
-    s3AccessKey: <your-access-key>
-    s3Bucket: s3.example.org/mysql-backups
-    s3Region: us-east-1
-    s3SecretKey: <your-secret-key>
-    schedule: 0 2 * * *
-  databases:
-    myapp1:
-      roles:
-        admin:
-        - user1
-        readonly:
-        - user2
-  external: true
-  replicas: 3
-  resources:
-    cpu: 3000m
-    memory: 3Gi
-  resourcesPreset: nano
-  size: 10Gi
-  storageClass: ""
-  users:
-    user1:
-      maxUserConnections: 1000
-      password: hackme
-    user2:
-      maxUserConnections: 1000
-      password: hackme
-```
-
-### **Deploy the MySQL yaml**
-
-```bash
-# Apply the yaml
-kubectl apply -f mysql.yaml
-```
+1. Log in to the [Hikube console](https://console.hikube.cloud) and select your project.
+2. In the side menu, open **DB & Messaging** → **MariaDB**. The **MariaDB Clusters** page is displayed.
+3. Click **Create a cluster**. The **Create a MariaDB cluster** wizard opens.
 
 ---
 
-## Step 2: Deployment verification
+## Step 2: Configure and confirm
 
-Check the status of your MySQL cluster (may take 1-2 minutes):
+The wizard has five steps: **General**, **Configuration**, **Users**, **Summary** and **Finish**.
 
-```bash
-kubectl get mysql
-```
+### General
 
-**Expected output:**
+Enter the **Cluster Name**, for example `demo-mariadb` (3 to 16 characters: lowercase letters, digits and hyphens; starts with a letter, ends with a letter or a digit).
 
-```console
-NAME      READY   AGE     VERSION
-example   True    1m16s   0.10.0
-```
+### Configuration
 
----
+| Field | Recommended value for this guide | Note |
+|-------|----------------------------------|----------|
+| **MariaDB Version** | `11.8` | Offered versions: 10.6, 10.11, 11.4, 11.8 |
+| **Preset** | `Small (1 CPU, 512Mi)` | Cannot be changed after creation |
+| **Disk size (GB)** | `10` | Storage capacity per node |
+| **Number of replicas** | `1 (Standalone)` | `3` or `5` for high availability; cannot be changed after creation |
+| **External access** | Enabled | Required to connect from your workstation |
 
-## Step 3: Pod verification
-
-Verify that the application pods are in `Running` state:
-
-```bash
-kubectl get po -o wide | grep mysql
-```
-
-**Expected output:**
-
-```console
-mysql-example-0                                   1/1     Running     0             24m   10.244.123.64    gld-csxhk-006   <none>           <none>
-mysql-example-1                                   1/1     Running     0             24m   10.244.123.65    luc-csxhk-005   <none>           <none>
-mysql-example-2                                   1/1     Running     0             24m   10.244.123.66    plo-csxhk-001   <none>           <none>
-mysql-example-metrics-747cf456c9-6vnq9            1/1     Running     0             23m   10.244.123.73    plo-csxhk-004   <none>           <none>
-```
-
-With `replicas: 3`, you get **3 MySQL instances** (1 primary + 2 replicas) distributed across different datacenters, plus a metrics pod.
-
-Verify that each instance has a persistent volume (PVC):
-
-```bash
-kubectl get pvc | grep mysql
-```
-
-**Expected output:**
-
-```console
-storage-mysql-example-0                    Bound     pvc-3622a61d-7432-4a36-9812-953e30f85fbe   10Gi       RWO            local          <unset>                 24m
-storage-mysql-example-1                    Bound     pvc-b9933029-c9c6-40c2-a67d-69dcb224a9bb   10Gi       RWO            local          <unset>                 24m
-storage-mysql-example-2                    Bound     pvc-597da2f3-1604-416c-a480-2dae7aae75e1   10Gi       RWO            local          <unset>                 24m
-```
-
----
-
-## Step 4: Retrieve credentials
-
-Passwords are stored in a Kubernetes Secret:
-
-```bash
-kubectl get secret mysql-example-credentials -o json | jq -r '.data | to_entries[] | "\(.key): \(.value|@base64d)"'
-```
-
-**Expected output:**
-
-```console
-root: cr42msoxKhnEajfo
-user1: hackme
-user2: hackme
-```
-
----
-
-## Step 5: Connection and testing
-
-### External access (if `external: true`)
-
-Check available services:
-
-```bash
-kubectl get svc | grep mysql
-```
-
-```console
-mysql-example                        ClusterIP      10.96.149.25    <none>          3306/TCP                     27m
-mysql-example-internal               ClusterIP      None            <none>          3306/TCP                     27m
-mysql-example-metrics                ClusterIP      10.96.101.154   <none>          9104/TCP                     26m
-mysql-example-primary                LoadBalancer   10.96.161.170   91.223.132.64   3306:32537/TCP               27m
-mysql-example-secondary              ClusterIP      10.96.105.28    <none>          3306/TCP                     27m
-```
-
-### Access via port-forward (if `external: false`)
-
-```bash
-kubectl port-forward svc/mysql-example 3306:3306
-```
+The banner at the top of the wizard shows the **Estimated Cost** and the impact on the project quotas.
 
 :::note
-It is recommended not to expose the database externally if you do not need to.
+Only enable **External access** if you need it: it exposes the database on the public Internet.
 :::
 
-### Connection test with mysql
+### Users
+
+Add at least one user:
+
+1. **Username**: for example `app-user` (lowercase letters, digits and hyphens).
+2. **Role**: **Administrator** or **Read-only**.
+3. Click **Add**.
+
+### Summary
+
+Review the summary (**Version**, **Preset**, **Data volume**, **Replicas**, **External exposure**, **Estimated cost**, **Users to create**), then click **Create cluster**.
+
+---
+
+## Step 3: Check the status
+
+The **Finish** step confirms the creation ("Creation complete!"). Click **Finish** to open the cluster page.
+
+| Status | Meaning |
+|--------|---------------|
+| **Creating** | The cluster is being provisioned |
+| **Ready** / **Active** | The cluster is operational |
+| **Error** / **Failed** | Provisioning failed |
+
+**Expected result:** after a few minutes, the status changes to **Ready**. The page shows the **MariaDB Version**, the **Replicas**, the **Allocated Size** and the **Preset**.
+
+---
+
+## Step 4: Retrieve the credentials and grant access to a database
+
+### Credentials
+
+The wizard's **Finish** step displays, under **User Credentials**, the **Password** of each user and the **Internal Connection String** (`<host>:3306`) when external access is enabled.
+
+:::warning
+Copy these passwords immediately: they will not be displayed again. If one is lost, generate a new one from the **Users** section (**Actions** → **Change Password**).
+:::
+
+The address remains available in the **Connection and network** card of the cluster page, **Host** field.
+
+### Access to an application database
+
+The role chosen in the wizard applies to the `mysql` system database. To create an application database and grant access to it:
+
+1. In the **Users** section, open the **Actions** menu of `app-user` and choose **Manage Access**.
+2. Under **Specific Access (Databases)**, click **Add**.
+3. Enter the **Database name**, for example `myapp` (lowercase letters, digits and hyphens), and choose the **Rights** **Administrator (Admin)**.
+4. Click **Save**. The `myapp` database is created if it does not exist.
+
+---
+
+## Step 5: Connect and test
 
 ```bash
-mysql -h 91.223.132.64 -u user1 -p myapp1
+mysql -h <host> -P 3306 -u app-user -p myapp
 ```
+
+Enter the password, then check the connection:
+
+```sql
+SELECT VERSION();
+CREATE TABLE test (id INT AUTO_INCREMENT PRIMARY KEY, message VARCHAR(100));
+INSERT INTO test (message) VALUES ('Hello Hikube');
+SELECT * FROM test;
+```
+
+**Expected result:**
 
 ```console
-Welcome to the MySQL monitor.  Commands end with ; or \g.
-Your MySQL connection id is 1214
-Server version: 11.0.2-MariaDB-1:11.0.2+maria~ubu2204-log mariadb.org binary distribution
-
-Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
-
-mysql> show databases;
-+--------------------+
-| Database           |
-+--------------------+
-| information_schema |
-| myapp1             |
-+--------------------+
-2 rows in set (0.00 sec)
-
-mysql>
++----+--------------+
+| id | message      |
++----+--------------+
+|  1 | Hello Hikube |
++----+--------------+
 ```
+
+:::tip
+The `mariadb` client accepts the same options: `mariadb -h <host> -P 3306 -u app-user -p myapp`.
+:::
 
 ---
 
 ## Step 6: Quick troubleshooting
 
-### Pods in CrashLoopBackOff
+### The Host field shows "Not defined"
 
-```bash
-# Check the logs of the failing pod
-kubectl logs mysql-example-0
+**External access** is disabled, or the public IP address has not been assigned yet. Enable it via **Edit** if needed, then wait a few moments.
 
-# Check the pod events
-kubectl describe pod mysql-example-0
-```
+### `Access denied for user`
 
-**Common causes:** insufficient memory (`resources.memory` too low), full storage volume, MariaDB configuration error.
+Wrong password, or user without access to the specified database. Check the **Databases** column of the user list and add the access via **Manage Access**.
 
-### MySQL not accessible
+### The Next button stays disabled
 
-```bash
-# Check that services exist
-kubectl get svc | grep mysql
+- At the **Configuration** step: the cluster exceeds the project quotas.
+- At the **Users** step: add at least one user.
 
-# Check that the LoadBalancer has an external IP
-kubectl describe svc mysql-example-primary
-```
+### The cluster stays in Error
 
-**Common causes:** `external: false` in the manifest, LoadBalancer waiting for IP assignment, wrong port or hostname in the connection string.
+[Contact support](mailto:support@hidora.io), providing the project and cluster names.
 
-### Replication failure
+---
 
-```bash
-# Check the MariaDB cluster status
-kubectl get mariadb
+## Step 7: Cleanup
 
-# Inspect the MariaDB resource details
-kubectl describe mariadb mysql-example
-```
+1. Open the cluster page (**DB & Messaging** → **MariaDB** → cluster name).
+2. Click **Delete cluster**.
+3. Enter the exact cluster name in the **Resource name to confirm** field, then click **Permanently delete**.
 
-**Common causes:** binlog purged before a replica could synchronize, insufficient disk space, network issue between nodes.
-
-### General diagnostic commands
-
-```bash
-# Recent events on the namespace
-kubectl get events --sort-by=.metadata.creationTimestamp
-
-# Detailed MySQL cluster status
-kubectl describe mysql example
-```
+:::warning
+This action deletes the MariaDB cluster and all associated data. It is **irreversible**.
+:::
 
 ---
 
 ## Summary
 
-You have deployed:
+From the console, you have created:
 
-- A **MySQL** database on your Hikube tenant
-- A replicated cluster with a **primary** and **replicas** to ensure service continuity
-- Automatically created users, with their credentials stored in Kubernetes Secrets
-- Persistent storage (PVC) dedicated to each MySQL pod to ensure data durability
-- Secure access via the `mysql` client (port-forward or LoadBalancer)
-- The option to configure **S3 backups** and restore when needed
-
----
-
-## Cleanup
-
-To delete the test resources:
-
-```bash
-kubectl delete -f mysql.yaml
-```
-
-:::warning
-This action deletes the MySQL cluster and all associated data. This operation is **irreversible**.
-:::
-
----
-
-## Next steps
-
-- **[API Reference](./api-reference.md)**: Complete configuration of all MySQL options
-- **[Overview](./overview.md)**: Detailed architecture and MySQL use cases on Hikube
+- A **MariaDB** cluster in your project
+- A user and an application database
+- External access and a connection with the `mysql` client
 
 <NavigationFooter
   nextSteps={[
+    {label: "Manage users and databases", href: "../how-to/manage-users-databases"},
     {label: "FAQ", href: "../faq"},
-    {label: "API Reference", href: "../api-reference"},
   ]}
   seeAlso={[
     {label: "All databases", href: "../../"},

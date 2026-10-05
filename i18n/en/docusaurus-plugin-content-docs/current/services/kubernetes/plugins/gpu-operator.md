@@ -1,91 +1,73 @@
 ---
-
 sidebar_position: 7
 title: GPU Operator
--------------------
+---
 
-# Details of the `addons.gpuOperator` Field
+# GPU Operator
 
-The `addons.gpuOperator` field defines the configuration of the **NVIDIA GPU Operator** add-on, used to automatically manage **GPUs** in a Kubernetes cluster.
-This component installs and maintains the NVIDIA drivers, runtime plugins, the device plugin, and the monitoring tools required for GPU operations.
+The **GPU Operator** addon installs the **NVIDIA GPU Operator**, which automatically manages the cluster's GPUs: NVIDIA drivers, container runtime, `device plugin` and the monitoring tools needed to operate GPUs.
 
-```yaml
-addons:
-  gpuOperator:
+## In the console
+
+- **With GPU nodes**: as soon as a node group has GPUs (**GPU** section of the **Nodes** step), the console enables **GPU Operator** and prevents you from unchecking it ("Required when a node group has GPUs").
+- **Without GPU nodes**: check **GPU Operator** in the **Addons** step or from **Edit** > **Extensions & Addons**, then **Save**. It is disabled by default.
+
+The cluster detail page shows **GPU Operator** in the **Extensions** section when it is active.
+
+See [How to add and modify a node group](../how-to/manage-node-groups.md#5-add-gpus) for adding GPUs.
+
+## Override the configuration
+
+Once the addon is checked, the **Helm Configuration (YAML) — optional** field appears. The value is passed to the GPU Operator Helm chart, under the `gpu-operator` key.
+
+```yaml title="gpu-operator-override.yaml"
+gpu-operator:
+  dcgmExporter:
     enabled: true
-    valuesOverride:
-      gpuOperator:
-        driver:
-          enabled: true
-        toolkit:
-          enabled: true
-        devicePlugin:
-          enabled: true
 ```
 
----
+The available options are described in the [NVIDIA GPU Operator documentation](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/getting-started.html).
 
-## `gpuOperator` (Object) — **Required**
+:::warning
+The drivers and the device plugin are preconfigured by the platform for Hikube nodes. Do not disable them through an override: the GPUs would no longer be exposed to pods.
+:::
 
-### Description
+## Usage in the cluster
 
-The `gpuOperator` field contains the main configuration of the NVIDIA GPU Operator add-on.
-It allows enabling the component deployment and adjusting its configuration.
+```bash
+# GPU Operator pods
+kubectl get pods -A | grep -i -E "gpu-operator|nvidia"
 
-### Example
-
-```yaml
-gpuOperator:
-  enabled: true
-  valuesOverride:
-    gpuOperator:
-      driver:
-        enabled: true
+# Allocatable GPUs per node
+kubectl get nodes -o custom-columns=NAME:.metadata.name,GPU:.status.allocatable.'nvidia\.com/gpu'
 ```
 
----
+Example pod requesting a GPU:
 
-## `enabled` (boolean) — **Required**
-
-### Description
-
-Indicates whether the **GPU Operator** is enabled (`true`) or disabled (`false`) in the cluster.
-When enabled, the operator automatically deploys the components necessary for managing NVIDIA GPUs.
-
-### Example
-
-```yaml
-enabled: true
+```yaml title="gpu-test.yaml"
+apiVersion: v1
+kind: Pod
+metadata:
+  name: gpu-test
+spec:
+  restartPolicy: Never
+  containers:
+    - name: cuda
+      image: nvidia/cuda:12.4.1-base-ubuntu22.04
+      command: ["nvidia-smi"]
+      resources:
+        limits:
+          nvidia.com/gpu: 1
 ```
 
----
-
-## `valuesOverride` (Object) — **Required**
-
-### Description
-
-The `valuesOverride` field allows **overriding the default values** of the GPU Operator.
-It is used to customize deployment behavior (enabling the driver, toolkit, plugins, or configuring resources).
-
-### Example
-
-```yaml
-valuesOverride:
-  gpuOperator:
-    driver:
-      enabled: true
-    toolkit:
-      enabled: true
-    devicePlugin:
-      enabled: true
+```bash
+kubectl apply -f gpu-test.yaml
+kubectl logs gpu-test
 ```
 
----
+See also [Provision GPUs in Kubernetes](../../gpu/how-to/provision-gpu-kubernetes.md).
 
-## Best Practices
+## Best practices
 
-* Enable `enabled: true` on nodes equipped with GPUs so the operator can automatically manage NVIDIA components.
-* Use `valuesOverride` to adapt the configuration to specific needs (e.g., enabling or disabling the `driver` if already installed manually).
-* Deploy the GPU Operator only in environments where GPU workloads (AI, ML, scientific computing) are required.
-
----
+- Place GPU workloads on a dedicated node group, with a minimum of 0 nodes if usage is occasional.
+- To share a single GPU between several pods, enable [HAMi](./hami.md).

@@ -5,21 +5,22 @@ title: FAQ
 
 # FAQ — ClickHouse
 
+:::info Availability
+ClickHouse is not yet available as self-service in the [Hikube console](https://console.hikube.cloud).
+To provision an instance or change its configuration, [contact support](mailto:support@hidora.io).
+:::
+
 ### What is the difference between shards and replicas?
 
 **Shards** and **replicas** play different roles in the ClickHouse architecture:
 
-- **Shards**: **horizontal** data distribution. Each shard contains a portion of the total dataset. Adding shards increases storage and processing capacity.
-- **Replicas**: **identical** copies of data within the same shard. Each replica contains the same data to ensure high availability.
+- **Shards**: **horizontal** distribution of data. Each shard contains part of the total dataset. Adding shards increases storage and processing capacity.
+- **Replicas**: **identical** copies of the data within the same shard, for high availability.
 
-```yaml title="clickhouse.yaml"
-spec:
-  shards: 2       # Data is distributed across 2 shards
-  replicas: 3     # Each shard has 3 copies (total: 6 pods)
-```
+For example, 2 shards with 3 replicas each represent 6 ClickHouse nodes.
 
 :::tip
-In production, use at least 2 replicas per shard for high availability. Increase the number of shards to handle larger data volumes.
+In production, plan for at least 2 replicas per shard for high availability. Increase the number of shards to handle larger data volumes.
 :::
 
 ### What is ClickHouse Keeper for?
@@ -28,32 +29,21 @@ In production, use at least 2 replicas per shard for high availability. Increase
 
 - **Leader election** for replicated tables
 - **Coordination** of replication operations between replicas
-- **Metadata** management for the cluster
+- Management of cluster **metadata**
 
-The number of Keeper replicas must be **odd** (3 or 5) to guarantee quorum (majority required for leader election). The recommended minimum is **3 replicas**.
-
-```yaml title="clickhouse.yaml"
-spec:
-  clickhouseKeeper:
-    enabled: true
-    replicas: 3        # Always odd: 3 or 5
-    resourcesPreset: micro
-    size: 2Gi
-```
+The number of Keeper instances must be **odd** (3 or 5) to guarantee quorum. The recommended minimum is **3**.
 
 ### Is ClickHouse suitable for transactional queries (OLTP)?
 
-**No.** ClickHouse is an **OLAP** (Online Analytical Processing) database engine optimized for data analysis:
+**No.** ClickHouse is an **OLAP** (Online Analytical Processing) engine optimized for data analysis:
 
-- **Column-oriented** architecture: very performant for aggregations and scans on large data volumes
+- **Column-oriented** architecture: very efficient for aggregations and scans over large volumes
 - Optimized for **massive reads** and analytical queries
-- **Not suitable** for frequent transactional operations (individual `UPDATE`, `DELETE`)
+- **Not suited** to frequent transactional operations (single-row `UPDATE`, `DELETE`)
 
-If you need a transactional engine (OLTP), use **PostgreSQL** or **MySQL** on Hikube instead.
+For a transactional engine, use [PostgreSQL](../postgresql/overview.md) or [MariaDB](../mariadb/overview.md) instead, both available in the console.
 
-### What is the difference between `resourcesPreset` and `resources`?
-
-The `resourcesPreset` field lets you choose a predetermined resource profile for each ClickHouse replica. If the `resources` field (explicit CPU/memory) is defined, `resourcesPreset` is **completely ignored**.
+### Which presets are available?
 
 | **Preset** | **CPU** | **Memory** |
 |------------|---------|------------|
@@ -65,44 +55,18 @@ The `resourcesPreset` field lets you choose a predetermined resource profile for
 | `xlarge`   | 4       | 4Gi        |
 | `2xlarge`  | 8       | 8Gi        |
 
-```yaml title="clickhouse.yaml"
-spec:
-  # Using a preset
-  resourcesPreset: large
-
-  # OR explicit configuration (the preset is then ignored)
-  resources:
-    cpu: 4000m
-    memory: 8Gi
-```
+The preset applies to each replica. Specify it in your request to support.
 
 ### How is data distributed between shards?
 
-Data is distributed between shards via the ClickHouse **Distributed** engine:
+Data is distributed between shards through the ClickHouse **Distributed** engine:
 
 - Each shard stores a **partition** of the total dataset
 - The `Distributed` engine routes queries to all shards and **merges the results**
-- Data is **replicated** within each shard according to the configured number of replicas
+- Data is **replicated** within each shard according to the number of replicas
 
-To benefit from distribution, create tables with the `ReplicatedMergeTree` engine on each shard and a `Distributed` table for global queries.
+Create `ReplicatedMergeTree` tables on each shard and a `Distributed` table for global queries. See [Configure sharding](./how-to/configure-sharding.md).
 
-### How to configure ClickHouse backups?
+### How do I configure ClickHouse backups?
 
-ClickHouse backups use **Restic** for sending to S3-compatible storage. Configure the `backup` section:
-
-```yaml title="clickhouse.yaml"
-spec:
-  backup:
-    enabled: true
-    s3Region: eu-central-1
-    s3Bucket: s3.example.com/clickhouse-backups
-    schedule: "0 3 * * *"
-    cleanupStrategy: "--keep-last=7 --keep-daily=7 --keep-weekly=4"
-    s3AccessKey: your-access-key
-    s3SecretKey: your-secret-key
-    resticPassword: your-restic-password
-```
-
-:::warning
-Keep the `resticPassword` in a safe place. Without this password, backups cannot be decrypted.
-:::
+ClickHouse backups send encrypted snapshots to S3-compatible storage. They are set up on request: [contact support](mailto:support@hidora.io) and specify the desired frequency and retention.

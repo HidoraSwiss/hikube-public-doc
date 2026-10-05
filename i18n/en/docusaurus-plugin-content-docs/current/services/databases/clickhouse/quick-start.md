@@ -1,13 +1,18 @@
 ---
-sidebar_position: 2
-title: Quick Start
+sidebar_position: 3
+title: Quick start
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';
 
-# Deploy ClickHouse in 5 minutes
+# Getting started with ClickHouse
 
-This guide walks you through deploying your first **ClickHouse** database on Hikube in **just a few minutes**!
+:::info Availability
+ClickHouse is not yet available as self-service in the [Hikube console](https://console.hikube.cloud).
+To provision an instance or change its configuration, [contact support](mailto:support@hidora.io).
+:::
+
+This guide describes the information to prepare when requesting a **ClickHouse** instance, then how to get started with `clickhouse-client` once the instance is delivered.
 
 ---
 
@@ -15,156 +20,76 @@ This guide walks you through deploying your first **ClickHouse** database on Hik
 
 By the end of this guide, you will have:
 
-- A **ClickHouse** database deployed on Hikube
-- An initial configuration with **shards** and **replicas** tailored to your needs
-- A user and password to connect
-- Persistent storage to preserve your data
+- A complete provisioning request, with the topology suited to your needs
+- A working connection with `clickhouse-client`
+- A first analytical table
 
 ---
 
 ## Prerequisites
 
-Before starting, make sure you have:
-
-- **kubectl** configured with your Hikube kubeconfig
-- **Administrator rights** on your tenant
-- A **namespace** available to host your database
-- (Optional) An **S3-compatible** bucket if you want to enable automatic backups
+- A **Hikube account** and a **project** with sufficient quotas
+- The **`clickhouse-client`** client installed on your workstation
 
 ---
 
-## Step 1: Create the ClickHouse manifest
+## Step 1: Define the topology
 
-### **Prepare the manifest file**
+Choose the number of **shards** and **replicas** according to your usage (see [Overview](./overview.md)):
 
-Create a `clickhouse.yaml` file as shown below:
+| Usage | Shards | Replicas per shard |
+|-------|--------|--------------------|
+| POC, development | 1 | 1 |
+| Production, moderate volume | 1 | 2 |
+| Production, large volumes | 2 or more | 2 |
 
-```yaml title="clickhouse.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: ClickHouse
-metadata:
-  name: example
-spec:
-#   backup:
-#     cleanupStrategy: --keep-last=3 --keep-daily=3 --keep-within-weekly=1m
-#     enabled: false
-#     resticPassword: <password>
-#     s3AccessKey: <your-access-key>
-#     s3Bucket: s3.example.org/clickhouse-backups
-#     s3Region: us-east-1
-#     s3SecretKey: <your-secret-key>
-#     schedule: 0 2 * * *
-  clickhouseKeeper:
-    enabled: true
-    replicas: 3
-    resourcesPreset: micro
-    size: 1Gi
-  logStorageSize: 2Gi
-  logTTL: 15
-  replicas: 2
-  resources:
-    cpu: 3000m
-    memory: 3Gi
-  resourcesPreset: small
-  shards: 1
-  size: 10Gi
-  storageClass: ""
-  users:
-    user1:
-      password: strongpassword
-    user2:
-      readonly: true
-      password: hackme
-```
-
-### **Deploy the ClickHouse yaml**
-
-```bash
-# Apply the yaml
-kubectl apply -f clickhouse.yaml
-```
+A replicated configuration relies on **ClickHouse Keeper** (3 instances recommended) for coordination.
 
 ---
 
-## Step 2: Deployment verification
+## Step 2: Request the instance
 
-Check the status of your ClickHouse cluster (may take 1-2 minutes):
+[Contact support](mailto:support@hidora.io) with the following information:
 
-```bash
-kubectl get clickhouse
-```
-
-**Expected output:**
-
-```console
-NAME      READY   AGE     VERSION
-example   True    2m48s   0.13.0
-```
-
----
-
-## Step 3: Pod verification
-
-Verify that the application pods are in `Running` state:
-
-```bash
-kubectl get po | grep clickhouse
-```
-
-**Expected output:**
-
-```console
-chi-clickhouse-example-clickhouse-0-0-0           1/1     Running     0             3m43s
-chi-clickhouse-example-clickhouse-0-1-0           1/1     Running     0             2m28s
-chk-clickhouse-example-keeper-cluster1-0-0-0      1/1     Running     0             3m17s
-chk-clickhouse-example-keeper-cluster1-0-1-0      1/1     Running     0             2m50s
-chk-clickhouse-example-keeper-cluster1-0-2-0      1/1     Running     0             2m28s
-```
-
-With `replicas: 2` and `shards: 1`, you get **2 ClickHouse pods** (shard replicas) and **3 ClickHouse Keeper pods** for cluster coordination.
+| Information | Example |
+|-------------|---------|
+| Project | `analytics` |
+| Instance name | `events-ch` |
+| Shards / replicas per shard | `1` / `2` |
+| Preset per replica | `large` (2 CPU, 2Gi) |
+| Storage size per replica | `50 GB` |
+| Users and rights | `app` (full access), `analyst` (read-only) |
+| Access from the Internet | Yes / No |
+| Backups | Yes / No, with the desired retention |
 
 ---
 
-## Step 4: Retrieve credentials
+## Step 3: Check the delivery
 
-Passwords are stored in a Kubernetes Secret:
-
-```bash
-kubectl get secret clickhouse-example-credentials -o json | jq -r '.data | to_entries[] | "\(.key): \(.value|@base64d)"'
-```
-
-**Expected output:**
-
-```console
-backup: vIdZUNiaLKaVbIvl
-user1: strongpassword
-user2: hackme
-```
+Support confirms that the instance is available and sends you the connection details: address, ports and credentials.
 
 ---
 
-## Step 5: Connection and testing
+## Step 4: Retrieve the credentials
 
-### Port-forward the ClickHouse service
+Store the passwords you received in a password manager. To change them, contact support.
 
-```bash
-kubectl port-forward svc/chendpoint-clickhouse-example 9000:9000
-```
+---
 
-### Connection test with clickhouse-client
+## Step 5: Connection and tests
 
-In another terminal, connect and verify the ClickHouse version:
+ClickHouse exposes the native protocol (port `9000` by default) and the HTTP interface (port `8123` by default).
 
 ```bash
 clickhouse-client \
-  --host 127.0.0.1 \
+  --host <host> \
   --port 9000 \
-  --user user1 \
-  --password 'strongpassword' \
+  --user app \
+  --password \
   --query "SHOW DATABASES;"
 ```
 
-**Expected output:**
+**Expected result:**
 
 ```console
 INFORMATION_SCHEMA
@@ -173,95 +98,54 @@ information_schema
 system
 ```
 
+Then create a first table:
+
+```sql
+CREATE TABLE default.events
+(
+    ts DateTime,
+    user_id UInt64,
+    action String
+)
+ENGINE = MergeTree
+ORDER BY (ts, user_id);
+
+INSERT INTO default.events VALUES (now(), 1, 'login');
+SELECT action, count() FROM default.events GROUP BY action;
+```
+
 ---
 
 ## Step 6: Quick troubleshooting
 
-### Pods in CrashLoopBackOff
+### Unable to connect
 
-```bash
-# Check the logs of the failing ClickHouse pod
-kubectl logs chi-clickhouse-example-clickhouse-0-0-0
+Check the address and port: `9000` for the native protocol (`clickhouse-client`), `8123` for HTTP. If the instance is not exposed on the Internet, connect from a resource in the same project.
 
-# Check the pod events
-kubectl describe pod chi-clickhouse-example-clickhouse-0-0-0
-```
+### Authentication refused
 
-**Common causes:** insufficient memory (`resources.memory` too low), full storage volume, error in shard or replica configuration.
+Check the user and password you received. To reset a password, contact support.
 
-### ClickHouse not accessible
+### Slow queries
 
-```bash
-# Check that services exist
-kubectl get svc | grep clickhouse
-
-# Check the endpoint service
-kubectl describe svc chendpoint-clickhouse-example
-```
-
-**Common causes:** port-forward not active, wrong port (9000 for native protocol, 8123 for HTTP), service not ready.
-
-### ClickHouse Keeper not working
-
-```bash
-# Check the Keeper logs
-kubectl logs chk-clickhouse-example-keeper-cluster1-0-0-0
-
-# Check the Keeper pod status
-kubectl get pods | grep keeper
-```
-
-**Common causes:** Keeper quorum requires an odd number of replicas (3 minimum recommended), insufficient Keeper disk space (`clickhouseKeeper.size` too low).
-
-### General diagnostic commands
-
-```bash
-# Recent events on the namespace
-kubectl get events --sort-by=.metadata.creationTimestamp
-
-# Detailed ClickHouse cluster status
-kubectl describe clickhouse example
-```
+Check that the `ORDER BY` of your tables matches your most frequent filters. See [Troubleshooting](./troubleshooting.md).
 
 ---
 
-## Summary
+## Step 7: Cleanup
 
-You have deployed:
-
-- A **ClickHouse** database on your Hikube tenant
-- An initial configuration with **shards** and **replicas**
-- A **ClickHouse Keeper** component for cluster coordination
-- Persistent storage attached for your data and logs
-- Users with passwords generated and stored in a Kubernetes Secret
-- Access to your database via `clickhouse-client`
-- The option to configure automatic **S3 backups**
-
----
-
-## Cleanup
-
-To delete the test resources:
-
-```bash
-kubectl delete -f clickhouse.yaml
-```
+To delete a ClickHouse instance, [contact support](mailto:support@hidora.io) with the project and the instance name.
 
 :::warning
-This action deletes the ClickHouse cluster and all associated data. This operation is **irreversible**.
+Deleting an instance erases all associated data. It is **irreversible**.
 :::
 
 ---
 
-## Next steps
-
-- **[API Reference](./api-reference.md)**: Complete configuration of all ClickHouse options
-- **[Overview](./overview.md)**: Detailed architecture and ClickHouse use cases on Hikube
-
 <NavigationFooter
   nextSteps={[
+    {label: "Concepts", href: "../concepts"},
     {label: "FAQ", href: "../faq"},
-    {label: "API Reference", href: "../api-reference"},
   ]}
   seeAlso={[
     {label: "All databases", href: "../../"},

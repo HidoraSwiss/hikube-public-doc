@@ -5,125 +5,102 @@ title: FAQ
 
 # FAQ — Kubernetes
 
-### What instance types are available?
+### How do I create a Kubernetes cluster?
 
-Hikube offers three instance families for Kubernetes nodes:
-
-| Family | Prefix | vCPU:RAM ratio | Recommended use |
-|--------|--------|----------------|-----------------|
-| **Standard** | `s1` | 1:2 | General workloads, web servers |
-| **Universal** | `u1` | 1:4 | Business apps, databases |
-| **Memory** | `m1` | 1:8 | Cache, analytics, in-memory processing |
-
-Each family is available in sizes from `small` to `8xlarge`. For example: `s1.small`, `u1.large`, `m1.2xlarge`.
+In the [Hikube console](https://console.hikube.cloud), open **Infrastructure** > **Kubernetes** and click **Create cluster**. The wizard has four steps: **General**, **Nodes**, **Addons** and **Summary**. The [quick start](./quick-start.md) details each step.
 
 ---
 
-### How does `storageClass` work in a Kubernetes cluster?
+### Which instance types are available?
 
-The storageClass chosen in the cluster manifest is **replicated inside the tenant cluster**. When your workloads create PVCs in the cluster, storage is provisioned with this storageClass on the infrastructure side.
+Hikube offers three instance series for Kubernetes nodes:
 
-The available storageClasses are: `local`, `replicated`, and `replicated-async`.
+| Series | Prefix | vCPU:RAM ratio | Recommended use |
+|-------|---------|----------------|------------------|
+| **Standard (S)** | `s1` | 1:2 | Economical use, development, testing |
+| **Universal (U)** | `u1` | 1:4 | General use: web servers, applications |
+| **Memory (M)** | `m1` | 1:8 | Databases, caches, in-memory processing |
 
-| Feature | `local` | `replicated` / `replicated-async` |
-|---------|---------|-------------------------------------|
-| **Replication** | Single datacenter | Multi-datacenter (synchronous or asynchronous) |
-| **Performance** | Faster (low latency) | Slightly slower |
-| **High availability** | No (at storage level) | Yes |
-
-:::tip
-The default recommendation for Kubernetes is **`replicated`**, which ensures data durability at the storage level.
-:::
-
-:::note
-**Current limitation**: only one storageClass can be passed to the tenant cluster. An improvement is in progress to allow passing all storageClasses and letting the client choose based on their needs.
-:::
+Each series is available in several sizes, for example `s1.small`, `u1.large`, `m1.2xlarge`. The full list is in the [concepts](./concepts.md#instance-types).
 
 ---
 
-### What addons are available?
+### Which storage class should I use in my cluster?
 
-The following addons can be enabled on your cluster:
+The persistent volumes of your workloads use the **`replicated`** storage class, replicated across several datacenters:
 
-| Addon | Description |
-|-------|-------------|
-| `certManager` | Automatic TLS certificate management (Let's Encrypt) |
-| `ingressNginx` | NGINX Ingress controller for HTTP/HTTPS routing |
-| `fluxcd` | Continuous GitOps deployment |
-| `monitoringAgents` | Monitoring agents (metrics, logs) |
-| `gpuOperator` | NVIDIA GPU Operator for GPU workloads |
-
-Each addon is enabled in the cluster manifest:
-
-```yaml title="cluster.yaml"
+```yaml title="pvc.yaml"
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: my-data
 spec:
-  addons:
-    certManager:
-      enabled: true
-    ingressNginx:
-      enabled: true
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: replicated
+  resources:
+    requests:
+      storage: 10Gi
 ```
+
+Choosing another storage class for the cluster is not offered in the console; contact support.
+
+---
+
+### Which addons are available?
+
+The **Addons** step of the wizard offers:
+
+| Addon | Description | Enabled by default |
+|-------|-------------|-------------------|
+| **Cert-Manager** | Automatic SSL/TLS certificate management | Yes |
+| **Ingress NGINX** | NGINX-based Ingress controller | Yes |
+| **Gateway API** | Kubernetes Gateway API CRDs | No |
+| **GPU Operator** | NVIDIA GPU management | No (enforced if a group has GPUs) |
+| **HAMi** | Sharing a GPU between several pods (requires GPU Operator) | No |
+| **Flux CD** | GitOps continuous deployment | No |
+| **Monitoring Agents** | Monitoring agents for logs and metrics | Yes |
+| **Ouroboros** | Fixes Ingress NGINX hairpin NAT (requires Ingress NGINX) | No |
+| **Velero** | Backup and restore | No |
+
+**Cilium**, **CoreDNS** and **Vertical Pod Autoscaler** are always present; their configuration is overridden in the **Advanced Configuration** section. Addons are enabled at creation or from **Edit** > **Extensions & Addons**. See the Plugins section, starting with [Cilium](./plugins/cilium.md).
 
 ---
 
 ### How do I retrieve my kubeconfig?
 
-The kubeconfig is stored in a Kubernetes Secret automatically generated when the cluster is created:
+Open the cluster detail page in the console and click **Kubeconfig** in the **Actions** section. The browser downloads the `kubeconfig-<cluster-name>.yaml` file:
 
 ```bash
-kubectl get tenantsecret <cluster-name>-admin-kubeconfig -o jsonpath='{.data.super-admin\.conf}' | base64 -d > kubeconfig.yaml
-```
-
-You can then use it:
-
-```bash
-export KUBECONFIG=kubeconfig.yaml
+export KUBECONFIG=~/Downloads/kubeconfig-<cluster-name>.yaml
 kubectl get nodes
 ```
 
+See [Access and tools](./how-to/toolbox.md).
+
 ---
 
-### How do I scale nodeGroups?
+### How do I scale node groups?
 
-Scaling is controlled by the `minReplicas` and `maxReplicas` parameters of each nodeGroup. The autoscaler automatically adjusts the number of nodes between these bounds based on load.
+Scaling is controlled by the **Minimum nodes** and **Maximum nodes** of each group. The autoscaler automatically adjusts the number of nodes between these two bounds according to the load.
 
-To modify the limits, update your manifest and apply it:
-
-```yaml title="cluster.yaml"
-spec:
-  nodeGroups:
-    workers:
-      minReplicas: 3
-      maxReplicas: 15
-      instanceType: "s1.large"
-```
-
-```bash
-kubectl apply -f cluster.yaml
-```
+To change the bounds: **Edit** > **Node groups**, expand the group, change the values, then **Save**. See [How to configure autoscaling](./how-to/configure-autoscaling.md).
 
 ---
 
 ### How do I add GPU nodes to my cluster?
 
-Add a dedicated nodeGroup with the `gpus` field specifying the desired GPU model:
-
-```yaml title="cluster-gpu.yaml"
-spec:
-  nodeGroups:
-    gpu-workers:
-      minReplicas: 1
-      maxReplicas: 4
-      instanceType: "u1.2xlarge"
-      gpus:
-        - name: "nvidia.com/AD102GL_L40S"
-  addons:
-    gpuOperator:
-      enabled: true
-```
+Add a new node group (**Edit** > **Add node group**) and choose the GPU model and number in its **GPU** section. The console then automatically enables the **GPU Operator** addon, which installs the NVIDIA drivers.
 
 :::warning
-- Don't forget to enable the `gpuOperator` addon so that NVIDIA drivers are automatically installed on GPU nodes.
-- Each node in the GPU nodeGroup consumes **1 physical GPU**. A nodeGroup with `minReplicas: 4` requires 4 available GPUs, with a direct impact on billing.
+- The chosen GPUs are attached to **each** node of the group, and the reservation is calculated on the maximum number of nodes: a group of at most 4 nodes with 1 GPU per node reserves 4 GPUs, with a direct impact on billing.
+- An existing group created without GPUs cannot receive any: create a new group.
 :::
 
+See [How to add and modify a node group](./how-to/manage-node-groups.md).
+
+---
+
+### Can I modify the control plane after creation?
+
+No. The **Control Plane Instance Size** and **Control Plane High Availability** cannot be changed in the console after creation; contact support. The Kubernetes version, the API endpoint, the node groups and the addons remain editable.

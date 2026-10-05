@@ -9,108 +9,61 @@ title: FAQ
 
 RabbitMQ offers two main types of queues:
 
-- **Quorum queues**: based on the **Raft** consensus protocol, data is replicated across multiple cluster nodes. They guarantee message **durability** and **high availability**. Recommended for production.
-- **Classic queues**: stored on a single node, faster for writes but **without replication**. If the node fails, messages are lost.
+- **Quorum queues**: based on the **Raft** protocol, data is replicated across several nodes of the cluster. They guarantee message **durability** and **high availability**. Recommended for production.
+- **Classic queues**: stored on a single node, without replication between nodes. If that node fails, the messages are no longer available.
+
+The queue type is chosen by the application when the queue is declared (argument `x-queue-type: quorum`).
 
 :::tip
-With 3 or more replicas (`replicas: 3`), RabbitMQ uses quorum queues by default, ensuring message durability in case of a node failure.
+To benefit from quorum queue replication, create the cluster with **3 (Max High Availability)** or **5 (Ultra High Availability)** replicas.
 :::
 
-### What are virtual hosts (vhosts) used for?
+### What are virtual hosts (vhosts) for?
 
-**Virtual hosts** (vhosts) provide **logical isolation** within a single RabbitMQ cluster:
+**Virtual hosts** (vhosts) provide **logical isolation** within the same RabbitMQ cluster:
 
-- Each vhost has its own exchanges, queues, and bindings
-- Permissions are managed **per vhost**, allowing access control per application
-- A user can have different roles depending on the vhost (admin on one, readonly on another)
+- Each vhost has its own exchanges, queues and bindings
+- Rights are managed **per vhost**, which lets you control access per application
+- A user can have different rights depending on the vhost (**Administrator** on one, **Read-only** on another)
 
-Configuration example with multiple vhosts:
-
-```yaml title="rabbitmq.yaml"
-vhosts:
-  production:
-    roles:
-      admin: ["admin"]
-      readonly: ["monitoring"]
-  staging:
-    roles:
-      admin: ["admin", "dev"]
-```
+Vhosts are created in the creation wizard (**VHosts** step) or later with **Add a VHost** on the cluster page. See [Manage vhosts and users](./how-to/manage-vhosts-users.md).
 
 ### How do exchanges work in RabbitMQ?
 
 An **exchange** receives messages from producers and routes them to queues according to **binding** rules:
 
-| **Type**    | **Behavior**                                                                   |
-| ----------- | ------------------------------------------------------------------------------ |
-| `direct`    | Routes the message to the queue whose **routing key** matches exactly          |
-| `fanout`    | Broadcasts the message to **all bound queues**, without filtering              |
-| `topic`     | Routes based on a routing key **pattern** (e.g., `orders.*`, `logs.#`)        |
-| `headers`   | Routes based on message **headers** rather than the routing key                |
+| **Type**    | **Behavior**                                                                  |
+| ----------- | ----------------------------------------------------------------------------- |
+| `direct`    | Routes the message to the queue whose **routing key** matches exactly         |
+| `fanout`    | Broadcasts the message to **all bound queues**, without filtering             |
+| `topic`     | Routes according to a routing key **pattern** (e.g. `orders.*`, `logs.#`)     |
+| `headers`   | Routes according to the message **headers** rather than the routing key       |
 
-The producer publishes to an exchange, never directly to a queue.
+The producer publishes to an exchange, never directly to a queue. Exchanges and bindings are declared by your applications.
 
-### What protocols are supported?
+### Which port should I connect to?
 
-RabbitMQ on Hikube supports the following protocols:
+AMQP clients connect on port **5672**, at the address displayed in the **Host** field of the cluster's **Connection** section (when **External Access** is enabled).
 
-| **Protocol**         | **Port** | **Usage**                             |
-| -------------------- | -------- | ------------------------------------- |
-| AMQP                 | 5672     | Main messaging protocol               |
-| Management HTTP API  | 15672    | Web interface and management API      |
+### Can the number of replicas or the preset be changed after creation?
 
-### What is the difference between `resourcesPreset` and `resources`?
+No. The **Number of replicas** (and therefore the standalone or cluster mode) and the **Preset** are set at creation. The version, the disk size and external access remain editable. See [Change a cluster's configuration](./how-to/scale-resources.md).
 
-The `resourcesPreset` field applies a predefined CPU/memory configuration, while `resources` allows you to specify explicit values. If `resources` is defined, `resourcesPreset` is **ignored**.
+### I have lost a user's password. How do I recover it?
 
-| **Preset** | **CPU** | **Memory** |
-| ---------- | ------- | ---------- |
-| `nano`     | 100m    | 128Mi      |
-| `micro`    | 250m    | 256Mi      |
-| `small`    | 500m    | 512Mi      |
-| `medium`   | 500m    | 1Gi        |
-| `large`    | 1       | 2Gi        |
-| `xlarge`   | 2       | 4Gi        |
-| `2xlarge`  | 4       | 8Gi        |
+The password is displayed only once and cannot be read again. Generate a new one with the user's **Change Password** action, then update your applications: the old password is revoked immediately.
 
-Example with explicit resources:
+### What rights do "Administrator" and "Read-only" grant?
 
-```yaml title="rabbitmq.yaml"
-replicas: 3
-resources:
-  cpu: 2000m
-  memory: 4Gi
-size: 20Gi
-```
+- **Administrator**: read, write and configure on the vhost (declare exchanges and queues, publish, consume).
+- **Read-only**: read-only on the vhost.
 
-### How to access the management interface?
+A user without access to a vhost cannot connect to it.
 
-The RabbitMQ management interface is accessible on port **15672**. Two options:
+### How do I access the RabbitMQ management interface?
 
-**Option 1 — Port-forward (local access)**:
+The Hikube console does not provide access to the RabbitMQ web management interface. With **External Access**, port 15672 of this interface is reachable at the cluster address, over unencrypted HTTP, but users created from the console do not have the RabbitMQ administration tag that it requires: they cannot log in to it. Vhosts and users are managed from the console; exchanges and queues, from your applications. For a specific need, [contact support](mailto:support@hidora.io).
 
-```bash
-kubectl port-forward svc/<rabbitmq-name> 15672:15672
-```
+### How is the cost of a cluster estimated?
 
-Then open `http://localhost:15672` in your browser.
-
-**Option 2 — External access**:
-
-Enable `external: true` in your manifest to expose the service via a LoadBalancer:
-
-```yaml title="rabbitmq.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: RabbitMQ
-metadata:
-  name: rabbitmq
-spec:
-  external: true
-  replicas: 3
-  resourcesPreset: small
-  size: 10Gi
-```
-
-:::warning
-External access exposes AMQP (5672) and Management (15672) ports on the Internet. Make sure to use strong passwords for all users.
-:::
+The creation wizard displays a monthly and hourly **Estimated Cost**, calculated from the preset, the number of replicas, the disk size and external access. Actual billing is calculated per hour of use.

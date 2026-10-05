@@ -5,198 +5,152 @@ title: Overview
 
 import NavigationFooter from '@site/src/components/NavigationFooter';
 
-# Presentation of Managed Kubernetes on Hikube
+# Managed Kubernetes on Hikube
 
-Hikube provides a **managed Kubernetes service** designed to offer a highly available, secure, and high-performance infrastructure.
-The control plane is fully managed by the platform, while **worker nodes** are deployed inside your tenant as virtual machines.
+Hikube offers a **managed Kubernetes** service designed to provide a highly available, secure and high-performance infrastructure.
+The control plane is fully managed by the platform, while the **worker nodes** are deployed in your project as virtual machines.
 
----
-
-## Architecture Diagram
-
-### **High-Level Overview**
-
-Hikube Kubernetes clusters rely on a **multi-datacenter infrastructure** (3 Swiss locations), ensuring replication, fault tolerance, and service continuity.
-
-* **Control Plane**: hosted and operated by Hikube
-  Components:
-
-  * `kube-apiserver`
-  * `etcd`
-  * `kube-scheduler`
-  * `kube-controller-manager`
-* **Worker Nodes**: virtual machines inside your tenant
-* **Networking**: CNI with support for `LoadBalancer`, `Ingress`, and `NetworkPolicy`
-* **Storage**: persistent volumes replicated across the 3 datacenters
-* **Add-ons**: cert-manager, FluxCD, monitoring stack, etc.
-* **Kubernetes Versioning**: multi-version support with controlled upgrades
+Clusters are created, modified and deleted from the [Hikube console](https://console.hikube.cloud), menu **Infrastructure** > **Kubernetes**. Once the cluster is ready, you download its kubeconfig from the console and work in the cluster with your usual tools (`kubectl`, `helm`, SDK client, etc.).
 
 ---
 
-## Cluster Composition and Configuration
+## Architecture
 
-Clusters are fully declarative and configurable via API or YAML manifests.
-The main configuration elements include:
+Hikube Kubernetes clusters rely on a **multi-datacenter infrastructure** (3 Swiss sites) that ensures replication, fault tolerance and service continuity.
 
-| Element          | Description                                         |
-| ---------------- | --------------------------------------------------- |
-| **nodeGroups**   | Homogeneous groups of nodes (size, role, GPU, etc.) |
-| **storageClass** | Defines persistence and replication behavior        |
-| **addons**       | Optional features that can be enabled               |
-| **version**      | Kubernetes server version                           |
-| **network**      | CNI configuration, LoadBalancer, Ingress            |
-
----
-
-## How the Platform Works
-
-###**Control Plane**
-
-* Managed entirely by Hikube — no customer maintenance required
-* Critical components replicated across multiple sites
-* High availability, monitoring, and automated patching included
-* Access via the standard Kubernetes API (`kubectl`, SDK clients, etc.)
-
-###**Worker Nodes / NodeGroups**
-
-NodeGroups allow you to adapt compute resources to your needs.
-Each group can define instance type, roles, and autoscaling parameters.
-
-#### Example NodeGroup
-
-```yaml
-nodeGroups:
-  web:
-    minReplicas: 2
-    maxReplicas: 10
-    instanceType: "s1.large"
-    roles: ["ingress-nginx"]
-```
-
-#### Key Characteristics
-
-* **Autoscaling** via `minReplicas` / `maxReplicas`
-* **GPU support** with dynamically attached NVIDIA GPUs
-* **Instance types**: `S1` (standard), `U1` (universal), `M1` (memory-optimized)
+- **Control Plane**: hosted and operated by Hikube. It consists of:
+  - `kube-apiserver`
+  - `etcd`
+  - `kube-scheduler`
+  - `kube-controller-manager`
+- **Worker nodes**: virtual machines in your project, grouped into node groups
+- **Networking**: Cilium CNI, support for `LoadBalancer` Services, `Ingress` and `NetworkPolicy`
+- **Storage**: persistent volumes replicated across the 3 datacenters
+- **Addons**: Cert-Manager, Ingress NGINX, Flux CD, monitoring agents, Velero, GPU Operator, etc.
+- **Kubernetes versions**: you choose the version among those offered by the platform
 
 ---
 
-## Persistent Storage
+## What you configure in the console
 
-### **Storage Class: `replicated`**
+The **Create cluster** wizard groups the configuration into four steps:
 
-* Automatic replication across **all 3 Swiss datacenters**
-* Dynamic provisioning of Persistent Volumes (PVC)
-* Built-in fault tolerance and high availability
+| Step | What you define |
+|-------|------------------------|
+| **General** | Cluster name, Kubernetes version, API endpoint (optional), size and number of control plane instances |
+| **Nodes** | One or more node groups: name, instance type, ephemeral storage, minimum and maximum number of nodes, exposure on the internet, GPU |
+| **Addons** | Enabling the cluster addons and optionally overriding their Helm values |
+| **Summary** | Summary before deployment |
 
-Example usage:
+Each field is described in detail in the [concepts](./concepts.md) and the [quick start](./quick-start.md).
 
-```yaml
-storageClassName: replicated
-resources:
-  requests:
-    storage: 20Gi
+---
+
+## How it works in detail
+
+### Control Plane
+
+- Managed by Hikube, with no maintenance required on your side
+- Sized by a preset (**Control Plane Instance Size**) and a number of instances (**Control Plane High Availability**: 1, 3 or 5)
+- Access through the standard Kubernetes API (`kubectl`, SDK client, etc.) with the kubeconfig downloaded from the console
+
+### Node groups
+
+**Node groups** let you adapt resources to your workloads. Each group has its own instance type and its own autoscaling bounds.
+
+- **Autoscaling**: minimum and maximum number of nodes per group
+- **GPU support**: NVIDIA GPUs attached to the nodes of a group, chosen in the wizard
+- **Instance types**: Standard (S), Universal (U) and Memory (M) series
+
+---
+
+## Persistent storage
+
+Persistent volumes (PVCs) created in the cluster use the **`replicated`** storage class:
+
+- Automatic replication across the **3 Swiss datacenters**
+- Dynamic provisioning of persistent volumes
+- Native fault tolerance and high availability
+
+Example PVC to deploy in your cluster:
+
+```yaml title="pvc.yaml"
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: my-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: replicated
+  resources:
+    requests:
+      storage: 20Gi
 ```
 
 ---
 
-## Kubernetes Versioning
+## Kubernetes versions
 
-* Clusters can be created with a **specific Kubernetes version**
-* Hikube handles minor and patch upgrades in a controlled manner
-* Customers may plan major upgrades when needed
-
-Example:
-
-```yaml
-version: "1.30.3"
-```
+- The version is chosen when the cluster is created, among those offered by the platform (the most recent one is preselected)
+- Upgrades are done from the cluster's edit page (see [How to upgrade a cluster](./how-to/upgrade-cluster.md))
 
 ---
 
-## Integrated Add-ons
+## Built-in addons
 
-### **Cert-Manager**
+### Cert-Manager
 
-* Automated SSL/TLS certificate management
-* Supports Let’s Encrypt and private authorities
-* Automatic renewal
+- Automated management of SSL/TLS certificates
+- Support for Let's Encrypt and private authorities
+- Automatic renewal
 
-### **Ingress NGINX**
+### Ingress NGINX
 
-* Built-in ingress controller
-* Wildcard support, SNI, and Prometheus metrics
+- Built-in ingress controller, exposed by a `LoadBalancer` Service
+- Deployed on the node groups exposed on the internet
 
-### **Flux CD (GitOps)**
+### Flux CD (GitOps)
 
-* Continuous sync with your Git repositories
-* Automated deployments and rollback
+- Continuous synchronization with your Git repositories
+- Automated deployment and rollback
 
-### **Monitoring Stack**
+### Monitoring Agents
 
-* **Node Exporter**, **FluentBit**, **Kube-State-Metrics**
-* Full integration with your tenant’s Grafana and Prometheus
+- Collection of the cluster's metrics and logs (VictoriaMetrics Agent, Fluent Bit, kube-state-metrics, node exporter)
+
+The full list is in the [Plugins](./plugins/cilium.md) section.
 
 ---
 
-## Example Use Cases
+## Example use cases
 
-### **Web Applications**
-
-```yaml
-nodeGroups:
-  web:
-    minReplicas: 2
-    maxReplicas: 10
-    instanceType: "s1.large"
-    roles: ["ingress-nginx"]
-```
-
-### **ML/AI Workloads**
-
-```yaml
-nodeGroups:
-  ml:
-    minReplicas: 1
-    maxReplicas: 5
-    instanceType: "u1.xlarge"
-    gpus:
-      - name: "nvidia.com/AD102GL_L40S"
-```
-
-### **Critical Applications**
-
-```yaml
-nodeGroups:
-  production:
-    minReplicas: 3
-    maxReplicas: 20
-    instanceType: "m1.large"
-```
+| Use case | Recommended node group |
+|-------------|---------------------------|
+| **Web applications** | Standard series (S), 2 to 10 nodes, group exposed on the internet to host the Ingress |
+| **ML/AI workloads** | Universal series (U) with GPU, GPU Operator addon enabled |
+| **Critical applications** | At least 3 nodes minimum, highly available control plane (3 instances) |
 
 ---
 
 ## Resources
 
-* **[Concepts & Architecture](./concepts.md)** → Learn how a Hikube Kubernetes cluster is built
-* **[Quick Start](./quick-start.md)** → Create your first Hikube cluster
-* **[API Reference](./api-reference.md)** → Full configuration documentation
+- **[Concepts and architecture](./concepts.md)**: understand how a Hikube Kubernetes cluster is deployed
+- **[Quick start](./quick-start.md)**: create your first cluster from the console
 
 ---
 
-## Key Takeaways
+## Key points
 
-* **Managed control plane** – no master maintenance required
-* **Workers in your tenant** – full control over compute resources
-* **Autoscaling** – dynamic adjustment based on load
-* **Multi-datacenter replication** – built-in high availability
-* **Full compatibility** – standard Kubernetes API support
+- **Managed control plane**: no master maintenance required
+- **Nodes in your project**: full control over the workers
+- **Autoscaling**: dynamic adjustment to the load
+- **Multi-datacenter**: native high availability and replication
+- **Full compatibility**: standard Kubernetes API
 
 <NavigationFooter
   nextSteps={[
     {label: "Concepts", href: "../concepts"},
-    {label: "Quick Start", href: "../quick-start"},
+    {label: "Quick start", href: "../quick-start"},
   ]}
 />
-
----

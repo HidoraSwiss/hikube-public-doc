@@ -1,173 +1,184 @@
 ---
-sidebar_position: 2
-title: Quick Start
+sidebar_position: 3
+title: Quick start
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';
 
-# Create Your First S3 Bucket
+# Create your first S3 bucket
 
-This guide walks you step by step through creating your **first Hikube S3 bucket** in **5 minutes**.  
-By the end of this tutorial, you will have a ready-to-use bucket, with valid S3 credentials and operational connectivity.
+This guide walks you through creating your **first S3 bucket** from the [Hikube console](https://console.hikube.cloud), up to uploading your first file.
 
 ---
 
-## Objective
+## Objectives
 
 By the end of this guide, you will have:
 
-- A **functional S3 bucket** in your tenant  
-- An **S3 access secret** automatically generated  
-- The ability to connect with standard tools (`aws-cli`, `mc`, etc.)
+- An operational **S3 bucket** in your project
+- An **S3 user** with their access key pair
+- A first file uploaded with `aws` or `mc`
 
 ---
 
 ## Prerequisites
 
-Before starting, make sure you have:
-
-- **kubectl** configured with your Hikube kubeconfig  
-- The **necessary rights** on your tenant to create resources  
-- An S3 tool of your choice installed (e.g., `aws-cli` or `mc`)
+- A **Hikube account** and a **project** (see the [Hikube quick start](../../../getting-started/quick-start.md))
+- An S3 client installed on your workstation: [AWS CLI](https://aws.amazon.com/cli/) or [MinIO Client (`mc`)](https://min.io/docs/minio/linux/reference/minio-mc.html)
 
 ---
 
-## Step 1: Create the Bucket (1 minute)
+## Step 1: Open the creation wizard
 
-### **Prepare the manifest file**
-
-Create a `bucket.yaml` file:
-
-```yaml title="bucket.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Bucket
-metadata:
-  name: example-bucket
-```
-
-> The name indicated in `metadata.name` identifies the Kubernetes resource.
-> The actual S3 bucket name is automatically generated.
+1. Log in to the [Hikube console](https://console.hikube.cloud) and select your project.
+2. In the side menu, open **Infrastructure** → **S3 Buckets**. The **Object Storage Buckets** page is displayed.
+3. Click **Create a bucket**.
 
 ---
 
-### **Deploy the bucket**
+## Step 2: Configure and create the bucket
 
-```bash
-# Create the bucket
-kubectl apply -f bucket.yaml
+The wizard has three steps.
 
-# Verify creation
-kubectl get bucket example-bucket -w
-```
+### General
 
-**Expected result:**
+1. Enter the **Bucket name** (a name is suggested by default). Rules: lowercase letters, digits and hyphens; starts with a letter and ends with a letter or a digit; 16 characters maximum. Example: `demo-assets`.
+2. For this guide, leave these options unchecked:
+   - **Enable Object Lock (WORM)**: prevents objects from being deleted or modified for 365 days (retention set by the platform);
+   - **Enable encryption at rest (LUKS)**: encrypts the stored data; cannot be changed after creation.
+3. Click **Next**.
 
-```bash
-NAME             READY   AGE
-example-bucket   True    15s
-```
+### Users
 
----
+1. Enter the **Username** (for example `app-user`).
+2. Leave **Read only** set to **No** to get read and write access.
+3. Click **Add**, then **Next**.
 
-## Step 2: Retrieve Credentials (2 minutes)
+At least one user is required to continue.
 
-Bucket creation generates a `Secret` containing a `BucketInfo` key (JSON).
+### Summary
 
-```bash
-# Retrieve and store the JSON in a variable
-INFO="$(kubectl get secret bucket-example-bucket -o jsonpath='{.data.BucketInfo}' | base64 -d)"
+The **Summary** displays the name, the project, the number of users to create, the locking and encryption status, and the **Estimated Cost** per GB. Click **Create bucket**.
 
-# Export useful variables
-export S3_ENDPOINT="$(echo "$INFO" | jq -r '.spec.secretS3.endpoint')"
-export S3_ACCESS_KEY="$(echo "$INFO" | jq -r '.spec.secretS3.accessKeyID')"
-export S3_SECRET_KEY="$(echo "$INFO" | jq -r '.spec.secretS3.accessSecretKey')"
-export BUCKET_NAME="$(echo "$INFO" | jq -r '.spec.bucketName')"
-```
-
-> `BUCKET_NAME` is the **actual name** of your bucket on the S3 side. Use it in the commands below.
+During creation, the button displays **Creating...** then **Provisioning bucket…**: the console waits for the bucket to be ready before creating the users.
 
 ---
 
-## Step 3: Test S3 Connection (2 minutes)
+## Step 3: Check the bucket status
 
-:::warning S3 Root Access
-With these credentials, you **do not have** permission to list all buckets on the endpoint.
-Commands like `ls` **must target your bucket**:
-`… ls s3://$BUCKET_NAME/ …` or `… ls <alias>/$BUCKET_NAME/ …`
+The final screen displays **Bucket successfully created**. After retrieving the credentials (step 4), click **Finish**: the console opens the bucket page.
+
+On this page:
+
+- the status badge shows **Ready** when the bucket is operational (**Creating** during provisioning);
+- the **WORM** and **LUKS** badges show the locking and encryption status;
+- the **Access & Configuration** card displays the S3 **Bucket name** and the **Endpoint**;
+- the **Users & Access** card lists the users and their permission (**Read-only** or **Read / Write**).
+
+:::note
+If the bucket is not ready in time, the console displays "Bucket provisioning" and does not create the users. Wait until the bucket switches to **Ready**, then create them from its page with **Add User** (see [Manage users and access keys](./how-to/configure-access.md)).
 :::
 
-### Option A — `aws-cli`
+---
+
+## Step 4: Retrieve the credentials
+
+The final screen of the wizard displays, for each user created:
+
+| Field | Usage |
+|-------|-------|
+| **S3 Bucket Name** | Actual bucket name to use in your commands and SDKs |
+| **Access Key** | Access Key ID |
+| **Secret Key** | Secret Access Key |
+| **API Endpoint (S3)** | S3 endpoint, for example `prod.s3.hikube.cloud` |
+
+:::warning Secret key displayed only once
+Copy these values before clicking **Finish** and store the secret key in a password manager. It will not be displayed again. If it is lost, create a new user.
+:::
+
+:::note S3 Bucket Name
+The **S3 Bucket Name** is generated by the platform and differs from the name entered in the wizard. Always use the S3 name in your clients. It remains available on the bucket page.
+:::
+
+Export the values in your terminal:
 
 ```bash
-# Configure a temporary profile
-aws configure --profile hikube
-# Access Key ID:    $S3_ACCESS_KEY
-# Secret Access Key: $S3_SECRET_KEY
-# Default region name: (leave empty)
-# Default output format: json
-
-# List the contents **of your bucket** (empty right after creation)
-aws s3 ls "s3://$BUCKET_NAME/" --endpoint-url "$S3_ENDPOINT" --profile hikube
-
-# Upload a test file
-echo "hello hikube" > /tmp/hello.txt
-aws s3 cp /tmp/hello.txt "s3://$BUCKET_NAME/hello.txt" --endpoint-url "$S3_ENDPOINT" --profile hikube
-
-# Verify
-aws s3 ls "s3://$BUCKET_NAME/" --endpoint-url "$S3_ENDPOINT" --profile hikube
+export S3_ENDPOINT="https://<endpoint>"
+export AWS_ACCESS_KEY_ID="<clé-d-accès>"
+export AWS_SECRET_ACCESS_KEY="<clé-secrète>"
+export BUCKET_NAME="<s3-bucket-name>"
 ```
 
-### Option B — `mc` (S3 client)
+If the endpoint is displayed without a prefix (for example `prod.s3.hikube.cloud`), add `https://` in front of it: the `aws` and `mc` clients expect a full URL.
+
+---
+
+## Step 5: Connect and test
+
+:::warning Target your bucket
+A user's keys do not grant permission to list all the buckets of the endpoint. Commands must **always target your bucket**: `s3://$BUCKET_NAME/` or `hikube/$BUCKET_NAME/`.
+:::
+
+### Option A: AWS CLI
+
+```bash
+# Upload a test file
+echo "hello hikube" > /tmp/hello.txt
+aws --endpoint-url "$S3_ENDPOINT" s3 cp /tmp/hello.txt "s3://$BUCKET_NAME/hello.txt"
+
+# List the bucket contents
+aws --endpoint-url "$S3_ENDPOINT" s3 ls "s3://$BUCKET_NAME/"
+```
+
+### Option B: MinIO Client (`mc`)
 
 ```bash
 # Define an alias for the endpoint
-mc alias set hikube "$S3_ENDPOINT" "$S3_ACCESS_KEY" "$S3_SECRET_KEY"
+mc alias set hikube "$S3_ENDPOINT" "$AWS_ACCESS_KEY_ID" "$AWS_SECRET_ACCESS_KEY"
 
-# Do NOT do: `mc ls hikube`  -> AccessDenied
-# Target your bucket directly:
-mc ls "hikube/$BUCKET_NAME/"
-
-# Upload a test file
+# Upload a test file, then list the bucket
 mc cp /tmp/hello.txt "hikube/$BUCKET_NAME/hello.txt"
-
-# Verify
 mc ls "hikube/$BUCKET_NAME/"
 ```
 
----
+**Expected result:** the `hello.txt` file appears in the list.
 
-## Cleanup (optional)
-
-```bash
-# Delete the bucket (also erases its content)
-kubectl delete buckets example-bucket
-```
-
-:::warning Irreversible Deletion
-Deleting the bucket **permanently** erases all data it contains.
-Check your backups before proceeding.
+:::tip
+The **Access & Configuration** card on the bucket page provides these commands, already filled in with the endpoint and the bucket name, in the **Connection example** section.
 :::
 
 ---
 
-## Next Steps
+## Step 6: Quick troubleshooting
 
-**API Reference** → [Complete specification](./api-reference.md)
-**Architecture** → [Overview](./overview.md)
+| Symptom | Probable cause | Action |
+|---------|----------------|--------|
+| `AccessDenied` on `aws s3 ls` without a bucket | Listing the whole endpoint | Target `s3://$BUCKET_NAME/` |
+| `NoSuchBucket` | Name entered in the wizard used instead of the S3 name | Use the **Bucket name** displayed in **Access & Configuration** |
+| `AccessDenied` on write | User set to **Read-only** | Change their permission with **Edit access** |
+| `SignatureDoesNotMatch` / `InvalidAccessKeyId` | Incorrect or incomplete keys | Copy the keys again; if the secret key is lost, create a new user |
+| Connection error | Endpoint without `https://` | Prefix the endpoint with `https://` |
+
+See also the [full troubleshooting guide](./troubleshooting.md).
 
 ---
 
-## To Remember
+## Step 7: Cleanup
 
-- The provided credentials give access **only** to your bucket
-- Always target `s3://$BUCKET_NAME/` (or `alias/$BUCKET_NAME/`) in your commands
-- The S3 endpoint is compatible with standard tools and SDKs
-- Strict isolation by tenant and dedicated credentials
+1. Delete the test file:
+   ```bash
+   aws --endpoint-url "$S3_ENDPOINT" s3 rm "s3://$BUCKET_NAME/hello.txt"
+   ```
+2. On the bucket page, click **Delete** (or, from the list, open the bucket's actions menu and choose **Delete**).
+3. Enter the exact bucket name in **Resource name to confirm**, then click **Permanently delete**.
+
+:::warning Irreversible deletion
+Deleting a bucket is permanent. If the console replies "The bucket is not empty or is still in use.", empty the bucket and try again.
+:::
 
 <NavigationFooter
   nextSteps={[
-    {label: "FAQ", href: "../faq"},
-    {label: "API Reference", href: "../api-reference"},
+    {label: "Manage users and access keys", href: "../how-to/configure-access"},
+    {label: "Connect an application", href: "../how-to/connect-from-app"},
   ]}
 />
-

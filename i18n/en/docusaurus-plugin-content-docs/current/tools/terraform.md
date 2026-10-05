@@ -1,11 +1,15 @@
 ---
 sidebar_position: 1
-title: Terraform with Hikube
+title: Terraform (legacy)
 ---
 
-# Infrastructure as Code with Hikube
+# Infrastructure as Code with Hikube (legacy)
 
-Since Hikube is based on Kubernetes, you can use **Terraform** to manage your infrastructure in a declarative and reproducible way. This approach allows you to version, test, and deploy your Hikube infrastructure in an automated manner.
+:::warning Legacy method
+This method drives Hikube through a project kubeconfig and Kubernetes manifests. It is **deprecated**: it remains functional for customers who already use it, but will no longer evolve. To manage your resources, use the [Hikube console](https://console.hikube.cloud).
+:::
+
+You can use **Terraform** to manage your Hikube infrastructure in a declarative and reproducible way, through the Kubernetes providers.
 
 ---
 
@@ -13,12 +17,11 @@ Since Hikube is based on Kubernetes, you can use **Terraform** to manage your in
 
 ### Prerequisites
 
+- **A project kubeconfig provided by Hidora.** It is no longer issued by default: [contact support](mailto:support@hidora.io) to get one.
 - [Terraform](https://www.terraform.io/downloads) (version >= 1.0)
 - [kubectl](https://kubernetes.io/docs/tasks/tools/)
-- Access to a Hikube tenant
-- Configured kubeconfig
 
-### Kubernetes Provider
+### Kubernetes provider
 
 ```hcl title="main.tf"
 terraform {
@@ -47,7 +50,7 @@ provider "kubectl" {
 
 ```hcl title="variables.tf"
 variable "ssh_public_key" {
-  description = "SSH public key for VM access"
+  description = "Public SSH key for VM access"
   type        = string
 }
 
@@ -68,7 +71,7 @@ variable "vm_name" {
 
 ## Examples
 
-### Deploy a Kubernetes Cluster
+### Deploy a Kubernetes cluster
 
 ```hcl title="kubernetes.tf"
 resource "kubectl_manifest" "kubernetes_cluster" {
@@ -76,8 +79,7 @@ resource "kubectl_manifest" "kubernetes_cluster" {
     apiVersion = "apps.cozystack.io/v1alpha1"
     kind       = "Kubernetes"
     metadata = {
-      name      = var.cluster_name
-      namespace = "default"
+      name = var.cluster_name
     }
     spec = {
       version      = "v1.34"
@@ -95,7 +97,7 @@ resource "kubectl_manifest" "kubernetes_cluster" {
           ephemeralStorage = "50Gi"
           roles            = ["ingress-nginx"]
         }
-        # Example GPU node group (requires the gpuOperator addon below)
+        # Example GPU group (requires the gpuOperator addon below)
         # gpu = {
         #   minReplicas      = 0
         #   maxReplicas      = 4
@@ -130,8 +132,7 @@ data "kubernetes_secret" "cluster_kubeconfig" {
   depends_on = [kubectl_manifest.kubernetes_cluster]
   
   metadata {
-    name      = "${var.cluster_name}-admin-kubeconfig"
-    namespace = "default"
+    name = "kubernetes-${var.cluster_name}-admin-kubeconfig"
   }
 }
 
@@ -145,7 +146,7 @@ resource "local_file" "kubeconfig" {
 }
 ```
 
-### Deploy a Virtual Machine
+### Deploy a virtual machine
 
 ```hcl title="virtual-machine.tf"
 # The disk is a separate VMDisk resource, referenced by the VM
@@ -220,7 +221,7 @@ resource "kubectl_manifest" "virtual_machine" {
 }
 ```
 
-### Deploy a VM with GPU
+### Deploy a VM with a GPU
 
 ```hcl title="vm-gpu.tf"
 resource "kubectl_manifest" "vm_gpu_disk" {
@@ -344,18 +345,18 @@ variable "postgres_password" {
 
 ---
 
-## Outputs and Variables
+## Outputs and variables
 
-### Useful Outputs
+### Useful outputs
 
 ```hcl title="outputs.tf"
 output "cluster_kubeconfig" {
-  description = "Path to cluster kubeconfig"
+  description = "Path to the cluster kubeconfig"
   value       = local_file.kubeconfig.filename
 }
 
 output "vm_status" {
-  description = "Command to check VM status"
+  description = "Command to check the VM status"
   value       = "kubectl get vminstance ${var.vm_name}"
 }
 
@@ -366,14 +367,14 @@ output "postgres_connection" {
 }
 ```
 
-### terraform.tfvars File
+### terraform.tfvars file
 
 ```hcl title="terraform.tfvars"
 # Basic configuration
 cluster_name = "my-prod-cluster"
 vm_name      = "my-app-vm"
 
-# Your SSH public key
+# Your public SSH key
 ssh_public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQ... user@hostname"
 
 # PostgreSQL password
@@ -382,9 +383,9 @@ postgres_password = "your-secure-password-here"
 
 ---
 
-## Best Practices
+## Best practices
 
-### Project Structure
+### Project structure
 
 ```
 hikube-terraform/
@@ -401,22 +402,22 @@ hikube-terraform/
     └── outputs.tf
 ```
 
-### Useful Commands
+### Useful commands
 
 ```bash
 # Initialize Terraform
 terraform init
 
-# Plan changes
+# Plan the changes
 terraform plan
 
-# Apply configuration
+# Apply the configuration
 terraform apply
 
-# Check created resources
+# Check the created resources
 terraform show
 
-# Clean up resources
+# Clean up the resources
 terraform destroy
 ```
 
@@ -424,6 +425,7 @@ terraform destroy
 
 ## References
 
-- [Kubernetes Provider](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs)
-- [kubectl Provider](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs)
-- [Terraform Documentation](https://developer.hashicorp.com/terraform/docs)
+- [Kubernetes provider](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs)
+- [kubectl provider](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs)
+- [Terraform documentation](https://developer.hashicorp.com/terraform/docs)
+

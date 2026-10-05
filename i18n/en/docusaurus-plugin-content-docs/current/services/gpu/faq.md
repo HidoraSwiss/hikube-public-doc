@@ -5,107 +5,84 @@ title: FAQ
 
 # FAQ — GPU
 
-### What GPU models are available?
+### Where is the GPU page in the console?
 
-Hikube offers several NVIDIA GPUs:
+There is none: you choose the GPU in the wizard of the resource that uses it.
 
-| GPU | Architecture | Memory | Use case |
-|-----|-------------|--------|----------|
-| **L40S** | Ada Lovelace | 48 GB GDDR6 | Inference, graphical rendering |
-| **A100 (PCIe / SXM4)** | Ampere | 80 GB HBM2e | ML training, scientific computing |
-| **RTX PRO 6000 Blackwell** | Blackwell | 96 GB GDDR7 | LLM, intensive computing |
-
-Identifiers to use in manifests:
-
-```yaml
-gpus:
-  - name: "nvidia.com/AD102GL_L40S"                                  # L40S
-  - name: "nvidia.com/GA100_A100_PCIE_80GB"                          # A100 PCIe
-  - name: "nvidia.com/GA100_A100_SXM4_80GB"                          # A100 SXM4
-  - name: "nvidia.com/GB202GL_RTX_PRO_6000_BLACKWELL_SERVER_EDITION" # RTX PRO 6000 Blackwell
-```
+- **VM**: **VM Instances** > **Create an Instance**, **Configuration** step, **Hardware Acceleration (GPU)** section; or **Edit** on an existing VM.
+- **Kubernetes**: **Kubernetes** > **Create cluster** (or **Edit**), **Nodes** step, **GPU** section of a node group.
 
 ---
 
-### What is the difference between GPU in VM and GPU in Kubernetes?
+### Which GPU models are available?
 
-| Aspect | GPU in VM | GPU in Kubernetes |
-|--------|----------|-------------------|
-| **Access mode** | Exclusive PCI passthrough | Shared via device plugin |
-| **Isolation** | GPU dedicated to the VM | Scheduling orchestrated by K8s |
-| **Driver installation** | Manual (cloud-init) | Automatic (GPU Operator) |
-| **Use case** | Dedicated workstation, CUDA dev | Containerized workloads, batch |
+| Model | Memory | Use cases |
+|-------|--------|-----------|
+| **NVIDIA L40S** | 48 GB | Inference, rendering, prototyping |
+| **NVIDIA A100 80GB** | 80 GB | ML training, scientific computing |
+| **NVIDIA H100 80GB** | 80 GB | Training and inference of large models |
+| **NVIDIA RTX 6000 Pro** | 96 GB | LLM, intensive computing |
 
-In a VM, the GPU is directly attached via PCI passthrough: the VM has exclusive access to the hardware. In Kubernetes, the GPU Operator manages drivers and scheduling allows sharing GPU resources across multiple pods.
+The selector shows all models; those with no free unit left are marked **Unavailable**.
+
+---
+
+### Why is a model marked Unavailable?
+
+All its units are assigned to other workloads. The console does not show the number of free units. Try again later, choose another model, or contact [sales@hidora.io](mailto:sales@hidora.io) for a capacity requirement.
+
+---
+
+### Can I put several GPUs on a VM?
+
+Yes: click a card then use **+** to add GPUs of the same model, or select several models. All of them must be free on the same physical server; otherwise, creation fails with **The following GPUs are not available: …**.
+
+---
+
+### What is the difference between a GPU on a VM and a GPU on Kubernetes?
+
+| Aspect | GPU on VM | GPU on Kubernetes |
+|--------|-----------|-------------------|
+| **Access** | GPU dedicated to the VM | GPU assigned to pods by the scheduler |
+| **Drivers** | To be installed in the OS (cloud-init or manually) | Installed by the GPU Operator addon |
+| **Sharing** | No | Yes, with the HAMi addon |
+| **Use cases** | Workstation, CUDA development | Containerized workloads, batch, inference |
 
 ---
 
 ### What CPU/GPU ratio is recommended?
 
-For optimal usage, plan for **8 to 16 vCPU per GPU**. **Universal (u1)** instances with a 1:4 ratio are recommended:
+Plan for **8 to 16 vCPUs per GPU**, preferably in the **Universal (U)** series:
 
 | Configuration | Instance | vCPU | RAM |
-|--------------|----------|------|-----|
+|---------------|----------|------|-----|
 | 1 GPU | `u1.2xlarge` | 8 | 32 GB |
 | 1 GPU (intensive) | `u1.4xlarge` | 16 | 64 GB |
 | Multi-GPU | `u1.8xlarge` | 32 | 128 GB |
 
 ---
 
-### How are NVIDIA drivers installed?
+### How are the NVIDIA drivers installed?
 
-Installation depends on the usage mode:
+**On a VM**: by you, in the OS. Follow [Install CUDA and GPU drivers](../compute/how-to/install-cuda-drivers.md), which also provides a cloud-init script to paste into **Cloud-Init script (User Data)**.
 
-**In a VM**: install manually via cloud-init at boot:
-
-```yaml title="vm-gpu.yaml"
-spec:
-  cloudInit: |
-    #cloud-config
-    runcmd:
-      - apt-get update
-      - apt-get install -y linux-headers-$(uname -r)
-      - apt-get install -y nvidia-driver-550 nvidia-utils-550
-```
-
-**In Kubernetes**: enable the GPU Operator addon which automatically installs drivers on GPU nodes:
-
-```yaml title="cluster-gpu.yaml"
-spec:
-  addons:
-    gpuOperator:
-      enabled: true
-```
+**On Kubernetes**: by the **GPU Operator** addon, enabled automatically as soon as a node group has GPUs.
 
 ---
 
-### How do I verify that the GPU is detected?
+### What happens when I stop a VM with a GPU?
 
-**In a VM**:
+The GPU is released and can be assigned to another workload. The console warns you about this in the stop confirmation. On start, if the GPU is no longer available, the **Select an alternative GPU** dialog offers you another model.
 
-```bash
-nvidia-smi
-```
+---
 
-This command displays detected GPUs, their memory usage, and active processes.
+### Can I add GPUs to an existing Kubernetes node group?
 
-**In Kubernetes**:
-
-```bash
-kubectl get nodes -o json | jq '.items[].status.allocatable["nvidia.com/gpu"]'
-```
-
-You can also verify from within a pod:
-
-```bash
-kubectl exec -it <pod-name> -- nvidia-smi
-```
+Not to a group created without GPUs: add a new node group with GPUs. A group created with GPUs can change model or count, while keeping at least one GPU.
 
 ---
 
 ### How do I request a GPU in a Kubernetes pod?
-
-Specify the `nvidia.com/gpu` resource in the container limits:
 
 ```yaml title="pod-gpu.yaml"
 apiVersion: v1
@@ -115,12 +92,31 @@ metadata:
 spec:
   containers:
     - name: cuda-app
-      image: nvidia/cuda:12.0-base
+      image: nvidia/cuda:12.4.1-base-ubuntu22.04
+      command: ["sleep", "infinity"]
       resources:
         limits:
           nvidia.com/gpu: 1
 ```
 
 :::note
-The number of GPUs requested in `limits` must correspond to physical GPUs available on the nodes. A pod cannot request a fraction of a GPU.
+Without the HAMi addon, a pod cannot request a fraction of a GPU: the value of `nvidia.com/gpu` is a whole number of physical GPUs.
 :::
+
+---
+
+### How do I check that the GPU is detected?
+
+**On a VM**:
+
+```bash
+lspci | grep -i nvidia   # the GPU is visible
+nvidia-smi               # the drivers are installed
+```
+
+**On Kubernetes** (with the cluster's kubeconfig, **Kubeconfig** button on the cluster page):
+
+```bash
+kubectl get nodes -o custom-columns=NAME:.metadata.name,GPU:.status.allocatable.'nvidia\.com/gpu'
+kubectl exec -it <pod> -- nvidia-smi
+```

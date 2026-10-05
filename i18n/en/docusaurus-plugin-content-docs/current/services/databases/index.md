@@ -1,24 +1,29 @@
 ---
-title: Managed Databases
+title: Managed databases
 sidebar_position: 0
 ---
 
 import ServiceCardGrid from '@site/src/components/ServiceCardGrid';
 
-# Managed Databases
+# Managed databases
 
-Hikube offers fully managed databases deployed via `kubectl apply`. Each service includes replication, automatic backups, and built-in monitoring.
+Hikube offers fully managed databases, which you create and manage from the [Hikube console](https://console.hikube.cloud), in the **DB & Messaging** section of your project's side menu. For each cluster, the console lets you choose the version, the resource template (preset), the number of replicas and the disk size, manage users and, depending on the engine, databases.
 
 ## Comparison
 
-| Service | Type | Operator | Replication | Use Case |
-|---------|------|----------|-------------|----------|
-| PostgreSQL | Relational | CloudNativePG | Streaming + failover | Transactional apps, APIs |
-| MariaDB | Relational | Oracle Operator | Group Replication | CMS, legacy applications |
-| Redis | Key-value | Spotahome | Sentinel | Cache, sessions, queues |
-| ClickHouse | Analytical | Altinity | ReplicatedMergeTree | Analytics, logs, OLAP |
+| Service | Type | Available in the console | Use cases |
+|---------|------|--------------------------|-----------|
+| PostgreSQL | Relational | Yes | Transactional applications, APIs |
+| MariaDB | Relational (MySQL-compatible) | Yes | CMS, web applications, existing MySQL applications |
+| MongoDB | Document | Yes | Semi-structured data, catalogs, JSON applications |
+| Redis | In-memory key-value | Yes | Cache, sessions, queues |
+| ClickHouse | Columnar analytics | On request | Analytics, logs, OLAP |
 
-## Available Services
+:::info
+ClickHouse is not yet available as self-service in the console. To provision an instance, [contact support](mailto:support@hidora.io).
+:::
+
+## Available services
 
 <ServiceCardGrid items={[
   {
@@ -30,10 +35,17 @@ Hikube offers fully managed databases deployed via `kubectl apply`. Each service
   },
   {
     title: "MariaDB",
-    description: "Popular relational database, compatible with the MySQL/MariaDB ecosystem.",
+    description: "Relational database compatible with MySQL clients and protocol.",
     icon: "/img/services/mariadb.svg",
     href: "./mariadb/overview",
-    tags: ["Relational", "ACID"],
+    tags: ["Relational", "MySQL-compatible"],
+  },
+  {
+    title: "MongoDB",
+    description: "Document-oriented database, with replication and optional sharding.",
+    icon: "/img/services/mongodb.svg",
+    href: "./mongodb/overview",
+    tags: ["Document", "NoSQL"],
   },
   {
     title: "Redis",
@@ -44,9 +56,9 @@ Hikube offers fully managed databases deployed via `kubectl apply`. Each service
   },
   {
     title: "ClickHouse",
-    description: "Columnar analytical database for large-scale OLAP queries.",
+    description: "Columnar analytical database for large-scale OLAP queries. Available on request.",
     icon: "/img/services/clickhouse.svg",
     href: "./clickhouse/overview",
-    tags: ["Analytical", "Columnar"],
+    tags: ["Analytics", "On request"],
   },
 ]} />

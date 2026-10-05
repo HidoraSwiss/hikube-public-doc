@@ -3,145 +3,115 @@ sidebar_position: 7
 title: Troubleshooting
 ---
 
-# Troubleshooting — Virtual Machines
+# Troubleshooting — Virtual machines
 
-### VM does not boot
+### The Next button stays greyed out in the wizard
 
-**Cause**: the system disk is not ready, the source image is invalid, or the instance profile does not match the image.
+**Cause**: the VM would exceed a project quota (CPU, Memory or Storage). The wizard banner shows **Quota exceeded** and the breakdown per resource.
 
 **Solution**:
 
-1. Verify that VMDisk resources exist and are ready:
-   ```bash
-   kubectl get vmdisk
-   ```
+1. Choose a smaller instance type or reduce the size of the disks.
+2. Free up resources: delete unused VMs or disks (detached disks count against the storage quota).
+3. Have the project quotas increased.
 
-2. Check the VMInstance events:
-   ```bash
-   kubectl describe vminstance <vm-name>
-   ```
-
-3. Verify that the `instanceProfile` is appropriate for the OS image (for example `ubuntu` for an Ubuntu image). An incorrect profile will not prevent boot but the VM will not be optimized (missing drivers).
-
-4. Verify that the chosen `instanceType` is valid (prefix `s1`, `u1`, or `m1` followed by a valid size).
+If the console says the project quotas are unavailable, creation stays blocked until they can be read: try again later or contact [support](mailto:support@hidora.io).
 
 ---
 
-### SSH timeout with PortList
+### Error at creation: name already in use or disk size rejected
 
-**Cause**: port 22 is not in the `externalPorts` list, external exposure is not enabled, or the SSH key was not injected.
+**Cause and solution**:
+
+| Message | Solution |
+|---------|----------|
+| **An instance with this name already exists.** | Choose another name. |
+| **Min. 20 GB required** / **Min. 50 GB required** | Increase **Size (GB)**: 20 GB minimum, 50 GB for Windows. |
+| Message mentioning a minimum size for Oracle Linux | The Oracle Linux system disk requires at least 40 GB. |
+| **A system image is required for a new disk** | Select a card under **Operating System**. |
+| **Invalid format. Expected: `<algorithm> <base64-key> [comment]`** | Paste the complete **public** key (`.pub` file), on a single line. |
+
+---
+
+### The VM stays in Error or Failed status
+
+**Cause**: the VM could not be scheduled or started (resources unavailable, disk in error, GPU unavailable…). When the platform returns a reason, it is shown when you hover over the status badge.
 
 **Solution**:
 
-1. Verify that `external: true` is enabled and port 22 is listed:
-   ```yaml title="vm.yaml"
-   spec:
-     external: true
-     externalMethod: PortList
-     externalPorts:
-       - 22
-   ```
+1. Open the detail page and check the **Storage & Disks** section: the disks must be present.
+2. If the VM has GPUs, see [GPU unavailable at startup](#gpu-unavailable-at-startup).
+3. Try **Stop** then **Start** from the **Actions** section.
+4. If the status persists, contact [support](mailto:support@hidora.io), giving the VM name and its identifier (shown under the title of the detail page, with a copy button).
 
-2. Retrieve the exposed service IP address:
+---
+
+### SSH timeout
+
+**Cause**: no public IP, port 22 not allowed, or SSH service not yet started in the VM.
+
+**Solution**:
+
+1. On the detail page, **Network & Security** section: **Public IP** must be **Active** and port **22** must appear under **Firewall & Ports**.
+2. Otherwise, click **Edit**, enable **Public IPv4 Address**, check **SSH (22)** in **Allowed Ports**, then **Save**.
+3. Right after creation, wait one to two minutes for the OS to finish booting.
+4. Test in verbose mode:
    ```bash
-   kubectl get svc
+   ssh -v ubuntu@<public-ip>
    ```
 
-3. Verify that your SSH key was injected in the manifest:
-   ```yaml title="vm.yaml"
-   spec:
-     sshKeys:
-       - "ssh-ed25519 AAAAC3... user@laptop"
-   ```
+---
 
-4. Test the connection in verbose mode:
+### Permission denied (publickey)
+
+**Cause**: wrong user, wrong key, or key added after the first boot without reloading the user-data.
+
+**Solution**:
+
+1. Use the user shown in the **SSH Connection** block (or under **System Image** > **User**).
+2. Check that the public key matching your private key appears in **Advanced Configuration** > **SSH Keys**.
+3. If you just added the key via **Edit**, choose **Reload user-data** in the **SSH keys changed** dialog, or run **Reload UserData** from the **Actions** section, then **Restart**: the key is only installed at restart.
+
+---
+
+### The added disk does not appear in the VM
+
+**Cause**: the VM has not restarted yet after the addition, or the disk is not formatted.
+
+**Solution**:
+
+1. After **Save**, the console shows **Restart required**: wait for the VM to return to the **Running** state.
+2. Check the disk in the **Storage & Disks** section of the detail page.
+3. In the VM, list the devices: a new disk appears with no partition and no mount point.
    ```bash
-   ssh -v user@<external-ip>
+   lsblk
    ```
+4. Format and mount it: see [Attach an extra disk](./how-to/attach-extra-disk.md).
+
+---
+
+### GPU unavailable at startup
+
+**Cause**: a GPU is released when the VM is stopped and may be assigned to another workload in the meantime.
+
+**Solution**: at startup, if the GPU is no longer available, the console opens the **Select an alternative GPU** dialog. Choose a model in **Available GPU**, then click **Update and Start**. If the dialog says **No GPUs are currently available.**, try again later or contact [support](mailto:support@hidora.io). See [GPU troubleshooting](../gpu/troubleshooting.md).
 
 ---
 
 ### .local DNS does not work in the VM
 
-**Cause**: `systemd-resolved` treats `.local` domains as mDNS (multicast DNS), which prevents standard DNS resolution for these domains.
+**Cause**: `systemd-resolved` treats `.local` domains as mDNS.
 
-**Solution**:
-
-1. Create a drop-in for `systemd-networkd` that disables mDNS:
-   ```bash
-   sudo mkdir -p /etc/systemd/network/10-cloud-init-eth0.network.d
-   ```
-
-2. Create the configuration file:
-   ```bash
-   sudo tee /etc/systemd/network/10-cloud-init-eth0.network.d/override.conf << 'EOF'
-   [Network]
-   MulticastDNS=no
-   EOF
-   ```
-
-3. Reload the network configuration:
-   ```bash
-   sudo networkctl reload
-   ```
-
-4. Verify that resolution works:
-   ```bash
-   resolvectl status
-   resolvectl query my-service.local
-   ```
-
-:::note
-This issue affects all distributions using `systemd-resolved` (Ubuntu 22.04+, Debian 12+, etc.). The fix persists after reboot.
-:::
+**Solution**: see [Resolve .local DNS in VMs](./how-to/fix-dns-local.md).
 
 ---
 
-### Disk not attached to the VM
+### The VM does not respond at all (neither SSH nor RDP)
 
-**Cause**: the VMDisk name does not match the entry in `spec.disks`, the VMDisk is not ready, or the `storageClass` is invalid.
-
-**Solution**:
-
-1. Verify that the VMDisk name exactly matches the one referenced in `spec.disks`:
-   ```yaml title="vm.yaml"
-   spec:
-     disks:
-       - name: data-volume  # Must match the VMDisk metadata.name
-   ```
-
-2. Check the VMDisk status:
-   ```bash
-   kubectl get vmdisk data-volume
-   kubectl describe vmdisk data-volume
-   ```
-
-3. The storageClasses available on Hikube are: `local`, `local-encrypted`, `replicated`, `replicated-encrypted`, `replicated-async`, `replicated-async-encrypted`, `replicated-async-windows`, and `replicated-async-windows-encrypted`. For a VM (single instance), `replicated` is recommended.
-
----
-
-### Serial console / VNC for debugging
-
-**Cause**: the VM is not responding via SSH and you need direct access to diagnose the issue.
+**Cause**: OS hung, network misconfigured inside the VM, internal firewall too restrictive.
 
 **Solution**:
 
-1. For serial console access (text):
-   ```bash
-   virtctl console <vm-name>
-   ```
-
-2. For VNC access (graphical):
-   ```bash
-   virtctl vnc <vm-name>
-   ```
-
-3. From the console, you can check:
-   - Boot logs
-   - Network configuration (`ip addr`, `ip route`)
-   - Service status (`systemctl status`)
-   - System logs (`journalctl -xe`)
-
-:::tip
-`virtctl` is the KubeVirt CLI. Install it from the [KubeVirt releases](https://github.com/kubevirt/kubevirt/releases).
-:::
+1. Run **Restart** from the **Actions** section of the detail page.
+2. If a recent cloud-init change is the cause, fix the script in **Edit** > **Advanced Configuration**, then run **Reload UserData** and **Restart**.
+3. Serial console or VNC access is not offered in the console; contact [support](mailto:support@hidora.io) for low-level diagnostics.

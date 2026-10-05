@@ -7,39 +7,39 @@ import NavigationFooter from '@site/src/components/NavigationFooter';
 
 # PostgreSQL on Hikube
 
-Hikube offers a managed PostgreSQL service, based on the **CloudNativePG** operator, recognized and widely adopted by the community.  
-The platform supports the deployment and management of a **replicated and self-healing** PostgreSQL cluster, ensuring robustness, performance, and high availability without user effort.
+Hikube offers a managed PostgreSQL service.
+The platform handles the deployment and management of a **replicated, self-healing** PostgreSQL cluster, which you create and manage from the [Hikube console](https://console.hikube.cloud) (**DB & Messaging** → **PostgreSQL** menu).
 
 ---
 
-## Architecture and Operation
+## Architecture and operation
 
-The managed PostgreSQL service on Hikube is based on the **CloudNativePG** operator, which automates the complete lifecycle management of the database: creation, update, replication, and disaster recovery.  
+The platform automates the database lifecycle: creation, updates, replication and incident recovery.
 
-The architecture is built around a **replicated cluster**:  
+The architecture is built around a **replicated cluster**:
 
-- A **primary node** that handles writes and serves as the reference for data consistency.  
-- One or more **replicas** (standby) that receive modifications in real-time through synchronous or asynchronous replication.  
-- An **auto-failover** mechanism that automatically promotes a replica as the new primary in case of failure, ensuring **high availability** without manual intervention.  
+- A **primary node** that handles writes and serves as the reference for data consistency.
+- One or more **replicas** (standby) that continuously receive changes through replication.
+- An **auto-failover** mechanism that automatically promotes a replica to new primary in the event of a failure, with no manual intervention.
 
-This approach guarantees:  
+This approach ensures:
 
-- **Resilience** against hardware or software failures  
-- **Read scalability** through query distribution across replicas  
-- **Operational simplicity**, as the platform manages cluster coordination and maintenance  
+- **Resilience** against hardware or software failures
+- **Read scalability** by distributing queries across replicas
+- **Operational simplicity**, as the platform handles cluster coordination and maintenance
 
 ```mermaid
 graph TD
     subgraph Gland
-        P1[Pod PostgreSQL Primary] --> PVC1[(PVC - Storage)]
+        P1[PostgreSQL primary] --> PVC1[(Storage)]
     end
 
     subgraph Lucerne
-        P2[Pod PostgreSQL Standby] --> PVC2[(PVC - Storage)]
+        P2[PostgreSQL standby] --> PVC2[(Storage)]
     end
 
-    subgraph Genève
-        P3[Pod PostgreSQL Standby] --> PVC3[(PVC - Storage)]
+    subgraph Geneva
+        P3[PostgreSQL standby] --> PVC3[(Storage)]
     end
 
     P1 -->|Replication| P2
@@ -48,21 +48,33 @@ graph TD
 
 ---
 
-## Use Cases
+## What you manage from the console
 
-- **Critical business applications** requiring a reliable and highly available database  
-- **E-commerce and ERP**, where service continuity is essential  
-- **Multi-tenant SaaS**, allowing load distribution between primary and replicas  
-- **Business Intelligence and reporting**, thanks to optimized reads on replicas  
-- **Cloud-native applications**, integrated into Kubernetes environments
+| Feature | Available |
+|----------|------------|
+| Cluster creation (version 15 to 18, preset, disk size, 1 to 3 replicas, external access) | Yes |
+| Databases and PostgreSQL extensions | Yes |
+| Users, per-database rights (admin / read-only), password rotation | Yes |
+| Changing the version, preset, disk size and external access | Yes |
+| Changing the number of replicas after creation | No, [contact support](mailto:support@hidora.io) |
+| Backups and restore | No, [contact support](mailto:support@hidora.io) |
+
+---
+
+## Use cases
+
+- **Business-critical applications** requiring a reliable, highly available database
+- **E-commerce and ERP**, where service continuity is essential
+- **Multi-tenant SaaS**, distributing load between the primary and replicas
+- **Business Intelligence and reporting**, thanks to optimized reads on replicas
+- **Cloud-native applications**, deployed on your Hikube Kubernetes clusters
 
 <NavigationFooter
   nextSteps={[
     {label: "Concepts", href: "../concepts"},
-    {label: "Quick Start", href: "../quick-start"},
+    {label: "Quick start", href: "../quick-start"},
   ]}
   seeAlso={[
     {label: "All databases", href: "../../"},
   ]}
 />
-
