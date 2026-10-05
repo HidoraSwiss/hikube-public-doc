@@ -9,6 +9,10 @@ title: Terraform (legacy)
 Cette méthode pilote Hikube au travers d'un kubeconfig de projet et de manifestes Kubernetes. Elle est **dépréciée** : elle reste fonctionnelle pour les clients qui l'utilisent déjà, mais n'évoluera plus. Pour gérer vos ressources, utilisez la [console Hikube](https://console.hikube.cloud).
 :::
 
+:::info Automatisation : l'API publique
+La voie d'automatisation à venir est l'[API publique Hikube](../api/overview.md), avec des [clés d'API](../api/authentication.md) rattachées à un projet ; elle est aujourd'hui en préversion. Un provider Terraform dédié, fondé sur cette API, est envisagé.
+:::
+
 Vous pouvez utiliser **Terraform** pour gérer votre infrastructure Hikube de manière déclarative et reproductible, au travers des providers Kubernetes.
 
 ---
