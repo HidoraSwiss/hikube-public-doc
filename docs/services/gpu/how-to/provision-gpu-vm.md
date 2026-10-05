@@ -4,207 +4,77 @@ title: "Comment provisionner un GPU sur une VM"
 
 # Comment provisionner un GPU sur une VM
 
-Hikube permet d'attacher un ou plusieurs GPU NVIDIA directement a une machine virtuelle. Ce guide explique comment choisir le type de GPU adapte a votre workload, creer une VM avec GPU et verifier que l'acceleration materielle est bien disponible.
+Hikube permet d'attacher un ou plusieurs GPU NVIDIA à une machine virtuelle, à la création ou après coup. Ce guide explique comment choisir le GPU, l'ajouter depuis la console et vérifier qu'il est utilisable.
 
-## Prerequis
+## Prérequis
 
-- **kubectl** configure avec votre kubeconfig Hikube
-- Un acces **SSH** a la VM (cle publique SSH disponible)
-- Familiarite avec les concepts de [machines virtuelles](../../compute/overview.md) sur Hikube
+- Un compte Hikube et un projet avec des quotas suffisants (8 vCPU et 32 Go de mémoire par GPU recommandés)
+- Une clé SSH publique
+- Familiarité avec les [machines virtuelles](../../compute/overview.md) Hikube
 
-## Etapes
+## Étapes
 
-### 1. Choisir le type de GPU
+### 1. Choisir le modèle de GPU
 
-Hikube propose plusieurs GPU NVIDIA adaptes a differents cas d'usage :
-
-| GPU | Architecture | Memoire | Cas d'usage |
-|-----|-------------|---------|-------------|
-| **L40S** | Ada Lovelace | 48 GB GDDR6 | Inference, developpement, prototypage |
-| **A100 (PCIe / SXM4)** | Ampere | 80 GB HBM2e | Entrainement ML, fine-tuning |
-| **RTX PRO 6000 Blackwell** | Blackwell | 96 GB GDDR7 | LLM, calcul intensif, entrainement distribue |
+| Modèle | Mémoire | Cas d'usage |
+|--------|---------|-------------|
+| **NVIDIA L40S** | 48 Go | Inférence, développement, prototypage |
+| **NVIDIA A100 80GB** | 80 Go | Entraînement ML, fine-tuning |
+| **NVIDIA H100 80GB** | 80 Go | Entraînement et inférence de grands modèles |
+| **NVIDIA RTX 6000 Pro** | 96 Go | LLM, calcul intensif |
 
 :::tip Quel GPU choisir ?
-Commencez par un **L40S** pour le developpement et le prototypage. Passez a un **A100** pour l'entrainement de modeles ML standard, et reservez le **RTX PRO 6000 (Blackwell)** pour les workloads les plus exigeants comme l'entrainement de LLM ou le calcul haute performance.
+Commencez par un **L40S** pour le développement et le prototypage. Passez à un **A100** ou un **H100** pour l'entraînement, et réservez le **RTX 6000 Pro** aux modèles qui demandent le plus de mémoire.
 :::
 
-Les identifiants GPU a utiliser dans vos manifestes sont :
+### 2. Ajouter le GPU à la création de la VM
 
-| GPU | Valeur `gpus[].name` |
-|-----|----------------------|
-| L40S | `nvidia.com/AD102GL_L40S` |
-| A100 PCIe 80 Go | `nvidia.com/GA100_A100_PCIE_80GB` |
-| A100 SXM4 80 Go | `nvidia.com/GA100_A100_SXM4_80GB` |
-| RTX PRO 6000 Blackwell | `nvidia.com/GB202GL_RTX_PRO_6000_BLACKWELL_SERVER_EDITION` |
+1. Ouvrez **Infrastructure** > **Instances VM** > **Créer une Instance**.
+2. Étape **Configuration** :
+   - sous **Ressources (CPU / RAM)**, choisissez un gabarit adapté, par exemple **Universel (U)** > **2XLARGE** (8 vCPU, 32 Go) pour un GPU ;
+   - sous **Accélération Matérielle (GPU)**, cliquez sur la carte du modèle voulu. Utilisez **+** pour ajouter d'autres GPU du même modèle, ou cliquez sur une autre carte pour combiner des modèles.
+3. Étape **Stockage** : choisissez l'image (par exemple **ubuntu** 24.04) et au moins **50 Go**.
+4. Étape **Réseau** : ajoutez votre clé SSH et les ports nécessaires (par exemple `8888` pour Jupyter, via **Port personnalisé...**).
+5. Étape **Vérification** : contrôlez la ligne **Accélération Matérielle (GPU)** et le coût estimé, puis cliquez sur **Déployer**.
 
-### 2. Creer le manifeste de la VM avec GPU
-
-Creez un manifeste qui declare le GPU souhaite dans la section `spec.gpus` :
-
-```yaml title="gpu-vm.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: VMDisk
-metadata:
-  name: gpu-workstation-disk
-spec:
-  source:
-    image:
-      name: ubuntu-2404
-  storage: 100Gi
-  storageClass: replicated
----
-apiVersion: apps.cozystack.io/v1alpha1
-kind: VMInstance
-metadata:
-  name: gpu-workstation
-spec:
-  runStrategy: Always
-  instanceProfile: ubuntu
-  instanceType: u1.2xlarge
-  gpus:
-    - name: "nvidia.com/AD102GL_L40S"
-  disks:
-    - name: gpu-workstation-disk
-  external: true
-  externalMethod: PortList
-  externalPorts:
-    - 22
-    - 8888
-  sshKeys:
-    - ssh-ed25519 AAAA... user@host
-```
-
-:::tip Ratio CPU/GPU recommande
-Prevoyez **8 a 16 vCPU par GPU**. Pour un seul GPU, un `u1.2xlarge` (8 vCPU, 32 GB RAM) est un bon point de depart. Pour du multi-GPU, montez a `u1.4xlarge` ou `u1.8xlarge`.
+:::warning Plusieurs GPU sur une VM
+Tous les GPU d'une VM doivent être libres sur le même serveur physique. Si ce n'est pas le cas, le déploiement échoue avec **Les GPUs suivants ne sont pas disponibles : …**. Réduisez alors le nombre de GPU ou choisissez un autre modèle. Dimensionnez le gabarit en conséquence : un `u1.8xlarge` (32 vCPU, 128 Go) convient pour 4 GPU.
 :::
 
-### 3. Deployer la VM
+### 3. Ajouter ou changer un GPU sur une VM existante
 
-Appliquez le manifeste :
+1. Ouvrez la page de détail de la VM et cliquez sur **Modifier**.
+2. Dans **Ressources (CPU / RAM)**, ajustez la sélection **Accélération Matérielle (GPU)** (ajout, retrait, changement de modèle). Adaptez le gabarit si besoin.
+3. Cliquez sur **Enregistrer**. La console affiche **Redémarrage requis** : la VM redémarre avec la nouvelle configuration.
+
+### 4. Installer les drivers
+
+Les images Hikube ne contiennent pas les drivers NVIDIA. Suivez [Installer CUDA et les drivers GPU](../../compute/how-to/install-cuda-drivers.md), ou collez le script cloud-init de ce guide dans **Script Cloud-Init (User Data)** à la création.
+
+## Vérification
+
+1. **Dans la console** : la page de détail affiche le statut **Actif** et le GPU sous **GPUs** (section **Ressources & Caractéristiques**).
+2. **Dans la VM** :
 
 ```bash
-kubectl apply -f gpu-vm.yaml
+ssh -i ~/.ssh/id_ed25519 ubuntu@<ip-publique>
+lspci | grep -i nvidia
+nvidia-smi --query-gpu=name,memory.total,driver_version --format=csv
 ```
 
-Attendez que la VM soit en etat `Running` :
-
-```bash
-kubectl get vminstance gpu-workstation -w
-```
-
-**Resultat attendu :**
+**Résultat attendu** (après installation des drivers) :
 
 ```
-NAME               STATUS    AGE
-gpu-workstation    Running   2m
+name, memory.total [MiB], driver_version
+NVIDIA L40S, 46068 MiB, 560.xx.xx
 ```
 
-:::note
-Le provisionnement d'une VM avec GPU peut prendre quelques minutes supplementaires par rapport a une VM standard, le temps que le GPU soit alloue et attache.
+:::note Arrêt d'une VM avec GPU
+**Arrêter** la VM libère ses GPU. Au démarrage suivant, si un GPU a été attribué à un autre workload, la console ouvre **Sélectionner un GPU alternatif** : choisissez un modèle dans **GPU disponible** puis **Mettre à jour et démarrer**.
 :::
-
-### 4. Verifier le GPU dans la VM
-
-Connectez-vous a la VM via SSH :
-
-```bash
-virtctl ssh -i ~/.ssh/id_ed25519 ubuntu@gpu-workstation
-```
-
-Verifiez que le GPU est detecte :
-
-```bash
-nvidia-smi
-```
-
-**Resultat attendu :**
-
-```
-+-----------------------------------------------------------------------------+
-| NVIDIA-SMI 535.xx.xx    Driver Version: 535.xx.xx    CUDA Version: 12.x     |
-|-------------------------------+----------------------+----------------------+
-| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
-| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
-|===============================+======================+======================|
-|   0  NVIDIA L40S         Off  | 00000000:00:06.0 Off |                    0 |
-| N/A   30C    P0    35W / 350W |      0MiB / 46068MiB |      0%      Default |
-+-------------------------------+----------------------+----------------------+
-```
-
-Pour des informations detaillees :
-
-```bash
-nvidia-smi --query-gpu=name,memory.total,utilization.gpu --format=csv
-```
-
-### 5. Configurer une VM multi-GPU
-
-Pour les workloads intensifs (entrainement distribue, inference a grande echelle), vous pouvez attacher plusieurs GPU a une meme VM en repetant les entrees dans `spec.gpus` :
-
-```yaml title="multi-gpu-vm.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: VMDisk
-metadata:
-  name: multi-gpu-disk
-spec:
-  source:
-    image:
-      name: ubuntu-2404
-  storage: 200Gi
-  storageClass: replicated
----
-apiVersion: apps.cozystack.io/v1alpha1
-kind: VMInstance
-metadata:
-  name: multi-gpu-workstation
-spec:
-  runStrategy: Always
-  instanceProfile: ubuntu
-  instanceType: u1.8xlarge
-  gpus:
-    - name: "nvidia.com/GA100_A100_SXM4_80GB"
-    - name: "nvidia.com/GA100_A100_SXM4_80GB"
-    - name: "nvidia.com/GA100_A100_SXM4_80GB"
-    - name: "nvidia.com/GA100_A100_SXM4_80GB"
-  disks:
-    - name: multi-gpu-disk
-  external: true
-  externalMethod: PortList
-  externalPorts:
-    - 22
-    - 8888
-  sshKeys:
-    - ssh-ed25519 AAAA... user@host
-```
-
-:::warning
-Pour du multi-GPU, dimensionnez le type d'instance en consequence. Prevoyez au minimum 8 vCPU et 32 GB de RAM par GPU. Un `u1.8xlarge` (32 vCPU, 128 GB RAM) est adapte pour 4 GPU.
-:::
-
-## Verification
-
-Apres le deploiement, confirmez que tout fonctionne :
-
-1. **Verifiez l'etat de la VM** :
-
-```bash
-kubectl get vminstance gpu-workstation
-```
-
-2. **Verifiez le GPU dans la VM** :
-
-```bash
-virtctl ssh -i ~/.ssh/id_ed25519 ubuntu@gpu-workstation -- nvidia-smi
-```
-
-3. **Testez CUDA** (si les pilotes sont installes) :
-
-```bash
-virtctl ssh -i ~/.ssh/id_ed25519 ubuntu@gpu-workstation -- nvidia-smi --query-gpu=name,memory.total,driver_version,cuda_version --format=csv,noheader
-```
 
 ## Pour aller plus loin
 
-- [Référence API GPU](../api-reference.md)
-- [Comment provisionner un GPU sur Kubernetes](./provision-gpu-kubernetes.md)
-- [Comment installer les pilotes CUDA](../../compute/how-to/install-cuda-drivers.md)
+- [Provisionner un GPU sur Kubernetes](./provision-gpu-kubernetes.md)
+- [Installer CUDA et les drivers GPU](../../compute/how-to/install-cuda-drivers.md)
+- [Dépannage GPU](../troubleshooting.md)

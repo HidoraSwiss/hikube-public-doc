@@ -4,208 +4,107 @@ title: "Comment configurer cloud-init"
 
 # Comment configurer cloud-init
 
-cloud-init est le standard de l'industrie pour l'initialisation automatique des VMs au premier démarrage. Hikube supporte cloud-init nativement via le paramètre `cloudInit` de la VMInstance. Ce guide montre comment l'utiliser pour automatiser la configuration de vos VMs.
+cloud-init est le standard d'initialisation automatique des VM : création d'utilisateurs, installation de paquets, écriture de fichiers, exécution de commandes. Dans la console Hikube, le script cloud-init se saisit dans le champ **Script Cloud-Init (User Data)**.
 
 ## Prérequis
 
-- **kubectl** configuré avec votre kubeconfig Hikube
+- Un compte Hikube et un projet
+- Une image **Linux** : le champ cloud-init n'est pas proposé pour les images Windows
 - Connaissance de base du format **YAML**
-- Un manifeste VMInstance prêt à configurer
 
 ## Étapes
 
-### 1. Comprendre cloud-init
+### 1. Saisir le script à la création
 
-cloud-init s'exécute automatiquement au premier démarrage de la VM. Il permet de :
+1. Ouvrez **Infrastructure** > **Instances VM** > **Créer une Instance** et renseignez les étapes **Général**, **Configuration** et **Stockage**.
+2. À l'étape **Réseau**, section **Initialisation & Accès**, activez l'interrupteur **Script Cloud-Init (User Data)**.
+3. Saisissez votre configuration dans la zone de texte. Elle doit commencer par `#cloud-config`.
+4. Terminez l'assistant et cliquez sur **Déployer**.
 
-- Créer des utilisateurs et configurer les accès SSH
-- Installer des paquets
-- Exécuter des commandes au démarrage
-- Écrire des fichiers de configuration
-- Configurer le réseau, le hostname, etc.
+Les clés saisies dans **Clés SSH autorisées** sont injectées par la plateforme : inutile de les répéter dans le script pour l'utilisateur par défaut.
 
-La configuration cloud-init est passée en YAML inline dans le champ `spec.cloudInit` de la VMInstance. Elle doit commencer par `#cloud-config`.
+### 2. Exemples
 
-### 2. Créer un manifeste avec cloud-init
+#### Utilisateur supplémentaire avec sudo
 
-Voici un exemple complet de VMInstance avec une configuration cloud-init qui crée un utilisateur, installe des paquets et exécute des commandes :
-
-```yaml title="vm-cloud-init.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: VMInstance
-metadata:
-  name: vm-configured
-spec:
-  runStrategy: Always
-  instanceType: u1.xlarge
-  instanceProfile: ubuntu
-  external: true
-  externalMethod: PortList
-  externalPorts:
-    - 22
-    - 80
-  disks:
-    - vm-system-disk
-  sshKeys:
-    - ssh-ed25519 AAAA... user@host
-  cloudInit: |
-    #cloud-config
-    users:
-      - name: admin
-        sudo: ALL=(ALL) NOPASSWD:ALL
-        shell: /bin/bash
-        ssh_authorized_keys:
-          - ssh-ed25519 AAAA... user@host
-
-    packages:
-      - htop
-      - curl
-      - docker.io
-      - nginx
-
-    runcmd:
-      - systemctl enable --now docker
-      - systemctl enable --now nginx
+```yaml title="user-data.yaml"
+#cloud-config
+users:
+  - default
+  - name: deployer
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: sudo
+    shell: /bin/bash
+    ssh_authorized_keys:
+      - ssh-ed25519 AAAA... deployer@ci
 ```
 
-### 3. Exemples pratiques
+L'entrée `default` conserve l'utilisateur par défaut de l'image (par exemple `ubuntu`).
 
-#### Ajouter un utilisateur sudo
+#### Paquets installés au démarrage
 
-```yaml title="cloud-init-user.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: VMInstance
-metadata:
-  name: vm-with-user
-spec:
-  runStrategy: Always
-  instanceType: s1.medium
-  instanceProfile: ubuntu
-  disks:
-    - vm-system-disk
-  cloudInit: |
-    #cloud-config
-    users:
-      - name: deployer
-        sudo: ALL=(ALL) NOPASSWD:ALL
-        groups: docker, sudo
-        shell: /bin/bash
-        ssh_authorized_keys:
-          - ssh-ed25519 AAAA... deployer@ci
+```yaml title="user-data.yaml"
+#cloud-config
+package_update: true
+package_upgrade: true
+packages:
+  - htop
+  - curl
+  - git
+  - docker.io
 ```
 
-#### Installer des paquets au démarrage
+#### Commandes au démarrage
 
-```yaml title="cloud-init-packages.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: VMInstance
-metadata:
-  name: vm-with-packages
-spec:
-  runStrategy: Always
-  instanceType: u1.xlarge
-  instanceProfile: ubuntu
-  disks:
-    - vm-system-disk
-  cloudInit: |
-    #cloud-config
-    package_update: true
-    package_upgrade: true
-    packages:
-      - htop
-      - docker.io
-      - curl
-      - wget
-      - git
-      - build-essential
+```yaml title="user-data.yaml"
+#cloud-config
+runcmd:
+  - mkdir -p /opt/app
+  - echo "VM initialisée le $(date)" > /opt/app/init.log
+  - systemctl enable --now docker
 ```
 
-#### Exécuter des commandes au démarrage
+#### Serveur web
 
-```yaml title="cloud-init-runcmd.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: VMInstance
-metadata:
-  name: vm-with-commands
-spec:
-  runStrategy: Always
-  instanceType: u1.xlarge
-  instanceProfile: ubuntu
-  disks:
-    - vm-system-disk
-  cloudInit: |
-    #cloud-config
-    runcmd:
-      - mkdir -p /opt/app
-      - echo "VM initialisée le $(date)" > /opt/app/init.log
-      - curl -fsSL https://get.docker.com | sh
-      - usermod -aG docker ubuntu
+Autorisez aussi les ports **HTTP (80)** et **HTTPS (443)** à l'étape **Réseau**.
+
+```yaml title="user-data.yaml"
+#cloud-config
+packages:
+  - nginx
+write_files:
+  - path: /var/www/html/index.html
+    content: |
+      <!DOCTYPE html>
+      <html>
+      <head><title>Hikube VM</title></head>
+      <body><h1>VM opérationnelle</h1></body>
+      </html>
+runcmd:
+  - systemctl enable --now nginx
 ```
 
-#### Configurer un serveur web
+### 3. Modifier le script d'une VM existante
 
-```yaml title="cloud-init-webserver.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: VMInstance
-metadata:
-  name: vm-webserver
-spec:
-  runStrategy: Always
-  instanceType: u1.xlarge
-  instanceProfile: ubuntu
-  external: true
-  externalMethod: PortList
-  externalPorts:
-    - 22
-    - 80
-    - 443
-  disks:
-    - vm-system-disk
-  sshKeys:
-    - ssh-ed25519 AAAA... user@host
-  cloudInit: |
-    #cloud-config
-    packages:
-      - nginx
-      - certbot
-      - python3-certbot-nginx
+1. Ouvrez la page de détail de la VM et cliquez sur **Modifier**.
+2. Dans **Configuration avancée**, modifiez **Script Cloud-Init (User Data)**.
+3. Cliquez sur **Enregistrer**.
 
-    write_files:
-      - path: /var/www/html/index.html
-        content: |
-          <!DOCTYPE html>
-          <html>
-          <head><title>Hikube VM</title></head>
-          <body><h1>VM opérationnelle</h1></body>
-          </html>
+Le nouveau script est enregistré mais n'est pas rejoué automatiquement : passez à l'étape suivante.
 
-    runcmd:
-      - systemctl enable --now nginx
-```
+### 4. Rejouer le script
 
-### 4. Appliquer et vérifier
+Sur une VM au statut **Actif**, cliquez sur **Recharger UserData**, depuis la section **Actions** de la page de détail ou depuis le menu **Actions** de la liste. La console affiche **Le rechargement du UserData a été initié.**
 
-Déployez la VM :
+Lorsque vous modifiez les **Clés SSH** d'une VM, la console propose directement ce rechargement dans la boîte **Clés SSH modifiées** : **Reload user-data** ou **Ne pas reloader user-data**.
 
-```bash
-kubectl apply -f vm-cloud-init.yaml
-```
-
-Attendez que la VM soit prête :
-
-```bash
-kubectl get vminstance vm-configured -w
-```
+:::warning Effets d'un rechargement
+Un rechargement fait réexécuter le script cloud-init par la VM. Écrivez des scripts idempotents (sans effet indésirable s'ils sont exécutés plusieurs fois), en particulier pour `runcmd` et `write_files`.
+:::
 
 ## Vérification
 
-Connectez-vous à la VM et vérifiez que cloud-init s'est exécuté correctement :
-
-```bash
-virtctl ssh -i ~/.ssh/id_ed25519 ubuntu@vm-configured
-```
-
-Vérifiez le statut de cloud-init :
+Connectez-vous à la VM et vérifiez l'état de cloud-init :
 
 ```bash
 cloud-init status
@@ -217,27 +116,22 @@ cloud-init status
 status: done
 ```
 
-Vérifiez les paquets installés :
-
-```bash
-dpkg -l | grep -E "htop|docker|nginx"
-```
-
-Consultez les logs cloud-init en cas de problème :
+Consultez le journal en cas de problème :
 
 ```bash
 sudo cat /var/log/cloud-init-output.log
 ```
 
-:::warning Exécution unique
-cloud-init s'exécute **uniquement au premier démarrage** de la VM. Les redémarrages suivants n'exécutent pas de nouveau la configuration. Pour forcer une ré-exécution, utilisez `sudo cloud-init clean` puis redémarrez.
-:::
+Vérifiez la syntaxe d'un script avant de l'envoyer (sur une machine où cloud-init est installé) :
 
-:::tip Seed cloud-init
-Le paramètre `cloudInitSeed` permet de passer des données seed supplémentaires. Modifiez cette valeur pour forcer cloud-init à se ré-exécuter lors du prochain démarrage.
-:::
+```bash
+cloud-init schema --config-file user-data.yaml
+```
+
+Le script enregistré est visible à tout moment sur la page de détail, section **Configuration avancée** > **Cloud-Init User Data**.
 
 ## Pour aller plus loin
 
-- [Référence API](../api-reference.md) -- section Cloud-init
-- [Démarrage rapide](../quick-start.md)
+- [Installer CUDA via cloud-init](./install-cuda-drivers.md)
+- [Démarrage rapide VM](../quick-start.md)
+- [Documentation cloud-init](https://cloudinit.readthedocs.io/)
