@@ -5,55 +5,45 @@ title: FAQ
 
 # FAQ — ClickHouse
 
-### Qual e la differenza tra shard e repliche?
+:::info Disponibilità
+ClickHouse non è ancora disponibile in modalità self-service nella [console Hikube](https://console.hikube.cloud).
+Per effettuare il provisioning di un'istanza o modificarne la configurazione, [contatti il supporto](mailto:support@hidora.io).
+:::
+
+### Qual è la differenza tra shard e repliche?
 
 Gli **shard** e le **repliche** svolgono ruoli diversi nell'architettura ClickHouse:
 
-- **Shard**: distribuzione **orizzontale** dei dati. Ogni shard contiene una parte del dataset totale. Aggiungere shard aumenta la capacità di archiviazione e di elaborazione.
-- **Repliche**: copie **identiche** dei dati all'interno di uno stesso shard. Ogni replica contiene gli stessi dati per assicurare l'alta disponibilità.
+- **Shard**: distribuzione **orizzontale** dei dati. Ogni shard contiene una parte del dataset totale. Aggiungere shard aumenta la capacità di storage e di elaborazione.
+- **Repliche**: copie **identiche** dei dati all'interno di uno stesso shard, per l'alta disponibilità.
 
-```yaml title="clickhouse.yaml"
-spec:
-  shards: 2       # I dati sono distribuiti su 2 shard
-  replicas: 3     # Ogni shard ha 3 copie (totale: 6 pod)
-```
+Ad esempio, 2 shard con 3 repliche ciascuno corrispondono a 6 nodi ClickHouse.
 
 :::tip
-In produzione, usate almeno 2 repliche per shard per l'alta disponibilità. Aumentate il numero di shard per elaborare volumi di dati più importanti.
+In produzione, preveda almeno 2 repliche per shard per l'alta disponibilità. Aumenti il numero di shard per elaborare volumi di dati più importanti.
 :::
 
 ### A cosa serve ClickHouse Keeper?
 
-**ClickHouse Keeper** e il componente di coordinamento del cluster, basato sul protocollo **Raft**. Sostituisce Apache ZooKeeper e assicura:
+**ClickHouse Keeper** è il componente di coordinamento del cluster, basato sul protocollo **Raft**. Sostituisce Apache ZooKeeper e garantisce:
 
 - L'**elezione del leader** per le tabelle replicate
-- Il **coordinamento** delle operazioni di replica tra repliche
+- Il **coordinamento** delle operazioni di replica tra le repliche
 - La gestione dei **metadati** del cluster
 
-Il numero di repliche Keeper deve essere **dispari** (3 o 5) per garantire il quorum (maggioranza necessaria per l'elezione del leader). Il minimo raccomandato e **3 repliche**.
-
-```yaml title="clickhouse.yaml"
-spec:
-  clickhouseKeeper:
-    enabled: true
-    replicas: 3        # Sempre dispari: 3 o 5
-    resourcesPreset: micro
-    size: 2Gi
-```
+Il numero di istanze Keeper deve essere **dispari** (3 o 5) per garantire il quorum. Il minimo consigliato è **3**.
 
 ### ClickHouse è adatto alle query transazionali (OLTP)?
 
-**No.** ClickHouse e un motore di database **OLAP** (Online Analytical Processing) ottimizzato per l'analisi dei dati:
+**No.** ClickHouse è un motore **OLAP** (Online Analytical Processing) ottimizzato per l'analisi dei dati:
 
-- Architettura **orientata per colonne**: molto performante per aggregazioni e scansioni su grandi volumi di dati
-- Ottimizzato per le **letture massive** e le query analitiche
-- **Non adatto** alle operazioni transazionali frequenti (`UPDATE`, `DELETE` unitari)
+- Architettura **orientata alle colonne**: molto performante per aggregazioni e scansioni su grandi volumi
+- Ottimizzato per **letture massive** e query analitiche
+- **Non adatto** alle operazioni transazionali frequenti (`UPDATE`, `DELETE` puntuali)
 
-Se avete bisogno di un motore transazionale (OLTP), usate piuttosto **PostgreSQL** o **MySQL** su Hikube.
+Per un motore transazionale, utilizzi piuttosto [PostgreSQL](../postgresql/overview.md) o [MariaDB](../mariadb/overview.md), disponibili nella console.
 
-### Qual e la differenza tra `resourcesPreset` e `resources`?
-
-Il campo `resourcesPreset` permette di scegliere un profilo di risorse predeterminato per ogni replica ClickHouse. Se il campo `resources` (CPU/memoria espliciti) e definito, `resourcesPreset` viene **completamente ignorato**.
+### Quali preset sono disponibili?
 
 | **Preset** | **CPU** | **Memoria** |
 |------------|---------|-------------|
@@ -65,44 +55,18 @@ Il campo `resourcesPreset` permette di scegliere un profilo di risorse predeterm
 | `xlarge`   | 4       | 4Gi         |
 | `2xlarge`  | 8       | 8Gi         |
 
-```yaml title="clickhouse.yaml"
-spec:
-  # Utilizzo di un preset
-  resourcesPreset: large
-
-  # OPPURE configurazione esplicita (il preset viene allora ignorato)
-  resources:
-    cpu: 4000m
-    memory: 8Gi
-```
+Il preset si applica a ogni replica. Lo indichi nella sua richiesta al supporto.
 
 ### Come vengono distribuiti i dati tra gli shard?
 
 I dati vengono distribuiti tra gli shard tramite il motore **Distributed** di ClickHouse:
 
 - Ogni shard archivia una **partizione** del dataset totale
-- Il motore `Distributed` reindirizza le query verso tutti gli shard e **fonde i risultati**
-- I dati vengono **replicati** all'interno di ogni shard secondo il numero di repliche configurato
+- Il motore `Distributed` inoltra le query a tutti gli shard e **unisce i risultati**
+- I dati vengono **replicati** all'interno di ogni shard in base al numero di repliche
 
-Per beneficiare della distribuzione, create tabelle con il motore `ReplicatedMergeTree` su ogni shard e una tabella `Distributed` per le query globali.
+Crei tabelle `ReplicatedMergeTree` su ogni shard e una tabella `Distributed` per le query globali. Consulti [Configurare lo sharding](./how-to/configure-sharding.md).
 
 ### Come configurare i backup ClickHouse?
 
-I backup ClickHouse utilizzano **Restic** per l'invio verso uno storage S3 compatibile. Configurate la sezione `backup`:
-
-```yaml title="clickhouse.yaml"
-spec:
-  backup:
-    enabled: true
-    s3Region: eu-central-1
-    s3Bucket: s3.example.com/clickhouse-backups
-    schedule: "0 3 * * *"
-    cleanupStrategy: "--keep-last=7 --keep-daily=7 --keep-weekly=4"
-    s3AccessKey: your-access-key
-    s3SecretKey: your-secret-key
-    resticPassword: your-restic-password
-```
-
-:::warning
-Conservate il `resticPassword` in un luogo sicuro. Senza questa password, i backup non potranno essere decifrati.
-:::
+I backup ClickHouse inviano snapshot cifrati verso uno storage compatibile S3. L'attivazione avviene su richiesta: [contatti il supporto](mailto:support@hidora.io) precisando la frequenza e la conservazione desiderate.

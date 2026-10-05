@@ -3,21 +3,19 @@ sidebar_position: 6
 title: FAQ
 ---
 
-# FAQ — MySQL
+# FAQ — MariaDB
 
-### Perche Hikube utilizza MariaDB per il servizio MySQL?
+### Le mie applicazioni MySQL sono compatibili?
 
-Il servizio MySQL su Hikube è basato su **MariaDB**, distribuito tramite il **MariaDB Operator**. MariaDB e un fork open-source di MySQL, completamente compatibile con il protocollo e la sintassi MySQL. Questa scelta garantisce:
+Sì. **MariaDB** è un fork open source di MySQL, compatibile con il protocollo e la sintassi MySQL. I client `mysql`, `mysqldump` e i connettori MySQL (JDBC, PDO, `mysql2`, ecc.) funzionano senza modifiche. In precedenza, questo servizio era presentato in questa documentazione con il nome « MySQL ».
 
-- Una **compatibilità totale** con i client e le applicazioni MySQL esistenti
-- Uno sviluppo **open-source** attivo e trasparente
-- Funzionalita avanzate (compressione delle colonne, motore Aria, ecc.)
+### Quale versione scegliere?
 
-Le vostre applicazioni MySQL funzionano senza modifiche con il servizio MySQL Hikube.
+La procedura guidata propone le versioni **10.6**, **10.11**, **11.4** e **11.8**. Scelga la più recente per un nuovo progetto, oppure la versione più vicina al suo ambiente attuale per una migrazione. La versione può essere cambiata dopo la creazione tramite **Edit**.
 
-### Qual e la differenza tra `resourcesPreset` e `resources`?
+### Quali preset sono disponibili?
 
-Il campo `resourcesPreset` permette di scegliere un profilo di risorse predeterminato per ogni replica MySQL. Se il campo `resources` (CPU/memoria espliciti) e definito, `resourcesPreset` viene **completamente ignorato**.
+Il **Preset** stabilisce la CPU e la memoria di ogni nodo. Fa fede l'elenco mostrato dalla procedura guidata; a titolo indicativo:
 
 | **Preset** | **CPU** | **Memoria** |
 |------------|---------|-------------|
@@ -29,94 +27,34 @@ Il campo `resourcesPreset` permette di scegliere un profilo di risorse predeterm
 | `xlarge`   | 4       | 4Gi         |
 | `2xlarge`  | 8       | 8Gi         |
 
-```yaml title="mysql.yaml"
-spec:
-  # Utilizzo di un preset
-  resourcesPreset: small
-
-  # OPPURE configurazione esplicita (il preset viene allora ignorato)
-  resources:
-    cpu: 2000m
-    memory: 2Gi
-```
-
-### Come funziona la replica MySQL su Hikube?
-
-La replica MySQL su Hikube utilizza la **replica binlog** (binary log) gestita dal MariaDB Operator:
-
-- Un nodo e designato come **primary** (lettura-scrittura)
-- Gli altri nodi sono delle **repliche** (sola lettura)
-- La commutazione automatica (**auto-failover**) è gestita dall'operatore in caso di guasto del primary
-
-Con 3 repliche, ottenete 1 primary + 2 repliche, il che assicura l'alta disponibilità.
-
-### Come configurare i backup con Restic?
-
-I backup MySQL utilizzano **Restic** per la cifratura e la compressione. Configurate la sezione `backup` con uno storage S3 compatibile:
-
-```yaml title="mysql.yaml"
-spec:
-  backup:
-    enabled: true
-    s3Region: eu-central-1
-    s3Bucket: s3.example.com/mysql-backups
-    schedule: "0 3 * * *"
-    cleanupStrategy: "--keep-last=7 --keep-daily=7 --keep-weekly=4"
-    s3AccessKey: your-access-key
-    s3SecretKey: your-secret-key
-    resticPassword: your-restic-password
-```
-
 :::warning
-Conservate il `resticPassword` in un luogo sicuro. Senza questa password, i backup non potranno essere decifrati.
+Il preset non può essere modificato dopo la creazione. Lo dimensioni di conseguenza, oppure contatti il supporto per cambiarlo.
 :::
 
-### Come effettuare uno switchover del primary?
+### Come funziona la replica?
 
-Per commutare il ruolo di primary verso un'altra replica, modificate il campo `spec.replication.primary.podIndex` nel vostro manifesto:
+Il primary scrive le sue modifiche nel binary log, che le repliche rieseguono. In caso di guasto del primary, la piattaforma promuove automaticamente una replica. Per beneficiarne, scelga **3 (Max High Availability)** o **5 (Ultra High Availability)** repliche alla creazione: questo numero non è più modificabile in seguito.
 
-```yaml title="mysql.yaml"
-spec:
-  replication:
-    primary:
-      podIndex: 1    # Indice del pod che diventera il nuovo primary
-```
+### Dove si trova l'indirizzo di connessione?
 
-Applicate poi la modifica:
+Nel riquadro **Connection and network** della pagina del cluster, campo **Host**, quando l'**External Access** è attivato. La porta è `3306`. Senza accesso esterno, il campo mostra **Not defined**: il cluster resta raggiungibile dalle VM del progetto tramite un indirizzo interno, che la console non mostra; [contatti il supporto](mailto:support@hidora.io) per ottenerlo.
 
-```bash
-kubectl apply -f mysql.yaml
-```
+### Come creare un database?
 
-:::note
-Lo switchover comporta una **breve interruzione** delle scritture durante la commutazione. Le letture restano disponibili sulle repliche.
-:::
+Conceda a un utente un accesso sul nome del database (**Manage Access** → **Specific Access (Databases)** → **Add**). Il database viene creato se non esiste. Consulti [Gestire utenti e database](./how-to/manage-users-databases.md).
 
-### Come gestire utenti e database?
+### Perché l'utente creato nella procedura guidata non ha accesso al mio database?
 
-Utilizzate le mappe `users` e `databases` per definire i vostri utenti e database. Ogni utente può avere un limite di connessioni, e ogni database dei ruoli `admin` e `readonly`:
+Il **Role** scelto nella procedura guidata di creazione del cluster si applica al database di sistema `mysql`. Conceda poi l'accesso ai suoi database applicativi tramite **Manage Access**.
 
-```yaml title="mysql.yaml"
-spec:
-  users:
-    appuser:
-      password: SecurePassword123
-      maxUserConnections: 100
-    analyst:
-      password: AnalystPassword456
-      maxUserConnections: 20
+### Ho smarrito la password di un utente. Come recuperarla?
 
-  databases:
-    production:
-      roles:
-        admin:
-          - appuser
-        readonly:
-          - analyst
-    analytics:
-      roles:
-        admin:
-          - appuser
-        readonly:
-          - analyst
-```
+Non può essere riletta. Ne generi una nuova: **Actions** → **Change Password** → **Perform rotation**. La vecchia password viene revocata immediatamente.
+
+### È possibile limitare il numero di connessioni per utente o modificare i parametri del server?
+
+Queste impostazioni non sono proposte nella console; contatti il supporto.
+
+### I backup sono disponibili?
+
+La configurazione dei backup e il ripristino non sono proposti nella console; contatti il supporto. Consulti [Configurare i backup](./how-to/configure-backups.md).

@@ -1,157 +1,63 @@
 ---
-title: "Come scalare verticalmente"
+title: "Come modificare le risorse di un cluster"
+sidebar_position: 2
 ---
 
-# Come scalare verticalmente
+# Come modificare le risorse di un cluster
 
-Questa guida vi spiega come regolare le risorse CPU e memoria della vostra istanza MySQL su Hikube, sia tramite un preset predeterminato, sia definendo valori espliciti.
+Questa guida spiega come adattare un cluster MariaDB esistente dalla [console Hikube](https://console.hikube.cloud): dimensione del disco, versione e accesso esterno.
 
 ## Prerequisiti
 
-- **kubectl** configurato con il vostro kubeconfig Hikube
-- Un'istanza **MySQL** distribuita sul vostro tenant
-- Conoscenza dei requisiti di risorse del vostro carico di lavoro
+- Un cluster **MariaDB** esistente nel suo progetto
+- Una quota di progetto sufficiente per la nuova configurazione
+
+## Cosa è modificabile
+
+| Parametro | Modificabile dopo la creazione |
+|-----------|--------------------------------|
+| **MariaDB Version** | Sì |
+| **Disk size (GB)** | Sì |
+| **External access** | Sì |
+| **Preset** | No, « The resources preset cannot be changed after creation » |
+| **Number of replicas** | No, « The mode cannot be changed after creation » |
+
+Per cambiare il preset (CPU e memoria) o il numero di repliche di un cluster esistente, [contatti il supporto](mailto:support@hidora.io).
 
 ## Passaggi
 
-### 1. Verificare le risorse attuali
+### 1. Aprire il modulo di modifica
 
-Consultate la configurazione attuale della vostra istanza MySQL:
+1. Apra **DB & Messaging** → **MariaDB**.
+2. Apra il cluster, quindi faccia clic su **Edit** (oppure utilizzi **Actions** → **Edit** nell'elenco).
 
-```bash
-kubectl get mariadb example -o yaml | grep -A 5 -E "resources:|resourcesPreset"
-```
+La pagina **Edit MariaDB cluster** mostra il riquadro **Cluster settings** e l'impatto sulla quota del progetto.
 
-**Risultato atteso (con preset):**
+### 2. Adattare i parametri
 
-```console
-  resourcesPreset: nano
-```
+- **Disk size (GB)**: inserisca la nuova capacità.
+- **MariaDB Version**: selezioni la versione di destinazione (10.6, 10.11, 11.4 o 11.8). Il modulo propone anche le versioni inferiori alla versione attuale: non torni a una versione precedente, MariaDB non supporta il downgrade.
+- **External access**: attivi o disattivi l'esposizione sull'Internet pubblico.
 
-**Risultato atteso (con risorse esplicite):**
+### 3. Salvare
 
-```console
-  resources:
-    cpu: 1000m
-    memory: 1Gi
-```
-
-### 2. Scegliere il metodo di scaling
-
-Hikube propone due approcci per definire le risorse:
-
-#### Opzione A: Usare un `resourcesPreset`
-
-I preset offrono profili di risorse predefiniti e adatti a diversi casi d'uso:
-
-| Preset | CPU | Memoria | Caso d'uso |
-|---|---|---|---|
-| `nano` | 250m | 128Mi | Test, sviluppo minimale |
-| `micro` | 500m | 256Mi | Sviluppo, piccole applicazioni |
-| `small` | 1 | 512Mi | Applicazioni leggere |
-| `medium` | 1 | 1Gi | Applicazioni standard |
-| `large` | 2 | 2Gi | Carichi di lavoro moderati |
-| `xlarge` | 4 | 4Gi | Produzione standard |
-| `2xlarge` | 8 | 8Gi | Produzione intensiva |
-
-#### Opzione B: Definire risorse esplicite
-
-Per un controllo preciso, definite direttamente i valori `resources.cpu` e `resources.memory`.
-
-:::warning
-Se il campo `resources` e definito (CPU e memoria espliciti), il valore di `resourcesPreset` viene **ignorato**. I due approcci sono mutuamente esclusivi.
-:::
-
-### 3. Opzione A: Modificare il resourcesPreset
-
-Per passare da un preset a un altro, usate `kubectl patch`:
-
-```bash
-kubectl patch mariadb example --type='merge' -p='
-spec:
-  resourcesPreset: medium
-'
-```
-
-O modificate direttamente il manifesto:
-
-```yaml title="mysql-scaled.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: MariaDB
-metadata:
-  name: example
-spec:
-  replicas: 3
-  size: 10Gi
-  resourcesPreset: medium
-```
-
-```bash
-kubectl apply -f mysql-scaled.yaml
-```
-
-### 4. Opzione B: Definire risorse esplicite
-
-Per un controllo fine delle risorse, specificate i valori CPU e memoria direttamente:
-
-```bash
-kubectl patch mariadb example --type='merge' -p='
-spec:
-  resources:
-    cpu: 2000m
-    memory: 4Gi
-'
-```
-
-O tramite il manifesto completo:
-
-```yaml title="mysql-custom-resources.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: MariaDB
-metadata:
-  name: example
-spec:
-  replicas: 3
-  size: 10Gi
-  resources:
-    cpu: 2000m
-    memory: 4Gi
-```
-
-```bash
-kubectl apply -f mysql-custom-resources.yaml
-```
+Faccia clic su **Save**. Il messaggio « Cluster updated » conferma che la modifica è stata presa in carico. Se la nuova configurazione supera la quota del progetto, il pulsante resta inattivo.
 
 :::tip
-Per tornare a un preset dopo aver usato risorse esplicite, rimuovete il campo `resources` e definite `resourcesPreset` nel vostro manifesto.
+Aumenti la dimensione del disco prima che sia pieno. Per misurare lo spazio utilizzato per database:
+
+```sql
+SELECT table_schema, ROUND(SUM(data_length + index_length) / 1024 / 1024, 1) AS size_mb
+FROM information_schema.tables
+GROUP BY table_schema;
+```
 :::
 
 ## Verifica
 
-Seguite il rolling update dei pod MySQL:
-
-```bash
-kubectl get pods -w | grep mysql-example
-```
-
-**Risultato atteso:**
-
-```console
-mysql-example-0   1/1     Running   0   5m
-mysql-example-1   1/1     Running   0   3m
-mysql-example-2   1/1     Running   0   1m
-```
-
-Verificate che le nuove risorse siano applicate:
-
-```bash
-kubectl get mariadb example -o yaml | grep -A 5 -E "resources:|resourcesPreset"
-```
-
-:::note
-Lo scaling verticale comporta un **rolling update** dei pod. Le repliche vengono riavviate una alla volta per minimizzare l'impatto sulla disponibilità. Durante questo processo, il cluster resta accessibile in lettura tramite le repliche già aggiornate.
-:::
+La pagina del cluster mostra i nuovi valori nei riquadri **MariaDB Version** e **Allocated Size**, e lo stato dell'**External Access** nel riquadro **Connection and network**.
 
 ## Per approfondire
 
-- [Riferimento API](../api-reference.md): lista completa dei preset e parametri di risorse
+- [Concetti MariaDB](../concepts.md): replica, preset, accesso di rete
+- [Gestire utenti e database](./manage-users-databases.md)

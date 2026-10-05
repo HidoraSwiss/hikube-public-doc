@@ -5,18 +5,18 @@ title: Concetti
 
 # Concetti — NATS
 
+:::info Disponibilità
+NATS non è ancora disponibile in self-service nella [console Hikube](https://console.hikube.cloud).
+Per effettuare il provisioning di un'istanza o modificarne la configurazione, [contatti il supporto](mailto:support@hidora.io).
+:::
+
 ## Architettura
 
-NATS su Hikube è un servizio di messaggistica gestito, ultra-leggero e ad alte prestazioni. Ogni istanza distribuita tramite la risorsa `NATS` crea un cluster di server con supporto opzionale di **JetStream** per la persistenza dei messaggi.
+NATS su Hikube è un servizio di messaggistica gestito, ultraleggero e ad alte prestazioni. Ogni istanza è un cluster di server NATS associato a un progetto Hikube, con supporto opzionale di **JetStream** per la persistenza dei messaggi.
 
 ```mermaid
 graph TB
-    subgraph "Hikube Platform"
-        subgraph "Tenant namespace"
-            CR[NATS CRD]
-            SEC[Secret credentials]
-        end
-
+    subgraph "Progetto Hikube"
         subgraph "Cluster NATS"
             N1[NATS Server 1]
             N2[NATS Server 2]
@@ -25,19 +25,16 @@ graph TB
 
         subgraph "JetStream"
             JS[Stream Storage]
-            PV[Persistent Volume]
-        end
-
-        subgraph "Clients"
-            PUB[Publisher]
-            SUB[Subscriber]
-            REQ[Request/Reply]
+            PV[Volume persistente]
         end
     end
 
-    CR --> N1
-    CR --> N2
-    CR --> N3
+    subgraph "Client"
+        PUB[Publisher]
+        SUB[Subscriber]
+        REQ[Request/Reply]
+    end
+
     N1 <-->|cluster routing| N2
     N2 <-->|cluster routing| N3
     N1 --> JS
@@ -45,7 +42,6 @@ graph TB
     PUB --> N1
     N2 --> SUB
     REQ --> N3
-    CR --> SEC
 ```
 
 ---
@@ -54,14 +50,14 @@ graph TB
 
 | Termine | Descrizione |
 |---------|-------------|
-| **NATS** | Risorsa Kubernetes (`apps.cozystack.io/v1alpha1`) che rappresenta un cluster NATS gestito. |
-| **Subject** | Indirizzo di routing dei messaggi (es: `orders.created`). Supporta i wildcard (`*`, `>`). |
+| **NATS (istanza)** | Cluster NATS gestito da Hikube, associato a un progetto. La sua configurazione viene definita alla creazione e modificata su richiesta al supporto. |
+| **Subject** | Indirizzo di instradamento dei messaggi (es. `orders.created`). Supporta i caratteri jolly (`*`, `>`). |
 | **Publish/Subscribe** | Modello di comunicazione in cui i publisher inviano messaggi a un subject e i subscriber li ricevono. |
-| **JetStream** | Estensione di persistenza di NATS — archiviazione durevole dei messaggi con replay, acknowledgment e consumer. |
-| **Stream** | Collezione persistente di messaggi in JetStream, con politica di retention configurabile. |
-| **Consumer** | Abbonamento durevole in JetStream con tracciamento della posizione (offset) e acknowledgment. |
-| **Request/Reply** | Modello di comunicazione sincrono — un client invia una richiesta e attende una risposta. |
-| **resourcesPreset** | Profilo di risorse predefinito (da nano a 2xlarge). |
+| **JetStream** | Estensione di persistenza di NATS: archiviazione durevole dei messaggi con replay, acknowledgment e consumer. |
+| **Stream** | Raccolta persistente di messaggi in JetStream, con politica di conservazione configurabile. |
+| **Consumer** | Sottoscrizione durevole in JetStream con tracciamento della posizione (offset) e acknowledgment. |
+| **Request/Reply** | Modello di comunicazione sincrono: un client invia una richiesta e attende una risposta. |
+| **Preset di risorse** | Profilo CPU/memoria predefinito (da nano a 2xlarge). |
 
 ---
 
@@ -71,7 +67,7 @@ NATS supporta tre modelli di comunicazione:
 
 ### Publish/Subscribe
 
-Il modello più semplice — un publisher invia un messaggio, tutti i subscriber ricevono una copia:
+Il modello più semplice: un publisher invia un messaggio e tutti i subscriber ne ricevono una copia:
 
 ```mermaid
 graph LR
@@ -88,9 +84,9 @@ I subscriber di uno stesso queue group si ripartiscono i messaggi (load balancin
 ```mermaid
 graph LR
     PUB[Publisher] -->|"orders.created"| NATS[NATS Server]
-    NATS -->|"message 1"| S1[Worker 1<br/>queue: processors]
-    NATS -->|"message 2"| S2[Worker 2<br/>queue: processors]
-    NATS -->|"message 3"| S3[Worker 3<br/>queue: processors]
+    NATS -->|"messaggio 1"| S1[Worker 1<br/>queue: processors]
+    NATS -->|"messaggio 2"| S2[Worker 2<br/>queue: processors]
+    NATS -->|"messaggio 3"| S3[Worker 3<br/>queue: processors]
 ```
 
 ### Request/Reply
@@ -104,9 +100,9 @@ sequenceDiagram
     participant Service
 
     Client->>NATS: Request (orders.get)
-    NATS->>Service: Forward request
-    Service-->>NATS: Reply (order data)
-    NATS-->>Client: Forward reply
+    NATS->>Service: Inoltro della richiesta
+    Service-->>NATS: Reply (dati dell'ordine)
+    NATS-->>Client: Inoltro della risposta
 ```
 
 ---
@@ -115,20 +111,22 @@ sequenceDiagram
 
 JetStream aggiunge la **persistenza** a NATS:
 
-- I messaggi sono archiviati su disco negli **stream**
-- I **consumer** tracciano la propria posizione e possono rileggere i messaggi
-- Supporto per la consegna **at-least-once** e **exactly-once**
-- Retention configurabile per durata, numero di messaggi o dimensione
+- I messaggi vengono archiviati su disco in **stream**
+- I **consumer** tengono traccia della propria posizione e possono rileggere i messaggi
+- Supporto della consegna **at-least-once** ed **exactly-once**
+- Conservazione configurabile per durata, numero di messaggi o dimensione
+
+L'attivazione di JetStream e la dimensione del suo volume fanno parte della configurazione dell'istanza. Stream e consumer si creano poi dai propri client (CLI `nats` o SDK).
 
 :::tip
-Attivate JetStream solo se avete bisogno di persistenza. Per il pub/sub effimero, il NATS di base è più leggero (< 10 MB di RAM per istanza).
+JetStream è utile solo se ha bisogno di persistenza. Per un pub/sub effimero, il NATS di base è più leggero.
 :::
 
 ---
 
 ## Gestione degli utenti
 
-Gli utenti NATS sono dichiarati nel manifesto con una password. Le credenziali sono archiviate nel Secret `<istanza>-credentials`.
+Gli utenti NATS (nome e password) fanno parte della configurazione dell'istanza. La loro creazione o modifica va richiesta al supporto, che le trasmette le credenziali.
 
 ---
 
@@ -150,9 +148,9 @@ Gli utenti NATS sono dichiarati nel manifesto con una password. Le credenziali s
 
 | Parametro | Valore |
 |-----------|--------|
-| Repliche max | Secondo la quota del tenant |
-| Impronta di memoria minima | < 10 MB per istanza (senza JetStream) |
-| Dimensione archiviazione JetStream | Variabile (in Gi) |
+| Repliche max | In base alle quote del progetto |
+| Ingombro di memoria minimo | Ridotto (pochi MB per istanza senza JetStream) |
+| Dimensione dello storage JetStream | Definita alla creazione dell'istanza |
 | Latenza tipica | < 1 ms (stesso datacenter) |
 
 ---
@@ -160,4 +158,4 @@ Gli utenti NATS sono dichiarati nel manifesto con una password. Le credenziali s
 ## Per approfondire
 
 - [Panoramica](./overview.md): presentazione del servizio
-- [Riferimento API](./api-reference.md): tutti i parametri della risorsa NATS
+- [Avvio rapido](./quick-start.md): richiedere un'istanza e testarla

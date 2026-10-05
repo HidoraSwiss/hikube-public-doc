@@ -7,20 +7,20 @@ title: Concetti
 
 ## Architettura
 
-RabbitMQ su Hikube è un servizio di messaggistica gestito basato sul protocollo **AMQP**. Ogni istanza distribuita tramite la risorsa `RabbitMQ` crea un cluster ad alta disponibilità con **quorum queue** (protocollo Raft) per la replica dei messaggi.
+RabbitMQ su Hikube è un servizio di messaggistica gestito basato sul protocollo **AMQP**. Ogni cluster creato dalla [console Hikube](https://console.hikube.cloud) appartiene a un **progetto** e consuma le quote di tale progetto (CPU, memoria, storage).
 
 ```mermaid
 graph TB
-    subgraph "Hikube Platform"
-        subgraph "Tenant namespace"
-            CR[RabbitMQ CRD]
-            SEC[Secret credentials]
+    subgraph "Progetto Hikube"
+        subgraph "Cluster RabbitMQ"
+            N1[Nodo 1]
+            N2[Nodo 2]
+            N3[Nodo 3]
         end
 
-        subgraph "Cluster RabbitMQ"
-            N1[Node 1 - Leader]
-            N2[Node 2 - Follower]
-            N3[Node 3 - Follower]
+        subgraph "Virtual Hosts"
+            VH1[vhost: production]
+            VH2[vhost: staging]
         end
 
         subgraph "Componenti AMQP"
@@ -30,32 +30,23 @@ graph TB
             B[Bindings]
         end
 
-        subgraph "Archiviazione"
-            PV1[PV Node 1]
-            PV2[PV Node 2]
-            PV3[PV Node 3]
-        end
-
-        subgraph "Virtual Hosts"
-            VH1[vhost: production]
-            VH2[vhost: staging]
+        subgraph "Storage"
+            PV1[Volume nodo 1]
+            PV2[Volume nodo 2]
+            PV3[Volume nodo 3]
         end
     end
 
-    CR --> N1
-    CR --> N2
-    CR --> N3
     N1 <-->|Raft| N2
     N2 <-->|Raft| N3
     N1 --> PV1
     N2 --> PV2
     N3 --> PV3
+    VH1 --> EX
+    VH2 --> EX
     EX -->|routing| B
     B --> Q1
     B --> Q2
-    VH1 --> EX
-    VH2 --> EX
-    CR --> SEC
 ```
 
 ---
@@ -64,21 +55,38 @@ graph TB
 
 | Termine | Descrizione |
 |---------|-------------|
-| **RabbitMQ** | Risorsa Kubernetes (`apps.cozystack.io/v1alpha1`) che rappresenta un cluster RabbitMQ gestito. |
-| **AMQP** | Advanced Message Queuing Protocol — protocollo standard di messaggistica supportato da RabbitMQ. |
-| **Exchange** | Punto di ingresso dei messaggi. Instrada i messaggi verso le code tramite binding. |
-| **Queue** | Coda che archivia i messaggi in attesa che un consumer li elabori. |
-| **Binding** | Regola di routing tra un exchange e una coda (basata su una routing key). |
-| **Quorum Queue** | Tipo di coda che utilizza il protocollo **Raft** per replicare i messaggi su più nodi. |
-| **Virtual Host (vhost)** | Spazio dei nomi logico che isola exchange, code e permessi all'interno di uno stesso cluster. |
-| **Consumer** | Applicazione che legge ed elabora i messaggi di una coda. |
-| **resourcesPreset** | Profilo di risorse predefinito (da nano a 2xlarge). |
+| **Cluster RabbitMQ** | Istanza RabbitMQ gestita, creata e amministrata dalla console (menu **DB & Messaging** → **RabbitMQ**). |
+| **AMQP** | Advanced Message Queuing Protocol, protocollo standard di messaggistica supportato da RabbitMQ. |
+| **Exchange** | Punto di ingresso dei messaggi. Instrada i messaggi verso le queue tramite i binding. |
+| **Queue** | Coda che conserva i messaggi in attesa che un consumer li elabori. |
+| **Binding** | Regola di instradamento tra un exchange e una queue (basata su una routing key). |
+| **Quorum Queue** | Tipo di queue che utilizza il protocollo **Raft** per replicare i messaggi su più nodi. |
+| **Virtual Host (vhost)** | Spazio dei nomi logico che isola exchange, queue e permessi all'interno di uno stesso cluster. |
+| **Consumer** | Applicazione che legge ed elabora i messaggi di una queue. |
+| **Preset** | Profilo di risorse CPU/memoria predefinito, scelto alla creazione del cluster. |
+| **Repliche** | Numero di nodi RabbitMQ del cluster. Determina la modalità di deployment. |
 
 ---
 
-## Routing dei messaggi
+## Modalità di deployment
 
-RabbitMQ utilizza un modello di routing flessibile basato sugli exchange e i binding:
+Il campo **Number of replicas** della procedura guidata propone tre valori:
+
+| Valore | Etichetta nella console | Modalità |
+|--------|-------------------------|----------|
+| 1 | **1 (Standalone)** | Un solo nodo. Il volume dei dati è replicato a livello dello storage della piattaforma. |
+| 3 | **3 (Max High Availability)** | Cluster di 3 nodi. La replica dei messaggi è assicurata da RabbitMQ (quorum queues). |
+| 5 | **5 (Ultra High Availability)** | Cluster di 5 nodi, tollerante alla perdita di due nodi. |
+
+:::warning Modalità fissata alla creazione
+La modalità (standalone o cluster) e il numero di repliche non possono essere modificati dopo la creazione: la console mostra « The mode cannot be changed after creation ». Per cambiare modalità, crei un nuovo cluster.
+:::
+
+---
+
+## Instradamento dei messaggi
+
+RabbitMQ utilizza un modello di instradamento flessibile basato su exchange e binding:
 
 ```mermaid
 graph LR
@@ -97,29 +105,31 @@ graph LR
 
 ### Tipi di exchange
 
-| Tipo | Routing |
-|------|---------|
+| Tipo | Instradamento |
+|------|---------------|
 | **direct** | Routing key esatta |
-| **topic** | Pattern matching con wildcard (`*`, `#`) |
-| **fanout** | Broadcast a tutte le code collegate |
-| **headers** | Routing basato sugli header del messaggio |
+| **topic** | Pattern matching con caratteri jolly (`*`, `#`) |
+| **fanout** | Broadcast a tutte le queue collegate |
+| **headers** | Instradamento basato sugli header del messaggio |
+
+Exchange, queue e binding vengono creati dalle sue applicazioni, con un client AMQP connesso al vhost desiderato. La console gestisce il cluster, i vhost e gli utenti, non gli oggetti AMQP stessi.
 
 ---
 
-## Quorum Queue e alta disponibilità
+## Quorum queues e alta disponibilità
 
-Le quorum queue utilizzano il protocollo **Raft** per replicare i messaggi:
+Le quorum queues utilizzano il protocollo **Raft** per replicare i messaggi:
 
-1. Un nodo viene eletto **leader** per ogni coda
-2. I messaggi vengono replicati sui **follower** prima della conferma
-3. In caso di guasto del leader, un follower viene automaticamente promosso
+1. Per ogni queue viene eletto un nodo **leader**
+2. I messaggi vengono replicati sui **followers** prima della conferma
+3. In caso di guasto del leader, un follower viene promosso automaticamente
 
 ```mermaid
 sequenceDiagram
     participant P as Producer
-    participant L as Leader (Node 1)
-    participant F1 as Follower (Node 2)
-    participant F2 as Follower (Node 3)
+    participant L as Leader (Nodo 1)
+    participant F1 as Follower (Nodo 2)
+    participant F2 as Follower (Nodo 3)
 
     P->>L: Publish message
     L->>F1: Replicate (Raft)
@@ -131,58 +141,69 @@ sequenceDiagram
 ```
 
 :::tip
-Configurate `replicas: 3` minimo per garantire il quorum Raft e l'alta disponibilità delle quorum queue.
+Scelga **3 (Max High Availability)** o **5 (Ultra High Availability)** repliche per garantire il quorum Raft, e dichiari le queue critiche come quorum queues (argomento `x-queue-type: quorum` lato client).
 :::
 
 ---
 
-## Virtual Host
+## Virtual host
 
 I **vhost** isolano le risorse all'interno di uno stesso cluster:
 
-- Ogni vhost ha i propri exchange, code e permessi
-- Gli utenti possono avere ruoli diversi per vhost: `admin` o `readonly`
-- Utile per separare gli ambienti (produzione, staging) sullo stesso cluster
+- Ogni vhost ha i propri exchange, queue e permessi
+- Un utente può avere un diritto diverso su ciascun vhost
+- Utile per separare gli ambienti (production, staging) o le applicazioni su uno stesso cluster
+
+La procedura guidata di creazione richiede almeno un vhost. Altri vhost possono essere aggiunti in seguito dalla pagina del cluster (pulsante **Add a VHost**).
 
 ---
 
-## Gestione degli utenti
+## Utenti e diritti
 
-Gli utenti sono dichiarati nel manifesto con:
+Ogni utente RabbitMQ riceve una **password generata dalla piattaforma**, mostrata **una sola volta** alla creazione (o dopo una rotazione). I suoi diritti sono definiti **per vhost**:
 
-- **Password** per l'autenticazione
-- **Ruoli per vhost**: `admin` (lettura/scrittura/configurazione), `readonly` (sola lettura)
+| Diritto nella console | Effetto |
+|-----------------------|---------|
+| **Administrator** | Lettura, scrittura e configurazione sul vhost |
+| **Read-only** | Sola lettura sul vhost |
+| **No access** | L'utente non ha accesso al vhost |
 
-Le credenziali sono archiviate nel Secret `<istanza>-credentials`.
+Un utente può avere un solo diritto per vhost. I diritti si modificano in qualsiasi momento con l'azione **Manage Access**.
 
 ---
 
 ## Preset di risorse
 
+Il **Preset** fissa le risorse CPU e memoria di ciascun nodo. La console mostra i valori di ogni preset nell'elenco a discesa.
+
 | Preset | CPU | Memoria |
 |--------|-----|---------|
-| `nano` | 250m | 128Mi |
-| `micro` | 500m | 256Mi |
-| `small` | 1 | 512Mi |
-| `medium` | 1 | 1Gi |
-| `large` | 2 | 2Gi |
-| `xlarge` | 4 | 4Gi |
-| `2xlarge` | 8 | 8Gi |
+| **Micro** | 0,5 | 256 Mi |
+| **Small** | 1 | 512 Mi |
+| **Medium** | 1 | 1 Gi |
+| **Large** | 2 | 2 Gi |
+| **X-Large** | 4 | 4 Gi |
+| **2X-Large** | 8 | 8 Gi |
+
+Il preset **Small** è selezionato per impostazione predefinita. **Non può essere modificato dopo la creazione**.
 
 ---
 
-## Limiti e quote
+## Limiti
 
 | Parametro | Valore |
 |-----------|--------|
-| Repliche max | Secondo la quota del tenant |
-| Dimensione archiviazione (`size`) | Variabile (in Gi) |
-| Vhost per cluster | Illimitato (secondo le risorse) |
-| Protocolli supportati | AMQP 0-9-1, AMQP 1.0, MQTT, STOMP |
+| Nome del cluster | Da 3 a 16 caratteri: lettere minuscole, cifre e trattini; inizia con una lettera e termina con una lettera o una cifra |
+| Versioni disponibili | 4.2, 4.1, 4.0, 3.13 |
+| Repliche | 1, 3 o 5 (fissate alla creazione) |
+| Dimensione del disco | Da 1 a 4096 GB per nodo, entro il limite della quota di storage del progetto; solo aumento |
+| Accesso esterno | Attivabile alla creazione o in seguito |
+| Porta AMQP | 5672, senza TLS |
 
 ---
 
 ## Per approfondire
 
 - [Panoramica](./overview.md): presentazione del servizio
-- [Riferimento API](./api-reference.md): tutti i parametri della risorsa RabbitMQ
+- [Avvio rapido](./quick-start.md): creare il primo cluster
+- [Gestire vhost e utenti](./how-to/manage-vhosts-users.md)

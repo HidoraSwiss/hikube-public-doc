@@ -7,55 +7,32 @@ title: Concetti
 
 ## Architettura
 
-Redis su Hikube e un servizio gestito basato sull'operatore **Spotahome Redis Operator**. Ogni istanza distribuita tramite la risorsa `Redis` crea un cluster master-replica con **Redis Sentinel** per il failover automatico.
+Redis su Hikube è un servizio gestito. Ogni cluster creato dalla console è un insieme master-repliche, supervisionato da **Redis Sentinel** per il failover automatico. Appartiene a un **progetto** e consuma le quote di tale progetto.
 
 ```mermaid
 graph TB
-    subgraph "Hikube Platform"
-        subgraph "Tenant namespace"
-            CR[Redis CRD]
-            SEC[Secret credentials]
-        end
-
-        subgraph "Spotahome Operator"
-            OP[Controller]
-        end
-
-        subgraph "Cluster Redis"
-            M[Master - R/W]
-            R1[Replica 1 - RO]
-            R2[Replica 2 - RO]
-        end
-
-        subgraph "Redis Sentinel"
-            S1[Sentinel 1]
-            S2[Sentinel 2]
-            S3[Sentinel 3]
-        end
-
-        subgraph "Archiviazione"
-            PV1[PV Master]
-            PV2[PV Replica 1]
-            PV3[PV Replica 2]
-        end
+    subgraph "Console Hikube"
+        UI[Progetto → DB & Messaging → Redis]
     end
 
-    CR --> OP
-    OP --> M
-    OP --> R1
-    OP --> R2
-    OP --> S1
-    OP --> S2
-    OP --> S3
-    M -->|replica| R1
-    M -->|replica| R2
-    S1 -.->|monitoring| M
-    S2 -.->|monitoring| M
-    S3 -.->|monitoring| M
-    M --> PV1
-    R1 --> PV2
-    R2 --> PV3
-    OP --> SEC
+    subgraph "Cluster Redis"
+        M[Master - R/W]
+        R1[Replica 1 - RO]
+        R2[Replica 2 - RO]
+    end
+
+    subgraph "Redis Sentinel"
+        S1[Sentinel 1]
+        S2[Sentinel 2]
+        S3[Sentinel 3]
+    end
+
+    UI -->|creazione / modifica| M
+    M -->|replicazione| R1
+    M -->|replicazione| R2
+    S1 -.->|monitoraggio| M
+    S2 -.->|monitoraggio| M
+    S3 -.->|monitoraggio| M
 ```
 
 ---
@@ -63,25 +40,26 @@ graph TB
 ## Terminologia
 
 | Termine | Descrizione |
-|---------|-------------|
-| **Redis** | Risorsa Kubernetes (`apps.cozystack.io/v1alpha1`) che rappresenta un cluster Redis gestito. |
+|-------|-------------|
+| **Cluster Redis** | Istanza gestita creata dalla console, composta da un master ed eventuali repliche. |
+| **Progetto** | Spazio isolato che raggruppa le sue risorse e a cui si applicano le quote. |
 | **Master** | Istanza principale che accetta letture e scritture. |
 | **Replica** | Istanza in sola lettura, sincronizzata dal master. |
 | **Sentinel** | Processo di supervisione che rileva i guasti del master e orchestra il failover automatico. |
-| **Spotahome Redis Operator** | Operatore Kubernetes che gestisce il deployment e il ciclo di vita dei cluster Redis. |
-| **authEnabled** | Attiva l'autenticazione tramite password (`requirepass`). |
-| **resourcesPreset** | Profilo di risorse predefinito (da nano a 2xlarge). |
+| **Preset** | Modello di risorse (CPU, memoria) allocato a ogni nodo del cluster. |
+| **Public network** | Opzione (chiamata anche **External access**) che espone il cluster su Internet tramite un indirizzo IP pubblico. |
+| **Autenticazione** | Protezione dell'accesso tramite una password globale del cluster. |
 
 ---
 
 ## Alta disponibilità con Sentinel
 
-Redis Sentinel assicura l'alta disponibilità:
+Redis Sentinel garantisce l'alta disponibilità:
 
-1. **Sorvegliando** permanentemente il master e le repliche
-2. **Rilevando** il guasto del master tramite consenso (quorum tra Sentinel)
+1. **Monitorando** costantemente il master e le repliche
+2. **Rilevando** il guasto del master tramite consenso tra i Sentinel
 3. **Promuovendo** automaticamente una replica a nuovo master
-4. **Riconfigurando** le altre repliche per seguire il nuovo master
+4. **Riconfigurando** le altre repliche affinché seguano il nuovo master
 
 ```mermaid
 sequenceDiagram
@@ -95,48 +73,52 @@ sequenceDiagram
     M--xS1: Timeout (guasto)
     S1->>S2: Master down?
     S1->>S3: Master down?
-    S2-->>S1: Si
-    S3-->>S1: Si
+    S2-->>S1: Sì
+    S3-->>S1: Sì
     Note over S1,S3: Quorum raggiunto
-    S1->>R1: SLAVEOF NO ONE
-    Note over R1: Promosso Master
-    S1->>S2: Nuovo master: R1
-    S1->>S3: Nuovo master: R1
+    S1->>R1: Promozione
+    Note over R1: Nuovo master
 ```
 
+Il valore **Number of replicas** si sceglie alla creazione (da 1 a 8).
+
 :::tip
-Configurate `replicas: 3` come minimo per garantire il quorum Sentinel e permettere il failover automatico.
+Il failover automatico funziona a partire da **2 repliche**: vengono sempre distribuiti tre Sentinel, che formano il quorum. Per la produzione scelga **3 repliche** o più, in modo da tollerare un numero maggiore di guasti.
+:::
+
+:::warning
+Il numero di repliche non può essere modificato dopo la creazione («The mode cannot be changed after creation»). Per cambiarlo, [contatti il supporto](mailto:support@hidora.io).
 :::
 
 ---
 
 ## Persistenza
 
-Redis su Hikube supporta lo storage persistente:
-
-| Parametro | Descrizione |
-|-----------|-------------|
-| `size` | Dimensione del volume persistente (es: `10Gi`) |
-| `storageClass` | `local` (prestazioni) o `replicated` (alta disponibilità) |
-
-I dati Redis vengono scritti su disco tramite i meccanismi nativi Redis (RDB/AOF), garantendo la durabilita anche in caso di riavvio.
-
-:::warning
-Per la produzione, usate sempre `storageClass: replicated` per proteggere i dati contro un guasto del nodo.
-:::
+Ogni nodo dispone di un volume persistente la cui capacità è definita dal campo **Volume size (GB)** («Storage capacity allocated to each node in the cluster.»). Redis scrive i dati su disco tramite i propri meccanismi nativi, il che consente loro di sopravvivere ai riavvii.
 
 ---
 
 ## Autenticazione
 
-Redis supporta l'autenticazione opzionale:
+L'opzione **Enable authentication** è attiva per impostazione predefinita nella procedura guidata:
 
-- `authEnabled: true` — una password viene generata e memorizzata nel Secret `<instance>-credentials`
-- `authEnabled: false` — accesso senza password (da evitare in produzione)
+- **Attivata**: alla creazione viene generata una password, mostrata una sola volta insieme all'utente `default`. Può rinnovarla in qualsiasi momento dalla sezione **Security** della pagina del cluster (**Rotate password**).
+- **Disattivata**: il cluster accetta connessioni senza password. Da evitare, in particolare con la rete pubblica attivata.
+
+Redis su Hikube non offre nella console la gestione di più utenti (ACL): l'accesso si basa su questa password globale.
 
 ---
 
-## Preset di risorse
+## Accesso di rete
+
+- **Public network** disattivata (impostazione predefinita, «Private» nel riepilogo): il cluster non è esposto su Internet. La sezione **Connection** della pagina del cluster mostra «Waiting for allocation...» al posto dell'host.
+- **Public network** attivata («Public»): la piattaforma assegna un indirizzo IP pubblico, mostrato nel campo **Host**. Dà accesso al master sulla porta standard di Redis, `6379`, e segue il master dopo una commutazione.
+
+---
+
+## Preset
+
+Il **Preset** definisce la capacità allocata a **ogni nodo** del cluster. Fa fede l'elenco mostrato dalla procedura guidata; a titolo indicativo:
 
 | Preset | CPU | Memoria |
 |--------|-----|---------|
@@ -148,23 +130,23 @@ Redis supporta l'autenticazione opzionale:
 | `xlarge` | 4 | 4Gi |
 | `2xlarge` | 8 | 8Gi |
 
-:::warning
-Se il campo `resources` (CPU/memoria espliciti) e definito, `resourcesPreset` viene ignorato.
-:::
+La memoria del preset limita la dimensione del dataset che Redis può mantenere in memoria. La definizione di risorse CPU/memoria personalizzate non è disponibile nella console; contatti il supporto.
 
 ---
 
-## Limiti e quote
+## Quote e costi
+
+La procedura guidata mostra l'**Estimated Cost** e l'impatto del cluster sulle quote del progetto. Se il cluster supera le quote disponibili, il pulsante **Next** resta inattivo.
 
 | Parametro | Valore |
 |-----------|--------|
-| Repliche max | Secondo la quota del tenant |
-| Dimensione archiviazione (`size`) | Variabile (in Gi) |
-| Database Redis | Database unico (db 0 per impostazione predefinita) |
+| Repliche | Da 1 a 8 |
+| Dimensione del volume | Da 1 a 4.096 GB per nodo, entro il limite della quota del progetto |
+| Database Redis | Database logico `0` per impostazione predefinita |
 
 ---
 
 ## Per approfondire
 
 - [Panoramica](./overview.md): presentazione del servizio
-- [Riferimento API](./api-reference.md): tutti i parametri della risorsa Redis
+- [Avvio rapido](./quick-start.md): creare il suo primo cluster

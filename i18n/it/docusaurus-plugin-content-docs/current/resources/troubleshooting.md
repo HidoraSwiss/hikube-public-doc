@@ -1,371 +1,155 @@
 ---
 sidebar_position: 1
-title: Risoluzione dei problemi globale
+title: Risoluzione dei problemi generale
 ---
 
-# Risoluzione dei problemi globale Hikube
+# Risoluzione dei problemi generale Hikube
 
-Questa guida copre i problemi più comuni riscontrati su Hikube e le loro soluzioni.
-
----
-
-## 1. Diagnostica generale
-
-Prima di cercare una soluzione specifica, iniziate con questi comandi di diagnostica:
-
-```bash
-# Stato delle risorse nel vostro namespace
-kubectl get all
-
-# Eventi recenti (ordinati per data)
-kubectl get events --sort-by=.metadata.creationTimestamp
-
-# Descrizione dettagliata di una risorsa
-kubectl describe <type> <nom>
-
-# Log di un pod
-kubectl logs <nom-du-pod>
-
-# Log del contenitore precedente (in caso di crash)
-kubectl logs <nom-du-pod> --previous
-```
+Questa guida tratta i problemi più comuni riscontrati su Hikube. Per un problema specifico di un servizio, consulti anche la pagina **Risoluzione dei problemi** di quel servizio.
 
 ---
 
-## 2. Pod in errore
+## 1. Accesso alla console
 
-### CrashLoopBackOff
+### «No organization»
 
-**Sintomo:** Il pod si riavvia in loop, lo stato mostra `CrashLoopBackOff`.
-
-**Diagnostica:**
-
-```bash
-kubectl describe pod <nom-du-pod>
-kubectl logs <nom-du-pod> --previous
-```
+**Sintomo:** dopo l'accesso, la console mostra **No organization**.
 
 **Soluzioni:**
-- **Memoria insufficiente**: aumentate `resources.memory` o utilizzate un `resourcesPreset` più elevato
-- **Errore di configurazione**: verificate le variabili d'ambiente e i file di configurazione nei log
-- **Dipendenza mancante**: verificate che i servizi richiesti (database, secret) siano disponibili
+- se la sua organizzazione è stata appena creata, faccia clic su **Refresh**;
+- altrimenti, il suo account non è associato ad alcuna organizzazione: [contatti il supporto](mailto:support@hidora.io).
 
----
+### «Service Unavailable»
 
-### Pending
-
-**Sintomo:** Il pod resta in stato `Pending` senza avviarsi.
-
-**Diagnostica:**
-
-```bash
-kubectl describe pod <nom-du-pod>
-# Cercate la sezione "Events" in fondo all'output
-```
+**Sintomo:** la console mostra **Service Unavailable**.
 
 **Soluzioni:**
-- **Risorse insufficienti**: il cluster non ha abbastanza CPU/memoria. Verificate i nodi disponibili con `kubectl get nodes` e `kubectl top nodes`
-- **PVC non collegato**: il volume persistente richiesto non è disponibile (vedi sezione Archiviazione)
-- **NodeSelector/Affinity**: il pod ha vincoli di posizionamento che non corrispondono a nessun nodo
+- la piattaforma è in manutenzione o momentaneamente irraggiungibile: attenda qualche istante, quindi faccia clic su **Retry**;
+- se il problema persiste, contatti il supporto da questa pagina: gli **Error details** vengono allegati alla richiesta.
+
+### Un progetto non è visibile
+
+I progetti visualizzati dipendono dall'organizzazione selezionata e dai suoi diritti. Verifichi la **Current Organization** nel menu del profilo (**Change organization** se ne ha più di una), quindi chieda a un amministratore dell'organizzazione di concederle l'accesso al progetto.
 
 ---
 
-### ImagePullBackOff
+## 2. Creazione di una risorsa
 
-**Sintomo:** Il pod non si avvia, lo stato mostra `ImagePullBackOff` o `ErrImagePull`.
+### «Quota exceeded»
 
-**Diagnostica:**
-
-```bash
-kubectl describe pod <nom-du-pod>
-# Cercate "Failed to pull image" negli eventi
-```
+**Sintomo:** la procedura guidata di creazione blocca la convalida e segnala un superamento della quota.
 
 **Soluzioni:**
-- **Immagine non trovata**: verificate il nome e il tag dell'immagine nel vostro manifesto
-- **Registry privato**: assicuratevi che un `imagePullSecret` sia configurato
-- **Problema di rete**: verificate la connettività verso il registry
+- riduca la dimensione richiesta (tipo di istanza, preset, storage, numero massimo di nodi);
+- liberi le risorse inutilizzate nel progetto;
+- chieda a un amministratore di aumentare le quota del progetto (impostazioni del progetto → **Quotas**).
 
----
+:::note Kubernetes
+Per un cluster Kubernetes, la quota è calcolata sul **numero massimo** di nodi di ogni gruppo, auto-scaling compreso.
+:::
 
-### OOMKilled
+### «Project quotas are unavailable right now»
 
-**Sintomo:** Il pod viene terminato con il codice di uscita `137` e il motivo `OOMKilled`.
+La console non riesce a leggere le quota del progetto e blocca la creazione per sicurezza. Ricarichi la pagina; se il messaggio persiste, contatti il supporto.
 
-**Diagnostica:**
+### Risorsa bloccata in «Creating»
 
-```bash
-kubectl describe pod <nom-du-pod>
-# Cercate "Last State: Terminated - Reason: OOMKilled"
-```
+**Sintomo:** una risorsa resta nello stato **Creating** ben oltre il tempo abituale (alcuni minuti).
 
 **Soluzioni:**
-- Aumentate il limite di memoria in `resources.memory` o passate a un `resourcesPreset` superiore
-- Verificate se l'applicazione ha una perdita di memoria osservando il consumo con `kubectl top pod`
+- ricarichi la pagina di dettaglio;
+- se lo stato non cambia, oppure passa a **Error** / **Failed**, contatti il supporto indicando il progetto e il nome della risorsa.
 
 ---
 
-## 3. Accesso al cluster
+## 3. Kubernetes
 
-### Kubeconfig non valido
+### Il download del kubeconfig non riesce
 
-**Sintomo:** `error: You must be logged in to the server (Unauthorized)`
+**Sintomo:** il pulsante **Kubeconfig** mostra **Download failed**.
 
-**Diagnostica:**
+**Soluzione:** probabilmente il cluster non è ancora pronto. Attenda che passi allo stato **Ready**, quindi riprovi.
+
+### `kubectl` non riesce a raggiungere il cluster
 
 ```bash
-# Verificare il file kubeconfig utilizzato
+# Verificare il file utilizzato
 echo $KUBECONFIG
-kubectl config current-context
-```
+kubectl config view --minify
 
-**Soluzioni:**
-- Rigenerate il kubeconfig dal vostro cluster Hikube:
-  ```bash
-  kubectl get secret <nom-cluster>-admin-kubeconfig \
-    -o go-template='{{ printf "%s\n" (index .data "super-admin.conf" | base64decode) }}' \
-    > my-cluster-kubeconfig.yaml
-  export KUBECONFIG=my-cluster-kubeconfig.yaml
-  ```
-- Verificate che la variabile `KUBECONFIG` punti al file corretto
-
----
-
-### Certificato scaduto
-
-**Sintomo:** `Unable to connect to the server: x509: certificate has expired`
-
-**Diagnostica:**
-
-```bash
-kubectl config view --raw -o jsonpath='{.clusters[0].cluster.certificate-authority-data}' | base64 -d | openssl x509 -text -noout | grep -A2 Validity
-```
-
-**Soluzione:** Recuperate un nuovo kubeconfig aggiornato dal Secret del cluster (vedi sopra).
-
----
-
-### Connessione rifiutata
-
-**Sintomo:** `The connection to the server was refused`
-
-**Diagnostica:**
-
-```bash
-# Testare la connettività
+# Testare la connessione
 kubectl cluster-info
 ```
 
 **Soluzioni:**
-- Verificate che il cluster sia in stato `Ready`: `kubectl get kubernetes <nom-cluster>`
-- Verificate che il control plane sia accessibile dalla vostra rete
-- Se utilizzate una VPN, assicuratevi che sia attiva
+- verifichi che `KUBECONFIG` punti al file `kubeconfig-<nome-del-cluster>.yaml` scaricato dalla console;
+- se il cluster è stato ricreato, scarichi di nuovo il relativo kubeconfig.
+
+### Pod in errore nel cluster
+
+I comandi seguenti si eseguono **nel suo cluster Kubernetes**, con il relativo kubeconfig:
+
+```bash
+kubectl get pods -A
+kubectl describe pod <nome-del-pod> -n <namespace>
+kubectl logs <nome-del-pod> -n <namespace> --previous
+```
+
+| Stato | Causa frequente | Indicazione |
+|------|-----------------|-------|
+| `CrashLoopBackOff` | Errore applicativo, memoria insufficiente | Legga i log del container precedente; aumenti i limiti di memoria |
+| `Pending` | Risorse insufficienti sui nodi | Aumenti il massimo del gruppo di nodi nella console o scelga un tipo di istanza più grande |
+| `ImagePullBackOff` | Immagine non trovata o registry privato | Verifichi il nome dell'immagine e le credenziali del registry |
+| `OOMKilled` | Limite di memoria raggiunto | Aumenti `resources.limits.memory` del container |
+
+Vedere: [Kubernetes - Risoluzione dei problemi](../services/kubernetes/troubleshooting.md)
 
 ---
 
-## 4. Archiviazione
+## 4. Macchine virtuali
 
-### PVC in stato Pending
-
-**Sintomo:** Il PVC resta in `Pending` e i pod dipendenti non si avviano.
-
-**Diagnostica:**
-
-```bash
-kubectl get pvc
-kubectl describe pvc <nom-du-pvc>
-```
+### Impossibile connettersi in SSH
 
 **Soluzioni:**
-- **StorageClass non valida**: verificate che la `storageClass` specificata esista con `kubectl get storageclass`
-- **Capacità insufficiente**: riducete la dimensione richiesta o contattate il supporto per aumentare le quote
-- **StorageClass vuota**: se `storageClass: ""`, viene utilizzata la classe predefinita. Provate `storageClass: replicated` esplicitamente
+- verifichi che la VM sia nello stato **Running** in **VM Instances**;
+- verifichi che sia assegnato un IP pubblico e che la porta 22 sia autorizzata nella configurazione di rete della VM;
+- verifichi di utilizzare la chiave privata corrispondente alla chiave pubblica fornita alla creazione.
+
+Vedere: [Macchine virtuali - Risoluzione dei problemi](../services/compute/troubleshooting.md)
 
 ---
 
-### Spazio disco insufficiente
+## 5. Database e messaggistica
 
-**Sintomo:** I pod si bloccano con errori di tipo `No space left on device`.
-
-**Diagnostica:**
-
-```bash
-# Verificare l'utilizzo dei PVC
-kubectl exec -it <nom-du-pod> -- df -h
-```
+### Connessione rifiutata dall'esterno
 
 **Soluzioni:**
-- Aumentate il valore di `size` nel manifesto e riapplicate
-- Eliminate i dati inutili (log, file temporanei)
+- verifichi che l'**External access** sia attivato sul cluster (**Edit**);
+- utilizzi l'indirizzo visualizzato nel campo **Host** della pagina di dettaglio. Finché non è assegnato, la connessione esterna non è possibile;
+- verifichi l'utente e la password visualizzati nella console.
+
+### Password rifiutata
+
+Verifichi di utilizzare la password dell'utente interessato, visualizzata nella pagina di dettaglio del cluster. Per Redis e RabbitMQ, se ha effettuato una rotazione della password, aggiorni le sue applicazioni.
+
+Vedere: [PostgreSQL](../services/databases/postgresql/troubleshooting.md), [MariaDB](../services/databases/mariadb/troubleshooting.md), [MongoDB](../services/databases/mongodb/troubleshooting.md), [Redis](../services/databases/redis/troubleshooting.md), [RabbitMQ](../services/messaging/rabbitmq/troubleshooting.md)
 
 ---
 
-## 5. Rete
+## 6. Storage
 
-### Servizio non accessibile
+### Impossibile eliminare un bucket
 
-**Sintomo:** Impossibile connettersi al servizio dall'esterno o tra pod.
+Un bucket che contiene ancora oggetti, o che è ancora in uso, non può essere eliminato. Lo svuoti con il suo client S3, quindi riprovi.
 
-**Diagnostica:**
+### Accesso S3 negato (`AccessDenied`)
 
-```bash
-# Verificare che il servizio esista e abbia un endpoint
-kubectl get svc
-kubectl get endpoints <nom-du-service>
+Verifichi che la chiave di accesso utilizzata appartenga a un utente del bucket, con i diritti adeguati (sola lettura o lettura/scrittura).
 
-# Testare la connettività da un pod
-kubectl run test-net --image=busybox --rm -it -- wget -qO- http://<nom-du-service>:<port>
-```
-
-**Soluzioni:**
-- **Nessun endpoint**: le label del `selector` del servizio non corrispondono a nessun pod
-- **External non attivato**: aggiungete `external: true` nel manifesto per creare un LoadBalancer
-- **Porta errata**: verificate che la porta del servizio corrisponda alla porta esposta dall'applicazione
+Vedere: [Bucket - Risoluzione dei problemi](../services/storage/buckets/troubleshooting.md), [Dischi - Risoluzione dei problemi](../services/storage/disks/troubleshooting.md)
 
 ---
 
-### DNS non risolto
+## Contattare il supporto
 
-**Sintomo:** `Could not resolve host` durante l'accesso a un servizio tramite il suo nome.
-
-**Diagnostica:**
-
-```bash
-# Verificare il DNS del cluster
-kubectl run test-dns --image=busybox --rm -it -- nslookup <nom-du-service>
-
-# Verificare i pod CoreDNS
-kubectl get pods -n kube-system -l k8s-app=kube-dns
-```
-
-**Soluzioni:**
-- Utilizzate il nome DNS completo: `<service>.<namespace>.svc.cluster.local`
-- Verificate che i pod CoreDNS siano in stato `Running`
-
----
-
-### Ingress restituisce 404 o 502
-
-**Sintomo:** L'URL dell'Ingress restituisce un errore 404 (Not Found) o 502 (Bad Gateway).
-
-**Diagnostica:**
-
-```bash
-kubectl describe ingress <nom-de-lingress>
-kubectl logs -n ingress-nginx deploy/ingress-nginx-controller
-```
-
-**Soluzioni:**
-- **404**: verificate che il `path` e l'`host` dell'Ingress corrispondano alla vostra configurazione
-- **502**: il servizio backend non risponde. Verificate che i pod del backend siano in stato `Running` e che la porta sia corretta
-- **IngressClass mancante**: aggiungete `ingressClassName: nginx` nella spec dell'Ingress
-
----
-
-## 6. Database
-
-### Connessione rifiutata
-
-**Sintomo:** `Connection refused` durante il tentativo di connessione al database.
-
-**Diagnostica:**
-
-```bash
-# Verificare lo stato dei pod del database
-kubectl get pods | grep <nom-de-la-base>
-
-# Verificare i servizi
-kubectl get svc | grep <nom-de-la-base>
-```
-
-**Soluzioni:**
-- Verificate che i pod del database siano in stato `Running`
-- Verificate le credenziali: `kubectl get secret <nom>-auth -o json | jq -r '.data | to_entries[] | "\(.key): \(.value|@base64d)"'`
-- Se `external: false`, utilizzate `kubectl port-forward` per connettervi localmente
-
----
-
-### Replica in ritardo
-
-**Sintomo:** Le repliche hanno un ritardo di replica significativo rispetto al master.
-
-**Diagnostica:**
-
-```bash
-# Redis - Verificare la replica
-kubectl exec -it rfr-redis-<nom>-0 -- redis-cli -a "$REDIS_PASSWORD" INFO replication
-
-# PostgreSQL - Verificare il ritardo
-kubectl exec -it <nom>-1 -- psql -c "SELECT * FROM pg_stat_replication;"
-```
-
-**Soluzioni:**
-- Aumentate le risorse (CPU/memoria) delle repliche
-- Verificate il carico di rete tra i datacenter
-- Riducete il carico in scrittura se il ritardo persiste
-
----
-
-### Failover non attivato
-
-**Sintomo:** Il master è in panne ma nessuna replica viene promossa.
-
-**Diagnostica:**
-
-```bash
-# Redis - Verificare Sentinel
-kubectl exec -it rfs-redis-<nom>-<id> -- redis-cli -p 26379 SENTINEL masters
-
-# Verificare gli eventi
-kubectl get events --sort-by=.metadata.creationTimestamp | grep <nom-de-la-base>
-```
-
-**Soluzioni:**
-- Verificate che `replicas > 1` nel manifesto (il failover richiede almeno una replica)
-- Verificate che i pod Sentinel (Redis) o l'operatore siano in stato `Running`
-- Consultate i log dell'operatore per eventuali errori
-
----
-
-## 7. Messaggistica (NATS, RabbitMQ)
-
-### Produttore/consumatore disconnesso
-
-**Sintomo:** I client perdono la connessione al broker di messaggi.
-
-**Diagnostica:**
-
-```bash
-# Verificare lo stato dei pod del broker
-kubectl get pods | grep <nats|rabbitmq>
-
-# Verificare i log
-kubectl logs <nom-du-pod-broker>
-```
-
-**Soluzioni:**
-- Verificate che i pod del broker siano in stato `Running`
-- Implementate una logica di riconnessione automatica lato client
-- Verificate i limiti di connessione configurati
-
----
-
-### Messaggi persi
-
-**Sintomo:** Messaggi inviati non vengono mai ricevuti dai consumatori.
-
-**Diagnostica:**
-
-```bash
-# RabbitMQ - Verificare le code
-kubectl exec -it <pod-rabbitmq> -- rabbitmqctl list_queues name messages consumers
-
-# NATS - Verificare gli stream JetStream
-kubectl exec -it <pod-nats> -- nats stream ls
-```
-
-**Soluzioni:**
-- **RabbitMQ**: utilizzate le Quorum Queues per garantire la durabilità dei messaggi
-- **NATS**: attivate JetStream per la persistenza dei messaggi
-- Verificate che i consumatori siano connessi e attivi
-- Assicuratevi che le code/subject esistano prima di inviare messaggi
+Se il problema persiste: menu del profilo → **Contact support** (il contesto tecnico della pagina viene allegato), oppure **support@hidora.io**. Indichi l'organizzazione, il progetto e il nome delle risorse interessate.

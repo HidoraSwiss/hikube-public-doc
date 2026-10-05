@@ -3,41 +3,48 @@ sidebar_position: 1
 title: Panoramica
 ---
 
-# MySQL su Hikube
+import NavigationFooter from '@site/src/components/NavigationFooter';
 
-Hikube offre un servizio **MySQL gestito**, basato sull'operatore **MariaDB-Operator**.
-Assicura il deployment di un cluster replicato e auto-riparante, garantendo **alta disponibilità**, **semplicita di gestione** e **prestazioni affidabili**, senza sforzo lato utente.
+# MariaDB su Hikube
+
+Hikube offre un servizio **MariaDB gestito**. MariaDB è compatibile con il protocollo e i client MySQL: le sue applicazioni e i suoi strumenti MySQL esistenti (`mysql`, `mysqldump`, connettori JDBC, PDO, ecc.) funzionano senza modifiche.
+
+Il servizio si occupa del deployment di un cluster replicato e auto-riparante, che lei crea e amministra dalla [console Hikube](https://console.hikube.cloud) (menu **DB & Messaging** → **MariaDB**).
+
+:::note
+In precedenza, questo servizio era presentato in questa documentazione con il nome « MySQL ». Il motore, MariaDB, è invariato.
+:::
 
 ---
 
-## Architettura e Funzionamento
+## Architettura e funzionamento
 
-Il servizio **MySQL gestito** su Hikube si basa sull'operatore **MariaDB-Operator**, che automatizza la gestione completa del ciclo di vita del database: deployment, aggiornamento, replica e ripristino dopo un incidente.
+La piattaforma automatizza la gestione del ciclo di vita del database: deployment, aggiornamento, replica e ripristino dopo un incidente.
 
 L'architettura si basa su un **cluster replicato**:
 
-- Un **nodo primario** (primary) gestisce tutte le operazioni di scrittura e assicura la coerenza dei dati.
-- Una o più **repliche** (standby) ricevono in tempo reale le transazioni tramite la replica asincrona o semi-sincrona.
-- Un meccanismo di **auto-failover** promuove automaticamente una replica come nuovo primario in caso di guasto, garantendo un'**alta disponibilità**.
+- Un **nodo primario** (primary) gestisce tutte le operazioni di scrittura e garantisce la coerenza dei dati.
+- Una o più **repliche** ricevono in modo continuo le transazioni tramite replica.
+- Un meccanismo di **auto-failover** promuove automaticamente una replica a nuovo primario in caso di guasto.
 
 Questo approccio offre:
 
 - **Resilienza** in caso di guasto hardware o software
-- **Scalabilita in lettura** grazie alla distribuzione delle query tra le repliche
-- **Semplicita di gestione**, poiché la piattaforma si occupa del coordinamento e della manutenzione del cluster
+- **Scalabilità in lettura** grazie alla distribuzione delle query tra le repliche
+- **Semplicità di gestione**, poiché la piattaforma si occupa del coordinamento e della manutenzione del cluster
 
 ```mermaid
 graph TD
     subgraph Gland
-        P1[Pod MySQL Primary] --> PVC1[(PVC - Storage)]
+        P1[MariaDB primario] --> PVC1[(Storage)]
     end
 
-    subgraph Lucerne
-        P2[Pod MySQL Replica] --> PVC2[(PVC - Storage)]
+    subgraph Lucerna
+        P2[MariaDB replica] --> PVC2[(Storage)]
     end
 
-    subgraph Genève
-        P3[Pod MySQL Replica] --> PVC3[(PVC - Storage)]
+    subgraph Ginevra
+        P3[MariaDB replica] --> PVC3[(Storage)]
     end
 
     P1 -->|Replica| P2
@@ -46,11 +53,31 @@ graph TD
 
 ---
 
+## Cosa gestisce dalla console
+
+| Funzione | Disponibile |
+|----------|-------------|
+| Creazione di un cluster (versione 10.6, 10.11, 11.4 o 11.8, preset, dimensione del disco, 1, 3 o 5 repliche, accesso esterno) | Sì |
+| Utenti, ruolo globale e accesso per database (admin / sola lettura), rotazione della password | Sì |
+| Modifica della versione, della dimensione del disco e dell'accesso esterno | Sì |
+| Modifica del preset o del numero di repliche dopo la creazione | No, [contatti il supporto](mailto:support@hidora.io) |
+| Backup e ripristino | No, [contatti il supporto](mailto:support@hidora.io) |
+
+---
+
 ## Casi d'uso
 
-Il servizio **MySQL gestito su Hikube** e particolarmente adatto per:
-
 - **Applicazioni web transazionali (OLTP)**: e-commerce, ERP, CRM, dove l'affidabilità e la rapidità delle transazioni sono essenziali.
-- **Applicazioni SaaS multi-client**: ogni client può disporre del proprio database isolato beneficiando dell'alta disponibilità.
-- **Carichi di lavoro con forte domanda in lettura**: la presenza di repliche permette di distribuire le query e migliorare le prestazioni globali.
-- **Scenari di ripristino dopo un incidente**: grazie al meccanismo di auto-failover e ai backup S3 integrati.
+- **CMS e applicazioni PHP**: WordPress, Drupal, Magento e, più in generale, qualsiasi applicazione progettata per MySQL.
+- **Applicazioni SaaS multi-cliente**: un database isolato per cliente, con l'alta disponibilità della piattaforma.
+- **Carichi di lavoro a lettura intensiva**: le repliche consentono di ripartire le query.
+
+<NavigationFooter
+  nextSteps={[
+    {label: "Concetti", href: "../concepts"},
+    {label: "Avvio rapido", href: "../quick-start"},
+  ]}
+  seeAlso={[
+    {label: "Tutti i database", href: "../../"},
+  ]}
+/>

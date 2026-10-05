@@ -1,202 +1,123 @@
 ---
 sidebar_position: 1
-title: Panoramica dei GPU
+title: Panoramica delle GPU
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';
 
 # GPU su Hikube
 
-Hikube propone l'accesso agli acceleratori **NVIDIA** tramite GPU Passthrough, permettendo l'esecuzione di workload che necessitano di accelerazione hardware. Le GPU sono disponibili per due tipi di workload: macchine virtuali e pod Kubernetes.
+Hikube offre acceleratori **NVIDIA** collegati in passthrough, per due tipi di carichi di lavoro: le **macchine virtuali** e i **nodi dei cluster Kubernetes**. Nella console non esiste una pagina GPU: la GPU si sceglie nella procedura guidata della risorsa che la utilizza.
 
 ---
 
-## Tipi di Utilizzo
+## Modalità di utilizzo
 
-### **GPU con Macchine Virtuali**
+### GPU su macchina virtuale
 
-Le GPU possono essere collegate direttamente alle macchine virtuali tramite GPU passthrough VFIO-PCI, offrendo un accesso completo ed esclusivo all'acceleratore.
+La GPU fisica viene assegnata alla VM in passthrough PCI: la VM vi ha accesso esclusivo e prestazioni native.
 
-**Casi d'uso:**
+- Scelta nella procedura guidata **Create an Instance**, passaggio **Configuration**, sezione **Hardware Acceleration (GPU)**.
+- Una o più GPU per VM, di uno o più modelli.
+- I driver NVIDIA si installano nel sistema operativo della VM (vedere [Installare CUDA](../compute/how-to/install-cuda-drivers.md)).
 
-- Applicazioni che necessitano un controllo completo della GPU
-- Workload legacy o specializzati
-- Ambienti di sviluppo isolati
-- Applicazioni grafiche (rendering, CAD)
+**Casi d'uso:** ambienti di sviluppo CUDA, applicazioni che richiedono il controllo completo della GPU, rendering grafico, carichi di lavoro specializzati.
 
-### **GPU con Kubernetes**
+### GPU su Kubernetes
 
-Le GPU possono essere allocate ai worker Kubernetes e poi assegnate ai pod tramite le resource requests/limits.
+Le GPU vengono collegate ai nodi di un **gruppo di nodi** del cluster, quindi assegnate ai pod tramite `resources.limits`.
 
-**Casi d'uso:**
+- Scelta nella procedura guidata **Create cluster** (o **Edit**), passaggio **Nodes**, sezione **GPU** del gruppo di nodi.
+- L'addon **GPU Operator** viene attivato automaticamente non appena un gruppo dispone di GPU; installa i driver e il device plugin.
+- L'addon **HAMi** consente di condividere una stessa GPU tra più pod.
 
-- Workload containerizzati di IA/ML
-- Scaling automatico delle applicazioni GPU
-- Condivisione delle risorse GPU tra applicazioni
-- Orchestrazione complessa di job paralleli
+**Casi d'uso:** IA/ML containerizzata, inferenza su larga scala, job paralleli.
 
 ---
 
-## Hardware Disponibile
+## Modelli offerti
 
-Hikube propone diverse GPU NVIDIA:
+| Modello (etichetta della console) | Memoria | Architettura | Utilizzo tipico |
+|--------------------------------|---------|--------------|---------------|
+| **NVIDIA L40S** | 48 GB | Ada Lovelace | Inferenza, IA generativa, rendering in tempo reale, prototipazione |
+| **NVIDIA A100 80GB** | 80 GB | Ampere | Addestramento ML, fine-tuning, calcolo scientifico |
+| **NVIDIA H100 80GB** | 80 GB | Hopper | Addestramento e inferenza di grandi modelli |
+| **NVIDIA RTX 6000 Pro** | 96 GB | Blackwell | LLM, calcolo intensivo |
 
-### **NVIDIA L40S**
+Ogni scheda del selettore mostra il nome del modello e la sua memoria (ad esempio **48 GB VRAM**). Un modello che non ha più unità libere appare disattivato e contrassegnato come **Unavailable**.
 
-- **Architettura**: Ada Lovelace
-- **Memoria**: 48 GB GDDR6 con ECC
-- **Nome di risorsa**: `nvidia.com/AD102GL_L40S`
-- **Uso tipico**: IA generativa, inferenza, rendering in tempo reale
-
-### **NVIDIA A100 80 GB (PCIe / SXM4)**
-
-- **Architettura**: Ampere
-- **Memoria**: 80 GB HBM2e con ECC
-- **Nomi di risorsa**: `nvidia.com/GA100_A100_PCIE_80GB`, `nvidia.com/GA100_A100_SXM4_80GB`
-- **Uso tipico**: Addestramento ML, calcolo ad alte prestazioni (la variante SXM4 supporta NVLink per il multi-GPU)
-
-### **NVIDIA RTX PRO 6000 Blackwell**
-
-- **Architettura**: Blackwell (Server Edition)
-- **Memoria**: 96 GB GDDR7 con ECC
-- **Nome di risorsa**: `nvidia.com/GB202GL_RTX_PRO_6000_BLACKWELL_SERVER_EDITION`
-- **Uso tipico**: LLM, transformer, calcolo intensivo
+:::note Disponibilità
+La console indica soltanto se un modello è disponibile o meno, senza mostrare il numero di unità libere. Le GPU sono risorse condivise tra i clienti della piattaforma: una GPU liberata (VM arrestata, nodo eliminato) può essere assegnata a un altro carico di lavoro. Per un'esigenza specifica di capacità GPU, contatti [sales@hidora.io](mailto:sales@hidora.io).
+:::
 
 ---
 
 ## Architettura
 
-### **Allocazione GPU con VM**
+### GPU su VM
 
 ```mermaid
 flowchart TD
-    subgraph HIKUBE["Infrastruttura Hikube"]
-        subgraph NODE["Nodo Fisico"]
-            GPU1["GPU L40S"]
-            GPU2["GPU A100"]
-            GPU3["GPU RTX PRO 6000"]
-        end
-        
-        subgraph VM1["VM Instance"]
-            APP1["Applicazione GPU"]
-        end
+    subgraph NODE["Nodo fisico GPU"]
+        GPU1["GPU NVIDIA"]
+        GPU2["GPU NVIDIA"]
     end
-    
-    GPU1 --> VM1
-    VM1 --> APP1
-    
-    style GPU1 fill:#90EE90
-    style VM1 fill:#FFE4B5
-    style APP1 fill:#ADD8E6
+
+    subgraph VM1["Istanza VM"]
+        DRV["Driver NVIDIA + CUDA"]
+        APP1["Applicazione"]
+    end
+
+    GPU1 -->|passthrough PCI| VM1
+    DRV --> APP1
 ```
 
-### **Allocazione GPU con Kubernetes**
+Una VM viene eseguita su un unico nodo fisico: tutte le GPU richieste per una VM devono essere disponibili **sullo stesso nodo**.
+
+### GPU su Kubernetes
 
 ```mermaid
 flowchart TD
-    subgraph CLUSTER["Cluster Kubernetes"]
-        subgraph WORKER["Worker Node"]
-            GPU1["GPU L40S"]
-            GPU2["GPU A100"]
-            KUBELET["kubelet"]
+    subgraph CLUSTER["Cluster Kubernetes gestito"]
+        subgraph NG["Gruppo di nodi GPU"]
+            W1["Nodo worker + GPU"]
+            OP["GPU Operator: driver + device plugin"]
         end
-        
-        subgraph POD1["Pod"]
-            CONTAINER1["Container GPU"]
-        end
-        
-        subgraph POD2["Pod"]
-            CONTAINER2["Container GPU"]
-        end
+        POD1["Pod: nvidia.com/gpu: 1"]
+        POD2["Pod: nvidia.com/gpu: 1"]
     end
-    
-    GPU1 --> KUBELET
-    GPU2 --> KUBELET
-    KUBELET --> POD1
-    KUBELET --> POD2
-    POD1 --> CONTAINER1
-    POD2 --> CONTAINER2
-    
-    style GPU1 fill:#90EE90
-    style GPU2 fill:#90EE90
-    style POD1 fill:#FFE4B5
-    style POD2 fill:#FFE4B5
+
+    OP --> W1
+    W1 --> POD1
+    W1 --> POD2
 ```
 
 ---
 
-## Configurazione
+## Confronto
 
-### **GPU su VM**
-
-```yaml
-apiVersion: apps.cozystack.io/v1alpha1
-kind: VMInstance
-spec:
-  runStrategy: Always
-  instanceType: "u1.xlarge"
-  gpus:
-    - name: "nvidia.com/AD102GL_L40S"
-  disks:
-    - name: vm-gpu-disk
-```
-
-### **GPU su Kubernetes Worker**
-
-```yaml
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Kubernetes
-spec:
-  nodeGroups:
-    gpu-workers:
-      instanceType: "u1.xlarge"
-      gpus:
-        - name: "nvidia.com/AD102GL_L40S"
-  addons:
-    gpuOperator:
-      enabled: true
-```
-
-### **GPU in Pod Kubernetes**
-
-```yaml
-apiVersion: v1
-kind: Pod
-spec:
-  containers:
-  - name: gpu-app
-    image: nvidia/cuda:12.0-runtime-ubuntu20.04
-    resources:
-      limits:
-        nvidia.com/gpu: 1
-```
-
----
-
-## Confronto degli Approcci
-
-| **Aspetto** | **GPU su VM** | **GPU su Kubernetes** |
-|------------|----------------|------------------------|
-| **Isolamento** | Completo (1 GPU = 1 VM) | Condiviso (orchestrato) |
+| Aspetto | GPU su VM | GPU su Kubernetes |
+|--------|-----------|-------------------|
+| **Isolamento** | GPU dedicata alla VM | GPU assegnata ai pod dallo scheduler |
 | **Prestazioni** | Native (passthrough) | Native (device plugin) |
-| **Gestione** | Manuale | Automatizzata |
-| **Scaling** | Solo verticale | Orizzontale + Verticale |
-| **Condivisione** | No | Sì (tra pod) |
-| **Complessità** | Semplice | Complessa |
+| **Driver** | Da installare nel sistema operativo | Installati dal GPU Operator |
+| **Scalabilità** | Verticale (modificare la VM) | Orizzontale (numero di nodi del gruppo) |
+| **Condivisione di una GPU** | No | Sì, con l'addon HAMi |
+| **Modifica** | Aggiungere, rimuovere o cambiare GPU (riavvio) | Un gruppo esistente mantiene almeno una GPU; un gruppo senza GPU non può riceverne |
 
 ---
 
-## Prossimi Passi
+## Fatturazione e quote
 
-### **Per le Macchine Virtuali**
+La stima dei costi mostrata nelle procedure guidate VM e Kubernetes include le GPU selezionate. La GPU di una VM viene liberata quando la VM è arrestata.
 
-- [Creare una VM GPU](./quick-start.md) → Guida pratica
-- [API Reference](./api-reference.md) → Configurazione completa
+---
 
-### **Per Kubernetes**
+## Passi successivi
 
-- [Cluster GPU](../kubernetes/overview.md) → Worker con GPU
-  - [Configurazione avanzata](../kubernetes/api-reference.md) → NodeGroup GPU
+- [Avvio rapido: una VM con GPU](./quick-start.md)
+- [Assegnare una GPU su Kubernetes](./how-to/provision-gpu-kubernetes.md)
+- [Concetti](./concepts.md)
 
 <NavigationFooter
   nextSteps={[

@@ -5,20 +5,20 @@ title: Concetti
 
 # Concetti — ClickHouse
 
+:::info Disponibilità
+ClickHouse non è ancora disponibile in modalità self-service nella [console Hikube](https://console.hikube.cloud).
+Per effettuare il provisioning di un'istanza o modificarne la configurazione, [contatti il supporto](mailto:support@hidora.io).
+:::
+
 ## Architettura
 
-ClickHouse su Hikube e un servizio gestito basato sull'operatore **ClickHouse Operator**. E un database SQL orientato per colonne, ottimizzato per l'analisi dei dati (OLAP). L'architettura si basa su **shard** (partizionamento orizzontale) e **repliche** (alta disponibilità), coordinati da **ClickHouse Keeper**.
+ClickHouse su Hikube è un servizio gestito. È un database SQL orientato alle colonne, ottimizzato per l'analisi dei dati (OLAP). L'architettura si basa su **shard** (partizionamento orizzontale) e **repliche** (alta disponibilità), coordinati da **ClickHouse Keeper**.
 
 ```mermaid
 graph TB
     subgraph "Hikube Platform"
-        subgraph "Tenant namespace"
-            CR[ClickHouse CRD]
-            SEC[Secret credentials]
-        end
-
-        subgraph "ClickHouse Operator"
-            OP[Controller]
+        subgraph "Gestione"
+            OP[Piattaforma Hikube]
         end
 
         subgraph "Cluster ClickHouse"
@@ -40,11 +40,10 @@ graph TB
 
         subgraph "Backup"
             S3[Bucket S3]
-            RES[Restic]
+            RES[Backup automatizzato]
         end
     end
 
-    CR --> OP
     OP --> S1R1
     OP --> S1R2
     OP --> S2R1
@@ -55,7 +54,6 @@ graph TB
     K2 <--> K3
     S1R1 -.-> K1
     S2R1 -.-> K1
-    OP --> SEC
     S1R1 --> RES
     RES --> S3
 ```
@@ -66,13 +64,12 @@ graph TB
 
 | Termine | Descrizione |
 |---------|-------------|
-| **ClickHouse** | Risorsa Kubernetes (`apps.cozystack.io/v1alpha1`) che rappresenta un cluster ClickHouse gestito. |
+| **Cluster ClickHouse** | Istanza gestita di ClickHouse, fornita su richiesta nel suo progetto. |
 | **Shard** | Partizione orizzontale dei dati. Ogni shard contiene un sottoinsieme dei dati totali. |
-| **Replica** | Copia di uno shard. Assicura la ridondanza e permette la lettura parallela. |
+| **Replica** | Copia di uno shard. Garantisce la ridondanza e permette la lettura parallela. |
 | **ClickHouse Keeper** | Servizio di coordinamento distribuito (alternativa a ZooKeeper) che gestisce la replica e il consenso tra i nodi. |
-| **Restic** | Strumento di backup per creare snapshot cifrati verso uno storage S3. |
 | **OLAP** | Online Analytical Processing — modello di accesso ai dati ottimizzato per le query analitiche (aggregazioni, scansioni di colonne). |
-| **resourcesPreset** | Profilo di risorse predefinito (da nano a 2xlarge). |
+| **Preset** | Profilo di risorse predefinito (da nano a 2xlarge) assegnato a ogni replica. |
 
 ---
 
@@ -84,14 +81,14 @@ Lo sharding distribuisce i dati orizzontalmente tra più nodi:
 
 - Ogni **shard** contiene una parte dei dati
 - Le query `SELECT` vengono eseguite in parallelo su tutti gli shard
-- Il parametro `shards` nel manifesto determina il numero di partizioni
+- Il numero di shard viene fissato al momento del provisioning
 
 ### Replica
 
 Ogni shard può avere più repliche:
 
 - Le repliche di uno stesso shard contengono **dati identici**
-- Il coordinamento e assicurato da **ClickHouse Keeper**
+- Il coordinamento è garantito da **ClickHouse Keeper**
 - In caso di guasto di una replica, le letture vengono reindirizzate verso le altre
 
 ```mermaid
@@ -110,7 +107,7 @@ graph LR
 ```
 
 :::tip
-Per piccoli volumi di dati, un solo shard con 2 repliche è sufficiente. Aggiungete shard quando il volume supera le capacità di un singolo nodo.
+Per piccoli volumi di dati è sufficiente un solo shard con 2 repliche. Aggiunga shard quando il volume supera le capacità di un singolo nodo.
 :::
 
 ---
@@ -121,34 +118,32 @@ ClickHouse Keeper sostituisce ZooKeeper per il coordinamento del cluster:
 
 - Gestisce il **consenso** tra le repliche (protocollo Raft)
 - Archivia i **metadati** del cluster (tabelle distribuite, replica)
-- Necessita di un numero **dispari** di istanze (3 raccomandato) per il quorum
+- Richiede un numero **dispari** di istanze (3 consigliate) per il quorum
 
-| Parametro Keeper | Descrizione |
-|-------------------|-------------|
-| `keeper.replicas` | Numero di istanze Keeper (3 raccomandato) |
-| `keeper.resources` / `keeper.resourcesPreset` | Risorse allocate al Keeper |
-| `keeper.size` | Dimensione dello storage Keeper |
+Il numero di istanze Keeper, le loro risorse e il loro storage vengono definiti al momento del provisioning.
 
 ---
 
 ## Backup
 
-ClickHouse su Hikube utilizza **Restic** per i backup, con lo stesso modello di MySQL:
+I backup ClickHouse su Hikube offrono:
 
 - Snapshot **cifrati** archiviati in un bucket S3
-- Pianificazione tramite cron (`backup.schedule`)
-- Strategia di retention configurabile (`backup.cleanupStrategy`)
+- Pianificazione regolare
+- Strategia di conservazione configurabile
+
+L'attivazione dei backup avviene su richiesta al supporto.
 
 ---
 
 ## Gestione degli utenti
 
-Gli utenti sono dichiarati nel manifesto con:
+Gli utenti vengono definiti al momento del provisioning, con:
 
 - **Password** per l'autenticazione
-- **Flag readonly**: `true` per un accesso in sola lettura, `false` per l'accesso completo
+- **Sola lettura** o **accesso completo**
 
-Un utente `admin` viene creato automaticamente con i diritti completi.
+Un utente `admin` viene creato automaticamente con diritti completi.
 
 ---
 
@@ -170,14 +165,14 @@ Un utente `admin` viene creato automaticamente con i diritti completi.
 
 | Parametro | Valore |
 |-----------|--------|
-| Shard max | Secondo la quota del tenant |
-| Repliche per shard | Secondo la quota del tenant |
-| Dimensione archiviazione (`size`) | Variabile (in Gi) |
-| Istanze Keeper | 3 raccomandato (dispari) |
+| Shard max | In base alle quote del progetto |
+| Repliche per shard | In base alle quote del progetto |
+| Dimensione dello storage | Variabile (in GB) |
+| Istanze Keeper | 3 consigliate (dispari) |
 
 ---
 
 ## Per approfondire
 
 - [Panoramica](./overview.md): presentazione del servizio
-- [Riferimento API](./api-reference.md): tutti i parametri della risorsa ClickHouse
+- [FAQ](./faq.md): domande frequenti

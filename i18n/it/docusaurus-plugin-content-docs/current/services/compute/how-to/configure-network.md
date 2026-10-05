@@ -1,128 +1,84 @@
 ---
-title: "Come configurare la rete esterna"
+title: "Come configurare la rete e il firewall"
 ---
 
-# Come configurare la rete esterna
+# Come configurare la rete e il firewall
 
-Hikube propone due metodi di esposizione di rete per rendere una VM accessibile dall'esterno: **PortList** (raccomandato) e **WholeIP**. Questa guida spiega come scegliere e configurare ciascun metodo.
+Una VM Hikube può essere esposta su Internet tramite un IP pubblico IPv4, filtrato da un firewall che apre solo le porte scelte. Può anche essere collegata a reti private (VPC). Questa guida spiega come regolare queste opzioni dalla console, alla creazione o su una VM esistente.
 
 ## Prerequisiti
 
-- **kubectl** configurato con il vostro kubeconfig Hikube
-- Una **VMInstance** esistente o un manifest pronto per il deployment
-- Conoscenza delle porte necessarie per la vostra applicazione
+- Un account Hikube e un progetto
+- Una VM esistente, oppure la procedura guidata di creazione aperta
+- L'elenco delle porte di cui la sua applicazione ha bisogno
 
-## Passi
+## Passaggi
 
-### 1. Scegliere il metodo di esposizione
+### 1. Scegliere la modalità di esposizione
 
-Hikube supporta due metodi tramite il parametro `externalMethod`:
-
-| Metodo | Descrizione | Caso d'uso |
-|---------|-------------|-------------|
-| **PortList** | Solo le porte elencate in `externalPorts` sono esposte. Firewall automatico. | Produzione, ambienti sicuri |
-| **WholeIP** | Tutte le porte della VM sono esposte. Nessun filtraggio di rete. | Sviluppo, test, VPN/Gateway, accesso amministrativo completo |
+| Configurazione | Effetto | Caso d'uso |
+|---------------|-------|-------------|
+| **Public IPv4 Address** attivato + **Enable Firewall** selezionato | Solo le **Allowed Ports** sono raggiungibili da Internet | Produzione, servizi mirati (consigliato) |
+| **Public IPv4 Address** attivato + firewall non selezionato | Tutte le porte della VM sono raggiungibili da Internet | VPN, gateway, protocolli a porte dinamiche |
+| **Public IPv4 Address** disattivato | Nessuna esposizione su Internet | VM interna, raggiungibile tramite un [VPC](../../networking/overview.md) |
 
 :::tip Raccomandazione
-Utilizzate **PortList** in produzione. Questo metodo applica un firewall automatico che espone solo le porte esplicitamente dichiarate.
+Mantenga il firewall attivato in produzione e apra solo le porte necessarie.
+
+Il firewall filtra solo il traffico che arriva dall'IP pubblico. Il traffico tra le VM del progetto, su un VPC come sulla rete principale, non è filtrato: a tale scopo utilizzi il firewall del sistema operativo (ufw, firewalld, nftables).
 :::
 
-### 2. Configurare con PortList (raccomandato)
+### 2. Regolare le opzioni alla creazione
 
-Con `PortList`, dichiarate esplicitamente le porte da esporre tramite `externalPorts`. Tutto il resto è bloccato a livello di rete:
+Al passaggio **Network** della procedura guidata:
 
-```yaml title="vm-portlist.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: VMInstance
-metadata:
-  name: vm-web-server
-spec:
-  runStrategy: Always
-  instanceType: u1.xlarge
-  instanceProfile: ubuntu
-  external: true
-  externalMethod: PortList
-  externalPorts:
-    - 22
-    - 80
-    - 443
-  disks:
-    - vm-system-disk
-  sshKeys:
-    - ssh-ed25519 AAAA... user@host
-```
+1. **Public IPv4 Address**: lasci l'interruttore attivato per esporre la VM.
+2. **Enable Firewall**: lasci la casella selezionata.
+3. **Allowed Ports**: selezioni **SSH (22)**, **HTTP (80)**, **HTTPS (443)** secondo le sue esigenze.
+4. Per un'altra porta, la inserisca in **Custom port...** (da 1 a 65535) e faccia clic sul pulsante di aggiunta. Compare selezionata nell'elenco; l'icona del cestino la rimuove.
 
-In questo esempio, solo le porte SSH (22), HTTP (80) e HTTPS (443) sono accessibili dall'esterno.
+Il **Summary** mostra **Public IP**, **Firewall** e **Open Ports** prima della distribuzione.
 
-### 3. Configurare con WholeIP (alternativa)
+### 3. Modificare le opzioni di una VM esistente
 
-Con `WholeIP`, la VM riceve un IP pubblico con tutte le porte aperte. Il parametro `externalPorts` non è necessario:
+1. Apra la pagina di dettaglio della VM e faccia clic su **Edit**.
+2. In **Network & Security**, regoli **Public IPv4 Address**, **Enable Firewall** e le **Allowed Ports**.
+3. Faccia clic su **Save**.
 
-```yaml title="vm-wholeip.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: VMInstance
-metadata:
-  name: vm-dev
-spec:
-  runStrategy: Always
-  instanceType: u1.xlarge
-  instanceProfile: ubuntu
-  external: true
-  externalMethod: WholeIP
-  disks:
-    - vm-system-disk
-  sshKeys:
-    - ssh-ed25519 AAAA... user@host
-```
+Queste modifiche si applicano in pochi secondi, senza riavviare la VM, a differenza di un cambio di formato, di dischi o di GPU.
 
-:::warning Sicurezza
-Con `WholeIP`, la VM è interamente esposta su Internet. Tutte le porte sono accessibili. Configurate obbligatoriamente un **firewall a livello del sistema operativo** (ufw, firewalld, iptables) per restringere gli accessi.
-:::
+### 4. Collegare la VM a una rete privata (facoltativo)
 
-### 4. Applicare e verificare l'accesso
-
-Applicate il manifest:
-
-```bash
-kubectl apply -f vm-portlist.yaml
-```
-
-Attendete che la VM sia in stato `Running`:
-
-```bash
-kubectl get vminstance vm-web-server -w
-```
+In **VPC Networks (Secondary)**, selezioni un VPC e poi una o più delle sue **Subnets**. Ogni sottorete aggiunge un'interfaccia privata alla VM, che il sistema operativo non configura automaticamente (vedere [Collegare una VM a un VPC](../../networking/how-to/attach-vm-to-vpc.md#4-verificare-nel-sistema-operativo)). Il pulsante **+ VPC** crea un VPC senza lasciare la schermata, e **Add subnet** crea una sottorete nel VPC selezionato. Il dettaglio è in [Rete: avvio rapido](../../networking/quick-start.md).
 
 ## Verifica
 
-Recuperate l'indirizzo IP esterno della VM:
+Nella pagina di dettaglio, sezione **Network & Security**:
+
+- **Public IP**: **Active** o **Disabled**;
+- **IP Addresses**: l'indirizzo **Primary** e, se presenti, gli indirizzi **Secondary** delle sottoreti VPC;
+- **VPC Networks**: i VPC e le sottoreti connessi;
+- **Firewall & Ports**: le porte aperte, oppure **No ports open**.
+
+Esegua un test dalla sua postazione:
 
 ```bash
-kubectl get vminstance vm-web-server -o yaml
+# SSH
+ssh ubuntu@<ip-pubblico>
+
+# HTTP, se un server web è in ascolto
+curl http://<ip-pubblico>
+
+# Una porta non autorizzata deve essere irraggiungibile
+nc -zv -w 5 <ip-pubblico> 8080
 ```
 
-Testate la connettività sulle porte esposte:
-
-```bash
-# Test SSH
-ssh -i ~/.ssh/hikube-vm ubuntu@<IP-ESTERNO>
-
-# Test HTTP (se un server web è installato)
-curl http://<IP-ESTERNO>
-```
-
-Per verificare che una porta non esposta sia ben bloccata (con PortList):
-
-```bash
-# Questa porta dovrebbe essere inaccessibile con PortList
-nc -zv <IP-ESTERNO> 8080
-```
-
-:::note Modifica delle porte
-Per aggiungere o rimuovere porte esposte con `PortList`, modificate la lista `externalPorts` nel manifest e riapplicate con `kubectl apply`.
+:::warning Firewall disattivato
+Senza il firewall Hikube, la VM è completamente esposta. Configuri un firewall nel sistema operativo (ufw, firewalld, nftables) prima di disattivare l'opzione.
 :::
 
 ## Per approfondire
 
-- [Riferimento API](../api-reference.md) -- sezione Configurazione di rete
-- [Avvio rapido](../quick-start.md)
+- [Rete: VPC e sottoreti](../../networking/overview.md)
+- [Avvio rapido VM](../quick-start.md)
+- [Risoluzione dei problemi](../troubleshooting.md)

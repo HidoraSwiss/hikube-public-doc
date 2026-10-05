@@ -1,39 +1,36 @@
 ---
 sidebar_position: 3
-title: GatewayAPI
+title: Gateway API
 ---
 
-# Dettagli del campo `addons.gatewayAPI`
+# Gateway API
 
-Il campo `addons.gatewayAPI` definisce la configurazione dell'add-on **Gateway API**, un'estensione moderna di Kubernetes per la gestione degli **ingressi di rete** (ingress, route, gateway).
-Sostituisce progressivamente gli oggetti `Ingress` tradizionali offrendo un modello più flessibile ed estensibile.
+**Gateway API** è un'estensione di Kubernetes per la gestione degli **ingressi di rete** (gateway, route). Offre un modello più flessibile ed estensibile rispetto ai tradizionali oggetti `Ingress`.
 
-```yaml
-addons:
-  gatewayAPI:
-    enabled: true
+L'addon installa le **CRD Kubernetes Gateway API** (canale experimental): `GatewayClass`, `Gateway`, `HTTPRoute`, ecc. Attiva inoltre il supporto di Gateway API in [Cilium](./cilium.md) (con il relativo proxy Envoy) e, se selezionati, in [Cert-Manager](./cert-manager.md) e [Ouroboros](./ouroboros.md).
+
+## Nella console
+
+1. Alla creazione, passaggio **Addons**, selezioni **Gateway API** (disattivato per impostazione predefinita).
+2. Su un cluster esistente: **Edit** > **Extensions & Addons**, selezioni **Gateway API**, quindi **Save**.
+
+Questo addon non prevede sovrascrittura Helm: si può soltanto attivare o disattivare.
+
+La pagina di dettaglio del cluster mostra **Gateway API** nella sezione **Extensions** quando è attivo.
+
+## Utilizzo nel cluster
+
+```bash
+# CRD installate
+kubectl get crds | grep gateway.networking.k8s.io
+
+# Classi di gateway disponibili
+kubectl get gatewayclass
 ```
 
----
-
-## `enabled` (boolean) — **Obbligatorio**
-
-### Descrizione
-
-Indica se il modulo **Gateway API** è attivato (`true`) o disattivato (`false`).
-Quando è attivato, le **Custom Resource Definitions (CRD)** associate a Gateway API (come `GatewayClass`, `Gateway`, `HTTPRoute`, ecc.) vengono installate e rese disponibili nel cluster.
-
-### Esempio
-
-```yaml
-enabled: true
-```
-
----
+Consulti la [documentazione Gateway API](https://gateway-api.sigs.k8s.io) per la descrizione delle risorse.
 
 ## Buone pratiche
 
-- Attivare `enabled: true` per utilizzare la nuova API di rete standardizzata dalla CNCF.
-- Testare la compatibilità delle risorse (`HTTPRoute`, `TCPRoute`, `ReferencePolicy`, ecc.) prima di migrare da `Ingress`.
-
----
+- Testi le sue risorse (`HTTPRoute`, `TLSRoute`, ecc.) su un cluster di collaudo prima di migrare da `Ingress`.
+- Il canale experimental può cambiare da una versione all'altra: verifichi la compatibilità dei suoi manifesti durante gli aggiornamenti.

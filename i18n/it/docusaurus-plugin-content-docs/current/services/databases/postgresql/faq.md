@@ -5,9 +5,9 @@ title: FAQ
 
 # FAQ — PostgreSQL
 
-### Qual e la differenza tra `resourcesPreset` e `resources`?
+### Quali preset di istanza sono disponibili?
 
-Il campo `resourcesPreset` permette di scegliere un profilo di risorse predeterminato per ogni replica PostgreSQL. Se il campo `resources` (CPU/memoria espliciti) e definito, `resourcesPreset` viene **completamente ignorato**.
+L'**Instance preset** stabilisce la CPU e la memoria di ogni nodo del cluster. Fa fede l'elenco mostrato dalla procedura guidata; a titolo indicativo:
 
 | **Preset** | **CPU** | **Memoria** |
 |------------|---------|-------------|
@@ -19,132 +19,44 @@ Il campo `resourcesPreset` permette di scegliere un profilo di risorse predeterm
 | `xlarge`   | 4       | 4Gi         |
 | `2xlarge`  | 8       | 8Gi         |
 
-```yaml title="postgresql.yaml"
-spec:
-  # Utilizzo di un preset
-  resourcesPreset: medium
+Il preset può essere cambiato dopo la creazione tramite **Edit**. La definizione di valori CPU/memoria liberi non è proposta nella console; contatti il supporto.
 
-  # OPPURE configurazione esplicita (il preset viene allora ignorato)
-  resources:
-    cpu: 2000m
-    memory: 2Gi
-```
+### Quante repliche scegliere?
 
-### Come scegliere tra `storageClass` local e replicated?
+- **1 (Standalone)**: sviluppo e test. Un guasto dell'istanza rende il database non disponibile fino al suo riavvio.
+- **2 (High Availability)**: uno standby pronto a subentrare in caso di guasto del primary.
+- **3 (Max High Availability)**: consigliato per la produzione critica.
 
-Hikube propone due tipi di classi di archiviazione:
+Il numero di repliche non può essere modificato dopo la creazione; contatti il supporto se deve cambiarlo.
 
-- **`local`**: i dati sono archiviati sul nodo fisico dove viene eseguito il pod. Questa modalita offre le **migliori prestazioni** (latenza minima) ma non protegge contro il guasto di un nodo.
-- **`replicated`**: i dati sono replicati su più nodi fisici. Questa modalita assicura l'**alta disponibilità multi-DC** e protegge contro la perdita di un nodo, al prezzo di una latenza leggermente superiore.
+### Dove si trova l'indirizzo di connessione?
 
-:::tip
-Usate `storageClass: local` se configurate più repliche (`replicas` > 1): la replica applicativa (standby PostgreSQL) assicura già l'alta disponibilità. Usate `storageClass: replicated` se avete una sola replica (`replicas` = 1): lo storage replicato compensa l'assenza di replica applicativa. In sviluppo con una sola replica, `local` può bastare se la perdita di dati e accettabile.
-:::
+Nella pagina del cluster, riquadro **Connection and Databases**, campo **Host**. Vi compare un indirizzo solo se l'**External Access** è attivato; altrimenti il campo mostra **Not defined**. La porta è `5432`.
 
-### Come connettersi a PostgreSQL dall'interno del cluster?
+### Come connettersi da una VM o da un cluster Kubernetes dello stesso progetto senza accesso esterno?
 
-Il servizio PostgreSQL e accessibile tramite il seguente nome di servizio Kubernetes:
+Senza accesso esterno, il cluster resta raggiungibile dalle VM del progetto tramite un indirizzo interno al progetto, che la console non mostra. [Contatti il supporto](mailto:support@hidora.io) per ottenerlo.
 
-- **Servizio in lettura-scrittura**: `pg-<name>-rw` sulla porta `5432`
+### Ho smarrito la password di un utente. Come recuperarla?
 
-Le credenziali di connessione sono memorizzate in un Secret Kubernetes chiamato `pg-<name>-app`.
+Le password vengono mostrate una sola volta e non possono essere rilette. Ne generi una nuova: scheda **Users** → **Actions** → **Change Password** → **Perform rotation**. La vecchia password viene revocata immediatamente.
 
-```bash
-# Recuperare la password
-kubectl get tenantsecret pg-mydb-app -o jsonpath='{.data.password}' | base64 -d
+### Perché il mio nome utente viene rifiutato?
 
-# Recuperare il nome utente
-kubectl get tenantsecret pg-mydb-app -o jsonpath='{.data.username}' | base64 -d
-
-# Connettersi da un pod
-psql -h pg-mydb-rw -p 5432 -U <username> -d <database>
-```
-
-### Come configurare la replica sincrona?
-
-La replica sincrona garantisce che una transazione venga confermata solo quando è stata scritta su un numero minimo di repliche. Configurate i parametri `quorum` nel vostro manifesto:
-
-```yaml title="postgresql.yaml"
-spec:
-  replicas: 3
-  quorum:
-    minSyncReplicas: 1    # Almeno 1 replica deve confermare
-    maxSyncReplicas: 2    # Al massimo 2 repliche confermano
-```
-
-- **`minSyncReplicas`**: numero minimo di repliche sincrone che devono confermare la ricezione di una transazione.
-- **`maxSyncReplicas`**: numero massimo di repliche sincrone che possono confermare la ricezione.
-
-:::warning
-La replica sincrona aumenta la latenza di scrittura. Assicuratevi di avere sufficienti repliche (`replicas` >= `maxSyncReplicas` + 1).
-:::
-
-### Come attivare il backup PITR?
-
-PostgreSQL su Hikube utilizza **CloudNativePG** con l'archiviazione WAL per permettere il ripristino a un istante specifico (PITR). Configurate la sezione `backup` con uno storage S3 compatibile:
-
-```yaml title="postgresql.yaml"
-spec:
-  backup:
-    enabled: true
-    schedule: "0 2 * * *"
-    retentionPolicy: 30d
-    destinationPath: s3://my-bucket/postgresql-backups/
-    endpointURL: https://prod.s3.hikube.cloud
-    s3AccessKey: your-access-key
-    s3SecretKey: your-secret-key
-```
-
-I backup includono automaticamente i file WAL, il che permette di ripristinare il database a qualsiasi istante tra due backup.
+I nomi utente PostgreSQL contano da 3 a 16 caratteri, in lettere minuscole, cifre e trattini bassi (`_`), e iniziano con una lettera o un trattino basso. Il trattino (`-`) non è accettato. I nomi `postgres`, `admin`, `root`, `owner`, `superuser`, `streaming_replica`, `cnpg_pooler_pgbouncer` e tutti quelli che iniziano con `pg_` sono riservati.
 
 ### Come aggiungere estensioni PostgreSQL?
 
-Potete attivare estensioni PostgreSQL per ogni database tramite il campo `databases[name].extensions`:
+Alla creazione di un database (scheda **Databases** → **Create**, sezione **PostgreSQL Extensions**) o in seguito, tramite **Actions** → **Manage extensions**. Le estensioni proposte includono in particolare `pg_stat_statements`, `pgcrypto`, `uuid-ossp`, `pg_trgm`, `hstore`, `citext`, `postgres_fdw`, `pgaudit` e `vector` (pgvector).
 
-```yaml title="postgresql.yaml"
-spec:
-  databases:
-    myapp:
-      extensions:
-        - uuid-ossp
-        - pgcrypto
-        - hstore
-      roles:
-        admin:
-          - admin
-```
+### È possibile creare più database e utenti?
 
-Le estensioni vengono attivate automaticamente alla creazione del database. Le estensioni disponibili dipendono dalla versione di PostgreSQL distribuita.
+Sì. Aggiunga tutti i database necessari nella scheda **Databases** e tutti gli utenti necessari nella scheda **Users**. Ogni utente può avere un diritto diverso su ogni database (**Administrator (Admin)** o **Read-only**).
 
-### Si possono creare più database e utenti?
+### È possibile modificare i parametri PostgreSQL (`max_connections`, `shared_buffers`…)?
 
-Si. Usate le mappe `users` e `databases` per definire quanti utenti e database necessitate. Ogni database può avere ruoli `admin` e `readonly` distinti:
+Questi parametri non sono proposti nella console; contatti il supporto.
 
-```yaml title="postgresql.yaml"
-spec:
-  users:
-    admin:
-      password: AdminPassword123
-      replication: true
-    appuser:
-      password: AppPassword456
-    analyst:
-      password: AnalystPassword789
+### I backup sono disponibili?
 
-  databases:
-    production:
-      roles:
-        admin:
-          - admin
-        readonly:
-          - analyst
-      extensions:
-        - uuid-ossp
-    analytics:
-      roles:
-        admin:
-          - admin
-        readonly:
-          - appuser
-          - analyst
-```
+La configurazione dei backup e il ripristino non sono proposti nella console; contatti il supporto. Consulti [Configurare i backup](./how-to/configure-backups.md).

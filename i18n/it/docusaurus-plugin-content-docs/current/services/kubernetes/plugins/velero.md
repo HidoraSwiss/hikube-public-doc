@@ -3,102 +3,76 @@ sidebar_position: 9
 title: Velero
 ---
 
-# Dettagli del campo `addons.velero`
+# Velero
 
-Il campo `addons.velero` definisce la configurazione dell'add-on **Velero**, utilizzato per il **backup e il ripristino** delle risorse Kubernetes e dei volumi persistenti.
-Velero permette di garantire la resilienza del cluster in caso di perdita di dati o di migrazione tra ambienti.
+L'addon **Velero** installa lo strumento di **backup e ripristino** delle risorse Kubernetes e dei volumi persistenti. Garantisce la resilienza del cluster in caso di perdita di dati o di migrazione tra ambienti.
 
-```yaml
-addons:
-  velero:
-    enabled: true
-    valuesOverride:
-      velero:
-        configuration:
-          backupStorageLocation:
-            name: default
-            provider: aws
-            bucket: velero-backups
-            config:
-              region: eu-west-3
-        schedules:
-          daily:
-            schedule: "0 2 * * *"
-            template:
-              ttl: 240h
-```
+## Nella console
 
----
+1. Alla creazione, passaggio **Addons**, selezioni **Velero** (disattivato per impostazione predefinita).
+2. Su un cluster esistente: **Edit** > **Extensions & Addons**, selezioni **Velero**, quindi **Save**.
 
-## `velero` (Object) — **Obbligatorio**
+La pagina di dettaglio del cluster mostra **Velero** nella sezione **Extensions** quando è attivo.
 
-### Descrizione
+Velero si installa nel cluster con il plugin AWS (`velero-plugin-for-aws`, per lo storage S3) già installato. Nessuna posizione di backup è configurata per impostazione predefinita.
 
-Il campo `velero` raggruppa la configurazione principale del sistema di backup e ripristino del cluster Kubernetes.
-Permette di attivare Velero e di definirne i parametri di distribuzione.
+## Configurare lo storage dei backup
 
-### Esempio
+Velero necessita di una posizione di object storage per i propri backup, ad esempio un [bucket S3 Hikube](../../storage/buckets/overview.md). Questa posizione si dichiara nel campo **Helm Configuration (YAML) — optional**, che compare una volta selezionato l'addon. Il valore viene trasmesso al chart Helm di Velero, sotto la chiave `velero`.
 
-```yaml
+```yaml title="velero-override.yaml"
 velero:
-  enabled: true
-  valuesOverride:
-    velero:
-      configuration:
-        backupStorageLocation:
-          provider: aws
-```
-
----
-
-## `enabled` (boolean) — **Obbligatorio**
-
-### Descrizione
-
-Indica se **Velero** è attivato (`true`) o disattivato (`false`).
-Quando è attivato, Velero distribuisce i suoi componenti (server, controller e CRD) permettendo la gestione dei backup e dei ripristini.
-
-### Esempio
-
-```yaml
-enabled: true
-```
-
----
-
-## `valuesOverride` (Object) — **Obbligatorio**
-
-### Descrizione
-
-Il campo `valuesOverride` permette di **sovrascrivere i valori** della distribuzione Velero.
-Serve a definire i parametri di archiviazione, le pianificazioni automatiche, i provider cloud o le opzioni di sicurezza e risorse.
-
-### Esempio
-
-```yaml
-valuesOverride:
-  velero:
-    configuration:
-      backupStorageLocation:
+  configuration:
+    backupStorageLocation:
+      - name: default
         provider: aws
         bucket: velero-backups
         config:
-          region: eu-west-3
-    schedules:
-      daily:
-        schedule: "0 2 * * *"
-        template:
-          ttl: 240h
+          region: us-east-1
+          s3ForcePathStyle: "true"
+          s3Url: https://<endpoint-s3>
+  credentials:
+    secretContents:
+      cloud: |
+        [default]
+        aws_access_key_id=<chiave-di-accesso>
+        aws_secret_access_key=<chiave-segreta>
+  schedules:
+    daily:
+      schedule: "0 2 * * *"
+      template:
+        ttl: 240h
 ```
 
----
+Le opzioni disponibili sono descritte nel [chart Helm di Velero](https://github.com/vmware-tanzu/helm-charts/tree/main/charts/velero).
+
+:::warning
+Le chiavi di accesso inserite nella sovrascrittura sono archiviate nella configurazione del cluster. Utilizzi un utente di bucket dedicato a Velero, limitato al bucket di backup.
+:::
+
+## Utilizzo nel cluster
+
+```bash
+# Posizioni di backup e relativo stato
+kubectl get backupstoragelocations -A
+
+# Backup e ripristini
+kubectl get backups -A
+kubectl get restores -A
+```
+
+Con la CLI `velero` (configurata sul kubeconfig del cluster). Indichi innanzitutto il namespace in cui è installato l'addon:
+
+```bash
+velero client config set namespace=$(kubectl get deploy -A -l app.kubernetes.io/name=velero -o jsonpath='{.items[0].metadata.namespace}')
+
+velero backup create my-backup --include-namespaces production
+velero backup describe my-backup
+velero restore create --from-backup my-backup
+```
 
 ## Buone pratiche
 
-- Attivare `enabled: true` per garantire il backup regolare delle risorse critiche del cluster.
-- Utilizzare `valuesOverride` per adattare la configurazione al provider cloud o all'archiviazione scelta (AWS, GCP, Azure, ecc.).
-- Configurare delle **schedule** (pianificazioni) automatiche per i backup ricorrenti.
-- Verificare regolarmente l'integrità dei backup e la possibilità di ripristino.
-- Limitare gli accessi alle chiavi di archiviazione per proteggere i dati di backup.
-
----
+- Pianifichi backup ricorrenti (`schedules`) con una durata di conservazione (`ttl`) adeguata.
+- Testi regolarmente un ripristino completo su un cluster di collaudo.
+- Archivi i backup in un bucket distinto da quello dei dati applicativi.

@@ -3,111 +3,63 @@ sidebar_position: 7
 title: Risoluzione dei problemi
 ---
 
-# Risoluzione dei problemi — MySQL
+# Risoluzione dei problemi — MariaDB
 
-### Replica interrotta (binlog eliminato)
+### Il cluster resta nello stato « Creating »
 
-**Causa**: il binary log (binlog) è stato eliminato sul primary prima che la replica abbia potuto leggerlo. Questo e un problema noto del MariaDB Operator quando `mariadbbackup` non è ancora utilizzato per inizializzare i nodi.
-
-**Soluzione**:
-
-1. Identificate la replica desincronizzata:
-   ```bash
-   kubectl get pods -l app=mysql-<name>
-   ```
-2. Effettuate un dump da una replica funzionante e ripristinatelo sul primary:
-   ```bash
-   mysqldump -h <replica-host> -P 3306 -u<user> -p<password> --column-statistics=0 <database> <table> > fix-table.sql
-   mysql -h <primary-host> -P 3306 -u<user> -p<password> <database> < fix-table.sql
-   ```
-3. Verificate che la replica riprenda correttamente dopo il ripristino.
-
-:::note
-Questo problema e documentato nel [MariaDB Operator](https://github.com/mariadb-operator/mariadb-operator/issues/141). Una correzione automatica e prevista nelle future versioni dell'operatore.
-:::
-
-### Backup Restic fallito
-
-**Causa**: le credenziali S3 sono errate, l'endpoint e inaccessibile, o il `resticPassword` non corrisponde a quello utilizzato durante l'inizializzazione del repository.
+**Causa**: il provisioning dei nodi e dei relativi volumi è in corso. Può richiedere diversi minuti, di più con 3 o 5 repliche.
 
 **Soluzione**:
 
-1. Verificate i log del pod di backup:
-   ```bash
-   kubectl logs -l app=mysql-<name>-backup
-   ```
-2. Assicuratevi che i parametri S3 siano corretti nel vostro manifesto:
-   - `s3Bucket`: il bucket esiste ed e accessibile
-   - `s3AccessKey` / `s3SecretKey`: le chiavi sono valide
-   - `s3Region`: la regione corrisponde a quella del bucket
-3. Verificate che il `resticPassword` sia identico a quello utilizzato durante il primo backup. Un cambio di password rende i vecchi backup inaccessibili.
-4. Testate la connettività verso l'endpoint S3 dal cluster.
+1. Attenda qualche minuto e aggiorni la pagina del cluster.
+2. Se lo stato non cambia dopo una quindicina di minuti, oppure passa a **Error** o **Failed**, [contatti il supporto](mailto:support@hidora.io) indicando il progetto e il nome del cluster.
 
-### Connessione rifiutata
+### Connessione rifiutata o timeout
 
-**Causa**: i pod MySQL non sono in esecuzione, il nome del Secret e errato, o il limite `maxUserConnections` è stato raggiunto.
+**Causa**: l'accesso esterno è disattivato, l'indirizzo IP non è ancora stato assegnato, oppure il client utilizza un indirizzo o una porta errati.
 
 **Soluzione**:
 
-1. Verificate che i pod siano nello stato `Running`:
+1. Nel riquadro **Connection and network**, verifichi che l'**External Access** sia **Enabled** e che il campo **Host** contenga un indirizzo.
+2. Utilizzi la porta `3306` e testi la connettività:
    ```bash
-   kubectl get pods -l app=mysql-<name>
+   mysqladmin -h <host> -P 3306 -u <utente> -p ping
    ```
-2. Recuperate le credenziali dal Secret. Il pattern e `mysql-<name>-auth`:
-   ```bash
-   kubectl get tenantsecret mysql-<name>-auth -o jsonpath='{.data.password}' | base64 -d
-   ```
-3. Verificate che il limite `maxUserConnections` non sia stato raggiunto per l'utente interessato.
-4. Testate la connessione da un pod nel cluster:
-   ```bash
-   kubectl run test-mysql --rm -it --image=mariadb:11 -- mysql -h mysql-<name> -P 3306 -u<user> -p
-   ```
+3. Verifichi che nessun firewall in uscita della sua rete blocchi la porta `3306`.
 
-### Pod in CrashLoopBackOff
+### `Access denied for user`
 
-**Causa**: il pod si riavvia in loop, generalmente a causa di una mancanza di memoria (OOMKilled) o di una configurazione non valida.
+**Causa**: password errata o revocata da una rotazione, oppure utente senza diritti sul database indicato.
 
 **Soluzione**:
 
-1. Consultate i log del pod precedente per identificare l'errore:
-   ```bash
-   kubectl logs mysql-<name>-0 --previous
-   ```
-2. Verificate se il pod è stato terminato per superamento della memoria (OOMKilled):
-   ```bash
-   kubectl describe pod mysql-<name>-0 | grep -i oom
-   ```
-3. Se si tratta di un problema di memoria, aumentate il `resourcesPreset` o definite `resources` esplicite:
-   ```yaml title="mysql.yaml"
-   spec:
-     resourcesPreset: medium    # Passare da nano/micro a medium o superiore
-   ```
-4. Applicate la modifica e attendete il riavvio:
-   ```bash
-   kubectl apply -f mysql.yaml
-   ```
+1. Nell'elenco degli utenti, verifichi la colonna **Databases**: l'utente deve avere un accesso sul database utilizzato.
+2. Se necessario, aggiunga l'accesso tramite **Actions** → **Manage Access**.
+3. In caso di dubbi sulla password, ne generi una nuova tramite **Actions** → **Change Password** e aggiorni le sue applicazioni.
 
-### Spazio disco pieno
+### Errore durante l'aggiunta di un accesso o di un utente
 
-**Causa**: il volume persistente e saturato dai dati, dai log binari o dai file temporanei.
+**Causa**: il nome del database o dell'utente non rispetta le regole di denominazione.
+
+**Soluzione**: utilizzi solo lettere minuscole, cifre e trattini, iniziando con una lettera e terminando con una lettera o una cifra. I trattini bassi (`_`) e le lettere maiuscole non sono accettati. Consulti [Concetti MariaDB](./concepts.md#regole-di-denominazione).
+
+### Spazio su disco esaurito
+
+**Causa**: il volume dei dati (inclusi i binary log) ha raggiunto l'**Allocated Size**.
 
 **Soluzione**:
 
-1. Verificate l'utilizzo del disco nel pod:
-   ```bash
-   kubectl exec mysql-<name>-0 -- df -h /var/lib/mysql
+1. Misuri lo spazio utilizzato per database:
+   ```sql
+   SELECT table_schema, ROUND(SUM(data_length + index_length) / 1024 / 1024, 1) AS size_mb
+   FROM information_schema.tables
+   GROUP BY table_schema;
    ```
-2. Aumentate la dimensione del volume nel vostro manifesto:
-   ```yaml title="mysql.yaml"
-   spec:
-     size: 20Gi    # Aumentare dal valore attuale
-   ```
-3. Applicate la modifica:
-   ```bash
-   kubectl apply -f mysql.yaml
-   ```
-4. Se il problema e urgente, pulite i dati obsoleti da un client MySQL.
+2. Aumenti la **Disk size (GB)** tramite **Edit**, entro il limite della quota di storage del progetto. Consulti [Modificare le risorse](./how-to/scale-resources.md).
+3. Elimini i dati obsoleti, quindi ottimizzi le tabelle interessate (`OPTIMIZE TABLE`).
 
-:::warning
-Non riducete mai il valore di `size`. L'aumento del volume e supportato, ma la riduzione non lo e.
-:::
+### Replica non sincronizzata
+
+**Causa**: una replica non riesce più a seguire il primary (carico di scrittura elevato, risorse insufficienti, incidente infrastrutturale).
+
+**Soluzione**: la risincronizzazione di una replica non è proposta nella console. [Contatti il supporto](mailto:support@hidora.io) indicando il progetto e il nome del cluster.

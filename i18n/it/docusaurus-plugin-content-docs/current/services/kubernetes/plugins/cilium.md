@@ -3,71 +3,51 @@ sidebar_position: 1
 title: Cilium
 ---
 
-# Dettagli del campo `addons.cilium`
+# Cilium
 
-Il campo `addons.cilium` definisce la configurazione dell'add-on **Cilium**, utilizzato come **CNI (Container Network Interface)** per il cluster Kubernetes.
-Cilium gestisce la rete, la sicurezza e l'osservabilità dei Pod tramite **BPF (Berkeley Packet Filter)**.
-Questo campo permette di personalizzare la distribuzione del componente tramite valori specifici.
+**Cilium** è il **CNI (Container Network Interface)** dei cluster Kubernetes Hikube. Gestisce la rete, la sicurezza e l'osservabilità dei pod tramite **eBPF** e applica le `NetworkPolicy`.
 
-```yaml
-addons:
-  cilium:
-    valuesOverride:
-      cilium:
-        hubble:
-          enabled: true
-        encryption:
-          enabled: true
-```
+## Nella console
 
----
+Cilium fa parte della **Advanced Configuration** del passaggio **Addons**: è sempre presente nel cluster e non si può disattivare. È possibile soltanto sovrascriverne la configurazione.
 
-## `cilium` (Object) — **Obbligatorio**
+1. Alla creazione (passaggio **Addons**) oppure da **Edit** > **Extensions & Addons**, espanda il blocco **Cilium** della sezione **Advanced Configuration**.
+2. Inserisca i suoi valori in **Helm Configuration (YAML) — optional**.
+3. Confermi con **Next** e poi **Create cluster** (creazione) oppure **Save** (modifica).
 
-### Descrizione
+Nella pagina di dettaglio del cluster, la riga **CNI** della sezione **Network** indica **Custom** quando viene applicata una configurazione Cilium.
 
-Il campo `cilium` rappresenta la configurazione principale dell'add-on di rete.
-Raggruppa i parametri necessari all'installazione e alla personalizzazione di Cilium nel cluster.
+## Sovrascrivere la configurazione
 
-### Esempio
+Il valore YAML viene trasmesso al chart Helm di Cilium, sotto la chiave `cilium`. Ad esempio, per attivare Hubble:
 
-```yaml
+```yaml title="cilium-override.yaml"
 cilium:
-  valuesOverride:
-    cilium:
-      hubble:
-        enabled: true
+  hubble:
+    enabled: true
 ```
 
----
+Le opzioni disponibili sono descritte nel [riferimento Helm di Cilium](https://docs.cilium.io/en/stable/helm-reference/).
 
-## `valuesOverride` (Object) — **Obbligatorio**
+:::warning
+La rete del cluster dipende da Cilium. Una sovrascrittura errata può interrompere la comunicazione tra i pod o con il control plane: modifichi solo le opzioni di cui conosce bene l'effetto.
+:::
 
-### Descrizione
+## Utilizzo nel cluster
 
-Il campo `valuesOverride` permette di **sovrascrivere i valori predefiniti** utilizzati durante la distribuzione di Cilium.
-Serve a regolare il comportamento del CNI senza modificare il chart principale.
-Questi valori possono includere la configurazione di **Hubble**, della crittografia, delle policy di rete o delle risorse allocate.
-Per ulteriori valori da definire: https://docs.cilium.io/en/stable/helm-reference/
+```bash
+# Pod Cilium (uno per nodo)
+kubectl get pods -A -l k8s-app=cilium
 
-### Esempio
-
-```yaml
-valuesOverride:
-  cilium:
-    hubble:
-      enabled: true
-    encryption:
-      enabled: true
+# Stato dell'agente Cilium
+CILIUM_NS=$(kubectl get ds -A -l k8s-app=cilium -o jsonpath='{.items[0].metadata.namespace}')
+kubectl exec -n "$CILIUM_NS" -it ds/cilium -- cilium status
 ```
 
----
+Vedere [Come configurare il networking](../how-to/configure-networking.md) per le `NetworkPolicy` e Hubble.
 
 ## Buone pratiche
 
-- Definire sempre `valuesOverride` per mantenere il controllo della configurazione di rete.
-- Attivare **Hubble** (`hubble.enabled: true`) per beneficiare della visibilità di rete e del tracciamento dei flussi.
-- Utilizzare `encryption.enabled: true` per crittografare il traffico inter-Pod negli ambienti sensibili.
-- Verificare la compatibilità della versione di Cilium con la versione del cluster Kubernetes.
-
----
+- Attivi **Hubble** per beneficiare della visibilità di rete e del tracciamento dei flussi.
+- Utilizzi le `NetworkPolicy` per limitare il traffico tra le sue applicazioni.
+- Testi qualsiasi sovrascrittura su un cluster di collaudo prima della produzione.

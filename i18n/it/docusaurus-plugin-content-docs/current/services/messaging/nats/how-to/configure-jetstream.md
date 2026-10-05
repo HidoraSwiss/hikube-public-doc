@@ -4,171 +4,74 @@ title: "Come configurare JetStream"
 
 # Come configurare JetStream
 
-Questa guida spiega come attivare e configurare il modulo **JetStream** su un cluster NATS distribuito su Hikube. JetStream fornisce la persistenza dei messaggi, lo streaming e il pattern request/reply con garanzie di consegna.
+:::info Disponibilità
+NATS non è ancora disponibile in self-service nella [console Hikube](https://console.hikube.cloud).
+Per effettuare il provisioning di un'istanza o modificarne la configurazione, [contatti il supporto](mailto:support@hidora.io).
+:::
+
+Questa guida spiega come dimensionare **JetStream** su un cluster NATS Hikube e poi come creare e utilizzare gli stream dalla CLI `nats`. JetStream fornisce la persistenza dei messaggi, lo streaming e il replay con garanzie di consegna.
+
+L'attivazione di JetStream, la dimensione del suo volume e la configurazione avanzata del server fanno parte della configurazione dell'istanza. Questa opzione non è disponibile nella console; contatti il supporto.
 
 ## Prerequisiti
 
-- **kubectl** configurato con il vostro kubeconfig Hikube
-- Un cluster **NATS** distribuito su Hikube (o un manifesto pronto per la distribuzione)
-- (Opzionale) la CLI **nats** installata localmente per i test
+- Un cluster **NATS** predisposto su Hikube, il suo URL (`<nats-url>`) e delle credenziali
+- La CLI **nats** installata in locale, con un contesto salvato (vedere l'[avvio rapido](../quick-start.md))
 
-## Passi
+## Procedura
 
-### 1. Attivare JetStream
+### 1. Dimensionare lo storage JetStream
 
-JetStream è attivato per impostazione predefinita (`jetstream.enabled: true`). Se lo avete disattivato o desiderate configurarlo esplicitamente, aggiungete la sezione `jetstream` al manifesto:
+| Parametro | Descrizione |
+|-----------|-------------|
+| JetStream attivato | Attiva o disattiva la persistenza sull'istanza |
+| Dimensione del volume | Spazio su disco riservato ai dati JetStream |
 
-```yaml title="nats-jetstream.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: NATS
-metadata:
-  name: my-nats
-spec:
-  replicas: 3
-  resourcesPreset: small
-  external: false
+Il dimensionamento del volume dipende dal caso d'uso:
 
-  jetstream:
-    enabled: true
-    size: 20Gi
-
-  users:
-    admin:
-      password: SecureAdminPassword
-```
-
-**Parametri JetStream:**
-
-| Parametro | Tipo | Descrizione | Default |
-|-----------|------|-------------|---------|
-| `jetstream.enabled` | `bool` | Attiva o disattiva JetStream | `true` |
-| `jetstream.size` | `quantity` | Dimensione del volume persistente per i dati JetStream | `10Gi` |
+- **Messaggi effimeri** (TTL breve, alcune ore): da 10 a 20 GB
+- **Conservazione lunga** (giorni, settimane): da 50 a 100 GB
+- **Stream voluminosi** (eventi, log): 100 GB e oltre
 
 :::tip
-Utilizzate minimo 3 repliche in produzione per beneficiare del consenso Raft di JetStream. Questo garantisce l'alta disponibilità e la durabilità degli stream in caso di guasto di un nodo.
+In produzione preveda almeno 3 repliche per beneficiare del consenso Raft di JetStream. Ciò garantisce l'alta disponibilità e la durabilità degli stream in caso di guasto di un nodo.
 :::
-
-### 2. Configurare l'archiviazione JetStream
-
-Il dimensionamento del volume JetStream dipende dal vostro caso d'uso:
-
-- **Messaggi effimeri** (TTL breve, qualche ora): da `10Gi` a `20Gi`
-- **Retention lunga** (giorni, settimane): da `50Gi` a `100Gi`
-- **Stream voluminosi** (eventi, log): `100Gi` e oltre
-
-```yaml title="nats-jetstream-storage.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: NATS
-metadata:
-  name: my-nats
-spec:
-  replicas: 3
-  resourcesPreset: medium
-  storageClass: replicated
-
-  jetstream:
-    enabled: true
-    size: 50Gi
-
-  users:
-    admin:
-      password: SecureAdminPassword
-```
 
 :::warning
-Ridurre `jetstream.size` su un cluster esistente può comportare una perdita di dati. Prevedete sempre un margine sufficiente durante il dimensionamento iniziale.
+La riduzione del volume JetStream su un'istanza esistente può causare una perdita di dati. Preveda un margine sufficiente in fase di dimensionamento iniziale.
 :::
 
-### 3. Configurazione avanzata tramite config.merge
+### 2. Regolare la configurazione del server (opzionale)
 
-Il campo `config.merge` consente di regolare i parametri di basso livello di NATS:
+I parametri seguenti possono essere regolati a livello di istanza:
 
-```yaml title="nats-config-advanced.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: NATS
-metadata:
-  name: my-nats
-spec:
-  replicas: 3
-  resourcesPreset: medium
-  storageClass: replicated
-
-  jetstream:
-    enabled: true
-    size: 50Gi
-
-  users:
-    admin:
-      password: SecureAdminPassword
-
-  config:
-    merge:
-      max_payload: 8MB
-      write_deadline: 2s
-      debug: false
-      trace: false
-```
-
-**Opzioni di configurazione comuni:**
-
-| Parametro | Descrizione | Default |
-|-----------|-------------|---------|
+| Parametro | Descrizione | Predefinito |
+|-----------|-------------|-------------|
 | `max_payload` | Dimensione massima di un messaggio | `1MB` |
-| `write_deadline` | Ritardo massimo per scrivere una risposta al client | `2s` |
+| `write_deadline` | Tempo massimo per scrivere una risposta al client | `2s` |
 | `debug` | Attiva i log di debug | `false` |
 | `trace` | Attiva il tracciamento dei messaggi (molto verboso) | `false` |
 
 :::note
-Attivate `debug` e `trace` solo per la risoluzione temporanea dei problemi. Queste opzioni generano un volume importante di log e possono impattare le prestazioni.
+`debug` e `trace` si giustificano solo per una risoluzione temporanea dei problemi. Queste opzioni generano un volume elevato di log e possono influire sulle prestazioni.
 :::
 
-### 4. Applicare e verificare
+Trasmetta la dimensione desiderata ed eventuali parametri al [supporto](mailto:support@hidora.io), indicando il progetto e il nome dell'istanza.
 
-Applicate il manifesto:
+### 3. Creare uno stream
 
-```bash
-kubectl apply -f nats-config-advanced.yaml
-```
-
-Monitorate il rolling update dei pod:
+Una volta attivato JetStream, crei uno stream dalla CLI:
 
 ```bash
-kubectl get po -w | grep my-nats
-```
-
-Attendete che tutti i pod siano nello stato `Running`:
-
-```bash
-kubectl get po | grep my-nats
-```
-
-**Risultato atteso:**
-
-```console
-my-nats-0   1/1     Running   0   2m
-my-nats-1   1/1     Running   0   4m
-my-nats-2   1/1     Running   0   6m
-```
-
-### 5. Testare JetStream
-
-Aprite un port-forward verso il servizio NATS:
-
-```bash
-kubectl port-forward svc/my-nats 4222:4222
-```
-
-Create uno stream con la CLI `nats`:
-
-```bash
-nats stream create EVENTS \
-  --server nats://admin:SecureAdminPassword@127.0.0.1:4222 \
+nats stream add EVENTS \
   --subjects "events.>" \
+  --storage file \
   --retention limits \
   --max-msgs -1 \
   --max-bytes -1 \
   --max-age 72h \
-  --replicas 3
+  --replicas 3 \
+  --defaults
 ```
 
 **Risultato atteso:**
@@ -185,19 +88,18 @@ Information:
   ...
 ```
 
-Pubblicate un messaggio:
+### 4. Testare lo stream
+
+Pubblichi un messaggio:
 
 ```bash
-nats pub events.test "Hello JetStream" \
-  --server nats://admin:SecureAdminPassword@127.0.0.1:4222
+nats pub events.test "Hello JetStream"
 ```
 
-Consumate il messaggio:
+Consumi il messaggio:
 
 ```bash
-nats sub "events.>" \
-  --server nats://admin:SecureAdminPassword@127.0.0.1:4222 \
-  --count 1
+nats sub "events.>" --count 1
 ```
 
 **Risultato atteso:**
@@ -207,23 +109,22 @@ nats sub "events.>" \
 Hello JetStream
 ```
 
-Verificate lo stato dello stream:
+Verifichi lo stato dello stream:
 
 ```bash
-nats stream info EVENTS \
-  --server nats://admin:SecureAdminPassword@127.0.0.1:4222
+nats stream info EVENTS
 ```
 
 ## Verifica
 
-La configurazione è riuscita se:
+La configurazione è corretta se:
 
-- I pod NATS sono tutti nello stato `Running`
-- Uno stream può essere creato con il numero di repliche desiderato
-- I messaggi pubblicati vengono persistiti e possono essere consumati
-- Lo stream info mostra il numero corretto di repliche e la politica di retention configurata
+- `nats account info` indica che JetStream è disponibile
+- È possibile creare uno stream con il numero di repliche desiderato
+- I messaggi pubblicati vengono resi persistenti e possono essere consumati
+- `nats stream info` mostra il numero corretto di repliche e la politica di conservazione configurata
 
 ## Per approfondire
 
-- **[Riferimento API NATS](../api-reference.md)**: documentazione completa dei parametri `jetstream`, `config` e `config.merge`
-- **[Come gestire gli utenti NATS](./manage-users.md)**: creare e gestire gli account di accesso al cluster
+- **[Concetti](../concepts.md)**: modelli di comunicazione e JetStream
+- **[Come gestire gli utenti NATS](./manage-users.md)**: account di accesso al cluster

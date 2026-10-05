@@ -1,40 +1,45 @@
 ---
-title: Archiviazione
+title: Storage
 sidebar_position: 0
 ---
 
 import ServiceCardGrid from '@site/src/components/ServiceCardGrid';
 
-# Archiviazione
+# Storage
 
-Hikube offre soluzioni di archiviazione gestite, crittografate e replicate su piu datacenter svizzeri.
+Hikube offre soluzioni di storage gestito, cifrabile e replicato su più datacenter svizzeri. I dischi e i bucket S3 si gestiscono in modalità self-service dalla [console Hikube](https://console.hikube.cloud), nel menu **Infrastructure** del suo progetto.
 
-## Tipi di archiviazione
+## Tipi di storage
 
-| Tipo | Tecnologia | Caso d'uso | Accesso |
-|------|-----------|------------|---------|
-| Object storage (S3) | S3 compatibile | File, backup, asset statici | API S3 |
-| Block storage | LINSTOR/DRBD | Volumi persistenti Kubernetes | PVC nei vostri cluster |
-| Storage locale | NVMe SSD | Workload a bassa latenza | Automatico via StorageClass |
+| Tipo | Menu della console | Utilizzo | Accesso |
+|------|--------------------|-------|-------|
+| Dischi (storage a blocchi) | **Infrastructure** → **Disks** | Dischi di sistema e dischi dati delle macchine virtuali | Collegato a una VM, montato dal sistema operativo |
+| Storage a oggetti (S3) | **Infrastructure** → **S3 Buckets** | File, backup, asset statici, archivi | API S3 (HTTPS) |
 
 :::note
-Il block storage e lo storage locale sono gestiti automaticamente dalla piattaforma tramite le StorageClass Kubernetes.
-Solo l'object storage S3 viene fornito come servizio indipendente.
+I volumi persistenti dei suoi cluster Kubernetes vengono forniti all'interno di ciascun cluster, tramite le sue StorageClass. Non sono gestiti dal menu **Disks**.
 :::
 
 ## Caratteristiche
 
-- **Crittografia**: dati crittografati a riposo e in transito
-- **Replica**: replica sincrona su 3 datacenter per il block storage
-- **Isolamento**: ogni tenant ha le proprie credenziali e spazi di archiviazione
-- **Alta disponibilita**: failover automatico in caso di guasto
+- **Cifratura**: cifratura a riposo (LUKS) opzionale per dischi e bucket; accesso S3 in HTTPS
+- **Replica**: dischi con replica sincrona o asincrona; bucket replicati su 3 datacenter
+- **Isolamento**: ogni risorsa appartiene a un progetto; ogni utente S3 dispone di chiavi proprie, limitate al suo bucket
+- **Quote**: la dimensione dei dischi viene imputata alla quota di storage del progetto
 
 ## Servizi disponibili
 
 <ServiceCardGrid items={[
   {
+    title: "Dischi",
+    description: "Volumi a blocchi persistenti e replicati per le sue macchine virtuali: dischi di sistema e dischi dati.",
+    icon: "/img/services/disks.svg",
+    href: "./disks/overview",
+    tags: ["Block Storage", "VM"],
+  },
+  {
     title: "Bucket S3",
-    description: "Object storage compatibile S3 per file, backup e asset. Provisioning tramite kubectl apply.",
+    description: "Storage a oggetti compatibile S3 per i suoi file, backup e asset, con utenti e chiavi di accesso per bucket.",
     icon: "/img/services/s3.svg",
     href: "./buckets/overview",
     tags: ["Object Storage", "S3"],

@@ -5,15 +5,24 @@ title: FAQ
 
 # FAQ — Kafka
 
-### Qual è la differenza tra `partitions` e `replicationFactor`?
+:::info Disponibilità
+Kafka non è ancora disponibile in modalità self-service nella [console Hikube](https://console.hikube.cloud).
+Per effettuare il provisioning di un'istanza o modificarne la configurazione, [contatti il supporto](mailto:support@hidora.io).
+:::
 
-Questi due parametri servono obiettivi distinti:
+### Come ottenere un cluster Kafka?
 
-- **`partitions`**: determina il **parallelismo e il throughput** di un topic. Più partizioni ci sono, più consumatori possono leggere in parallelo. Ogni partizione è una sequenza ordinata di messaggi.
-- **`replicas`** (fattore di replica): determina il numero di **copie** di ogni partizione distribuite su diversi broker, garantendo l'**alta disponibilità**. Se un broker cade, una replica prende il suo posto.
+Invii la sua richiesta al [supporto](mailto:support@hidora.io) con i parametri dell'istanza (numero di broker, preset, storage, topic, accesso esterno). L'[avvio rapido](./quick-start.md) elenca le informazioni da preparare.
+
+### Qual è la differenza tra le partizioni e il fattore di replica?
+
+Questi due parametri servono a obiettivi distinti:
+
+- **Partizioni**: determinano il **parallelismo e il throughput** di un topic. Più partizioni ci sono, più alto è il numero di consumer che possono leggere in parallelo. Ogni partizione è una sequenza ordinata di messaggi.
+- **Repliche** (fattore di replica): determinano il numero di **copie** di ogni partizione distribuite su broker diversi, garantendo l'**alta disponibilità**. Se un broker si arresta, una replica subentra.
 
 :::warning
-Il numero di repliche di un topic **non può superare** il numero di broker disponibili. Ad esempio, con 3 broker (`kafka.replicas: 3`), potete configurare al massimo `replicas: 3` su un topic.
+Il numero di repliche di un topic **non può superare** il numero di broker disponibili. Ad esempio, con 3 broker un topic può avere al massimo 3 repliche.
 :::
 
 ### Perché Kafka utilizza ZooKeeper?
@@ -21,44 +30,35 @@ Il numero di repliche di un topic **non può superare** il numero di broker disp
 ZooKeeper garantisce il **coordinamento del cluster Kafka**:
 
 - **Elezione del controller**: designa il broker leader responsabile della gestione delle partizioni
-- **Metadati dei topic**: archivia la lista dei topic, delle partizioni e la loro assegnazione ai broker
-- **Rilevamento dei guasti**: monitora lo stato dei broker e avvia la riassegnazione in caso di malfunzionamento
+- **Metadati dei topic**: archivia l'elenco dei topic, delle partizioni e la loro assegnazione ai broker
+- **Rilevamento dei guasti**: monitora lo stato dei broker e avvia la riassegnazione in caso di guasto
 
 :::tip
-ZooKeeper richiede un **numero dispari di repliche** (3, 5, 7...) per mantenere il quorum. In produzione, utilizzate almeno `zookeeper.replicas: 3`.
+ZooKeeper richiede un **numero dispari di istanze** (3, 5, 7…) per mantenere il quorum. In produzione, preveda almeno 3 istanze.
 :::
 
 ### A cosa serve `cleanup.policy` su un topic?
 
-La politica di pulizia definisce come Kafka gestisce i vecchi messaggi:
+La politica di pulizia definisce come Kafka gestisce i messaggi meno recenti:
 
-- **`delete`** (predefinito): elimina i segmenti di log che superano la durata di retention definita da `retention.ms`. Adatto ai flussi di eventi.
-- **`compact`**: conserva unicamente l'**ultimo valore per ogni chiave**. Adatto alle tabelle di riferimento o agli stati (changelog).
+- **`delete`** (predefinita): elimina i segmenti di log che superano la durata di conservazione definita da `retention.ms`. Adatta ai flussi di eventi.
+- **`compact`**: conserva solo l'**ultimo valore per ogni chiave**. Adatta alle tabelle di riferimento o agli stati (changelog).
 
-Esempio di configurazione:
-
-```yaml title="kafka.yaml"
-topics:
-  - name: user-profiles
-    partitions: 3
-    replicas: 3
-    config:
-      cleanup.policy: compact
-```
+La politica di ogni topic fa parte della configurazione dell'istanza. Questa opzione non è disponibile nella console; contatti il supporto.
 
 ### Come funzionano i consumer group?
 
 Un **consumer group** è un insieme di consumer che si ripartiscono la lettura delle partizioni di un topic:
 
-- Ogni partizione è letta da **un solo consumer** del gruppo in un dato momento
-- Se un consumer cade, le sue partizioni vengono redistribuite agli altri membri del gruppo (**rebalancing**)
-- Più consumer group possono leggere lo stesso topic indipendentemente (ognuno mantiene il proprio offset)
+- Ogni partizione viene letta da **un solo consumer** del gruppo in un dato momento
+- Se un consumer si arresta, le sue partizioni vengono ridistribuite agli altri membri del gruppo (**rebalancing**)
+- Più consumer group possono leggere lo stesso topic in modo indipendente (ciascuno mantiene il proprio offset)
 
-Questo consente un **consumo parallelo** garantendo al contempo l'ordine dei messaggi all'interno di ogni partizione.
+Ciò consente un **consumo parallelo** garantendo al tempo stesso l'ordine dei messaggi all'interno di ogni partizione.
 
-### Qual è la differenza tra `resourcesPreset` e `resources`?
+### Quali preset di risorse sono disponibili?
 
-Il campo `resourcesPreset` applica una configurazione CPU/memoria predefinita, mentre `resources` permette di specificare valori espliciti. Se `resources` è definito, `resourcesPreset` viene **ignorato**.
+I preset si applicano separatamente ai broker e a ZooKeeper:
 
 | **Preset** | **CPU** | **Memoria** |
 | ---------- | ------- | ----------- |
@@ -70,57 +70,20 @@ Il campo `resourcesPreset` applica una configurazione CPU/memoria predefinita, m
 | `xlarge`   | 4       | 4Gi         |
 | `2xlarge`  | 8       | 8Gi         |
 
-Esempio con risorse esplicite:
+È possibile richiedere anche valori espliciti di CPU/memoria, che in tal caso sostituiscono il preset. Questa opzione non è disponibile nella console; contatti il supporto.
 
-```yaml title="kafka.yaml"
-kafka:
-  replicas: 3
-  resources:
-    cpu: 2000m
-    memory: 4Gi
-  size: 50Gi
-```
+### Come esporre Kafka all'esterno della piattaforma?
 
-### Come esporre Kafka all'esterno del cluster?
-
-Attivate il parametro `external: true` nel vostro manifesto:
-
-```yaml title="kafka.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Kafka
-metadata:
-  name: kafka
-spec:
-  external: true
-  kafka:
-    replicas: 3
-    resourcesPreset: small
-    size: 10Gi
-  zookeeper:
-    replicas: 3
-    resourcesPreset: small
-    size: 5Gi
-```
-
-Questo crea un servizio di tipo **LoadBalancer** per ogni broker, consentendo l'accesso dall'esterno del cluster Kubernetes.
+L'accesso esterno è un'opzione dell'istanza: quando è attivata, i broker diventano raggiungibili dall'esterno della piattaforma. Questa opzione non è disponibile nella console; contatti il supporto.
 
 :::warning
-L'esposizione esterna rende i vostri broker accessibili su Internet. Assicuratevi che l'autenticazione e la crittografia siano correttamente configurate prima di attivare questa opzione.
+L'esposizione esterna rende i suoi broker accessibili su Internet, sulla porta `9094`. Questo listener è cifrato in TLS per impostazione predefinita, ma non è configurata alcuna autenticazione dei client: chiunque conosca l'indirizzo può produrre e consumare messaggi. Concordi con il supporto l'attivazione di un'autenticazione (SCRAM o mTLS) prima di attivare questa opzione.
 :::
 
 ### Come configurare `min.insync.replicas`?
 
-Il parametro `min.insync.replicas` garantisce che un numero minimo di repliche confermi ogni scrittura prima che venga considerata riuscita. Si tratta di una configurazione a livello di **topic**:
-
-```yaml title="kafka.yaml"
-topics:
-  - name: orders
-    partitions: 6
-    replicas: 3
-    config:
-      min.insync.replicas: "2"
-```
+Il parametro `min.insync.replicas` garantisce che un numero minimo di repliche confermi ogni scrittura prima che sia considerata riuscita. È una configurazione a livello di **topic**, definita nella configurazione dell'istanza.
 
 :::tip
-Per un cluster di produzione con 3 repliche, configurate `min.insync.replicas: 2`. Questo tollera la perdita di un broker garantendo al contempo la durabilità dei dati.
+Per un topic di produzione con 3 repliche, `min.insync.replicas: 2` tollera la perdita di un broker garantendo al tempo stesso la durabilità dei dati. Lato producer, lo combini con `acks=all`.
 :::

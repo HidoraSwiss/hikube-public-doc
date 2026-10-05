@@ -5,97 +5,116 @@ title: Risoluzione dei problemi
 
 # Risoluzione dei problemi — Kubernetes
 
-### Nodi in stato NotReady
+### Il cluster resta in creazione
 
-**Causa**: uno o più nodi non rispondono più al piano di controllo. Questo può essere legato a risorse insufficienti, un problema di archiviazione o un malfunzionamento del kubelet.
+**Causa**: il provisioning del control plane o dei nodi non va a buon fine.
 
 **Soluzione**:
 
-1. Verificate lo stato dei nodi e le loro condizioni:
-   ```bash
-   kubectl get nodes
-   kubectl describe node <node-name>
-   ```
-2. Consultate gli eventi per identificare la causa (DiskPressure, MemoryPressure, PIDPressure):
-   ```bash
-   kubectl get events --sort-by='.lastTimestamp'
-   ```
-3. Verificate che l'`instanceType` scelto fornisca risorse sufficienti per i workload distribuiti.
-4. Se il problema persiste, aumentate il `maxReplicas` del nodeGroup per permettere al cluster di provisionare nuovi nodi sani.
+1. In **Infrastructure** > **Kubernetes**, verifichi lo stato del cluster. Un cluster appena creato passa da **Creating** a **Ready** in pochi minuti.
+2. Nella pagina di dettaglio, verifichi in **Node Pools** che i nodi diventino attivi.
+3. Se lo stato non cambia, [contatti il supporto](mailto:support@hidora.io) indicando il nome del cluster e il progetto.
 
 ---
 
-### Pod in Pending (risorse insufficienti)
+### La procedura guidata blocca la creazione (quota)
 
-**Causa**: nessun nodo dispone di CPU o memoria sufficienti per pianificare il pod. Lo scheduler Kubernetes non riesce a trovare un posizionamento.
+**Causa**: il progetto non dispone di quota CPU, memoria o storage sufficiente. La quota è calcolata sul control plane e sul **numero massimo** di nodi di ogni gruppo, storage effimero compreso («Storage quota exceeded for this project (including maximum auto-scaling)»).
 
 **Soluzione**:
 
-1. Identificate la ragione del Pending:
-   ```bash
-   kubectl describe pod <pod-name>
-   ```
-   Cercate il messaggio `FailedScheduling` negli eventi.
+1. Consulti gli indicatori **Project Quotas** della procedura guidata per identificare la risorsa superata.
+2. Riduca i **Maximum nodes**, il tipo di istanza o la **Ephemeral storage size** dei gruppi.
+3. Se l'esigenza è reale, chieda un aumento della quota al supporto.
 
-2. Verificate le risorse disponibili sui nodi:
-   ```bash
-   kubectl top nodes
-   ```
+---
 
-3. Se i nodi sono saturi, aumentate il `maxReplicas` del vostro nodeGroup:
-   ```yaml title="cluster.yaml"
-   spec:
-     nodeGroups:
-       workers:
-         minReplicas: 2
-         maxReplicas: 10
-   ```
+### Il download del kubeconfig non riesce
 
-4. Se il pod e bloccato su un PVC, verificate che il PVC sia correttamente provisionato:
-   ```bash
-   kubectl get pvc
-   ```
+**Causa**: la console mostra «Could not download the kubeconfig file.» quando il cluster non è ancora pronto o il servizio è momentaneamente non disponibile.
+
+**Soluzione**:
+
+1. Attenda che il cluster abbia lo stato **Ready**.
+2. Faccia di nuovo clic su **Kubeconfig** nella sezione **Actions** della pagina di dettaglio.
+3. Se l'errore persiste, contatti il supporto.
 
 ---
 
 ### Kubeconfig scaduto o non valido
 
-**Causa**: il certificato client nel kubeconfig e scaduto (errore `x509: certificate has expired`) o le credenziali non sono valide (errore `Unauthorized`).
+**Causa**: `kubectl` restituisce `x509: certificate has expired`, `Unauthorized`, oppure non raggiunge più il server (ad esempio, file di un cluster eliminato e poi ricreato).
 
 **Soluzione**:
 
-1. Rigenerate il kubeconfig dal Secret sorgente:
+1. Scarichi un nuovo kubeconfig dalla pagina di dettaglio del cluster (pulsante **Kubeconfig**).
+2. Sostituisca il vecchio file:
    ```bash
-   kubectl get tenantsecret <cluster-name>-admin-kubeconfig -o jsonpath='{.data.super-admin\.conf}' | base64 -d > kubeconfig.yaml
+   export KUBECONFIG=~/Downloads/kubeconfig-<nome-del-cluster>.yaml
    ```
-
-2. Sostituite il vostro vecchio file kubeconfig:
-   ```bash
-   export KUBECONFIG=kubeconfig.yaml
-   ```
-
-3. Verificate la connettività:
+3. Verifichi la connettività:
    ```bash
    kubectl cluster-info
    ```
 
 ---
 
-### Ingress restituisce 404
+### Nodi nello stato NotReady
 
-**Causa**: la risorsa Ingress e mal configurata o l'addon ingressNginx non è attivato sul cluster.
+**Causa**: uno o più nodi non rispondono più al control plane. Ciò può dipendere da risorse insufficienti, da un disco effimero saturo o da un malfunzionamento del kubelet.
 
 **Soluzione**:
 
-1. Verificate che l'addon `ingressNginx` sia attivato nella configurazione del cluster:
-   ```yaml title="cluster.yaml"
-   spec:
-     addons:
-       ingressNginx:
-         enabled: true
+1. Verifichi lo stato dei nodi e le relative condizioni:
+   ```bash
+   kubectl get nodes
+   kubectl describe node <nome-del-nodo>
+   ```
+2. Consulti gli eventi per identificare la causa (`DiskPressure`, `MemoryPressure`, `PIDPressure`):
+   ```bash
+   kubectl get events -A --sort-by='.lastTimestamp'
+   ```
+3. In caso di `DiskPressure`, aumenti la **Ephemeral storage size** del gruppo (**Edit** > **Node groups**).
+4. Verifichi che il tipo di istanza fornisca risorse sufficienti per i workload distribuiti.
+5. Se il problema persiste, contatti il supporto.
+
+---
+
+### Pod in Pending (risorse insufficienti)
+
+**Causa**: nessun nodo dispone di CPU o memoria sufficienti per pianificare il pod.
+
+**Soluzione**:
+
+1. Identifichi il motivo del Pending:
+   ```bash
+   kubectl describe pod <nome-del-pod>
+   ```
+   Cerchi il messaggio `FailedScheduling` negli eventi.
+2. Verifichi le risorse disponibili sui nodi:
+   ```bash
+   kubectl top nodes
+   ```
+3. Se i nodi sono saturi e il gruppo ha raggiunto il suo massimo, aumenti i **Maximum nodes** (**Edit** > **Node groups**), oppure aggiunga un gruppo con un tipo di istanza più grande.
+4. Se il pod è bloccato su un PVC, verifichi che il PVC sia stato correttamente provisionato:
+   ```bash
+   kubectl get pvc
    ```
 
-2. Verificate che l'`ingressClassName` sia specificato nel vostro Ingress:
+---
+
+### L'Ingress restituisce 404 o non risponde
+
+**Causa**: la risorsa Ingress è configurata in modo errato, l'addon Ingress NGINX non è attivato oppure nessun gruppo di nodi ospita il controller.
+
+**Soluzione**:
+
+1. Verifichi nella pagina di dettaglio del cluster che **Ingress NGINX** compaia nella sezione **Extensions**. In caso contrario, lo attivi tramite **Edit** > **Extensions & Addons**.
+2. Verifichi che almeno un gruppo di nodi sia **Exposed on the internet (Public IP)** e che il controller abbia un IP esterno:
+   ```bash
+   kubectl get svc -A | grep ingress-nginx-controller
+   ```
+3. Verifichi che l'`ingressClassName` sia specificato nel suo Ingress:
    ```yaml title="ingress.yaml"
    apiVersion: networking.k8s.io/v1
    kind: Ingress
@@ -115,26 +134,26 @@ title: Risoluzione dei problemi
                    port:
                      number: 80
    ```
-
-3. Verificate che il backend (Service + Pod) funzioni:
+4. Verifichi che il backend (Service e pod) funzioni:
    ```bash
    kubectl get pods -l app=my-app
    kubectl get svc my-app-svc
    ```
-
-4. Verificate la configurazione dell'host e del path nella regola Ingress.
+5. Verifichi che il suo record DNS punti all'IP esterno del controller, nonché la configurazione dell'host e del path nella regola Ingress.
 
 ---
 
-### PVC in stato Pending
+### PVC nello stato Pending
 
-**Causa**: la `storageClass` richiesta non esiste o la capacità di archiviazione e insufficiente.
+**Causa**: la classe di storage richiesta non esiste nel cluster oppure la capacità di storage è insufficiente.
 
 **Soluzione**:
 
-1. Le storageClass disponibili su Hikube sono: `local`, `replicated` e `replicated-async`.
-
-2. Assicuratevi che il nome utilizzato nel vostro PVC corrisponda a una storageClass esistente:
+1. Elenchi le classi di storage disponibili nel cluster:
+   ```bash
+   kubectl get storageclass
+   ```
+2. Si assicuri che il nome utilizzato nel PVC corrisponda a una classe esistente, ad esempio `replicated`:
    ```yaml title="pvc.yaml"
    apiVersion: v1
    kind: PersistentVolumeClaim
@@ -148,10 +167,20 @@ title: Risoluzione dei problemi
        requests:
          storage: 10Gi
    ```
-
-3. Verificate gli eventi legati al PVC:
+3. Verifichi gli eventi relativi al PVC:
    ```bash
    kubectl describe pvc my-data
    ```
+4. Se la capacità è insufficiente, riduca la dimensione richiesta o contatti il supporto Hikube.
 
-4. Se la capacità e insufficiente, riducete la dimensione richiesta o contattate il supporto Hikube.
+---
+
+### Il salvataggio delle modifiche non riesce
+
+**Causa**: la console mostra un errore dopo **Save**, ad esempio «Conflict during the update (e.g. resource in use).» oppure un messaggio di convalida.
+
+**Soluzione**:
+
+1. Legga il messaggio: indica il campo da correggere (ad esempio, GPU aggiunte a un gruppo esistente, massimo inferiore al minimo, YAML di sovrascrittura non valido).
+2. In caso di conflitto, attenda il termine dell'operazione in corso sul cluster, ricarichi la pagina di modifica e riprovi.
+3. Per aggiungere GPU, crei un nuovo gruppo di nodi anziché modificare un gruppo esistente senza GPU.

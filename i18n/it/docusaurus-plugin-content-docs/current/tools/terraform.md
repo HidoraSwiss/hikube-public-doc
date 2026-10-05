@@ -1,11 +1,15 @@
 ---
 sidebar_position: 1
-title: Terraform con Hikube
+title: Terraform (legacy)
 ---
 
-# Infrastructure as Code con Hikube
+# Infrastructure as Code con Hikube (legacy)
 
-Hikube essendo basato su Kubernetes, potete utilizzare **Terraform** per gestire la vostra infrastruttura in modo dichiarativo e riproducibile. Questo approccio vi permette di versionare, testare e distribuire la vostra infrastruttura Hikube in modo automatizzato.
+:::warning Metodo legacy
+Questo metodo gestisce Hikube tramite un kubeconfig di progetto e manifesti Kubernetes. È **deprecato**: resta funzionante per i clienti che lo utilizzano già, ma non verrà più sviluppato. Per gestire le sue risorse, utilizzi la [console Hikube](https://console.hikube.cloud).
+:::
+
+È possibile utilizzare **Terraform** per gestire l'infrastruttura Hikube in modo dichiarativo e riproducibile, tramite i provider Kubernetes.
 
 ---
 
@@ -13,10 +17,9 @@ Hikube essendo basato su Kubernetes, potete utilizzare **Terraform** per gestire
 
 ### Prerequisiti
 
+- **Un kubeconfig di progetto fornito da Hidora.** Non viene più fornito per impostazione predefinita: [contatti il supporto](mailto:support@hidora.io) per ottenerne uno.
 - [Terraform](https://www.terraform.io/downloads) (versione >= 1.0)
 - [kubectl](https://kubernetes.io/docs/tasks/tools/)
-- Accesso a un tenant Hikube
-- Kubeconfig configurato
 
 ### Provider Kubernetes
 
@@ -68,7 +71,7 @@ variable "vm_name" {
 
 ## Esempi
 
-### Distribuire un Cluster Kubernetes
+### Distribuire un cluster Kubernetes
 
 ```hcl title="kubernetes.tf"
 resource "kubectl_manifest" "kubernetes_cluster" {
@@ -76,8 +79,7 @@ resource "kubectl_manifest" "kubernetes_cluster" {
     apiVersion = "apps.cozystack.io/v1alpha1"
     kind       = "Kubernetes"
     metadata = {
-      name      = var.cluster_name
-      namespace = "default"
+      name = var.cluster_name
     }
     spec = {
       version      = "v1.34"
@@ -116,7 +118,7 @@ resource "kubectl_manifest" "kubernetes_cluster" {
             "${var.cluster_name}.example.com"
           ]
         }
-        # Richiesto per esporre le GPU ai pod di un gruppo di nodi GPU
+        # Necessario per esporre le GPU ai pod di un node group GPU
         # gpuOperator = {
         #   enabled = true
         # }
@@ -130,8 +132,7 @@ data "kubernetes_secret" "cluster_kubeconfig" {
   depends_on = [kubectl_manifest.kubernetes_cluster]
   
   metadata {
-    name      = "${var.cluster_name}-admin-kubeconfig"
-    namespace = "default"
+    name = "kubernetes-${var.cluster_name}-admin-kubeconfig"
   }
 }
 
@@ -145,10 +146,10 @@ resource "local_file" "kubeconfig" {
 }
 ```
 
-### Distribuire una Macchina Virtuale
+### Distribuire una macchina virtuale
 
 ```hcl title="virtual-machine.tf"
-# Il disco è una risorsa VMDisk separata, referenziata dalla VM
+# Il disco è una risorsa VMDisk distinta, referenziata dalla VM
 resource "kubectl_manifest" "vm_disk" {
   yaml_body = yamlencode({
     apiVersion = "apps.cozystack.io/v1alpha1"
@@ -336,7 +337,7 @@ resource "kubectl_manifest" "postgres" {
 }
 
 variable "postgres_password" {
-  description = "Password per l'utente admin di PostgreSQL"
+  description = "Password for PostgreSQL admin user"
   type        = string
   sensitive   = true
 }
@@ -344,7 +345,7 @@ variable "postgres_password" {
 
 ---
 
-## Output e Variabili
+## Output e variabili
 
 ### Output utili
 
@@ -373,7 +374,7 @@ output "postgres_connection" {
 cluster_name = "my-prod-cluster"
 vm_name      = "my-app-vm"
 
-# La vostra chiave SSH pubblica
+# La sua chiave SSH pubblica
 ssh_public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQ... user@hostname"
 
 # Password PostgreSQL
@@ -382,7 +383,7 @@ postgres_password = "your-secure-password-here"
 
 ---
 
-## Buone Pratiche
+## Buone pratiche
 
 ### Struttura del progetto
 
@@ -416,7 +417,7 @@ terraform apply
 # Verificare le risorse create
 terraform show
 
-# Pulire le risorse
+# Eliminare le risorse
 terraform destroy
 ```
 

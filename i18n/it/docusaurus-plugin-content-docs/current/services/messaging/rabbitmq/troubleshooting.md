@@ -5,114 +5,86 @@ title: Risoluzione dei problemi
 
 # Risoluzione dei problemi — RabbitMQ
 
-### Coda bloccata (flow control)
+### Il cluster resta in « Creating » o passa in « Error »
 
-**Causa**: RabbitMQ ha attivato un **allarme memoria** o **allarme disco**, bloccando le pubblicazioni per proteggere il sistema. Questo si verifica quando il consumo di memoria supera la soglia (high watermark) o lo spazio su disco è insufficiente.
-
-**Soluzione**:
-
-1. Verificate lo stato del cluster e gli allarmi attivi:
-   ```bash
-   kubectl exec <pod-rabbitmq> -- rabbitmqctl status | grep -A 10 "alarms"
-   ```
-2. Identificate la risorsa in causa (memoria o disco):
-   ```bash
-   kubectl exec <pod-rabbitmq> -- rabbitmqctl status | grep -E "mem_|disk_"
-   ```
-3. Aumentate le risorse allocate nel vostro manifesto:
-   ```yaml title="rabbitmq.yaml"
-   replicas: 3
-   resources:
-     cpu: 1
-     memory: 2Gi
-   size: 20Gi
-   ```
-4. Eliminate le code inutilizzate se necessario:
-   ```bash
-   kubectl exec <pod-rabbitmq> -- rabbitmqctl purge_queue <nome-coda>
-   ```
-
-### Nodo RabbitMQ non unito al cluster
-
-**Causa**: un nodo RabbitMQ non riesce a unirsi al cluster, spesso a causa di un problema di risoluzione DNS, di incoerenza del cookie Erlang, o di policy di rete restrittive.
+**Causa**: il provisioning è in corso, oppure non è riuscito (ad esempio per mancanza di risorse disponibili).
 
 **Soluzione**:
 
-1. Verificate lo stato del cluster da un nodo funzionante:
-   ```bash
-   kubectl exec <pod-rabbitmq> -- rabbitmqctl cluster_status
-   ```
-2. Consultate i log del pod in errore:
-   ```bash
-   kubectl logs <pod-rabbitmq-problematico>
-   ```
-3. Verificate che la risoluzione DNS funzioni tra i pod:
-   ```bash
-   kubectl exec <pod-rabbitmq> -- nslookup <pod-rabbitmq-problematico>.<servizio-headless>
-   ```
-4. Se il problema persiste, eliminate il pod in errore per forzarne la ricreazione:
-   ```bash
-   kubectl delete pod <pod-rabbitmq-problematico>
-   ```
+1. Attenda qualche minuto: la pagina di dettaglio e l'elenco si aggiornano automaticamente.
+2. Se lo stato resta in **Creating** per un tempo anomalo o passa a **Error** / **Failed**, [contatti il supporto](mailto:support@hidora.io) indicando il nome del progetto, il nome del cluster e il suo identificativo (mostrato sotto il nome del cluster, con un pulsante di copia).
 
-### Messaggi non instradati (exchange mal configurato)
+### « Storage quota exceeded for this project » nella procedura guidata
 
-**Causa**: i messaggi pubblicati non raggiungono le code, generalmente a causa di un tipo di exchange errato, di una routing key non corretta, o di un binding mancante tra l'exchange e la coda.
+**Causa**: la dimensione del disco moltiplicata per il numero di repliche supera lo storage residuo della quota del progetto.
 
 **Soluzione**:
 
-1. Elencate i binding esistenti per identificare le rotte configurate:
-   ```bash
-   kubectl exec <pod-rabbitmq> -- rabbitmqctl list_bindings -p <vhost>
-   ```
-2. Verificate il tipo di exchange e la routing key attesa:
-   ```bash
-   kubectl exec <pod-rabbitmq> -- rabbitmqctl list_exchanges -p <vhost>
-   ```
-3. Configurate un **dead letter exchange** per catturare i messaggi non instradati e facilitare la diagnostica:
-   ```bash
-   kubectl exec <pod-rabbitmq> -- rabbitmqctl set_policy DLX ".*" '{"dead-letter-exchange":"dlx"}' -p <vhost>
-   ```
-4. Verificate che il produttore utilizzi l'exchange e la routing key corretti nella sua configurazione
+1. Riduca il **Disk size (GB)** o il **Number of replicas**.
+2. Se necessario, liberi storage nel progetto o faccia aumentare la quota del progetto.
 
-### Memoria satura (memory alarm)
+### « A cluster with this name already exists. »
 
-**Causa**: RabbitMQ ha raggiunto la soglia di memoria (**high watermark**, per impostazione predefinita il 40% della memoria disponibile). Tutte le pubblicazioni sono bloccate fino a quando la memoria non scende sotto la soglia.
+**Causa**: un cluster RabbitMQ del progetto ha già questo nome.
+
+**Soluzione**: torni al passaggio **General** e scelga un altro **Cluster Name**.
+
+### Il campo « Host » mostra « Not available / Creating »
+
+**Causa**: l'indirizzo pubblico non è ancora assegnato, oppure l'**External Access** è disattivato.
 
 **Soluzione**:
 
-1. Verificate il consumo di memoria:
-   ```bash
-   kubectl exec <pod-rabbitmq> -- rabbitmqctl status | grep "mem_used"
-   ```
-2. Identificate le code più voluminose:
-   ```bash
-   kubectl exec <pod-rabbitmq> -- rabbitmqctl list_queues name messages memory -p <vhost> --formatter table
-   ```
-3. Aumentate la memoria allocata a RabbitMQ:
-   ```yaml title="rabbitmq.yaml"
-   resources:
-     cpu: 1
-     memory: 4Gi
-   ```
-4. Eliminate le code inutilizzate o le code contenenti un gran numero di messaggi non consumati
+1. Verifichi nella sezione **Connection** che **External Access** indichi **Enabled**. In caso contrario, lo attivi (vedere [Configurare l'accesso esterno](./how-to/configure-external-access.md)).
+2. Se l'accesso esterno è attivato, attenda e poi ricarichi la pagina.
 
-### Connessione AMQP rifiutata
+### Connessione AMQP rifiutata (`ACCESS_REFUSED`)
 
-**Causa**: il client non riesce a connettersi al broker RabbitMQ. Questo può essere dovuto a credenziali errate, permessi vhost mancanti, o un problema di accessibilità di rete.
+**Causa**: credenziali errate, oppure l'utente non ha diritti sul vhost richiesto.
 
 **Soluzione**:
 
-1. Verificate le credenziali di connessione nel Secret Kubernetes:
+1. Verifichi nella tabella **Users** (colonna **VHosts**) che l'utente abbia effettivamente un diritto sul vhost utilizzato dal client.
+2. Se necessario, aggiunga l'accesso con **Manage Access**.
+3. Se la password è stata smarrita o è dubbia, ne generi una nuova con **Change Password** e aggiorni il client.
+4. Verifichi che il client indichi il vhost corretto (nome esatto, con distinzione tra maiuscole e minuscole).
+
+### Connessione impossibile (timeout, connessione rifiutata)
+
+**Causa**: accesso esterno disattivato, indirizzo o porta errati, oppure filtraggio di rete lato client.
+
+**Soluzione**:
+
+1. Verifichi l'**Host** e lo stato dell'**External Access** nella sezione **Connection**.
+2. Utilizzi la porta **5672**.
+3. Verifichi l'apertura della porta dalla macchina client:
    ```bash
-   kubectl get tenantsecret <nome-rabbitmq>-credentials -o jsonpath='{.data}' | base64 -d
+   nc -zv <host> 5672
    ```
-2. Verificate che l'utente abbia i permessi necessari sul vhost:
-   ```bash
-   kubectl exec <pod-rabbitmq> -- rabbitmqctl list_permissions -p <vhost>
-   ```
-3. Testate la connettività alla porta AMQP (5672):
-   ```bash
-   kubectl exec <pod-rabbitmq> -- rabbitmq-diagnostics check_port_connectivity
-   ```
-4. Se vi connettete dall'esterno del cluster, assicuratevi che `external: true` sia configurato nel vostro manifesto
+4. Verifichi che la sua rete o il firewall locale autorizzino le connessioni in uscita verso questa porta.
+
+### Pubblicazioni bloccate (flow control, allarme di memoria o disco)
+
+**Causa**: RabbitMQ blocca le pubblicazioni quando raggiunge la soglia di memoria (high watermark) o quando lo spazio su disco è insufficiente, per proteggere il broker. I client ricevono allora una notifica `connection.blocked`.
+
+**Soluzione**:
+
+1. Lato applicazioni, verifichi che i consumer tengano il ritmo dei producer ed elimini i messaggi dalle queue che accumulano messaggi non consumati.
+2. Aumenti il **Disk size (GB)** da **Edit** se l'allarme riguarda il disco (vedere [Modificare la configurazione di un cluster](./how-to/scale-resources.md)).
+3. Il preset (memoria) non è modificabile dopo la creazione: crei un cluster con un preset superiore oppure [contatti il supporto](mailto:support@hidora.io).
+
+### Messaggi non instradati
+
+**Causa**: il producer pubblica verso un exchange senza binding corrispondente (tipo di exchange errato, routing key errata, binding mancante). Il messaggio viene quindi scartato.
+
+**Soluzione**:
+
+1. Verifichi nel codice del producer il nome dell'exchange e la routing key.
+2. Verifichi che il consumer dichiari correttamente il binding tra la queue e l'exchange.
+3. Pubblichi con il flag `mandatory` per essere avvisato dei messaggi non instradati, oppure dichiari un *alternate exchange* per acquisirli.
+
+### L'eliminazione del cluster non riesce
+
+**Causa**: un conflitto impedisce l'eliminazione (« Cannot delete this cluster (conflict). ») oppure il servizio è momentaneamente non disponibile.
+
+**Soluzione**: riprovi qualche minuto più tardi. Se l'errore persiste, [contatti il supporto](mailto:support@hidora.io).
