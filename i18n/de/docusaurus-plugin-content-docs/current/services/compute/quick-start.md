@@ -109,7 +109,7 @@ Im Abschnitt **Network & Security** der Detailseite zeigt der Block **SSH Connec
 ssh ubuntu@203.0.113.10
 ```
 
-Klicken Sie auf das Kopiersymbol, um ihn in die Zwischenablage zu kopieren. Der Standardbenutzer hängt vom Image ab; er wird auch unter **System Image** (**User**) angezeigt.
+Klicken Sie auf das Kopiersymbol, um ihn in die Zwischenablage zu kopieren. Der Standardbenutzer hängt vom Image ab; es ist der Benutzer im SSH-Befehl.
 
 ---
 

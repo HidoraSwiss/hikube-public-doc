@@ -71,7 +71,7 @@ Der Wechsel zu **Ready** dauert in der Regel einige Minuten.
 
 ## Schritt 5: Die kubeconfig des Clusters abrufen
 
-1. Klicken Sie auf den Cluster, um seine Seite **Cluster Details** zu öffnen.
+1. Klicken Sie auf den Cluster, um seine Detailseite zu öffnen.
 2. Klicken Sie auf **Kubeconfig**. Die Konsole lädt eine Datei `kubeconfig-<cluster-name>.yaml` herunter.
 
 :::warning Sensible Datei

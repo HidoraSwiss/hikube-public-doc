@@ -67,7 +67,7 @@ Reaching **Ready** usually takes a few minutes.
 
 ## Step 5: Retrieve the cluster kubeconfig
 
-1. Click the cluster to open its **Cluster Details** page.
+1. Click the cluster to open its detail page.
 2. Click **Kubeconfig**. The console downloads a `kubeconfig-<cluster-name>.yaml` file.
 
 :::warning Sensitive file

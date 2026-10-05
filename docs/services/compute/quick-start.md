@@ -109,7 +109,7 @@ Dans la section **Réseau et Sécurité** de la page de détail, le bloc **Conne
 ssh ubuntu@203.0.113.10
 ```
 
-Cliquez sur l'icône de copie pour la copier dans le presse-papier. L'utilisateur par défaut dépend de l'image ; il est aussi affiché sous **Image Système** (**Utilisateur**).
+Cliquez sur l'icône de copie pour la copier dans le presse-papier. L'utilisateur par défaut dépend de l'image ; c'est celui qui figure dans la commande SSH.
 
 ---
 

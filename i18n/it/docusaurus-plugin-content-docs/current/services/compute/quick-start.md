@@ -109,7 +109,7 @@ Nella sezione **Network & Security** della pagina di dettaglio, il blocco **SSH 
 ssh ubuntu@203.0.113.10
 ```
 
-Faccia clic sull'icona di copia per copiarlo negli appunti. L'utente predefinito dipende dall'immagine; è indicato anche in **System Image** (**User**).
+Faccia clic sull'icona di copia per copiarlo negli appunti. L'utente predefinito dipende dall'immagine; è quello indicato nel comando SSH.
 
 ---
 

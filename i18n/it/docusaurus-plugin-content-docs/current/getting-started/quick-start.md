@@ -71,7 +71,7 @@ Il passaggio a **Ready** richiede generalmente alcuni minuti.
 
 ## Passaggio 5: Recuperare il kubeconfig del cluster
 
-1. Faccia clic sul cluster per aprire la pagina **Cluster Details**.
+1. Faccia clic sul cluster per aprire la sua pagina di dettaglio.
 2. Faccia clic su **Kubeconfig**. La console scarica un file `kubeconfig-<nome-del-cluster>.yaml`.
 
 :::warning File sensibile

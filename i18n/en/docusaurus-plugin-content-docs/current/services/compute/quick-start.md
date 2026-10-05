@@ -109,7 +109,7 @@ In the **Network & Security** section of the detail page, the **SSH Connection**
 ssh ubuntu@203.0.113.10
 ```
 
-Click the copy icon to copy it to the clipboard. The default user depends on the image; it is also shown under **System Image** (**User**).
+Click the copy icon to copy it to the clipboard. The default user depends on the image; it is the one shown in the SSH command.
 
 ---
 
