@@ -6,6 +6,16 @@ on:
       - main
     # Review gh actions docs if you want to further define triggers, paths, etc
     # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#on
+  # Redéploiement manuel de main, sans repasser par un ancien run
+  workflow_dispatch:
+
+# Un seul déploiement à la fois, dans l'ordre des pushs : sans ce groupe, deux
+# fusions rapprochées lancent deux runs en parallèle et le plus lent écrase le
+# plus récent. Pas de cancel-in-progress, pour ne jamais couper un déploiement
+# déjà en cours d'écriture sur Pages.
+concurrency:
+  group: pages
+  cancel-in-progress: false
 
 jobs:
   build:
