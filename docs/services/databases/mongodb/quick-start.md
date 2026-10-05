@@ -116,6 +116,8 @@ Le rôle choisi dans l'assistant s'applique à la base `admin`. Pour donner acc�
 mongosh "mongodb://<hôte>:27017/myapp" --username app-user --authenticationDatabase admin
 ```
 
+La connexion n'est pas chiffrée (pas de TLS) : n'ajoutez pas `--tls`.
+
 Saisissez le mot de passe, puis vérifiez la connexion :
 
 ```javascript
@@ -138,6 +140,8 @@ db.test.find()
 ### Le champ Hôte (Host) affiche « Non défini »
 
 L'**Accès externe** est désactivé, ou l'adresse publique n'est pas encore attribuée. Activez-le via **Modifier** si besoin, puis patientez quelques instants.
+
+Sur un cluster sans sharding, le champ reste aujourd'hui sur **Non défini** même avec l'accès externe activé : chaque membre reçoit sa propre adresse publique, que la console n'affiche pas. [Contactez le support](mailto:support@hidora.io) pour l'obtenir. Connectez-vous alors à cette adresse sans paramètre `replicaSet` : les membres s'annoncent sous des noms internes, qui ne se résolvent pas depuis l'extérieur.
 
 ### `Authentication failed`
 

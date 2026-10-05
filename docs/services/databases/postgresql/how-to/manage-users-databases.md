@@ -98,7 +98,7 @@ CREATE TABLE test (id int);
 ## Vérification
 
 - L'onglet **Bases de données** liste vos bases et leurs extensions.
-- L'onglet **Utilisateurs** liste vos utilisateurs avec, pour chacun, les bases accessibles et le droit associé (par exemple `analytics (Lecture seule)`).
+- L'onglet **Utilisateurs** liste vos utilisateurs avec, pour chacun, les bases accessibles et le droit associé (par exemple `analytics (readonly)` ou `analytics (admin)`).
 
 ## Pour aller plus loin
 

@@ -111,13 +111,15 @@ La politique `default-deny-all` bloque **tout le trafic** dans le namespace, y c
 
 ### 4. Utiliser Hubble pour le debugging réseau
 
-Hubble n'est pas activé par défaut. Pour l'activer, modifiez le cluster dans la console (**Modifier**), dépliez **Cilium** dans la section **Configuration avancée** des addons, saisissez la surcharge suivante dans **Configuration Helm (YAML) — optionnel**, puis cliquez sur **Enregistrer** :
+Hubble n'est pas activé par défaut. Pour l'activer, dépliez **Cilium** dans la section **Configuration avancée** de l'étape **Addons**, à la création du cluster, et saisissez la surcharge suivante dans **Configuration Helm (YAML) — optionnel** :
 
 ```yaml title="cilium-override.yaml"
 cilium:
   hubble:
     enabled: true
 ```
+
+Sur un cluster existant, la console n'enregistre pas une première surcharge Cilium saisie depuis **Modifier** : [contactez le support](mailto:support@hidora.io) pour l'appliquer.
 
 Une fois Cilium redéployé, utilisez la CLI Hubble embarquée dans les pods Cilium :
 

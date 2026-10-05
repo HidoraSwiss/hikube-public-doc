@@ -92,7 +92,7 @@ La bascule manuelle du primary (switchover) n'est pas proposée dans la console 
 
 La page d'un cluster MariaDB comporte une section **Utilisateurs** ; il n'y a pas d'onglet dédié aux bases de données. Les droits se gèrent par utilisateur :
 
-- **Rôle Global (Optionnel)** : **Aucun rôle global**, **Administrateur** ou **Lecture seule (globale)** ;
+- **Rôle Global (Optionnel)** : **Aucun rôle global**, **Administrateur** ou **Lecture seule (globale)**. Un rôle global est actuellement refusé à l'enregistrement (message `invalid database_name`) : laissez **Aucun rôle global** et passez par les accès spécifiques ;
 - **Accès spécifiques (Bases de données)** : une liste de couples **Nom de la base** / **Droits** (**Administrateur (Admin)** ou **Lecture seule (Read-only)**). Accorder un accès sur une base qui n'existe pas encore la crée.
 
 Les utilisateurs déclarés dans l'assistant de création du cluster reçoivent le **Rôle** choisi sur la base système `mysql`, visible dans la colonne **Bases de données** de la liste des utilisateurs : **Administrateur** y donne tous les privilèges (`ALL`, avec droit de délégation), **Lecture seule** le droit `SELECT`. Accordez-leur ensuite l'accès à vos bases applicatives via **Gérer les accès**.

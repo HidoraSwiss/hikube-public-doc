@@ -62,7 +62,7 @@ Avec le réseau public activé, utilisez l'adresse du champ **Hôte** (section *
 REDISCLI_AUTH='<mot de passe>' redis-cli -h <hôte> -p 6379 ping
 ```
 
-Sans réseau public, l'instance reste joignable depuis les VM du projet par une adresse interne, que la console n'affiche pas. [Contactez le support](mailto:support@hidora.io) pour l'obtenir.
+Sans réseau public, l'instance reste joignable depuis les VM et les clusters Kubernetes du projet par une adresse interne, que la console n'affiche pas. [Contactez le support](mailto:support@hidora.io) pour l'obtenir.
 
 ### Peut-on créer plusieurs utilisateurs Redis (ACL) ?
 

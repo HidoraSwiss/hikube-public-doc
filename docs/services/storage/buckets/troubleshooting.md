@@ -63,18 +63,19 @@ title: Dépannage
 
 ---
 
+### Les objets ont disparu après la suppression d'un bucket
+
+**Cause** : la suppression d'un bucket n'est pas bloquée lorsqu'il contient des objets ; elle les supprime avec lui, sans possibilité de récupération.
+
+**Solution** : avant de supprimer un bucket, copiez les objets à conserver, par exemple sur votre poste :
+
+```bash
+aws --endpoint-url https://<endpoint> s3 sync s3://<nom-du-bucket-s3>/ ./sauvegarde-bucket/
+```
+
 ### La suppression du bucket échoue
 
-**Cause** : la console répond « Le bucket n'est pas vide ou est encore utilisé. ».
-
-**Solution** :
-
-1. Videz le bucket avec un utilisateur en **Lecture / Écriture** :
-   ```bash
-   aws --endpoint-url https://<endpoint> s3 rm s3://<nom-du-bucket-s3>/ --recursive
-   ```
-2. Si le verrouillage (WORM) est activé, les objets encore sous rétention ne peuvent pas être supprimés avant l'échéance.
-3. Réessayez la suppression depuis la console. Si l'erreur persiste, [contactez le support](mailto:support@hidora.io).
+**Solution** : réessayez la suppression depuis la console. Si l'erreur persiste, [contactez le support](mailto:support@hidora.io) en indiquant le nom du bucket.
 
 ---
 

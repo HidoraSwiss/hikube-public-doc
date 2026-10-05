@@ -37,7 +37,7 @@ Le primary écrit ses modifications dans le binary log, que les réplicas rejoue
 
 ### Où trouver l'adresse de connexion ?
 
-Dans la carte **Connexion et réseau** de la page du cluster, champ **Hôte (Host)**, lorsque l'**Accès externe** est activé. Le port est `3306`. Sans accès externe, le champ affiche **Non défini** : le cluster reste joignable depuis les VM du projet par une adresse interne, que la console n'affiche pas ; [contactez le support](mailto:support@hidora.io) pour l'obtenir.
+Dans la carte **Connexion et réseau** de la page du cluster, champ **Hôte (Host)**, lorsque l'**Accès externe** est activé. Le port est `3306`. Sans accès externe, le champ affiche **Non défini** : le cluster reste joignable depuis les VM et les clusters Kubernetes du projet par une adresse interne, que la console n'affiche pas ; [contactez le support](mailto:support@hidora.io) pour l'obtenir.
 
 ### Comment créer une base de données ?
 

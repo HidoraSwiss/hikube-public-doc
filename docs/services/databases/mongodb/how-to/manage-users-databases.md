@@ -78,7 +78,7 @@ db.events.insertOne({ test: true })
 
 ## Vérification
 
-La liste des utilisateurs affiche, pour chacun, son **Rôle** et les **Bases de données** accessibles avec le droit associé (par exemple `analytics (Lecture seule)`).
+La liste des utilisateurs affiche, pour chacun, son **Rôle** et les **Bases de données** accessibles avec le droit associé (par exemple `analytics (readonly)` ou `analytics (admin)`).
 
 ## Pour aller plus loin
 

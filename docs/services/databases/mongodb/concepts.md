@@ -121,7 +121,7 @@ La **Préconfiguration (Preset)** définit la capacité allouée à **chaque nœ
 ## Accès réseau
 
 - **Accès externe désactivé** (par défaut) : le cluster n'est pas exposé sur Internet. Le champ **Hôte (Host)** de la carte **Connexion et réseau** affiche **Non défini**.
-- **Accès externe activé** : la plateforme attribue une adresse publique, affichée dans le champ **Hôte (Host)**. Le port est le port MongoDB standard, `27017`. L'assistant fournit une chaîne de connexion de la forme `mongodb://<utilisateur>:<password>@<hôte>`.
+- **Accès externe activé** : la plateforme attribue une adresse publique, affichée dans le champ **Hôte (Host)** pour un cluster shardé. Sans sharding, chaque membre reçoit sa propre adresse publique et le champ reste sur **Non défini** : demandez l'adresse au [support](mailto:support@hidora.io). Le port est le port MongoDB standard, `27017`. L'assistant fournit une chaîne de connexion de la forme `mongodb://<utilisateur>:<password>@<hôte>`.
 
 ---
 

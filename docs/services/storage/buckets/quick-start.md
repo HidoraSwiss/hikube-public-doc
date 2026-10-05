@@ -179,7 +179,7 @@ Voir aussi le [dépannage complet](./troubleshooting.md).
 3. Saisissez le nom exact du bucket dans **Nom de la ressource à confirmer**, puis cliquez sur **Supprimer définitivement**.
 
 :::warning Suppression irréversible
-La suppression d'un bucket est définitive. Si la console répond « Le bucket n'est pas vide ou est encore utilisé. », videz le bucket puis réessayez.
+La suppression d'un bucket est définitive et emporte tous ses objets : la console ne vérifie pas que le bucket est vide. Copiez les données à conserver avant de le supprimer.
 :::
 
 <NavigationFooter
