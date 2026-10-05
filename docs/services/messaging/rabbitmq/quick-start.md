@@ -1,13 +1,13 @@
 ---
-sidebar_position: 2
+sidebar_position: 3
 title: Démarrage rapide
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';
 
-# Déployer RabbitMQ en 5 minutes
+# Créer un cluster RabbitMQ en 5 minutes
 
-Ce guide vous accompagne pas à pas dans le déploiement de votre premier **cluster RabbitMQ** sur Hikube, du manifeste YAML jusqu'aux premiers tests de messagerie.
+Ce guide vous accompagne dans la création de votre premier **cluster RabbitMQ** depuis la [console Hikube](https://console.hikube.cloud), jusqu'à l'envoi d'un premier message.
 
 ---
 
@@ -15,164 +15,143 @@ Ce guide vous accompagne pas à pas dans le déploiement de votre premier **clus
 
 À la fin de ce guide, vous aurez :
 
-- Un **cluster RabbitMQ** déployé et opérationnel sur Hikube
-- **3 nœuds RabbitMQ** répliqués pour la haute disponibilité
-- Un **vhost** et un **utilisateur admin** configurés
-- Un **stockage persistant** pour les données RabbitMQ
-- Un accès à l'**interface de gestion** (Management UI)
+- Un **cluster RabbitMQ** opérationnel dans votre projet
+- Un **vhost** et un **utilisateur** avec ses droits
+- Le **mot de passe** de cet utilisateur et l'**adresse de connexion** du cluster
+- Un premier message publié avec un client AMQP
 
 ---
 
 ## Prérequis
 
-Avant de commencer, assurez-vous d'avoir :
-
-- **kubectl** configuré avec votre kubeconfig Hikube
-- **Droits administrateur** sur votre tenant
-- Un **namespace** dédié pour héberger votre cluster RabbitMQ
-- **Python** avec le module `pika` installé (optionnel, pour les tests)
+- Un **compte Hikube** et un **projet** (voir le [démarrage rapide Hikube](../../../getting-started/quick-start.md))
+- Un quota de projet suffisant pour le cluster (CPU, mémoire et stockage)
+- **Python 3** avec le module `pika` installé, pour le test de l'étape 5 (`pip install pika`)
 
 ---
 
-## Étape 1 : Créer le manifeste RabbitMQ
+## Étape 1 : Ouvrir l'assistant de création
 
-Créez un fichier `rabbitmq.yaml` avec la configuration suivante :
+1. Connectez-vous à la [console Hikube](https://console.hikube.cloud) et sélectionnez votre projet.
+2. Dans le menu latéral, ouvrez **DB & Messaging** → **RabbitMQ**. La page **Clusters RabbitMQ** s'affiche.
+3. Cliquez sur **Créer un cluster**. L'assistant **Créer un cluster RabbitMQ** s'ouvre.
 
-```yaml title="rabbitmq.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: RabbitMQ
-metadata:
-  name: example
-spec:
-  replicas: 3
-  resourcesPreset: small
-  size: 10Gi
-  storageClass: replicated
-  users:
-    admin:
-      password: "strongpassword"
-  vhosts:
-    default:
-      roles:
-        admin: ["admin"]
-```
+---
 
-:::tip
-Avec 3 réplicas, RabbitMQ utilise les **quorum queues** pour garantir la durabilité des messages. Consultez la [Référence API](./api-reference.md) pour la configuration complète.
+## Étape 2 : Configurer et créer le cluster
+
+L'assistant comporte cinq étapes. Un bandeau affiche le coût estimé et, à l'étape **Configuration**, la consommation de quota du projet.
+
+### Général
+
+Saisissez le **Nom du cluster** (un nom est proposé par défaut). Il doit comporter 3 à 16 caractères : minuscules, chiffres et tirets, commencer par une lettre et se terminer par une lettre ou un chiffre. Exemple : `rabbit-demo`.
+
+### Configuration
+
+| Champ | Valeur conseillée pour ce guide | Remarque |
+|-------|--------------------------------|----------|
+| **Version RabbitMQ** | 4.2 | Versions proposées : 4.2, 4.1, 4.0, 3.13 |
+| **Préconfiguration (Preset)** | Small | Non modifiable après création |
+| **Taille du disque (Go)** | 10 | Capacité par nœud |
+| **Nombre de réplicas** | 3 (Haute disponibilité max) | 1 (Standalone), 3 ou 5 ; non modifiable après création |
+| **Accès externe** | Activé | Expose le cluster sur Internet ; nécessaire pour le test depuis votre poste |
+
+:::note
+Si le quota de stockage du projet est dépassé, la console affiche « Quota de stockage dépassé pour ce projet » et le bouton **Suivant** reste inactif. Réduisez la taille ou le nombre de réplicas, ou faites augmenter le quota du projet.
 :::
 
+### VHosts
+
+Saisissez un **Nom du VHost** (par exemple `demo`) puis cliquez sur **Ajouter**. Au moins un vhost est nécessaire pour passer à l'étape suivante.
+
+### Utilisateurs
+
+1. Dans **Ajouter un nouvel utilisateur**, saisissez le **Nom de l'utilisateur** (par exemple `app-user` ; minuscules, chiffres et tirets).
+2. Dans **Accès aux VHosts**, choisissez **Administrateur** pour le vhost `demo`.
+3. Cliquez sur **Ajouter l'utilisateur**.
+
+Au moins un utilisateur est nécessaire pour continuer.
+
+### Vérification
+
+Relisez le récapitulatif (nom, version, préconfiguration, réplicas, taille, réseau **Public** ou **Privé**, coût estimé, nombre de vhosts et d'utilisateurs à créer), puis cliquez sur **Déployer**.
+
+### Résumé : copier le mot de passe
+
+À la fin du déploiement, l'écran **Résumé** affiche **Création terminée !** et, pour chaque utilisateur créé, son **Mot de passe**.
+
+:::warning Mot de passe affiché une seule fois
+Copiez le mot de passe immédiatement et conservez-le dans un gestionnaire de mots de passe. Il ne sera plus affiché après avoir quitté cet écran. En cas de perte, générez-en un nouveau avec l'action **Changer le mot de passe** (voir [Gérer les vhosts et utilisateurs](./how-to/manage-vhosts-users.md)).
+:::
+
+Cliquez ensuite sur **Terminer** pour revenir à la liste des clusters.
+
 ---
 
-## Étape 2 : Déployer le cluster RabbitMQ
+## Étape 3 : Vérifier l'état du cluster
 
-Appliquez le manifeste et vérifiez que le déploiement démarre :
-
-```bash
-# Appliquer le manifeste
-kubectl apply -f rabbitmq.yaml
-```
-
-Vérifiez le statut du cluster (peut prendre 2-3 minutes) :
-
-```bash
-kubectl get rabbitmq
-```
-
-**Résultat attendu :**
-
-```console
-NAME      READY   AGE     VERSION
-example   True    2m      0.10.0
-```
-
----
-
-## Étape 3 : Vérification des pods
-
-Vérifiez que tous les pods sont en état `Running` :
-
-```bash
-kubectl get pods | grep rabbitmq
-```
-
-**Résultat attendu :**
-
-```console
-rabbitmq-example-rabbitmq-server-0    1/1     Running   0   2m
-rabbitmq-example-rabbitmq-server-1    1/1     Running   0   2m
-rabbitmq-example-rabbitmq-server-2    1/1     Running   0   2m
-```
-
-Avec `replicas: 3`, vous obtenez **3 nœuds RabbitMQ** formant un cluster haute disponibilité.
-
-| Préfixe | Rôle | Nombre |
-|---------|------|--------|
-| `rabbitmq-example-rabbitmq-server-*` | **RabbitMQ Server** (broker de messages + Management UI) | 3 |
+1. Dans la liste **Clusters RabbitMQ**, le cluster apparaît avec le statut **En création**, puis **Prêt** lorsqu'il est opérationnel.
+2. Cliquez sur le cluster pour ouvrir sa page de détail :
+   - **Informations générales** : **Version**, **Réplicas**, **Taille du volume** ;
+   - **VHosts** et **Utilisateurs** : les éléments créés par l'assistant ;
+   - **Connexion** : **Hôte (Host)**, **Statut** et **Accès externe** (**Activé** ou **Désactivé**).
 
 ---
 
 ## Étape 4 : Récupérer les identifiants
 
-Les mots de passe sont stockés dans des Secrets Kubernetes :
+Pour vous connecter, il vous faut :
 
-```bash
-# Identifiants de l'utilisateur défini dans le manifeste
-kubectl get secret rabbitmq-example-credentials -o json | jq -r '.data | to_entries[] | "\(.key): \(.value|@base64d)"'
-```
+| Information | Où la trouver |
+|-------------|---------------|
+| **Nom d'utilisateur** | Section **Utilisateurs** de la page du cluster |
+| **Mot de passe** | Copié à l'écran **Résumé** de l'assistant (étape 2) |
+| **VHost** | Section **VHosts** de la page du cluster |
+| **Hôte** | Champ **Hôte (Host)** de la section **Connexion** |
+| **Port** | 5672 (AMQP) |
 
-**Résultat attendu :**
+Tant que l'adresse n'est pas attribuée, le champ **Hôte (Host)** affiche « Non disponible / En création ». Une fois l'adresse attribuée, copiez-la avec le bouton de copie.
 
-```console
-admin: strongpassword
-```
+:::note
+Le champ **Hôte (Host)** est renseigné lorsque l'**Accès externe** est activé. Si vous avez créé un cluster sans accès externe et souhaitez y connecter une application, [contactez le support](mailto:support@hidora.io) pour obtenir l'adresse à utiliser.
+:::
 
-Un utilisateur par défaut est également créé automatiquement par l'opérateur :
+L'écran **Résumé** de l'assistant affiche aussi, lorsque l'hôte est déjà connu, une chaîne de connexion de la forme :
 
-```bash
-# Identifiants de l'utilisateur par défaut
-kubectl get secret rabbitmq-example-rabbitmq-default-user -o json | jq -r '.data | to_entries[] | "\(.key): \(.value|@base64d)"'
+```text
+amqp://app-user:<password>@<hôte>:5672
 ```
 
 ---
 
-## Étape 5 : Connexion et tests
+## Étape 5 : Connexion et test
 
-### Accès à l'interface de gestion (Management UI)
-
-```bash
-kubectl port-forward svc/rabbitmq-example-rabbitmq 15672:15672 &
-```
-
-Accédez à l'interface via votre navigateur : http://localhost:15672
-
-Connectez-vous avec les identifiants de l'utilisateur par défaut récupérés à l'étape 4.
-
-### Test de messagerie avec Python
-
-```bash
-kubectl port-forward svc/rabbitmq-example-rabbitmq 5672:5672 &
-```
+Créez le script suivant en remplaçant l'hôte et le mot de passe par vos valeurs :
 
 ```python title="test_rabbitmq.py"
 import pika
 
-credentials = pika.PlainCredentials('admin', 'strongpassword')
+credentials = pika.PlainCredentials('app-user', '<password>')
 parameters = pika.ConnectionParameters(
-    host='localhost',
+    host='<hôte>',
     port=5672,
-    virtual_host='default',
-    credentials=credentials
+    virtual_host='demo',
+    credentials=credentials,
 )
 
 connection = pika.BlockingConnection(parameters)
 channel = connection.channel()
 
-# Création d'une queue
-channel.queue_declare(queue='test')
+# Déclaration d'une quorum queue (répliquée sur les nœuds du cluster)
+channel.queue_declare(queue='test', durable=True, arguments={'x-queue-type': 'quorum'})
 
 # Envoi d'un message
 channel.basic_publish(exchange='', routing_key='test', body='Hello Hikube!')
 print("Message envoyé avec succès")
+
+# Lecture du message
+method, properties, body = channel.basic_get(queue='test', auto_ack=True)
+print(f"Message reçu : {body.decode()}")
 
 connection.close()
 ```
@@ -185,98 +164,47 @@ python test_rabbitmq.py
 
 ```console
 Message envoyé avec succès
+Message reçu : Hello Hikube!
 ```
-
-:::note
-Si vous n'avez pas `pika`, installez-le avec `pip install pika`.
-:::
 
 ---
 
 ## Étape 6 : Dépannage rapide
 
-### Pods en CrashLoopBackOff
-
-```bash
-# Vérifier les logs du pod en erreur
-kubectl logs rabbitmq-example-rabbitmq-server-0
-
-# Vérifier les events du pod
-kubectl describe pod rabbitmq-example-rabbitmq-server-0
-```
-
-**Causes fréquentes :** mémoire insuffisante (`resources.memory` trop faible), volume de stockage plein, erreur de résolution DNS entre les nœuds.
-
-### RabbitMQ non accessible
-
-```bash
-# Vérifier que les services existent
-kubectl get svc | grep rabbitmq
-
-# Vérifier le service RabbitMQ
-kubectl describe svc rabbitmq-example-rabbitmq
-```
-
-**Causes fréquentes :** port-forward non actif, mauvais port (5672 pour AMQP, 15672 pour Management UI), identifiants incorrects.
-
-### Cluster non formé
-
-```bash
-# Vérifier l'état du cluster RabbitMQ
-kubectl exec rabbitmq-example-rabbitmq-server-0 -- rabbitmqctl cluster_status
-
-# Vérifier les logs de formation du cluster
-kubectl logs rabbitmq-example-rabbitmq-server-0 | grep -i cluster
-```
-
-**Causes fréquentes :** problème de résolution DNS entre les nœuds, cookie Erlang non synchronisé, ressources insuffisantes pour le processus de formation du cluster.
-
-### Commandes de diagnostic générales
-
-```bash
-# Events récents sur le namespace
-kubectl get events --sort-by=.metadata.creationTimestamp
-
-# État détaillé du cluster RabbitMQ
-kubectl describe rabbitmq example
-```
+| Symptôme | Causes fréquentes | Action |
+|----------|-------------------|--------|
+| Le cluster reste **En création** | Provisionnement en cours | Patientez quelques minutes ; si le statut ne change pas, consultez le [dépannage](./troubleshooting.md) |
+| Statut **Erreur** | Échec du provisionnement | [Contactez le support](mailto:support@hidora.io) en indiquant le nom et l'identifiant du cluster |
+| `ACCESS_REFUSED` à la connexion | Mot de passe erroné, ou utilisateur sans droit sur le vhost | Vérifiez le vhost dans **Gérer les accès** ; régénérez le mot de passe si nécessaire |
+| Connexion impossible (timeout) | Accès externe désactivé, mauvais hôte ou port | Vérifiez **Accès externe** et **Hôte (Host)** dans la section **Connexion** ; le port AMQP est 5672 |
+| `NOT_FOUND - no vhost` | Nom de vhost incorrect dans le client | Utilisez exactement le nom affiché dans la section **VHosts** |
 
 ---
 
 ## Étape 7 : Nettoyage
 
-Pour supprimer les ressources de test :
-
-```bash
-kubectl delete -f rabbitmq.yaml
-```
+1. Ouvrez la page de détail du cluster et cliquez sur **Supprimer** (ou, depuis la liste, ouvrez le menu d'actions du cluster et choisissez **Supprimer le cluster**).
+2. Dans la fenêtre de confirmation, saisissez le nom exact du cluster dans **Nom de la ressource à confirmer**.
+3. Cliquez sur **Supprimer définitivement**.
 
 :::warning
-Cette action supprime le cluster RabbitMQ et toutes les données associées. Cette opération est **irréversible**.
+Cette action est irréversible : le cluster, ses vhosts, ses utilisateurs et tous les messages stockés sont définitivement supprimés.
 :::
 
 ---
 
 ## Résumé
 
-Vous avez déployé :
+Vous avez créé depuis la console :
 
-- Un cluster RabbitMQ avec **3 nœuds** en haute disponibilité
-- Un **utilisateur admin** et un **vhost** par défaut configurés
-- Une **interface de gestion** (Management UI) accessible localement
-- Un stockage persistant pour la durabilité des données
-
----
-
-## Prochaines étapes
-
-- **[Référence API](./api-reference.md)** : Configuration complète de toutes les options RabbitMQ
-- **[Vue d'ensemble](./overview.md)** : Architecture détaillée et cas d'usage RabbitMQ sur Hikube
+- Un cluster RabbitMQ de **3 nœuds** en haute disponibilité
+- Un **vhost** et un **utilisateur administrateur** de ce vhost
+- Une **connexion AMQP** fonctionnelle depuis votre poste
 
 <NavigationFooter
   nextSteps={[
+    {label: "Gérer les vhosts et utilisateurs", href: "../how-to/manage-vhosts-users"},
     {label: "FAQ", href: "../faq"},
-    {label: "Référence API", href: "../api-reference"},
   ]}
   seeAlso={[
     {label: "Tous les services de messagerie", href: "../../"},

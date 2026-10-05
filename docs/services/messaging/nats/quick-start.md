@@ -5,9 +5,14 @@ title: Démarrage rapide
 
 import NavigationFooter from '@site/src/components/NavigationFooter';
 
-# Déployer NATS en 5 minutes
+# Démarrer avec NATS
 
-Ce guide vous accompagne pas à pas dans le déploiement de votre premier **cluster NATS** sur Hikube, du manifeste YAML jusqu'aux premiers tests de messagerie.
+:::info Disponibilité
+NATS n'est pas encore disponible en libre-service dans la [console Hikube](https://console.hikube.cloud).
+Pour en provisionner une instance ou modifier sa configuration, [contactez le support](mailto:support@hidora.io).
+:::
+
+Ce guide explique comment obtenir un **cluster NATS** sur Hikube et réaliser vos premiers tests de publication et de consommation avec le CLI `nats`.
 
 ---
 
@@ -15,147 +20,79 @@ Ce guide vous accompagne pas à pas dans le déploiement de votre premier **clus
 
 À la fin de ce guide, vous aurez :
 
-- Un **cluster NATS** déployé et opérationnel sur Hikube
-- Une configuration **haute disponibilité** avec plusieurs réplicas
-- Le **JetStream** activé pour le stockage persistant des messages
-- Un **utilisateur** configuré pour se connecter à votre cluster
+- Un **cluster NATS** provisionné dans votre projet Hikube, avec **JetStream** activé
+- Un **utilisateur** pour vous connecter au cluster
+- Créé un stream, publié et consommé un premier message
 
 ---
 
 ## Prérequis
 
-Avant de commencer, assurez-vous d'avoir :
-
-- **kubectl** configuré avec votre kubeconfig Hikube
-- **Droits administrateur** sur votre tenant
-- Un **namespace** dédié pour héberger votre cluster NATS
-- Le **CLI NATS** (`nats`) installé sur votre poste (optionnel, pour les tests)
+- Un **compte Hikube** et un **projet** (voir le [démarrage rapide Hikube](../../../getting-started/quick-start.md))
+- Le **CLI NATS** (`nats`) installé sur votre poste, disponible sur [nats-io/natscli](https://github.com/nats-io/natscli)
 
 ---
 
-## Étape 1 : Créer le manifeste NATS
+## Étape 1 : Préparer votre demande
 
-Créez un fichier `nats.yaml` avec la configuration suivante :
+Rassemblez les paramètres de l'instance souhaitée :
 
-```yaml title="nats.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: NATS
-metadata:
-  name: example
-spec:
-  external: false
+| Paramètre | Description | Exemple |
+|-----------|-------------|---------|
+| Projet | Projet Hikube dans lequel créer l'instance | `demo01` |
+| Nom | Nom de l'instance NATS | `events` |
+| Réplicas | Nombre de serveurs NATS (3 pour la haute disponibilité de JetStream) | `3` |
+| Preset | Profil CPU/mémoire (voir [Concepts](./concepts.md#presets-de-ressources)) | `small` |
+| JetStream | Activation et taille du volume de persistance | Activé, `10 Go` |
+| Utilisateurs | Noms des comptes à créer | `user1` |
+| Configuration avancée | Paramètres NATS à ajuster (`max_payload`, `write_deadline`…) | `max_payload: 16MB` |
+| Accès externe | Exposer ou non le cluster en dehors de la plateforme | Non |
 
-  replicas: 3
-  resourcesPreset: small
-  storageClass: replicated
+---
 
-  jetstream:
-    enabled: true
-    size: 10Gi
+## Étape 2 : Demander l'instance
 
-  users:
-    user1:
-      password: mypassword
+Envoyez ces paramètres au support à [support@hidora.io](mailto:support@hidora.io), ou via le bouton **Contacter le support** du menu profil de la console.
 
-  config:
-    merge:
-      max_payload: 16MB
-      write_deadline: 2s
-      debug: false
-      trace: false
+Le support vous communique en retour :
+
+- l'**URL du serveur** NATS (notée `<nats-url>` dans la suite de ce guide) ;
+- les **identifiants** des utilisateurs demandés.
+
+:::note
+Le port client NATS standard est `4222`. Utilisez toujours l'adresse et le port communiqués par le support.
+:::
+
+Pour éviter de répéter l'URL et les identifiants, enregistrez un contexte dans le CLI :
+
+```bash
+nats context save hikube --server <nats-url> --user <utilisateur> --password <mot-de-passe> --select
 ```
 
-:::tip
-Si `resources` est défini, la valeur de `resourcesPreset` est ignorée. Consultez la [Référence API](./api-reference.md) pour la liste complète des options disponibles.
+---
+
+## Étape 3 : Créer un stream JetStream
+
+```bash
+nats stream add EVENTS \
+  --subjects "events.*" --storage file --replicas 3 --retention limits \
+  --max-msgs -1 --max-bytes -1 --max-age 24h --discard old --defaults
+```
+
+:::note
+Le nombre de réplicas d'un stream ne peut pas dépasser le nombre de serveurs NATS de l'instance.
 :::
 
 ---
 
-## Étape 2 : Déployer le cluster NATS
-
-Appliquez le manifeste et vérifiez que le déploiement démarre :
+## Étape 4 : Publier et consommer un message
 
 ```bash
-# Appliquer le manifeste
-kubectl apply -f nats.yaml
-```
-
-Vérifiez le statut du cluster (peut prendre 1-2 minutes) :
-
-```bash
-kubectl get nats
-```
-
-**Résultat attendu :**
-
-```console
-NAME      READY   AGE     VERSION
-example   True    2m      0.10.0
-```
-
----
-
-## Étape 3 : Vérification des pods
-
-Vérifiez que tous les pods sont en état `Running` :
-
-```bash
-kubectl get pods | grep nats
-```
-
-**Résultat attendu :**
-
-```console
-nats-example-0    1/1     Running   0   2m
-nats-example-1    1/1     Running   0   2m
-nats-example-2    1/1     Running   0   2m
-```
-
-Avec `replicas: 3`, vous obtenez **3 pods NATS** formant un cluster haute disponibilité avec consensus Raft pour JetStream.
-
-| Préfixe | Rôle | Nombre |
-|---------|------|--------|
-| `nats-example-*` | **NATS Server** (messagerie + JetStream) | 3 |
-
----
-
-## Étape 4 : Récupérer les identifiants
-
-Les mots de passe des utilisateurs NATS sont stockés dans un Secret Kubernetes :
-
-```bash
-kubectl get secret nats-example-credentials -o json | jq -r '.data | to_entries[] | "\(.key): \(.value|@base64d)"'
-```
-
-**Résultat attendu :**
-
-```console
-user1: mypassword
-```
-
----
-
-## Étape 5 : Connexion et tests
-
-### Port-forward du service NATS
-
-```bash
-kubectl port-forward svc/nats-example 4222:4222 &
-```
-
-### Test de publication et consommation
-
-```bash
-# Créer un stream JetStream
-nats -s nats://user1:mypassword@localhost:4222 stream add EVENTS \
-  --subjects "events.*" --storage file --replicas 3 --retention limits \
-  --max-msgs -1 --max-bytes -1 --max-age 24h --discard old
-
 # Publier un message
-nats -s nats://user1:mypassword@localhost:4222 pub events.test "Hello Hikube!"
+nats pub events.test "Hello Hikube!"
 
-# Consommer le message
-nats -s nats://user1:mypassword@localhost:4222 stream view EVENTS
+# Lire le contenu du stream
+nats stream view EVENTS
 ```
 
 **Résultat attendu :**
@@ -165,96 +102,57 @@ nats -s nats://user1:mypassword@localhost:4222 stream view EVENTS
   Hello Hikube!
 ```
 
-:::note
-Si vous n'avez pas le CLI NATS, vous pouvez l'installer depuis [nats-io/natscli](https://github.com/nats-io/natscli).
-:::
-
 ---
 
-## Étape 6 : Dépannage rapide
+## Étape 5 : Dépannage rapide
 
-### Pods en CrashLoopBackOff
-
-```bash
-# Vérifier les logs du pod en erreur
-kubectl logs nats-example-0
-
-# Vérifier les events du pod
-kubectl describe pod nats-example-0
-```
-
-**Causes fréquentes :** mémoire insuffisante (`resources.memory` trop faible), volume JetStream plein (`jetstream.size` trop faible).
-
-### NATS non accessible
+### Connexion refusée
 
 ```bash
-# Vérifier que les services existent
-kubectl get svc | grep nats
-
-# Vérifier le service NATS
-kubectl describe svc nats-example
+nats server check connection
 ```
 
-**Causes fréquentes :** port-forward non actif, mauvais port (4222 pour les clients), identifiants incorrects.
+**Causes fréquentes :** URL ou port incorrect, identifiants erronés (`Authorization Violation`), accès externe non activé alors que vous vous connectez depuis l'extérieur de la plateforme.
 
 ### JetStream non fonctionnel
 
 ```bash
-# Vérifier l'état de JetStream dans les logs
-kubectl logs nats-example-0 | grep -i jetstream
-
-# Vérifier le rapport JetStream
-nats -s nats://user1:mypassword@localhost:4222 server report jetstream
+nats account info
 ```
 
-**Causes fréquentes :** `jetstream.enabled: false` dans le manifeste, espace de stockage JetStream insuffisant, nombre de réplicas insuffisant pour le facteur de réplication demandé.
+**Causes fréquentes :** JetStream non activé sur l'instance, espace de stockage JetStream insuffisant, nombre de réplicas du stream supérieur au nombre de serveurs.
 
-### Commandes de diagnostic générales
+### Problème côté cluster
 
-```bash
-# Events récents sur le namespace
-kubectl get events --sort-by=.metadata.creationTimestamp
-
-# État détaillé du cluster NATS
-kubectl describe nats example
-```
+Si le cluster semble indisponible, [contactez le support](mailto:support@hidora.io) en précisant le nom du projet et de l'instance.
 
 ---
 
-## Étape 7 : Nettoyage
+## Étape 6 : Nettoyage
 
-Pour supprimer les ressources de test :
+Supprimez le stream de test depuis le CLI :
 
 ```bash
-kubectl delete -f nats.yaml
+nats stream rm EVENTS -f
 ```
+
+Pour supprimer l'instance elle-même, adressez la demande au [support](mailto:support@hidora.io) en indiquant le projet et le nom de l'instance.
 
 :::warning
-Cette action supprime le cluster NATS et toutes les données associées. Cette opération est **irréversible**.
+La suppression d'un cluster NATS efface toutes les données associées, y compris les streams JetStream. Cette opération est **irréversible**.
 :::
-
----
-
-## Résumé
-
-Vous avez déployé :
-
-- Un cluster NATS avec **3 réplicas** en haute disponibilité
-- **JetStream** activé pour la persistance des messages
-- Un **utilisateur** authentifié pour se connecter au cluster
-- Un stockage persistant pour la durabilité des données
 
 ---
 
 ## Prochaines étapes
 
-- **[Référence API](./api-reference.md)** : Configuration complète de toutes les options NATS
-- **[Vue d'ensemble](./overview.md)** : Architecture détaillée et cas d'usage NATS sur Hikube
+- **[Concepts](./concepts.md)** : modèles de communication et JetStream
+- **[Comment configurer JetStream](./how-to/configure-jetstream.md)** : dimensionnement et gestion des streams
 
 <NavigationFooter
   nextSteps={[
     {label: "FAQ", href: "../faq"},
-    {label: "Référence API", href: "../api-reference"},
+    {label: "Concepts", href: "../concepts"},
   ]}
   seeAlso={[
     {label: "Tous les services de messagerie", href: "../../"},

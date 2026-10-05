@@ -5,27 +5,29 @@ title: Dépannage
 
 # Dépannage — NATS
 
+:::info Disponibilité
+NATS n'est pas encore disponible en libre-service dans la [console Hikube](https://console.hikube.cloud).
+Pour en provisionner une instance ou modifier sa configuration, [contactez le support](mailto:support@hidora.io).
+:::
+
+Les diagnostics ci-dessous se font depuis le CLI `nats` (voir le [démarrage rapide](./quick-start.md) pour enregistrer un contexte de connexion). Lorsqu'une action est nécessaire côté plateforme (ressources, stockage, redémarrage, journaux serveur), [contactez le support](mailto:support@hidora.io) en indiquant le projet et le nom de l'instance.
+
 ### Messages perdus (pas de JetStream)
 
 **Cause** : JetStream n'est pas activé ou aucun stream n'est configuré pour capturer les messages. Sans JetStream, NATS fonctionne en mode fire-and-forget : les messages ne sont délivrés qu'aux abonnés connectés au moment de la publication.
 
 **Solution** :
 
-1. Vérifiez que JetStream est activé dans votre manifeste :
-   ```yaml title="nats.yaml"
-   jetstream:
-     enabled: true
-     size: 10Gi
-   ```
-2. Réappliquez le manifeste si nécessaire :
+1. Vérifiez que JetStream est disponible pour votre compte :
    ```bash
-   kubectl apply -f nats.yaml
+   nats account info
    ```
-3. Créez un stream pour capturer les messages des subjects souhaités :
+   Si JetStream n'est pas activé sur l'instance, contactez le support.
+2. Créez un stream pour capturer les messages des subjects souhaités :
    ```bash
    nats stream add --subjects "orders.>" --storage file --replicas 3 --retention limits orders-stream
    ```
-4. Vérifiez que le stream est bien créé et capture les messages :
+3. Vérifiez que le stream est bien créé et capture les messages :
    ```bash
    nats stream info orders-stream
    ```
@@ -36,19 +38,18 @@ title: Dépannage
 
 **Solution** :
 
-1. Vérifiez le subject exact utilisé par le producteur et le consumer — les subjects sont **sensibles à la casse**
+1. Vérifiez le subject exact utilisé par le producteur et le consumer — les subjects sont **sensibles à la casse**.
 2. Testez la réception avec un abonnement de diagnostic :
    ```bash
    nats sub ">"
    ```
-   Cela permet de voir **tous les messages** publiés sur le serveur
-3. Vérifiez les wildcards utilisés :
-   - `orders.*` ne matche **pas** `orders.new.urgent` (utilisez `orders.>` pour les sous-niveaux)
-4. Si vous utilisez des queue groups, vérifiez que le consumer est bien membre du groupe attendu et que le group name est identique
+   Cela permet de voir **tous les messages** que votre utilisateur est autorisé à recevoir.
+3. Vérifiez les wildcards utilisés : `orders.*` ne matche **pas** `orders.new.urgent` (utilisez `orders.>` pour les sous-niveaux).
+4. Si vous utilisez des queue groups, vérifiez que le consumer est bien membre du groupe attendu et que le nom du groupe est identique.
 
 ### Stockage JetStream plein
 
-**Cause** : le volume JetStream a atteint sa capacité maximale (`jetstream.size`). Les nouveaux messages ne peuvent plus être persistés et les publications échouent.
+**Cause** : le volume JetStream a atteint sa capacité maximale. Les nouveaux messages ne peuvent plus être persistés et les publications échouent.
 
 **Solution** :
 
@@ -64,63 +65,32 @@ title: Dépannage
    ```bash
    nats stream purge <nom-stream>
    ```
-4. Vérifiez la politique de rétention des streams — utilisez `limits` avec `max-age` pour supprimer automatiquement les anciens messages :
+4. Ajustez la politique de rétention des streams — utilisez `limits` avec `max-age` pour supprimer automatiquement les anciens messages :
    ```bash
    nats stream edit <nom-stream> --max-age 72h
    ```
-5. Si nécessaire, augmentez `jetstream.size` dans votre manifeste :
-   ```yaml title="nats.yaml"
-   jetstream:
-     enabled: true
-     size: 50Gi
-   ```
+5. Si nécessaire, demandez l'augmentation du volume JetStream. Cette option n'est pas proposée dans la console ; contactez le support.
 
 ### Mémoire insuffisante
 
-**Cause** : le serveur NATS consomme plus de mémoire que la limite allouée, souvent à cause d'un nombre élevé de connexions, de messages volumineux (`max_payload` trop élevé), ou de streams JetStream en mémoire.
+**Cause** : le serveur NATS consomme plus de mémoire que la limite allouée, souvent à cause d'un nombre élevé de connexions, de messages volumineux (`max_payload` élevé), ou de streams JetStream en mémoire.
 
 **Solution** :
 
-1. Vérifiez les événements du pod pour confirmer un OOMKill :
-   ```bash
-   kubectl describe pod <pod-nats> | grep -A 5 "Last State"
-   ```
-2. Augmentez les ressources allouées à NATS :
-   ```yaml title="nats.yaml"
-   replicas: 3
-   resources:
-     cpu: 1
-     memory: 2Gi
-   ```
-3. Vérifiez la valeur de `max_payload` dans `config.merge` — réduisez-la si des messages très volumineux ne sont pas nécessaires
-4. Réappliquez le manifeste :
-   ```bash
-   kubectl apply -f nats.yaml
-   ```
+1. Privilégiez le stockage `file` plutôt que `memory` pour les streams volumineux.
+2. Réduisez la taille des messages publiés si des messages très volumineux ne sont pas nécessaires.
+3. Si le problème persiste, demandez un preset supérieur ou un ajustement de `max_payload`. Cette option n'est pas proposée dans la console ; contactez le support.
 
 ### Connexion refusée
 
-**Cause** : le client ne parvient pas à se connecter au serveur NATS. Cela peut être dû à des pods non démarrés, des identifiants incorrects, ou une tentative de connexion externe sans `external: true`.
+**Cause** : URL ou port incorrect, identifiants erronés, ou tentative de connexion depuis l'extérieur de la plateforme sans accès externe activé.
 
 **Solution** :
 
-1. Vérifiez que les pods NATS sont en état `Running` :
+1. Vérifiez que vous utilisez l'URL et les identifiants communiqués par le support.
+2. Testez la connexion :
    ```bash
-   kubectl get pods -l app.kubernetes.io/component=nats
+   nats server check connection --server <nats-url> --user <utilisateur> --password <mot-de-passe>
    ```
-2. Consultez les logs du pod pour identifier les erreurs :
-   ```bash
-   kubectl logs <pod-nats>
-   ```
-3. Vérifiez les identifiants utilisateur dans le Secret Kubernetes :
-   ```bash
-   kubectl get tenantsecret <nom-nats>-credentials -o jsonpath='{.data}' | base64 -d
-   ```
-4. Si vous vous connectez depuis l'extérieur du cluster, assurez-vous que `external: true` est configuré :
-   ```yaml title="nats.yaml"
-   external: true
-   ```
-5. Testez la connectivité depuis un pod dans le cluster :
-   ```bash
-   kubectl exec <pod-nats> -- nats-server --help 2>&1 | head -1
-   ```
+3. Une erreur `Authorization Violation` indique des identifiants incorrects ; demandez au support de vérifier ou de renouveler le mot de passe.
+4. Si vous vous connectez depuis l'extérieur de la plateforme, vérifiez avec le support que l'accès externe est activé sur l'instance.

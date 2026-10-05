@@ -5,21 +5,24 @@ title: FAQ
 
 # FAQ — NATS
 
+:::info Disponibilité
+NATS n'est pas encore disponible en libre-service dans la [console Hikube](https://console.hikube.cloud).
+Pour en provisionner une instance ou modifier sa configuration, [contactez le support](mailto:support@hidora.io).
+:::
+
+### Comment obtenir un cluster NATS ?
+
+Adressez votre demande au [support](mailto:support@hidora.io) avec les paramètres de l'instance (réplicas, preset, JetStream, utilisateurs, accès externe). Le [démarrage rapide](./quick-start.md) liste les informations à préparer.
+
 ### Faut-il activer JetStream ?
 
 **JetStream** ajoute la **persistance**, le **streaming** et le **replay** des messages à NATS. Sans JetStream, NATS fonctionne en mode **pub/sub pur** (fire-and-forget) : les messages sont transmis uniquement aux abonnés connectés au moment de la publication.
 
-JetStream est activé par défaut (`jetstream.enabled: true`). Ne le désactivez que si vous avez besoin uniquement de messagerie éphémère sans persistance :
-
-```yaml title="nats.yaml"
-jetstream:
-  enabled: true
-  size: 10Gi
-```
-
 :::tip
-En production, gardez toujours JetStream activé pour bénéficier de la persistance des messages, de la possibilité de rejouer les événements, et des consumer groups durables.
+En production, gardez JetStream activé pour bénéficier de la persistance des messages, de la possibilité de rejouer les événements et des consumers durables.
 :::
+
+L'activation de JetStream et la taille de son volume font partie de la configuration de l'instance. Cette option n'est pas proposée dans la console ; contactez le support.
 
 ### Quelle est la différence entre pub/sub et queue groups ?
 
@@ -43,9 +46,7 @@ Exemples :
 - `logs.*` : reçoit `logs.info`, `logs.error`, mais pas `logs.app.error`
 - `logs.>` : reçoit `logs.info`, `logs.error`, `logs.app.error`, etc.
 
-### Quelle est la différence entre `resourcesPreset` et `resources` ?
-
-Le champ `resourcesPreset` applique une configuration CPU/mémoire prédéfinie, tandis que `resources` permet de spécifier des valeurs explicites. Si `resources` est défini, `resourcesPreset` est **ignoré**.
+### Quels presets de ressources sont disponibles ?
 
 | **Preset** | **CPU** | **Mémoire** |
 | ---------- | ------- | ----------- |
@@ -57,14 +58,7 @@ Le champ `resourcesPreset` applique une configuration CPU/mémoire prédéfinie,
 | `xlarge`   | 4       | 4Gi         |
 | `2xlarge`  | 8       | 8Gi         |
 
-Exemple avec des ressources explicites :
-
-```yaml title="nats.yaml"
-replicas: 3
-resources:
-  cpu: 2000m
-  memory: 2Gi
-```
+Des valeurs CPU/mémoire explicites peuvent aussi être demandées ; elles remplacent alors le preset. Cette option n'est pas proposée dans la console ; contactez le support.
 
 ### NATS persiste-t-il les messages ?
 
@@ -72,25 +66,14 @@ Par défaut, NATS fonctionne en mode **fire-and-forget** : les messages ne sont 
 
 Pour persister les messages, deux conditions doivent être remplies :
 
-1. **JetStream doit être activé** (`jetstream.enabled: true`)
-2. **Un stream doit être créé** pour capturer les messages des subjects concernés
+1. **JetStream doit être activé** sur l'instance
+2. **Un stream doit être créé** (par exemple avec `nats stream add`) pour capturer les messages des subjects concernés
 
-Sans stream configuré, même avec JetStream activé, les messages publiés sur un subject sans stream associé ne sont pas persistés.
+Même avec JetStream activé, les messages publiés sur un subject sans stream associé ne sont pas persistés.
 
-### Comment configurer NATS de manière avancée ?
+### Peut-on ajuster la configuration du serveur NATS ?
 
-Le champ `config.merge` permet d'ajouter ou de surcharger des paramètres de la configuration NATS :
-
-```yaml title="nats.yaml"
-config:
-  merge:
-    max_payload: 8MB
-    write_deadline: 2s
-    debug: false
-    trace: false
-```
-
-Paramètres courants :
+Certains paramètres du serveur peuvent être ajustés au niveau de l'instance :
 
 | **Paramètre**     | **Description**                                          | **Défaut** |
 | ------------------ | -------------------------------------------------------- | ---------- |
@@ -99,6 +82,8 @@ Paramètres courants :
 | `debug`            | Active les logs de debug                                 | false      |
 | `trace`            | Active le traçage des messages (très verbeux)            | false      |
 
+Cette option n'est pas proposée dans la console ; contactez le support.
+
 :::warning
-Activer `debug` et `trace` en production génère un volume de logs considérable. Utilisez-les uniquement pour le diagnostic temporaire.
+Activer `debug` et `trace` en production génère un volume de logs considérable. Ne les demandez que pour un diagnostic temporaire.
 :::

@@ -7,6 +7,11 @@ import NavigationFooter from '@site/src/components/NavigationFooter';
 
 # NATS sur Hikube
 
+:::info Disponibilité
+NATS n'est pas encore disponible en libre-service dans la [console Hikube](https://console.hikube.cloud).
+Pour en provisionner une instance ou modifier sa configuration, [contactez le support](mailto:support@hidora.io).
+:::
+
 Les **clusters NATS** d’Hikube offrent une **plateforme de messagerie moderne, ultra-légère et performante**, conçue pour la **communication en temps réel** entre services, applications et appareils connectés.  
 Pensé pour les **architectures cloud natives et microservices**, NATS combine **simplicité, rapidité et résilience** dans un système unique et facile à opérer.
 
@@ -97,7 +102,7 @@ Les clusters NATS Hikube intègrent des mécanismes de sécurité avancés :
 * **Authentification par NKeys et JWT**  
 * **Contrôle d’accès par sujet (subject-level ACL)**  
 
-Cela garantit une **communication fiable, sécurisée et isolée** entre services, même dans des environnements multi-tenant.
+Cela garantit une **communication fiable, sécurisée et isolée** entre services, même dans des environnements mutualisés.
 
 ---
 

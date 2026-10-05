@@ -5,18 +5,18 @@ title: Concepts
 
 # Concepts — Kafka
 
+:::info Disponibilité
+Kafka n'est pas encore disponible en libre-service dans la [console Hikube](https://console.hikube.cloud).
+Pour en provisionner une instance ou modifier sa configuration, [contactez le support](mailto:support@hidora.io).
+:::
+
 ## Architecture
 
-Kafka sur Hikube est un service managé de streaming distribué. Chaque instance déployée via la ressource `Kafka` crée un cluster de **brokers** coordonnés par **ZooKeeper**, capable de gérer des millions de messages par seconde avec une persistance garantie.
+Kafka sur Hikube est un service managé de streaming distribué. Chaque instance est un cluster de **brokers** coordonnés par **ZooKeeper**, rattaché à un projet Hikube, avec un stockage persistant pour chaque broker.
 
 ```mermaid
 graph TB
-    subgraph "Hikube Platform"
-        subgraph "Tenant namespace"
-            CR[Kafka CRD]
-            SEC[Secret credentials]
-        end
-
+    subgraph "Projet Hikube"
         subgraph "Cluster Kafka"
             B1[Broker 1]
             B2[Broker 2]
@@ -35,15 +35,12 @@ graph TB
         end
 
         subgraph "Stockage"
-            PV1[PV Broker 1]
-            PV2[PV Broker 2]
-            PV3[PV Broker 3]
+            PV1[Volume Broker 1]
+            PV2[Volume Broker 2]
+            PV3[Volume Broker 3]
         end
     end
 
-    CR --> B1
-    CR --> B2
-    CR --> B3
     B1 --> PV1
     B2 --> PV2
     B3 --> PV3
@@ -65,7 +62,7 @@ graph TB
 
 | Terme | Description |
 |-------|-------------|
-| **Kafka** | Ressource Kubernetes (`apps.cozystack.io/v1alpha1`) représentant un cluster Kafka managé. |
+| **Kafka (instance)** | Cluster Kafka managé par Hikube, rattaché à un projet. Sa configuration est définie à la création et modifiée sur demande auprès du support. |
 | **Broker** | Instance Kafka qui stocke les messages et sert les producteurs/consommateurs. |
 | **ZooKeeper** | Service de coordination distribué qui gère les métadonnées du cluster, l'élection du leader et la configuration des topics. |
 | **Topic** | Canal de messages nommé. Les producteurs écrivent dans un topic, les consommateurs lisent depuis un topic. |
@@ -73,7 +70,7 @@ graph TB
 | **Replication Factor** | Nombre de copies de chaque partition sur différents brokers. |
 | **Consumer Group** | Groupe de consommateurs qui se répartissent les partitions d'un topic pour le traitement parallèle. |
 | **Retention** | Durée ou taille maximale de conservation des messages dans un topic. |
-| **resourcesPreset** | Profil de ressources prédéfini (nano à 2xlarge). |
+| **Preset de ressources** | Profil CPU/mémoire prédéfini (nano à 2xlarge) appliqué aux brokers et à ZooKeeper. |
 
 ---
 
@@ -102,18 +99,21 @@ graph LR
 
 - Plus de partitions = plus de parallélisme
 - Chaque partition a un **leader** (un broker) et des **followers** (réplicas)
-- Le `replicationFactor` détermine le nombre de copies de chaque partition
+- Le facteur de réplication détermine le nombre de copies de chaque partition
 
 ### Configuration des topics
 
-Les topics sont déclarés directement dans le manifeste Kafka :
+Les topics gérés font partie de la configuration de l'instance. Pour chaque topic, les paramètres suivants peuvent être définis :
 
 | Paramètre | Description |
 |-----------|-------------|
-| `topics[name].partitions` | Nombre de partitions du topic |
-| `topics[name].config.replicationFactor` | Nombre de réplicas par partition |
-| `topics[name].config.retentionMs` | Durée de rétention en ms (ex: `604800000` = 7 jours) |
-| `topics[name].config.cleanupPolicy` | `delete` (suppression par TTL) ou `compact` (conservation du dernier message par clé) |
+| Partitions | Nombre de partitions du topic |
+| Réplicas | Nombre de copies de chaque partition (ne peut pas dépasser le nombre de brokers) |
+| `retention.ms` | Durée de rétention en ms (ex. `604800000` = 7 jours) |
+| `cleanup.policy` | `delete` (suppression après rétention) ou `compact` (conservation du dernier message par clé) |
+| `min.insync.replicas` | Nombre minimum de réplicas synchronisés pour confirmer une écriture |
+
+Cette option n'est pas proposée dans la console ; contactez le support.
 
 ---
 
@@ -126,10 +126,10 @@ ZooKeeper assure la coordination du cluster Kafka :
 - **Détection des pannes** des brokers
 
 :::tip
-Configurez toujours un nombre impair d'instances ZooKeeper (`zookeeper.replicas: 3`) pour garantir le quorum.
+Un nombre impair d'instances ZooKeeper (3 en général) est nécessaire pour garantir le quorum. Précisez-le lors de votre demande d'instance.
 :::
 
-Les ressources ZooKeeper sont configurées indépendamment des brokers via `zookeeper.resources` ou `zookeeper.resourcesPreset`.
+Les ressources de ZooKeeper (nombre d'instances, preset, taille de stockage) sont définies indépendamment de celles des brokers.
 
 ---
 
@@ -153,15 +153,15 @@ Les presets s'appliquent séparément aux **brokers Kafka** et au **ZooKeeper** 
 
 | Paramètre | Valeur |
 |-----------|--------|
-| Brokers Kafka max | Selon quota tenant |
+| Brokers Kafka max | Selon les quotas du projet |
 | Instances ZooKeeper | 3 recommandé (impair) |
 | Topics par cluster | Illimité (selon ressources) |
 | Partitions par topic | Configurable |
-| Taille stockage | Variable (`kafka.size`, `zookeeper.size`) |
+| Taille stockage | Définie séparément pour les brokers et pour ZooKeeper |
 
 ---
 
 ## Pour aller plus loin
 
-- [Overview](./overview.md) : présentation du service
-- [Référence API](./api-reference.md) : tous les paramètres de la ressource Kafka
+- [Vue d'ensemble](./overview.md) : présentation du service
+- [Démarrage rapide](./quick-start.md) : demander une instance et la tester

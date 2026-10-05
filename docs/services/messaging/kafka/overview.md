@@ -7,6 +7,11 @@ import NavigationFooter from '@site/src/components/NavigationFooter';
 
 # Kafka sur Hikube
 
+:::info Disponibilité
+Kafka n'est pas encore disponible en libre-service dans la [console Hikube](https://console.hikube.cloud).
+Pour en provisionner une instance ou modifier sa configuration, [contactez le support](mailto:support@hidora.io).
+:::
+
 Les **clusters Kafka** d’Hikube offrent une plateforme de **streaming de données distribuée, scalable et hautement disponible**, conçue pour la **collecte, le traitement et la distribution d’événements en temps réel**.
 Grâce à son intégration native avec **ZooKeeper**, chaque cluster Kafka sur Hikube bénéficie d’une **gestion coordonnée et résiliente des brokers**, assurant la **stabilité et la cohérence** des métadonnées du cluster.
 
