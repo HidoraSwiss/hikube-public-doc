@@ -1,26 +1,26 @@
 ---
-title: "Comment connecter un registre d'images prive"
+title: "Comment connecter un registre d'images privé"
 ---
 
-# Comment connecter un registre d'images prive
+# Comment connecter un registre d'images privé
 
-Ce guide explique comment configurer l'acces a un registre d'images de conteneurs prive (Docker Hub, GitLab Registry, GitHub Container Registry, etc.) depuis votre cluster Kubernetes Hikube.
+Ce guide explique comment configurer l'accès à un registre d'images de conteneurs privé (Docker Hub, GitLab Registry, GitHub Container Registry, etc.) depuis votre cluster Kubernetes Hikube.
 
 :::note
-Ce guide utilise les mecanismes Kubernetes natifs pour l'authentification aux registres d'images. Il s'applique a tout cluster Kubernetes Hikube.
+Ce guide utilise les mécanismes Kubernetes natifs pour l'authentification aux registres d'images. Toutes les commandes s'exécutent dans votre cluster.
 :::
 
-## Prerequis
+## Prérequis
 
-- Un cluster Kubernetes Hikube deploye (voir le [demarrage rapide](../quick-start.md))
-- Le kubeconfig du cluster enfant configure (`export KUBECONFIG=cluster-admin.yaml`)
-- Les identifiants d'acces a votre registre prive (URL, nom d'utilisateur, mot de passe ou token)
+- Un cluster Kubernetes Hikube déployé (voir le [démarrage rapide](../quick-start.md))
+- Le kubeconfig du cluster téléchargé depuis la console (bouton **Kubeconfig**) et chargé dans votre session (`export KUBECONFIG=~/Downloads/kubeconfig-<nom-du-cluster>.yaml`)
+- Les identifiants d'accès à votre registre privé (URL, nom d'utilisateur, mot de passe ou token)
 
-## Etapes
+## Étapes
 
-### 1. Creer un Secret de type docker-registry
+### 1. Créer un Secret de type docker-registry
 
-Creez un Secret Kubernetes contenant les identifiants de votre registre prive :
+Créez un Secret Kubernetes contenant les identifiants de votre registre privé :
 
 ```bash
 kubectl create secret docker-registry my-registry \
@@ -54,19 +54,19 @@ kubectl create secret docker-registry ghcr \
 
 ### 2. Attacher le secret au ServiceAccount default
 
-Pour que tous les pods du namespace utilisent automatiquement le registre prive, attachez le secret au ServiceAccount `default` :
+Pour que tous les pods du namespace utilisent automatiquement le registre privé, attachez le secret au ServiceAccount `default` :
 
 ```bash
 kubectl patch serviceaccount default -p '{"imagePullSecrets": [{"name": "my-registry"}]}'
 ```
 
 :::tip
-Cette methode est pratique pour les environnements ou tous les pods d'un namespace doivent acceder au meme registre. Les nouveaux pods heritent automatiquement du secret.
+Cette méthode est pratique lorsque tous les pods d'un namespace doivent accéder au même registre. Les nouveaux pods héritent automatiquement du secret.
 :::
 
-### 3. Ou referencer directement dans le Pod spec
+### 3. Ou référencer directement dans le Pod spec
 
-Alternativement, vous pouvez specifier le secret `imagePullSecrets` directement dans le spec de chaque Pod ou Deployment :
+Vous pouvez aussi spécifier `imagePullSecrets` directement dans le spec de chaque Pod ou Deployment :
 
 ```yaml title="deployment-private-image.yaml"
 apiVersion: apps/v1
@@ -92,26 +92,26 @@ spec:
         - name: my-registry
 ```
 
-### 4. Tester avec un deploiement utilisant une image privee
+### 4. Tester avec un déploiement utilisant une image privée
 
-Deployez votre application et verifiez que l'image est correctement telechargee :
+Déployez votre application et vérifiez que l'image est correctement téléchargée :
 
 ```bash
 kubectl apply -f deployment-private-image.yaml
 
-# Verifier le statut des pods
+# Vérifier le statut des pods
 kubectl get pods -l app=my-app
 
 # En cas d'erreur, inspecter les events
 kubectl describe pod -l app=my-app
 ```
 
-## Verification
+## Vérification
 
-Verifiez que les pods utilisent correctement l'image privee :
+Vérifiez que les pods utilisent correctement l'image privée :
 
 ```bash
-# Verifier que les pods sont Running
+# Vérifier que les pods sont Running
 kubectl get pods -l app=my-app
 ```
 
@@ -124,15 +124,14 @@ my-app-6b8d5f7c9d-def34   1/1     Running   0          1m
 ```
 
 :::warning
-Si les pods restent en etat `ImagePullBackOff` ou `ErrImagePull`, verifiez :
-- L'URL du registre dans le Secret (`--docker-server`)
-- Les identifiants (nom d'utilisateur et mot de passe/token)
-- Le nom complet de l'image avec le prefixe du registre
-- Que le secret est dans le meme namespace que le Pod
+Si les pods restent en état `ImagePullBackOff` ou `ErrImagePull`, vérifiez :
+- l'URL du registre dans le Secret (`--docker-server`) ;
+- les identifiants (nom d'utilisateur et mot de passe ou token) ;
+- le nom complet de l'image avec le préfixe du registre ;
+- que le secret est dans le même namespace que le Pod.
 :::
 
 ## Pour aller plus loin
 
-- [Référence API](../api-reference.md) -- Configuration complète des clusters
-- [Concepts](../concepts.md) -- Architecture Kubernetes Hikube
-- [Démarrage rapide](../quick-start.md) -- Déployer un premier cluster
+- [Concepts](../concepts.md) : architecture Kubernetes Hikube
+- [Accès et outils](./toolbox.md) : kubeconfig et commandes utiles

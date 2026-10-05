@@ -7,7 +7,7 @@ import ServiceCardGrid from '@site/src/components/ServiceCardGrid';
 
 # Kubernetes managé
 
-Hikube fournit des clusters Kubernetes entièrement managés, basés sur Cozystack, avec des plugins préconfigurés et une intégration native à l'écosystème cloud.
+Hikube fournit des clusters Kubernetes entièrement managés, avec des addons préconfigurés et une intégration native à l'écosystème cloud. Les clusters se créent et se pilotent depuis la [console Hikube](https://console.hikube.cloud), menu **Infrastructure** > **Kubernetes**.
 
 ## Accès rapide
 
@@ -20,13 +20,13 @@ Hikube fournit des clusters Kubernetes entièrement managés, basés sur Cozysta
   },
   {
     title: "Démarrage rapide",
-    description: "Déployez votre premier cluster Kubernetes en quelques minutes.",
+    description: "Créez votre premier cluster Kubernetes depuis la console en quelques minutes.",
     icon: "/img/services/kubernetes.svg",
     href: "./quick-start",
   },
   {
     title: "Plugins",
-    description: "Cilium, CoreDNS, Ingress NGINX, Cert-Manager, FluxCD, Velero et plus.",
+    description: "Cilium, CoreDNS, Ingress NGINX, Cert-Manager, Flux CD, Velero et plus.",
     icon: "/img/services/kubernetes.svg",
     href: "./plugins/cilium",
   },

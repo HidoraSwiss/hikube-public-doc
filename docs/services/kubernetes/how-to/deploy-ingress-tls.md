@@ -1,101 +1,81 @@
 ---
-title: "Comment deployer un Ingress avec TLS"
+title: "Comment déployer un Ingress avec TLS"
 ---
 
-# Comment deployer un Ingress avec TLS
+# Comment déployer un Ingress avec TLS
 
-Ce guide explique comment exposer une application via HTTPS avec un certificat TLS automatique sur un cluster Kubernetes Hikube, en utilisant les addons cert-manager et ingress-nginx.
+Ce guide explique comment exposer une application en HTTPS avec un certificat TLS automatique sur un cluster Kubernetes Hikube, en utilisant les addons Cert-Manager et Ingress NGINX.
 
-## Prerequis
+## Prérequis
 
-- Un cluster Kubernetes Hikube deploye (voir le [demarrage rapide](../quick-start.md))
-- `kubectl` configure pour interagir avec l'API Hikube
-- Un nom de domaine pointe vers votre cluster (enregistrement DNS A ou CNAME)
-- Le kubeconfig du cluster enfant recupere
+- Un cluster Kubernetes Hikube déployé (voir le [démarrage rapide](../quick-start.md))
+- Le kubeconfig du cluster téléchargé depuis la console (bouton **Kubeconfig**)
+- Un nom de domaine dont vous gérez la zone DNS
 
-## Etapes
+## Étapes
 
-### 1. Activer les addons certManager et ingressNginx
+### 1. Activer les addons Cert-Manager et Ingress NGINX
 
-Modifiez la configuration de votre cluster pour activer les addons necessaires :
+Les deux addons sont cochés par défaut à la création d'un cluster. Pour vérifier ou les activer sur un cluster existant :
 
-```yaml title="cluster-ingress-tls.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Kubernetes
-metadata:
-  name: my-cluster
-spec:
-  controlPlane:
-    replicas: 3
+1. Dans **Infrastructure** > **Kubernetes**, ouvrez la page de détail du cluster : la section **Extensions** liste les addons actifs.
+2. S'ils n'y figurent pas, cliquez sur **Modifier**, cochez **Cert-Manager** et **Ingress NGINX** dans la section **Extensions & Addons**, puis cliquez sur **Enregistrer**.
 
-  nodeGroups:
-    web:
-      minReplicas: 2
-      maxReplicas: 5
-      instanceType: "s1.large"
-      ephemeralStorage: 50Gi
-      roles:
-        - ingress-nginx
+### 2. Vérifier le groupe de nœuds exposé
 
-  addons:
-    certManager:
-      enabled: true
-    ingressNginx:
-      enabled: true
-      hosts:
-        - app.example.com
-```
+Le contrôleur Ingress NGINX s'exécute sur les nœuds des groupes marqués **Exposé sur internet (IP Publique)**. Le premier groupe du cluster l'est toujours. Pour dédier un autre groupe au trafic entrant, activez cette option sur sa carte dans la section **Groupes de nœuds** de la page **Modifier**.
 
-:::note
-Le champ `hosts` sous `ingressNginx` definit les domaines pour lesquels l'Ingress Controller acceptera le trafic. Vous pouvez utiliser des wildcards (`*.example.com`) pour couvrir plusieurs sous-domaines.
+:::tip
+Dédier un groupe de nœuds à l'Ingress permet d'isoler le trafic entrant et de dimensionner indépendamment les ressources d'exposition HTTP/HTTPS.
 :::
 
-### 2. Assigner le role ingress-nginx a un node group
+### 3. Récupérer l'IP externe et configurer le DNS
 
-Le node group qui hebergera l'Ingress Controller doit avoir le role `ingress-nginx` dans sa configuration. Verifiez que votre node group est correctement configure :
+```bash
+export KUBECONFIG=~/Downloads/kubeconfig-<nom-du-cluster>.yaml
 
-```yaml title="cluster-ingress.yaml"
-nodeGroups:
-  web:
-    minReplicas: 2
-    maxReplicas: 5
-    instanceType: "s1.large"
-    ephemeralStorage: 50Gi
-    roles:
-      - ingress-nginx
+# Pods Cert-Manager et Ingress NGINX
+kubectl get pods -A | grep -E "cert-manager|ingress-nginx"
+
+# IP externe du contrôleur Ingress NGINX (colonne EXTERNAL-IP)
+kubectl get svc -A | grep ingress-nginx-controller
+```
+
+Créez chez votre fournisseur DNS un enregistrement `A` qui pointe votre domaine (par exemple `app.example.com`) vers cette IP externe.
+
+### 4. Créer un émetteur de certificats
+
+Déclarez un `ClusterIssuer` Let's Encrypt, qui validera vos domaines par challenge HTTP-01 via Ingress NGINX :
+
+```yaml title="cluster-issuer.yaml"
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: admin@example.com
+    privateKeySecretRef:
+      name: letsencrypt-prod-account-key
+    solvers:
+      - http01:
+          ingress:
+            ingressClassName: nginx
+```
+
+```bash
+kubectl apply -f cluster-issuer.yaml
+kubectl get clusterissuer letsencrypt-prod
 ```
 
 :::tip
-Dedier un node group a l'Ingress permet d'isoler le trafic entrant et de dimensionner independamment les ressources d'exposition HTTP/HTTPS.
+Pour vos tests, utilisez d'abord le serveur de staging de Let's Encrypt (`https://acme-staging-v02.api.letsencrypt.org/directory`) afin de ne pas atteindre les limites de requêtes.
 :::
 
-### 3. Appliquer la configuration du cluster
+### 5. Créer un Ingress avec TLS
 
-```bash
-kubectl apply -f cluster-ingress-tls.yaml
-
-# Attendre que le cluster soit pret
-kubectl get kubernetes my-cluster -w
-```
-
-Verifiez que les addons sont deployes dans le cluster enfant :
-
-```bash
-export KUBECONFIG=cluster-admin.yaml
-
-# Verifier cert-manager
-kubectl get pods -n cert-manager
-
-# Verifier l'Ingress Controller
-kubectl get pods -n ingress-nginx
-
-# Recuperer l'IP externe de l'Ingress Controller
-kubectl get svc -n ingress-nginx ingress-nginx-controller
-```
-
-### 4. Creer un Ingress avec TLS dans le cluster enfant
-
-Deployez votre application, puis creez un Ingress avec terminaison TLS automatique :
+Déployez votre application, puis créez un Ingress avec terminaison TLS automatique :
 
 ```yaml title="ingress-tls.yaml"
 apiVersion: networking.k8s.io/v1
@@ -123,43 +103,37 @@ spec:
                   number: 80
 ```
 
-Appliquez la configuration dans le cluster enfant :
-
 ```bash
 kubectl apply -f ingress-tls.yaml
 ```
 
 :::note
-L'annotation `cert-manager.io/cluster-issuer: letsencrypt-prod` indique a cert-manager d'obtenir automatiquement un certificat Let's Encrypt pour le domaine specifie.
+L'annotation `cert-manager.io/cluster-issuer: letsencrypt-prod` indique à Cert-Manager d'obtenir automatiquement un certificat pour les domaines de la section `tls`.
 :::
 
-### 5. Verifier le certificat
+### 6. Vérifier le certificat
 
 ```bash
-# Verifier l'etat du certificat
 kubectl get certificate
 
-# Resultat attendu
+# Résultat attendu
 # NAME      READY   SECRET    AGE
 # app-tls   True    app-tls   2m
 
-# Details du certificat
 kubectl describe certificate app-tls
 ```
 
-## Verification
-
-Testez l'acces HTTPS a votre application :
+## Vérification
 
 ```bash
-# Verifier l'Ingress
+# Vérifier l'Ingress
 kubectl get ingress my-app
 
-# Tester l'acces HTTPS
+# Tester l'accès HTTPS
 curl -v https://app.example.com
 ```
 
-**Resultat attendu :**
+**Résultat attendu :**
 
 ```console
 NAME     CLASS   HOSTS             ADDRESS        PORTS     AGE
@@ -167,11 +141,14 @@ my-app   nginx   app.example.com   203.0.113.10   80, 443   5m
 ```
 
 :::warning
-Le provisionnement du certificat Let's Encrypt peut prendre quelques minutes. Si le certificat reste en etat `False`, verifiez que votre enregistrement DNS pointe correctement vers l'IP de l'Ingress Controller et que le port 80 est accessible (necessaire pour la validation HTTP-01).
+Le provisionnement du certificat Let's Encrypt peut prendre quelques minutes. Si le certificat reste en état `False`, vérifiez que votre enregistrement DNS pointe vers l'IP externe du contrôleur Ingress NGINX et que le port 80 est accessible (nécessaire pour la validation HTTP-01).
+:::
+
+:::tip
+Si des pods du cluster doivent joindre vos propres domaines publics (hairpin NAT), activez l'addon [Ouroboros](../plugins/ouroboros.md).
 :::
 
 ## Pour aller plus loin
 
-- [Référence API](../api-reference.md) -- Configuration des addons `certManager` et `ingressNginx`
-- [Concepts](../concepts.md) -- Architecture du cluster et composants reseau
-- [Comment configurer le networking](./configure-networking.md) -- Gestion avancee du reseau
+- [Cert-Manager](../plugins/cert-manager.md) et [Ingress NGINX](../plugins/ingress-nginx.md) : détail des addons
+- [Comment configurer le networking](./configure-networking.md) : gestion avancée du réseau
