@@ -50,7 +50,7 @@ const sidebars = {
     },
     {
       type: "category",
-      label: "🚀 Démarrer",
+      label: "Démarrer",
       items: [
         "getting-started/introduction",
         "getting-started/concepts",
@@ -59,7 +59,7 @@ const sidebars = {
     },
     {
       type: "category",
-      label: "💾 Services",
+      label: "Services",
       items: [
         {
           type: "category",
@@ -179,7 +179,7 @@ const sidebars = {
     },
     {
       type: "category",
-      label: "📚 Ressources",
+      label: "Ressources",
       items: [
         "resources/troubleshooting",
         "resources/faq",
@@ -188,7 +188,7 @@ const sidebars = {
     },
     {
       type: "category",
-      label: "🛠️ Outils",
+      label: "Outils",
       items: ["tools/terraform"],
     },
   ],

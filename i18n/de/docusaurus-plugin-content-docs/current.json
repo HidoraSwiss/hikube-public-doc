@@ -3,13 +3,13 @@
     "message": "3.0.0",
     "description": "The label for version current"
   },
-  "sidebar.docsSidebar.category.🚀 Démarrer": {
-    "message": "🚀 Erste Schritte",
-    "description": "The label for category '🚀 Démarrer' in sidebar 'docsSidebar'"
+  "sidebar.docsSidebar.category.Démarrer": {
+    "message": "Erste Schritte",
+    "description": "The label for category 'Démarrer' in sidebar 'docsSidebar'"
   },
-  "sidebar.docsSidebar.category.💾 Services": {
-    "message": "💾 Dienste",
-    "description": "The label for category '💾 Services' in sidebar 'docsSidebar'"
+  "sidebar.docsSidebar.category.Services": {
+    "message": "Dienste",
+    "description": "The label for category 'Services' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.Storage": {
     "message": "Speicher",
@@ -159,12 +159,12 @@
     "message": "Praktische Anleitungen",
     "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
-  "sidebar.docsSidebar.category.📚 Ressources": {
-    "message": "📚 Ressourcen",
-    "description": "The label for category '📚 Ressources' in sidebar 'docsSidebar'"
+  "sidebar.docsSidebar.category.Ressources": {
+    "message": "Ressourcen",
+    "description": "The label for category 'Ressources' in sidebar 'docsSidebar'"
   },
-  "sidebar.docsSidebar.category.🛠️ Outils": {
-    "message": "🛠️ Werkzeuge",
-    "description": "The label for category '🛠️ Outils' in sidebar 'docsSidebar'"
+  "sidebar.docsSidebar.category.Outils": {
+    "message": "Werkzeuge",
+    "description": "The label for category 'Outils' in sidebar 'docsSidebar'"
   }
 }
