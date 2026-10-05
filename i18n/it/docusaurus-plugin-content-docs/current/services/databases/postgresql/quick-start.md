@@ -55,6 +55,9 @@ Inserisca il **Cluster Name** (per impostazione predefinita viene proposto un no
 | **Number of replicas** | `1 (Standalone)` | `2` o `3` per l'alta disponibilità |
 | **External access** | Attivato | Necessario per connettersi dal suo computer |
 
+![Procedura guidata PostgreSQL, passo Configuration](/img/console/postgresql/wizard-configuration.en.png)
+
+
 Il banner nella parte superiore della procedura guidata mostra l'**Estimated cost** e l'impatto sulla quota del progetto.
 
 :::warning
@@ -106,6 +109,9 @@ Le password vengono mostrate **una sola volta**, nel passaggio **Finish** della 
 
 - **Password** di ogni utente creato;
 - **Internal Connection String**: l'indirizzo del cluster, quando l'accesso esterno è attivato.
+
+![Procedura guidata PostgreSQL, passo Finish: credenziali degli utenti (password oscurata)](/img/console/postgresql/wizard-credentials.en.png)
+
 
 :::warning
 Copi queste password in un gestore di password prima di lasciare la schermata: non verranno più mostrate. In caso di smarrimento, ne generi una nuova dalla scheda **Users** (**Actions** → **Change Password**).

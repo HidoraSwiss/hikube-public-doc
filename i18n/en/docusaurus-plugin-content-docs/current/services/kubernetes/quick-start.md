@@ -42,6 +42,8 @@ The wizard has four steps: **General**, **Nodes**, **Addons** and **Summary**. T
 | **Control Plane Instance Size** | **Small** |
 | **Control Plane High Availability** | **3 (HA)** |
 
+![Kubernetes cluster creation wizard, General step](/img/console/kubernetes/wizard-general.en.png)
+
 Click **Next**.
 
 ### Nodes
@@ -57,17 +59,24 @@ A first group, `worker-pool-1`, is already present. Expand it and fill in:
 | **Instance type** | **Standard (S)** series, size **Large** (`s1.large`, 4 vCPU, 8 GB) |
 | **Exposed on the internet (Public IP)** | Enabled (enforced for the first group) |
 
+![Kubernetes wizard, Nodes step: node group and instance type](/img/console/kubernetes/wizard-nodes.en.png)
+
 Click **Next**.
 
 ### Addons
 
 **Cert-Manager**, **Ingress NGINX** and **Monitoring Agents** are checked by default. Keep this selection for this guide. The **Advanced Configuration** blocks (Cilium, CoreDNS, Vertical Pod Autoscaler) do not need to be modified.
 
+![Kubernetes wizard, Addons step](/img/console/kubernetes/wizard-addons.en.png)
+
 Click **Next**.
 
 ### Summary
 
 The **Summary** lists the cluster identity, the control plane, the node groups and the **Enabled Extensions & Addons**. Check the configuration, then click **Create cluster**.
+
+![Kubernetes wizard, Summary step](/img/console/kubernetes/wizard-review.en.png)
+
 
 ---
 
@@ -90,6 +99,9 @@ Click the cluster (or **View details** in its **Actions** menu) to open its deta
 ## Step 4: Retrieve the credentials
 
 On the cluster detail page, in the **Actions** section, click **Kubeconfig**. The browser downloads the `kubeconfig-demo-cluster.yaml` file and the console confirms: "The kubeconfig file has been downloaded."
+
+![Kubernetes cluster detail page, with the Kubeconfig button in the Actions card](/img/console/kubernetes/cluster-detail.en.png)
+
 
 :::warning
 This kubeconfig grants full administrator access to the cluster. Keep it in a safe place and do not commit it to version control.

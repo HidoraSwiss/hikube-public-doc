@@ -39,6 +39,9 @@ Ein **Projekt** ist ein isolierter Bereich, der Ihre Ressourcen (VMs, Cluster, D
 
 1. Öffnen Sie die Projektauswahl und klicken Sie auf **Create a project**. Bei Ihrer ersten Anmeldung öffnet sich direkt der Assistent **Welcome to Hikube**.
 2. Schritt **General**: Geben Sie den **Project Name** ein. Er muss mit einem Buchstaben beginnen und darf nur Kleinbuchstaben und Ziffern enthalten, ohne Bindestrich, mit 3 bis 16 Zeichen (Beispiel: `demo01`).
+
+   ![Assistent zum Erstellen eines Projekts, Schritt General](/img/console/projects/wizard-general.en.png)
+
 3. Schritt **Quotas** (optional): Legen Sie die Limits für **CPU** (vCPU), **Memory** (GB) und **Storage** (GB) des Projekts fest.
 4. Schritt **Summary**: Prüfen Sie die Zusammenfassung und klicken Sie dann auf **Create project**.
 

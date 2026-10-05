@@ -60,6 +60,9 @@ Geben Sie den **Instance name** ein, zum Beispiel `vm-demo`. Der Name muss 3 bis
 3. Lassen Sie **Automatic Restart** deaktiviert oder aktivieren Sie die Option nach Bedarf.
 4. Klicken Sie auf **Next**.
 
+![Assistent zum Erstellen einer VM, Schritt Configuration: Instanztyp und GPU](/img/console/compute/wizard-configuration.en.png)
+
+
 Das Banner oben im Schritt zeigt die geschätzten Kosten und den Quota-Verbrauch des Projekts an.
 
 ### Storage
@@ -110,6 +113,9 @@ ssh ubuntu@203.0.113.10
 ```
 
 Klicken Sie auf das Kopiersymbol, um ihn in die Zwischenablage zu kopieren. Der Standardbenutzer hängt vom Image ab; es ist der Benutzer im SSH-Befehl.
+
+![Detailseite einer VM: Karte Network & Security mit dem SSH-Befehl](/img/console/compute/vm-detail-network.en.png)
+
 
 ---
 

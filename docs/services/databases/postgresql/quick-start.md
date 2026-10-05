@@ -55,6 +55,9 @@ Saisissez le **Nom du cluster** (un nom aléatoire est proposé par défaut), pa
 | **Nombre de réplicas** | `1 (Standalone)` | `2` ou `3` pour la haute disponibilité |
 | **Accès externe** | Activé | Nécessaire pour vous connecter depuis votre poste |
 
+![Assistant PostgreSQL, étape Configuration](/img/console/postgresql/wizard-configuration.fr.png)
+
+
 Le bandeau en haut de l'assistant affiche le **Coût estimé** et l'impact sur les quotas du projet.
 
 :::warning
@@ -106,6 +109,9 @@ Les mots de passe sont affichés **une seule fois**, à l'étape **Résumé** de
 
 - **Mot de passe** de chaque utilisateur créé ;
 - **Chaîne de connexion interne** : l'adresse du cluster, lorsque l'accès externe est activé.
+
+![Assistant PostgreSQL, étape Résumé : identifiants des utilisateurs (mot de passe masqué)](/img/console/postgresql/wizard-credentials.fr.png)
+
 
 :::warning
 Copiez ces mots de passe dans un gestionnaire de mots de passe avant de quitter l'écran : ils ne seront plus affichés. En cas de perte, générez-en un nouveau depuis l'onglet **Utilisateurs** (**Actions** → **Changer le mot de passe**).

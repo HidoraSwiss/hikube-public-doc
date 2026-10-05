@@ -55,6 +55,9 @@ Enter the **Cluster Name** (a random name is suggested by default), for example 
 | **Number of replicas** | `1 (Standalone)` | `2` or `3` for high availability |
 | **External access** | Enabled | Required to connect from your workstation |
 
+![PostgreSQL wizard, Configuration step](/img/console/postgresql/wizard-configuration.en.png)
+
+
 The banner at the top of the wizard shows the **Estimated Cost** and the impact on the project quotas.
 
 :::warning
@@ -106,6 +109,9 @@ Passwords are displayed **only once**, at the wizard's **Finish** step, in the *
 
 - **Password** of each user created;
 - **Internal Connection String**: the cluster address, when external access is enabled.
+
+![PostgreSQL wizard, Finish step: user credentials (password masked)](/img/console/postgresql/wizard-credentials.en.png)
+
 
 :::warning
 Copy these passwords into a password manager before leaving the screen: they will not be displayed again. If one is lost, generate a new one from the **Users** tab (**Actions** → **Change Password**).

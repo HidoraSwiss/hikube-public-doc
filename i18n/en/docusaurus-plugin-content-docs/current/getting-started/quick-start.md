@@ -35,6 +35,9 @@ A **project** is an isolated space that groups your resources (VMs, clusters, da
 
 1. Open the project selector and click **Create a project**. On your first sign-in, the **Welcome to Hikube** wizard opens directly.
 2. **General** step: enter the **Project Name**. It must start with a letter and contain only lowercase letters and digits, no hyphens, between 3 and 16 characters (example: `demo01`).
+
+   ![Project creation wizard, General step](/img/console/projects/wizard-general.en.png)
+
 3. **Quotas** step (optional): set the project's **CPU** (vCPU), **Memory** (GB) and **Storage** (GB) limits.
 4. **Summary** step: review the summary, then click **Create project**.
 

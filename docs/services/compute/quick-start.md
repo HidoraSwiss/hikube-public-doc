@@ -60,6 +60,9 @@ Saisissez le **Nom de l'instance**, par exemple `vm-demo`. Le nom doit faire 3 �
 3. Laissez **Redémarrage Automatique** désactivé ou activez-le selon votre besoin.
 4. Cliquez sur **Suivant**.
 
+![Assistant de création de VM, étape Configuration : type d'instance et GPU](/img/console/compute/wizard-configuration.fr.png)
+
+
 Le bandeau en haut de l'étape affiche le coût estimé et la consommation de quota du projet.
 
 ### Stockage
@@ -110,6 +113,9 @@ ssh ubuntu@203.0.113.10
 ```
 
 Cliquez sur l'icône de copie pour la copier dans le presse-papier. L'utilisateur par défaut dépend de l'image ; c'est celui qui figure dans la commande SSH.
+
+![Page de détail d'une VM : carte Réseau et Sécurité avec la commande SSH](/img/console/compute/vm-detail-network.fr.png)
+
 
 ---
 

@@ -42,6 +42,8 @@ L'assistant comporte quatre étapes : **Général**, **Nœuds**, **Addons** et *
 | **Taille de l'instance Control Plane** | **Small** |
 | **Haute Disponibilité du Control Plane** | **3 (HA)** |
 
+![Assistant de création de cluster Kubernetes, étape Général](/img/console/kubernetes/wizard-general.fr.png)
+
 Cliquez sur **Suivant**.
 
 ### Nœuds
@@ -57,17 +59,24 @@ Un premier groupe, `worker-pool-1`, est déjà présent. Dépliez-le et renseign
 | **Type d'instance** | Série **Standard (S)**, taille **Large** (`s1.large`, 4 vCPU, 8 Go) |
 | **Exposé sur internet (IP Publique)** | Activé (imposé pour le premier groupe) |
 
+![Assistant Kubernetes, étape Nœuds : groupe de nœuds et type d'instance](/img/console/kubernetes/wizard-nodes.fr.png)
+
 Cliquez sur **Suivant**.
 
 ### Addons
 
 **Cert-Manager**, **Ingress NGINX** et **Monitoring Agents** sont cochés par défaut. Gardez cette sélection pour ce guide. Les blocs de la **Configuration avancée** (Cilium, CoreDNS, Vertical Pod Autoscaler) n'ont pas besoin d'être modifiés.
 
+![Assistant Kubernetes, étape Addons](/img/console/kubernetes/wizard-addons.fr.png)
+
 Cliquez sur **Suivant**.
 
 ### Vérification
 
 Le **Récapitulatif** reprend l'identité du cluster, le control plane, les groupes de nœuds et les **Extensions & Addons activés**. Vérifiez la configuration, puis cliquez sur **Déployer**.
+
+![Assistant Kubernetes, étape Vérification : récapitulatif du cluster](/img/console/kubernetes/wizard-review.fr.png)
+
 
 ---
 
@@ -90,6 +99,9 @@ Cliquez sur le cluster (ou **Voir les détails** dans son menu **Actions**) pour
 ## Étape 4 : Récupérer les identifiants
 
 Sur la page de détail du cluster, section **Actions**, cliquez sur **Kubeconfig**. Le navigateur télécharge le fichier `kubeconfig-demo-cluster.yaml` et la console confirme : « Le fichier kubeconfig a été téléchargé. »
+
+![Page de détail d'un cluster Kubernetes, avec le bouton Kubeconfig dans la carte Actions](/img/console/kubernetes/cluster-detail.fr.png)
+
 
 :::warning
 Ce kubeconfig donne un accès administrateur complet au cluster. Conservez-le en lieu sûr et ne le versionnez pas.

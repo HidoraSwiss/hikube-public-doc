@@ -75,6 +75,9 @@ Sur cette page :
 - la carte **Accès & Configuration** affiche le **Nom du bucket** S3 et le **Point de terminaison (Endpoint)** ;
 - la carte **Utilisateurs et Accès** liste les utilisateurs et leur droit (**Lecture seule** ou **Lecture / Écriture**).
 
+![Page d'un bucket : nom S3, point de terminaison et utilisateurs](/img/console/buckets/bucket-detail.fr.png)
+
+
 :::note
 Si le bucket n'est pas prêt à temps, la console affiche « Bucket en cours de provisionnement » et ne crée pas les utilisateurs. Attendez que le bucket passe à **Prêt**, puis créez-les depuis sa page avec **Ajouter un utilisateur** (voir [Gérer les utilisateurs et les clés d'accès](./how-to/configure-access.md)).
 :::
@@ -91,6 +94,9 @@ L'écran de fin de l'assistant affiche, pour chaque utilisateur créé :
 | **Clé d'accès** | Access Key ID |
 | **Clé secrète** | Secret Access Key |
 | **Point de terminaison API (S3)** | Endpoint S3, par exemple `prod.s3.hikube.cloud` |
+
+![Écran de fin de l'assistant de bucket : identifiants de l'utilisateur (clé secrète masquée)](/img/console/buckets/wizard-credentials.fr.png)
+
 
 :::warning Clé secrète affichée une seule fois
 Copiez ces valeurs avant de cliquer sur **Terminer** et conservez la clé secrète dans un gestionnaire de mots de passe. Elle ne sera plus affichée. En cas de perte, créez un nouvel utilisateur.

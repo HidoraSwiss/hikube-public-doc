@@ -42,6 +42,8 @@ Der Assistent umfasst vier Schritte: **General**, **Nodes**, **Addons** und **Su
 | **Control Plane Instance Size** | **Small** |
 | **Control Plane High Availability** | **3 (HA)** |
 
+![Assistent zum Erstellen eines Kubernetes-Clusters, Schritt General](/img/console/kubernetes/wizard-general.en.png)
+
 Klicken Sie auf **Next**.
 
 ### Nodes
@@ -57,17 +59,24 @@ Eine erste Gruppe, `worker-pool-1`, ist bereits vorhanden. Klappen Sie sie auf u
 | **Instance type** | Serie **Standard (S)**, Größe **Large** (`s1.large`, 4 vCPU, 8 GB) |
 | **Exposed on the internet (Public IP)** | Aktiviert (für die erste Gruppe vorgegeben) |
 
+![Kubernetes-Assistent, Schritt Nodes: Node-Gruppe und Instanztyp](/img/console/kubernetes/wizard-nodes.en.png)
+
 Klicken Sie auf **Next**.
 
 ### Addons
 
 **Cert-Manager**, **Ingress NGINX** und **Monitoring Agents** sind standardmäßig ausgewählt. Behalten Sie diese Auswahl für diesen Leitfaden bei. Die Blöcke der **Advanced Configuration** (Cilium, CoreDNS, Vertical Pod Autoscaler) müssen nicht geändert werden.
 
+![Kubernetes-Assistent, Schritt Addons](/img/console/kubernetes/wizard-addons.en.png)
+
 Klicken Sie auf **Next**.
 
 ### Summary
 
 Die **Summary** fasst die Identität des Clusters, die Control Plane, die Node-Gruppen und die **Enabled Extensions & Addons** zusammen. Prüfen Sie die Konfiguration und klicken Sie dann auf **Create cluster**.
+
+![Kubernetes-Assistent, Schritt Summary](/img/console/kubernetes/wizard-review.en.png)
+
 
 ---
 
@@ -90,6 +99,9 @@ Klicken Sie auf den Cluster (oder auf **View details** in seinem Menü **Actions
 ## Schritt 4: Die Zugangsdaten abrufen
 
 Klicken Sie auf der Detailseite des Clusters im Abschnitt **Actions** auf **Kubeconfig**. Der Browser lädt die Datei `kubeconfig-demo-cluster.yaml` herunter, und die Konsole bestätigt: „The kubeconfig file has been downloaded.“
+
+![Detailseite eines Kubernetes-Clusters mit der Schaltfläche Kubeconfig in der Karte Actions](/img/console/kubernetes/cluster-detail.en.png)
+
 
 :::warning
 Diese kubeconfig gewährt vollen administrativen Zugriff auf den Cluster. Bewahren Sie sie sicher auf und versionieren Sie sie nicht.

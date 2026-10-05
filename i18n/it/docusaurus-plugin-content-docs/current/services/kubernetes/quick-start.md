@@ -42,6 +42,8 @@ La procedura guidata comprende quattro passaggi: **General**, **Nodes**, **Addon
 | **Control Plane Instance Size** | **Small** |
 | **Control Plane High Availability** | **3 (HA)** |
 
+![Procedura guidata di creazione del cluster Kubernetes, passo General](/img/console/kubernetes/wizard-general.en.png)
+
 Faccia clic su **Next**.
 
 ### Nodes
@@ -57,17 +59,24 @@ Faccia clic su **Next**.
 | **Instance type** | Serie **Standard (S)**, dimensione **Large** (`s1.large`, 4 vCPU, 8 GB) |
 | **Exposed on the internet (Public IP)** | Attivato (imposto per il primo gruppo) |
 
+![Procedura guidata Kubernetes, passo Nodes: gruppo di nodi e tipo di istanza](/img/console/kubernetes/wizard-nodes.en.png)
+
 Faccia clic su **Next**.
 
 ### Addons
 
 **Cert-Manager**, **Ingress NGINX** e **Monitoring Agents** sono selezionati per impostazione predefinita. Mantenga questa selezione per la presente guida. I blocchi della **Advanced Configuration** (Cilium, CoreDNS, Vertical Pod Autoscaler) non devono essere modificati.
 
+![Procedura guidata Kubernetes, passo Addons](/img/console/kubernetes/wizard-addons.en.png)
+
 Faccia clic su **Next**.
 
 ### Summary
 
 Il **Summary** riprende l'identità del cluster, il control plane, i gruppi di nodi e gli **Enabled Extensions & Addons**. Verifichi la configurazione, quindi faccia clic su **Create cluster**.
+
+![Procedura guidata Kubernetes, passo Summary](/img/console/kubernetes/wizard-review.en.png)
+
 
 ---
 
@@ -90,6 +99,9 @@ Faccia clic sul cluster (oppure su **View Details** nel relativo menu **Actions*
 ## Passaggio 4: Recuperare le credenziali
 
 Nella pagina di dettaglio del cluster, sezione **Actions**, faccia clic su **Kubeconfig**. Il browser scarica il file `kubeconfig-demo-cluster.yaml` e la console conferma: «The kubeconfig file has been downloaded.»
+
+![Pagina di dettaglio di un cluster Kubernetes, con il pulsante Kubeconfig nella scheda Actions](/img/console/kubernetes/cluster-detail.en.png)
+
 
 :::warning
 Questo kubeconfig conferisce un accesso amministratore completo al cluster. Lo conservi in un luogo sicuro e non lo inserisca nel controllo di versione.

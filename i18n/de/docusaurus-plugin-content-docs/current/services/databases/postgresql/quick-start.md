@@ -55,6 +55,9 @@ Geben Sie den **Cluster Name** ein (standardmäßig wird ein zufälliger Name vo
 | **Number of replicas** | `1 (Standalone)` | `2` oder `3` für Hochverfügbarkeit |
 | **External access** | Aktiviert | Erforderlich, um sich von Ihrem Rechner aus zu verbinden |
 
+![PostgreSQL-Assistent, Schritt Configuration](/img/console/postgresql/wizard-configuration.en.png)
+
+
 Das Banner oben im Assistenten zeigt die **Estimated cost** und die Auswirkung auf die Quotas des Projekts an.
 
 :::warning
@@ -106,6 +109,9 @@ Die Passwörter werden **nur ein einziges Mal** angezeigt, im Schritt **Finish**
 
 - **Password** jedes erstellten Benutzers;
 - **Internal Connection String**: die Adresse des Clusters, wenn der externe Zugriff aktiviert ist.
+
+![PostgreSQL-Assistent, Schritt Finish: Benutzer-Zugangsdaten (Passwort verdeckt)](/img/console/postgresql/wizard-credentials.en.png)
+
 
 :::warning
 Kopieren Sie diese Passwörter in einen Passwort-Manager, bevor Sie den Bildschirm verlassen: Sie werden nicht mehr angezeigt. Bei Verlust generieren Sie in der Registerkarte **Users** ein neues (**Actions** → **Change Password**).

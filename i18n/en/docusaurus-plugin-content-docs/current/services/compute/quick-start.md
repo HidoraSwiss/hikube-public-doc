@@ -60,6 +60,9 @@ Enter the **Instance name**, for example `vm-demo`. The name must be 3 to 16 cha
 3. Leave **Automatic Restart** disabled, or enable it if you need it.
 4. Click **Next**.
 
+![VM creation wizard, Configuration step: instance type and GPU](/img/console/compute/wizard-configuration.en.png)
+
+
 The banner at the top of the step shows the estimated cost and the project's quota usage.
 
 ### Storage
@@ -110,6 +113,9 @@ ssh ubuntu@203.0.113.10
 ```
 
 Click the copy icon to copy it to the clipboard. The default user depends on the image; it is the one shown in the SSH command.
+
+![VM detail page: Network & Security card with the SSH command](/img/console/compute/vm-detail-network.en.png)
+
 
 ---
 

@@ -75,6 +75,9 @@ Auf dieser Seite:
 - zeigt die Karte **Access & Configuration** den S3-**Bucket name** und den **Endpoint** an;
 - listet die Karte **Users & Access** die Benutzer und ihr Recht auf (**Read-only** oder **Read / Write**).
 
+![Bucket-Seite: S3-Name, Endpoint und Benutzer](/img/console/buckets/bucket-detail.en.png)
+
+
 :::note
 Ist der Bucket nicht rechtzeitig bereit, zeigt die Konsole „Bucket provisioning“ an und erstellt die Benutzer nicht. Warten Sie, bis der Bucket auf **Ready** wechselt, und erstellen Sie sie dann auf seiner Seite mit **Add User** (siehe [Benutzer und Zugriffsschlüssel verwalten](./how-to/configure-access.md)).
 :::
@@ -91,6 +94,9 @@ Der Abschlussbildschirm des Assistenten zeigt für jeden erstellten Benutzer an:
 | **Access Key** | Access Key ID |
 | **Secret Key** | Secret Access Key |
 | **API Endpoint (S3)** | S3-Endpunkt, zum Beispiel `prod.s3.hikube.cloud` |
+
+![Abschlussbildschirm des Bucket-Assistenten: Benutzer-Zugangsdaten (geheimer Schlüssel verdeckt)](/img/console/buckets/wizard-credentials.en.png)
+
 
 :::warning Geheimer Schlüssel wird nur einmal angezeigt
 Kopieren Sie diese Werte, bevor Sie auf **Finish** klicken, und bewahren Sie den geheimen Schlüssel in einem Passwortmanager auf. Er wird nicht erneut angezeigt. Bei Verlust erstellen Sie einen neuen Benutzer.

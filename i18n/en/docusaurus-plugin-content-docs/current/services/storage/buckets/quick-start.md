@@ -75,6 +75,9 @@ On this page:
 - the **Access & Configuration** card displays the S3 **Bucket name** and the **Endpoint**;
 - the **Users & Access** card lists the users and their permission (**Read-only** or **Read / Write**).
 
+![Bucket page: S3 name, endpoint and users](/img/console/buckets/bucket-detail.en.png)
+
+
 :::note
 If the bucket is not ready in time, the console displays "Bucket provisioning" and does not create the users. Wait until the bucket switches to **Ready**, then create them from its page with **Add User** (see [Manage users and access keys](./how-to/configure-access.md)).
 :::
@@ -91,6 +94,9 @@ The final screen of the wizard displays, for each user created:
 | **Access Key** | Access Key ID |
 | **Secret Key** | Secret Access Key |
 | **API Endpoint (S3)** | S3 endpoint, for example `prod.s3.hikube.cloud` |
+
+![Final screen of the bucket wizard: user credentials (secret key masked)](/img/console/buckets/wizard-credentials.en.png)
+
 
 :::warning Secret key displayed only once
 Copy these values before clicking **Finish** and store the secret key in a password manager. It will not be displayed again. If it is lost, create a new user.
