@@ -7,43 +7,41 @@ title: Concepts
 
 ## Architecture
 
-Le service Object Storage d'Hikube repose sur **SeaweedFS**, une solution de stockage objet compatible S3. Les données sont **triple-répliquées** automatiquement sur 3 datacenters géographiquement distincts, garantissant une haute disponibilité même en cas de perte complète d'un datacenter.
+Le service Object Storage d'Hikube repose sur **SeaweedFS**, une solution de stockage objet compatible S3. Les données sont **répliquées** automatiquement sur 3 datacenters géographiquement distincts, ce qui maintient la disponibilité même en cas de perte complète d'un datacenter.
 
 ```mermaid
 graph TB
-    subgraph "Hikube Platform"
-        subgraph "Tenant namespace"
-            CR[Bucket CRD]
-            SEC[Secret credentials]
-        end
-
-        subgraph "S3 Gateway"
-            GW[S3 API Endpoint]
-        end
-
-        subgraph "Triple réplication"
-            DC1[Geneva<br/>Data Storage]
-            DC2[Gland<br/>Data Storage]
-            DC3[Lucerne<br/>Data Storage]
-        end
-
-        subgraph "Clients"
-            CLI[AWS CLI / mc]
-            APP[Application]
-            BKP[Backup - Velero/Restic]
-        end
+    subgraph "Projet Hikube"
+        BK[Bucket]
+        U1[Utilisateur S3 lecture / écriture]
+        U2[Utilisateur S3 lecture seule]
     end
 
-    CR --> GW
-    GW --> DC1
-    GW --> DC2
-    GW --> DC3
-    DC1 <-->|sync| DC2
-    DC2 <-->|sync| DC3
+    subgraph "Passerelle S3"
+        GW[Endpoint S3 HTTPS]
+    end
+
+    subgraph "Réplication"
+        DC1[Genève]
+        DC2[Gland]
+        DC3[Lucerne]
+    end
+
+    subgraph "Clients"
+        CLI[AWS CLI / mc / rclone]
+        APP[Application / SDK]
+        BKP[Backup - Velero / Restic]
+    end
+
+    U1 -.->|clés d'accès| GW
+    U2 -.->|clés d'accès| GW
     CLI --> GW
     APP --> GW
     BKP --> GW
-    CR --> SEC
+    GW --> BK
+    BK --> DC1
+    BK --> DC2
+    BK --> DC3
 ```
 
 ---
@@ -52,13 +50,14 @@ graph TB
 
 | Terme | Description |
 |-------|-------------|
-| **Bucket** | Ressource Kubernetes (`apps.cozystack.io/v1alpha1`) représentant un bucket S3. Un seul champ requis : le `name`. |
-| **Object Storage** | Stockage non structuré basé sur des objets (fichiers) identifiés par une clé unique. |
-| **S3-compatible** | API compatible avec le protocole Amazon S3, supportée par la majorité des outils et SDKs. |
-| **SeaweedFS** | Système de stockage distribué open source, compatible S3, utilisé comme backend par Hikube. |
-| **Access Key / Secret Key** | Paire d'identifiants pour l'authentification S3, générée automatiquement dans un Secret Kubernetes. |
-| **BucketInfo** | Champ JSON dans le Secret contenant l'endpoint S3, le protocole et le port. |
-| **Endpoint** | URL du service S3 Hikube : `https://prod.s3.hikube.cloud` |
+| **Bucket** | Espace de stockage objet créé depuis la console (menu **Infrastructure** → **Buckets S3**). |
+| **Nom du bucket (console)** | Nom choisi à la création. Il identifie le bucket dans la console et ne peut pas être modifié. |
+| **Nom du bucket S3** | Nom réel du bucket côté S3, généré par la plateforme. C'est **ce nom** que vos clients S3 doivent utiliser. Il est affiché sur la page du bucket. |
+| **Endpoint S3** | Adresse du service S3 (par exemple `prod.s3.hikube.cloud`), affichée sur la page du bucket. |
+| **Utilisateur S3** | Identité rattachée à un bucket, avec un droit **Lecture seule** ou **Lecture / Écriture**. Un bucket peut avoir plusieurs utilisateurs. |
+| **Access Key ID / Secret Access Key** | Paire de clés d'authentification S3 d'un utilisateur, générée à sa création. La clé secrète n'est affichée qu'une seule fois. |
+| **Verrouillage (WORM)** | Object Lock : empêche la suppression ou la modification des objets pendant une durée définie (*Write Once, Read Many*). |
+| **Chiffrement au repos (LUKS)** | Chiffrement des données stockées sur disque. |
 
 ---
 
@@ -66,56 +65,53 @@ graph TB
 
 ### Création
 
-La création d'un bucket est la plus simple de toutes les ressources Hikube :
+Un bucket se crée avec l'assistant **Créer un bucket**. Seul le nom est obligatoire ; deux options peuvent être activées à la création :
 
-```yaml title="bucket.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Bucket
-metadata:
-  name: my-data
-spec: {}
-```
+- **Activer le verrouillage (Object Lock / WORM)**
+- **Activer le chiffrement au repos (LUKS)**
 
-L'opérateur crée automatiquement :
-1. Le **bucket** dans le stockage objet
-2. Un **Secret Kubernetes** contenant les credentials d'accès
+L'assistant demande aussi de créer **au moins un utilisateur S3**. À la fin, la console affiche pour chaque utilisateur le **Nom du bucket S3**, la **Clé d'accès**, la **Clé secrète** et le **Point de terminaison API (S3)**.
 
-### Credentials automatiques
+:::warning Options fixées à la création
+Le nom, le verrouillage et le chiffrement se choisissent à la création. La console ne permet pas de les modifier ensuite.
+:::
 
-Le Secret `<bucket-name>-credentials` contient :
+### Utilisateurs et droits
 
-| Clé | Description |
-|-----|-------------|
-| `accessKeyID` | Clé d'accès S3 |
-| `accessSecretKey` | Clé secrète S3 |
-| `bucketInfo` | JSON avec endpoint, protocole et port |
+| Droit | Libellé dans la console | Effet |
+|-------|------------------------|-------|
+| Lecture / écriture | **Lecture / Écriture** | Lister, lire, écrire et supprimer des objets du bucket |
+| Lecture seule | **Lecture seule** | Lister et lire les objets uniquement |
+
+Le droit d'un utilisateur se change à tout moment avec **Modifier l'accès**. Les clés d'un utilisateur ne peuvent pas être affichées à nouveau : pour obtenir de nouvelles clés, créez un nouvel utilisateur puis supprimez l'ancien.
+
+### Portée des clés
+
+Les clés d'un utilisateur donnent accès **uniquement au bucket auquel il est rattaché**. Elles ne permettent pas de lister tous les buckets de l'endpoint : les commandes doivent toujours cibler le bucket (`s3://<nom-du-bucket-s3>/`).
 
 ---
 
-## Triple réplication multi-datacenter
-
-Les données sont automatiquement répliquées sur **3 datacenters** :
+## Réplication multi-datacenter
 
 | Datacenter | Localisation |
 |-----------|-------------|
-| Region 1 | Geneva (Genève) |
+| Region 1 | Genève |
 | Region 2 | Gland |
 | Region 3 | Lucerne |
 
-Cette architecture garantit :
-- **Zéro perte de données** en cas de panne d'un datacenter
-- **Continuité de service** avec basculement automatique
-- **Latence optimisée** depuis la Suisse et l'Europe
-
 :::tip
-La triple réplication est transparente — vous n'avez rien à configurer. Toutes les données sont automatiquement répliquées.
+La réplication est transparente : vous n'avez rien à configurer.
 :::
 
 ---
 
-## Outils compatibles
+## Tarification
 
-Le service est compatible avec tous les outils supportant le protocole S3 :
+L'assistant affiche un **Coût estimé** par Go et par mois (et par heure). Le tarif dépend du chiffrement : un bucket chiffré utilise un tarif distinct d'un bucket standard.
+
+---
+
+## Outils compatibles
 
 | Outil | Cas d'usage |
 |-------|-------------|
@@ -124,34 +120,24 @@ Le service est compatible avec tous les outils supportant le protocole S3 :
 | **rclone** | Synchronisation et migration de données |
 | **s3cmd** | Gestion S3 alternative |
 | **Velero** | Sauvegarde de clusters Kubernetes |
-| **Restic** | Sauvegarde de bases de données (PostgreSQL, MySQL, ClickHouse) |
-| **SDKs** | boto3 (Python), AWS SDK (Go, Java, Node.js) |
+| **Restic** | Sauvegarde de fichiers et de bases de données |
+| **SDK** | boto3 (Python), AWS SDK (Go, Java, Node.js) |
 
 ---
 
-## Cas d'usage
-
-| Cas d'usage | Description |
-|-------------|-------------|
-| **Stockage d'assets** | Images, vidéos, fichiers statiques pour applications web |
-| **Sauvegarde** | Destination pour les backups de bases de données et clusters K8s |
-| **Data lake** | Stockage de données brutes pour l'analyse |
-| **Archivage** | Conservation long terme de documents et logs |
-
----
-
-## Limites et quotas
+## Limites
 
 | Paramètre | Valeur |
 |-----------|--------|
-| Taille max par objet | Selon configuration du service |
-| Nombre de buckets | Selon quota tenant |
-| Réplication | Triple (3 DC), automatique |
-| Endpoint | `https://prod.s3.hikube.cloud` |
+| Nom du bucket | 3 à 16 caractères : minuscules, chiffres et tirets ; commence par une lettre, se termine par une lettre ou un chiffre |
+| Nom d'utilisateur S3 | 3 à 16 caractères, mêmes règles ; certains noms sont réservés |
+| Utilisateurs par bucket | Au moins un à la création |
+| Réplication | 3 datacenters, automatique |
 
 ---
 
 ## Pour aller plus loin
 
-- [Overview](./overview.md) : présentation détaillée du service
-- [Référence API](./api-reference.md) : paramètres de la ressource Bucket
+- [Vue d'ensemble](./overview.md) : présentation du service
+- [Démarrage rapide](./quick-start.md) : créer votre premier bucket
+- [Gérer les utilisateurs et les clés d'accès](./how-to/configure-access.md)
