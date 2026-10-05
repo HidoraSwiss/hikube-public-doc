@@ -7,7 +7,7 @@ title: Concepts
 
 ## Architecture
 
-PostgreSQL sur Hikube est un service managé basé sur l'opérateur **CloudNativePG**. Chaque cluster créé depuis la console est un ensemble d'instances PostgreSQL répliquées, avec failover automatique et réplication streaming. Il appartient à un **projet** et consomme les quotas de ce projet (CPU, mémoire, stockage).
+PostgreSQL sur Hikube est un service managé. Chaque cluster créé depuis la console est un ensemble d'instances PostgreSQL répliquées, avec failover automatique et réplication streaming. Il appartient à un **projet** et consomme les quotas de ce projet (CPU, mémoire, stockage).
 
 ```mermaid
 graph TB
@@ -45,7 +45,6 @@ graph TB
 | **Projet** | Espace isolé qui regroupe vos ressources et porte les quotas. |
 | **Primary** | Instance principale qui accepte les lectures et écritures. |
 | **Réplica** | Instance en lecture seule, synchronisée par streaming replication depuis le primary. |
-| **CloudNativePG** | Opérateur qui gère le cycle de vie des clusters PostgreSQL (déploiement, failover). |
 | **Preset d'instance** | Gabarit de ressources (CPU, mémoire) alloué à chaque nœud du cluster. |
 | **Accès externe** | Option qui expose le cluster sur Internet via une adresse IP publique. |
 | **Extension** | Module PostgreSQL (par exemple `pgcrypto`, `vector`) activé par base de données. |
@@ -55,7 +54,7 @@ graph TB
 
 ## Réplication et haute disponibilité
 
-CloudNativePG assure la haute disponibilité via :
+La haute disponibilité repose sur :
 
 1. **Streaming replication** : les réplicas reçoivent les WAL en continu depuis le primary
 2. **Failover automatique** : si le primary tombe, un réplica est promu automatiquement

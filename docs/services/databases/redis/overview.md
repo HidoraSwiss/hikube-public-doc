@@ -7,7 +7,7 @@ import NavigationFooter from '@site/src/components/NavigationFooter';
 
 # Redis sur Hikube
 
-Hikube propose un service **Redis managé**, basé sur l'opérateur **[Spotahome Redis Operator](https://github.com/spotahome/redis-operator)**, largement utilisé dans la communauté.
+Hikube propose un service **Redis managé**.
 La plateforme prend en charge le déploiement et la gestion d'un cluster Redis **répliqué et auto-réparant**, s'appuyant sur **Redis Sentinel** pour la détection des pannes et l'auto-failover. Vous créez et administrez vos clusters depuis la [console Hikube](https://console.hikube.cloud) (menu **DB & Messaging** → **Redis**).
 
 ---

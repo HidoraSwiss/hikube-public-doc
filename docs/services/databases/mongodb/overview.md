@@ -7,7 +7,7 @@ import NavigationFooter from '@site/src/components/NavigationFooter';
 
 # MongoDB sur Hikube
 
-Hikube propose un service **MongoDB managé**, basé sur l'opérateur **Percona Operator for MongoDB**. MongoDB est une base de données orientée documents : les données sont stockées sous forme de documents JSON (BSON), sans schéma imposé, ce qui la rend adaptée aux modèles de données évolutifs.
+Hikube propose un service **MongoDB managé**. MongoDB est une base de données orientée documents : les données sont stockées sous forme de documents JSON (BSON), sans schéma imposé, ce qui la rend adaptée aux modèles de données évolutifs.
 
 Le service déploie un **replica set** répliqué et auto-réparant, avec en option une topologie **shardée** pour répartir les données sur plusieurs groupes de nœuds. Vous créez et administrez vos clusters depuis la [console Hikube](https://console.hikube.cloud) (menu **DB & Messaging** → **MongoDB**).
 

@@ -7,7 +7,7 @@ title: Concepts
 
 ## Architecture
 
-Une **instance VM** Hikube regroupe un gabarit de calcul (vCPU et RAM), un ou plusieurs disques, une configuration réseau et, en option, des GPU. Les VM reposent sur **KubeVirt** (virtualisation KVM) ; vous les pilotez uniquement depuis la console.
+Une **instance VM** Hikube regroupe un gabarit de calcul (vCPU et RAM), un ou plusieurs disques, une configuration réseau et, en option, des GPU. Vous les pilotez depuis la console.
 
 ```mermaid
 graph TB

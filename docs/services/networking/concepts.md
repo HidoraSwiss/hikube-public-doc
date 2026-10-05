@@ -9,7 +9,7 @@ title: Concepts
 
 Chaque VM Hikube dispose d'un **réseau principal**, géré par la plateforme : c'est par lui que passent l'accès Internet et, si elle est activée, l'IP publique. Les **VPC** ajoutent des réseaux privés **secondaires** : chaque sous-réseau auquel une VM est reliée lui apporte une interface réseau supplémentaire.
 
-Les VPC reposent sur un réseau défini par logiciel (Kube-OVN) : chaque VPC est un routeur virtuel isolé, chaque sous-réseau un commutateur virtuel.
+Les VPC reposent sur un réseau défini par logiciel : chaque VPC est un routeur virtuel isolé, chaque sous-réseau un commutateur virtuel.
 
 ```mermaid
 graph TB

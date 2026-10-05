@@ -7,7 +7,7 @@ title: FAQ
 
 ### Comment fonctionne Redis Sentinel sur Hikube ?
 
-Redis sur Hikube est déployé via l'opérateur **Spotahome Redis Operator**, qui met en place une architecture **Redis Sentinel** pour la haute disponibilité :
+Redis sur Hikube est déployé en architecture **Redis Sentinel** pour la haute disponibilité :
 
 - **Redis Sentinel** surveille les instances Redis et effectue un **basculement automatique** (failover) en cas de panne du master.
 - Un **quorum** est nécessaire pour décider du failover : il faut au minimum **3 réplicas** pour garantir un quorum fonctionnel (majorité de 2 sur 3).

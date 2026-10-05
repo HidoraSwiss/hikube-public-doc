@@ -7,14 +7,14 @@ import NavigationFooter from '@site/src/components/NavigationFooter';
 
 # PostgreSQL sur Hikube
 
-Hikube propose un service PostgreSQL managé, basé sur l'opérateur **CloudNativePG**, reconnu et largement adopté par la communauté.
+Hikube propose un service PostgreSQL managé.
 La plateforme prend en charge le déploiement et la gestion d'un cluster PostgreSQL **répliqué et auto-réparant**, que vous créez et administrez depuis la [console Hikube](https://console.hikube.cloud) (menu **DB & Messaging** → **PostgreSQL**).
 
 ---
 
 ## Architecture et fonctionnement
 
-L'opérateur **CloudNativePG** automatise la gestion du cycle de vie de la base de données : création, mise à jour, réplication et reprise après incident.
+La plateforme automatise la gestion du cycle de vie de la base de données : création, mise à jour, réplication et reprise après incident.
 
 L'architecture est construite autour d'un **cluster répliqué** :
 

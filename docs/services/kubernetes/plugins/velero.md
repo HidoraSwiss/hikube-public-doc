@@ -14,7 +14,7 @@ L'addon **Velero** installe l'outil de **sauvegarde et de restauration** des res
 
 La page de détail du cluster affiche **Velero** dans la section **Extensions** lorsqu'il est actif.
 
-Velero s'installe dans le namespace `cozy-velero` du cluster, avec le plugin AWS (`velero-plugin-for-aws`, pour le stockage S3) et le plugin KubeVirt déjà installés. Aucun emplacement de sauvegarde n'est configuré par défaut.
+Velero s'installe dans le namespace `cozy-velero` du cluster, avec le plugin AWS (`velero-plugin-for-aws`, pour le stockage S3) déjà installé. Aucun emplacement de sauvegarde n'est configuré par défaut.
 
 ## Configurer le stockage des sauvegardes
 

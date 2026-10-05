@@ -120,7 +120,7 @@ Le control plane se dimensionne à l'étape **Général** de l'assistant de cré
 
 ### Taille de l'instance Control Plane
 
-Preset de ressources appliqué à l'ensemble des composants du control plane (API Server, Controller Manager, Scheduler, Konnectivity). La liste est fournie par la plateforme et chaque option affiche son CPU et sa mémoire. Le preset **Small** est sélectionné par défaut.
+Preset de ressources appliqué à l'ensemble des composants du control plane (API Server, Controller Manager, Scheduler). La liste est fournie par la plateforme et chaque option affiche son CPU et sa mémoire. Le preset **Small** est sélectionné par défaut.
 
 | Preset | Usage conseillé (aide de la console) |
 |--------|--------------------------------------|

@@ -7,7 +7,7 @@ title: Concepts
 
 ## Architecture
 
-Le service Object Storage d'Hikube repose sur **SeaweedFS**, une solution de stockage objet compatible S3. Les données sont **répliquées** automatiquement sur 3 datacenters géographiquement distincts, ce qui maintient la disponibilité même en cas de perte complète d'un datacenter.
+Le service Object Storage d'Hikube est compatible S3. Les données sont **répliquées** automatiquement sur 3 datacenters géographiquement distincts, ce qui maintient la disponibilité même en cas de perte complète d'un datacenter.
 
 ```mermaid
 graph TB

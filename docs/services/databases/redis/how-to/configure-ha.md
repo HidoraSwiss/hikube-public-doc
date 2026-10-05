@@ -5,7 +5,7 @@ sidebar_position: 1
 
 # Comment configurer la haute disponibilité Redis
 
-Ce guide explique comment créer un cluster Redis hautement disponible depuis la [console Hikube](https://console.hikube.cloud). Le service s'appuie sur l'opérateur **Spotahome Redis Operator**, qui utilise **Redis Sentinel** pour assurer le failover automatique lorsque 3 réplicas ou plus sont configurés.
+Ce guide explique comment créer un cluster Redis hautement disponible depuis la [console Hikube](https://console.hikube.cloud). Le service utilise **Redis Sentinel** pour assurer le failover automatique lorsque 3 réplicas ou plus sont configurés.
 
 ## Prérequis
 

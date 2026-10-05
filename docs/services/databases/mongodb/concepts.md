@@ -7,7 +7,7 @@ title: Concepts
 
 ## Architecture
 
-MongoDB sur Hikube est un service managé basé sur l'opérateur **Percona Operator for MongoDB**. Chaque cluster créé depuis la console est, par défaut, un **replica set** : un ensemble de membres qui portent les mêmes données, dont un seul accepte les écritures. Le cluster appartient à un **projet** et consomme les quotas de ce projet.
+MongoDB sur Hikube est un service managé. Chaque cluster créé depuis la console est, par défaut, un **replica set** : un ensemble de membres qui portent les mêmes données, dont un seul accepte les écritures. Le cluster appartient à un **projet** et consomme les quotas de ce projet.
 
 ```mermaid
 graph TB

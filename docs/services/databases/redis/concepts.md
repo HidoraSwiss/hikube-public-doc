@@ -7,7 +7,7 @@ title: Concepts
 
 ## Architecture
 
-Redis sur Hikube est un service managé basé sur l'opérateur **Spotahome Redis Operator**. Chaque cluster créé depuis la console est un ensemble master-réplicas, supervisé par **Redis Sentinel** pour le failover automatique. Il appartient à un **projet** et consomme les quotas de ce projet.
+Redis sur Hikube est un service managé. Chaque cluster créé depuis la console est un ensemble master-réplicas, supervisé par **Redis Sentinel** pour le failover automatique. Il appartient à un **projet** et consomme les quotas de ce projet.
 
 ```mermaid
 graph TB

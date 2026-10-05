@@ -12,7 +12,7 @@ Pour activer ou modifier les sauvegardes d'un cluster, [contactez le support](ma
 
 ## Principe
 
-Les clusters PostgreSQL Hikube reposent sur l'opérateur **CloudNativePG**, qui sait sauvegarder une base vers un stockage objet compatible S3 :
+Les clusters PostgreSQL Hikube savent sauvegarder une base vers un stockage objet compatible S3 :
 
 - **Sauvegardes complètes** (base backups) planifiées à intervalle régulier ;
 - **Archivage continu des WAL**, qui permet la restauration à un instant précis (PITR, Point-In-Time Recovery) ;

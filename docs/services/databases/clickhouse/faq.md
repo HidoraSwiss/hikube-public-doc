@@ -69,4 +69,4 @@ Créez des tables `ReplicatedMergeTree` sur chaque shard et une table `Distribut
 
 ### Comment configurer les backups ClickHouse ?
 
-Les sauvegardes ClickHouse utilisent **Restic** pour l'envoi de snapshots chiffrés vers un stockage compatible S3. Leur mise en place se fait sur demande : [contactez le support](mailto:support@hidora.io) en précisant la fréquence et la rétention souhaitées.
+Les sauvegardes ClickHouse envoient des snapshots chiffrés vers un stockage compatible S3. Leur mise en place se fait sur demande : [contactez le support](mailto:support@hidora.io) en précisant la fréquence et la rétention souhaitées.

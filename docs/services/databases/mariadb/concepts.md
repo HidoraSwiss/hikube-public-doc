@@ -7,7 +7,7 @@ title: Concepts
 
 ## Architecture
 
-MariaDB sur Hikube est un service managé basé sur l'opérateur **MariaDB-Operator**. MariaDB est un fork de MySQL compatible avec ses clients et son protocole. Chaque cluster créé depuis la console est un ensemble répliqué composé d'un primary et de réplicas éventuels. Il appartient à un **projet** et consomme les quotas de ce projet.
+MariaDB sur Hikube est un service managé. MariaDB est un fork de MySQL compatible avec ses clients et son protocole. Chaque cluster créé depuis la console est un ensemble répliqué composé d'un primary et de réplicas éventuels. Il appartient à un **projet** et consomme les quotas de ce projet.
 
 ```mermaid
 graph TB
@@ -45,7 +45,6 @@ graph TB
 | **Projet** | Espace isolé qui regroupe vos ressources et porte les quotas. |
 | **Primary** | Nœud principal qui accepte les lectures et écritures. |
 | **Réplica** | Nœud en lecture seule, synchronisé depuis le primary via la réplication binlog. |
-| **MariaDB-Operator** | Opérateur qui gère le déploiement, la réplication et le failover. |
 | **Préconfiguration (Preset)** | Gabarit de ressources (CPU, mémoire) alloué à chaque nœud du cluster. |
 | **Accès externe** | Option qui expose le cluster sur Internet via une adresse IP publique. |
 | **Rôle** | Droit d'un utilisateur sur une base : **Administrateur** ou **Lecture seule**. |
@@ -58,7 +57,7 @@ Le cluster utilise la **réplication binlog** de MariaDB :
 
 1. **Le primary** écrit toutes les modifications dans le binary log
 2. **Les réplicas** consomment le binlog et appliquent les modifications
-3. **En cas de panne** du primary, l'opérateur promeut automatiquement un réplica
+3. **En cas de panne** du primary, la plateforme promeut automatiquement un réplica
 
 ```mermaid
 sequenceDiagram

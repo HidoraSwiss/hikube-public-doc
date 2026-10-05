@@ -33,7 +33,7 @@ La préconfiguration ne peut pas être modifiée après la création. Dimensionn
 
 ### Comment fonctionne la réplication ?
 
-Le primary écrit ses modifications dans le binary log, que les réplicas rejouent. En cas de panne du primary, l'opérateur promeut automatiquement un réplica. Choisissez **3 (Haute disponibilité max)** ou **5 (Très haute disponibilité)** réplicas à la création pour en bénéficier : ce nombre n'est plus modifiable ensuite.
+Le primary écrit ses modifications dans le binary log, que les réplicas rejouent. En cas de panne du primary, la plateforme promeut automatiquement un réplica. Choisissez **3 (Haute disponibilité max)** ou **5 (Très haute disponibilité)** réplicas à la création pour en bénéficier : ce nombre n'est plus modifiable ensuite.
 
 ### Où trouver l'adresse de connexion ?
 

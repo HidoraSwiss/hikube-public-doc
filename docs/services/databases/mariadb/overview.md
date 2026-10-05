@@ -7,7 +7,7 @@ import NavigationFooter from '@site/src/components/NavigationFooter';
 
 # MariaDB sur Hikube
 
-Hikube propose un service **MariaDB managé**, basé sur l'opérateur **MariaDB-Operator**. MariaDB est compatible avec le protocole et les clients MySQL : vos applications et outils MySQL existants (`mysql`, `mysqldump`, connecteurs JDBC, PDO, etc.) fonctionnent sans modification.
+Hikube propose un service **MariaDB managé**. MariaDB est compatible avec le protocole et les clients MySQL : vos applications et outils MySQL existants (`mysql`, `mysqldump`, connecteurs JDBC, PDO, etc.) fonctionnent sans modification.
 
 Le service assure le déploiement d'un cluster répliqué et auto-réparant, que vous créez et administrez depuis la [console Hikube](https://console.hikube.cloud) (menu **DB & Messaging** → **MariaDB**).
 
@@ -19,7 +19,7 @@ Ce service était auparavant présenté dans cette documentation sous le nom « 
 
 ## Architecture et fonctionnement
 
-L'opérateur **MariaDB-Operator** automatise la gestion du cycle de vie de la base de données : déploiement, mise à jour, réplication et reprise après incident.
+La plateforme automatise la gestion du cycle de vie de la base de données : déploiement, mise à jour, réplication et reprise après incident.
 
 L'architecture repose sur un **cluster répliqué** :
 
