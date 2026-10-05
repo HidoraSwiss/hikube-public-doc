@@ -100,7 +100,7 @@
 }
 
 /* Thème sombre = graphite. La navbar et le footer en héritent toujours. */
-[data-theme='dark'],
+html[data-theme='dark'],
 .navbar,
 .footer {
   color-scheme: dark;
@@ -158,8 +158,8 @@
 /* Les variables Infima sont résolues sur chaque portée (racine, navbar,
    footer) pour que la navbar reste graphite même en thème clair. */
 :root,
-[data-theme='light'],
-[data-theme='dark'],
+html[data-theme='light'],
+html[data-theme='dark'],
 .navbar,
 .footer,
 .footer--dark {
