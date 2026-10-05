@@ -37,7 +37,7 @@ Fa fede l'elenco mostrato dalla procedura guidata. Il preset non può essere mod
 
 ### Dove si trova l'indirizzo di connessione?
 
-Nel riquadro **Network and Connection** della pagina del cluster, campo **Host**, quando l'**External Access** è attivato. La porta è `27017`. Senza accesso esterno, il campo mostra **Not defined**: il cluster resta raggiungibile dalle VM del progetto tramite un indirizzo interno, che la console non mostra; [contatti il supporto](mailto:support@hidora.io) per ottenerlo.
+Nel riquadro **Network and Connection** della pagina del cluster, campo **Host**, quando l'**External Access** è attivato. La porta è `27017`. Senza accesso esterno, il campo mostra **Not defined**: il cluster resta raggiungibile dalle VM e dai cluster Kubernetes del progetto tramite un indirizzo interno, che la console non mostra; [contatti il supporto](mailto:support@hidora.io) per ottenerlo.
 
 ### Perché l'utente creato nella procedura guidata non ha accesso al mio database?
 

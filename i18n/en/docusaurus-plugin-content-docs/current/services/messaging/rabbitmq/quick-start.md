@@ -113,7 +113,7 @@ To connect, you need:
 As long as the address has not been assigned, the **Host** field displays "Not available / Creating". Once the address is assigned, copy it with the copy button.
 
 :::note
-The **Host** field is filled in when **External Access** is enabled. Without external access, the cluster remains reachable from the project's VMs through an internal address, which the console does not display: [contact support](mailto:support@hidora.io) to get it.
+The **Host** field is filled in when **External Access** is enabled. Without external access, the cluster remains reachable from the project's VMs and Kubernetes clusters through an internal address, which the console does not display: [contact support](mailto:support@hidora.io) to get it.
 :::
 
 When the host is already known, the wizard's **Done** screen also displays a connection string of the form:

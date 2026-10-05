@@ -116,6 +116,8 @@ Die im Assistenten gewählte Rolle gilt für die Datenbank `admin`. So gewähren
 mongosh "mongodb://<host>:27017/myapp" --username app-user --authenticationDatabase admin
 ```
 
+Die Verbindung ist nicht verschlüsselt (kein TLS): Fügen Sie `--tls` nicht hinzu.
+
 Geben Sie das Passwort ein und prüfen Sie anschließend die Verbindung:
 
 ```javascript
@@ -138,6 +140,8 @@ db.test.find()
 ### Das Feld Host zeigt „Not defined“ an
 
 Der **External access** ist deaktiviert, oder die öffentliche Adresse ist noch nicht zugewiesen. Aktivieren Sie ihn bei Bedarf über **Edit** und warten Sie einige Augenblicke.
+
+Bei einem Cluster ohne Sharding bleibt das Feld derzeit auch bei aktiviertem externem Zugriff auf **Not defined**: Jedes Mitglied erhält eine eigene öffentliche Adresse, die die Konsole nicht anzeigt. [Wenden Sie sich an den Support](mailto:support@hidora.io), um sie zu erhalten. Verbinden Sie sich dann ohne den Parameter `replicaSet` mit dieser Adresse: Die Mitglieder melden sich unter internen Namen, die von außen nicht aufgelöst werden.
 
 ### `Authentication failed`
 

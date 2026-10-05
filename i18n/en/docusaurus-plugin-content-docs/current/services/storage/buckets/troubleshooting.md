@@ -63,18 +63,19 @@ title: Troubleshooting
 
 ---
 
+### Objects disappeared after deleting a bucket
+
+**Cause**: deleting a bucket is not blocked when it contains objects; it deletes them along with it, with no possibility of recovery.
+
+**Solution**: before deleting a bucket, copy the objects you want to keep, for example to your workstation:
+
+```bash
+aws --endpoint-url https://<endpoint> s3 sync s3://<s3-bucket-name>/ ./bucket-backup/
+```
+
 ### Bucket deletion fails
 
-**Cause**: the console replies "The bucket is not empty or is still in use.".
-
-**Solution**:
-
-1. Empty the bucket with a **Read / Write** user:
-   ```bash
-   aws --endpoint-url https://<endpoint> s3 rm s3://<s3-bucket-name>/ --recursive
-   ```
-2. If locking (WORM) is enabled, objects still under retention cannot be deleted before it expires.
-3. Retry the deletion from the console. If the error persists, [contact support](mailto:support@hidora.io).
+**Solution**: retry the deletion from the console. If the error persists, [contact support](mailto:support@hidora.io) and specify the bucket name.
 
 ---
 

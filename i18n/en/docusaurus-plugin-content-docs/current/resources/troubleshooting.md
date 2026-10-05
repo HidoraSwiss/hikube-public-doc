@@ -138,9 +138,9 @@ See: [PostgreSQL](../services/databases/postgresql/troubleshooting.md), [MariaDB
 
 ## 6. Storage
 
-### Cannot delete a bucket
+### Delete a bucket without losing data
 
-A bucket that still contains objects, or that is still in use, cannot be deleted. Empty it with your S3 client, then try again.
+Deleting a bucket is permanent and removes all its objects: the console does not check that it is empty. First copy the data you want to keep with your S3 client (for example `aws s3 sync`). If the deletion fails, try again, then contact support.
 
 ### S3 access denied (`AccessDenied`)
 

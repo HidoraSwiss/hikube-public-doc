@@ -62,7 +62,7 @@ Bei aktiviertem öffentlichem Netzwerk verwenden Sie die Adresse aus dem Feld **
 REDISCLI_AUTH='<password>' redis-cli -h <host> -p 6379 ping
 ```
 
-Ohne öffentliches Netzwerk bleibt die Instanz von den VMs des Projekts über eine interne Adresse erreichbar, die die Konsole nicht anzeigt. [Wenden Sie sich an den Support](mailto:support@hidora.io), um sie zu erhalten.
+Ohne öffentliches Netzwerk bleibt die Instanz von den VMs und Kubernetes-Clustern des Projekts über eine interne Adresse erreichbar, die die Konsole nicht anzeigt. [Wenden Sie sich an den Support](mailto:support@hidora.io), um sie zu erhalten.
 
 ### Kann ich mehrere Redis-Benutzer (ACL) anlegen?
 

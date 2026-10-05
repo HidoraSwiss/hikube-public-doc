@@ -92,7 +92,7 @@ Manual primary switchover is not offered in the console; contact support.
 
 A MariaDB cluster page has a **Users** section; there is no tab dedicated to databases. Rights are managed per user:
 
-- **Global Role (Optional)**: **No global role**, **Administrator** or **Read-only (global)**;
+- **Global Role (Optional)**: **No global role**, **Administrator** or **Read-only (global)**. A global role is currently rejected on save (message `invalid database_name`): leave **No global role** and use specific access instead;
 - **Specific Access (Databases)**: a list of **Database name** / **Rights** pairs (**Administrator (Admin)** or **Read-only**). Granting access to a database that does not exist yet creates it.
 
 Users declared in the cluster creation wizard are granted the chosen **Role** on the `mysql` system database, visible in the **Databases** column of the user list: **Administrator** grants all privileges there (`ALL`, with grant option), **Read-only** grants `SELECT`. Then give them access to your application databases via **Manage Access**.

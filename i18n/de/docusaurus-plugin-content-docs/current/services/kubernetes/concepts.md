@@ -130,6 +130,10 @@ Ressourcen-Preset, das auf alle Komponenten der Control Plane angewendet wird (A
 
 Die Plattform bietet außerdem kleinere (`nano`, `micro`) und größere (`xlarge`, `2xlarge`) Presets an.
 
+:::warning
+Mit **Small** (512 MiB pro Komponente) kann dem API Server der Speicher ausgehen, sodass er in einer Schleife neu startet, insbesondere während der Installation der Addons. Wählen Sie mindestens **Medium**: Die Größe der Control Plane lässt sich nach der Erstellung in der Konsole nicht mehr ändern.
+:::
+
 :::note
 Eine Dimensionierung pro Komponente (dedizierte Ressourcen für API Server, Scheduler usw.) wird in der Konsole nicht angeboten; wenden Sie sich an den Support.
 :::

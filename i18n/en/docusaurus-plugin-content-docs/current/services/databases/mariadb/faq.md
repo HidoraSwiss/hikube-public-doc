@@ -37,7 +37,7 @@ The primary writes its changes to the binary log, which the replicas replay. If 
 
 ### Where can I find the connection address?
 
-In the **Connection and network** card of the cluster page, **Host** field, when **External Access** is enabled. The port is `3306`. Without external access, the field shows **Not defined**: the cluster remains reachable from the project's VMs through an internal address, which the console does not display; [contact support](mailto:support@hidora.io) to obtain it.
+In the **Connection and network** card of the cluster page, **Host** field, when **External Access** is enabled. The port is `3306`. Without external access, the field shows **Not defined**: the cluster remains reachable from the project's VMs and Kubernetes clusters through an internal address, which the console does not display; [contact support](mailto:support@hidora.io) to obtain it.
 
 ### How do I create a database?
 

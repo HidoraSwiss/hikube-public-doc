@@ -116,6 +116,8 @@ Il ruolo scelto nella procedura guidata si applica al database `admin`. Per dare
 mongosh "mongodb://<host>:27017/myapp" --username app-user --authenticationDatabase admin
 ```
 
+La connessione non è cifrata (nessun TLS): non aggiunga `--tls`.
+
 Inserisca la password, quindi verifichi la connessione:
 
 ```javascript
@@ -138,6 +140,8 @@ db.test.find()
 ### Il campo Host mostra «Not defined»
 
 L'**External access** è disattivato, oppure l'indirizzo pubblico non è ancora stato assegnato. Se necessario, lo attivi tramite **Edit**, quindi attenda qualche istante.
+
+Su un cluster senza sharding, il campo resta attualmente su **Not defined** anche con l'accesso esterno attivato: ciascun membro riceve il proprio indirizzo pubblico, che la console non mostra. [Contatti il supporto](mailto:support@hidora.io) per ottenerlo. Si connetta quindi a questo indirizzo senza il parametro `replicaSet`: i membri si annunciano con nomi interni, che non si risolvono dall'esterno.
 
 ### `Authentication failed`
 

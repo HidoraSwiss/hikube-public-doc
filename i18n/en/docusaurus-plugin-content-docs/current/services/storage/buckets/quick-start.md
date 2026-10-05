@@ -179,7 +179,7 @@ See also the [full troubleshooting guide](./troubleshooting.md).
 3. Enter the exact bucket name in **Resource name to confirm**, then click **Permanently delete**.
 
 :::warning Irreversible deletion
-Deleting a bucket is permanent. If the console replies "The bucket is not empty or is still in use.", empty the bucket and try again.
+Deleting a bucket is permanent and removes all its objects: the console does not check that the bucket is empty. Copy the data you want to keep before deleting it.
 :::
 
 <NavigationFooter

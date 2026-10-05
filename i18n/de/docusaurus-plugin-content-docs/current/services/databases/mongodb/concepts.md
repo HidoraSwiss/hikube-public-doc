@@ -121,7 +121,7 @@ Das **Preset** legt die Kapazität fest, die **jedem Knoten** zugewiesen wird. M
 ## Netzwerkzugriff
 
 - **Externer Zugriff deaktiviert** (Standard): Der Cluster ist nicht im Internet erreichbar. Das Feld **Host** der Karte **Network and Connection** zeigt **Not defined** an.
-- **Externer Zugriff aktiviert**: Die Plattform weist eine öffentliche Adresse zu, die im Feld **Host** angezeigt wird. Der Port ist der MongoDB-Standardport `27017`. Der Assistent liefert einen Verbindungsstring der Form `mongodb://<user>:<password>@<host>`.
+- **Externer Zugriff aktiviert**: Die Plattform weist eine öffentliche Adresse zu, die bei einem Cluster mit Sharding im Feld **Host** angezeigt wird. Ohne Sharding erhält jedes Mitglied eine eigene öffentliche Adresse, und das Feld bleibt auf **Not defined**: Fordern Sie die Adresse beim [Support](mailto:support@hidora.io) an. Der Port ist der MongoDB-Standardport `27017`. Der Assistent liefert einen Verbindungsstring der Form `mongodb://<user>:<password>@<host>`.
 
 ---
 

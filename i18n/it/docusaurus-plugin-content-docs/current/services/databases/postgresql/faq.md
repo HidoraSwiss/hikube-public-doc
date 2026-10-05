@@ -35,7 +35,7 @@ Nella pagina del cluster, riquadro **Connection and Databases**, campo **Host**.
 
 ### Come connettersi da una VM o da un cluster Kubernetes dello stesso progetto senza accesso esterno?
 
-Senza accesso esterno, il cluster resta raggiungibile dalle VM del progetto tramite un indirizzo interno al progetto, che la console non mostra. [Contatti il supporto](mailto:support@hidora.io) per ottenerlo.
+Senza accesso esterno, il cluster resta raggiungibile dalle VM e dai cluster Kubernetes del progetto tramite un indirizzo interno al progetto, che la console non mostra. [Contatti il supporto](mailto:support@hidora.io) per ottenerlo.
 
 ### Ho smarrito la password di un utente. Come recuperarla?
 

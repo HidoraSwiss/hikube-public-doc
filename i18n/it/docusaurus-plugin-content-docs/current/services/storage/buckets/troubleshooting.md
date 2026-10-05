@@ -63,18 +63,19 @@ title: Risoluzione dei problemi
 
 ---
 
+### Gli oggetti sono scomparsi dopo l'eliminazione di un bucket
+
+**Causa**: l'eliminazione di un bucket non viene bloccata quando contiene oggetti; li elimina insieme al bucket, senza possibilità di recupero.
+
+**Soluzione**: prima di eliminare un bucket, copi gli oggetti da conservare, ad esempio sulla sua postazione:
+
+```bash
+aws --endpoint-url https://<endpoint> s3 sync s3://<nome-del-bucket-s3>/ ./backup-bucket/
+```
+
 ### L'eliminazione del bucket non riesce
 
-**Causa**: la console risponde «The bucket is not empty or is still in use.».
-
-**Soluzione**:
-
-1. Svuoti il bucket con un utente in **Read / Write**:
-   ```bash
-   aws --endpoint-url https://<endpoint> s3 rm s3://<nome-del-bucket-s3>/ --recursive
-   ```
-2. Se il blocco (WORM) è attivato, gli oggetti ancora soggetti a conservazione non possono essere eliminati prima della scadenza.
-3. Riprovi l'eliminazione dalla console. Se l'errore persiste, [contatti il supporto](mailto:support@hidora.io).
+**Soluzione**: riprovi l'eliminazione dalla console. Se l'errore persiste, [contatti il supporto](mailto:support@hidora.io) indicando il nome del bucket.
 
 ---
 

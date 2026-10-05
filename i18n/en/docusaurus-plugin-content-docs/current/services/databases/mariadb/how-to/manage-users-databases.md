@@ -81,7 +81,7 @@ CREATE TABLE test (id INT);
 
 ## Verification
 
-The user list shows, for each user, its **Role** and the accessible **Databases** with the associated right (for example `analytics (Read-only)`).
+The user list shows, for each user, its **Role** and the accessible **Databases** with the associated right (for example `analytics (readonly)` or `analytics (admin)`).
 
 ## Going further
 

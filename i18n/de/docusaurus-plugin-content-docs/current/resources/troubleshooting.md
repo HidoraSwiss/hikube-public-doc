@@ -138,9 +138,9 @@ Siehe: [PostgreSQL](../services/databases/postgresql/troubleshooting.md), [Maria
 
 ## 6. Speicher
 
-### Ein Bucket lässt sich nicht löschen
+### Einen Bucket löschen, ohne Daten zu verlieren
 
-Ein Bucket, der noch Objekte enthält oder noch verwendet wird, kann nicht gelöscht werden. Leeren Sie ihn mit Ihrem S3-Client und versuchen Sie es dann erneut.
+Das Löschen eines Buckets ist endgültig und entfernt alle seine Objekte: Die Konsole prüft nicht, ob er leer ist. Kopieren Sie zuerst die zu behaltenden Daten mit Ihrem S3-Client (zum Beispiel `aws s3 sync`). Schlägt das Löschen fehl, versuchen Sie es erneut und wenden Sie sich dann an den Support.
 
 ### S3-Zugriff verweigert (`AccessDenied`)
 

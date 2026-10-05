@@ -111,13 +111,15 @@ Die Policy `default-deny-all` blockiert **den gesamten Traffic** im Namespace, e
 
 ### 4. Hubble für das Netzwerk-Debugging verwenden
 
-Hubble ist standardmäßig nicht aktiviert. Um es zu aktivieren, bearbeiten Sie den Cluster in der Konsole (**Edit**), klappen Sie **Cilium** im Abschnitt **Advanced Configuration** der Addons auf, geben Sie das folgende Override in **Helm Configuration (YAML) — optional** ein und klicken Sie dann auf **Save**:
+Hubble ist standardmäßig nicht aktiviert. Um es zu aktivieren, klappen Sie bei der Erstellung des Clusters **Cilium** im Abschnitt **Advanced Configuration** des Schritts **Addons** auf und geben Sie das folgende Override in **Helm Configuration (YAML) — optional** ein:
 
 ```yaml title="cilium-override.yaml"
 cilium:
   hubble:
     enabled: true
 ```
+
+Bei einem bestehenden Cluster speichert die Konsole ein erstes über **Edit** eingegebenes Cilium-Override nicht: [Wenden Sie sich an den Support](mailto:support@hidora.io), um es anwenden zu lassen.
 
 Sobald Cilium neu bereitgestellt ist, verwenden Sie die in die Cilium-Pods integrierte Hubble-CLI:
 

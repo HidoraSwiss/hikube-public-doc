@@ -98,7 +98,7 @@ CREATE TABLE test (id int);
 ## Überprüfung
 
 - Die Registerkarte **Databases** listet Ihre Datenbanken und deren Erweiterungen auf.
-- Die Registerkarte **Users** listet Ihre Benutzer auf, jeweils mit den zugänglichen Datenbanken und dem zugehörigen Recht (zum Beispiel `analytics (Read-only)`).
+- Die Registerkarte **Users** listet Ihre Benutzer auf, jeweils mit den zugänglichen Datenbanken und dem zugehörigen Recht (zum Beispiel `analytics (readonly)` oder `analytics (admin)`).
 
 ## Weiterführende Informationen
 

@@ -116,6 +116,8 @@ The role chosen in the wizard applies to the `admin` database. To grant access t
 mongosh "mongodb://<host>:27017/myapp" --username app-user --authenticationDatabase admin
 ```
 
+The connection is not encrypted (no TLS): do not add `--tls`.
+
 Enter the password, then check the connection:
 
 ```javascript
@@ -138,6 +140,8 @@ db.test.find()
 ### The Host field shows "Not defined"
 
 **External Access** is disabled, or the public address has not been assigned yet. Enable it via **Edit** if needed, then wait a few moments.
+
+On a cluster without sharding, the field currently remains on **Not defined** even with external access enabled: each member receives its own public address, which the console does not display. [Contact support](mailto:support@hidora.io) to obtain it. Then connect to this address without the `replicaSet` parameter: the members advertise themselves under internal names, which do not resolve from outside.
 
 ### `Authentication failed`
 

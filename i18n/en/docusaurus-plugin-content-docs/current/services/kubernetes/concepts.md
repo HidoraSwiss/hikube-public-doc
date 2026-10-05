@@ -130,6 +130,10 @@ Resource preset applied to all control plane components (API Server, Controller 
 
 The platform also offers smaller (`nano`, `micro`) and larger (`xlarge`, `2xlarge`) presets.
 
+:::warning
+With **Small** (512 MiB per component), the API Server can run out of memory and restart in a loop, especially during addon installation. Choose at least **Medium**: the control plane size can no longer be changed in the console after creation.
+:::
+
 :::note
 Component-by-component sizing (resources dedicated to the API Server, the Scheduler, etc.) is not offered in the console; contact support.
 :::

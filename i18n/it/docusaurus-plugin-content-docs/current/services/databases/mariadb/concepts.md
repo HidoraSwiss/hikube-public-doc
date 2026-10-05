@@ -92,7 +92,7 @@ Il passaggio manuale del primary (switchover) non è proposto nella console; con
 
 La pagina di un cluster MariaDB comprende una sezione **Users**; non esiste una scheda dedicata ai database. I diritti si gestiscono per utente:
 
-- **Global Role (Optional)**: **No global role**, **Administrator** o **Read-only (global)**;
+- **Global Role (Optional)**: **No global role**, **Administrator** o **Read-only (global)**. Un ruolo globale viene attualmente rifiutato al salvataggio (messaggio `invalid database_name`): lasci **No global role** e utilizzi gli accessi specifici;
 - **Specific Access (Databases)**: un elenco di coppie **Database name** / **Rights** (**Administrator (Admin)** o **Read-only**). Concedere un accesso su un database che non esiste ancora lo crea.
 
 Gli utenti dichiarati nella procedura guidata di creazione del cluster ricevono il **Role** scelto sul database di sistema `mysql`, visibile nella colonna **Databases** dell'elenco degli utenti: **Administrator** concede tutti i privilegi (`ALL`, con diritto di delega), **Read-only** il diritto `SELECT`. Conceda poi a questi utenti l'accesso ai suoi database applicativi tramite **Manage Access**.

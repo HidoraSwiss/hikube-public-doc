@@ -113,7 +113,7 @@ Für die Verbindung benötigen Sie:
 Solange die Adresse nicht zugewiesen ist, zeigt das Feld **Host** „Not available / Creating“ an. Sobald die Adresse zugewiesen ist, kopieren Sie sie mit der Kopierschaltfläche.
 
 :::note
-Das Feld **Host** ist ausgefüllt, wenn der **External Access** aktiviert ist. Ohne externen Zugriff bleibt der Cluster von den VMs des Projekts über eine interne Adresse erreichbar, die die Konsole nicht anzeigt: [Wenden Sie sich an den Support](mailto:support@hidora.io), um sie zu erhalten.
+Das Feld **Host** ist ausgefüllt, wenn der **External Access** aktiviert ist. Ohne externen Zugriff bleibt der Cluster von den VMs und Kubernetes-Clustern des Projekts über eine interne Adresse erreichbar, die die Konsole nicht anzeigt: [Wenden Sie sich an den Support](mailto:support@hidora.io), um sie zu erhalten.
 :::
 
 Der Bildschirm **Done** des Assistenten zeigt außerdem, sofern der Host bereits bekannt ist, eine Verbindungszeichenfolge der folgenden Form an:

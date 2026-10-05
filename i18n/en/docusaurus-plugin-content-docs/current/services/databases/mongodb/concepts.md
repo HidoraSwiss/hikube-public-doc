@@ -121,7 +121,7 @@ The **Preset** defines the capacity allocated to **each node**. The list display
 ## Network access
 
 - **External access disabled** (default): the cluster is not exposed on the Internet. The **Host** field of the **Network and Connection** card shows **Not defined**.
-- **External access enabled**: the platform assigns a public address, displayed in the **Host** field. The port is the standard MongoDB port, `27017`. The wizard provides a connection string of the form `mongodb://<user>:<password>@<host>`.
+- **External access enabled**: the platform assigns a public address, displayed in the **Host** field for a sharded cluster. Without sharding, each member receives its own public address and the field remains on **Not defined**: request the address from [support](mailto:support@hidora.io). The port is the standard MongoDB port, `27017`. The wizard provides a connection string of the form `mongodb://<user>:<password>@<host>`.
 
 ---
 

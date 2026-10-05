@@ -35,7 +35,7 @@ Auf der Seite des Clusters, in der Karte **Connection and Databases**, Feld **Ho
 
 ### Wie verbinde ich mich ohne externen Zugriff von einer VM oder einem Kubernetes-Cluster desselben Projekts?
 
-Ohne externen Zugriff bleibt der Cluster von den VMs des Projekts über eine projektinterne Adresse erreichbar, die die Konsole nicht anzeigt. [Wenden Sie sich an den Support](mailto:support@hidora.io), um sie zu erhalten.
+Ohne externen Zugriff bleibt der Cluster von den VMs und Kubernetes-Clustern des Projekts über eine projektinterne Adresse erreichbar, die die Konsole nicht anzeigt. [Wenden Sie sich an den Support](mailto:support@hidora.io), um sie zu erhalten.
 
 ### Ich habe das Passwort eines Benutzers verloren. Wie kann ich es wiederherstellen?
 

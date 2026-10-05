@@ -92,7 +92,7 @@ Ein manueller Wechsel des Primary (Switchover) wird in der Konsole nicht angebot
 
 Die Seite eines MariaDB-Clusters enthält einen Abschnitt **Users**; eine eigene Registerkarte für Datenbanken gibt es nicht. Die Rechte werden pro Benutzer verwaltet:
 
-- **Global Role (Optional)**: **No global role**, **Administrator** oder **Read-only (global)**;
+- **Global Role (Optional)**: **No global role**, **Administrator** oder **Read-only (global)**. Eine globale Rolle wird derzeit beim Speichern abgelehnt (Meldung `invalid database_name`): Belassen Sie **No global role** und verwenden Sie die spezifischen Zugriffe;
 - **Specific Access (Databases)**: eine Liste von Paaren aus **Database name** / **Rights** (**Administrator (Admin)** oder **Read-only**). Wird ein Zugriff auf eine noch nicht existierende Datenbank gewährt, wird diese erstellt.
 
 Benutzer, die im Erstellungsassistenten des Clusters angelegt werden, erhalten die gewählte **Role** auf der Systemdatenbank `mysql`, sichtbar in der Spalte **Databases** der Benutzerliste: **Administrator** gewährt dort alle Privilegien (`ALL`, mit Recht zur Weitergabe), **Read-only** das Recht `SELECT`. Gewähren Sie ihnen anschließend über **Manage Access** den Zugriff auf Ihre Anwendungsdatenbanken.

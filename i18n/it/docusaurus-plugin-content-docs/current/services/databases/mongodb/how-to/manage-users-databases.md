@@ -78,7 +78,7 @@ db.events.insertOne({ test: true })
 
 ## Verifica
 
-L'elenco degli utenti mostra, per ciascuno, il suo **Role** e i **Databases** accessibili con il relativo diritto (ad esempio `analytics (Read-only)`).
+L'elenco degli utenti mostra, per ciascuno, il suo **Role** e i **Databases** accessibili con il relativo diritto (ad esempio `analytics (readonly)` o `analytics (admin)`).
 
 ## Per approfondire
 

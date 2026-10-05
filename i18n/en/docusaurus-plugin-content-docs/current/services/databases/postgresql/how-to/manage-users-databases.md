@@ -98,7 +98,7 @@ CREATE TABLE test (id int);
 ## Verification
 
 - The **Databases** tab lists your databases and their extensions.
-- The **Users** tab lists your users with, for each one, the accessible databases and the associated right (for example `analytics (Read-only)`).
+- The **Users** tab lists your users with, for each one, the accessible databases and the associated right (for example `analytics (readonly)` or `analytics (admin)`).
 
 ## Going further
 

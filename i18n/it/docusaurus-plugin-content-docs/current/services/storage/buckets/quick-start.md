@@ -179,7 +179,7 @@ Vedere anche la [risoluzione dei problemi completa](./troubleshooting.md).
 3. Inserisca il nome esatto del bucket in **Resource name to confirm**, quindi faccia clic su **Permanently delete**.
 
 :::warning Eliminazione irreversibile
-L'eliminazione di un bucket è definitiva. Se la console risponde «The bucket is not empty or is still in use.», svuoti il bucket e riprovi.
+L'eliminazione di un bucket è definitiva e comporta la perdita di tutti i suoi oggetti: la console non verifica che il bucket sia vuoto. Copi i dati da conservare prima di eliminarlo.
 :::
 
 <NavigationFooter

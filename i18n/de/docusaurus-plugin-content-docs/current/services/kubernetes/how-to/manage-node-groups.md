@@ -53,7 +53,7 @@ Wählen Sie aussagekräftige Namen für Ihre Gruppen (`compute`, `web`, `monitor
 Klappen Sie im Abschnitt **Node groups** die Karte der Gruppe auf, ändern Sie die gewünschten Felder (Instanztyp, ephemerer Speicher, minimale oder maximale Anzahl der Nodes, Erreichbarkeit) und klicken Sie dann auf **Save**.
 
 :::warning
-Eine Änderung des Instanztyps ersetzt die Nodes der Gruppe schrittweise: Neue Nodes werden erstellt, danach werden die alten einzeln entfernt. Die Quota des Projekts muss die zusätzlichen Nodes während des Austauschs aufnehmen können.
+Eine Änderung des Instanztyps ersetzt alle Nodes der Gruppe: Die Plattform erstellt die neuen Nodes und entfernt die alten einzeln, ohne abzuwarten, bis jeder Ersatz-Node bereit ist. Eine Gruppe mit nur einem Node ist daher während des Austauschs (mehrere Minuten) nicht verfügbar: Sehen Sie für Workloads, die keine Unterbrechung vertragen, mindestens zwei Nodes vor. Die Quota des Projekts muss die zusätzlichen Nodes während des Austauschs aufnehmen können.
 :::
 
 :::note

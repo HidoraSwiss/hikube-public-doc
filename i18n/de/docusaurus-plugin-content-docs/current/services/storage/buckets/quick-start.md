@@ -179,7 +179,7 @@ Siehe auch die [vollständige Fehlerbehebung](./troubleshooting.md).
 3. Geben Sie den genauen Namen des Buckets in **Resource name to confirm** ein und klicken Sie dann auf **Permanently delete**.
 
 :::warning Unwiderrufliches Löschen
-Das Löschen eines Buckets ist endgültig. Antwortet die Konsole mit „The bucket is not empty or is still in use.“, leeren Sie den Bucket und versuchen Sie es erneut.
+Das Löschen eines Buckets ist endgültig und entfernt alle seine Objekte: Die Konsole prüft nicht, ob der Bucket leer ist. Kopieren Sie die zu behaltenden Daten, bevor Sie ihn löschen.
 :::
 
 <NavigationFooter

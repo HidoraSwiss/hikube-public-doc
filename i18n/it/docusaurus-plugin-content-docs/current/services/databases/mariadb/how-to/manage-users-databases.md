@@ -81,7 +81,7 @@ CREATE TABLE test (id INT);
 
 ## Verifica
 
-L'elenco degli utenti mostra, per ciascuno, il suo **Role** e i **Databases** accessibili con il diritto associato (ad esempio `analytics (Read-only)`).
+L'elenco degli utenti mostra, per ciascuno, il suo **Role** e i **Databases** accessibili con il diritto associato (ad esempio `analytics (readonly)` o `analytics (admin)`).
 
 ## Per approfondire
 

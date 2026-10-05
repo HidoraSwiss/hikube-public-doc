@@ -138,9 +138,9 @@ Vedere: [PostgreSQL](../services/databases/postgresql/troubleshooting.md), [Mari
 
 ## 6. Storage
 
-### Impossibile eliminare un bucket
+### Eliminare un bucket senza perdere dati
 
-Un bucket che contiene ancora oggetti, o che è ancora in uso, non può essere eliminato. Lo svuoti con il suo client S3, quindi riprovi.
+L'eliminazione di un bucket è definitiva e comporta la perdita di tutti i suoi oggetti: la console non verifica che sia vuoto. Copi prima i dati da conservare con il suo client S3 (ad esempio `aws s3 sync`). Se l'eliminazione non riesce, riprovi, quindi contatti il supporto.
 
 ### Accesso S3 negato (`AccessDenied`)
 

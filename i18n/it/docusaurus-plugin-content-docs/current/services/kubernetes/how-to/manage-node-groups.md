@@ -53,7 +53,7 @@ Scelga un nome descrittivo per i gruppi (`compute`, `web`, `monitoring`, `gpu`) 
 Nella sezione **Node groups**, espanda la scheda del gruppo, modifichi i campi desiderati (tipo di istanza, storage effimero, numero minimo o massimo di nodi, esposizione), quindi faccia clic su **Save**.
 
 :::warning
-La modifica del tipo di istanza sostituisce progressivamente i nodi del gruppo: vengono creati nuovi nodi, quindi i vecchi vengono rimossi uno alla volta. La quota del progetto deve poter accogliere i nodi aggiuntivi durante la sostituzione.
+La modifica del tipo di istanza sostituisce tutti i nodi del gruppo: la piattaforma crea i nuovi nodi e rimuove i vecchi uno alla volta, senza attendere che ciascun sostituto sia pronto. Un gruppo con un solo nodo è quindi indisponibile durante la sostituzione (alcuni minuti): preveda almeno due nodi per i carichi di lavoro che non tollerano interruzioni. La quota del progetto deve poter accogliere i nodi aggiuntivi durante la sostituzione.
 :::
 
 :::note

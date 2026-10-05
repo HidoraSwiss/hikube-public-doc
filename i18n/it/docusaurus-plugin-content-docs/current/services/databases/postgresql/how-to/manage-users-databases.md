@@ -98,7 +98,7 @@ CREATE TABLE test (id int);
 ## Verifica
 
 - La scheda **Databases** elenca i suoi database e le relative estensioni.
-- La scheda **Users** elenca i suoi utenti con, per ciascuno, i database accessibili e il diritto associato (ad esempio `analytics (Read-only)`).
+- La scheda **Users** elenca i suoi utenti con, per ciascuno, i database accessibili e il diritto associato (ad esempio `analytics (readonly)` o `analytics (admin)`).
 
 ## Per approfondire
 

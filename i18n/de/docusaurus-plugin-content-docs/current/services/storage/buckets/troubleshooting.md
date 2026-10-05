@@ -63,18 +63,19 @@ title: Fehlerbehebung
 
 ---
 
+### Objekte sind nach dem Löschen eines Buckets verschwunden
+
+**Ursache**: Das Löschen eines Buckets wird nicht blockiert, wenn er Objekte enthält; sie werden mit ihm gelöscht und lassen sich nicht wiederherstellen.
+
+**Lösung**: Kopieren Sie vor dem Löschen eines Buckets die zu behaltenden Objekte, zum Beispiel auf Ihren Rechner:
+
+```bash
+aws --endpoint-url https://<endpoint> s3 sync s3://<s3-bucket-name>/ ./bucket-backup/
+```
+
 ### Das Löschen des Buckets schlägt fehl
 
-**Ursache**: Die Konsole antwortet mit „The bucket is not empty or is still in use.“.
-
-**Lösung**:
-
-1. Leeren Sie den Bucket mit einem Benutzer mit **Read / Write**:
-   ```bash
-   aws --endpoint-url https://<endpoint> s3 rm s3://<s3-bucket-name>/ --recursive
-   ```
-2. Ist die Sperre (WORM) aktiviert, können Objekte, die noch unter Aufbewahrung stehen, vor Ablauf nicht gelöscht werden.
-3. Versuchen Sie das Löschen in der Konsole erneut. Besteht der Fehler weiterhin, [wenden Sie sich an den Support](mailto:support@hidora.io).
+**Lösung**: Versuchen Sie das Löschen in der Konsole erneut. Besteht der Fehler weiterhin, [wenden Sie sich an den Support](mailto:support@hidora.io) und geben Sie den Namen des Buckets an.
 
 ---
 

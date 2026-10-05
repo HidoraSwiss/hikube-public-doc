@@ -113,7 +113,7 @@ Per connettersi, occorrono:
 Finché l'indirizzo non è assegnato, il campo **Host** mostra « Not available / Creating ». Una volta assegnato l'indirizzo, lo copi con il pulsante di copia.
 
 :::note
-Il campo **Host** viene compilato quando l'**External access** è attivato. Senza accesso esterno, il cluster resta raggiungibile dalle VM del progetto tramite un indirizzo interno, che la console non mostra: [contatti il supporto](mailto:support@hidora.io) per ottenerlo.
+Il campo **Host** viene compilato quando l'**External access** è attivato. Senza accesso esterno, il cluster resta raggiungibile dalle VM e dai cluster Kubernetes del progetto tramite un indirizzo interno, che la console non mostra: [contatti il supporto](mailto:support@hidora.io) per ottenerlo.
 :::
 
 Quando l'host è già noto, la schermata **Done** della procedura guidata mostra anche una stringa di connessione nella forma:

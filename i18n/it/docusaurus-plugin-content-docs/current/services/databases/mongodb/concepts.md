@@ -121,7 +121,7 @@ Il **Preset** definisce la capacità allocata a **ogni nodo**. Fa fede l'elenco 
 ## Accesso di rete
 
 - **External access** disattivato (impostazione predefinita): il cluster non è esposto su Internet. Il campo **Host** del riquadro **Network and Connection** mostra **Not defined**.
-- **External access** attivato: la piattaforma assegna un indirizzo pubblico, mostrato nel campo **Host**. La porta è quella standard di MongoDB, `27017`. La procedura guidata fornisce una stringa di connessione nella forma `mongodb://<utente>:<password>@<host>`.
+- **External access** attivato: la piattaforma assegna un indirizzo pubblico, mostrato nel campo **Host** per un cluster con sharding. Senza sharding, ciascun membro riceve il proprio indirizzo pubblico e il campo resta su **Not defined**: richieda l'indirizzo al [supporto](mailto:support@hidora.io). La porta è quella standard di MongoDB, `27017`. La procedura guidata fornisce una stringa di connessione nella forma `mongodb://<utente>:<password>@<host>`.
 
 ---
 

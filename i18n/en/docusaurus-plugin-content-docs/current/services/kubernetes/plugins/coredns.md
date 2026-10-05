@@ -15,6 +15,10 @@ CoreDNS is part of the **Advanced Configuration** of the **Addons** step: it is 
 2. Enter your values in **Helm Configuration (YAML) — optional**.
 3. Confirm with **Next** then **Create cluster** (creation) or **Save** (modification).
 
+:::warning
+On an existing cluster, the console does not save a first override entered from **Edit**: the **Save** button confirms the update, but the value is ignored. Define the override when creating the cluster, or [contact support](mailto:support@hidora.io). An override defined at creation remains editable from **Edit**.
+:::
+
 On the cluster detail page, the **DNS** line of the **Network** section shows **CoreDNS** when a CoreDNS configuration is applied.
 
 ## Override the configuration

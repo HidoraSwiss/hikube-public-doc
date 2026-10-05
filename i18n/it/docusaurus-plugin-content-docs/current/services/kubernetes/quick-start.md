@@ -39,7 +39,7 @@ La procedura guidata comprende quattro passaggi: **General**, **Nodes**, **Addon
 | **Cluster name** | `demo-cluster` (da 3 a 16 caratteri: lettere minuscole, cifre e trattini) |
 | **Kubernetes Version** | La versione preselezionata (la più recente proposta) |
 | **API Endpoint (Host)** | Lasci vuoto: l'indirizzo viene generato automaticamente dalla piattaforma, senza alcuna configurazione DNS da parte sua |
-| **Control Plane Instance Size** | **Small** |
+| **Control Plane Instance Size** | **Medium** (il preset **Small** proposto per impostazione predefinita può non avere memoria sufficiente) |
 | **Control Plane High Availability** | **3 (HA)** |
 
 ![Procedura guidata di creazione del cluster Kubernetes, passo General](/img/console/kubernetes/wizard-general.en.png)
