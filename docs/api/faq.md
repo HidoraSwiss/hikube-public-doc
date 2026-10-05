@@ -73,7 +73,7 @@ Non. L'API couvre les ressources des projets (VM, disques, buckets, Kubernetes, 
 
 ### Existe-t-il un client officiel ou un provider Terraform ?
 
-Pas encore. Vous pouvez générer un client dans votre langage depuis la [spécification OpenAPI](pathname:///openapi/hikube-public.swagger.json). Un provider Terraform fondé sur l'API publique est envisagé (voir [Terraform](../tools/terraform.md)).
+Pas encore. Vous pouvez générer un client dans votre langage depuis la [spécification OpenAPI](pathname:///openapi/hikube-public.swagger.json). Un provider Terraform fondé sur l'API publique est envisagé (voir [Terraform](../../tools/terraform)).
 
 ---
 

@@ -29,7 +29,7 @@ L'API publique est en préversion (`v1alpha1`) : chemins et champs peuvent encor
 
 ## Prérequis
 
-- Un **compte Hikube** et un **projet** (voir le [démarrage rapide Hikube](../getting-started/quick-start.md))
+- Un **compte Hikube** et un **projet** (voir le [démarrage rapide Hikube](../../getting-started/quick-start))
 - Être **administrateur** du projet ou de son organisation, ou passer par un administrateur, pour obtenir la clé
 - `curl` et [`jq`](https://jqlang.org/) sur votre poste
 
@@ -134,7 +134,7 @@ La réponse contient `bucketName`, `endpoint` et `secrets.accessKeyId` / `secret
 Les clés S3 ne sont renvoyées qu'à la création de l'utilisateur. Enregistrez-les aussitôt dans votre gestionnaire de secrets. En cas de perte, générez-en de nouvelles avec `POST .../users/app/rotate-credentials`.
 :::
 
-Testez l'accès avec un client S3, par exemple l'AWS CLI (voir [Buckets — démarrage rapide](../services/storage/buckets/quick-start.md)).
+Testez l'accès avec un client S3, par exemple l'AWS CLI (voir [Buckets — démarrage rapide](../../services/storage/buckets/quick-start)).
 
 ---
 
