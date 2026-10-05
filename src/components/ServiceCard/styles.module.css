@@ -1,53 +1,126 @@
-.serviceCard {
-  text-decoration: none !important;
-  color: inherit !important;
-  display: block;
+/* Carte « card-accent » de hikube.cloud : la couleur vient par la surface et
+   le filet de tête, pas par une bordure qui clignote au survol. */
+
+.card {
+  --svc: var(--hk-muted);
+  --svc-ink: var(--svc-deep, var(--svc));
+  display: flex;
+  flex-direction: column;
   height: 100%;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  padding: 1.15rem 1.25rem 1rem;
+  border: 1px solid color-mix(in srgb, var(--svc) 22%, var(--hk-line));
+  border-top: 2px solid var(--svc);
+  border-radius: var(--hk-radius);
+  background: color-mix(in srgb, var(--svc) 4%, var(--hk-panel));
+  color: inherit;
+  text-decoration: none;
+  transition:
+    background-color 200ms ease,
+    border-color 200ms ease,
+    transform 200ms var(--hk-ease-out);
 }
 
-.serviceCard:hover {
+:global([data-theme='dark']) .card {
+  --svc-ink: var(--svc);
+}
+
+.card:hover {
+  border-color: color-mix(in srgb, var(--svc) 45%, var(--hk-line));
+  border-top-color: var(--svc);
+  background: color-mix(in srgb, var(--svc) 9%, var(--hk-panel));
+  color: inherit;
+  text-decoration: none;
   transform: translateY(-2px);
-  text-decoration: none !important;
 }
 
-.serviceCard:hover .card {
-  border-left: 3px solid var(--ifm-color-primary);
+.card:active {
+  transform: translateY(-1px);
 }
 
-.serviceCard .card {
-  height: 100%;
-  border-left: 3px solid transparent;
-  transition: border-color 0.2s ease;
-}
-
-.cardHeader {
+.header {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.6rem;
+}
+
+/* Les pictogrammes de static/img/services portent déjà leur disque et
+   l'anneau de leur famille, comme les icônes produit de hikube.cloud. */
+.glyph {
+  display: inline-flex;
+  flex: none;
 }
 
 .icon {
-  width: 40px;
-  height: 40px;
-  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  object-fit: contain;
 }
 
 .title {
   margin: 0;
-  font-size: 1.1rem;
+  color: var(--hk-ink);
+  font-size: 1.0625rem;
+  font-weight: 650;
+  line-height: 1.25;
 }
 
 .description {
+  flex: 1;
   margin: 0;
+  color: var(--hk-muted);
   font-size: 0.9rem;
-  color: var(--ifm-color-content-secondary);
+  line-height: 1.55;
+}
+
+.footer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.9rem;
 }
 
 .tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.25rem;
-  margin-top: 0.5rem;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tag {
+  margin: 0 !important;
+  padding: 0.12rem 0.45rem;
+  border: 1px solid var(--hk-line);
+  border-radius: var(--hk-radius-btn);
+  color: var(--hk-muted);
+  font-family: var(--hk-font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
+/* La flèche avance au survol de la carte. */
+.arrow {
+  flex: none;
+  color: var(--svc-ink);
+  font-size: 1rem;
+  line-height: 1;
+  transition: transform 220ms var(--hk-ease-out);
+}
+
+.card:hover .arrow {
+  transform: translateX(4px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .card:hover,
+  .card:hover .arrow {
+    transform: none;
+  }
 }

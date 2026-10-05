@@ -7,8 +7,16 @@
     "message": "Documentation",
     "description": "Navbar item with label Documentation"
   },
-  "item.label.Hikube": {
-    "message": "Hikube",
-    "description": "Navbar item with label Hikube"
+  "item.label.Changelog": {
+    "message": "Changelog",
+    "description": "Navbar item with label Changelog"
+  },
+  "item.label.hikube.cloud": {
+    "message": "hikube.cloud",
+    "description": "Navbar item with label hikube.cloud"
+  },
+  "item.label.Console": {
+    "message": "Console",
+    "description": "Navbar item with label Console"
   }
 }

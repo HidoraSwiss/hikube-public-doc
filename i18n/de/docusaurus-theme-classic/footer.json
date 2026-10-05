@@ -1,30 +1,70 @@
 {
-  "link.title.Community": {
-    "message": "Community",
-    "description": "The title of the footer links column with title=Community in the footer"
+  "link.title.Documentation": {
+    "message": "Dokumentation",
+    "description": "The title of the footer links column with title=Documentation in the footer"
   },
-  "link.title.More": {
-    "message": "Mehr",
-    "description": "The title of the footer links column with title=More in the footer"
+  "link.title.Plateforme": {
+    "message": "Plattform",
+    "description": "The title of the footer links column with title=Plateforme in the footer"
   },
-  "link.item.label.Linkedin": {
-    "message": "Linkedin",
-    "description": "The label of footer link with label=Linkedin linking to https://www.linkedin.com/company/hidora"
+  "link.title.Hidora": {
+    "message": "Hidora",
+    "description": "The title of the footer links column with title=Hidora in the footer"
   },
-  "link.item.label.X": {
-    "message": "X",
-    "description": "The label of footer link with label=X linking to https://x.com/HidoraSwiss"
+  "link.item.label.Kubernetes": {
+    "message": "Kubernetes",
+    "description": "The label of footer link with label=Kubernetes linking to /services/kubernetes/overview"
   },
-  "link.item.label.Hikube": {
-    "message": "Hikube",
-    "description": "The label of footer link with label=Hikube linking to https://hikube.cloud"
+  "link.item.label.Machines virtuelles": {
+    "message": "Virtuelle Maschinen",
+    "description": "The label of footer link with label=Machines virtuelles linking to /services/compute/overview"
+  },
+  "link.item.label.Changelog": {
+    "message": "Änderungsprotokoll",
+    "description": "The label of footer link with label=Changelog linking to /blog"
+  },
+  "link.item.label.hikube.cloud": {
+    "message": "hikube.cloud",
+    "description": "The label of footer link with label=hikube.cloud linking to https://hikube.cloud"
+  },
+  "link.item.label.Console": {
+    "message": "Console",
+    "description": "The label of footer link with label=Console linking to https://console.hikube.cloud"
+  },
+  "link.item.label.Statut": {
+    "message": "Status",
+    "description": "The label of footer link with label=Statut linking to https://status.hikube.cloud"
+  },
+  "link.item.label.Tarifs": {
+    "message": "Preise",
+    "description": "The label of footer link with label=Tarifs linking to https://hikube.cloud/pricing"
   },
   "link.item.label.Hidora": {
     "message": "Hidora",
     "description": "The label of footer link with label=Hidora linking to https://hidora.io"
   },
-  "copyright": {
-    "message": "Copyright © 2025 Hidora",
-    "description": "The footer copyright"
+  "link.item.label.contact@hidora.io": {
+    "message": "contact@hidora.io",
+    "description": "The label of footer link with label=contact@hidora.io linking to mailto:contact@hidora.io"
+  },
+  "link.item.label.LinkedIn": {
+    "message": "LinkedIn",
+    "description": "The label of footer link with label=LinkedIn linking to https://www.linkedin.com/company/hidora"
+  },
+  "link.item.label.X": {
+    "message": "X",
+    "description": "The label of footer link with label=X linking to https://x.com/HidoraSwiss"
+  },
+  "logo.alt": {
+    "message": "Hikube",
+    "description": "The alt text of footer logo"
+  },
+  "link.item.label.Bases de données": {
+    "message": "Datenbanken",
+    "description": "The label of footer link with label=Bases de données linking to /services/databases/"
+  },
+  "link.item.label.Accueil": {
+    "message": "Startseite",
+    "description": "The label of footer link with label=Accueil linking to /"
   }
 }

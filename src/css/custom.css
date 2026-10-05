@@ -1,38 +1,1618 @@
 /**
- * Any CSS included here will be global. The classic template
- * bundles Infima by default. Infima is a CSS framework designed to
- * work well for content-centric websites.
+ * Charte Hikube — documentation.
+ *
+ * Source de vérité : le site marketing hikube.cloud (dépôt hikube-web,
+ * src/app/globals.css). On en reprend les mêmes tokens :
+ *   - sombre  = « graphite chaud » (--base #16120f, --panel #1f1a16, --line #362e28)
+ *   - clair   = « papier » (.paper-scope : #ede8e0, #e4ded4, #cfc6b9)
+ *   - vert    = l'action (#38ba6a sur graphite, #1e6b3c sur papier)
+ *   - rayon unique de 6 px, boutons à 2 px
+ *   - Archivo (texte et titres, légèrement serrés) + IBM Plex Mono (code, libellés)
+ *
+ * La barre de navigation et le pied de page restent graphite dans les deux
+ * thèmes, comme sur les articles papier du site : la marque ne change pas de
+ * couleur quand le lecteur change de thème.
+ *
+ * Organisation :
+ *   1. Tokens          5. Contenu (titres, liens, code, tableaux, admonitions)
+ *   2. Mapping Infima  6. Sidebar, TOC, fil d'Ariane, pagination
+ *   3. Base            7. Navbar, recherche, footer
+ *   4. Utilitaires     8. Mermaid, blog, divers
  */
 
-/* You can override the default Infima variables here. */
+@import './fonts.css';
+
+/* ── 1. Tokens ──────────────────────────────────────────────────────────── */
+
 :root {
- --ifm-color-primary: #00683b; /* Couleur primaire */
- --ifm-color-primary-dark: #005a33; /* Plus sombre */
- --ifm-color-primary-darker: #004a2b; /* Encore plus sombre */
- --ifm-color-primary-darkest: #003622; /* Très sombre */
- --ifm-color-primary-light: #008d59; /* Plus claire */
- --ifm-color-primary-lighter: #009c66; /* Légèrement plus claire */
- --ifm-color-primary-lightest: #00b073; /* Très claire */
- --ifm-code-font-size: 95%;
- --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+  /* Constantes de marque, identiques dans les deux thèmes */
+  --hk-green: #38ba6a;
+  --hk-green-dark: #28904e;
+  --hk-green-deep: #1e6b3c;
+  --hk-amber: #d08a2c;
+  --hk-radius: 6px;
+  --hk-radius-sm: 3px;
+  --hk-radius-btn: 2px;
+  --hk-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --hk-font-sans: 'Archivo', system-ui, -apple-system, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+  --hk-font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, Consolas,
+    'Liberation Mono', monospace;
+
+  /* Les blocs de code restent graphite en clair comme en sombre, comme sur le
+     blog papier de hikube.cloud : une seule coloration syntaxique à maintenir,
+     et le code se détache nettement du texte. */
+  --hk-code-bg: #14110e;
+  --hk-code-title-bg: #1f1a16;
+  --hk-code-line: #2a231d;
+  --hk-code-ink: #ded8d1;
+  --hk-code-muted: #a99e95;
+
+  /* Thème clair = papier */
+  color-scheme: light;
+  --hk-base: #ede8e0;
+  --hk-panel: #e4ded4;
+  --hk-panel-high: #dad3c7;
+  --hk-line: #cfc6b9;
+  --hk-line-strong: #b3a899;
+  --hk-ink: #1a1613;
+  --hk-prose: #241f1b;
+  --hk-muted: #6b6158;
+  --hk-link: #1e6b3c;
+  --hk-link-hover: #14512c;
+  --hk-accent: #1e6b3c; /* vert lisible sur la surface courante */
+  --hk-on-accent: #ffffff;
+  --hk-focus: #1e6b3c;
+  --hk-shadow: 0 18px 40px -24px rgb(26 22 19 / 0.35);
+  --hk-caret-filter: none;
+
+  --hk-e0: #ede8e0;
+  --hk-e100: #e4ded4;
+  --hk-e200: #dad3c7;
+  --hk-e300: #cfc6b9;
+  --hk-e400: #b3a899;
+  --hk-e500: #8d8276;
+  --hk-e600: #6b6158;
+  --hk-e700: #4a423b;
+  --hk-e800: #2f2924;
+  --hk-e900: #1a1613;
+  --hk-e1000: #000000;
+
+  --hk-primary: #1e6b3c;
+  --hk-primary-dark: #1b6036;
+  --hk-primary-darker: #1a5b33;
+  --hk-primary-darkest: #154b2a;
+  --hk-primary-light: #217642;
+  --hk-primary-lighter: #237b45;
+  --hk-primary-lightest: #298b4e;
+
+  /* Admonitions : teinte (filet, lavis) et texte du libellé (≥ 4,5:1) */
+  --hk-note: #8d8276;
+  --hk-note-text: #5a524a;
+  --hk-tip: #1e6b3c;
+  --hk-tip-text: #1a5f35;
+  --hk-info: #085ce6;
+  --hk-info-text: #0a4fbf;
+  --hk-warning: #b8761c;
+  --hk-warning-text: #774a0d;
+  --hk-danger: #be3307;
+  --hk-danger-text: #a12b06;
 }
 
-/* For readability concerns, you should choose a lighter palette in dark mode. */
-[data-theme="dark"] {
- --ifm-color-primary: #38ba6a; /* Couleur primaire en mode sombre */
- --ifm-color-primary-dark: #2f9e58; /* Plus sombre */
- --ifm-color-primary-darker: #278850; /* Encore plus sombre */
- --ifm-color-primary-darkest: #20753f; /* Très sombre */
- --ifm-color-primary-light: #4acb7a; /* Plus claire */
- --ifm-color-primary-lighter: #52d48d; /* Légèrement plus claire */
- --ifm-color-primary-lightest: #69d99e; /* Très claire */
- --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+/* Thème sombre = graphite. La navbar et le footer en héritent toujours. */
+html[data-theme='dark'],
+.navbar,
+.footer {
+  color-scheme: dark;
+  --hk-base: #16120f;
+  --hk-panel: #1f1a16;
+  --hk-panel-high: #2a231d;
+  --hk-line: #362e28;
+  --hk-line-strong: #4a4038;
+  --hk-ink: #f7f4f0;
+  --hk-prose: #dcd7d1;
+  --hk-muted: #a99e95;
+  --hk-link: #38ba6a;
+  --hk-link-hover: #5fcb88;
+  --hk-accent: #38ba6a;
+  --hk-on-accent: #000000;
+  --hk-focus: #38ba6a;
+  --hk-shadow: 0 18px 40px -12px rgb(0 0 0 / 0.9);
+  --hk-caret-filter: invert(100%) sepia(94%) saturate(17%) hue-rotate(223deg)
+    brightness(104%) contrast(98%);
+
+  --hk-e0: #16120f;
+  --hk-e100: #1f1a16;
+  --hk-e200: #2a231d;
+  --hk-e300: #362e28;
+  --hk-e400: #4a4038;
+  --hk-e500: #7d7269;
+  --hk-e600: #a99e95;
+  --hk-e700: #c9c0b8;
+  --hk-e800: #dcd7d1;
+  --hk-e900: #f7f4f0;
+  --hk-e1000: #ffffff;
+
+  --hk-primary: #38ba6a;
+  --hk-primary-dark: #32a85f;
+  --hk-primary-darker: #2f9e5a;
+  --hk-primary-darkest: #27824a;
+  --hk-primary-light: #4cc27a;
+  --hk-primary-lighter: #57c682;
+  --hk-primary-lightest: #78d29b;
+
+  --hk-note: #a99e95;
+  --hk-note-text: #b8aea5;
+  --hk-tip: #38ba6a;
+  --hk-tip-text: #4cc27a;
+  --hk-info: #3b82f6;
+  --hk-info-text: #7eaef9;
+  --hk-warning: #d08a2c;
+  --hk-warning-text: #e0a24f;
+  --hk-danger: #f4511e;
+  --hk-danger-text: #f57a52;
 }
 
-html[data-theme="dark"] .only-light {
- display: none !important;
+/* ── 2. Mapping Infima ──────────────────────────────────────────────────── */
+
+/* Les variables Infima sont résolues sur chaque portée (racine, navbar,
+   footer) pour que la navbar reste graphite même en thème clair. */
+:root,
+html[data-theme='light'],
+html[data-theme='dark'],
+.navbar,
+.footer,
+.footer--dark {
+  --ifm-font-family-base: var(--hk-font-sans);
+  --ifm-heading-font-family: var(--hk-font-sans);
+  --ifm-font-family-monospace: var(--hk-font-mono);
+  /* Un cran au-dessus de 16 px, comme hikube.cloud, en pourcentage pour
+     respecter le réglage du visiteur. */
+  --ifm-font-size-base: 106.25%;
+  --ifm-line-height-base: 1.65;
+  --ifm-heading-font-weight: 650;
+  --ifm-heading-line-height: 1.2;
+  --ifm-font-weight-semibold: 600;
+  --ifm-font-weight-bold: 650;
+  --ifm-h1-font-size: 2.25rem;
+  --ifm-h2-font-size: 1.625rem;
+  --ifm-h3-font-size: 1.25rem;
+  --ifm-h4-font-size: 1.0625rem;
+  --ifm-h5-font-size: 0.9375rem;
+  --ifm-h6-font-size: 0.875rem;
+
+  --ifm-color-primary: var(--hk-primary);
+  --ifm-color-primary-dark: var(--hk-primary-dark);
+  --ifm-color-primary-darker: var(--hk-primary-darker);
+  --ifm-color-primary-darkest: var(--hk-primary-darkest);
+  --ifm-color-primary-light: var(--hk-primary-light);
+  --ifm-color-primary-lighter: var(--hk-primary-lighter);
+  --ifm-color-primary-lightest: var(--hk-primary-lightest);
+
+  --ifm-color-emphasis-0: var(--hk-e0);
+  --ifm-color-emphasis-100: var(--hk-e100);
+  --ifm-color-emphasis-200: var(--hk-e200);
+  --ifm-color-emphasis-300: var(--hk-e300);
+  --ifm-color-emphasis-400: var(--hk-e400);
+  --ifm-color-emphasis-500: var(--hk-e500);
+  --ifm-color-emphasis-600: var(--hk-e600);
+  --ifm-color-emphasis-700: var(--hk-e700);
+  --ifm-color-emphasis-800: var(--hk-e800);
+  --ifm-color-emphasis-900: var(--hk-e900);
+  --ifm-color-emphasis-1000: var(--hk-e1000);
+
+  --ifm-background-color: var(--hk-base);
+  --ifm-background-surface-color: var(--hk-panel);
+  --ifm-color-content: var(--hk-prose);
+  --ifm-color-content-secondary: var(--hk-muted);
+  --ifm-font-color-base: var(--hk-prose);
+  --ifm-font-color-secondary: var(--hk-muted);
+  --ifm-heading-color: var(--hk-ink);
+  --ifm-hr-border-color: var(--hk-line);
+  --ifm-hr-height: 1px;
+  --ifm-toc-border-color: var(--hk-line);
+  --ifm-scrollbar-track-background-color: transparent;
+  --ifm-scrollbar-thumb-background-color: var(--hk-line);
+  --ifm-scrollbar-thumb-hover-background-color: var(--hk-line-strong);
+
+  --ifm-link-color: var(--hk-link);
+  --ifm-link-hover-color: var(--hk-link-hover);
+  --ifm-link-decoration: none;
+  --ifm-link-hover-decoration: underline;
+
+  --ifm-global-radius: var(--hk-radius);
+  --ifm-global-shadow-lw: none;
+  --ifm-global-shadow-md: var(--hk-shadow);
+  --ifm-global-shadow-tl: var(--hk-shadow);
+  --ifm-button-border-radius: var(--hk-radius-btn);
+  --ifm-badge-border-radius: var(--hk-radius-btn);
+  --ifm-alert-border-radius: var(--hk-radius);
+  --ifm-card-border-radius: var(--hk-radius);
+  --ifm-card-background-color: var(--hk-panel);
+  --ifm-pagination-nav-border-radius: var(--hk-radius);
+  --ifm-transition-fast: 150ms;
+  --ifm-transition-timing-default: var(--hk-ease-out);
+
+  --ifm-code-font-size: 0.875em;
+  --ifm-code-background: var(--hk-panel);
+  --ifm-code-border-radius: var(--hk-radius-sm);
+  --ifm-code-padding-horizontal: 0.35rem;
+  --ifm-code-padding-vertical: 0.1rem;
+  --ifm-pre-background: var(--hk-code-bg);
+  --ifm-pre-color: var(--hk-code-ink);
+  --ifm-pre-line-height: 1.65;
+  --ifm-pre-padding: 1rem 1.25rem;
+  --docusaurus-highlighted-code-line-bg: rgb(56 186 106 / 0.12);
+
+  --ifm-table-border-color: var(--hk-line);
+  --ifm-table-head-background: var(--hk-panel);
+  --ifm-table-head-color: var(--hk-muted);
+  --ifm-table-stripe-background: transparent;
+  --ifm-table-cell-padding: 0.6rem 0.8rem;
+
+  --ifm-menu-color: var(--hk-muted);
+  --ifm-menu-color-active: var(--hk-ink);
+  --ifm-menu-color-background-active: var(--hk-panel);
+  --ifm-menu-color-background-hover: var(--hk-panel);
+  --ifm-menu-link-padding-vertical: 0.35rem;
+  --ifm-menu-link-padding-horizontal: 0.75rem;
+  --ifm-menu-link-sublist-icon-filter: var(--hk-caret-filter);
+
+  --ifm-navbar-height: 3.5rem;
+  --ifm-navbar-padding-horizontal: 1rem;
+  --ifm-navbar-padding-vertical: 0;
+  --ifm-navbar-background-color: color-mix(in srgb, var(--hk-base) 92%, transparent);
+  --ifm-navbar-link-color: color-mix(in srgb, var(--hk-ink) 85%, transparent);
+  --ifm-navbar-link-hover-color: var(--hk-green);
+  --ifm-navbar-link-active-color: var(--hk-ink);
+  --ifm-navbar-shadow: none;
+  --ifm-navbar-item-padding-horizontal: 0.7rem;
+  --ifm-navbar-search-input-background-color: var(--hk-panel);
+  --ifm-navbar-search-input-color: var(--hk-ink);
+  --ifm-navbar-search-input-placeholder-color: var(--hk-muted);
+  --ifm-navbar-search-input-icon: url('data:image/svg+xml;utf8,<svg fill="%23a99e95" alt="" xmlns="http://www.w3.org/2000/svg" height="16px" width="16px" viewBox="0 0 16 16"><path d="M6.02945,10.20327a4.17382,4.17382,0,1,1,4.17382-4.17382A4.15609,4.15609,0,0,1,6.02945,10.20327Zm9.69195,4.2199L10.8989,9.59979A5.88021,5.88021,0,0,0,12.058,6.02856,6.00467,6.00467,0,1,0,9.59979,10.8989l4.82338,4.82338a.89729.89729,0,0,0,1.29912,0,.89749.89749,0,0,0-.00087-1.29909Z" /></svg>');
+
+  --ifm-dropdown-background-color: var(--hk-panel);
+  --ifm-dropdown-link-color: var(--hk-prose);
+  --ifm-dropdown-hover-background-color: var(--hk-panel-high);
+
+  --ifm-footer-background-color: #0b0907;
+  --ifm-footer-color: var(--hk-muted);
+  --ifm-footer-link-color: var(--hk-muted);
+  --ifm-footer-link-hover-color: var(--hk-ink);
+  --ifm-footer-title-color: var(--hk-green);
+  --ifm-footer-padding-vertical: 3.5rem;
+
+  --ifm-tabs-color: var(--hk-muted);
+  --ifm-tabs-color-active: var(--hk-ink);
+  --ifm-tabs-color-active-border: var(--hk-accent);
+  --ifm-tabs-padding-vertical: 0.55rem;
+  --ifm-tabs-padding-horizontal: 0.9rem;
+
+  --docusaurus-collapse-button-bg: transparent;
+  --docusaurus-collapse-button-bg-hover: var(--hk-panel);
+  --docusaurus-tag-list-border: var(--hk-line);
+
+  /* Recherche locale (@easyops-cn/docusaurus-search-local) */
+  --search-local-modal-background: var(--hk-panel);
+  --search-local-modal-shadow: 0 0 0 1px var(--hk-line), var(--hk-shadow);
+  --search-local-modal-width: 560px;
+  --search-local-hit-background: var(--hk-base);
+  --search-local-hit-shadow: inset 0 0 0 1px var(--hk-line);
+  --search-local-hit-color: var(--hk-prose);
+  --search-local-hit-active-color: var(--hk-on-accent);
+  --search-local-highlight-color: var(--hk-accent);
+  --search-local-muted-color: var(--hk-muted);
+  --search-local-input-active-border-color: var(--hk-accent);
+  --search-local-spacing: 10px;
+  --search-local-hit-height: 54px;
 }
 
-html[data-theme="light"] .only-dark {
- display: none !important;
+/* ── 3. Base ────────────────────────────────────────────────────────────── */
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background: var(--hk-base);
+  color: var(--hk-prose);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  /* Archivo porte un axe de largeur : titres un peu serrés et resserrés,
+     une voix sans seconde famille. */
+  font-stretch: 94%;
+  letter-spacing: -0.02em;
+}
+
+::selection {
+  background: var(--hk-green);
+  color: #000;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--hk-focus);
+  outline-offset: 2px;
+}
+
+hr {
+  background-color: var(--hk-line);
+}
+
+/* ── 4. Utilitaires (repris de hikube.cloud) ────────────────────────────── */
+
+/* Petites capitales en chasse fixe : l'étiquette d'un instrument, pas un
+   sourcil marketing. */
+.hk-label {
+  font-family: var(--hk-font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--hk-muted);
+}
+
+.hk-section-label {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  margin: 0;
+  font-family: var(--hk-font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--hk-muted);
+}
+
+.hk-section-label::before {
+  content: '';
+  flex: none;
+  width: 1.25rem;
+  height: 1px;
+  background: var(--hk-accent);
+}
+
+html[data-theme='dark'] .only-light {
+  display: none !important;
+}
+
+html[data-theme='light'] .only-dark {
+  display: none !important;
+}
+
+/* ── 5. Contenu ─────────────────────────────────────────────────────────── */
+
+.markdown {
+  --ifm-h1-vertical-rhythm-bottom: 1;
+  --ifm-h2-vertical-rhythm-top: 2.25;
+  --ifm-h3-vertical-rhythm-top: 1.75;
+  --ifm-heading-vertical-rhythm-bottom: 0.75;
+}
+
+.markdown h1:first-child,
+.markdown > header > h1 {
+  --ifm-h1-font-size: clamp(2rem, 1.55rem + 1.5vw, 2.75rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+}
+
+.markdown > h2 {
+  line-height: 1.15;
+}
+
+/* Un filet court sous le h2, comme sur les articles de hikube.cloud : il
+   annonce une section sans ajouter de bruit. */
+.markdown > h2::after {
+  content: '';
+  display: block;
+  width: 2.5rem;
+  height: 2px;
+  margin-top: 0.7rem;
+  background: var(--hk-accent);
+}
+
+.markdown > h3,
+.markdown > h4 {
+  line-height: 1.3;
+}
+
+.markdown p,
+.markdown li {
+  color: var(--hk-prose);
+}
+
+.markdown strong {
+  color: var(--hk-ink);
+  font-weight: 650;
+}
+
+.markdown li::marker {
+  color: var(--hk-muted);
+}
+
+.markdown li + li {
+  margin-top: 0.25rem;
+}
+
+/* Liens de texte : soulignés discrets, appuyés au survol. Spécificité d'un
+   simple sélecteur d'élément (:where) : elle bat la règle `a` d'Infima mais
+   laisse la main aux classes des composants (cartes, pagination). */
+:where(.markdown, .theme-admonition) a:where(:not(.hash-link)) {
+  color: var(--hk-link);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--hk-link) 40%, transparent);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+  transition: text-decoration-color var(--ifm-transition-fast) ease,
+    color var(--ifm-transition-fast) ease;
+}
+
+:where(.markdown, .theme-admonition) a:where(:not(.hash-link)):hover {
+  color: var(--hk-link-hover);
+  text-decoration-color: currentColor;
+}
+
+.hash-link {
+  color: var(--hk-muted);
+}
+
+.markdown blockquote {
+  margin: 1.5rem 0;
+  padding: 0.9rem 1.25rem;
+  border-left: 3px solid var(--hk-accent);
+  border-radius: 0 var(--hk-radius-sm) var(--hk-radius-sm) 0;
+  background: var(--hk-panel);
+  color: var(--hk-ink);
+}
+
+.markdown blockquote > :last-child {
+  margin-bottom: 0;
+}
+
+.markdown img {
+  border-radius: var(--hk-radius-sm);
+}
+
+kbd {
+  border: 1px solid var(--hk-line);
+  border-bottom-width: 2px;
+  border-radius: var(--hk-radius-sm);
+  background: var(--hk-panel);
+  box-shadow: none;
+  color: var(--hk-ink);
+  font-family: var(--hk-font-mono);
+  font-size: 0.8em;
+  padding: 0.05rem 0.35rem;
+}
+
+/* Code au fil du texte : il reste dans la ligne, juste distingué. */
+:not(pre) > code {
+  border: 1px solid var(--hk-line);
+  background: var(--hk-panel);
+  color: var(--hk-ink);
+  vertical-align: baseline;
+  word-break: break-word;
+}
+
+a > code {
+  color: inherit;
+}
+
+/* Blocs de code */
+.theme-code-block {
+  --prism-background-color: var(--hk-code-bg);
+  border: 1px solid var(--hk-code-line);
+  border-radius: var(--hk-radius);
+  box-shadow: none;
+  overflow: hidden;
+  margin-bottom: 1.25rem;
+}
+
+[data-theme='light'] .theme-code-block {
+  border-color: #2a231d;
+}
+
+.theme-code-block pre,
+.theme-code-block code {
+  font-family: var(--hk-font-mono);
+}
+
+.theme-code-block pre {
+  border-radius: 0;
+}
+
+.theme-code-block code {
+  font-size: 0.8125rem;
+  line-height: 1.65;
+  tab-size: 2;
+}
+
+/* Titre du bloc (title="fichier.yaml") : l'onglet d'un terminal. */
+.theme-code-block > div[class*='codeBlockTitle'] {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid var(--hk-code-line);
+  background: var(--hk-code-title-bg);
+  color: var(--hk-code-muted);
+  font-family: var(--hk-font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.theme-code-block > div[class*='codeBlockTitle']::before {
+  content: '';
+  flex: none;
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: var(--hk-green);
+}
+
+.theme-code-block-highlighted-line {
+  box-shadow: inset 2px 0 0 var(--hk-green);
+}
+
+/* Boutons du bloc (copier, retour à la ligne) */
+.theme-code-block button {
+  border: 1px solid var(--hk-code-line);
+  border-radius: var(--hk-radius-sm);
+  background: var(--hk-code-title-bg);
+  color: var(--hk-code-muted);
+  transition: color 150ms ease, border-color 150ms ease, opacity 150ms ease;
+}
+
+.theme-code-block button:hover,
+.theme-code-block button:focus-visible {
+  border-color: var(--hk-green);
+  color: var(--hk-green);
+}
+
+/* Tableaux : filets fins, en-tête en libellé d'instrument. */
+.markdown table {
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 1.25rem 0 1.5rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.markdown table thead tr,
+.markdown table tr {
+  border: 0;
+  background: transparent;
+}
+
+.markdown table th,
+.markdown table td {
+  border: 0;
+  border-right: 1px solid var(--hk-line);
+  border-bottom: 1px solid var(--hk-line);
+  vertical-align: top;
+  text-align: left;
+}
+
+.markdown table tr > :first-child {
+  border-left: 1px solid var(--hk-line);
+}
+
+.markdown table thead th,
+.markdown table tr:first-child > th {
+  border-top: 1px solid var(--hk-line);
+}
+
+.markdown table:not(:has(thead)) tr:first-child > td {
+  border-top: 1px solid var(--hk-line);
+}
+
+.markdown table th {
+  background: var(--hk-panel);
+  color: var(--hk-muted);
+  font-family: var(--hk-font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.markdown table th code {
+  font-size: 0.95em;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.markdown table thead tr:first-child > :first-child,
+.markdown table:not(:has(thead)) tr:first-child > :first-child {
+  border-top-left-radius: var(--hk-radius);
+}
+
+.markdown table thead tr:first-child > :last-child,
+.markdown table:not(:has(thead)) tr:first-child > :last-child {
+  border-top-right-radius: var(--hk-radius);
+}
+
+.markdown table tr:last-child > :first-child {
+  border-bottom-left-radius: var(--hk-radius);
+}
+
+.markdown table tr:last-child > :last-child {
+  border-bottom-right-radius: var(--hk-radius);
+}
+
+.markdown table tbody tr {
+  transition: background-color 150ms ease;
+}
+
+.markdown table tbody tr:hover {
+  background: color-mix(in srgb, var(--hk-panel) 55%, transparent);
+}
+
+.markdown table td code {
+  font-size: 0.8125rem;
+  white-space: nowrap;
+}
+
+@media (max-width: 576px) {
+  .markdown table {
+    font-size: 0.85rem;
+  }
+
+  .markdown table th,
+  .markdown table td {
+    padding: 0.5rem 0.6rem;
+  }
+}
+
+/* Admonitions : un aparté, pas une alerte. Filet à gauche à la couleur du
+   type, lavis très dilué, libellé en chasse fixe. */
+.theme-admonition {
+  --hk-adm: var(--hk-note);
+  --hk-adm-text: var(--hk-note-text);
+  margin-bottom: 1.25rem;
+  padding: 0.9rem 1.15rem 0.95rem;
+  border: 1px solid color-mix(in srgb, var(--hk-adm) 24%, var(--hk-line));
+  border-left: 3px solid var(--hk-adm);
+  border-radius: var(--hk-radius-sm) var(--hk-radius) var(--hk-radius) var(--hk-radius-sm);
+  background: color-mix(in srgb, var(--hk-adm) 6%, var(--hk-panel));
+  box-shadow: none;
+  color: var(--hk-prose);
+  font-size: 0.95rem;
+}
+
+.theme-admonition-tip {
+  --hk-adm: var(--hk-tip);
+  --hk-adm-text: var(--hk-tip-text);
+}
+
+.theme-admonition-info {
+  --hk-adm: var(--hk-info);
+  --hk-adm-text: var(--hk-info-text);
+}
+
+.theme-admonition-warning,
+.theme-admonition-caution {
+  --hk-adm: var(--hk-warning);
+  --hk-adm-text: var(--hk-warning-text);
+}
+
+.theme-admonition-danger {
+  --hk-adm: var(--hk-danger);
+  --hk-adm-text: var(--hk-danger-text);
+}
+
+.theme-admonition > div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 0.4rem;
+  color: var(--hk-adm-text);
+  font-family: var(--hk-font-mono);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.theme-admonition > div:first-child svg {
+  width: 1rem;
+  height: 1rem;
+  fill: currentColor;
+  stroke: none;
+}
+
+.theme-admonition > div:first-child > span {
+  display: inline-flex;
+  margin-right: 0;
+}
+
+.theme-admonition p,
+.theme-admonition li {
+  color: var(--hk-prose);
+}
+
+.theme-admonition code {
+  background: color-mix(in srgb, var(--hk-base) 55%, transparent);
+}
+
+.theme-admonition .theme-code-block {
+  margin-top: 0.75rem;
+}
+
+/* <details> */
+.markdown details {
+  --ifm-alert-background-color: var(--hk-panel);
+  --ifm-alert-border-color: var(--hk-line);
+  --ifm-alert-foreground-color: var(--hk-prose);
+  --docusaurus-details-decoration-color: var(--hk-muted);
+  margin-bottom: 1.25rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--hk-line);
+  border-radius: var(--hk-radius);
+  background: var(--hk-panel);
+  box-shadow: none;
+  color: var(--hk-prose);
+}
+
+.markdown details > summary {
+  color: var(--hk-ink);
+  font-weight: 600;
+}
+
+.markdown details > div > div {
+  border-top-color: var(--hk-line) !important;
+}
+
+/* Onglets */
+.tabs {
+  border-bottom: 1px solid var(--hk-line);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tabs__item {
+  border-radius: 0;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.tabs__item:hover {
+  background: transparent;
+  color: var(--hk-ink);
+}
+
+.tabs__item--active {
+  border-bottom-color: var(--hk-accent);
+  color: var(--hk-ink);
+}
+
+.tabs-container > .margin-top--md {
+  margin-top: 1rem !important;
+}
+
+/* Boutons Infima, alignés sur les CTA du site */
+.button {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.button--primary {
+  --ifm-button-background-color: var(--hk-accent);
+  --ifm-button-border-color: var(--hk-accent);
+  --ifm-button-color: var(--hk-on-accent);
+}
+
+.badge {
+  font-family: var(--hk-font-mono);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+/* ── 6. Sidebar, TOC, fil d'Ariane, pagination ──────────────────────────── */
+
+.theme-doc-sidebar-container {
+  border-right-color: var(--hk-line) !important;
+}
+
+.theme-doc-sidebar-menu {
+  font-size: 0.9rem;
+}
+
+.menu {
+  padding: 1rem 0.65rem 2rem !important;
+}
+
+.menu__link {
+  border-radius: var(--hk-radius-sm);
+  line-height: 1.35;
+  transition: color 150ms ease, background-color 150ms ease;
+}
+
+.menu__link:hover {
+  color: var(--hk-ink);
+}
+
+.menu__link--active:not(.menu__link--sublist) {
+  background: var(--hk-panel);
+  box-shadow: inset 2px 0 0 var(--hk-accent);
+  color: var(--hk-ink);
+  font-weight: 600;
+}
+
+.menu__link--sublist.menu__link--active,
+.menu__list-item-collapsible--active > .menu__link {
+  color: var(--hk-ink);
+}
+
+.menu__list-item-collapsible:hover {
+  background: var(--hk-panel);
+}
+
+.menu__list-item-collapsible--active {
+  background: transparent;
+}
+
+.menu__caret,
+.menu__link--sublist-caret::after {
+  opacity: 0.8;
+}
+
+.menu__caret:hover {
+  background: var(--hk-panel-high);
+}
+
+/* Niveaux imbriqués : un filet vertical, comme une arborescence. */
+.theme-doc-sidebar-menu .menu__list .menu__list {
+  margin-left: 0.9rem;
+  padding-left: 0.4rem;
+  border-left: 1px solid var(--hk-line);
+}
+
+.theme-doc-sidebar-menu > .menu__list-item > .menu__list-item-collapsible > .menu__link,
+.theme-doc-sidebar-menu > .menu__list-item > .menu__link {
+  color: var(--hk-ink);
+  font-weight: 600;
+}
+
+.theme-doc-sidebar-menu > .menu__list-item {
+  margin-top: 0.15rem;
+}
+
+/* Bouton « réduire la barre latérale » */
+button[class*='collapseSidebarButton'],
+div[class*='expandButton'] {
+  border: 0;
+  border-top: 1px solid var(--hk-line);
+  border-radius: 0;
+  background: transparent;
+  height: 2.5rem;
+  transition: background-color 150ms ease;
+}
+
+button[class*='collapseSidebarButton']:hover,
+div[class*='expandButton']:hover {
+  background: var(--hk-panel);
+}
+
+[class*='collapseSidebarButtonIcon'] g,
+[class*='expandButtonIcon'] g {
+  fill: var(--hk-muted);
+}
+
+/* Table des matières */
+.table-of-contents {
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.table-of-contents__link {
+  color: var(--hk-muted);
+  transition: color 150ms ease;
+}
+
+.table-of-contents__link:hover,
+.table-of-contents__link code {
+  color: var(--hk-ink);
+}
+
+.table-of-contents__link--active {
+  color: var(--hk-accent);
+  font-weight: 600;
+}
+
+.table-of-contents strong {
+  color: inherit;
+  font-weight: inherit;
+}
+
+.table-of-contents code {
+  border: 0;
+  background: transparent;
+  padding: 0;
+}
+
+.theme-doc-toc-desktop {
+  padding-top: 0.25rem;
+}
+
+/* TOC mobile (repliable en haut de page) */
+.theme-doc-toc-mobile {
+  border: 1px solid var(--hk-line);
+  border-radius: var(--hk-radius);
+  background: var(--hk-panel);
+}
+
+.theme-doc-toc-mobile > button {
+  font-weight: 600;
+  color: var(--hk-ink);
+}
+
+/* Fil d'Ariane : discret, en petites capitales mono. */
+.breadcrumbs {
+  font-family: var(--hk-font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.breadcrumbs__link {
+  padding: 0.2rem 0.4rem;
+  border-radius: var(--hk-radius-sm);
+  background: transparent;
+  color: var(--hk-muted);
+  font-size: inherit;
+}
+
+a.breadcrumbs__link:hover {
+  background: var(--hk-panel);
+  color: var(--hk-ink);
+}
+
+.breadcrumbs__item--active .breadcrumbs__link {
+  background: var(--hk-panel);
+  color: var(--hk-ink);
+}
+
+.breadcrumbs__item:not(:last-child)::after {
+  opacity: 0.45;
+}
+
+/* Pagination précédent / suivant */
+.pagination-nav {
+  gap: 1rem;
+}
+
+.pagination-nav__link {
+  padding: 1rem 1.15rem;
+  border: 1px solid var(--hk-line);
+  border-radius: var(--hk-radius);
+  background: transparent;
+  transition: border-color 200ms ease, background-color 200ms ease,
+    transform 200ms var(--hk-ease-out);
+}
+
+.pagination-nav__link:hover {
+  border-color: color-mix(in srgb, var(--hk-accent) 60%, var(--hk-line));
+  background: var(--hk-panel);
+  text-decoration: none;
+  transform: translateY(-2px);
+}
+
+.pagination-nav__sublabel {
+  margin-bottom: 0.3rem;
+  color: var(--hk-muted);
+  font-family: var(--hk-font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.pagination-nav__label {
+  color: var(--hk-ink);
+  font-size: 1rem;
+  font-weight: 600;
+  font-stretch: 94%;
+  letter-spacing: -0.01em;
+}
+
+.pagination-nav__link--prev .pagination-nav__label::before {
+  content: '← ';
+  color: var(--hk-accent);
+}
+
+.pagination-nav__link--next .pagination-nav__label::after {
+  content: ' →';
+  color: var(--hk-accent);
+}
+
+/* Pied de page de la doc (éditer, dernière mise à jour, tags) */
+.theme-doc-footer {
+  margin-top: 2.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--hk-line);
+  font-size: 0.8125rem;
+}
+
+.theme-edit-this-page {
+  color: var(--hk-muted);
+}
+
+.theme-edit-this-page:hover {
+  color: var(--hk-ink);
+}
+
+[class*='lastUpdated'] {
+  color: var(--hk-muted);
+}
+
+/* ── 7. Navbar, recherche, footer ───────────────────────────────────────── */
+
+.navbar {
+  border-bottom: 1px solid var(--hk-line);
+  background-color: transparent;
+  color: var(--hk-ink);
+}
+
+/* Le flou est porté par un pseudo-élément : posé sur .navbar elle-même,
+   backdrop-filter ferait de la barre le bloc conteneur du tiroir mobile
+   (position: fixed) et le couperait à 56 px de haut. */
+.navbar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-color: var(--ifm-navbar-background-color);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.navbar__inner {
+  max-width: 100%;
+}
+
+.navbar__brand {
+  margin-right: 1.5rem;
+}
+
+.navbar__logo {
+  height: 1.75rem;
+}
+
+.navbar__link {
+  font-size: 0.875rem;
+  font-weight: 450;
+  transition: color 150ms ease;
+}
+
+.navbar__link--active {
+  color: var(--hk-ink);
+  font-weight: 600;
+}
+
+/* Liens externes de la barre : sans pictogramme, comme sur hikube.cloud. */
+.navbar__items--right > a.navbar__link[target='_blank']:not(.navbar__cta) > svg {
+  display: none;
+}
+
+.navbar__items--right > a.navbar__link[target='_blank']:not(.navbar__cta) {
+  color: var(--hk-muted);
+}
+
+.navbar__items--right > a.navbar__link[target='_blank']:not(.navbar__cta):hover {
+  color: var(--hk-green);
+}
+
+/* Sélecteur de langue : la boîte compacte du site marketing. */
+.navbar__items--right > .dropdown > .navbar__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 2rem;
+  margin: 0 0.25rem;
+  padding: 0.2rem 0.55rem;
+  border: 1px solid var(--hk-line);
+  border-radius: var(--hk-radius-sm);
+  color: var(--hk-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.navbar__items--right > .dropdown > .navbar__link:hover {
+  border-color: var(--hk-line-strong);
+  color: var(--hk-ink);
+}
+
+.navbar__items--right > .dropdown > .navbar__link svg {
+  width: 0.95rem;
+  height: 0.95rem;
+  color: var(--hk-green);
+}
+
+.navbar__items--right > .dropdown > .navbar__link::after {
+  top: 0;
+  margin-left: 0.15rem;
+  border-width: 0.3em 0.3em 0;
+  opacity: 0.7;
+}
+
+.dropdown__menu {
+  min-width: 10rem;
+  padding: 0.3rem;
+  border: 1px solid var(--hk-line);
+  border-radius: var(--hk-radius);
+  box-shadow: var(--hk-shadow);
+}
+
+.dropdown__link {
+  border-radius: var(--hk-radius-sm);
+  font-size: 0.85rem;
+}
+
+.dropdown__link--active {
+  background: transparent;
+  color: var(--hk-green);
+  font-weight: 600;
+}
+
+/* Appel à l'action : la console. Vert = action, texte noir (8,4:1). */
+.navbar .navbar__cta {
+  order: 3;
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.25rem;
+  margin-left: 0.5rem;
+  padding: 0.45rem 0.95rem;
+  border-radius: var(--hk-radius-btn);
+  background: var(--hk-green);
+  color: #000;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  transition: background-color 150ms ease;
+}
+
+.navbar .navbar__cta:hover {
+  background: var(--hk-green-dark);
+  color: #000;
+  text-decoration: none;
+}
+
+.navbar .navbar__cta > svg {
+  display: none;
+}
+
+.navbar__items--right > [class*='colorModeToggle'] {
+  order: 2;
+}
+
+[class*='colorModeToggle'] button {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--hk-radius-sm);
+  color: var(--hk-muted);
+}
+
+[class*='colorModeToggle'] button:hover {
+  background: var(--hk-panel);
+  color: var(--hk-ink);
+}
+
+.navbar__toggle {
+  color: var(--hk-ink);
+}
+
+/* Barre de recherche */
+.navbar__search-input {
+  height: 2.25rem;
+  width: 13.5rem;
+  border: 1px solid var(--hk-line);
+  border-radius: var(--hk-radius-sm);
+  background-position: 0.7rem center;
+  font-family: var(--hk-font-sans);
+  font-size: 0.85rem;
+  transition: border-color 150ms ease, width 200ms var(--hk-ease-out);
+}
+
+.navbar__search-input:hover {
+  border-color: var(--hk-line-strong);
+}
+
+.navbar__search-input:focus {
+  border-color: var(--hk-green);
+  outline: none !important;
+}
+
+.navbar__search kbd {
+  border-color: var(--hk-line);
+  background: var(--hk-base);
+  color: var(--hk-muted);
+  font-size: 0.7rem;
+}
+
+.navbar__search [class*='dropdownMenu'] {
+  border-radius: var(--hk-radius);
+}
+
+.navbar__search [class*='suggestion'] {
+  border-radius: var(--hk-radius-sm);
+}
+
+.navbar__search [class*='hitFooter'] a {
+  color: var(--hk-green);
+}
+
+/* Barre latérale mobile (même portée graphite que la navbar) */
+.navbar-sidebar {
+  background: var(--hk-base);
+  box-shadow: var(--hk-shadow);
+}
+
+.navbar-sidebar__brand {
+  border-bottom: 1px solid var(--hk-line);
+  box-shadow: none;
+}
+
+.navbar-sidebar__back {
+  margin: 0 0 0.5rem;
+  border-radius: var(--hk-radius-sm);
+  background: var(--hk-panel);
+  color: var(--hk-ink);
+  font-size: 0.85rem;
+}
+
+.navbar-sidebar .menu__link {
+  font-size: 0.95rem;
+}
+
+.navbar-sidebar .navbar__cta {
+  display: flex;
+  justify-content: center;
+  margin: 0.75rem 0 0;
+}
+
+/* En mobile, Infima masque les éléments de la barre : le CTA, déclaré en
+   inline-flex, doit suivre la même règle et ne vivre que dans le tiroir. */
+@media (max-width: 996px) {
+  .navbar__items > .navbar__cta {
+    display: none;
+  }
+
+  .navbar__search-input {
+    width: 2.25rem;
+  }
+
+  .navbar__search-input:focus {
+    width: min(14rem, calc(100vw - 9rem));
+  }
+}
+
+/* Pied de page — graphite, halo vert au sommet comme hikube.cloud. */
+.footer {
+  border-top: 1px solid var(--hk-line);
+  background:
+    radial-gradient(60% 9rem at 50% 0, rgb(56 186 106 / 0.13), transparent 100%),
+    var(--ifm-footer-background-color);
+  font-size: 0.875rem;
+}
+
+.footer .container {
+  max-width: 72rem;
+}
+
+.footer__title {
+  margin-bottom: 0.9rem;
+  color: var(--ifm-footer-title-color);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.footer__item {
+  margin: 0.45rem 0;
+}
+
+.footer__link-item {
+  color: var(--ifm-footer-link-color);
+  line-height: 1.5;
+  transition: color 150ms ease;
+}
+
+.footer__link-item:hover {
+  color: var(--ifm-footer-link-hover-color);
+  text-decoration: none;
+}
+
+.footer__link-item > svg {
+  display: none;
+}
+
+.footer__bottom {
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--hk-line);
+}
+
+.footer__copyright {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem 1.25rem;
+  color: var(--hk-muted);
+  font-size: 0.75rem;
+}
+
+.footer__copyright a.footer__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--hk-green);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.footer__copyright a.footer__status:hover {
+  color: var(--hk-ink);
+  text-decoration: none;
+}
+
+.footer__status::before {
+  content: '';
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--hk-green);
+}
+
+@media (max-width: 996px) {
+  .footer__col {
+    flex-basis: 50%;
+    margin-bottom: 1.5rem;
+  }
+}
+
+/* ── 8. Mermaid, blog, divers ───────────────────────────────────────────── */
+
+.docusaurus-mermaid-container {
+  margin: 1.5rem 0;
+  padding: 1.25rem;
+  border: 1px solid var(--hk-line);
+  border-radius: var(--hk-radius);
+  background:
+    linear-gradient(to right, color-mix(in srgb, var(--hk-line) 35%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--hk-line) 35%, transparent) 1px, transparent 1px),
+    var(--hk-base);
+  background-size: 24px 24px, 24px 24px, auto;
+  overflow-x: auto;
+}
+
+/* Les diagrammes reprennent les surfaces de la charte. Les nœuds qui portent
+   leur propre couleur (style X fill:…) la gardent, avec un texte foncé. */
+.docusaurus-mermaid-container svg {
+  font-family: var(--hk-font-sans) !important;
+}
+
+.docusaurus-mermaid-container .node :is(rect, circle, ellipse, polygon, path):not([style*='fill']) {
+  fill: var(--hk-panel) !important;
+  stroke: color-mix(in srgb, var(--hk-accent) 55%, var(--hk-line)) !important;
+}
+
+.docusaurus-mermaid-container .node:has([style*='fill']) :is(.nodeLabel, .label, span, p),
+.docusaurus-mermaid-container .cluster:has(> [style*='fill']) .cluster-label :is(.nodeLabel, span, p, text) {
+  color: #1a1613 !important;
+  fill: #1a1613 !important;
+}
+
+/* En sombre, les aplats pastel des diagrammes sont adoucis pour ne pas
+   éblouir sur le graphite. */
+[data-theme='dark'] .docusaurus-mermaid-container :is(.node, .cluster) > [style*='fill'] {
+  filter: brightness(0.85) saturate(0.8);
+}
+
+.docusaurus-mermaid-container :is(.nodeLabel, .cluster-label .nodeLabel, .label text) {
+  color: var(--hk-ink);
+}
+
+.docusaurus-mermaid-container .cluster rect:not([style*='fill']) {
+  fill: color-mix(in srgb, var(--hk-panel) 45%, transparent) !important;
+  stroke: var(--hk-line-strong) !important;
+  stroke-dasharray: 4 3;
+}
+
+.docusaurus-mermaid-container :is(.flowchart-link, .edgePath .path, .relation, .transition) {
+  stroke: var(--hk-muted) !important;
+}
+
+.docusaurus-mermaid-container :is(marker path, .arrowheadPath, .arrowMarkerPath) {
+  fill: var(--hk-muted) !important;
+  stroke: var(--hk-muted) !important;
+}
+
+.docusaurus-mermaid-container :is(.edgeLabel, .edgeLabel p, .edgeLabel rect, .labelBkg) {
+  background-color: var(--hk-base) !important;
+  fill: var(--hk-base) !important;
+  color: var(--hk-prose) !important;
+}
+
+/* Séquences */
+.docusaurus-mermaid-container rect.actor {
+  fill: var(--hk-panel) !important;
+  stroke: color-mix(in srgb, var(--hk-accent) 55%, var(--hk-line)) !important;
+}
+
+.docusaurus-mermaid-container :is(text.actor, text.actor > tspan) {
+  fill: var(--hk-ink) !important;
+}
+
+.docusaurus-mermaid-container :is(.actor-line, line[class*='actor-line']) {
+  stroke: var(--hk-line-strong) !important;
+}
+
+.docusaurus-mermaid-container :is(.messageLine0, .messageLine1) {
+  stroke: var(--hk-muted) !important;
+}
+
+.docusaurus-mermaid-container :is(.messageText, .loopText, .loopText > tspan, .noteText, .noteText > tspan, .labelText) {
+  fill: var(--hk-prose) !important;
+}
+
+.docusaurus-mermaid-container #arrowhead path,
+.docusaurus-mermaid-container [id$='arrowhead'] path {
+  fill: var(--hk-muted) !important;
+  stroke: var(--hk-muted) !important;
+}
+
+.docusaurus-mermaid-container rect.note {
+  fill: color-mix(in srgb, var(--hk-amber) 14%, var(--hk-panel)) !important;
+  stroke: color-mix(in srgb, var(--hk-amber) 50%, var(--hk-line)) !important;
+}
+
+.docusaurus-mermaid-container :is(.labelBox) {
+  fill: var(--hk-panel-high) !important;
+  stroke: var(--hk-line-strong) !important;
+}
+
+.docusaurus-mermaid-container .loopLine {
+  stroke: var(--hk-line-strong) !important;
+}
+
+.docusaurus-mermaid-container .activation0,
+.docusaurus-mermaid-container .activation1 {
+  fill: var(--hk-panel-high) !important;
+  stroke: var(--hk-line-strong) !important;
+}
+
+/* États */
+.docusaurus-mermaid-container .stateGroup rect,
+.docusaurus-mermaid-container g.stateGroup rect,
+.docusaurus-mermaid-container .state-description {
+  fill: var(--hk-panel) !important;
+  stroke: color-mix(in srgb, var(--hk-accent) 55%, var(--hk-line)) !important;
+}
+
+.docusaurus-mermaid-container :is(.stateLabel text, g.stateGroup text) {
+  fill: var(--hk-ink) !important;
+}
+
+/* Blog (changelog) */
+article header h1,
+article header h2[class*='title'] {
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+article header h2[class*='title'] a {
+  color: var(--hk-ink);
+  text-decoration: none;
+}
+
+article header h2[class*='title'] a:hover {
+  color: var(--hk-link);
+}
+
+/* Date et temps de lecture : un relevé, en chasse fixe. */
+article header > div[class*='container'] {
+  color: var(--hk-muted);
+  font-family: var(--hk-font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.avatar__name a {
+  color: var(--hk-ink);
+}
+
+main[itemtype*='Blog'] article + article,
+.blog-list-page main article + article {
+  margin-top: 3rem;
+  padding-top: 2.5rem;
+  border-top: 1px solid var(--hk-line);
+}
+
+/* Page de recherche */
+.search-page-wrapper input[type='search'],
+main input[class*='searchQueryInput'] {
+  border: 1px solid var(--hk-line);
+  border-radius: var(--hk-radius-sm);
+  background: var(--hk-panel);
+  color: var(--hk-ink);
+  font-family: var(--hk-font-sans);
+}
+
+main input[class*='searchQueryInput']:focus {
+  border-color: var(--hk-accent);
+  outline: none;
+}
+
+main mark {
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--hk-green) 28%, transparent);
+  color: inherit;
+}
+
+/* Bouton « retour en haut » */
+[class*='backToTopButton'] {
+  border: 1px solid var(--hk-line);
+  border-radius: var(--hk-radius);
+  background-color: var(--hk-panel);
+  box-shadow: var(--hk-shadow);
+}
+
+[class*='backToTopButton']:hover {
+  background-color: var(--hk-panel-high);
+}
+
+/* Barre de défilement fine, aux couleurs de la surface */
+* {
+  scrollbar-color: var(--hk-line) transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .pagination-nav__link:hover {
+    transform: none;
+  }
+}
+
+@media print {
+  .navbar,
+  .footer {
+    display: none !important;
+  }
+
+  .theme-code-block {
+    border-color: #999 !important;
+  }
 }
