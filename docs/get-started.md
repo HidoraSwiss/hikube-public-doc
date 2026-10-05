@@ -8,7 +8,7 @@ import ServiceCardGrid from '@site/src/components/ServiceCardGrid';
 
 # Commencer avec Hikube
 
-Hikube offre une solution cloud moderne qui facilite le déploiement et l'orchestration d'applications conteneurisées ainsi que de machines virtuelles. Tous les services sont déployés via `kubectl apply` avec une API Kubernetes native.
+Hikube est une plateforme cloud souveraine, hébergée en Suisse, pour déployer machines virtuelles, clusters Kubernetes, bases de données et stockage. Toutes les ressources se gèrent depuis la console web : **[console.hikube.cloud](https://console.hikube.cloud)**.
 
 ## Services
 
@@ -22,67 +22,62 @@ Hikube offre une solution cloud moderne qui facilite le déploiement et l'orches
   },
   {
     title: "Machines virtuelles",
-    description: "VMs KubeVirt avec profiles d'instances et disques persistants.",
+    description: "VM Linux et Windows avec disques persistants et réseau privé.",
     icon: "/img/services/compute.svg",
     href: "services/compute/overview",
-    tags: ["VMs", "KubeVirt"],
+    tags: ["VMs", "Linux", "Windows"],
   },
   {
     title: "GPU",
-    description: "GPU NVIDIA dédiés pour vos workloads IA/ML.",
+    description: "GPU NVIDIA pour vos VM et nœuds Kubernetes.",
     icon: "/img/services/gpu.svg",
     href: "services/gpu/overview",
     tags: ["GPU", "NVIDIA"],
   },
   {
     title: "Bases de données",
-    description: "PostgreSQL, MySQL, Redis, ClickHouse — entièrement managés avec réplication.",
+    description: "PostgreSQL, MariaDB, MongoDB, Redis — managés avec réplication.",
     icon: "/img/services/postgresql.svg",
     href: "services/databases/",
     tags: ["SQL", "NoSQL"],
   },
   {
     title: "Messagerie",
-    description: "Kafka, RabbitMQ, NATS — streaming et files d'attente managés.",
-    icon: "/img/services/kafka.svg",
+    description: "RabbitMQ en libre-service ; Kafka et NATS sur demande.",
+    icon: "/img/services/rabbitmq.svg",
     href: "services/messaging/",
     tags: ["Streaming", "Queues"],
   },
   {
     title: "Stockage S3",
-    description: "Buckets S3 compatibles, chiffrés et répliqués.",
+    description: "Disques persistants et buckets compatibles S3, répliqués.",
     icon: "/img/services/s3.svg",
-    href: "services/storage/buckets/overview",
-    tags: ["Object Storage", "S3"],
+    href: "services/storage/",
+    tags: ["Disques", "S3"],
   },
   {
     title: "Terraform",
-    description: "Infrastructure as Code avec des templates Terraform prêts à l'emploi.",
+    description: "Infrastructure as Code via kubeconfig (méthode legacy, sur demande).",
     icon: "/img/services/terraform.svg",
     href: "tools/terraform",
-    tags: ["IaC", "Terraform"],
+    tags: ["IaC", "Legacy"],
   },
 ]} />
 
 ## Prochaines étapes
 
-Pour bien démarrer avec Hikube, nous vous recommandons de suivre ce parcours d'apprentissage :
-
 ### 1. Comprendre les concepts clés
-Familiarisez-vous avec l'architecture et les concepts fondamentaux d'Hikube :
-- **[Concepts Hikube](getting-started/concepts.md)** - Architecture, tenants, ressources et sécurité
+- **[Concepts Hikube](getting-started/concepts.md)** : organisation, projets, quotas et services
 
 ### 2. Votre premier déploiement
-Suivez notre guide pratique pour déployer votre première application :
-- **[Démarrage rapide](getting-started/quick-start.md)** - Déployez une application en 10 minutes
+- **[Démarrage rapide](getting-started/quick-start.md)** : de la première connexion à votre premier cluster Kubernetes
 
-### 3. Maîtriser les APIs
-Explorez les APIs de chaque service pour des déploiements avancés :
-- **[Bases de données](services/databases/postgresql/overview.md)** - PostgreSQL, MySQL, Redis
-- **[Ressources de calcul](services/compute/overview.md)** - Machines virtuelles et GPU
-- **[Kubernetes](services/kubernetes/overview.md)** - Clusters managés
-- **[Stockage](services/storage/buckets/overview.md)** - Buckets S3 compatibles
-- **[Infrastructure as Code](tools/terraform.md)** - Templates Terraform
+### 3. Explorer les services
+- **[Machines virtuelles](services/compute/overview.md)** et **[GPU](services/gpu/overview.md)**
+- **[Kubernetes](services/kubernetes/overview.md)** : clusters managés
+- **[Bases de données](services/databases/index.md)** : PostgreSQL, MariaDB, MongoDB, Redis
+- **[Stockage](services/storage/index.md)** : disques et buckets S3
+- **[Réseau](services/networking/overview.md)** : VPC et sous-réseaux
 
 ## Support
 

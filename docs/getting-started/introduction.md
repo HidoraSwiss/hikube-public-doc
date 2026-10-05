@@ -5,80 +5,72 @@ title: Introduction à Hikube
 
 # Introduction à Hikube
 
-## **Qu'est-ce qu'Hikube ?**
+## Qu'est-ce qu'Hikube ?
 
-**Hikube** est une plateforme cloud privée d'entreprise offrant une infrastructure moderne avec des garanties de souveraineté et de sécurité maximales.
+**Hikube** est une plateforme cloud souveraine d'entreprise, hébergée en Suisse. Vous y déployez des machines virtuelles, des clusters Kubernetes, des bases de données et du stockage depuis une console web unique : [console.hikube.cloud](https://console.hikube.cloud).
 
-### **Infrastructure et Disponibilité**
+### Infrastructure et disponibilité
 
-**Cloud Souverain avec Données Hébergées en Suisse**
-- Toutes vos données restent strictement sur le territoire suisse, garantissant la conformité avec les réglementations locales et offrant une tranquillité d'esprit maximale en matière de protection des données.
+**Cloud souverain, données hébergées en Suisse**
+- Toutes vos données restent sur le territoire suisse, conformément aux réglementations locales en matière de protection des données.
 
-**Très Haute Disponibilité avec Réplication sur 3 Datacenters**
-- Assurez-vous que vos applications restent accessibles en permanence grâce à notre infrastructure redondante, répartie sur trois datacenters géographiquement distincts en Suisse.
+**Haute disponibilité sur trois datacenters**
+- Le stockage répliqué est réparti sur trois datacenters géographiquement distincts en Suisse.
 
-**Datacenter 100% Green IT**
-- Engagez-vous pour l'environnement avec notre datacenter alimenté par des énergies renouvelables, minimisant l'empreinte carbone de vos opérations IT.
+**Datacenter Green IT**
+- Datacenter alimenté par des énergies renouvelables.
 
-### **Services de Calcul**
+### Services
 
-**Kubernetes as a Service**
-- Déployez et gérez vos applications conteneurisées facilement grâce à notre service Kubernetes, qui offre une orchestration automatisée, une évolutivité et une gestion simplifiée.
+**Kubernetes managé**
+- Créez des clusters Kubernetes en quelques clics, avec groupes de nœuds, autoscaling et extensions préconfigurées.
 
-**Instances VM Linux et Windows**
-- Hébergez vos applications sur des instances Linux ou Windows, adaptées à vos besoins spécifiques et optimisées pour une performance maximale.
+**Machines virtuelles Linux et Windows**
+- Déployez des VM à partir d'images prêtes à l'emploi, avec disques persistants et IP publique si besoin.
 
-**GPU as a Service**
-- Exploitez la puissance du calcul haute performance avec notre offre GPU as a Service, idéale pour les charges de travail exigeantes comme l'intelligence artificielle, le machine learning et les simulations complexes.
+**GPU**
+- Ajoutez des GPU NVIDIA à vos VM ou à vos groupes de nœuds Kubernetes pour l'IA, le machine learning ou le calcul intensif.
 
-### **Sécurité et Isolation**
+**Bases de données et messagerie managées**
+- PostgreSQL, MariaDB, MongoDB, Redis et RabbitMQ, avec utilisateurs, bases et accès gérés depuis la console.
 
-**Chiffrement des Données**
-- Toutes les données stockées sont chiffrées si besoin, garantissant que vos informations sensibles sont protégées même lorsqu'elles sont inactives.
+**Stockage**
+- Disques persistants pour vos VM et buckets compatibles S3.
 
-### **Automatisation et Intégration**
+### Sécurité et isolation
 
-**Pilotable via API et Terraform**
-- Automatiser et gérer votre infrastructure cloud efficacement grâce à notre support des API et de Terraform, facilitant l'intégration et la gestion de vos ressources.
-
-**Orienté Entreprise et Qualité**
-- Notre offre est spécialement conçue pour répondre aux exigences des entreprises, offrant des solutions robustes, fiables et de haute qualité pour vos besoins professionnels.
+- Chaque **projet** est isolé des autres : réseau, ressources et quotas propres.
+- Les données stockées peuvent être chiffrées.
 
 ---
 
-## **Documentation disponible**
+## Documentation disponible
 
 **Pour commencer**
-- **[Démarrage rapide](./quick-start.md)** → Déployez votre première application
-- **[Concepts](./concepts.md)** → Architecture et fonctionnalités détaillées
+- **[Démarrage rapide](./quick-start.md)** : de la première connexion au premier cluster
+- **[Concepts](./concepts.md)** : organisation, projets, quotas, services
 
-**Services et intégrations**
-- **[Catalogue des services](../services/kubernetes/overview.md)** → Fonctionnalités disponibles
-- **APIs et automatisation** → Intégrations avancées
+**Services**
+- **[Kubernetes](../services/kubernetes/overview.md)**, **[Machines virtuelles](../services/compute/overview.md)**, **[Bases de données](../services/databases/index.md)**, **[Stockage](../services/storage/index.md)**
 
 ---
 
-## **Prérequis techniques**
+## Prérequis
 
-### **Connaissances recommandées :**
-- **Kubernetes** : Concepts de base (pods, services, deployments)
-- **Infrastructure cloud** : VMs, réseaux, stockage
-- **DevOps** : CI/CD, monitoring, logs
-- **APIs REST** : Pour l'automatisation avancée
+### Accès
+- Un **compte Hikube** rattaché à votre organisation. Pour en obtenir un, contactez **sales@hidora.io**.
+- Un navigateur web récent.
 
-### **Accès requis :**
-- **Tenant Hikube** actif avec vos identifiants
-- **Droits appropriés** selon votre rôle (dev/admin/viewer)
+### Connaissances utiles
+- **Infrastructure cloud** : VM, réseaux, stockage.
+- **Kubernetes** (pour le service Kubernetes) : pods, services, deployments.
 
 :::tip Première connexion ?
-Si vous n'avez pas encore d'accès, contactez l'équipe Hikube à **support@hidora.io**
-:::
----
-
-:::info **Prochaine étape recommandée**
-**[Quick Start](./quick-start.md)** → Déployez votre première application Kubernetes en 5 minutes !
+Si vous n'avez pas encore d'accès, contactez l'équipe Hikube à **support@hidora.io**.
 :::
 
 ---
 
-*Cette documentation est maintenue à jour en continu. Dernière mise à jour : Version 2.0* 
+:::info Prochaine étape recommandée
+**[Démarrage rapide](./quick-start.md)** : créez votre premier projet et votre premier cluster Kubernetes.
+:::

@@ -5,147 +5,93 @@ title: Concepts clés
 
 # Concepts clés d'Hikube
 
-Cette page vous explique les **concepts fondamentaux** qui font d'Hikube une plateforme cloud unique. Comprendre ces concepts vous permettra de tirer le meilleur parti de votre infrastructure et de prendre des décisions éclairées.
+Cette page présente les notions à connaître pour utiliser Hikube : comment vos ressources sont organisées, comment vous les pilotez, et ce que la plateforme gère pour vous.
 
 ---
 
-## Tenants : Votre Espace Privé
+## La console Hikube
 
-### **Qu'est-ce qu'un Tenant ?**
-Un **tenant** est votre environnement isolé et sécurisé au sein de Hikube. C'est comme avoir votre propre "datacenter virtuel" avec :
-- **Réseau isolé**
-- **Utilisateurs et permissions** séparés
-- **Politiques de sécurité** personnalisées
-- **Sous-tenants** à disposition
+Toutes les opérations courantes se font dans la **console web** : [https://console.hikube.cloud](https://console.hikube.cloud). Vous vous y connectez avec votre compte Hikube (authentification unique). Depuis la console, vous créez, modifiez et supprimez vos ressources, consultez leur état et leur coût estimé, et récupérez les informations de connexion.
 
-### **Pourquoi cette approche ?**
+Le menu latéral d'un projet regroupe les services :
+
+| Section | Services |
+|---------|----------|
+| **Tableau de bord** | Vue d'ensemble du projet, quotas, coûts, ressources récentes |
+| **Infrastructure** | **Instances VM**, **Disques**, **Buckets S3**, **Kubernetes**, **Réseau** |
+| **DB & Messaging** | **PostgreSQL**, **MariaDB**, **MongoDB**, **Redis**, **RabbitMQ** |
+
+---
+
+## Organisation et projets
+
 ```mermaid
 graph TB
-    A[Entreprise] --> B[Tenant Production]
-    A --> C[Tenant Développement]
-    A --> D[Tenant Staging]
+    O[Organisation] --> P1[Projet production]
+    O --> P2[Projet staging]
+    O --> P3[Projet développement]
 
-    B --> E[App critique 1]
-    B --> F[App critique 2]
-
-    C --> G[Tests Dev]
-    C --> H[Expérimentations]
-
-    D --> I[Tests QA]
-    D --> J[Validation]
+    P1 --> R1[VM, clusters Kubernetes]
+    P1 --> R2[Bases de données]
+    P2 --> R3[...]
+    P3 --> R4[...]
 ```
 
-**Avantages concrets :**
-- **Isolation totale** : Aucun impact entre environnements
-- **Gestion des équipes** : Permissions granulaires par tenant
-- **Politiques différenciées** : Production vs développement
-- **Facturation séparée** : Suivi des coûts par projet
+### Organisation
 
-### **Cas d'usage typiques**
-| Tenant | Usage |
-|--------|-------|
-| **Production** | Applications critiques |
-| **Staging** | Tests pré-production |
-| **Development** | Développement actif |
-| **Sandbox** | Formation/démonstration |
+L'**organisation** représente votre entreprise. Elle est créée par Hidora lors de l'ouverture de votre compte et regroupe vos utilisateurs et vos projets. Si vous avez accès à plusieurs organisations, vous en changez depuis le menu de profil (**Changer d'organisation**).
 
----
+### Projet
 
-## Infrastructure as Code (IaC)
+Un **projet** est un espace isolé au sein de l'organisation. Chaque ressource (VM, disque, cluster, base de données…) appartient à un seul projet. Un projet apporte :
 
-### **Pensé pour l'Industrialisation**
-Hikube est conçu pour l'automatisation et l'industrialisation de votre infrastructure. Toutes les fonctionnalités sont accessibles via :
+- **l'isolation** : les ressources d'un projet ne voient pas celles des autres projets ;
+- **des quotas** : limites de CPU, de mémoire et de stockage, qui plafonnent la consommation du projet ;
+- **un suivi des coûts** : le tableau de bord du projet estime le coût mensuel de ses ressources.
 
-- **API complète** : Intégration native dans vos pipelines CI/CD
-- **CLI puissant** : Automatisation et scripts pour vos équipes DevOps
-- **Déclaratif** : Décrivez l'état souhaité, Hikube s'occupe du reste
+Un usage courant consiste à créer un projet par environnement (production, staging, développement) ou par équipe.
 
-### **Avantages de l'Approche Industrielle**
-- **Reproductibilité** : Déploiements identiques à chaque fois
-- **Versionning** : Suivi complet des changements infrastructure
-- **Collaboration** : Code partagé entre équipes développement et ops
-- **Automatisation** : Intégration transparente dans vos workflows
+:::note Ancienne terminologie
+Dans les versions précédentes de la documentation, un projet était appelé **tenant**.
+:::
+
+### Quotas
+
+Les quotas d'un projet se définissent à sa création (étape **Quotas** de l'assistant) et se modifient ensuite dans les paramètres du projet. Les assistants de création affichent l'impact de chaque nouvelle ressource sur le quota avant de la créer. Un quota ne peut pas descendre sous ce que le projet consomme déjà : libérez d'abord des ressources.
+
+### Supprimer un projet
+
+La suppression d'un projet (paramètres du projet → **Zone dangereuse** → **Supprimer ce projet**) détruit définitivement toutes ses ressources : VM, clusters Kubernetes, bases de données, disques, buckets S3 et réseaux. Cette action est réservée aux administrateurs du projet ou de l'organisation.
 
 ---
 
-## Observabilité et Monitoring
+## Services managés
 
-### **Stack Monitoring Complète**
+Hikube opère pour vous l'infrastructure sous-jacente de chaque service : haute disponibilité, réplication du stockage entre datacenters, mises à jour de la plateforme. Vous choisissez la taille et la configuration ; la plateforme provisionne et maintient.
 
-Hikube vous permet de déployer votre propre stack de monitoring dans votre tenant avec **Grafana + VictoriaMetrics + VictoriaLogs**. Cette stack peut centraliser les données de tous vos sous-tenants pour une vision globale de votre infrastructure.
+| Famille | Services |
+|---------|----------|
+| Calcul | [Machines virtuelles](../services/compute/overview.md), [GPU](../services/gpu/overview.md) |
+| Conteneurs | [Kubernetes managé](../services/kubernetes/overview.md) |
+| Stockage | [Disques](../services/storage/disks/overview.md), [Buckets S3](../services/storage/buckets/overview.md) |
+| Réseau | [VPC et sous-réseaux](../services/networking/overview.md) |
+| Bases de données | [PostgreSQL](../services/databases/postgresql/overview.md), [MariaDB](../services/databases/mariadb/overview.md), [MongoDB](../services/databases/mongodb/overview.md), [Redis](../services/databases/redis/overview.md) |
+| Messagerie | [RabbitMQ](../services/messaging/rabbitmq/overview.md) |
 
-```mermaid
-flowchart TD
-    subgraph TENANT["TENANT PRINCIPAL"]
-        G[Grafana]
-        VM[VictoriaMetrics]
-        VL[VictoriaLogs]
-    end
-
-    subgraph SOUS["SOUS-TENANT"]
-        K8S[Kubernetes]
-        VMS[VMs]
-        APP[Applications]
-        M[Métriques]
-        L[Logs]
-    end
-
-    G -.-> VM
-    G -.-> VL
-    K8S --> M
-    VMS --> M
-    APP --> M
-    APP --> L
-
-    M --> VM
-    L --> VL
-
-    VM --> D1[Dashboard K8s]
-    VM --> D2[Dashboard VMs]
-    VM --> D3[Dashboard Apps]
-    VL --> D4[Dashboard Logs]
-```
-
-### **Architecture Multi-Tenant du Monitoring**
-
-#### **Centralisation Intelligente**
-- **Tenant principal** : Héberge la stack Grafana + VictoriaMetrics + VictoriaLogs
-- **Sous-tenants** : Génèrent métriques et logs automatiquement
-- **Remontée sécurisée** : Agrégation centralisée avec isolation des données
-- **Vue globale** : Dashboard unifié de toute votre infrastructure
-
-#### **Dashboards par Ressource**
-
-Hikube fournit des **dashboards préconfigurés** pour chaque type de ressource :
-
-| **Type de Ressource** | **Dashboard Inclus** | **Métriques Clés** |
-|---------------------------|-------------------------|------------------------|
-| **Kubernetes** | Cluster, Nodes, Pods, Services | CPU, RAM, réseau, stockage |
-| **Machines Virtuelles** | Host, VM, Performance | Utilisation, I/O, disponibilité |
-| **Bases de Données** | MySQL, PostgreSQL, Redis | Connexions, requêtes, cache |
-| **Applications** | Performances, Erreurs | Latence, throughput, 5xx |
-| **Réseau** | LoadBalancer, VPN | Trafic, latence, connexions |
-| **Stockage** | Buckets, Volumes | Capacité, IOPS, transferts |
+Certains services (ClickHouse, Kafka, NATS) ne sont pas encore proposés en libre-service dans la console : ils sont provisionnés à la demande par le support.
 
 ---
 
-## Prochaines Étapes
+## Souveraineté et disponibilité
 
-Maintenant que vous maîtrisez les concepts d'Hikube, vous pouvez :
-
-### **Mettre en Pratique**
-- **[Déployer Kubernetes](../services/kubernetes/overview.md)** → Créez votre premier cluster
-- **[Configurer des VMs](../services/compute/overview.md)** → Infrastructure hybride
-- **[Gérer le stockage](../services/storage/buckets/overview.md)** → Données persistantes
-
-### **Automatiser**
-- **[Terraform](../tools/terraform.md)** → Infrastructure as Code
-<!--- **[CLI](../tools/cli.md)** → Scripts et automatisation-->
-
-### **Approfondir**
-- **[FAQ](../resources/faq.md)** → Questions fréquentes
-- **[Troubleshooting](../resources/troubleshooting.md)** → Résolution de problèmes
+- **Données en Suisse** : toutes les données restent hébergées sur le territoire suisse.
+- **Trois datacenters** : le stockage répliqué est réparti sur trois datacenters géographiquement distincts.
+- **Isolation réseau** : chaque projet dispose de son propre périmètre réseau.
 
 ---
 
-**Recommandation :** Commencez par explorer les **[Services Kubernetes](../services/kubernetes/overview.md)** ou **[Services Compute](../services/compute/overview.md)** pour voir comment ces concepts s'appliquent concrètement à chaque composant d'Hikube.
+## Prochaines étapes
+
+- **[Démarrage rapide](./quick-start.md)** : créez votre premier projet et votre premier cluster
+- **[Machines virtuelles](../services/compute/overview.md)** : déployez une VM Linux ou Windows
+- **[FAQ](../resources/faq.md)** : questions fréquentes
