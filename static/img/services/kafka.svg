@@ -1,13 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
-  <circle cx="64" cy="52" r="14" fill="none" stroke="#231F20" stroke-width="6"/>
-  <circle cx="88" cy="32" r="10" fill="none" stroke="#231F20" stroke-width="5"/>
-  <circle cx="88" cy="72" r="10" fill="none" stroke="#231F20" stroke-width="5"/>
-  <circle cx="40" cy="84" r="10" fill="none" stroke="#231F20" stroke-width="5"/>
-  <circle cx="40" cy="20" r="10" fill="none" stroke="#231F20" stroke-width="5"/>
-  <line x1="75" y1="43" x2="82" y2="37" stroke="#231F20" stroke-width="5"/>
-  <line x1="75" y1="61" x2="82" y2="67" stroke="#231F20" stroke-width="5"/>
-  <line x1="53" y1="43" x2="46" y2="27" stroke="#231F20" stroke-width="5"/>
-  <line x1="53" y1="61" x2="46" y2="77" stroke="#231F20" stroke-width="5"/>
-  <circle cx="64" cy="104" r="8" fill="none" stroke="#231F20" stroke-width="5"/>
-  <line x1="64" y1="66" x2="64" y2="96" stroke="#231F20" stroke-width="5"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="none">
+  <circle cx="32" cy="32" r="29.75" fill="#1f1a16" stroke="#f4511e" stroke-width="2.5"/>
+  <g stroke="#f7f4f0" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" transform="translate(32 32) scale(1.18) translate(-32 -32)">
+    <path d="M20 24h19.5M36.5 20.5 40 24l-3.5 3.5M20 32h23.5M40.5 28.5 44 32l-3.5 3.5M20 40h15.5M32.5 36.5 36 40l-3.5 3.5"/>
+  </g>
 </svg>
