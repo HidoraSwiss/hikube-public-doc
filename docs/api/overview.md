@@ -65,7 +65,7 @@ curl -sS "$HIKUBE_API/disk/v1alpha1/projects/$PROJECT_ID/disks" \
 
 ## Versions
 
-Chaque service porte sa version dans le chemin : `/disk/v1alpha1/...`, `/postgres/v1alpha1/...`. Tous les services sont aujourd'hui en `v1alpha1`, c'est-à-dire en préversion : une version `v1alpha1` peut changer de manière incompatible. Une version stable sera publiée sous un nouveau chemin (`v1beta1`, puis `v1`), ce qui laissera le temps d'y migrer.
+Chaque service porte sa version dans le chemin : `/disk/v1alpha1/...`, `/postgres/v1alpha1/...`. Tous les services sont aujourd'hui en `v1alpha1`, c'est-à-dire en préversion : une version `v1alpha1` peut changer de manière incompatible. Les évolutions sont annoncées dans le [changelog](/blog).
 
 ---
 
