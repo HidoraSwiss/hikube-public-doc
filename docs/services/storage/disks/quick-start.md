@@ -4,6 +4,8 @@ title: Démarrage rapide
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
 # Créer et utiliser votre premier disque
 
@@ -26,18 +28,40 @@ Ce guide vous accompagne dans la création d'un **disque de données** depuis la
 - Un **compte Hikube** et un **projet** (voir le [démarrage rapide Hikube](../../../getting-started/quick-start.md))
 - Une **VM Linux** dans ce projet, accessible en SSH (voir le [démarrage rapide des machines virtuelles](../../compute/quick-start.md))
 - Un quota de stockage disponible d'au moins 20 Go
+- Pour l'onglet **API** : une clé d'API `admin` du projet et les variables `HIKUBE_API`, `HIKUBE_API_KEY` et `PROJECT_ID` (voir [Préparer l'environnement](../../../api/quick-start.md#environnement)) ; les exemples utilisent `curl` et `jq`
 
 ---
 
 ## Étape 1 : Ouvrir l'assistant de création
 
+<Tabs groupId="interface">
+<TabItem value="console" label="Console" default>
+
 1. Connectez-vous à la [console Hikube](https://console.hikube.cloud) et sélectionnez votre projet.
 2. Dans le menu latéral, ouvrez **Infrastructure** → **Disques**. La page **Disques de Stockage** s'affiche.
 3. Cliquez sur **Créer un disque**.
 
+</TabItem>
+<TabItem value="api" label="API">
+
+Avec l'API, il n'y a pas d'assistant. Vérifiez d'abord que la clé donne accès au projet en listant ses disques :
+
+```bash
+curl -sS "$HIKUBE_API/disk/v1alpha1/projects/$PROJECT_ID/disks" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY"
+```
+
+**Résultat attendu :** un objet JSON `{"totalCount": ..., "disks": [...]}`. Une réponse `403` (code `10002`) indique une clé invalide, expirée ou rattachée à un autre projet.
+
+</TabItem>
+</Tabs>
+
 ---
 
 ## Étape 2 : Configurer et créer le disque
+
+<Tabs groupId="interface">
+<TabItem value="console" label="Console" default>
 
 L'assistant **Créer un disque** comporte quatre étapes.
 
@@ -51,9 +75,41 @@ L'assistant **Créer un disque** comporte quatre étapes.
 
 La console affiche « Disque créé » et revient à la liste des disques.
 
+</TabItem>
+<TabItem value="api" label="API">
+
+Créez un disque vide de 20 Go avec `POST /disk/v1alpha1/projects/{projectId}/disks` :
+
+```bash
+curl -sS -X POST "$HIKUBE_API/disk/v1alpha1/projects/$PROJECT_ID/disks" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "data01",
+    "size": 20,
+    "encrypted": false,
+    "asyncReplication": true
+  }'
+```
+
+- `name` : 16 caractères maximum, en minuscules ; ce nom identifie le disque dans les chemins de l'API ;
+- `size` : taille en Go, de 20 à 4096 ;
+- `asyncReplication` : `true` correspond à **Réplication Asynchrone** ; sans ce champ, la réplication est synchrone ;
+- `encrypted` : chiffrement du disque, non modifiable après la création.
+
+Pour créer le disque à partir d'une image, ajoutez `"data": {"image": {"name": "<image>"}}` ; `GET /instance/v1alpha1/cloud-images` renvoie la liste des images.
+
+La réponse décrit le disque créé, avec son `id` et son `status`.
+
+</TabItem>
+</Tabs>
+
 ---
 
 ## Étape 3 : Vérifier l'état du disque
+
+<Tabs groupId="interface">
+<TabItem value="console" label="Console" default>
 
 Dans la liste **Disques de Stockage**, le disque apparaît avec le statut **En création**, puis **Prêt**.
 
@@ -62,9 +118,25 @@ Cliquez sur le disque (ou menu d'actions → **Aperçu**) pour ouvrir sa page de
 - **Configuration** : **Capacité**, **Chiffrement**, **Réplication** ;
 - **Source** : image d'origine (**N/A** pour un disque vide) et **Attaché à** (**Non rattaché** pour l'instant).
 
+</TabItem>
+<TabItem value="api" label="API">
+
+```bash
+curl -sS "$HIKUBE_API/disk/v1alpha1/projects/$PROJECT_ID/disks/data01" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" | jq '{name, size, status, attachedTo}'
+```
+
+**Résultat attendu :** `status` passe de `provisioning` à `ready`, et `attachedTo` est vide. Les autres valeurs possibles sont `downloading` (image en cours de copie, avec `downloadProgress` de 0 à 100), `in_use` (disque attaché à une VM) et `error`.
+
+</TabItem>
+</Tabs>
+
 ---
 
 ## Étape 4 : Attacher le disque à la VM
+
+<Tabs groupId="interface">
+<TabItem value="console" label="Console" default>
 
 1. Ouvrez **Infrastructure** → **Instances VM**, puis la page de votre VM, et cliquez sur **Modifier**.
 2. Dans la section **Stockage**, cliquez sur **Ajouter un disque**.
@@ -76,6 +148,35 @@ La modification du stockage redémarre la VM (« Le type d'instance ou le stocka
 :::
 
 Une fois l'opération terminée, le disque passe au statut **En cours d'utilisation** et sa page affiche le nom de la VM dans **Attaché à**.
+
+</TabItem>
+<TabItem value="api" label="API">
+
+Un disque s'attache en modifiant la VM : `PATCH /instance/v1alpha1/projects/{projectId}/instances/{name}`. `instanceType` et `disks` sont obligatoires, et la liste `disks` remplace la liste actuelle (le disque système reste en première position) ; les champs omis sont conservés. Partez donc de la configuration actuelle et ajoutez le disque à la fin :
+
+```bash
+VM=myvm   # nom de votre VM
+
+curl -sS "$HIKUBE_API/instance/v1alpha1/projects/$PROJECT_ID/instances/$VM" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" \
+| jq '{instanceType, disks: ((.disks | map({name})) + [{name: "data01"}])}' > vm-update.json
+
+curl -sS -X PATCH "$HIKUBE_API/instance/v1alpha1/projects/$PROJECT_ID/instances/$VM" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d @vm-update.json
+```
+
+Un disque existant n'a pas besoin de `size` : sa taille est conservée.
+
+:::warning Redémarrage de la VM
+Comme dans la console, la modification du stockage redémarre la VM.
+:::
+
+Une fois l'opération terminée, `GET .../disks/data01` renvoie `"status": "in_use"` et `"attachedTo": "myvm"`.
+
+</TabItem>
+</Tabs>
 
 ---
 
@@ -125,6 +226,9 @@ Voir aussi le [dépannage complet](./troubleshooting.md).
 
 ## Étape 7 : Nettoyage
 
+<Tabs groupId="interface">
+<TabItem value="console" label="Console" default>
+
 1. Dans la VM, démontez le disque et retirez sa ligne de `/etc/fstab` :
    ```bash
    sudo umount /mnt/data
@@ -132,6 +236,36 @@ Voir aussi le [dépannage complet](./troubleshooting.md).
    ```
 2. Détachez le disque : page de la VM → **Modifier** → section **Stockage**, cliquez sur l'icône de suppression du volume, confirmez en saisissant son nom, puis cliquez sur **Enregistrer**. Le disque revient au statut **Prêt**.
 3. Supprimez le disque : page du disque → **Supprimer** (ou menu d'actions → **Supprimer** dans la liste), saisissez son nom exact dans **Nom de la ressource à confirmer**, puis cliquez sur **Supprimer définitivement**.
+
+</TabItem>
+<TabItem value="api" label="API">
+
+1. Dans la VM, démontez le disque et retirez sa ligne de `/etc/fstab` :
+   ```bash
+   sudo umount /mnt/data
+   sudo sed -i '\|/mnt/data|d' /etc/fstab
+   ```
+2. Détachez le disque en renvoyant la liste des disques de la VM sans lui :
+   ```bash
+   curl -sS "$HIKUBE_API/instance/v1alpha1/projects/$PROJECT_ID/instances/$VM" \
+     -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" \
+   | jq '{instanceType, disks: (.disks | map(select(.name != "data01")) | map({name}))}' > vm-update.json
+
+   curl -sS -X PATCH "$HIKUBE_API/instance/v1alpha1/projects/$PROJECT_ID/instances/$VM" \
+     -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" \
+     -H "Content-Type: application/json" \
+     -d @vm-update.json
+   ```
+   Le disque revient au statut `ready`.
+3. Supprimez le disque :
+   ```bash
+   curl -sS -X DELETE "$HIKUBE_API/disk/v1alpha1/projects/$PROJECT_ID/disks/data01" \
+     -H "X-Hikube-Api-Key: $HIKUBE_API_KEY"
+   ```
+   Une réponse `200` avec un objet vide `{}` confirme la suppression.
+
+</TabItem>
+</Tabs>
 
 :::warning
 La suppression d'un disque est irréversible : toutes ses données sont perdues. Un disque attaché à une VM ne peut pas être supprimé ; détachez-le d'abord.

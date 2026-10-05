@@ -4,6 +4,8 @@ title: Démarrage rapide
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
 # Créer votre premier bucket S3
 
@@ -25,18 +27,40 @@ Ce guide vous accompagne dans la création de votre **premier bucket S3** depuis
 
 - Un **compte Hikube** et un **projet** (voir le [démarrage rapide Hikube](../../../getting-started/quick-start.md))
 - Un client S3 installé sur votre poste : [AWS CLI](https://aws.amazon.com/cli/) ou [MinIO Client (`mc`)](https://min.io/docs/minio/linux/reference/minio-mc.html)
+- Pour l'onglet **API** : une clé d'API `admin` du projet et les variables `HIKUBE_API`, `HIKUBE_API_KEY` et `PROJECT_ID` (voir [Préparer l'environnement](../../../api/quick-start.md#environnement)) ; les exemples utilisent `curl` et `jq`
 
 ---
 
 ## Étape 1 : Ouvrir l'assistant de création
 
+<Tabs groupId="interface">
+<TabItem value="console" label="Console" default>
+
 1. Connectez-vous à la [console Hikube](https://console.hikube.cloud) et sélectionnez votre projet.
 2. Dans le menu latéral, ouvrez **Infrastructure** → **Buckets S3**. La page **Buckets Object Storage** s'affiche.
 3. Cliquez sur **Créer un bucket**.
 
+</TabItem>
+<TabItem value="api" label="API">
+
+Avec l'API, il n'y a pas d'assistant. Vérifiez que la clé donne accès au projet en listant ses buckets :
+
+```bash
+curl -sS "$HIKUBE_API/bucket/v1alpha1/projects/$PROJECT_ID/buckets" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY"
+```
+
+**Résultat attendu :** un objet `{"totalCount": ..., "buckets": [...]}`.
+
+</TabItem>
+</Tabs>
+
 ---
 
 ## Étape 2 : Configurer et créer le bucket
+
+<Tabs groupId="interface">
+<TabItem value="console" label="Console" default>
 
 L'assistant comporte trois étapes.
 
@@ -62,9 +86,37 @@ Le **Récapitulatif** affiche le nom, le projet, le nombre d'utilisateurs à cr�
 
 Pendant la création, le bouton affiche **Création...** puis **Provisionnement du bucket…** : la console attend que le bucket soit prêt avant de créer les utilisateurs.
 
+</TabItem>
+<TabItem value="api" label="API">
+
+Créez le bucket avec `POST /bucket/v1alpha1/projects/{projectId}/buckets` :
+
+```bash
+curl -sS -X POST "$HIKUBE_API/bucket/v1alpha1/projects/$PROJECT_ID/buckets" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "demoassets",
+    "locking": false,
+    "encrypted": false
+  }'
+```
+
+- `name` : 16 caractères maximum, en minuscules ; ce nom identifie le bucket dans les chemins de l'API ;
+- `locking` : verrouillage des objets (Object Lock / WORM), non modifiable après la création ;
+- `encrypted` : chiffrement au repos, non modifiable après la création.
+
+Contrairement à l'assistant de la console, cette requête ne crée pas d'utilisateur : vous le créerez à l'étape 4, une fois le bucket prêt.
+
+</TabItem>
+</Tabs>
+
 ---
 
 ## Étape 3 : Vérifier l'état du bucket
+
+<Tabs groupId="interface">
+<TabItem value="console" label="Console" default>
 
 L'écran de fin affiche **Bucket créé avec succès**. Après avoir récupéré les identifiants (étape 4), cliquez sur **Terminer** : la console ouvre la page du bucket.
 
@@ -82,9 +134,25 @@ Sur cette page :
 Si le bucket n'est pas prêt à temps, la console affiche « Bucket en cours de provisionnement » et ne crée pas les utilisateurs. Attendez que le bucket passe à **Prêt**, puis créez-les depuis sa page avec **Ajouter un utilisateur** (voir [Gérer les utilisateurs et les clés d'accès](./how-to/configure-access.md)).
 :::
 
+</TabItem>
+<TabItem value="api" label="API">
+
+```bash
+curl -sS "$HIKUBE_API/bucket/v1alpha1/projects/$PROJECT_ID/buckets/demoassets" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" | jq '{name, status, bucketName, endpoint, locking, encrypted}'
+```
+
+**Résultat attendu :** `status` passe de `provisioning` à `ready` (`error` en cas d'échec). `bucketName` est le **nom S3** réel du bucket, généré par la plateforme, et `endpoint` le point de terminaison S3.
+
+</TabItem>
+</Tabs>
+
 ---
 
 ## Étape 4 : Récupérer les identifiants
+
+<Tabs groupId="interface">
+<TabItem value="console" label="Console" default>
 
 L'écran de fin de l'assistant affiche, pour chaque utilisateur créé :
 
@@ -116,6 +184,39 @@ export BUCKET_NAME="<nom-du-bucket-s3>"
 ```
 
 Si l'endpoint s'affiche sans préfixe (par exemple `prod.s3.hikube.cloud`), ajoutez `https://` devant : les clients `aws` et `mc` attendent une URL complète.
+
+</TabItem>
+<TabItem value="api" label="API">
+
+Une fois le bucket au statut `ready`, créez un utilisateur en lecture et écriture (`"readonly": false`) :
+
+```bash
+curl -sS -X POST "$HIKUBE_API/bucket/v1alpha1/projects/$PROJECT_ID/buckets/demoassets/users" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "appuser",
+    "config": {"readonly": false}
+  }' | jq '{bucketName, endpoint, secrets}'
+```
+
+La réponse contient :
+
+| Champ | Usage |
+|-------|-------|
+| `bucketName` | Nom réel du bucket à utiliser dans vos commandes et SDK |
+| `secrets.accessKeyId` | Access Key ID |
+| `secrets.accessSecretKey` | Secret Access Key |
+| `endpoint` | Endpoint S3 |
+
+:::warning Clés renvoyées une seule fois
+`secrets` n'est renvoyé que dans cette réponse. Enregistrez la clé secrète aussitôt dans votre gestionnaire de secrets. En cas de perte, générez une nouvelle paire avec `POST .../users/appuser/rotate-credentials` (voir [Gérer les utilisateurs et les clés d'accès](./how-to/configure-access.md)).
+:::
+
+Exportez ensuite ces valeurs comme dans l'onglet **Console** (`S3_ENDPOINT`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `BUCKET_NAME`), en préfixant l'endpoint par `https://` s'il n'en a pas.
+
+</TabItem>
+</Tabs>
 
 ---
 
@@ -171,12 +272,32 @@ Voir aussi le [dépannage complet](./troubleshooting.md).
 
 ## Étape 7 : Nettoyage
 
+<Tabs groupId="interface">
+<TabItem value="console" label="Console" default>
+
 1. Supprimez le fichier de test :
    ```bash
    aws --endpoint-url "$S3_ENDPOINT" s3 rm "s3://$BUCKET_NAME/hello.txt"
    ```
 2. Sur la page du bucket, cliquez sur **Supprimer** (ou, depuis la liste, ouvrez le menu d'actions du bucket et choisissez **Supprimer**).
 3. Saisissez le nom exact du bucket dans **Nom de la ressource à confirmer**, puis cliquez sur **Supprimer définitivement**.
+
+</TabItem>
+<TabItem value="api" label="API">
+
+1. Supprimez le fichier de test :
+   ```bash
+   aws --endpoint-url "$S3_ENDPOINT" s3 rm "s3://$BUCKET_NAME/hello.txt"
+   ```
+2. Supprimez le bucket :
+   ```bash
+   curl -sS -X DELETE "$HIKUBE_API/bucket/v1alpha1/projects/$PROJECT_ID/buckets/demoassets" \
+     -H "X-Hikube-Api-Key: $HIKUBE_API_KEY"
+   ```
+   Une réponse `200` avec un objet vide `{}` confirme la suppression. L'API ne demande pas de confirmation.
+
+</TabItem>
+</Tabs>
 
 :::warning Suppression irréversible
 La suppression d'un bucket est définitive et emporte tous ses objets : la console ne vérifie pas que le bucket est vide. Copiez les données à conserver avant de le supprimer.

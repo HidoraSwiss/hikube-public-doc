@@ -2,6 +2,9 @@
 title: "Comment gérer les utilisateurs et les clés d'accès"
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Comment gérer les utilisateurs et les clés d'accès
 
 Chaque bucket Hikube peut avoir plusieurs **utilisateurs S3**, chacun avec sa propre paire de clés et son droit (**Lecture seule** ou **Lecture / Écriture**). Ce guide explique comment gérer ces utilisateurs depuis la [console Hikube](https://console.hikube.cloud) et configurer les clients S3 courants (AWS CLI, MinIO Client, rclone).
@@ -10,6 +13,7 @@ Chaque bucket Hikube peut avoir plusieurs **utilisateurs S3**, chacun avec sa pr
 
 - Un **bucket** créé dans votre projet (voir le [démarrage rapide](../quick-start.md)), au statut **Prêt**
 - Un ou plusieurs clients S3 installés : **AWS CLI**, **mc** (MinIO Client) ou **rclone**
+- Pour l'onglet **API** : une clé d'API `admin` du projet et les variables `HIKUBE_API`, `HIKUBE_API_KEY` et `PROJECT_ID` (voir [Préparer l'environnement](../../../../api/quick-start.md#environnement)) ; les exemples utilisent `curl` et `jq`
 
 ## Comprendre le modèle d'accès
 
@@ -19,6 +23,9 @@ Chaque bucket Hikube peut avoir plusieurs **utilisateurs S3**, chacun avec sa pr
 - La **clé secrète n'est affichée qu'une fois**, à la création de l'utilisateur.
 
 ## Créer un utilisateur
+
+<Tabs groupId="interface">
+<TabItem value="console" label="Console" default>
 
 1. Ouvrez **Infrastructure** → **Buckets S3**, puis cliquez sur le bucket.
 2. Dans la carte **Utilisateurs et Accès**, cliquez sur **Ajouter un utilisateur**.
@@ -33,7 +40,42 @@ La fenêtre **Identifiants générés** affiche le **Bucket S3**, l'**Endpoint S
 Copiez ces valeurs avant de cliquer sur **J'ai sauvegardé ces clés** : la clé secrète ne pourra pas être récupérée par la suite.
 :::
 
+</TabItem>
+<TabItem value="api" label="API">
+
+```bash
+curl -sS -X POST "$HIKUBE_API/bucket/v1alpha1/projects/$PROJECT_ID/buckets/demoassets/users" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "reader",
+    "config": {"readonly": true}
+  }' | jq '{bucketName, endpoint, secrets}'
+```
+
+- `username` : 63 caractères maximum ; minuscules, chiffres et tirets ;
+- `config.readonly` : `true` pour un accès en lecture seule, `false` pour la lecture et l'écriture.
+
+La réponse contient le nom S3 du bucket (`bucketName`), l'endpoint (`endpoint`) et la paire de clés (`secrets.accessKeyId`, `secrets.accessSecretKey`).
+
+:::warning
+`secrets` n'est renvoyé que dans cette réponse : enregistrez la clé secrète aussitôt dans votre gestionnaire de secrets.
+:::
+
+Pour lister les utilisateurs du bucket et leur droit :
+
+```bash
+curl -sS "$HIKUBE_API/bucket/v1alpha1/projects/$PROJECT_ID/buckets/demoassets/users" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" | jq '.users[] | {username, readonly: .config.readonly}'
+```
+
+</TabItem>
+</Tabs>
+
 ## Modifier le droit d'un utilisateur
+
+<Tabs groupId="interface">
+<TabItem value="console" label="Console" default>
 
 1. Dans la carte **Utilisateurs et Accès**, ouvrez le menu d'actions de l'utilisateur.
 2. Choisissez **Modifier l'accès**.
@@ -41,13 +83,53 @@ Copiez ces valeurs avant de cliquer sur **J'ai sauvegardé ces clés** : la clé
 
 La colonne **Accès** du tableau affiche alors **Lecture seule** ou **Lecture / Écriture**. Les clés de l'utilisateur ne changent pas.
 
+</TabItem>
+<TabItem value="api" label="API">
+
+```bash
+curl -sS -X PATCH "$HIKUBE_API/bucket/v1alpha1/projects/$PROJECT_ID/buckets/demoassets/users/reader" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"config": {"readonly": false}}'
+```
+
+Les clés de l'utilisateur ne changent pas.
+
+</TabItem>
+</Tabs>
+
 ## Renouveler des clés
+
+<Tabs groupId="interface">
+<TabItem value="console" label="Console" default>
 
 La console ne propose pas de rotation des clés d'un utilisateur existant. Pour renouveler des clés (perte de la clé secrète, suspicion de fuite) :
 
 1. Créez un **nouvel utilisateur** avec le même droit et récupérez ses clés.
 2. Mettez à jour vos applications avec les nouvelles clés.
 3. Supprimez l'ancien utilisateur : menu d'actions → **Supprimer**, puis confirmez.
+
+</TabItem>
+<TabItem value="api" label="API">
+
+L'API renouvelle la paire de clés d'un utilisateur existant, sans changer son droit :
+
+```bash
+curl -sS -X POST "$HIKUBE_API/bucket/v1alpha1/projects/$PROJECT_ID/buckets/demoassets/users/reader/rotate-credentials" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" | jq '.secrets'
+```
+
+La requête n'a pas de corps. La réponse contient la nouvelle paire (`secrets.accessKeyId`, `secrets.accessSecretKey`), renvoyée une seule fois ; l'ancienne paire est révoquée. Mettez aussitôt à jour vos applications avec ces clés.
+
+Pour supprimer un utilisateur :
+
+```bash
+curl -sS -X DELETE "$HIKUBE_API/bucket/v1alpha1/projects/$PROJECT_ID/buckets/demoassets/users/reader" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY"
+```
+
+</TabItem>
+</Tabs>
 
 ## Configurer les clients S3
 

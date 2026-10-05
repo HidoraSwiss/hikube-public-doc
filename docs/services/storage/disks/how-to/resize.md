@@ -2,6 +2,9 @@
 title: "Comment redimensionner un disque"
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Comment redimensionner un disque
 
 Ce guide explique comment agrandir un disque depuis la [console Hikube](https://console.hikube.cloud), puis étendre son système de fichiers dans la VM.
@@ -10,12 +13,16 @@ Ce guide explique comment agrandir un disque depuis la [console Hikube](https://
 
 - Un **disque** dans votre projet
 - Un quota de stockage suffisant pour la nouvelle taille
+- Pour l'onglet **API** : une clé d'API `admin` du projet et les variables `HIKUBE_API`, `HIKUBE_API_KEY` et `PROJECT_ID` (voir [Préparer l'environnement](../../../../api/quick-start.md#environnement)) ; les exemples utilisent `curl` et `jq`
 
 :::warning Pas de réduction
 La réduction de taille n'est pas supportée. La nouvelle taille doit être supérieure ou égale à la taille actuelle, et d'au moins 20 Go.
 :::
 
 ## Étapes
+
+<Tabs groupId="interface">
+<TabItem value="console" label="Console" default>
 
 ### 1. Ouvrir la modification du disque
 
@@ -31,6 +38,32 @@ La page **Modifier le disque** affiche la **TAILLE ACTUELLE** et l'état du chif
 3. Cliquez sur **Enregistrer les modifications**.
 
 La console confirme : « Le disque a été redimensionné avec succès à N Go. »
+
+</TabItem>
+<TabItem value="api" label="API">
+
+### 1. Lire la taille actuelle
+
+```bash
+curl -sS "$HIKUBE_API/disk/v1alpha1/projects/$PROJECT_ID/disks/data01" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" | jq '{name, size, status, attachedTo}'
+```
+
+### 2. Envoyer la nouvelle taille
+
+`PATCH /disk/v1alpha1/projects/{projectId}/disks/{name}` ne prend que le champ `size`, en Go (20 à 4096) :
+
+```bash
+curl -sS -X PATCH "$HIKUBE_API/disk/v1alpha1/projects/$PROJECT_ID/disks/data01" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"size": 40}'
+```
+
+La réponse décrit le disque avec sa nouvelle `size`. Comme dans la console, n'envoyez qu'une taille supérieure ou égale à la taille actuelle : l'API ne vérifie pas elle-même ce point.
+
+</TabItem>
+</Tabs>
 
 ### 3. Étendre le système de fichiers dans la VM
 
