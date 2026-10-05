@@ -671,6 +671,17 @@ a > code {
   white-space: nowrap;
 }
 
+@media (max-width: 576px) {
+  .markdown table {
+    font-size: 0.85rem;
+  }
+
+  .markdown table th,
+  .markdown table td {
+    padding: 0.5rem 0.6rem;
+  }
+}
+
 /* Admonitions : un aparté, pas une alerte. Filet à gauche à la couleur du
    type, lavis très dilué, libellé en chasse fixe. */
 .theme-admonition {
@@ -1411,9 +1422,16 @@ a.breadcrumbs__link:hover {
   stroke: color-mix(in srgb, var(--hk-accent) 55%, var(--hk-line)) !important;
 }
 
-.docusaurus-mermaid-container .node:has([style*='fill']) :is(.nodeLabel, .label, span, p) {
+.docusaurus-mermaid-container .node:has([style*='fill']) :is(.nodeLabel, .label, span, p),
+.docusaurus-mermaid-container .cluster:has(> [style*='fill']) .cluster-label :is(.nodeLabel, span, p, text) {
   color: #1a1613 !important;
   fill: #1a1613 !important;
+}
+
+/* En sombre, les aplats pastel des diagrammes sont adoucis pour ne pas
+   éblouir sur le graphite. */
+[data-theme='dark'] .docusaurus-mermaid-container :is(.node, .cluster) > [style*='fill'] {
+  filter: brightness(0.85) saturate(0.8);
 }
 
 .docusaurus-mermaid-container :is(.nodeLabel, .cluster-label .nodeLabel, .label text) {
@@ -1556,6 +1574,18 @@ main mark {
   border-radius: 2px;
   background: color-mix(in srgb, var(--hk-green) 28%, transparent);
   color: inherit;
+}
+
+/* Bouton « retour en haut » */
+[class*='backToTopButton'] {
+  border: 1px solid var(--hk-line);
+  border-radius: var(--hk-radius);
+  background-color: var(--hk-panel);
+  box-shadow: var(--hk-shadow);
+}
+
+[class*='backToTopButton']:hover {
+  background-color: var(--hk-panel-high);
 }
 
 /* Barre de défilement fine, aux couleurs de la surface */
