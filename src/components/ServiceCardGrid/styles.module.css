@@ -1,6 +1,6 @@
 .cardGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
   gap: 1rem;
-  margin: 1rem 0;
+  margin: 1.25rem 0 2rem;
 }
