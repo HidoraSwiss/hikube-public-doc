@@ -41,7 +41,7 @@ kubectl get secret pg-<nom>-app -o json | jq -r '.data | to_entries[] | "\(.key)
 kubectl get secret mysql-<nom>-auth -o json | jq -r '.data | to_entries[] | "\(.key): \(.value|@base64d)"'
 ```
 
-Vedi: [Redis - Avvio rapido](../services/databases/redis/quick-start.md), [PostgreSQL - Avvio rapido](../services/databases/postgresql/quick-start.md), [MySQL - Avvio rapido](../services/databases/mysql/quick-start.md)
+Vedi: [Redis - Avvio rapido](../services/databases/redis/quick-start.md), [PostgreSQL - Avvio rapido](../services/databases/postgresql/quick-start.md), [MariaDB - Avvio rapido](../services/databases/mariadb/quick-start.md)
 
 ---
 

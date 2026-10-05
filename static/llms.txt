@@ -3,6 +3,7 @@
 > Hikube is a 100% Swiss sovereign cloud platform offering managed Kubernetes,
 > GPU as a Service, virtual machines, S3 object storage,
 > managed databases and messaging.
+> All resources are managed from the web console: https://console.hikube.cloud
 > Triple replication across 3 Swiss datacenters (Geneva, Gland, Lucerne).
 > nLPD/GDPR compliant, CLOUD Act immune, ISO 27001.
 
@@ -27,8 +28,7 @@ This documentation is available in 4 languages:
 - [Overview](https://docs.hikube.cloud/en/services/kubernetes/overview/)
 - [Concepts](https://docs.hikube.cloud/en/services/kubernetes/concepts/)
 - [Quick start](https://docs.hikube.cloud/en/services/kubernetes/quick-start/)
-- [Plugins: Cilium, CoreDNS, Ingress NGINX, Cert-Manager, FluxCD, Velero](https://docs.hikube.cloud/en/services/kubernetes/plugins/cilium/)
-- [API Reference](https://docs.hikube.cloud/en/services/kubernetes/api-reference/)
+- [Plugins: Cilium, CoreDNS, Ingress NGINX, Cert-Manager, Flux CD, Velero, HAMi, Ouroboros](https://docs.hikube.cloud/en/services/kubernetes/plugins/cilium/)
 - [FAQ](https://docs.hikube.cloud/en/services/kubernetes/faq/)
 - [Troubleshooting](https://docs.hikube.cloud/en/services/kubernetes/troubleshooting/)
 
@@ -39,7 +39,6 @@ This documentation is available in 4 languages:
 - [Quick start](https://docs.hikube.cloud/en/services/gpu/quick-start/)
 - [Provision GPU on Kubernetes](https://docs.hikube.cloud/en/services/gpu/how-to/provision-gpu-kubernetes/)
 - [Provision GPU on VM (Passthrough)](https://docs.hikube.cloud/en/services/gpu/how-to/provision-gpu-vm/)
-- [API Reference](https://docs.hikube.cloud/en/services/gpu/api-reference/)
 - [FAQ](https://docs.hikube.cloud/en/services/gpu/faq/)
 - [Troubleshooting](https://docs.hikube.cloud/en/services/gpu/troubleshooting/)
 
@@ -48,33 +47,40 @@ This documentation is available in 4 languages:
 - [Overview](https://docs.hikube.cloud/en/services/compute/overview/)
 - [Concepts](https://docs.hikube.cloud/en/services/compute/concepts/)
 - [Quick start](https://docs.hikube.cloud/en/services/compute/quick-start/)
-- [API Reference](https://docs.hikube.cloud/en/services/compute/api-reference/)
 - [FAQ](https://docs.hikube.cloud/en/services/compute/faq/)
 - [Troubleshooting](https://docs.hikube.cloud/en/services/compute/troubleshooting/)
 
 ## Storage
 
 - [Overview](https://docs.hikube.cloud/en/services/storage/)
+- [Disks](https://docs.hikube.cloud/en/services/storage/disks/overview/)
 - [S3 Buckets](https://docs.hikube.cloud/en/services/storage/buckets/overview/)
+
+## Networking
+
+- [Overview](https://docs.hikube.cloud/en/services/networking/overview/)
+- [Concepts: VPC and subnets](https://docs.hikube.cloud/en/services/networking/concepts/)
+- [Quick start](https://docs.hikube.cloud/en/services/networking/quick-start/)
 
 ## Managed Databases
 
 - [Overview](https://docs.hikube.cloud/en/services/databases/)
 - [PostgreSQL](https://docs.hikube.cloud/en/services/databases/postgresql/overview/)
-- [MySQL](https://docs.hikube.cloud/en/services/databases/mysql/overview/)
+- [MariaDB](https://docs.hikube.cloud/en/services/databases/mariadb/overview/)
+- [MongoDB](https://docs.hikube.cloud/en/services/databases/mongodb/overview/)
 - [Redis](https://docs.hikube.cloud/en/services/databases/redis/overview/)
-- [ClickHouse](https://docs.hikube.cloud/en/services/databases/clickhouse/overview/)
+- [ClickHouse (on request)](https://docs.hikube.cloud/en/services/databases/clickhouse/overview/)
 
 ## Managed Messaging
 
 - [Overview](https://docs.hikube.cloud/en/services/messaging/)
-- [Kafka](https://docs.hikube.cloud/en/services/messaging/kafka/overview/)
 - [RabbitMQ](https://docs.hikube.cloud/en/services/messaging/rabbitmq/overview/)
-- [NATS](https://docs.hikube.cloud/en/services/messaging/nats/overview/)
+- [Kafka (on request)](https://docs.hikube.cloud/en/services/messaging/kafka/overview/)
+- [NATS (on request)](https://docs.hikube.cloud/en/services/messaging/nats/overview/)
 
 ## Tools
 
-- [Terraform](https://docs.hikube.cloud/en/tools/terraform/)
+- [Terraform (legacy, project kubeconfig on request)](https://docs.hikube.cloud/en/tools/terraform/)
 
 ## Resources
 

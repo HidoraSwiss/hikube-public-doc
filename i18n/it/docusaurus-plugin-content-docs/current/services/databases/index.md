@@ -14,7 +14,7 @@ Hikube offre database completamente gestiti, distribuiti tramite `kubectl apply`
 | Servizio | Tipo | Operatore | Replica | Caso d'uso |
 |----------|------|-----------|---------|------------|
 | PostgreSQL | Relazionale | CloudNativePG | Streaming + failover | App transazionali, API |
-| MySQL | Relazionale | Oracle Operator | Group Replication | CMS, applicazioni legacy |
+| MariaDB | Relazionale | Oracle Operator | Group Replication | CMS, applicazioni legacy |
 | Redis | Chiave-valore | Spotahome | Sentinel | Cache, sessioni, code |
 | ClickHouse | Analitico | Altinity | ReplicatedMergeTree | Analytics, log, OLAP |
 
@@ -29,10 +29,10 @@ Hikube offre database completamente gestiti, distribuiti tramite `kubectl apply`
     tags: ["Relazionale", "ACID"],
   },
   {
-    title: "MySQL",
+    title: "MariaDB",
     description: "Database relazionale popolare, compatibile con l'ecosistema MySQL/MariaDB.",
-    icon: "/img/services/mysql.svg",
-    href: "./mysql/overview",
+    icon: "/img/services/mariadb.svg",
+    href: "./mariadb/overview",
     tags: ["Relazionale", "ACID"],
   },
   {

@@ -55,15 +55,15 @@
     "message": "How-to Guides",
     "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
-  "sidebar.docsSidebar.category.MySQL": {
-    "message": "MySQL",
-    "description": "The label for category 'MySQL' in sidebar 'docsSidebar'"
+  "sidebar.docsSidebar.category.MariaDB": {
+    "message": "MariaDB",
+    "description": "The label for category 'MariaDB' in sidebar 'docsSidebar'"
   },
-  "sidebar.docsSidebar.category.how-to-services-databases-mysql": {
+  "sidebar.docsSidebar.category.how-to-services-databases-mariadb": {
     "message": "How-to Guides",
     "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
-  "sidebar.docsSidebar.category.how-to-services-databases-mysql.link.generated-index.title": {
+  "sidebar.docsSidebar.category.how-to-services-databases-mariadb.link.generated-index.title": {
     "message": "How-to Guides",
     "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
