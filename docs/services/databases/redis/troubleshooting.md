@@ -5,104 +5,59 @@ title: Dépannage
 
 # Dépannage — Redis
 
-### Perte de données après redémarrage
+### Le cluster reste au statut « En création »
 
-**Cause** : la `storageClass` utilisée est `local`, ce qui signifie que les données sont stockées uniquement sur le nœud physique où s'exécutait le pod. Si le pod est replanifié sur un autre nœud, les données précédentes sont perdues.
-
-**Solution** :
-
-1. Vérifiez la `storageClass` utilisée :
-   ```bash
-   kubectl get pvc -l app=redis-<name>
-   ```
-2. Si vous utilisez un seul réplica (`replicas` = 1), passez à `storageClass: replicated` pour que le stockage compense l'absence de réplication applicative. Si vous avez plusieurs réplicas (`replicas` >= 3), `storageClass: local` est approprié car Redis Sentinel assure déjà la haute disponibilité :
-   ```yaml title="redis.yaml"
-   spec:
-     storageClass: replicated    # Si replicas = 1
-     # storageClass: local       # Si replicas >= 3 (Sentinel assure la HA)
-   ```
-3. Appliquez la modification. Notez qu'un changement de `storageClass` nécessite généralement une recréation des PVC.
-4. Assurez-vous également que `replicas` >= 3 pour bénéficier de la réplication Redis Sentinel.
-
-### Redis Sentinel ne converge pas
-
-**Cause** : le nombre de réplicas est pair ou inférieur à 3, ce qui empêche le quorum Sentinel de fonctionner correctement. Sentinel nécessite une majorité pour élire un nouveau primary.
+**Cause** : le provisionnement des nœuds Redis, des Sentinels et de leurs volumes est en cours.
 
 **Solution** :
 
-1. Vérifiez le nombre de réplicas :
-   ```bash
-   kubectl get pods -l app=redis-<name>
-   ```
-2. Assurez-vous d'utiliser un nombre **impair** >= 3 :
-   ```yaml title="redis.yaml"
-   spec:
-     replicas: 3    # Ou 5, jamais 2 ou 4
-   ```
-3. Consultez les logs Sentinel pour identifier les problèmes de convergence :
-   ```bash
-   kubectl logs -l app=rfs-redis-<name>
-   ```
-4. Vérifiez la connectivité réseau entre les pods Redis. Des problèmes de DNS ou de réseau peuvent empêcher la découverte des nœuds.
+1. Patientez quelques minutes et actualisez la page du cluster.
+2. Si le statut ne change pas après une quinzaine de minutes, ou passe à **Erreur** ou **Échec**, [contactez le support](mailto:support@hidora.io) en indiquant le projet et le nom du cluster.
 
-### Mémoire saturée (OOMKilled)
+### L'hôte affiche « En attente d'attribution... »
 
-**Cause** : le dataset Redis dépasse la mémoire allouée au conteneur. Kubernetes tue le pod lorsqu'il dépasse sa limite mémoire.
+**Cause** : le réseau public est désactivé, ou l'adresse IP publique n'est pas encore attribuée.
 
 **Solution** :
 
-1. Vérifiez si le pod a été tué pour OOM :
-   ```bash
-   kubectl describe pod rfr-redis-<name>-0 | grep -i oom
-   ```
-2. Augmentez la mémoire allouée via `resources.memory` ou un `resourcesPreset` supérieur :
-   ```yaml title="redis.yaml"
-   spec:
-     resources:
-       cpu: 1000m
-       memory: 2Gi    # Augmenter la mémoire
-   ```
-3. Vérifiez la politique d'éviction Redis (`maxmemory-policy`). Par défaut, Redis renvoie une erreur quand la mémoire est pleine. Envisagez d'utiliser `allkeys-lru` si Redis sert de cache.
-4. Surveillez la taille du dataset :
-   ```bash
-   redis-cli -h rfr-redis-<name> -p 6379 -a <password> INFO memory
-   ```
+1. Ouvrez **Modifier** et vérifiez l'option **Accès externe**. Activez-la si vous devez vous connecter depuis Internet, puis cliquez sur **Enregistrer les modifications**.
+2. Patientez quelques instants et actualisez la page du cluster.
 
 ### Connexion timeout
 
-**Cause** : les pods Redis ne sont pas en cours d'exécution, les endpoints du service sont vides, ou la configuration d'authentification côté client ne correspond pas à celle du serveur.
+**Cause** : l'adresse ou le port utilisés sont incorrects, le cluster n'est pas prêt, ou un pare-feu bloque le port `6379`.
 
 **Solution** :
 
-1. Vérifiez que les pods sont en état `Running` :
-   ```bash
-   kubectl get pods -l app=redis-<name>
-   ```
-2. Vérifiez que les services ont des endpoints :
-   ```bash
-   kubectl get endpoints rfr-redis-<name>
-   kubectl get endpoints rfs-redis-<name>
-   ```
-3. Si `authEnabled: true`, assurez-vous que votre client fournit le mot de passe correct.
-4. Testez la connexion depuis un pod de debug :
-   ```bash
-   kubectl run test-redis --rm -it --image=redis:7 -- redis-cli -h rfr-redis-<name> -p 6379 -a <password> PING
-   ```
+1. Vérifiez que le **Statut** de la section **Connexion** est **Prêt**.
+2. Copiez l'**Hôte** avec le bouton de copie pour éviter les erreurs de saisie.
+3. Vérifiez qu'aucun pare-feu sortant de votre réseau ne bloque le port `6379`.
 
-### Authentification échoue
+### Authentification échoue (`NOAUTH` ou `WRONGPASS`)
 
-**Cause** : le mot de passe utilisé ne correspond pas à celui stocké dans le Secret Kubernetes, ou `authEnabled` n'est pas activé sur le serveur alors que le client envoie un mot de passe (ou inversement).
+**Cause** : le client n'envoie pas de mot de passe, utilise un mot de passe erroné, ou un mot de passe révoqué par une rotation.
 
 **Solution** :
 
-1. Récupérez le mot de passe correct depuis le Secret :
+1. Vérifiez la valeur fournie au client (`REDISCLI_AUTH`, option `-a` ou configuration applicative).
+2. En cas de doute, générez un nouveau mot de passe depuis la section **Sécurité** (**Effectuer une rotation**) et mettez à jour vos applications. Voir [Renouveler le mot de passe](./how-to/rotate-password.md).
+3. Si l'option **Authentification requise** a été modifiée, mettez à jour les clients en conséquence.
+
+### Mémoire saturée (`OOM command not allowed`)
+
+**Cause** : le jeu de données dépasse la mémoire allouée par la préconfiguration.
+
+**Solution** :
+
+1. Contrôlez l'utilisation mémoire :
    ```bash
-   kubectl get tenantsecret redis-<name>-auth -o jsonpath='{.data.password}' | base64 -d
+   redis-cli -h <hôte> -p 6379 INFO memory
    ```
-2. Vérifiez que `authEnabled: true` est configuré dans votre manifeste :
-   ```yaml title="redis.yaml"
-   spec:
-     authEnabled: true
-   ```
-3. Assurez-vous que votre client utilise exactement le mot de passe récupéré à l'étape 1.
-4. Si vous avez changé la configuration `authEnabled`, les clients existants doivent être mis à jour pour refléter le changement.
+2. Passez à une **Préconfiguration** supérieure via **Modifier**. Voir [Modifier les ressources](./how-to/scale-resources.md).
+3. Si Redis sert de cache, posez des durées d'expiration (`EXPIRE`) sur vos clés pour limiter la croissance du jeu de données.
+
+### Le failover ne se produit pas
+
+**Cause** : le cluster compte moins de 3 réplicas ; le quorum Sentinel ne peut pas être atteint.
+
+**Solution** : le nombre de réplicas ne peut pas être modifié après la création. Créez un nouveau cluster avec au moins 3 réplicas et migrez vos données, ou [contactez le support](mailto:support@hidora.io). Voir [Configurer la haute disponibilité](./how-to/configure-ha.md).

@@ -5,50 +5,20 @@ title: Dépannage
 
 # Dépannage — ClickHouse
 
-### ClickHouse Keeper instable (nombre pair de réplicas)
-
-**Cause** : le nombre de réplicas ClickHouse Keeper est pair (2, 4, etc.), ce qui empêche le maintien du quorum. Le protocole Raft nécessite une majorité stricte pour élire un leader, et un nombre pair de nœuds ne garantit pas cette majorité en cas de partition réseau.
-
-**Solution** :
-
-1. Vérifiez le nombre actuel de réplicas Keeper :
-   ```bash
-   kubectl get pods -l app=clickhouse-keeper-<name>
-   ```
-2. Modifiez le nombre de réplicas pour utiliser un nombre **impair** (3 ou 5) :
-   ```yaml title="clickhouse.yaml"
-   spec:
-     clickhouseKeeper:
-       enabled: true
-       replicas: 3    # Toujours impair
-   ```
-3. Appliquez la modification :
-   ```bash
-   kubectl apply -f clickhouse.yaml
-   ```
-4. Vérifiez les logs Keeper pour confirmer que le quorum est rétabli :
-   ```bash
-   kubectl logs -l app=clickhouse-keeper-<name>
-   ```
+:::info Disponibilité
+ClickHouse n'est pas encore disponible en libre-service dans la [console Hikube](https://console.hikube.cloud).
+Pour en provisionner une instance ou modifier sa configuration, [contactez le support](mailto:support@hidora.io).
+:::
 
 ### Requêtes lentes sur gros volumes
 
-**Cause** : la configuration de sharding n'est pas optimale, les tables n'utilisent pas les bons moteurs, ou les ressources allouées sont insuffisantes.
+**Cause** : les tables n'utilisent pas les bons moteurs ou un `ORDER BY` adapté, la topologie n'est pas optimale, ou les ressources allouées sont insuffisantes.
 
 **Solution** :
 
-1. Vérifiez que vous utilisez des tables **Distributed** pour répartir les requêtes sur tous les shards.
-2. Assurez-vous que les tables locales utilisent le moteur `ReplicatedMergeTree` avec un `ORDER BY` adapté à vos requêtes les plus fréquentes.
-3. Augmentez le nombre de shards pour distribuer la charge :
-   ```yaml title="clickhouse.yaml"
-   spec:
-     shards: 4    # Augmenter le nombre de shards
-   ```
-4. Vérifiez les ressources allouées et augmentez si nécessaire :
-   ```bash
-   kubectl top pod -l app=clickhouse-<name>
-   ```
-5. Analysez les requêtes lentes via le `query_log` système :
+1. Sur une instance shardée, interrogez des tables **Distributed** pour répartir les requêtes sur tous les shards.
+2. Assurez-vous que les tables locales utilisent `ReplicatedMergeTree` avec un `ORDER BY` adapté à vos filtres les plus fréquents.
+3. Analysez les requêtes lentes via le journal système :
    ```sql
    SELECT query, elapsed, read_rows, memory_usage
    FROM system.query_log
@@ -56,76 +26,41 @@ title: Dépannage
    ORDER BY elapsed DESC
    LIMIT 10;
    ```
+4. Si les ressources sont saturées, demandez un preset supérieur ou des shards supplémentaires au [support](mailto:support@hidora.io). Voir [Scaler verticalement](./how-to/scale-resources.md).
 
 ### Espace disque insuffisant
 
-**Cause** : le volume de données dépasse la taille du PVC, ou les logs système (`query_log`, `query_thread_log`) accumulent trop de données.
+**Cause** : le volume de données dépasse la taille du stockage, ou les journaux système (`query_log`, `query_thread_log`) accumulent trop de données.
 
 **Solution** :
 
-1. Augmentez la taille du volume de données :
-   ```yaml title="clickhouse.yaml"
-   spec:
-     size: 50Gi    # Augmenter depuis la valeur actuelle
+1. Identifiez les tables les plus volumineuses :
+   ```sql
+   SELECT database, table, formatReadableSize(sum(bytes_on_disk)) AS size
+   FROM system.parts
+   WHERE active
+   GROUP BY database, table
+   ORDER BY sum(bytes_on_disk) DESC;
    ```
-2. Vérifiez également la taille du volume de logs et ajustez si nécessaire :
-   ```yaml title="clickhouse.yaml"
-   spec:
-     logStorageSize: 5Gi    # Augmenter si les logs saturent
-   ```
-3. Réduisez la rétention des logs système via `logTTL` :
-   ```yaml title="clickhouse.yaml"
-   spec:
-     logTTL: 7    # Réduire de 15 à 7 jours par exemple
-   ```
-4. Vérifiez les politiques de rétention de vos données applicatives et supprimez les partitions obsolètes.
+2. Supprimez les partitions obsolètes de vos données applicatives (`ALTER TABLE ... DROP PARTITION`) ou posez un `TTL` sur vos tables.
+3. Pour augmenter le stockage, la taille du volume des journaux ou réduire leur rétention, contactez le support.
 
-### Pod ClickHouse en état Pending
+### Erreurs de réplication ou Keeper indisponible
 
-**Cause** : le PersistentVolumeClaim (PVC) ne parvient pas à se lier à un volume, généralement à cause d'une `storageClass` inexistante ou d'un quota de ressources dépassé.
+**Cause** : ClickHouse Keeper n'a pas son quorum, ou un réplica ne parvient plus à se synchroniser.
 
 **Solution** :
 
-1. Vérifiez l'état du pod et les événements associés :
-   ```bash
-   kubectl describe pod clickhouse-<name>-0-0
+1. Contrôlez l'état des tables répliquées :
+   ```sql
+   SELECT database, table, is_readonly, absolute_delay, queue_size
+   FROM system.replicas
+   WHERE is_readonly OR absolute_delay > 60;
    ```
-2. Vérifiez l'état des PVC :
-   ```bash
-   kubectl get pvc -l app=clickhouse-<name>
-   ```
-3. Vérifiez que la `storageClass` utilisée est bien l'une des classes disponibles : `local`, `replicated` ou `replicated-async`.
-4. Vérifiez que les quotas de ressources (CPU, mémoire, stockage) ne sont pas atteints.
-5. Corrigez la configuration dans votre manifeste et réappliquez :
-   ```bash
-   kubectl apply -f clickhouse.yaml
-   ```
+2. Un réplica en lecture seule (`is_readonly = 1`) signale généralement une perte de contact avec Keeper. [Contactez le support](mailto:support@hidora.io) en indiquant le projet, le nom de l'instance et le résultat de la requête.
 
-### Réplication inter-shards échouée
+### Authentification refusée
 
-**Cause** : ClickHouse Keeper n'est pas fonctionnel, le réseau entre les pods est instable, ou la configuration des réplicas par shard est incorrecte.
+**Cause** : utilisateur ou mot de passe erroné, ou utilisateur en lecture seule tentant une écriture (`Not enough privileges`).
 
-**Solution** :
-
-1. Vérifiez que ClickHouse Keeper est opérationnel :
-   ```bash
-   kubectl get pods -l app=clickhouse-keeper-<name>
-   ```
-2. Consultez les logs Keeper pour identifier les erreurs :
-   ```bash
-   kubectl logs -l app=clickhouse-keeper-<name>
-   ```
-3. Vérifiez la connectivité réseau entre les pods ClickHouse :
-   ```bash
-   kubectl exec clickhouse-<name>-0-0 -- clickhouse-client --query "SELECT * FROM system.clusters"
-   ```
-4. Assurez-vous que la configuration des réplicas est cohérente :
-   ```yaml title="clickhouse.yaml"
-   spec:
-     shards: 2
-     replicas: 3    # Chaque shard doit avoir le même nombre de réplicas
-     clickhouseKeeper:
-       enabled: true
-       replicas: 3
-   ```
-5. Si Keeper est instable, redémarrez les pods Keeper et attendez la stabilisation du quorum.
+**Solution** : vérifiez les identifiants transmis et le niveau d'accès de l'utilisateur (`SHOW GRANTS`). Pour créer un utilisateur ou modifier ses droits, contactez le support. Voir [Gérer les utilisateurs](./how-to/manage-users.md).

@@ -7,18 +7,23 @@ import NavigationFooter from '@site/src/components/NavigationFooter';
 
 # ClickHouse sur Hikube
 
+:::info Disponibilité
+ClickHouse n'est pas encore disponible en libre-service dans la [console Hikube](https://console.hikube.cloud).
+Pour en provisionner une instance ou modifier sa configuration, [contactez le support](mailto:support@hidora.io).
+:::
+
 Les **bases de données ClickHouse** d’Hikube offrent un système de gestion SQL open source, haute performance et orienté colonnes, conçu pour le traitement analytique en ligne (OLAP). Elles garantissent l’ingestion rapide de données massives, l’exécution de requêtes complexes en temps quasi réel et la fiabilité nécessaire aux applications analytiques critiques des entreprises.
 
 ---
 
-## 🏗️ Architecture et Fonctionnement
+## Architecture et fonctionnement
 
 L’architecture de ClickHouse repose sur deux paramètres essentiels qui permettent d’adapter le déploiement aux besoins réels :  
 
 - **Shards** → ils permettent de **répartir les données en plusieurs morceaux** sur différents nœuds. Plus il y a de shards, plus la charge est distribuée, ce qui améliore la vitesse d’exécution des requêtes sur de très grands volumes.  
 - **Réplicas** → ils créent des **copies redondantes** des shards. Cela augmente la résilience et la tolérance aux pannes, tout en permettant de répartir la charge de lecture entre plusieurs nœuds.  
 
-### 🔎 Exemple illustratif
+### Exemple illustratif
 
 Imaginons une base de **1 milliard d’enregistrements clients** :  
 

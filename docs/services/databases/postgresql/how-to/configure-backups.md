@@ -1,136 +1,51 @@
 ---
 title: "Comment configurer les sauvegardes automatiques"
+sidebar_position: 3
 ---
 
 # Comment configurer les sauvegardes automatiques
 
-Ce guide explique comment activer et configurer les sauvegardes automatiques de votre base PostgreSQL vers un stockage compatible S3, via l'opérateur CloudNativePG.
-
-## Prérequis
-
-- **kubectl** configuré avec votre kubeconfig Hikube
-- Une instance **PostgreSQL** déployée sur Hikube (ou un manifeste prêt à déployer)
-- Un **bucket S3-compatible** accessible (Hikube Object Storage, AWS S3, etc.)
-- Les **identifiants S3** : access key, secret key, URL du endpoint
-
-## Étapes
-
-### 1. Préparer les identifiants S3
-
-Avant d'activer les sauvegardes, rassemblez les informations suivantes :
-
-| Paramètre | Description | Exemple |
-|-----------|-------------|---------|
-| `destinationPath` | Chemin S3 du bucket de destination | `s3://backups/postgresql/production/` |
-| `endpointURL` | URL du endpoint S3 | `https://prod.s3.hikube.cloud` |
-| `s3AccessKey` | Clé d'accès S3 | `oobaiRus9pah8PhohL1ThaeTa4UVa7gu` |
-| `s3SecretKey` | Clé secrète S3 | `ju3eum4dekeich9ahM1te8waeGai0oog` |
-
-:::tip
-Si vous utilisez le stockage objet Hikube, l'endpoint par défaut est `https://prod.s3.hikube.cloud`. Pour un fournisseur externe (AWS S3, Scaleway, etc.), renseignez l'URL correspondante.
+:::info Disponibilité
+La configuration des sauvegardes PostgreSQL n'est pas encore disponible en libre-service dans la [console Hikube](https://console.hikube.cloud).
+Pour activer ou modifier les sauvegardes d'un cluster, [contactez le support](mailto:support@hidora.io).
 :::
 
-### 2. Créer le manifeste PostgreSQL avec backup activé
+## Principe
 
-Créez ou modifiez votre manifeste pour inclure la section `backup` :
+Les clusters PostgreSQL Hikube reposent sur l'opérateur **CloudNativePG**, qui sait sauvegarder une base vers un stockage objet compatible S3 :
 
-```yaml title="postgresql-with-backup.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Postgres
-metadata:
-  name: my-database
-spec:
-  replicas: 3
-  resourcesPreset: medium
-  size: 20Gi
+- **Sauvegardes complètes** (base backups) planifiées à intervalle régulier ;
+- **Archivage continu des WAL**, qui permet la restauration à un instant précis (PITR, Point-In-Time Recovery) ;
+- **Politique de rétention** qui détermine la durée de conservation des sauvegardes.
 
-  users:
-    admin:
-      password: SecureAdminPassword
+## Informations à préparer
 
-  databases:
-    myapp:
-      roles:
-        admin:
-          - admin
+Pour une demande d'activation, indiquez au support :
 
-  backup:
-    enabled: true
-    schedule: "0 2 * * *"
-    retentionPolicy: 30d
-    destinationPath: s3://backups/postgresql/my-database/
-    endpointURL: https://prod.s3.hikube.cloud
-    s3AccessKey: oobaiRus9pah8PhohL1ThaeTa4UVa7gu
-    s3SecretKey: ju3eum4dekeich9ahM1te8waeGai0oog
-```
-
-**Détail des paramètres de backup :**
-
-| Paramètre | Description | Valeur par défaut |
-|-----------|-------------|-------------------|
-| `backup.enabled` | Active les sauvegardes automatiques | `false` |
-| `backup.schedule` | Planification cron (ici : tous les jours à 2h) | `"0 2 * * * *"` |
-| `backup.retentionPolicy` | Durée de rétention des sauvegardes | `"30d"` |
-| `backup.destinationPath` | Chemin S3 de destination | _(requis)_ |
-| `backup.endpointURL` | URL du endpoint S3 | _(requis)_ |
-| `backup.s3AccessKey` | Clé d'accès S3 | _(requis)_ |
-| `backup.s3SecretKey` | Clé secrète S3 | _(requis)_ |
-
-:::note
-La planification `schedule` utilise la syntaxe cron standard. Exemples courants :
-- `"0 2 * * *"` : tous les jours à 2h00
-- `"0 */6 * * *"` : toutes les 6 heures
-- `"0 2 * * 0"` : tous les dimanches à 2h00
-:::
-
-### 3. Appliquer la configuration
-
-```bash
-kubectl apply -f postgresql-with-backup.yaml
-```
-
-### 4. Vérifier que les sauvegardes sont configurées
-
-Vérifiez que l'instance PostgreSQL est bien déployée avec le backup activé :
-
-```bash
-kubectl get postgres my-database -o yaml | grep -A 10 backup
-```
-
-**Résultat attendu :**
-
-```console
-  backup:
-    enabled: true
-    schedule: "0 2 * * *"
-    retentionPolicy: 30d
-    destinationPath: s3://backups/postgresql/my-database/
-    endpointURL: https://prod.s3.hikube.cloud
-```
-
-## Vérification
-
-Pour confirmer que les sauvegardes fonctionnent correctement :
-
-1. **Vérifiez les logs** du pod PostgreSQL primary pour les messages relatifs aux sauvegardes :
-
-```bash
-kubectl logs postgres-my-database-1 -c postgres | grep -i backup
-```
-
-2. **Vérifiez le contenu du bucket S3** pour confirmer que les fichiers WAL et les sauvegardes base sont bien envoyés.
-
-3. **Vérifiez les événements** liés à l'instance :
-
-```bash
-kubectl describe postgres my-database
-```
+| Information | Exemple |
+|-------------|---------|
+| Projet et nom du cluster | `prod` / `orders-db` |
+| Fréquence des sauvegardes complètes | Tous les jours à 2h |
+| Durée de rétention | 30 jours |
+| Bucket de destination | Un bucket [Hikube Object Storage](../../../storage/buckets/overview.md) dédié ou un stockage S3 externe |
 
 :::warning
-Testez régulièrement la restauration de vos sauvegardes. Une sauvegarde qui n'a jamais été testée n'est pas une sauvegarde fiable. Consultez le guide [Comment restaurer une sauvegarde (PITR)](./restore-backup.md).
+Ne transmettez jamais de clés d'accès S3 par un canal non sécurisé. Le support vous indiquera la procédure adaptée.
 :::
+
+## Sauvegarde logique à la demande
+
+Indépendamment des sauvegardes gérées par la plateforme, vous pouvez à tout moment exporter une base avec les outils PostgreSQL standards :
+
+```bash
+# Export d'une base au format custom
+pg_dump "host=<hôte> port=5432 dbname=myapp user=app_user sslmode=require" \
+  --format=custom --file=myapp-$(date +%F).dump
+```
+
+L'utilisateur doit disposer du droit **Administrateur (Admin)** ou **Lecture seule (Read-only)** sur la base exportée.
 
 ## Pour aller plus loin
 
-- **[Référence API PostgreSQL](../api-reference.md)** : documentation complète de tous les paramètres de backup
-- **[Comment restaurer une sauvegarde (PITR)](./restore-backup.md)** : restaurer vos données à un instant précis
+- [Restaurer une sauvegarde](./restore-backup.md)
+- [Concepts PostgreSQL](../concepts.md)
