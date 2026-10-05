@@ -208,6 +208,11 @@ const sidebars = {
       type: "category",
       label: "API",
       items: [
+        "api/overview",
+        "api/authentication",
+        "api/quick-start",
+        "api/errors",
+        "api/faq",
         {
           type: "category",
           label: "Référence",
