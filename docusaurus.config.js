@@ -334,6 +334,14 @@ const config = {
         darkTheme: hikubePrismTheme,
         additionalLanguages: ['bash', 'yaml', 'hcl', 'json'],
       },
+      // Exemples de code de la référence API : curl en premier (onglet par
+      // défaut), comme dans le reste de la documentation.
+      languageTabs: [
+        {highlight: 'bash', language: 'curl', logoClass: 'curl'},
+        {highlight: 'python', language: 'python', logoClass: 'python'},
+        {highlight: 'javascript', language: 'nodejs', logoClass: 'nodejs'},
+        {highlight: 'go', language: 'go', logoClass: 'go'},
+      ],
       mermaid: {
         theme: {light: 'neutral', dark: 'dark'},
         options: {
