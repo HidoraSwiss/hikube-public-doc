@@ -4,6 +4,8 @@ title: Démarrage rapide
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
 # Créer un cluster RabbitMQ en 5 minutes
 
@@ -27,18 +29,43 @@ Ce guide vous accompagne dans la création de votre premier **cluster RabbitMQ**
 - Un **compte Hikube** et un **projet** (voir le [démarrage rapide Hikube](../../../getting-started/quick-start.md))
 - Un quota de projet suffisant pour le cluster (CPU, mémoire et stockage)
 - **Python 3** avec le module `pika` installé, pour le test de l'étape 5 (`pip install pika`)
+- Pour l'onglet **API** : une clé d'API `admin` du projet et les variables `HIKUBE_API`, `HIKUBE_API_KEY` et `PROJECT_ID` (voir [Préparer l'environnement](../../../api/quick-start.md#environnement)) ; les exemples utilisent `curl` et `jq`
 
 ---
 
 ## Étape 1 : Ouvrir l'assistant de création
 
+<Tabs groupId="interface">
+<TabItem value="console" label="Console" default>
+
 1. Connectez-vous à la [console Hikube](https://console.hikube.cloud) et sélectionnez votre projet.
 2. Dans le menu latéral, ouvrez **DB & Messaging** → **RabbitMQ**. La page **Clusters RabbitMQ** s'affiche.
 3. Cliquez sur **Créer un cluster**. L'assistant **Créer un cluster RabbitMQ** s'ouvre.
 
+</TabItem>
+<TabItem value="api" label="API">
+
+Avec l'API, il n'y a pas d'assistant. Vérifiez que la clé donne accès au projet en listant ses clusters RabbitMQ, puis consultez les préconfigurations disponibles :
+
+```bash
+curl -sS "$HIKUBE_API/rabbitmq/v1alpha1/projects/$PROJECT_ID/clusters" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY"
+
+curl -sS "$HIKUBE_API/rabbitmq/v1alpha1/presets" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" | jq '.presets[] | {name, cpu, memory}'
+```
+
+**Résultat attendu :** un objet `{"totalCount": ..., "clusters": [...]}`, puis la liste des préconfigurations avec leur CPU et leur mémoire.
+
+</TabItem>
+</Tabs>
+
 ---
 
 ## Étape 2 : Configurer et créer le cluster
+
+<Tabs groupId="interface">
+<TabItem value="console" label="Console" default>
 
 L'assistant comporte cinq étapes. Un bandeau affiche le coût estimé et, à l'étape **Configuration**, la consommation de quota du projet.
 
@@ -86,9 +113,76 @@ Copiez le mot de passe immédiatement et conservez-le dans un gestionnaire de mo
 
 Cliquez ensuite sur **Terminer** pour revenir à la liste des clusters.
 
+</TabItem>
+<TabItem value="api" label="API">
+
+L'assistant de la console enchaîne trois opérations que l'API expose séparément : créer le cluster, créer le vhost, puis créer l'utilisateur. Le vhost et l'utilisateur peuvent être créés dès que le cluster existe, sans attendre qu'il soit prêt.
+
+**1. Créer le cluster** avec `POST /rabbitmq/v1alpha1/projects/{projectId}/clusters` :
+
+```bash
+curl -sS -X POST "$HIKUBE_API/rabbitmq/v1alpha1/projects/$PROJECT_ID/clusters" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "rabbitdemo",
+    "version": "v4.2",
+    "preset": "small",
+    "size": 10,
+    "replicas": 3,
+    "external": true
+  }'
+```
+
+| Champ | Valeur | Remarque |
+|-------|--------|----------|
+| `name` | `rabbitdemo` | 16 caractères maximum, en minuscules ; identifie le cluster dans les chemins de l'API |
+| `version` | `v4.2` | `v3.13`, `v4.0`, `v4.1` ou `v4.2` |
+| `preset` | `small` | `nano`, `micro`, `small`, `medium`, `large`, `xlarge` ou `2xlarge` ; non modifiable après la création |
+| `size` | `10` | Taille du disque de chaque nœud, en Go (1 à 4096) |
+| `replicas` | `3` | La console propose 1, 3 ou 5 ; le mode (un nœud ou plusieurs) ne peut plus changer après la création |
+| `external` | `true` | **Accès externe** depuis Internet |
+
+**2. Créer le vhost** `demo` :
+
+```bash
+curl -sS -X POST "$HIKUBE_API/rabbitmq/v1alpha1/projects/$PROJECT_ID/clusters/rabbitdemo/vhosts" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"vhostName": "demo"}'
+```
+
+**3. Créer l'utilisateur** `appuser`, administrateur du vhost `demo`. Les droits sont une table « nom du vhost → rôle », avec le rôle `admin` ou `readonly` :
+
+```bash
+curl -sS -X POST "$HIKUBE_API/rabbitmq/v1alpha1/projects/$PROJECT_ID/clusters/rabbitdemo/users" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "appuser",
+    "config": {
+      "vhosts": {
+        "demo": {"role": "admin"}
+      }
+    }
+  }' | jq '{username, password}'
+```
+
+Les noms de vhost et d'utilisateur acceptés par l'API se limitent aux minuscules, chiffres et tirets.
+
+:::warning Mot de passe renvoyé une seule fois
+La réponse de création de l'utilisateur contient le champ `password`. Il n'est renvoyé qu'ici : enregistrez-le aussitôt dans votre gestionnaire de secrets. En cas de perte, voir [Gérer les vhosts et utilisateurs](./how-to/manage-vhosts-users.md).
+:::
+
+</TabItem>
+</Tabs>
+
 ---
 
 ## Étape 3 : Vérifier l'état du cluster
+
+<Tabs groupId="interface">
+<TabItem value="console" label="Console" default>
 
 1. Dans la liste **Clusters RabbitMQ**, le cluster apparaît avec le statut **En création**, puis **Prêt** lorsqu'il est opérationnel.
 2. Cliquez sur le cluster pour ouvrir sa page de détail :
@@ -96,9 +190,31 @@ Cliquez ensuite sur **Terminer** pour revenir à la liste des clusters.
    - **VHosts** et **Utilisateurs** : les éléments créés par l'assistant ;
    - **Connexion** : **Hôte (Host)**, **Statut** et **Accès externe** (**Activé** ou **Désactivé**).
 
+</TabItem>
+<TabItem value="api" label="API">
+
+```bash
+curl -sS "$HIKUBE_API/rabbitmq/v1alpha1/projects/$PROJECT_ID/clusters/rabbitdemo" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" | jq '{name, status, version, replicas, size, external, host}'
+
+curl -sS "$HIKUBE_API/rabbitmq/v1alpha1/projects/$PROJECT_ID/clusters/rabbitdemo/vhosts" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" | jq '.vhosts[] | {vhostName, roles}'
+
+curl -sS "$HIKUBE_API/rabbitmq/v1alpha1/projects/$PROJECT_ID/clusters/rabbitdemo/users" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" | jq '.users[] | {username, vhosts: .config.vhosts}'
+```
+
+**Résultat attendu :** `status` passe de `provisioning` à `ready` (`error` en cas d'échec) ; le vhost `demo` liste `appuser` dans `roles.admin`.
+
+</TabItem>
+</Tabs>
+
 ---
 
 ## Étape 4 : Récupérer les identifiants
+
+<Tabs groupId="interface">
+<TabItem value="console" label="Console" default>
 
 Pour vous connecter, il vous faut :
 
@@ -121,6 +237,27 @@ L'écran **Résumé** de l'assistant affiche aussi, lorsque l'hôte est déjà c
 ```text
 amqp://app-user:<password>@<hôte>:5672
 ```
+
+</TabItem>
+<TabItem value="api" label="API">
+
+| Information | Où la trouver |
+|-------------|---------------|
+| **Nom d'utilisateur** | `username` de `GET .../clusters/rabbitdemo/users` |
+| **Mot de passe** | `password` de la réponse de création de l'utilisateur (étape 2) ; aucun `GET` ne le renvoie |
+| **VHost** | `vhostName` de `GET .../clusters/rabbitdemo/vhosts` |
+| **Hôte** | `host` de `GET .../clusters/rabbitdemo`, renseigné lorsque `external` vaut `true` |
+| **Port** | 5672 (AMQP) |
+
+```bash
+curl -sS "$HIKUBE_API/rabbitmq/v1alpha1/projects/$PROJECT_ID/clusters/rabbitdemo" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" | jq -r '.host'
+```
+
+Tant que l'adresse n'est pas attribuée, `host` est vide.
+
+</TabItem>
+</Tabs>
 
 ---
 
@@ -183,9 +320,25 @@ Message reçu : Hello Hikube!
 
 ## Étape 7 : Nettoyage
 
+<Tabs groupId="interface">
+<TabItem value="console" label="Console" default>
+
 1. Ouvrez la page de détail du cluster et cliquez sur **Supprimer** (ou, depuis la liste, ouvrez le menu d'actions du cluster et choisissez **Supprimer le cluster**).
 2. Dans la fenêtre de confirmation, saisissez le nom exact du cluster dans **Nom de la ressource à confirmer**.
 3. Cliquez sur **Supprimer définitivement**.
+
+</TabItem>
+<TabItem value="api" label="API">
+
+```bash
+curl -sS -X DELETE "$HIKUBE_API/rabbitmq/v1alpha1/projects/$PROJECT_ID/clusters/rabbitdemo" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY"
+```
+
+Une réponse `200` avec un objet vide `{}` confirme la suppression. L'API ne demande pas de confirmation.
+
+</TabItem>
+</Tabs>
 
 :::warning
 Cette action est irréversible : le cluster, ses vhosts, ses utilisateurs et tous les messages stockés sont définitivement supprimés.
