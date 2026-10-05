@@ -115,7 +115,7 @@ Vérifiez que les pods utilisent correctement l'image privée :
 kubectl get pods -l app=my-app
 ```
 
-**Resultat attendu :**
+**Résultat attendu :**
 
 ```console
 NAME                      READY   STATUS    RESTARTS   AGE

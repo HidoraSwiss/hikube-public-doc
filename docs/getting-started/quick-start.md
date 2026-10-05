@@ -87,7 +87,7 @@ kubectl get nodes
 
 ```console
 NAME                       STATUS   ROLES    AGE   VERSION
-<nom-du-cluster>-md0-xxxxx   Ready    <none>   3m    v1.xx.x
+<nom-du-cluster>-<groupe>-xxxxx   Ready    <none>   3m    v1.xx.x
 ```
 
 Les nœuds workers peuvent mettre quelques minutes de plus à apparaître après le passage du cluster à **Prêt**.

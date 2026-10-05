@@ -21,10 +21,10 @@ title: Concepts
 Le schéma, ci-après, illustre la structure et les interactions principales du **cluster Kubernetes Hikube**, incluant la haute disponibilité du plan de contrôle, la gestion des nœuds, la persistance des données, et la réplication inter-régions.
 
 <div class="only-light">
-  <img src="/img/hikube-kubernetes-architecture.svg" alt="Logo clair"/>
+  <img src="/img/hikube-kubernetes-architecture.svg" alt="Schéma d’architecture d’un cluster Kubernetes Hikube"/>
 </div>
 <div class="only-dark">
-  <img src="/img/hikube-kubernetes-architecture-dark.svg" alt="Logo sombre"/>
+  <img src="/img/hikube-kubernetes-architecture-dark.svg" alt="Schéma d’architecture d’un cluster Kubernetes Hikube"/>
 </div>
 
 ---

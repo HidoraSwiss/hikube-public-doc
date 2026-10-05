@@ -31,13 +31,13 @@ La console MongoDB n'a pas d'onglet dédié aux bases de données : les droits s
 
 Si aucun rôle n'est défini, la console affiche « Veuillez attribuer au moins un rôle (global ou spécifique) à l'utilisateur. » et le bouton reste inactif.
 
-L'écran « Utilisateur créé avec succès ! » affiche le mot de passe généré.
+L'écran « Mot de passe généré » affiche le mot de passe généré.
 
 :::warning
 Copiez ce mot de passe immédiatement et conservez-le en lieu sûr : il ne sera plus affiché après avoir quitté cet écran.
 :::
 
-Cliquez ensuite sur **Terminer et retourner au cluster**.
+Cliquez ensuite sur **Terminer**.
 
 ### 2. Modifier les droits d'un utilisateur
 

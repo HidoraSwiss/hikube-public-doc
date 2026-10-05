@@ -19,7 +19,7 @@ Adressez votre demande au [support](mailto:support@hidora.io) avec les paramètr
 Ces deux paramètres servent des objectifs distincts :
 
 - **Partitions** : déterminent le **parallélisme et le débit** d'un topic. Plus il y a de partitions, plus le nombre de consumers pouvant lire en parallèle est élevé. Chaque partition est une séquence ordonnée de messages.
-- **Réplicas** (facteur de réplication) : déterminent le nombre de **copies** de chaque partition réparties sur différents brokers, garantissant la **haute disponibilité**. Si un broker tombe, une réplique prend le relais.
+- **Réplicas** (facteur de réplication) : déterminent le nombre de **copies** de chaque partition réparties sur différents brokers, garantissant la **haute disponibilité**. Si un broker tombe, un réplica prend le relais.
 
 :::warning
 Le nombre de réplicas d'un topic **ne peut pas dépasser** le nombre de brokers disponibles. Par exemple, avec 3 brokers, un topic peut avoir au maximum 3 réplicas.

@@ -51,7 +51,7 @@ Saisissez le **Nom du cluster**, par exemple `demo-cache` (3 à 16 caractères :
 | **Version** | `8 (Latest)` | Versions proposées : 8 et 7 |
 | **Préconfiguration** | `Small (1 CPU, 512Mi)` | Capacité allouée à chaque nœud |
 | **Taille du volume (Go)** | `10` | Stockage alloué à chaque nœud |
-| **Nombre de réplicas** | `3` | 1 à 8 ; 3 minimum pour le failover automatique |
+| **Nombre de réplicas** | `3` | 1 à 8 ; 2 minimum pour le failover automatique |
 | **Réseau public** | Activé | Nécessaire pour vous connecter depuis votre poste |
 | **Activer l'authentification** | Activé | Active par défaut ; à conserver |
 

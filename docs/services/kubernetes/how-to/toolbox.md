@@ -101,7 +101,7 @@ Ces opérations se font dans la console :
 |-----------|----|
 | Mettre à jour la version | **Modifier** > **Version de Kubernetes** ([guide](./upgrade-cluster.md)) |
 | Ajouter, modifier ou supprimer un groupe de nœuds | **Modifier** > **Groupes de nœuds** ([guide](./manage-node-groups.md)) |
-| Ajuster le scaling | **Modifier** > **Nombre minimum / maximum de nœuds** ([guide](./configure-autoscaling.md)) |
+| Ajuster le scaling | **Modifier** > **Nombre minimum de nœuds** / **Nombre maximum de nœuds** ([guide](./configure-autoscaling.md)) |
 | Activer ou configurer un addon | **Modifier** > **Extensions & Addons** |
 | Supprimer le cluster | **Supprimer**, puis confirmation du nom ([démarrage rapide](../quick-start.md), étape 7) |
 

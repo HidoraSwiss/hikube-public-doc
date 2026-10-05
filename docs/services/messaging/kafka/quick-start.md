@@ -1,5 +1,5 @@
 ---
-sidebar_position: 2
+sidebar_position: 3
 title: Démarrage rapide
 ---
 
@@ -108,7 +108,7 @@ Hello Hikube!
 ```
 
 :::note
-kcat s'installe avec `apt install kafkacat` (Debian/Ubuntu) ou `brew install kcat` (macOS).
+kcat s'installe avec `apt install kcat` (Debian/Ubuntu) ou `brew install kcat` (macOS).
 :::
 
 ---

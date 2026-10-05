@@ -43,7 +43,7 @@ Pour en provisionner une instance ou modifier sa configuration, [contactez le su
    ORDER BY sum(bytes_on_disk) DESC;
    ```
 2. Supprimez les partitions obsolètes de vos données applicatives (`ALTER TABLE ... DROP PARTITION`) ou posez un `TTL` sur vos tables.
-3. Pour augmenter le stockage, la taille du volume des journaux ou réduire leur rétention, contactez le support.
+3. Pour augmenter le stockage ou la taille du volume des journaux, ou pour réduire leur rétention, contactez le support.
 
 ### Erreurs de réplication ou Keeper indisponible
 

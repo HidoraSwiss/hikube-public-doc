@@ -30,13 +30,13 @@ La console MariaDB n'a pas d'onglet dédié aux bases de données : une base se 
    - **Droits** : **Administrateur (Admin)** ou **Lecture seule (Read-only)**.
 5. Cliquez sur **Créer l'utilisateur**.
 
-L'écran « Utilisateur créé avec succès ! » affiche le mot de passe généré.
+L'écran « Mot de passe généré » affiche le mot de passe généré.
 
 :::warning
 Copiez ce mot de passe immédiatement et conservez-le en lieu sûr : il ne sera plus affiché après avoir quitté cet écran.
 :::
 
-Cliquez ensuite sur **Terminer et retourner au cluster**.
+Cliquez ensuite sur **Terminer**.
 
 ### 2. Créer une base de données
 

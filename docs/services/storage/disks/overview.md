@@ -51,7 +51,7 @@ flowchart LR
 ```
 
 - Un disque est attaché à **une seule VM** à la fois.
-- La liste **Disques de Stockage** affiche pour chaque disque la VM à laquelle il est **Attaché à**.
+- La liste **Disques de Stockage** indique dans la colonne **Attaché à** la VM à laquelle chaque disque est rattaché.
 - Supprimer une VM **détache** ses disques sans les supprimer : ils restent dans la liste et peuvent être réutilisés.
 
 ---

@@ -76,7 +76,9 @@ my-cluster-general-yyyyy      310m         7%     1350Mi          17%
 
 ```bash
 # Logs d'un agent Fluent Bit, en cas de doute sur l'envoi des logs
-kubectl logs -A -l app.kubernetes.io/name=fluent-bit --tail=20 --prefix
+# Namespace des agents Fluent Bit
+FLUENTBIT_NS=$(kubectl get ds -A -l app.kubernetes.io/name=fluent-bit -o jsonpath='{.items[0].metadata.namespace}')
+kubectl logs -n "$FLUENTBIT_NS" -l app.kubernetes.io/name=fluent-bit --tail=20 --prefix
 ```
 
 :::warning
