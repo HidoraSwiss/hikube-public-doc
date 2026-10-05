@@ -3,103 +3,83 @@ sidebar_position: 6
 title: FAQ
 ---
 
-# FAQ — S3 Buckets
+# FAQ — S3-Buckets
 
-### Was ist der S3-Endpunkt von Hikube?
+### Wie lautet der S3-Endpunkt von Hikube?
 
-Der öffentliche S3-Endpunkt von Hikube ist:
+Der Endpunkt wird auf der Seite jedes Buckets in der Karte **Access & Configuration**, Feld **Endpoint**, angezeigt (zum Beispiel `prod.s3.hikube.cloud`). Er wird außerdem zusammen mit den Schlüsseln bei der Erstellung eines Benutzers angegeben.
 
-```
-https://prod.s3.hikube.cloud
-```
+Stellen Sie ihm in Ihren S3-Clients `https://` voran.
 
-Dieser Endpunkt ist mit der Standard-AWS-S3-API kompatibel. Sie können ihn mit jedem S3-kompatiblen Tool oder SDK verwenden.
+---
+
+### Warum unterscheidet sich der S3-Name des Buckets von dem Namen, den ich gewählt habe?
+
+Der in der Konsole gewählte Name identifiziert den Bucket in Ihrem Projekt. Der **tatsächliche S3-Name** wird von der Plattform generiert, um seine Eindeutigkeit auf dem Endpunkt zu gewährleisten. Verwenden Sie in Ihren Befehlen und SDKs immer den **Bucket name**, der unter **Access & Configuration** angezeigt wird.
 
 ---
 
 ### Welche Tools sind kompatibel?
 
-Alle mit der S3-API kompatiblen Tools funktionieren mit den Hikube-Buckets:
+Alle mit der S3-API kompatiblen Tools:
 
 | Tool | Konfiguration |
-|------|---------------|
-| **aws-cli** | `aws --endpoint-url https://prod.s3.hikube.cloud s3 ls` |
-| **mc** (MinIO Client) | `mc alias set hikube https://prod.s3.hikube.cloud ACCESS_KEY SECRET_KEY` |
-| **rclone** | Ein Remote vom Typ `s3` mit dem Hikube-Endpunkt konfigurieren |
-| **s3cmd** | `host_base` und `host_bucket` auf den Hikube-Endpunkt konfigurieren |
-| **Velero** | Kubernetes-Backup nach S3 Hikube |
-| **Restic** | Datei-Backup nach S3 Hikube |
+|-------|--------------|
+| **aws-cli** | `aws --endpoint-url https://<endpoint> s3 ls s3://<bucket>/` |
+| **mc** (MinIO Client) | `mc alias set hikube https://<endpoint> <access-key> <secret-key>` |
+| **rclone** | Remote vom Typ `s3` mit dem Hikube-Endpunkt |
+| **s3cmd** | `host_base` und `host_bucket` auf den Hikube-Endpunkt |
+| **Velero** | Kubernetes-Backup nach Hikube S3 |
+| **Restic** | Datei-Backup nach Hikube S3 |
 
-Jede AWS-S3-kompatible Bibliothek (boto3, aws-sdk-js usw.) funktioniert ebenfalls.
+Jede mit AWS S3 kompatible Bibliothek (boto3, aws-sdk-js usw.) funktioniert ebenfalls.
 
 ---
 
-### Wie funktionieren die Zugangsdaten?
+### Wie funktionieren die Anmeldedaten?
 
-Wenn ein Bucket erstellt wird, generiert Hikube automatisch ein Kubernetes Secret namens `bucket-<name>`. Dieses Secret enthält einen `BucketInfo`-Schlüssel im JSON-Format mit allen Zugangsinformationen:
+Die Anmeldedaten sind an **S3-Benutzer** des Buckets gebunden. Jeder Benutzer erhält bei seiner Erstellung eine **Access Key ID** und einen **Secret Access Key** sowie den S3-Namen des Buckets und den Endpunkt. Ein Bucket kann mehrere Benutzer haben, jeweils mit **Read-only** oder **Read / Write**.
 
-```bash
-kubectl get tenantsecret bucket-<name> -o jsonpath='{.data.BucketInfo}' | base64 -d | jq
-```
+Siehe [Benutzer und Zugriffsschlüssel verwalten](./how-to/configure-access.md).
 
-Das JSON enthält:
+---
 
-| Feld | Beschreibung |
-|------|--------------|
-| `spec.bucketName` | Tatsächlicher Bucket-Name im S3-Backend |
-| `spec.secretS3.endpoint` | S3-Endpunkt (`https://prod.s3.hikube.cloud`) |
-| `spec.secretS3.accessKeyID` | S3-Zugriffsschlüssel |
-| `spec.secretS3.accessSecretKey` | S3-Geheimschlüssel |
+### Ich habe den geheimen Schlüssel eines Benutzers verloren. Was tun?
 
-:::warning
-Verwenden Sie `spec.bucketName` (nicht `metadata.name`) als Bucket-Namen beim S3-Zugriff. Der tatsächliche Name wird automatisch generiert und unterscheidet sich vom Kubernetes-Namen.
-:::
+Der geheime Schlüssel wird nur ein einziges Mal angezeigt und kann nicht wiederhergestellt werden. Erstellen Sie einen neuen Benutzer (Schaltfläche **Add User**), aktualisieren Sie Ihre Anwendungen und löschen Sie dann den alten Benutzer.
 
 ---
 
 ### Kann man mehrere Buckets haben?
 
-Ja, Sie können so viele Buckets erstellen, wie Sie benötigen. Jede `Bucket`-Ressource stellt einen unabhängigen Bucket mit eigenen Zugangsdaten bereit:
-
-```yaml title="bucket-logs.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Bucket
-metadata:
-  name: app-logs
-```
-
-```yaml title="bucket-backups.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Bucket
-metadata:
-  name: db-backups
-```
-
-Jeder Bucket generiert sein eigenes Secret (`bucket-app-logs`, `bucket-db-backups`) mit separaten Zugangsdaten.
+Ja. Erstellen Sie mit **Create a bucket** so viele Buckets wie nötig. Jeder Bucket hat seinen eigenen S3-Namen und seine eigenen Benutzer; die Schlüssel eines Buckets gewähren keinen Zugriff auf die anderen.
 
 ---
 
-### Wie hoch ist die Datenhaltbarkeit?
+### Kann man mit einem S3-Client alle seine Buckets auflisten?
 
-Die in den Hikube-Buckets gespeicherten Daten profitieren von einer **dreifachen Replikation** auf drei Rechenzentren:
-
-- Genf
-- Gland
-- Luzern
-
-Diese Architektur gewährleistet Hochverfügbarkeit und Datenhaltbarkeit, selbst bei vollständigem Ausfall eines Rechenzentrums.
+Nein. Die Schlüssel eines Benutzers sind auf seinen Bucket beschränkt: `aws s3 ls` ohne Bucket-Namen gibt `AccessDenied` zurück. Die Liste Ihrer Buckets ist in der Konsole auf der Seite **Object Storage Buckets** sichtbar.
 
 ---
 
-### Besteht die Konfiguration wirklich nur aus metadata.name?
+### Wozu dient die Sperre (WORM)?
 
-Ja, das `Bucket`-Objekt ist absichtlich minimal gehalten. Kein `spec`-Feld ist erforderlich:
+Die Option **Enable Object Lock (WORM)** verhindert das Löschen oder Ändern der Objekte während 365 Tagen. Die Plattform wendet diese Aufbewahrung standardmäßig im Modus `COMPLIANCE` an: Niemand kann ein Objekt löschen oder seine Aufbewahrung vor Ablauf verkürzen. Diese Standarddauer ist in der Konsole nicht einstellbar; wenden Sie sich bei einem anderen Bedarf an den Support. Die Option dient der regulatorischen Archivierung oder dem Schutz von Backups vor versehentlichem oder böswilligem Löschen. Sie wird bei der Erstellung des Buckets gewählt.
 
-```yaml title="bucket.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Bucket
-metadata:
-  name: mein-bucket
-```
+---
 
-Das ist alles, was Sie benötigen, um einen funktionsfähigen S3-Bucket bereitzustellen. Der Endpunkt, die Zugangsdaten und der tatsächliche Bucket-Name werden automatisch generiert und im zugehörigen Secret bereitgestellt.
+### Kann die Verschlüsselung nachträglich aktiviert werden?
+
+Nein. **Enable encryption at rest (LUKS)** wird bei der Erstellung gewählt und kann danach nicht geändert werden. Um bestehende Daten zu verschlüsseln, erstellen Sie einen neuen verschlüsselten Bucket und kopieren Sie die Objekte dorthin (zum Beispiel mit `rclone sync` oder `mc mirror`).
+
+---
+
+### Wie dauerhaft sind die Daten?
+
+Die Daten werden über drei Rechenzentren repliziert (Genf, Gland, Luzern). Diese Architektur erhält die Verfügbarkeit und Dauerhaftigkeit der Daten, selbst bei einem vollständigen Ausfall eines Rechenzentrums.
+
+---
+
+### Wie wird ein Bucket abgerechnet?
+
+Der Erstellungsassistent zeigt **Estimated Cost** pro GB und Monat (sowie pro Stunde) an. Der Tarif eines verschlüsselten Buckets unterscheidet sich von dem eines Standard-Buckets.

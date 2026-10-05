@@ -7,43 +7,28 @@ title: Concetti
 
 ## Architettura
 
-Hikube fornisce macchine virtuali (VM) grazie a **KubeVirt**, una tecnologia che permette di eseguire VM direttamente all'interno dell'infrastruttura Kubernetes. Ogni VM è gestita come una risorsa Kubernetes nativa, offrendo un'integrazione trasparente con l'ecosistema cloud-native.
+Un'**istanza VM** Hikube riunisce un formato di calcolo (vCPU e RAM), uno o più dischi, una configurazione di rete e, in opzione, delle GPU. La gestisce dalla console.
 
 ```mermaid
 graph TB
-    subgraph "Hikube Platform"
-        subgraph "Tenant namespace"
-            VMI[VMInstance CRD]
-            VMD[VMDisk CRD]
-        end
-
-        subgraph "KubeVirt"
-            VP[virt-handler]
-            VL[virt-launcher Pod]
-            QEMU[QEMU/KVM]
-        end
-
-        subgraph "Archiviazione"
-            LS[Local Storage]
-            RS[Replicated Storage]
-        end
-
-        subgraph "Rete"
-            PL[PortList Exposure]
-            WI[WholeIP Exposure]
-            FW[Distributed Firewall]
-        end
+    subgraph "Progetto Hikube"
+        VM[Istanza VM]
+        SYS[Disco di sistema]
+        DATA[Dischi dati]
+        VPC[VPC / sottoreti]
+        GPU[GPU NVIDIA]
     end
 
-    VMI --> VP
-    VMD --> LS
-    VMD --> RS
-    VP --> VL
-    VL --> QEMU
-    VMI --> PL
-    VMI --> WI
-    PL --> FW
-    WI --> FW
+    subgraph "Accesso"
+        PUB[IP pubblico IPv4]
+        FW[Firewall: porte autorizzate]
+    end
+
+    VM --> SYS
+    VM --> DATA
+    VM --> VPC
+    VM -.opzionale.-> GPU
+    PUB --> FW --> VM
 ```
 
 ---
@@ -52,106 +37,112 @@ graph TB
 
 | Termine | Descrizione |
 |-------|-------------|
-| **VMInstance** | Risorsa Kubernetes (`apps.cozystack.io/v1alpha1`) che rappresenta una macchina virtuale. Gestisce il ciclo di vita, i dischi, la rete e il cloud-init. |
-| **VMDisk** | Risorsa Kubernetes che rappresenta un disco virtuale. Può essere creato a partire da un'immagine Golden, da una sorgente HTTP o vuoto. |
-| **Golden Image** | Immagine OS preconfigurata è ottimizzata per KubeVirt (AlmaLinux, Rocky, Debian, Ubuntu, ecc.). |
-| **Instance Type** | Profilo di risorse CPU/RAM definito da una serie (S, U, M) e una dimensione. |
-| **cloud-init** | Meccanismo di inizializzazione automatica delle VM al primo avvio (utenti, pacchetti, script). |
-| **PortList** | Metodo di esposizione di rete che espone porte specifiche con firewalling automatico sull'IP dedicato (raccomandato). |
-| **WholeIP** | Metodo di esposizione di rete che assegna un IP pubblico dedicato alla VM. |
+| **Progetto** | Spazio isolato che raggruppa le sue risorse e dispone di quote (CPU, memoria, storage). In precedenza chiamato *tenant*. |
+| **Istanza VM** | Macchina virtuale. Il suo nome (da 3 a 16 caratteri, lettere minuscole, cifre e trattini, che inizia con una lettera) non è più modificabile dopo la creazione. |
+| **Tipo di istanza** | Formato CPU/RAM, definito da una serie (S, U, M) e da una dimensione (ad esempio `u1.xlarge`). |
+| **Immagine di sistema** | Sistema operativo installato sul disco di sistema (Ubuntu, Debian, Rocky Linux, Windows Server…). |
+| **Disco di sistema** | Primo disco della VM, quello da cui si avvia. Per impostazione predefinita porta il nome della VM. |
+| **Disco dati** | Disco aggiuntivo, vuoto alla creazione. Compare nel sistema operativo come dispositivo a blocchi aggiuntivo (`/dev/vdb`, `/dev/vdc`…). |
+| **Replica** | Modalità di copia dei dati di un disco su più nodi: **Asynchronous** o **Synchronous**. |
+| **Firewall** | Filtraggio del traffico in ingresso sull'IP pubblico: solo le porte autorizzate sono aperte. |
+| **VPC** | Rete privata del progetto, suddivisa in sottoreti, a cui una VM può essere collegata. Vedere [Rete](../networking/concepts.md). |
+| **cloud-init (User Data)** | Script di inizializzazione eseguito all'avvio della VM (pacchetti, utenti, comandi). Non disponibile per Windows. |
 
 ---
 
-## Tipi di istanze
+## Tipi di istanza
 
-Hikube propone tre serie di istanze con rapporti CPU/RAM differenti:
+| Serie | Etichetta nella console | Rapporto vCPU:RAM | Dimensioni |
+|-------|-------------------------|----------------|---------|
+| `s1` | **Standard (S)** | 1:2 | da `small` (1 vCPU) a `8xlarge` (64 vCPU) |
+| `u1` | **Universal (U)** | 1:4 | da `medium` (1 vCPU) a `8xlarge` (32 vCPU) |
+| `m1` | **Memory (M)** | 1:8 | da `large` (2 vCPU) a `8xlarge` (32 vCPU) |
 
-| Serie | Rapporto CPU:RAM | Caso d'uso |
-|-------|---------------|-------------|
-| **S (Standard)** | 1:2 | Workload generali, CPU condiviso, burstable |
-| **U (Universal)** | 1:4 | Workload bilanciati, più memoria |
-| **M (Memory)** | 1:8 | Applicazioni memory-intensive (cache, database) |
-
-Ogni serie va da `small` (1-2 vCPU) a `8xlarge` (32-64 vCPU).
+Il dettaglio delle dimensioni si trova nella [panoramica](./overview.md#tipi-di-istanza).
 
 ---
 
-## Archiviazione
+## Storage
 
-Due classi di storage sono disponibili per i dischi delle VM:
+Ogni disco creato con la VM si configura nel passaggio **Storage** della procedura guidata:
 
-| Classe | Caratteristica | Caso d'uso |
-|--------|-----------------|-------------|
-| **local** | Storage sul nodo fisico, prestazioni massime | Dati effimeri, cache, test |
-| **replicated** | Replica su più nodi/regioni | Dati di produzione, alta disponibilità |
+| Parametro | Valori | Note |
+|-----------|---------|-----------|
+| **Volume Name** | Generato a partire dal nome della VM (`ma-vm`, `ma-vm-2`…) | Modificabile |
+| **Size (GB)** | Minimo 20 GB, massimo 4096 GB | Minimo 50 GB per Windows, 40 GB per Oracle Linux |
+| **Replication Type** | **Asynchronous Replication** (Recommended) o **Synchronous Replication** | Vedere sotto |
+| **Disk Encryption** | Attivata / disattivata | Cifratura LUKS dei dati a riposo |
 
-:::tip
-Utilizzate `storageClass: replicated` per i dischi di sistema in produzione. Lo storage `local` offre migliori prestazioni I/O ma non sopravvive a un guasto del nodo.
-:::
+| Modalità | RTO | RPO | Uso |
+|------|-----|-----|-------|
+| **Asynchronous Replication** | < 5 min | < 5 min | Scelta predefinita, adatta alla maggior parte degli usi |
+| **Synchronous Replication** | < 5 min | < 1 min | Dati per i quali la perdita massima tollerata deve essere minima |
 
----
+Un disco può anche essere **Existing**: viene allora scelto tra i dischi del progetto che non sono collegati ad alcuna VM. Il disco di sistema può essere solo un disco che contiene un'immagine; i dischi dati possono essere solo dischi senza immagine.
 
-## Rete ed esposizione
-
-### PortList (raccomandato)
-
-La modalità **PortList** espone unicamente le porte specificate tramite un IP dedicato alla VM con firewalling automatico sul Service. È il metodo raccomandato perché:
-- Limita la superficie d'attacco
-- Assegna un IP dedicato alla VM
-- Supporta le porte TCP standard (22, 80, 443, ecc.)
-
-### WholeIP
-
-La modalità **WholeIP** assegna un IP pubblico dedicato con tutte le porte aperte. Utile quando:
-- La VM deve essere accessibile su porte dinamiche
-- Un protocollo necessità un IP dedicato (VPN, SIP, ecc.)
-- La VM funge da gateway o VPN
+I dischi sono risorse a sé stanti, gestite nel menu **Disks**: vedere [Dischi](../storage/disks/concepts.md).
 
 ---
 
-## Ciclo di vita di una VM
+## Rete
+
+| Opzione della procedura guidata | Predefinito | Effetto |
+|-----------------------|--------|-------|
+| **Public IPv4 Address** | Attivata | La VM riceve un IP pubblico raggiungibile da Internet. |
+| **Enable Firewall** | Attivato | Solo le **Allowed Ports** sono aperte in ingresso (SSH 22 selezionata per impostazione predefinita; HTTP 80, HTTPS 443 e porte personalizzate in opzione). |
+| Firewall disattivato | — | Tutte le porte dell'IP pubblico sono aperte. Protegga allora la VM con un firewall nel sistema operativo. |
+| **VPC Networks (Secondary)** | Nessuno | Ogni sottorete selezionata aggiunge un'interfaccia di rete privata alla VM. |
+
+---
+
+## Ciclo di vita
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Provisioning: kubectl apply
-    Provisioning --> Running: Dischi pronti + VM avviata
-    Running --> Stopped: runStrategy = Halted
-    Stopped --> Running: runStrategy = Always
-    Running --> LiveMigration: Manutenzione nodo
-    LiveMigration --> Running: Migrazione completata
-    Running --> [*]: kubectl delete
+    [*] --> EnCreation: Create instance
+    EnCreation --> Actif
+    Actif --> ArretEnCours: Stop
+    ArretEnCours --> Arrete
+    Arrete --> DemarrageEnCours: Start
+    DemarrageEnCours --> Actif
+    Actif --> RedemarrageEnCours: Restart / modifica del formato, dei dischi o delle GPU
+    RedemarrageEnCours --> Actif
+    Actif --> SuppressionEnCours: Delete
+    Arrete --> SuppressionEnCours: Delete
+    SuppressionEnCours --> [*]
 ```
 
-Le VM Hikube supportano:
-- **Avvio/arresto** tramite il campo `spec.runStrategy`
-- **Live migration** trasparente durante le manutenzioni
-- **Auto-restart** in caso di guasto del nodo host
-- **Snapshot** per il backup puntuale
+Stati mostrati nella console: **Creating**, **Running**, **Starting**, **Stopping**, **Stopped**, **Restarting**, **Deleting**, **Error**, **Failed**, **Unknown**.
+
+L'opzione **Automatic Restart** (passaggio **Configuration** della procedura guidata, oppure **Advanced Configuration** in modifica) fa riavviare automaticamente la VM in caso di crash imprevisto. È disattivata per impostazione predefinita.
 
 ---
 
-## Isolamento e sicurezza
+## Cosa è modificabile dopo la creazione
 
-Ogni VM beneficia di un isolamento multi-livello:
-
-- **Isolamento kernel**: KubeVirt esegue ogni VM nel proprio processo QEMU/KVM
-- **Isolamento di rete**: firewall distribuito tra i tenant
-- **Isolamento storage**: ogni disco è un volume dedicato
+| Elemento | Modificabile | Effetto |
+|---------|-----------|-------|
+| Nome, immagine di sistema | No | — |
+| Tipo di istanza | Sì | Riavvio della VM |
+| Dischi (aggiunta, scollegamento) | Sì | Riavvio della VM |
+| GPU | Sì | Riavvio della VM |
+| IP pubblico, firewall, porte, VPC | Sì | Applicato senza riavvio |
+| Chiavi SSH | Sì | Proposta di ricaricare lo user-data, applicato al riavvio successivo |
+| Script cloud-init, riavvio automatico | Sì | Script rieseguito dopo **Reload UserData** e riavvio |
 
 ---
 
-## Limiti e quote
+## Quote
 
-| Parametro | Limite |
-|-----------|--------|
-| vCPU per VM | Fino a 64 (serie S `s1.8xlarge`) |
-| RAM per VM | Fino a 256 GB (serie M `m1.8xlarge`) |
-| Dischi per VM | Multipli (sistema + dati) |
-| Dimensione disco | Variabile, secondo la quota del tenant |
+Ogni progetto dispone di quote **CPU**, **Memory** e **Storage**. La procedura guidata mostra il consumo attuale, l'aggiunta prevista e il totale; il pulsante **Next** resta disattivato finché la nuova VM supera una quota. Lo stesso controllo si applica al pulsante **Save** durante una modifica.
+
+La procedura guidata mostra anche una stima del costo della VM: tipo di istanza, nuovi dischi, GPU, licenza Windows se applicabile e IP pubblico.
 
 ---
 
 ## Per approfondire
 
-- [Panoramica](./overview.md): presentazione dettagliata del servizio
-- [Riferimento API](./api-reference.md): lista completa dei parametri VMInstance e VMDisk
+- [Panoramica](./overview.md)
+- [Avvio rapido](./quick-start.md)
+- [Dischi](../storage/disks/overview.md)
+- [Rete: VPC e sottoreti](../networking/overview.md)

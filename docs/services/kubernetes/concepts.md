@@ -5,15 +5,26 @@ title: Concepts
 
 # Concepts — Kubernetes
 
+## Terminologie
+
+| Terme | Définition |
+|-------|------------|
+| **Projet** | Espace isolé de votre organisation, doté de quotas (CPU, mémoire, stockage), dans lequel le cluster et ses nœuds sont créés. Anciennement appelé « tenant ». |
+| **Cluster** | Cluster Kubernetes managé : un control plane opéré par Hikube et un ou plusieurs groupes de nœuds. |
+| **Control plane** | Composants qui pilotent le cluster (API Server, Scheduler, Controller Manager, etcd), hébergés par Hikube. |
+| **Groupe de nœuds** | Ensemble de nœuds workers homogènes (même type d'instance, même stockage), avec ses propres bornes d'auto-scaling. La page de détail du cluster les affiche sous **Pools de Nœuds**. |
+| **Addon** | Composant optionnel installé et maintenu par la plateforme dans le cluster (Cert-Manager, Ingress NGINX, etc.). |
+| **Kubeconfig** | Fichier d'accès au cluster, téléchargé depuis la page de détail du cluster dans la console. |
+
 ## Architecture
 
 Le schéma, ci-après, illustre la structure et les interactions principales du **cluster Kubernetes Hikube**, incluant la haute disponibilité du plan de contrôle, la gestion des nœuds, la persistance des données, et la réplication inter-régions.
 
 <div class="only-light">
-  <img src="/img/hikube-kubernetes-architecture.svg" alt="Logo clair"/>
+  <img src="/img/hikube-kubernetes-architecture.svg" alt="Schéma d’architecture d’un cluster Kubernetes Hikube"/>
 </div>
 <div class="only-dark">
-  <img src="/img/hikube-kubernetes-architecture-dark.svg" alt="Logo sombre"/>
+  <img src="/img/hikube-kubernetes-architecture-dark.svg" alt="Schéma d’architecture d’un cluster Kubernetes Hikube"/>
 </div>
 
 ---
@@ -102,259 +113,180 @@ Cette architecture assure :
 
 ---
 
+
 ## Control Plane
 
-Le champ `controlPlane` définit la configuration du plan de contrôle du cluster Kubernetes géré.
-Il spécifie les ressources allouées à chaque composant clé (API Server, Scheduler, Controller Manager, Konnectivity) et le nombre de réplicas pour la haute disponibilité.
+Le control plane se dimensionne à l'étape **Général** de l'assistant de création, avec deux champs.
 
-```yaml title="control-plane.yaml"
-controlPlane:
-  apiServer:
-    resources:
-      cpu: 2
-      memory: 4Gi
-    resourcesPreset: small
-  controllerManager:
-    resources:
-      cpu: 2
-      memory: 2Gi
-    resourcesPreset: small
-  konnectivity:
-    server:
-      resources:
-        cpu: 1
-        memory: 1Gi
-      resourcesPreset: nano
-  scheduler:
-    resources:
-      cpu: 1
-      memory: 512Mi
-    resourcesPreset: micro
-  replicas: 3
-```
+### Taille de l'instance Control Plane
 
----
+Preset de ressources appliqué à l'ensemble des composants du control plane (API Server, Controller Manager, Scheduler). La liste est fournie par la plateforme et chaque option affiche son CPU et sa mémoire. Le preset **Small** est sélectionné par défaut.
 
-### `apiServer` (Object)
+| Preset | Usage conseillé (aide de la console) |
+|--------|--------------------------------------|
+| **Small** | Faibles charges, développement ou tests. Optimisation des coûts. |
+| **Medium** | Usage standard avec une charge modérée. Bon équilibre performance/coût. |
+| **Large** | Usages intensifs ou trafic élevé. Performance maximale. |
 
-Le `apiServer` est le composant central du plan de contrôle Kubernetes.
-Il gère toutes les requêtes vers l'API Kubernetes et assure la communication entre les composants internes du cluster.
+La plateforme propose également des presets plus petits (`nano`, `micro`) et plus grands (`xlarge`, `2xlarge`).
 
-| Champ | Type | Obligatoire | Description |
-|-------|------|-------------|--------------|
-| `resources` | Object | Oui | Définit les ressources CPU et mémoire allouées à l'API Server |
-| `resources.cpu` | string | Non | Nombre de vCPU attribués (ex: `2`) |
-| `resources.memory` | string | Non | Quantité de mémoire allouée (ex: `4Gi`) |
-| `resourcesPreset` | string | Oui | Profil de ressources prédéfini (`nano`, `micro`, `small`, `medium`, `large`, `xlarge`, `2xlarge`) |
+:::warning
+Avec **Small** (512 Mio par composant), l'API Server peut manquer de mémoire et redémarrer en boucle, en particulier pendant l'installation des addons. Choisissez au moins **Medium** : la taille du control plane n'est plus modifiable dans la console après la création.
+:::
 
-### `controllerManager` (Object)
+:::note
+Le dimensionnement composant par composant (ressources dédiées à l'API Server, au Scheduler, etc.) n'est pas proposé dans la console ; contactez le support.
+:::
 
-Le `controllerManager` exécute les **boucles de contrôle** Kubernetes (reconciliation loops).
-Il assure la création, la mise à jour et la suppression des ressources (pods, services, etc.) en fonction de l'état désiré du cluster.
+### Haute Disponibilité du Control Plane
 
-| Champ | Type | Obligatoire | Description |
-|-------|------|-------------|--------------|
-| `resources` | Object | Oui | Spécifie les ressources CPU/mémoire pour le Controller Manager |
-| `resources.cpu` | string | Non | Nombre de vCPU réservés |
-| `resources.memory` | string | Non | Quantité de mémoire allouée |
-| `resourcesPreset` | string | Oui | Taille prédéfinie (`nano`, `micro`, `small`, `medium`, etc.) |
+Nombre d'instances du control plane : **1**, **3 (HA)** ou **5 (HA)**. La valeur par défaut est 3.
+Un nombre impair d'instances garantit le quorum d'`etcd` ; utilisez au moins 3 instances en production.
 
-### `konnectivity` (Object)
+Sous le champ, la console affiche l'empreinte comptée au quota du projet, par exemple « → 3 × Small = … CPU · … Gio comptés au quota ».
 
-Le service **Konnectivity** gère la communication sécurisée entre le plan de contrôle et les nœuds (agents).
-Il remplace l'ancien `kube-proxy` pour les connexions sortantes des nœuds et optimise la connectivité réseau.
-
-| Champ | Type | Obligatoire | Description |
-|-------|------|-------------|--------------|
-| `server.resources` | Object | Oui | Spécifie les ressources CPU/mémoire du serveur Konnectivity |
-| `server.resources.cpu` | string | Non | Nombre de vCPU |
-| `server.resources.memory` | string | Non | Quantité de mémoire |
-| `server.resourcesPreset` | string | Oui | Profil prédéfini (`nano`, `micro`, `small`, `medium`, etc.) |
-
-### `scheduler` (Object)
-
-Le `scheduler` détermine sur quel nœud chaque pod doit être exécuté en fonction des contraintes de ressources, affinités, et topologies.
-
-| Champ | Type | Obligatoire | Description |
-|-------|------|-------------|--------------|
-| `resources` | Object | Oui | Définit les ressources allouées au Scheduler |
-| `resources.cpu` | string | Non | Nombre de vCPU |
-| `resources.memory` | string | Non | Quantité de mémoire |
-| `resourcesPreset` | string | Oui | Taille prédéfinie (`nano`, `micro`, `small`, `medium`, etc.) |
-
-### `replicas` (integer)
-
-Le champ `replicas` définit le **nombre d'instances du plan de contrôle**.
-Un nombre impair de réplicas (généralement `3`) est recommandé pour garantir la haute disponibilité et le quorum dans `etcd`.
-
----
-
-### Types de resourcesPreset
-
-```yaml
-resourcesPreset: "nano"     # 0.1 CPU, 128 MiB RAM
-resourcesPreset: "micro"    # 0.25 CPU, 256 MiB RAM
-resourcesPreset: "small"    # 0.5 CPU, 512 MiB RAM
-resourcesPreset: "medium"   # 0.5 CPU, 1 GiB RAM
-resourcesPreset: "large"    # 1 CPU, 2 GiB RAM
-resourcesPreset: "xlarge"   # 2 CPU, 4 GiB RAM
-resourcesPreset: "2xlarge"  # 4 CPU, 8 GiB RAM
-```
-
-:::tip Bonnes pratiques Control Plane
-- Toujours définir `replicas: 3` pour la redondance.
-- Utiliser des `resourcesPreset` cohérents entre les composants.
-- Adapter les ressources en fonction de la charge (clusters de production → `medium` ou `large`).
-- Ne pas sous-dimensionner `apiServer`, c'est le composant le plus sollicité.
+:::warning
+La taille et le nombre d'instances du control plane ne sont pas modifiables après la création du cluster dans la console. Pour les changer, contactez le support.
 :::
 
 ---
 
-## Node Groups
+## Groupes de nœuds
 
-Le champ `nodeGroup` définit la configuration d'un groupe de nœuds (workers) au sein du cluster Kubernetes.
-Il permet de spécifier le type d'instance, les ressources, le nombre de réplicas, ainsi que les rôles et les GPU associés.
+Les groupes de nœuds se configurent à l'étape **Nœuds** de l'assistant (titre **Groupes de nœuds Worker**). Un cluster contient au moins un groupe ; **Ajouter un groupe de nœuds** en crée un nouveau. Chaque groupe est une carte repliable qui résume son gabarit, ses bornes et son stockage.
 
-```yaml title="node-group.yaml"
-nodeGroups:
-  <name>:
-    ephemeralStorage: 100Gi
-    gpus:
-      - name: nvidia.com/AD102GL_L40S
-    instanceType: u1.xlarge
-    maxReplicas: 5
-    minReplicas: 2
-    resources:
-      cpu: 4
-      memory: 16Gi
-    roles:
-      - ingress-nginx
-```
+| Champ | Description | Valeur par défaut |
+|-------|-------------|-------------------|
+| **Nom du groupe** | 3 à 16 caractères : minuscules, chiffres et tirets ; commence par une lettre, se termine par une lettre ou un chiffre | `worker-pool-1`, `worker-pool-2`… |
+| **Taille du stockage éphémère** | Espace disque alloué aux pods sur chaque nœud, en Go (minimum 5 Go) | 20 Go |
+| **Nombre minimum de nœuds** | Nombre de nœuds toujours présents. 0 est accepté | 1 |
+| **Nombre maximum de nœuds** | Plafond de l'auto-scaling (entre 1 et 100, supérieur ou égal au minimum ; 50 au maximum recommandé) | 3 |
+| **Type d'instance** | Gabarit des nœuds, choisi par série puis par taille | aucun (choix obligatoire) |
+| **Exposé sur internet (IP Publique)** | Les nœuds du groupe hébergent le contrôleur Ingress NGINX et reçoivent le trafic entrant | activé pour le premier groupe |
+| **GPU** | Modèle et nombre de GPU attachés à chaque nœud du groupe | aucun |
 
----
-
-### `ephemeralStorage` (string)
-
-Définit la taille du **stockage éphémère** par nœud du groupe (ex : `100Gi`).
-Ce stockage est utilisé pour les données temporaires, les caches ou les fichiers de logs. C'est une valeur scalaire (pas un objet `{size: …}`).
-
-### `gpus` (Array)
-
-Liste les **GPU** disponibles sur les nœuds du groupe, utilisés pour des charges de travail nécessitant de la puissance de calcul (IA, ML, etc.).
-
-| Champ | Type | Obligatoire | Description |
-|-------|------|-------------|--------------|
-| `name` | string | Oui | Nom du GPU ou type de carte (`nvidia.com/AD102GL_L40S` ou `nvidia.com/GA100_A100_PCIE_80GB`) |
-
-### `instanceType` (string)
-
-Spécifie le **type d'instance** utilisé pour les nœuds.
-
-#### Série S (Standard) — Ratio 1:2
-
-Optimisée pour workloads généraux avec CPU partagé et burstable.
-
-```yaml
-instanceType: "s1.small"     # 1 vCPU, 2 GB RAM
-instanceType: "s1.medium"    # 2 vCPU, 4 GB RAM
-instanceType: "s1.large"     # 4 vCPU, 8 GB RAM
-instanceType: "s1.xlarge"    # 8 vCPU, 16 GB RAM
-instanceType: "s1.3large"    # 12 vCPU, 24 GB RAM
-instanceType: "s1.2xlarge"   # 16 vCPU, 32 GB RAM
-instanceType: "s1.3xlarge"   # 24 vCPU, 48 GB RAM
-instanceType: "s1.4xlarge"   # 32 vCPU, 64 GB RAM
-instanceType: "s1.8xlarge"   # 64 vCPU, 128 GB RAM
-```
-
-#### Série U (Universal) — Ratio 1:4
-
-Optimisée pour workloads équilibrés avec plus de mémoire.
-
-```yaml
-instanceType: "u1.medium"    # 1 vCPU, 4 GB RAM
-instanceType: "u1.large"     # 2 vCPU, 8 GB RAM
-instanceType: "u1.xlarge"    # 4 vCPU, 16 GB RAM
-instanceType: "u1.2xlarge"   # 8 vCPU, 32 GB RAM
-instanceType: "u1.4xlarge"   # 16 vCPU, 64 GB RAM
-instanceType: "u1.8xlarge"   # 32 vCPU, 128 GB RAM
-```
-
-#### Série M (Memory Optimized) — Ratio 1:8
-
-Optimisée pour applications nécessitant beaucoup de mémoire.
-
-```yaml
-instanceType: "m1.large"     # 2 vCPU, 16 GB RAM
-instanceType: "m1.xlarge"    # 4 vCPU, 32 GB RAM
-instanceType: "m1.2xlarge"   # 8 vCPU, 64 GB RAM
-instanceType: "m1.4xlarge"   # 16 vCPU, 128 GB RAM
-instanceType: "m1.8xlarge"   # 32 vCPU, 256 GB RAM
-```
-
-### `maxReplicas` / `minReplicas` (integer)
-
-- `maxReplicas` : nombre **maximal** de nœuds pouvant être déployés (limite l'autoscaling).
-- `minReplicas` : nombre **minimal** de nœuds garantis dans ce groupe.
-
-### `resources` (Object)
-
-Définit les **ressources allouées** à chaque nœud du groupe (CPU et mémoire).
-
-| Champ | Type | Obligatoire | Description |
-|-------|------|-------------|--------------|
-| `cpu` | string | Non | Nombre de vCPU attribués par nœud (ex : `4`) |
-| `memory` | string | Non | Quantité de mémoire allouée par nœud (ex : `16Gi`) |
-
-### `roles` (Array)
-
-Liste les **rôles** assignés aux nœuds du groupe (ex : `ingress-nginx`).
-
----
-
-### Exemples de Node Groups
-
-#### Node Group Général
-
-```yaml title="node-group-general.yaml"
-nodeGroups:
-  general:
-    minReplicas: 2
-    maxReplicas: 10
-    instanceType: "s1.large"
-    ephemeralStorage: 50Gi
-    roles:
-      - ingress-nginx
-```
-
-#### Node Group Compute Intensif
-
-```yaml title="node-group-compute.yaml"
-nodeGroups:
-  compute:
-    minReplicas: 0
-    maxReplicas: 5
-    instanceType: "u1.4xlarge"  # 16 vCPU, 64 GB RAM
-    ephemeralStorage: 100Gi
-    roles: []
-```
-
-#### Node Group Memory Optimized
-
-```yaml title="node-group-memory.yaml"
-nodeGroups:
-  memory-intensive:
-    minReplicas: 1
-    maxReplicas: 3
-    instanceType: "m1.xlarge"   # 4 vCPU, 32 GB RAM
-    ephemeralStorage: 30Gi
-    resources:
-      cpu: "6"       # Override: 6 vCPU au lieu de 4
-      memory: "48Gi" # Override: 48 GB au lieu de 32
-```
-
-:::tip Bonnes pratiques Node Groups
-- Ajuster `minReplicas` et `maxReplicas` en fonction des besoins de montée en charge.
-- Utiliser des `instanceType` cohérents avec la charge de travail.
-- Définir un stockage éphémère suffisant pour les charges temporaires (logs, caches).
-- Spécifier clairement les rôles pour segmenter les fonctions des nœuds (ex : séparation `worker` / `ingress`).
+:::note
+Le premier groupe de nœuds est toujours exposé sur internet et ne peut pas être supprimé. Les groupes ajoutés ensuite ne sont pas exposés par défaut.
 :::
+
+### Types d'instance
+
+Le sélecteur propose trois séries. La liste exacte des gabarits disponibles est fournie par la plateforme.
+
+#### Série Standard (S) — ratio 1:2
+
+Usage économique, pour le développement et les tests.
+
+| Gabarit | vCPU | RAM |
+|---------|------|-----|
+| `s1.small` | 1 | 2 Go |
+| `s1.medium` | 2 | 4 Go |
+| `s1.large` | 4 | 8 Go |
+| `s1.xlarge` | 8 | 16 Go |
+| `s1.3large` | 12 | 24 Go |
+| `s1.2xlarge` | 16 | 32 Go |
+| `s1.3xlarge` | 24 | 48 Go |
+| `s1.4xlarge` | 32 | 64 Go |
+| `s1.8xlarge` | 64 | 128 Go |
+
+#### Série Universel (U) — ratio 1:4
+
+Usage général : serveurs web, applications.
+
+| Gabarit | vCPU | RAM |
+|---------|------|-----|
+| `u1.medium` | 1 | 4 Go |
+| `u1.large` | 2 | 8 Go |
+| `u1.xlarge` | 4 | 16 Go |
+| `u1.2xlarge` | 8 | 32 Go |
+| `u1.4xlarge` | 16 | 64 Go |
+| `u1.8xlarge` | 32 | 128 Go |
+
+#### Série Mémoire (M) — ratio 1:8
+
+Optimisée mémoire : bases de données, caches.
+
+| Gabarit | vCPU | RAM |
+|---------|------|-----|
+| `m1.large` | 2 | 16 Go |
+| `m1.xlarge` | 4 | 32 Go |
+| `m1.2xlarge` | 8 | 64 Go |
+| `m1.4xlarge` | 16 | 128 Go |
+| `m1.8xlarge` | 32 | 256 Go |
+
+### GPU
+
+La section **GPU** d'un groupe n'apparaît que si des GPU sont disponibles pour votre projet. Vous y choisissez un ou plusieurs modèles et leur nombre ; ces GPU sont attachés à **chaque** nœud du groupe.
+
+Règles appliquées par la console :
+
+- dès qu'un groupe a des GPU, l'addon **GPU Operator** est activé et ne peut plus être décoché ;
+- un groupe créé sans GPU ne peut pas en recevoir : ajoutez un nouveau groupe de nœuds pour avoir des GPU ;
+- un groupe créé avec des GPU peut changer de modèle ou de nombre, mais doit garder au moins un GPU.
+
+:::warning
+La réservation de GPU est calculée sur le nombre maximum de nœuds du groupe : un groupe de 4 nœuds au maximum avec 1 GPU par nœud réserve 4 GPU.
+:::
+
+### Options non proposées
+
+Les rôles de nœuds personnalisés (autres que l'exposition sur internet) et la surcharge des ressources CPU/mémoire d'un gabarit ne sont pas proposés dans la console ; contactez le support.
+
+:::tip Bonnes pratiques groupes de nœuds
+- Ajustez le minimum et le maximum de nœuds en fonction des besoins de montée en charge.
+- Choisissez une série cohérente avec la charge de travail (S pour le général, U pour l'équilibré, M pour la mémoire).
+- Prévoyez un stockage éphémère suffisant pour les images, les logs et les caches.
+- Séparez les rôles par groupe : un groupe exposé pour le trafic entrant, des groupes internes pour le calcul.
+:::
+
+---
+
+## Addons
+
+Les addons se choisissent à l'étape **Addons** de l'assistant (titre **Extensions et Addons**), puis se modifient depuis la page de modification du cluster.
+
+### Addons du cluster
+
+Ils s'activent ou se désactivent par une case à cocher.
+
+| Addon | Description | Activé par défaut |
+|-------|-------------|-------------------|
+| [Cert-Manager](./plugins/cert-manager.md) | Gestion automatique des certificats SSL/TLS | Oui |
+| [Ingress NGINX](./plugins/ingress-nginx.md) | Contrôleur Ingress basé sur NGINX | Oui |
+| [Gateway API](./plugins/gateway-api.md) | Installe les CRDs Kubernetes Gateway API (canal experimental) | Non |
+| [GPU Operator](./plugins/gpu-operator.md) | Gestion des GPU NVIDIA dans le cluster | Non (imposé si un groupe a des GPU) |
+| [HAMi](./plugins/hami.md) | Partage d'un même GPU entre plusieurs pods | Non |
+| [Flux CD](./plugins/fluxcd.md) | Déploiement continu GitOps | Non |
+| [Monitoring Agents](./plugins/monitoring-agents.md) | Agents de surveillance pour logs et métriques | Oui |
+| [Ouroboros](./plugins/ouroboros.md) | Corrige le NAT en épingle (hairpin) d'Ingress NGINX avec le PROXY protocol | Non |
+| [Velero](./plugins/velero.md) | Sauvegarde et restauration | Non |
+
+Dépendances vérifiées par la console :
+
+- **HAMi** nécessite l'addon **GPU Operator** ;
+- **Ouroboros** nécessite l'addon **Ingress NGINX**.
+
+### Configuration avancée
+
+[Cilium](./plugins/cilium.md), [CoreDNS](./plugins/coredns.md) et [Vertical Pod Autoscaler](./plugins/verticalpodautoscaler.md) sont toujours présents dans le cluster. Ils ne se désactivent pas : vous pouvez seulement déplier leur bloc pour surcharger leur configuration.
+
+### Surcharge des valeurs Helm
+
+Chaque addon (sauf Gateway API) accepte un champ **Configuration Helm (YAML) — optionnel**. La valeur YAML est transmise directement au chart Helm de l'addon et surcharge ses valeurs par défaut. Elle doit être un dictionnaire YAML (`clé: valeur`) ; la console refuse un YAML invalide. L'icône de lien à côté du nom de l'addon ouvre la documentation du chart.
+
+---
+
+## Accès au cluster
+
+Une fois le cluster prêt, le bouton **Kubeconfig** de la section **Actions** de la page de détail télécharge le fichier `kubeconfig-<nom-du-cluster>.yaml`. Ce fichier donne un accès administrateur au cluster avec `kubectl`, `helm` ou tout client Kubernetes. Le certificat client qu'il contient est valable un an à partir de la création du cluster. Voir [Accès et outils](./how-to/toolbox.md).
+
+L'adresse de l'API du cluster est définie par le champ **Endpoint API (Host)** de l'étape **Général**. Il est optionnel : laissé vide, il est généré automatiquement par la plateforme et se résout sans action de votre part. Si vous saisissez votre propre nom de domaine, le certificat du serveur API le couvre, mais l'enregistrement DNS reste à créer chez votre fournisseur DNS : demandez au [support](mailto:support@hidora.io) l'adresse vers laquelle le faire pointer.
+
+---
+
+## Cycle de vie et quotas
+
+- **Statut** : un cluster nouvellement créé apparaît dans la liste **Clusters Kubernetes** avec le statut **En création**, puis **Prêt** lorsqu'il est opérationnel.
+- **Quotas** : les jauges **Quotas du projet** de l'assistant comptent le control plane et chaque groupe de nœuds **à son nombre maximum de nœuds**. La création est bloquée si le projet n'a pas assez de quota.
+- **Modification** : le bouton **Modifier** permet de changer la version, l'endpoint API, les groupes de nœuds et les addons. Le nom du cluster n'est pas modifiable.
+- **Suppression** : le bouton **Supprimer** supprime le cluster après confirmation de son nom.

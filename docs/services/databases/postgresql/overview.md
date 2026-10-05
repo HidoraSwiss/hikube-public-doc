@@ -7,39 +7,39 @@ import NavigationFooter from '@site/src/components/NavigationFooter';
 
 # PostgreSQL sur Hikube
 
-Hikube propose un service PostgreSQL managé, basé sur l’opérateur **CloudNativePG**, reconnu et largement adopté par la communauté.  
-La plateforme prend en charge le déploiement et la gestion d’un cluster PostgreSQL **répliqué et auto-réparant**, garantissant robustesse, performance et haute disponibilité sans effort côté utilisateur.
+Hikube propose un service PostgreSQL managé.
+La plateforme prend en charge le déploiement et la gestion d'un cluster PostgreSQL **répliqué et auto-réparant**, que vous créez et administrez depuis la [console Hikube](https://console.hikube.cloud) (menu **DB & Messaging** → **PostgreSQL**).
 
 ---
 
-## 🏗️ Architecture et Fonctionnement
+## Architecture et fonctionnement
 
-Le service PostgreSQL managé sur Hikube repose sur l’opérateur **CloudNativePG**, qui automatise la gestion complète du cycle de vie de la base de données : création, mise à jour, réplication et reprise après incident.  
+La plateforme automatise la gestion du cycle de vie de la base de données : création, mise à jour, réplication et reprise après incident.
 
-L’architecture est construite autour d’un **cluster répliqué** :  
+L'architecture est construite autour d'un **cluster répliqué** :
 
-- Un **nœud primaire** (primary) qui traite les écritures et sert de référence pour la cohérence des données.  
-- Un ou plusieurs **réplicas** (standby) qui reçoivent en temps réel les modifications grâce à la réplication synchrone ou asynchrone.  
-- Un mécanisme d’**auto-failover**, qui permet de promouvoir automatiquement un réplica en tant que nouveau primaire en cas de panne, assurant ainsi une **haute disponibilité** sans intervention manuelle.  
+- Un **nœud primaire** (primary) qui traite les écritures et sert de référence pour la cohérence des données.
+- Un ou plusieurs **réplicas** (standby) qui reçoivent en continu les modifications par réplication.
+- Un mécanisme d'**auto-failover**, qui promeut automatiquement un réplica en nouveau primaire en cas de panne, sans intervention manuelle.
 
-Cette approche garantit :  
+Cette approche garantit :
 
-- **Résilience** face aux pannes matérielles ou logicielles  
-- **Scalabilité en lecture** grâce à la répartition des requêtes entre les réplicas  
-- **Simplicité opérationnelle**, car la plateforme gère la coordination et la maintenance du cluster  
+- **Résilience** face aux pannes matérielles ou logicielles
+- **Scalabilité en lecture** grâce à la répartition des requêtes entre les réplicas
+- **Simplicité opérationnelle**, car la plateforme gère la coordination et la maintenance du cluster
 
 ```mermaid
 graph TD
     subgraph Gland
-        P1[Pod PostgreSQL Primary] --> PVC1[(PVC - Storage)]
+        P1[PostgreSQL primaire] --> PVC1[(Stockage)]
     end
 
     subgraph Lucerne
-        P2[Pod PostgreSQL Standby] --> PVC2[(PVC - Storage)]
+        P2[PostgreSQL standby] --> PVC2[(Stockage)]
     end
 
     subgraph Genève
-        P3[Pod PostgreSQL Standby] --> PVC3[(PVC - Storage)]
+        P3[PostgreSQL standby] --> PVC3[(Stockage)]
     end
 
     P1 -->|Réplication| P2
@@ -48,13 +48,26 @@ graph TD
 
 ---
 
-## 💡 Cas d’usage
+## Ce que vous gérez depuis la console
 
-- **Applications métiers critiques** nécessitant une base fiable et hautement disponible  
-- **E-commerce et ERP**, où la continuité de service est indispensable  
-- **SaaS multi-tenant**, permettant de répartir les charges entre primaire et réplicas  
-- **Business Intelligence et reporting**, grâce à la lecture optimisée sur les réplicas  
-- **Applications cloud natives**, intégrées dans des environnements Kubernetes
+| Fonction | Disponible |
+|----------|------------|
+| Création d'un cluster (version 15 à 18, preset, taille du disque, 1 à 3 réplicas, accès externe) | Oui |
+| Bases de données et extensions PostgreSQL | Oui |
+| Utilisateurs, droits par base (admin / lecture seule), rotation du mot de passe | Oui |
+| Modification de la version, du preset, de la taille du disque et de l'accès externe | Oui |
+| Modification du nombre de réplicas après création | Non, [contactez le support](mailto:support@hidora.io) |
+| Sauvegardes et restauration | Non, [contactez le support](mailto:support@hidora.io) |
+
+---
+
+## Cas d'usage
+
+- **Applications métiers critiques** nécessitant une base fiable et hautement disponible
+- **E-commerce et ERP**, où la continuité de service est indispensable
+- **SaaS multi-tenant**, permettant de répartir les charges entre primaire et réplicas
+- **Business Intelligence et reporting**, grâce à la lecture optimisée sur les réplicas
+- **Applications cloud natives**, déployées sur vos clusters Kubernetes Hikube
 
 <NavigationFooter
   nextSteps={[

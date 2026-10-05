@@ -3,71 +3,55 @@ sidebar_position: 1
 title: Cilium
 ---
 
-# 🧩 Details zum Feld `addons.cilium`
+# Cilium
 
-Das Feld `addons.cilium` definiert die Konfiguration des Add-ons **Cilium**, das als **CNI (Container Network Interface)** für den Kubernetes-Cluster verwendet wird.
-Cilium verwaltet das Netzwerk, die Sicherheit und die Observability der Pods mithilfe von **BPF (Berkeley Packet Filter)**.
-Dieses Feld ermöglicht die Anpassung der Komponentenbereitstellung über spezifische Werte.
+**Cilium** ist das **CNI (Container Network Interface)** der Hikube-Kubernetes-Cluster. Es verwaltet Netzwerk, Sicherheit und Observability der Pods mithilfe von **eBPF** und setzt die `NetworkPolicy` durch.
 
-```yaml
-addons:
-  cilium:
-    valuesOverride:
-      cilium:
-        hubble:
-          enabled: true
-        encryption:
-          enabled: true
-```
+## In der Konsole
 
----
+Cilium gehört zur **Advanced Configuration** des Schritts **Addons**: Es ist immer im Cluster vorhanden und lässt sich nicht deaktivieren. Sie können lediglich seine Konfiguration überschreiben.
 
-## `cilium` (Object) — **Erforderlich**
+1. Klappen Sie bei der Erstellung (Schritt **Addons**) oder über **Edit** > **Extensions & Addons** den Block **Cilium** im Abschnitt **Advanced Configuration** auf.
+2. Geben Sie Ihre Werte in **Helm Configuration (YAML) — optional** ein.
+3. Bestätigen Sie mit **Next** und dann **Create cluster** (Erstellung) oder mit **Save** (Änderung).
 
-### Beschreibung
+:::warning
+Bei einem bestehenden Cluster speichert die Konsole ein erstes über **Edit** eingegebenes Override nicht: Die Schaltfläche **Save** bestätigt die Aktualisierung, der Wert wird jedoch ignoriert. Legen Sie das Override bei der Erstellung des Clusters fest oder [wenden Sie sich an den Support](mailto:support@hidora.io). Ein bei der Erstellung festgelegtes Override bleibt über **Edit** änderbar.
+:::
 
-Das Feld `cilium` stellt die Hauptkonfiguration des Netzwerk-Add-ons dar.
-Es gruppiert die für die Installation und Anpassung von Cilium im Cluster erforderlichen Parameter.
+Auf der Detailseite des Clusters zeigt die Zeile **CNI** im Abschnitt **Network** **Custom** an, wenn eine Cilium-Konfiguration angewendet wird.
 
-### Beispiel
+## Die Konfiguration überschreiben
 
-```yaml
+Der YAML-Wert wird unter dem Schlüssel `cilium` an das Helm-Chart von Cilium übergeben. Zum Beispiel, um Hubble zu aktivieren:
+
+```yaml title="cilium-override.yaml"
 cilium:
-  valuesOverride:
-    cilium:
-      hubble:
-        enabled: true
+  hubble:
+    enabled: true
 ```
 
----
+Die verfügbaren Optionen sind in der [Helm-Referenz von Cilium](https://docs.cilium.io/en/stable/helm-reference/) beschrieben.
 
-## `valuesOverride` (Object) — **Erforderlich**
+:::warning
+Das Netzwerk des Clusters hängt von Cilium ab. Ein fehlerhaftes Override kann die Kommunikation zwischen den Pods oder mit der Control Plane unterbrechen: Ändern Sie nur Optionen, deren Wirkung Sie genau kennen.
+:::
 
-### Beschreibung
+## Nutzung im Cluster
 
-Das Feld `valuesOverride` ermöglicht das **Überschreiben der Standardwerte**, die bei der Bereitstellung von Cilium verwendet werden.
-Es dient zur Anpassung des CNI-Verhaltens, ohne das Haupt-Chart zu ändern.
-Diese Werte können die Konfiguration von **Hubble**, der Verschlüsselung, der Netzwerkrichtlinien oder der zugewiesenen Ressourcen umfassen.
-Für weitere konfigurierbare Werte: https://docs.cilium.io/en/stable/helm-reference/
+```bash
+# Cilium-Pods (einer pro Node)
+kubectl get pods -A -l k8s-app=cilium
 
-### Beispiel
-
-```yaml
-valuesOverride:
-  cilium:
-    hubble:
-      enabled: true
-    encryption:
-      enabled: true
+# Zustand des Cilium-Agents
+CILIUM_NS=$(kubectl get ds -A -l k8s-app=cilium -o jsonpath='{.items[0].metadata.namespace}')
+kubectl exec -n "$CILIUM_NS" -it ds/cilium -- cilium status
 ```
 
----
+Siehe [Das Networking konfigurieren](../how-to/configure-networking.md) für `NetworkPolicy` und Hubble.
 
-## 💡 Best Practices
+## Best Practices
 
-- Definieren Sie immer `valuesOverride`, um die Kontrolle über die Netzwerkkonfiguration zu behalten.
-- Aktivieren Sie **Hubble** (`hubble.enabled: true`), um von der Netzwerk-Sichtbarkeit und der Flussverfolgung zu profitieren.
-- Verwenden Sie `encryption.enabled: true`, um den Inter-Pod-Datenverkehr in sensiblen Umgebungen zu verschlüsseln.
-- Prüfen Sie die Kompatibilität der Cilium-Version mit der Kubernetes-Cluster-Version.
-
----
+- Aktivieren Sie **Hubble**, um von Netzwerktransparenz und der Verfolgung der Flüsse zu profitieren.
+- Verwenden Sie `NetworkPolicy`, um den Traffic zwischen Ihren Anwendungen einzuschränken.
+- Testen Sie jedes Override auf einem Testcluster, bevor Sie es in der Produktion einsetzen.

@@ -5,9 +5,9 @@ title: FAQ
 
 # FAQ — PostgreSQL
 
-### Quelle est la différence entre `resourcesPreset` et `resources` ?
+### Quels presets d'instance sont disponibles ?
 
-Le champ `resourcesPreset` permet de choisir un profil de ressources prédéterminé pour chaque réplica PostgreSQL. Si le champ `resources` (CPU/mémoire explicites) est défini, `resourcesPreset` est **entièrement ignoré**.
+Le **Preset d'instance** fixe le CPU et la mémoire de chaque nœud du cluster. La liste affichée par l'assistant fait foi ; à titre indicatif :
 
 | **Preset** | **CPU** | **Mémoire** |
 |------------|---------|-------------|
@@ -19,132 +19,44 @@ Le champ `resourcesPreset` permet de choisir un profil de ressources prédéterm
 | `xlarge`   | 4       | 4Gi         |
 | `2xlarge`  | 8       | 8Gi         |
 
-```yaml title="postgresql.yaml"
-spec:
-  # Utilisation d'un preset
-  resourcesPreset: medium
+Le preset peut être changé après la création depuis **Modifier**. La définition de valeurs CPU/mémoire libres n'est pas proposée dans la console ; contactez le support.
 
-  # OU configuration explicite (le preset est alors ignoré)
-  resources:
-    cpu: 2000m
-    memory: 2Gi
-```
+### Combien de réplicas choisir ?
 
-### Comment choisir entre `storageClass` local et replicated ?
+- **1 (Standalone)** : développement et tests. Une panne de l'instance rend la base indisponible jusqu'à son redémarrage.
+- **2 (Haute disponibilité)** : un standby prêt à prendre le relais en cas de panne du primary.
+- **3 (Haute disponibilité max)** : recommandé pour la production critique.
 
-Hikube propose deux types de classes de stockage :
+Le nombre de réplicas ne peut pas être modifié après la création ; contactez le support si vous devez le changer.
 
-- **`local`** : les données sont stockées sur le nœud physique où s'exécute le pod. Ce mode offre les **meilleures performances** (latence minimale) mais ne protège pas contre la panne d'un nœud.
-- **`replicated`** : les données sont répliquées sur plusieurs nœuds physiques. Ce mode assure la **haute disponibilité multi-DC** et protège contre la perte d'un nœud, au prix d'une latence légèrement supérieure.
+### Où trouver l'adresse de connexion ?
 
-:::tip
-Utilisez `storageClass: local` si vous configurez plusieurs réplicas (`replicas` > 1) : la réplication applicative (standby PostgreSQL) assure déjà la haute disponibilité. Utilisez `storageClass: replicated` si vous n'avez qu'un seul réplica (`replicas` = 1) : le stockage répliqué compense l'absence de réplication applicative. En développement avec un seul réplica, `local` peut suffire si la perte de données est acceptable.
-:::
+Dans la page du cluster, carte **Connexion et Bases de données**, champ **Hôte (Host)**. Une adresse n'y figure que si l'**Accès externe** est activé ; sinon le champ affiche **Non défini**. Le port est `5432`.
 
-### Comment se connecter à PostgreSQL depuis l'intérieur du cluster ?
+### Comment se connecter depuis une VM ou un cluster Kubernetes du même projet sans accès externe ?
 
-Le service PostgreSQL est accessible via le nom de service Kubernetes suivant :
+Sans accès externe, le cluster reste joignable depuis les VM et les clusters Kubernetes du projet par une adresse interne au projet, que la console n'affiche pas. [Contactez le support](mailto:support@hidora.io) pour l'obtenir.
 
-- **Service en lecture-écriture** : `pg-<name>-rw` sur le port `5432`
+### J'ai perdu le mot de passe d'un utilisateur. Comment le récupérer ?
 
-Les identifiants de connexion sont stockés dans un Secret Kubernetes nommé `pg-<name>-app`.
+Les mots de passe ne sont affichés qu'une fois et ne peuvent pas être relus. Générez-en un nouveau : onglet **Utilisateurs** → **Actions** → **Changer le mot de passe** → **Effectuer la rotation**. L'ancien mot de passe est révoqué immédiatement.
 
-```bash
-# Récupérer le mot de passe
-kubectl get tenantsecret pg-mydb-app -o jsonpath='{.data.password}' | base64 -d
+### Pourquoi mon nom d'utilisateur est-il refusé ?
 
-# Récupérer le nom d'utilisateur
-kubectl get tenantsecret pg-mydb-app -o jsonpath='{.data.username}' | base64 -d
-
-# Se connecter depuis un pod
-psql -h pg-mydb-rw -p 5432 -U <username> -d <database>
-```
-
-### Comment configurer la réplication synchrone ?
-
-La réplication synchrone garantit qu'une transaction n'est confirmée que lorsqu'elle a été écrite sur un nombre minimum de réplicas. Configurez les paramètres `quorum` dans votre manifeste :
-
-```yaml title="postgresql.yaml"
-spec:
-  replicas: 3
-  quorum:
-    minSyncReplicas: 1    # Au moins 1 réplica doit confirmer
-    maxSyncReplicas: 2    # Au maximum 2 réplicas confirment
-```
-
-- **`minSyncReplicas`** : nombre minimum de réplicas synchrones qui doivent accuser réception d'une transaction.
-- **`maxSyncReplicas`** : nombre maximum de réplicas synchrones pouvant accuser réception.
-
-:::warning
-La réplication synchrone augmente la latence d'écriture. Assurez-vous d'avoir suffisamment de réplicas (`replicas` >= `maxSyncReplicas` + 1).
-:::
-
-### Comment activer le backup PITR ?
-
-PostgreSQL sur Hikube utilise **CloudNativePG** avec l'archivage WAL pour permettre la restauration à un instant donné (PITR). Configurez la section `backup` avec un stockage S3 compatible :
-
-```yaml title="postgresql.yaml"
-spec:
-  backup:
-    enabled: true
-    schedule: "0 2 * * *"
-    retentionPolicy: 30d
-    destinationPath: s3://my-bucket/postgresql-backups/
-    endpointURL: https://prod.s3.hikube.cloud
-    s3AccessKey: your-access-key
-    s3SecretKey: your-secret-key
-```
-
-Les sauvegardes incluent automatiquement les fichiers WAL, ce qui permet de restaurer la base à n'importe quel instant entre deux sauvegardes.
+Les noms d'utilisateur PostgreSQL comptent 3 à 16 caractères, en minuscules, chiffres et tirets bas (`_`), et commencent par une lettre ou un tiret bas. Le tiret (`-`) n'est pas accepté. Les noms `postgres`, `admin`, `root`, `owner`, `superuser`, `streaming_replica`, `cnpg_pooler_pgbouncer` et tous ceux commençant par `pg_` sont réservés.
 
 ### Comment ajouter des extensions PostgreSQL ?
 
-Vous pouvez activer des extensions PostgreSQL pour chaque base de données via le champ `databases[name].extensions` :
-
-```yaml title="postgresql.yaml"
-spec:
-  databases:
-    myapp:
-      extensions:
-        - uuid-ossp
-        - pgcrypto
-        - hstore
-      roles:
-        admin:
-          - admin
-```
-
-Les extensions sont activées automatiquement lors de la création de la base. Les extensions disponibles dépendent de la version de PostgreSQL déployée.
+À la création d'une base (onglet **Bases de données** → **Créer**, section **Extensions PostgreSQL**) ou ensuite, via **Actions** → **Gérer les extensions**. Les extensions proposées incluent notamment `pg_stat_statements`, `pgcrypto`, `uuid-ossp`, `pg_trgm`, `hstore`, `citext`, `postgres_fdw`, `pgaudit` et `vector` (pgvector).
 
 ### Peut-on créer plusieurs bases et utilisateurs ?
 
-Oui. Utilisez les maps `users` et `databases` pour définir autant d'utilisateurs et de bases que nécessaire. Chaque base peut avoir des rôles `admin` et `readonly` distincts :
+Oui. Ajoutez autant de bases que nécessaire dans l'onglet **Bases de données**, et autant d'utilisateurs que nécessaire dans l'onglet **Utilisateurs**. Chaque utilisateur peut avoir un droit différent sur chaque base (**Administrateur (Admin)** ou **Lecture seule (Read-only)**).
 
-```yaml title="postgresql.yaml"
-spec:
-  users:
-    admin:
-      password: AdminPassword123
-      replication: true
-    appuser:
-      password: AppPassword456
-    analyst:
-      password: AnalystPassword789
+### Peut-on modifier les paramètres PostgreSQL (`max_connections`, `shared_buffers`…) ?
 
-  databases:
-    production:
-      roles:
-        admin:
-          - admin
-        readonly:
-          - analyst
-      extensions:
-        - uuid-ossp
-    analytics:
-      roles:
-        admin:
-          - admin
-        readonly:
-          - appuser
-          - analyst
-```
+Ces paramètres ne sont pas proposés dans la console ; contactez le support.
+
+### Les sauvegardes sont-elles disponibles ?
+
+La configuration des sauvegardes et la restauration ne sont pas proposées dans la console ; contactez le support. Voir [Configurer les sauvegardes](./how-to/configure-backups.md).

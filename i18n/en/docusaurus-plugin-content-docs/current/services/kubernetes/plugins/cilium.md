@@ -1,74 +1,57 @@
 ---
-
 sidebar_position: 1
 title: Cilium
--------------
-
-# 🧩 Details of the `addons.cilium` Field
-
-The `addons.cilium` field defines the configuration of the **Cilium** add-on, used as the cluster’s **CNI (Container Network Interface)**.
-Cilium manages networking, security, and observability for Pods using **BPF (Berkeley Packet Filter)**.
-This field allows customizing the component deployment through specific values.
-
-```yaml
-addons:
-  cilium:
-    valuesOverride:
-      cilium:
-        hubble:
-          enabled: true
-        encryption:
-          enabled: true
-```
-
 ---
 
-## `cilium` (Object) — **Required**
+# Cilium
 
-### Description
+**Cilium** is the **CNI (Container Network Interface)** of Hikube Kubernetes clusters. It manages pod networking, security and observability using **eBPF**, and enforces `NetworkPolicy` objects.
 
-The `cilium` field represents the main configuration of the network add-on.
-It contains the parameters required for installing and customizing Cilium within the cluster.
+## In the console
 
-### Example
+Cilium is part of the **Advanced Configuration** of the **Addons** step: it is always present in the cluster and cannot be disabled. You can only override its configuration.
 
-```yaml
+1. At creation (**Addons** step) or from **Edit** > **Extensions & Addons**, expand the **Cilium** block in the **Advanced Configuration** section.
+2. Enter your values in **Helm Configuration (YAML) — optional**.
+3. Confirm with **Next** then **Create cluster** (creation) or **Save** (modification).
+
+:::warning
+On an existing cluster, the console does not save a first override entered from **Edit**: the **Save** button confirms the update, but the value is ignored. Define the override when creating the cluster, or [contact support](mailto:support@hidora.io). An override defined at creation remains editable from **Edit**.
+:::
+
+On the cluster detail page, the **CNI** line of the **Network** section shows **Custom** when a Cilium configuration is applied.
+
+## Override the configuration
+
+The YAML value is passed to the Cilium Helm chart, under the `cilium` key. For example, to enable Hubble:
+
+```yaml title="cilium-override.yaml"
 cilium:
-  valuesOverride:
-    cilium:
-      hubble:
-        enabled: true
+  hubble:
+    enabled: true
 ```
 
----
+The available options are described in the [Cilium Helm reference](https://docs.cilium.io/en/stable/helm-reference/).
 
-## `valuesOverride` (Object) — **Required**
+:::warning
+The cluster network depends on Cilium. An incorrect override can cut communication between pods or with the control plane: only change options whose effect you fully understand.
+:::
 
-### Description
+## Usage in the cluster
 
-The `valuesOverride` field allows **overriding the default values** used when deploying Cilium.
-It adjusts the behavior of the CNI without modifying the main chart.
-These values may include configuration for **Hubble**, encryption, network policies, or allocated resources.
-For more configuration options: [https://docs.cilium.io/en/stable/helm-reference/](https://docs.cilium.io/en/stable/helm-reference/)
+```bash
+# Cilium pods (one per node)
+kubectl get pods -A -l k8s-app=cilium
 
-### Example
-
-```yaml
-valuesOverride:
-  cilium:
-    hubble:
-      enabled: true
-    encryption:
-      enabled: true
+# Cilium agent status
+CILIUM_NS=$(kubectl get ds -A -l k8s-app=cilium -o jsonpath='{.items[0].metadata.namespace}')
+kubectl exec -n "$CILIUM_NS" -it ds/cilium -- cilium status
 ```
 
----
+See [How to configure networking](../how-to/configure-networking.md) for `NetworkPolicy` objects and Hubble.
 
-## 💡 Best Practices
+## Best practices
 
-* Always define `valuesOverride` to maintain full control over network configuration.
-* Enable **Hubble** (`hubble.enabled: true`) to gain network visibility and traffic flow tracking.
-* Use `encryption.enabled: true` to encrypt inter-Pod traffic in sensitive environments.
-* Verify version compatibility between Cilium and the Kubernetes cluster version.
-
----
+- Enable **Hubble** to get network visibility and flow tracking.
+- Use `NetworkPolicy` objects to restrict traffic between your applications.
+- Test any override on a staging cluster before production.

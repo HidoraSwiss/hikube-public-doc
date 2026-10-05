@@ -4,234 +4,82 @@ title: "Comment gérer les vhosts et utilisateurs"
 
 # Comment gérer les vhosts et utilisateurs
 
-Ce guide explique comment créer et gérer les utilisateurs, virtual hosts (vhosts) et permissions RabbitMQ sur Hikube de manière déclarative via les manifestes Kubernetes.
+Ce guide explique comment ajouter et supprimer des virtual hosts (vhosts), créer des utilisateurs RabbitMQ, gérer leurs droits par vhost et renouveler leur mot de passe depuis la [console Hikube](https://console.hikube.cloud).
 
 ## Prérequis
 
-- **kubectl** configuré avec votre kubeconfig Hikube
-- Un cluster **RabbitMQ** déployé sur Hikube (ou un manifeste prêt à déployer)
-- (Optionnel) **rabbitmqadmin** ou un navigateur pour accéder à la Management UI
+- Un **cluster RabbitMQ** créé dans votre projet (voir le [démarrage rapide](../quick-start.md))
+- Accès à la page de détail du cluster : menu **DB & Messaging** → **RabbitMQ**, puis clic sur le cluster
 
-## Étapes
+## Ajouter un vhost
 
-### 1. Créer des utilisateurs
+1. Sur la page du cluster, dans la section **VHosts**, cliquez sur **Ajouter un VHost**.
+2. Dans la fenêtre **Créer un VHost**, saisissez le **Nom du VHost** (lettres, chiffres, `_`, `.` et `-`, par exemple `production`).
+3. Cliquez sur **Créer**. Le message « VHost créé » confirme l'opération et le vhost apparaît dans la liste.
 
-Les utilisateurs sont déclarés dans la section `users` du manifeste. Chaque utilisateur est identifié par un nom et possède un mot de passe.
+## Supprimer un vhost
 
-```yaml title="rabbitmq-users.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: RabbitMQ
-metadata:
-  name: my-rabbitmq
-spec:
-  replicas: 3
-  resourcesPreset: small
-  size: 10Gi
+1. Dans la section **VHosts**, ouvrez le menu d'actions du vhost.
+2. Choisissez **Supprimer le VHost**.
+3. Saisissez le nom exact du vhost pour confirmer, puis cliquez sur **Supprimer définitivement**.
 
-  users:
-    admin:
-      password: SecureAdminPassword
-    appuser:
-      password: AppUserPassword456
-    monitoring:
-      password: MonitoringPassword789
-```
-
-:::tip
-Séparez les utilisateurs par rôle fonctionnel : un compte **admin** pour l'administration, des comptes **applicatifs** pour chaque service, et un compte **monitoring** dédié à la supervision. Cela facilite l'audit et limite l'impact en cas de compromission.
+:::warning
+La suppression d'un vhost supprime ses exchanges, queues et messages. Le vhost par défaut `/`, s'il est présent, ne peut pas être supprimé.
 :::
 
-### 2. Créer des vhosts avec permissions
+## Créer un utilisateur
 
-Les virtual hosts isolent les files, échanges et bindings entre différentes applications ou environnements. Chaque vhost définit des rôles `admin` (lecture/écriture complète) et `readonly` (lecture seule).
+1. Dans la section **Utilisateurs**, cliquez sur **Créer un utilisateur**.
+2. Saisissez le **Nom d'utilisateur** (lettres, chiffres, `_`, `.` et `-`).
+3. Dans **Accès spécifiques (VHosts)**, cliquez sur **Ajouter** pour chaque vhost auquel l'utilisateur doit accéder, puis choisissez :
+   - le **Nom du VHost** dans la liste ;
+   - les **Droits** : **Administrateur (Admin)** ou **Lecture seule (Read-only)**.
+4. Cliquez sur **Créer l'utilisateur**.
 
-```yaml title="rabbitmq-vhosts.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: RabbitMQ
-metadata:
-  name: my-rabbitmq
-spec:
-  replicas: 3
-  resourcesPreset: small
-  size: 10Gi
+La console affiche le mot de passe généré pour l'utilisateur.
 
-  users:
-    admin:
-      password: SecureAdminPassword
-    appuser:
-      password: AppUserPassword456
-    monitoring:
-      password: MonitoringPassword789
-
-  vhosts:
-    production:
-      roles:
-        admin:
-          - admin
-          - appuser
-        readonly:
-          - monitoring
-    analytics:
-      roles:
-        admin:
-          - admin
-        readonly:
-          - appuser
-          - monitoring
-```
-
-**Rôles disponibles :**
-
-| Rôle | Description |
-|------|-------------|
-| `admin` | Accès complet : créer/supprimer des queues, publier et consommer des messages |
-| `readonly` | Accès en lecture seule : consommer des messages, consulter les métriques |
-
-:::tip
-Isolez chaque application dans un vhost dédié. Cela limite l'impact en cas de surcharge d'une application et facilite la gestion des permissions.
+:::warning Mot de passe affiché une seule fois
+Copiez le mot de passe immédiatement : il ne sera plus affiché après avoir quitté cet écran. Cliquez ensuite sur **Terminer**.
 :::
 
-### 3. Appliquer les changements
+:::tip
+Créez un utilisateur par application, avec le droit **Lecture seule** pour les applications qui ne font que consommer des messages. Cela limite l'impact d'une fuite d'identifiants.
+:::
 
-Combinez la configuration complète dans un seul manifeste :
+## Modifier les droits d'un utilisateur
 
-```yaml title="rabbitmq-complete.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: RabbitMQ
-metadata:
-  name: my-rabbitmq
-spec:
-  replicas: 3
-  resourcesPreset: small
-  size: 10Gi
+1. Dans la section **Utilisateurs**, ouvrez le menu d'actions de l'utilisateur et choisissez **Gérer les accès**.
+2. La page **Modifier l'utilisateur** liste ses accès par vhost. Le **Nom d'utilisateur** ne peut pas être modifié.
+3. Ajoutez un accès avec **Ajouter**, changez les **Droits** d'un vhost, ou retirez un accès avec l'icône de suppression de la ligne.
+4. Cliquez sur **Enregistrer**.
 
-  users:
-    admin:
-      password: SecureAdminPassword
-    appuser:
-      password: AppUserPassword456
-    monitoring:
-      password: MonitoringPassword789
+Le mot de passe de l'utilisateur n'est pas modifié par cette opération.
 
-  vhosts:
-    production:
-      roles:
-        admin:
-          - admin
-          - appuser
-        readonly:
-          - monitoring
-    analytics:
-      roles:
-        admin:
-          - admin
-        readonly:
-          - appuser
-          - monitoring
-```
+## Renouveler le mot de passe d'un utilisateur
 
-```bash
-kubectl apply -f rabbitmq-complete.yaml
-```
+1. Dans le menu d'actions de l'utilisateur, choisissez **Changer le mot de passe**.
+2. La fenêtre **Rotation du mot de passe** demande confirmation. Cliquez sur **Effectuer la rotation**.
+3. Copiez le nouveau mot de passe affiché, puis cliquez sur **Terminer**.
 
-### 4. Vérifier les utilisateurs et vhosts
+:::warning
+L'ancien mot de passe est révoqué immédiatement. Mettez à jour sans attendre les applications qui utilisent ce compte, sinon leurs connexions seront refusées.
+:::
 
-Vérifiez que la ressource RabbitMQ a bien été mise à jour :
+## Supprimer un utilisateur
 
-```bash
-kubectl get rabbitmq my-rabbitmq -o yaml | grep -A 20 "users:\|vhosts:"
-```
+1. Dans le menu d'actions de l'utilisateur, choisissez **Supprimer l'utilisateur**.
+2. Saisissez le nom exact de l'utilisateur pour confirmer, puis cliquez sur **Supprimer définitivement**.
 
-Pour une vérification plus poussée, connectez-vous à un pod RabbitMQ :
-
-```bash
-kubectl exec -it my-rabbitmq-server-0 -- rabbitmqctl list_users
-```
-
-**Résultat attendu :**
-
-```console
-Listing users ...
-user	tags
-admin	[administrator]
-appuser	[]
-monitoring	[]
-```
-
-Listez les vhosts :
-
-```bash
-kubectl exec -it my-rabbitmq-server-0 -- rabbitmqctl list_vhosts
-```
-
-**Résultat attendu :**
-
-```console
-Listing vhosts ...
-name
-production
-analytics
-```
-
-Vérifiez les permissions d'un vhost :
-
-```bash
-kubectl exec -it my-rabbitmq-server-0 -- rabbitmqctl list_permissions -p production
-```
-
-**Résultat attendu :**
-
-```console
-Listing permissions for vhost "production" ...
-user	configure	write	read
-admin	.*	.*	.*
-appuser	.*	.*	.*
-monitoring		    	.*
-```
-
-### 5. Tester la connexion AMQP
-
-Ouvrez un port-forward vers le service RabbitMQ :
-
-```bash
-kubectl port-forward svc/my-rabbitmq 5672:5672
-```
-
-Testez la connexion avec un client AMQP (exemple avec Python `pika`) :
-
-```python
-import pika
-
-credentials = pika.PlainCredentials('appuser', 'AppUserPassword456')
-connection = pika.BlockingConnection(
-    pika.ConnectionParameters('127.0.0.1', 5672, 'production', credentials)
-)
-channel = connection.channel()
-channel.queue_declare(queue='test-queue')
-channel.basic_publish(exchange='', routing_key='test-queue', body='Hello Hikube!')
-print("Message envoyé avec succès")
-connection.close()
-```
-
-Vous pouvez aussi accéder à la Management UI via port-forward :
-
-```bash
-kubectl port-forward svc/my-rabbitmq 15672:15672
-```
-
-Puis ouvrez `http://127.0.0.1:15672` dans votre navigateur et connectez-vous avec le compte `admin`.
+Ses droits sur tous les vhosts sont retirés en même temps.
 
 ## Vérification
 
-La configuration est réussie si :
-
-- Les utilisateurs apparaissent dans `rabbitmqctl list_users`
-- Les vhosts sont listés dans `rabbitmqctl list_vhosts`
-- Les permissions correspondent au manifeste (`rabbitmqctl list_permissions`)
-- Les utilisateurs peuvent se connecter via AMQP sur leur vhost respectif
-- Les utilisateurs `readonly` ne peuvent pas publier de messages
+- La section **VHosts** liste tous les vhosts du cluster.
+- La colonne **VHosts** du tableau **Utilisateurs** affiche, pour chaque utilisateur, ses vhosts et le droit associé.
+- Un test de connexion avec un client AMQP (voir l'étape 5 du [démarrage rapide](../quick-start.md)) confirme que l'utilisateur accède au vhost attendu.
 
 ## Pour aller plus loin
 
-- **[Référence API RabbitMQ](../api-reference.md)** : documentation complète des paramètres `users` et `vhosts`
-- **[Comment scaler le cluster RabbitMQ](./scale-resources.md)** : ajuster les ressources et le nombre de réplicas
+- [Concepts](../concepts.md) : vhosts, utilisateurs et droits
+- [Modifier la configuration d'un cluster](./scale-resources.md)
+- [Configurer l'accès externe](./configure-external-access.md)

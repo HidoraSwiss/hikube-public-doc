@@ -5,115 +5,74 @@ title: Fehlerbehebung
 
 # Fehlerbehebung — PostgreSQL
 
-### PostgreSQL-Pod im Status Pending
+### Der Cluster bleibt im Status „Creating“
 
-**Ursache**: Der PersistentVolumeClaim (PVC) kann sich nicht an ein Volume binden. Dies kann an einer nicht existierenden `storageClass`, einem überschrittenen Speicherkontingent oder fehlenden Ressourcen auf den Knoten liegen.
-
-**Lösung**:
-
-1. Überprüfen Sie den Status des Pods und die zugehörigen Events:
-   ```bash
-   kubectl describe pod pg-<name>-1
-   ```
-2. Überprüfen Sie den Status des PVC:
-   ```bash
-   kubectl get pvc
-   kubectl describe pvc pg-<name>-1
-   ```
-3. Überprüfen Sie, dass die verwendete `storageClass` eine der verfügbaren Klassen ist: `local`, `replicated` oder `replicated-async`.
-4. Überprüfen Sie, dass Ihr Speicherkontingent nicht erreicht ist.
-5. Korrigieren Sie bei Bedarf die `storageClass` in Ihrem Manifest und wenden Sie es erneut an:
-   ```bash
-   kubectl apply -f postgresql.yaml
-   ```
-
-### Desynchronisierte Replikation zwischen Primary und Standby
-
-**Ursache**: Eine Replikationsverzögerung (Lag) kann durch hohe Netzwerklast, unzureichende Ressourcen auf den Standbys oder ein hohes Transaktionsvolumen auf dem Primary verursacht werden.
+**Ursache**: Die Bereitstellung der Instanzen und ihrer Volumes läuft noch. Sie kann mehrere Minuten dauern, mit mehreren Replicas länger.
 
 **Lösung**:
 
-1. Verbinden Sie sich mit dem Primary und überprüfen Sie den Replikationsstatus:
+1. Warten Sie einige Minuten und aktualisieren Sie die Seite des Clusters.
+2. Wenn sich der Status nach etwa fünfzehn Minuten nicht ändert oder zu **Error** oder **Failed** wechselt, [wenden Sie sich an den Support](mailto:support@hidora.io) und geben Sie dabei das Projekt und den Namen des Clusters an.
+
+### Der Schritt Configuration des Assistenten lässt sich nicht abschließen
+
+**Ursache**: Die angeforderte Konfiguration überschreitet die Quotas des Projekts (CPU, Arbeitsspeicher oder Speicher). Unter dem Feld **Disk size (GB)** kann die Meldung „Storage quota exceeded for this project“ erscheinen.
+
+**Lösung**:
+
+1. Sehen Sie sich das Quota-Banner oben im Assistenten an.
+2. Verringern Sie das **Instance preset**, die **Disk size (GB)** oder die **Number of replicas**: Der Verbrauch wird mit der Anzahl der Replicas multipliziert.
+3. Wenn das Projekt zusätzliche Quotas benötigt, wenden Sie sich an den Support.
+
+### Verbindung abgelehnt oder Zeitüberschreitung
+
+**Ursache**: Der externe Zugriff ist deaktiviert, die IP-Adresse ist noch nicht zugewiesen, oder der Client verwendet eine falsche Adresse oder einen falschen Port.
+
+**Lösung**:
+
+1. Prüfen Sie auf der Seite des Clusters, ob die Karte **External Access** **Enabled** anzeigt. Andernfalls aktivieren Sie ihn über **Edit**.
+2. Prüfen Sie, ob das Feld **Host** eine Adresse enthält und nicht **Not defined**.
+3. Verwenden Sie den Port `5432` und testen Sie die Konnektivität:
+   ```bash
+   pg_isready -h <host> -p 5432
+   ```
+4. Prüfen Sie, ob keine ausgehende Firewall Ihres Netzwerks den Port `5432` blockiert.
+
+### Authentifizierung abgelehnt (`password authentication failed`)
+
+**Ursache**: falsches oder durch eine Rotation widerrufenes Passwort, oder ein Benutzer ohne Recht auf der Zieldatenbank.
+
+**Lösung**:
+
+1. Prüfen Sie in der Registerkarte **Users**, ob der Benutzer existiert und Zugriff auf die verwendete Datenbank hat (Spalte **Databases**).
+2. Fügen Sie den Zugriff bei Bedarf über **Actions** → **Manage Access** hinzu.
+3. Wenn das Passwort verloren gegangen ist oder sich geändert hat, generieren Sie über **Actions** → **Change Password** ein neues und aktualisieren Sie anschließend Ihre Anwendungen.
+
+### Zugriff auf eine Tabelle verweigert (`permission denied`)
+
+**Ursache**: Der Benutzer hat auf der Datenbank das Recht **Read-only** oder hat keinen Zugriff auf diese Datenbank.
+
+**Lösung**: Weisen Sie über **Actions** → **Manage Access** das Recht **Administrator (Admin)** auf der betreffenden Datenbank zu und verbinden Sie sich anschließend erneut.
+
+### Langsame Performance
+
+**Ursache**: Die zugewiesenen Ressourcen reichen für die Last nicht aus, oder Abfragen sind nicht optimiert.
+
+**Lösung**:
+
+1. Aktivieren Sie die Erweiterung `pg_stat_statements` auf der Datenbank (**Actions** → **Manage extensions**) und ermitteln Sie die aufwendigsten Abfragen:
    ```sql
-   SELECT client_addr, state, sent_lsn, write_lsn, flush_lsn, replay_lsn
-   FROM pg_stat_replication;
+   SELECT query, calls, mean_exec_time
+   FROM pg_stat_statements
+   ORDER BY mean_exec_time DESC
+   LIMIT 10;
    ```
-2. Vergleichen Sie die LSN-Positionen zwischen `sent_lsn` und `replay_lsn`. Ein großer Unterschied deutet auf einen Lag hin.
-3. Überprüfen Sie die den Standbys zugewiesenen Ressourcen (CPU, Speicher). Erhöhen Sie bei Bedarf den `resourcesPreset` oder die expliziten `resources`.
-4. Überprüfen Sie die Netzwerkverbindung zwischen den Pods:
-   ```bash
-   kubectl logs pg-<name>-2
-   ```
-5. Wenn der Lag bestehen bleibt, erwägen Sie, die Schreiblast auf dem Primary zu reduzieren oder die Ressourcen zu erhöhen.
+2. Fügen Sie fehlende Indizes hinzu.
+3. Wenn die Ressourcen ausgelastet sind, wechseln Sie über **Edit** zu einem größeren Preset. Siehe [Ressourcen ändern](./how-to/scale-resources.md).
+4. Um PostgreSQL-Parameter anzupassen (`shared_buffers`, `work_mem`, `max_connections`), wenden Sie sich an den Support: Diese Parameter werden in der Konsole nicht angeboten.
 
-### Verbindung zu PostgreSQL verweigert
+### Disk voll
 
-**Ursache**: Die Pods laufen nicht, der Secret-Name ist falsch oder der Service ist nicht erreichbar.
+**Ursache**: Das Datenvolumen hat die **Allocated Size** erreicht.
 
-**Lösung**:
-
-1. Überprüfen Sie, dass die PostgreSQL-Pods den Status `Running` haben:
-   ```bash
-   kubectl get pods -l app=pg-<name>
-   ```
-2. Überprüfen Sie, dass der Service existiert und auf die richtigen Endpoints zeigt:
-   ```bash
-   kubectl get svc pg-<name>-rw
-   kubectl get endpoints pg-<name>-rw
-   ```
-3. Stellen Sie sicher, dass Sie den richtigen Secret-Namen für die Anmeldedaten verwenden. Das Muster ist `pg-<name>-app`:
-   ```bash
-   kubectl get tenantsecret pg-<name>-app
-   ```
-4. Testen Sie die Verbindung von einem Pod im selben Namespace:
-   ```bash
-   kubectl run test-pg --rm -it --image=postgres:16 -- psql -h pg-<name>-rw -p 5432 -U <user>
-   ```
-
-### PITR-Wiederherstellung fehlgeschlagen
-
-**Ursache**: Die Bootstrap-Parameter sind falsch konfiguriert. Das Feld `bootstrap.oldName` muss genau dem Namen der Ursprungsinstanz entsprechen, und der Name der neuen Instanz muss anders sein.
-
-**Lösung**:
-
-1. Überprüfen Sie, dass `bootstrap.oldName` genau dem Namen der ursprünglichen PostgreSQL-Instanz entspricht:
-   ```yaml title="postgresql-restore.yaml"
-   apiVersion: apps.cozystack.io/v1alpha1
-   kind: Postgres
-   metadata:
-     name: restored-db       # Muss ein neuer Name sein
-   spec:
-     bootstrap:
-       enabled: true
-       oldName: "original-db"  # Genauer Name der alten Instanz
-       recoveryTime: "2025-06-15T14:30:00Z"  # Format RFC 3339
-   ```
-2. Der `recoveryTime` muss im Format **RFC 3339** sein (z.B.: `2025-06-15T14:30:00Z`). Wenn leer gelassen, wird zum letzten verfügbaren Zustand wiederhergestellt.
-3. Der Name in `metadata.name` muss **anders** als `bootstrap.oldName` sein.
-4. Stellen Sie sicher, dass die Sicherungen der Ursprungsinstanz im S3-Speicher noch zugänglich sind.
-
-### Langsame Leistung
-
-**Ursache**: Die PostgreSQL-Parameter sind nicht an die Arbeitslast angepasst, oder die zugewiesenen Ressourcen sind unzureichend.
-
-**Lösung**:
-
-1. Passen Sie die PostgreSQL-Parameter in Ihrem Manifest an:
-   ```yaml title="postgresql.yaml"
-   spec:
-     postgresql:
-       parameters:
-         shared_buffers: 512MB       # ~25% des zugewiesenen RAM
-         work_mem: 64MB              # Speicher pro Sortiervorgang
-         max_connections: 200        # An die Last anpassen
-         effective_cache_size: 1536MB  # ~75% des RAM
-   ```
-2. Überprüfen Sie, dass der `resourcesPreset` für Ihre Last geeignet ist:
-   - Entwicklung: `nano` oder `micro`
-   - Produktion: `medium`, `large` oder höher
-3. Überwachen Sie die Ressourcennutzung:
-   ```bash
-   kubectl top pod pg-<name>-1
-   ```
-4. Wenn Abfragen langsam sind, identifizieren Sie sie mit `pg_stat_statements` und optimieren Sie die Indizes.
-5. Erhöhen Sie die Ressourcen bei Bedarf, indem Sie zu einem höheren Preset wechseln oder explizite `resources` definieren.
+**Lösung**: Erhöhen Sie die **Disk size (GB)** über **Edit**, im Rahmen des Speicher-Quotas des Projekts. Löschen Sie bei Bedarf veraltete Daten und führen Sie `VACUUM` aus, um Speicherplatz freizugeben.

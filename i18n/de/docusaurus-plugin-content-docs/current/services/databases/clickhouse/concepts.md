@@ -5,23 +5,23 @@ title: Konzepte
 
 # Konzepte — ClickHouse
 
+:::info Verfügbarkeit
+ClickHouse ist in der [Hikube-Konsole](https://console.hikube.cloud) noch nicht als Self-Service verfügbar.
+Um eine Instanz bereitzustellen oder ihre Konfiguration zu ändern, [wenden Sie sich an den Support](mailto:support@hidora.io).
+:::
+
 ## Architektur
 
-ClickHouse auf Hikube ist ein verwalteter Dienst basierend auf dem **ClickHouse Operator**. Es handelt sich um eine spaltenorientierte SQL-Datenbank, die für die Datenanalyse (OLAP) optimiert ist. Die Architektur basiert auf **Shards** (horizontale Partitionierung) und **Replikas** (Hochverfügbarkeit), koordiniert durch **ClickHouse Keeper**.
+ClickHouse auf Hikube ist ein Managed Service. Es handelt sich um eine spaltenorientierte SQL-Datenbank, die für die Datenanalyse (OLAP) optimiert ist. Die Architektur beruht auf **Shards** (horizontale Partitionierung) und **Replicas** (Hochverfügbarkeit), die von **ClickHouse Keeper** koordiniert werden.
 
 ```mermaid
 graph TB
     subgraph "Hikube Platform"
-        subgraph "Tenant namespace"
-            CR[ClickHouse CRD]
-            SEC[Secret credentials]
+        subgraph "Steuerung"
+            OP[Hikube-Plattform]
         end
 
-        subgraph "ClickHouse Operator"
-            OP[Controller]
-        end
-
-        subgraph "Cluster ClickHouse"
+        subgraph "ClickHouse-Cluster"
             subgraph "Shard 1"
                 S1R1[Replica 1]
                 S1R2[Replica 2]
@@ -38,13 +38,12 @@ graph TB
             K3[Keeper 3]
         end
 
-        subgraph "Sicherung"
-            S3[Bucket S3]
-            RES[Restic]
+        subgraph "Backup"
+            S3[S3-Bucket]
+            RES[Automatisiertes Backup]
         end
     end
 
-    CR --> OP
     OP --> S1R1
     OP --> S1R2
     OP --> S2R1
@@ -55,7 +54,6 @@ graph TB
     K2 <--> K3
     S1R1 -.-> K1
     S2R1 -.-> K1
-    OP --> SEC
     S1R1 --> RES
     RES --> S3
 ```
@@ -65,14 +63,13 @@ graph TB
 ## Terminologie
 
 | Begriff | Beschreibung |
-|---------|-------------|
-| **ClickHouse** | Kubernetes-Ressource (`apps.cozystack.io/v1alpha1`), die einen verwalteten ClickHouse-Cluster darstellt. |
+|-------|-------------|
+| **ClickHouse-Cluster** | Verwaltete ClickHouse-Instanz, die auf Anfrage in Ihrem Projekt bereitgestellt wird. |
 | **Shard** | Horizontale Partition der Daten. Jeder Shard enthält eine Teilmenge der Gesamtdaten. |
-| **Replica** | Kopie eines Shards. Gewährleistet Redundanz und ermöglicht paralleles Lesen. |
+| **Replica** | Kopie eines Shards. Sorgt für Redundanz und ermöglicht paralleles Lesen. |
 | **ClickHouse Keeper** | Verteilter Koordinationsdienst (Alternative zu ZooKeeper), der die Replikation und den Konsens zwischen den Knoten verwaltet. |
-| **Restic** | Sicherungstool zum Erstellen verschlüsselter Snapshots auf S3-Speicher. |
-| **OLAP** | Online Analytical Processing — Datenzugriffsmodell, optimiert für analytische Abfragen (Aggregationen, Spaltenscans). |
-| **resourcesPreset** | Vordefiniertes Ressourcenprofil (nano bis 2xlarge). |
+| **OLAP** | Online Analytical Processing — Datenzugriffsmodell, das für analytische Abfragen optimiert ist (Aggregationen, Spalten-Scans). |
+| **Preset** | Vordefiniertes Ressourcenprofil (nano bis 2xlarge), das jeder Replica zugewiesen wird. |
 
 ---
 
@@ -84,15 +81,15 @@ Sharding verteilt die Daten horizontal auf mehrere Knoten:
 
 - Jeder **Shard** enthält einen Teil der Daten
 - `SELECT`-Abfragen werden parallel auf allen Shards ausgeführt
-- Der Parameter `shards` im Manifest bestimmt die Anzahl der Partitionen
+- Die Anzahl der Shards wird bei der Bereitstellung festgelegt
 
 ### Replikation
 
-Jeder Shard kann mehrere Replikas haben:
+Jeder Shard kann mehrere Replicas haben:
 
-- Die Replikas eines Shards enthalten **identische Daten**
-- Die Koordination wird durch **ClickHouse Keeper** gewährleistet
-- Bei Ausfall eines Replikas werden Lesevorgänge auf die anderen umgeleitet
+- Die Replicas desselben Shards enthalten **identische Daten**
+- Die Koordination übernimmt **ClickHouse Keeper**
+- Fällt eine Replica aus, werden die Lesezugriffe auf die anderen umgeleitet
 
 ```mermaid
 graph LR
@@ -110,52 +107,50 @@ graph LR
 ```
 
 :::tip
-Für kleine Datenvolumen reicht ein einzelner Shard mit 2 Replikas aus. Fügen Sie Shards hinzu, wenn das Volumen die Kapazitäten eines einzelnen Knotens übersteigt.
+Bei kleinen Datenmengen genügt ein einzelner Shard mit 2 Replicas. Fügen Sie Shards hinzu, wenn das Datenvolumen die Kapazität eines einzelnen Knotens übersteigt.
 :::
 
 ---
 
 ## ClickHouse Keeper
 
-ClickHouse Keeper ersetzt ZooKeeper für die Cluster-Koordination:
+ClickHouse Keeper ersetzt ZooKeeper für die Koordination des Clusters:
 
-- Verwaltet den **Konsens** zwischen den Replikas (Raft-Protokoll)
+- Verwaltet den **Konsens** zwischen den Replicas (Raft-Protokoll)
 - Speichert die **Metadaten** des Clusters (verteilte Tabellen, Replikation)
-- Erfordert eine **ungerade** Anzahl von Instanzen (3 empfohlen) für das Quorum
+- Benötigt eine **ungerade** Anzahl von Instanzen (3 empfohlen) für das Quorum
 
-| Keeper-Parameter | Beschreibung |
-|-------------------|-------------|
-| `keeper.replicas` | Anzahl der Keeper-Instanzen (3 empfohlen) |
-| `keeper.resources` / `keeper.resourcesPreset` | Dem Keeper zugewiesene Ressourcen |
-| `keeper.size` | Keeper-Speichergröße |
+Die Anzahl der Keeper-Instanzen, ihre Ressourcen und ihr Speicher werden bei der Bereitstellung festgelegt.
 
 ---
 
-## Sicherung
+## Backup
 
-ClickHouse auf Hikube verwendet **Restic** für Sicherungen, mit dem gleichen Modell wie MySQL:
+Die ClickHouse-Backups auf Hikube bieten:
 
-- **Verschlüsselte** Snapshots, gespeichert in einem S3-Bucket
-- Planung über Cron (`backup.schedule`)
-- Konfigurierbare Aufbewahrungsstrategie (`backup.cleanupStrategy`)
+- **Verschlüsselte** Snapshots, die in einem S3-Bucket gespeichert werden
+- Regelmäßige Planung
+- Konfigurierbare Aufbewahrungsstrategie
+
+Backups werden auf Anfrage beim Support eingerichtet.
 
 ---
 
 ## Benutzerverwaltung
 
-Benutzer werden im Manifest deklariert mit:
+Die Benutzer werden bei der Bereitstellung festgelegt, mit:
 
 - **Passwort** für die Authentifizierung
-- **Flag readonly**: `true` für Nur-Lese-Zugriff, `false` für Vollzugriff
+- **Nur Lesen** oder **Vollzugriff**
 
-Ein `admin`-Benutzer wird automatisch mit Vollrechten erstellt.
+Ein Benutzer `admin` mit vollen Rechten wird automatisch angelegt.
 
 ---
 
 ## Ressourcen-Presets
 
-| Preset | CPU | Speicher |
-|--------|-----|----------|
+| Preset | CPU | Arbeitsspeicher |
+|--------|-----|---------|
 | `nano` | 250m | 128Mi |
 | `micro` | 500m | 256Mi |
 | `small` | 1 | 512Mi |
@@ -166,13 +161,13 @@ Ein `admin`-Benutzer wird automatisch mit Vollrechten erstellt.
 
 ---
 
-## Limits und Kontingente
+## Limits und Quotas
 
 | Parameter | Wert |
-|-----------|------|
-| Max. Shards | Je nach Tenant-Kontingent |
-| Replikas pro Shard | Je nach Tenant-Kontingent |
-| Speichergröße (`size`) | Variabel (in Gi) |
+|-----------|--------|
+| Max. Shards | Abhängig von den Quotas des Projekts |
+| Replicas pro Shard | Abhängig von den Quotas des Projekts |
+| Speichergröße | Variabel (in GB) |
 | Keeper-Instanzen | 3 empfohlen (ungerade) |
 
 ---
@@ -180,4 +175,4 @@ Ein `admin`-Benutzer wird automatisch mit Vollrechten erstellt.
 ## Weiterführende Informationen
 
 - [Übersicht](./overview.md): Vorstellung des Dienstes
-- [API-Referenz](./api-reference.md): Alle Parameter der ClickHouse-Ressource
+- [FAQ](./faq.md): häufig gestellte Fragen

@@ -4,13 +4,13 @@ title: "Comment résoudre le DNS .local dans les VMs"
 
 # Comment résoudre le DNS .local dans les VMs
 
-Les VMs Hikube basées sur Debian ou Ubuntu utilisent `systemd-resolved` pour la résolution DNS. Or, le domaine DNS interne du cluster est `cozy.local`, et `systemd-resolved` refuse par défaut toutes les requêtes `*.local` car ce TLD est réservé au protocole mDNS (RFC 6762). Ce guide explique comment corriger ce comportement pour permettre la résolution DNS des services Kubernetes depuis une VM.
+Les VM Hikube basées sur Debian ou Ubuntu utilisent `systemd-resolved` pour la résolution DNS. Or le domaine DNS interne de la plateforme se termine en `.local` (`cozy.local`), et `systemd-resolved` refuse par défaut les requêtes `*.local` car ce TLD est réservé au protocole mDNS (RFC 6762). Ce guide explique comment corriger ce comportement dans l'OS de la VM.
 
 ## Prérequis
 
-- Une **VMInstance** Hikube basée sur Debian ou Ubuntu
-- Un accès **SSH** ou **console** à la VM
-- Droits **root** ou **sudo** sur la VM
+- Une VM Hikube basée sur Debian ou Ubuntu
+- Un accès **SSH** à la VM (commande du bloc **Connexion SSH** de la page de détail)
+- Droits **root** ou **sudo**
 
 ## Étapes
 
@@ -19,7 +19,7 @@ Les VMs Hikube basées sur Debian ou Ubuntu utilisent `systemd-resolved` pour la
 Connectez-vous à la VM :
 
 ```bash
-virtctl ssh -i ~/.ssh/id_ed25519 ubuntu@my-vm
+ssh -i ~/.ssh/hikube-vm ubuntu@<ip-publique>
 ```
 
 Vérifiez la configuration DNS actuelle :
@@ -28,12 +28,12 @@ Vérifiez la configuration DNS actuelle :
 resolvectl status
 ```
 
-Observez la section de votre interface réseau (généralement `enp1s0`). Vous constaterez l'absence de domaines de recherche (search domains) et de domaines de routage (routing domains).
+Repérez la section de l'interface réseau principale (souvent `enp1s0`). Elle ne contient ni domaine de recherche ni domaine de routage.
 
-Testez la résolution d'un service Kubernetes :
+Testez la résolution d'un nom en `.local` :
 
 ```bash
-dig my-service.my-namespace.svc.cozy.local
+dig mon-service.cozy.local
 ```
 
 **Résultat typique du problème :**
@@ -42,19 +42,23 @@ dig my-service.my-namespace.svc.cozy.local
 ;; ->>HEADER<<- opcode: QUERY, status: REFUSED, id: 12345
 ```
 
-Le statut `REFUSED` confirme que `systemd-resolved` envoie la requête `.local` vers mDNS (désactivé dans la VM) au lieu du serveur DNS unicast.
+Le statut `REFUSED` confirme que `systemd-resolved` envoie la requête `.local` vers mDNS au lieu du serveur DNS unicast.
 
-**Cause racine** : le DHCP de KubeVirt (virt-launcher) fournit un serveur DNS mais ne transmet pas de domaines de recherche. Sans le domaine de routage `~local`, `systemd-resolved` applique le comportement par défaut du RFC 6762 et route `.local` vers mDNS.
+**Cause racine** : le DHCP de la plateforme fournit un serveur DNS mais pas de domaine de recherche. Sans domaine de routage `~local`, `systemd-resolved` applique le RFC 6762 et route `.local` vers mDNS.
 
 ### 2. Créer le drop-in systemd-networkd
 
-La solution consiste à créer un fichier drop-in pour `systemd-networkd` qui déclare les domaines de recherche et les domaines de routage appropriés.
-
 :::warning Ne pas utiliser netplan
-Netplan ne supporte pas les domaines de routage (préfixe `~`). Utilisez directement un drop-in `systemd-networkd`.
+Netplan ne gère pas les domaines de routage (préfixe `~`). Utilisez directement un drop-in `systemd-networkd`.
 :::
 
-Créez le répertoire du drop-in :
+Repérez le nom du fichier réseau généré pour l'interface :
+
+```bash
+networkctl status enp1s0 | grep "Network File"
+```
+
+Créez le répertoire du drop-in correspondant (ici pour `10-netplan-enp1s0.network`) :
 
 ```bash
 sudo mkdir -p /etc/systemd/network/10-netplan-enp1s0.network.d/
@@ -65,27 +69,23 @@ Créez le fichier de configuration :
 ```bash
 sudo tee /etc/systemd/network/10-netplan-enp1s0.network.d/dns-fix.conf << 'EOF'
 [Network]
-Domains=<namespace>.svc.cozy.local svc.cozy.local cozy.local ~local ~.
+Domains=cozy.local ~local ~.
 EOF
 ```
 
-:::note Remplacez le namespace
-Remplacez `<namespace>` par le nom réel de votre namespace (tenant) Hikube. Par exemple : `tenant-prod.svc.cozy.local`.
-:::
-
-**Explication des domaines configurés :**
+**Domaines configurés :**
 
 | Domaine | Rôle |
 |---------|------|
-| `<namespace>.svc.cozy.local` | Domaine de recherche : permet la résolution par nom court (ex : `my-service` au lieu de `my-service.my-namespace.svc.cozy.local`) |
-| `svc.cozy.local` | Domaine de recherche : résolution des services dans d'autres namespaces |
-| `cozy.local` | Domaine de recherche : résolution de tout nom dans le cluster |
+| `cozy.local` | Domaine de recherche : permet de résoudre un nom relatif à `cozy.local` |
 | `~local` | Domaine de routage : force `.local` vers le DNS unicast au lieu de mDNS |
-| `~.` | Domaine de routage : fait de cette interface la route DNS par défaut (sinon la résolution externe cesse de fonctionner) |
+| `~.` | Domaine de routage : fait de cette interface la route DNS par défaut (sans lui, la résolution externe cesse de fonctionner) |
+
+:::note Domaines de recherche supplémentaires
+Si l'on vous a communiqué un domaine interne plus précis (par exemple `<espace>.svc.cozy.local`), ajoutez-le en tête de la ligne `Domains=` pour pouvoir utiliser des noms courts. En cas de doute sur le domaine à utiliser, contactez le [support](mailto:support@hidora.io).
+:::
 
 ### 3. Appliquer la configuration
-
-Redémarrez les services réseau :
 
 ```bash
 sudo systemctl restart systemd-networkd systemd-resolved
@@ -93,13 +93,11 @@ sudo systemctl restart systemd-networkd systemd-resolved
 
 ### 4. Vérifier la configuration
 
-Vérifiez que les domaines sont correctement appliqués :
-
 ```bash
 resolvectl status
 ```
 
-Vous devriez voir les domaines de recherche et de routage dans la section de l'interface `enp1s0` :
+La section de l'interface doit lister les domaines :
 
 ```
 Link 2 (enp1s0)
@@ -109,42 +107,45 @@ Current DNS Server: 10.x.x.x
        DNS Servers: 10.x.x.x
         DNS Domain: ~.
                     ~local
-                    <namespace>.svc.cozy.local
-                    svc.cozy.local
                     cozy.local
 ```
 
 ## Vérification
 
-Testez la résolution DNS d'un service Kubernetes par nom complet (FQDN) :
+Testez la résolution d'un nom `.local` complet :
 
 ```bash
-dig my-service.my-namespace.svc.cozy.local
+dig mon-service.cozy.local
 ```
 
-**Résultat attendu :** statut `NOERROR` avec une réponse contenant l'adresse IP du service.
+**Résultat attendu :** statut `NOERROR` (ou `NXDOMAIN` si le nom n'existe pas), et non plus `REFUSED`.
 
-Testez la résolution par nom court (grâce aux domaines de recherche) :
-
-```bash
-dig my-service
-```
-
-Testez que la résolution DNS externe fonctionne toujours :
+Vérifiez que la résolution externe fonctionne toujours :
 
 ```bash
-dig google.com
+dig example.com
 ```
 
 :::tip Persistance
-Cette configuration est **persistante** : elle survit aux redémarrages de la VM. Le fichier drop-in est lu automatiquement par `systemd-networkd` au démarrage.
+Le drop-in est lu par `systemd-networkd` à chaque démarrage : la correction survit aux redémarrages.
 :::
 
-:::note Solution au niveau plateforme
-Ce problème sera résolu à terme au niveau de la plateforme Hikube en configurant le DHCP de KubeVirt (virt-launcher) pour transmettre les domaines de recherche aux VMs. En attendant, cette correction manuelle est nécessaire.
+:::tip Automatiser avec cloud-init
+Pour appliquer la correction dès la création, ajoutez-la au **Script Cloud-Init (User Data)** :
+
+```yaml title="user-data.yaml"
+#cloud-config
+write_files:
+  - path: /etc/systemd/network/10-netplan-enp1s0.network.d/dns-fix.conf
+    content: |
+      [Network]
+      Domains=cozy.local ~local ~.
+runcmd:
+  - systemctl restart systemd-networkd systemd-resolved
+```
 :::
 
 ## Pour aller plus loin
 
-- [Référence API](../api-reference.md)
-- [Démarrage rapide](../quick-start.md)
+- [Configurer cloud-init](./configure-cloud-init.md)
+- [Dépannage](../troubleshooting.md)

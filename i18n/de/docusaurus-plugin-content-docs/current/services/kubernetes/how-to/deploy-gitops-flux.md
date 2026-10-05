@@ -4,128 +4,128 @@ title: "Mit Flux bereitstellen (GitOps)"
 
 # Mit Flux bereitstellen (GitOps)
 
-Diese Anleitung erklärt, wie Sie FluxCD auf einem Kubernetes-Hikube-Cluster aktivieren und konfigurieren, um Ihre Anwendungen nach dem GitOps-Ansatz bereitzustellen: ein Git-Repository als einzige Wahrheitsquelle für den Zustand Ihres Clusters.
+Diese Anleitung erklärt, wie Sie Flux CD auf einem Hikube-Kubernetes-Cluster aktivieren und so konfigurieren, dass es Ihre Anwendungen nach dem GitOps-Ansatz bereitstellt: ein Git-Repository als Source of Truth für den Zustand Ihres Clusters.
 
 ## Voraussetzungen
 
-- Ein bereitgestellter Kubernetes-Hikube-Cluster (siehe [Schnellstart](../quick-start.md))
-- `kubectl` konfiguriert für die Interaktion mit der Hikube-API
-- Ein erreichbares Git-Repository mit Ihren Kubernetes-Manifesten
-- Die kubeconfig des Child-Clusters abgerufen
+- Ein bereitgestellter Hikube-Kubernetes-Cluster (siehe [Schnellstart](../quick-start.md))
+- Die über die Konsole heruntergeladene kubeconfig des Clusters (Schaltfläche **Kubeconfig**)
+- Ein vom Cluster aus erreichbares Git-Repository mit Ihren Kubernetes-Manifesten
 
 ## Schritte
 
-### 1. Git-Repository vorbereiten
+### 1. Das Git-Repository vorbereiten
 
 Organisieren Sie Ihr Git-Repository mit einer Verzeichnisstruktur, die Ihre Kubernetes-Manifeste enthält:
 
 ```
 k8s-manifests/
-├── namespaces/
-│   └── production.yaml
-├── apps/
-│   ├── frontend/
-│   │   ├── deployment.yaml
-│   │   ├── service.yaml
-│   │   └── ingress.yaml
-│   └── backend/
-│       ├── deployment.yaml
-│       └── service.yaml
-└── config/
-    └── configmaps.yaml
+└── clusters/
+    └── production/
+        ├── namespaces.yaml
+        ├── frontend/
+        │   ├── deployment.yaml
+        │   ├── service.yaml
+        │   └── ingress.yaml
+        └── backend/
+            ├── deployment.yaml
+            └── service.yaml
 ```
 
 :::tip
-Flux synchronisiert alle YAML-Manifeste, die im Zielverzeichnis und seinen Unterverzeichnissen gefunden werden. Organisieren Sie Ihre Dateien logisch, um die Wartung zu erleichtern.
+Flux wendet alle YAML-Manifeste an, die im Zielverzeichnis und seinen Unterverzeichnissen gefunden werden. Organisieren Sie Ihre Dateien logisch, um die Wartung zu erleichtern.
 :::
 
-### 2. FluxCD-Addon aktivieren
+### 2. Das Addon Flux CD aktivieren
 
-Ändern Sie die Konfiguration Ihres Clusters, um FluxCD mit der URL Ihres Repositorys zu aktivieren:
+1. Öffnen Sie unter **Infrastructure** > **Kubernetes** das Menü **Actions** des Clusters und wählen Sie **Edit** (oder wählen Sie das Addon direkt bei der Erstellung im Schritt **Addons** aus).
+2. Aktivieren Sie im Abschnitt **Extensions & Addons** das Kontrollkästchen **Flux CD** („GitOps continuous deployment for Kubernetes“).
+3. Klicken Sie auf **Save**.
 
-```yaml title="cluster-gitops.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Kubernetes
+Die Detailseite des Clusters zeigt dann **Flux CD** im Abschnitt **Extensions** an. Das Addon installiert die Flux-Controller und ihre CRDs; Ihre Repositories deklarieren Sie anschließend im Cluster.
+
+### 3. Die Installation von Flux prüfen
+
+```bash
+export KUBECONFIG=~/Downloads/kubeconfig-<cluster-name>.yaml
+
+# Installierte Flux-CRDs
+kubectl get crds | grep toolkit.fluxcd.io
+
+# Flux-Controller
+kubectl get deploy -A -l app.kubernetes.io/part-of=flux
+```
+
+### 4. Repository und Synchronisation deklarieren
+
+Erstellen Sie im Cluster eine Quelle `GitRepository` und eine `Kustomization`, die das gewählte Verzeichnis anwendet:
+
+```yaml title="gitops-sync.yaml"
+apiVersion: v1
+kind: Namespace
 metadata:
-  name: my-cluster
+  name: gitops
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: k8s-manifests
+  namespace: gitops
 spec:
-  controlPlane:
-    replicas: 3
+  interval: 1m
+  url: https://github.com/company/k8s-manifests
+  ref:
+    branch: main
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: production
+  namespace: gitops
+spec:
+  interval: 5m
+  sourceRef:
+    kind: GitRepository
+    name: k8s-manifests
+  path: ./clusters/production
+  prune: true
+```
 
-  nodeGroups:
-    general:
-      minReplicas: 2
-      maxReplicas: 5
-      instanceType: "s1.large"
-      ephemeralStorage: 50Gi
-      roles:
-        - ingress-nginx
-
-  addons:
-    certManager:
-      enabled: true
-    ingressNginx:
-      enabled: true
-      hosts:
-        - app.example.com
-    fluxcd:
-      enabled: true
-      valuesOverride:
-        gitRepository:
-          url: "https://github.com/company/k8s-manifests"
-          branch: "main"
+```bash
+kubectl apply -f gitops-sync.yaml
 ```
 
 :::note
-Für private Git-Repositories konfigurieren Sie die SSH- oder Token-Authentifizierung im Child-Cluster nach der Bereitstellung von Flux.
+Für ein privates Git-Repository erstellen Sie im Namespace `gitops` ein Secret mit einem SSH-Schlüssel oder einem Token und referenzieren es dann im Feld `spec.secretRef` des `GitRepository`. Das erwartete Format finden Sie in der [Flux-Dokumentation](https://fluxcd.io/flux/components/source/gitrepositories/).
 :::
 
-### 3. Cluster-Konfiguration anwenden
+### 5. Die Synchronisation beobachten
 
 ```bash
-kubectl apply -f cluster-gitops.yaml
+# Zustand der Git-Quelle
+kubectl get gitrepositories -n gitops
 
-# Warten, bis der Cluster und die Addons bereit sind
-kubectl get kubernetes my-cluster -w
-```
-
-### 4. Synchronisation beobachten
-
-Prüfen Sie, ob Flux Ihr Git-Repository korrekt synchronisiert:
-
-```bash
-export KUBECONFIG=cluster-admin.yaml
-
-# GitRepository prüfen
-kubectl get gitrepositories -A
-
-# Kustomizations prüfen (Flux-Reconciliation)
-kubectl get kustomizations -A
-
-# Synchronisierungsdetails
-kubectl describe gitrepository -A
-
-# Flux-Pods prüfen
-kubectl get pods -n flux-system
+# Zustand der Reconciliation
+kubectl get kustomizations -n gitops
 ```
 
 **Erwartetes Ergebnis:**
 
 ```console
-NAMESPACE     NAME            URL                                          READY   STATUS                  AGE
-flux-system   flux-system     https://github.com/company/k8s-manifests    True    Fetched revision: main   5m
+NAME            URL                                         READY   STATUS
+k8s-manifests   https://github.com/company/k8s-manifests    True    stored artifact for revision 'main@sha1:...'
 ```
 
 ```console
-NAMESPACE     NAME            READY   STATUS                  AGE
-flux-system   flux-system     True    Applied revision: main   5m
+NAME         READY   STATUS
+production   True    Applied revision: main@sha1:...
 ```
 
-### 5. Eine Anwendung über Git bereitstellen
+### 6. Eine Anwendung über Git bereitstellen
 
-Um eine Anwendung bereitzustellen oder zu aktualisieren, pushen Sie einfach die Manifeste in Ihr Git-Repository:
+Um eine Anwendung bereitzustellen oder zu aktualisieren, pushen Sie die Manifeste in Ihr Git-Repository:
 
-```yaml title="apps/my-app/deployment.yaml"
+```yaml title="clusters/production/my-app/deployment.yaml"
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -156,53 +156,44 @@ spec:
 
 ```bash
 # Aus Ihrem lokalen Repository
-git add apps/my-app/deployment.yaml
+git add clusters/production/my-app/deployment.yaml
 git commit -m "deploy: add my-app v1.0.0"
 git push origin main
 ```
 
-Flux erkennt die Änderungen automatisch und wendet die Manifeste im Cluster an:
+Flux erkennt die Änderungen im festgelegten Intervall und wendet die Manifeste im Cluster an:
 
 ```bash
-# Reconciliation beobachten
-kubectl get kustomizations -A -w
-
-# Prüfen, ob die Anwendung bereitgestellt ist
-kubectl get pods -l app=my-app
+kubectl get kustomizations -n gitops -w
+kubectl get pods -A -l app=my-app
 ```
 
 :::tip
-Standardmäßig synchronisiert Flux das Repository jede Minute. Um eine sofortige Reconciliation zu erzwingen:
+Um eine sofortige Reconciliation zu erzwingen:
 ```bash
-kubectl annotate --overwrite gitrepository flux-system -n flux-system reconcile.fluxcd.io/requestedAt="$(date +%s)"
+kubectl annotate --overwrite gitrepository k8s-manifests -n gitops reconcile.fluxcd.io/requestedAt="$(date +%s)"
 ```
+Mit der CLI `flux` lautet das Äquivalent `flux reconcile kustomization production -n gitops --with-source`.
 :::
 
 ## Überprüfung
 
-Validieren Sie, dass die GitOps-Pipeline durchgängig funktioniert:
-
 ```bash
-# Globaler Flux-Status
+# Gesamtstatus
 kubectl get gitrepositories,kustomizations -A
 
-# Flux-Logs bei Problemen
-kubectl logs -n flux-system deploy/source-controller --tail=30
-kubectl logs -n flux-system deploy/kustomize-controller --tail=30
-
-# Von Flux bereitgestellte Ressourcen prüfen
-kubectl get all -l kustomize.toolkit.fluxcd.io/name=flux-system
+# Details eines Reconciliation-Fehlers
+kubectl describe kustomization production -n gitops
 ```
 
 :::warning
 Wenn die Synchronisation fehlschlägt, prüfen Sie:
-- Die Erreichbarkeit des Git-Repositorys vom Cluster aus
-- Die Gültigkeit der YAML-Manifeste im Repository (eine ungültige Datei blockiert die Reconciliation)
-- Die Logs der Flux-Controller, um den genauen Fehler zu identifizieren
+- die Erreichbarkeit des Git-Repositorys vom Cluster aus;
+- die Gültigkeit der YAML-Manifeste im Repository (eine ungültige Datei blockiert die Reconciliation);
+- die Events und die Logs der Flux-Controller (`kubectl logs` auf den Pods `source-controller` und `kustomize-controller`).
 :::
 
 ## Weiterführende Informationen
 
-- [API-Referenz](../api-reference.md) -- Konfiguration des Addons `fluxcd`
-- [Konzepte](../concepts.md) -- Cluster-Architektur und Addons
-- [Ingress mit TLS bereitstellen](./deploy-ingress-tls.md) -- Ihre über Flux bereitgestellten Anwendungen exponieren
+- [Flux CD](../plugins/fluxcd.md): Details zum Addon
+- [Einen Ingress mit TLS bereitstellen](./deploy-ingress-tls.md): Ihre mit Flux bereitgestellten Anwendungen erreichbar machen

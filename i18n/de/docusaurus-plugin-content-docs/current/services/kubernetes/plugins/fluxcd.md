@@ -1,109 +1,71 @@
 ---
 sidebar_position: 8
-title: FluxCD
+title: Flux CD
 ---
 
-<!--Link zu valuesoverride-->
+# Flux CD
 
-# 🧩 Details zum Feld `addons.fluxcd`
+Das Addon **Flux CD** installiert die **Flux**-Controller im Cluster für die **GitOps-Verwaltung**: Flux synchronisiert den Zustand des Clusters kontinuierlich mit Git-Repositories, sodass die im Code deklarierte Konfiguration stets angewendet ist.
 
-Das Feld `addons.fluxcd` definiert die Konfiguration des Add-ons **FluxCD**, das für die **GitOps-Verwaltung** des Kubernetes-Clusters verwendet wird.
-FluxCD synchronisiert automatisch den Cluster-Zustand mit Git-Repositories und stellt sicher, dass die im Code deklarierte Konfiguration stets angewendet wird.
+## In der Konsole
 
-```yaml
-addons:
-  fluxcd:
-    enabled: true
-    valuesOverride:
-      fluxcd:
-        installCRDs: true
-        resources:
-          limits:
-            cpu: 500m
-            memory: 512Mi
-          requests:
-            cpu: 200m
-            memory: 256Mi
-```
+1. Wählen Sie bei der Erstellung im Schritt **Addons** **Flux CD** aus (standardmäßig deaktiviert).
+2. Auf einem bestehenden Cluster: **Edit** > **Extensions & Addons**, **Flux CD** aktivieren, dann **Save**.
 
+Die Detailseite des Clusters zeigt **Flux CD** im Abschnitt **Extensions** an, wenn es aktiv ist.
+
+## Die Konfiguration überschreiben
+
+Das Addon installiert Flux 2.8 mit dem **Flux Operator** im Cluster. Sobald das Addon ausgewählt ist, erscheint das Feld **Helm Configuration (YAML) — optional**. Der Wert wird unter dem Schlüssel `flux-instance` an das Chart `flux-instance` übergeben; die verfügbaren Optionen sind die der Ressource [FluxInstance](https://fluxcd.control-plane.io/operator/fluxinstance/). In den meisten Fällen ist kein Override nötig.
+
+:::note
+Das Addon installiert Flux, deklariert aber kein Repository. Git-Quellen und Synchronisationen werden im Cluster erstellt, wie unten beschrieben.
+:::
+
+## Nutzung im Cluster
+
+Deklarieren Sie eine Quelle `GitRepository` und eine `Kustomization`:
+
+```yaml title="gitops-sync.yaml"
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: gitops
 ---
-
-## `fluxcd` (Object) — **Erforderlich**
-
-### Beschreibung
-
-Das Feld `fluxcd` gruppiert die Hauptkonfiguration des GitOps-Managers des Clusters.
-Es ermöglicht die Aktivierung der FluxCD-Bereitstellung und die Anpassung seiner Konfiguration über Helm.
-
-### Beispiel
-
-```yaml
-fluxcd:
-  enabled: true
-  valuesOverride:
-    fluxcd:
-      installCRDs: true
-```
-
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: k8s-manifests
+  namespace: gitops
+spec:
+  interval: 1m
+  url: https://github.com/company/k8s-manifests
+  ref:
+    branch: main
 ---
-
-## `enabled` (boolean) — **Erforderlich**
-
-### Beschreibung
-
-Gibt an, ob **FluxCD** im Cluster aktiviert (`true`) oder deaktiviert (`false`) ist.
-Wenn aktiviert, stellt FluxCD seine Controller bereit und startet die GitOps-Synchronisation.
-
-### Beispiel
-
-```yaml
-enabled: true
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: production
+  namespace: gitops
+spec:
+  interval: 5m
+  sourceRef:
+    kind: GitRepository
+    name: k8s-manifests
+  path: ./clusters/production
+  prune: true
 ```
 
----
-
-## `valuesOverride` (Object) — **Erforderlich**
-
-### Beschreibung
-
-Das Feld `valuesOverride` ermöglicht das **Überschreiben der Standard-Helm-Werte**, die für die Bereitstellung von FluxCD verwendet werden.
-Es wird insbesondere zur Konfiguration der Ressourcen, der CRDs oder erweiterten Optionen wie Synchronisationsfrequenz, Git-Quellen und automatischen Update-Strategien verwendet.
-
-### Beispiele
-
-#### Basiskonfiguration
-
-```yaml
-valuesOverride:
-  fluxcd:
-    installCRDs: true
-    resources:
-      limits:
-        cpu: 500m
-        memory: 512Mi
-      requests:
-        cpu: 200m
-        memory: 256Mi
+```bash
+kubectl apply -f gitops-sync.yaml
+kubectl get gitrepositories,kustomizations -n gitops
 ```
 
-#### Konfiguration mit einem FluxCD Git-Repo
+Der vollständige Ablauf ist in [Mit Flux bereitstellen (GitOps)](../how-to/deploy-gitops-flux.md) beschrieben.
 
-```yaml
-valuesOverride:
-  fluxcd:
-    installCRDs: true
-    # Git-Repository-Konfiguration
-    gitRepository:
-      url: "https://github.com/company/k8s-manifests"
-      branch: "main"
-      path: "./clusters/production"
-```
+## Best Practices
 
----
-
-## 💡 Best Practices
-
-- Aktivieren Sie `enabled: true`, um vom kontinuierlichen GitOps-basierten Deployment zu profitieren.
-- Verwenden Sie `valuesOverride`, um die Ressourcen anzupassen und die Synchronisationsfrequenz je nach Bedarf einzustellen.
-- Sichern Sie den Git-Zugriff mit **Kubernetes-Secrets** oder **persönlichen Token**.
-- Prüfen Sie die Kompatibilität der FluxCD-Version mit der Kubernetes-Version vor jedem Update.
+- Speichern Sie Git-Zugangsdaten (SSH-Schlüssel, Token) in Kubernetes-Secrets, die über `spec.secretRef` referenziert werden, niemals im Repository.
+- Aktivieren Sie `prune: true`, damit aus dem Repository entfernte Ressourcen auch aus dem Cluster entfernt werden.
+- Trennen Sie die Verzeichnisse nach Umgebung (`clusters/staging`, `clusters/production`).

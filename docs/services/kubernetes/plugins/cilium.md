@@ -3,71 +3,55 @@ sidebar_position: 1
 title: Cilium
 ---
 
-# 🧩 Détails du champ `addons.cilium`
+# Cilium
 
-Le champ `addons.cilium` définit la configuration de l’add-on **Cilium**, utilisé comme **CNI (Container Network Interface)** pour le cluster Kubernetes.
-Cilium gère le réseau, la sécurité et l’observabilité des Pods à l’aide de **BPF (Berkeley Packet Filter)**.
-Ce champ permet de personnaliser le déploiement du composant via des valeurs spécifiques.
+**Cilium** est le **CNI (Container Network Interface)** des clusters Kubernetes Hikube. Il gère le réseau, la sécurité et l'observabilité des pods à l'aide d'**eBPF**, et applique les `NetworkPolicy`.
 
-```yaml
-addons:
-  cilium:
-    valuesOverride:
-      cilium:
-        hubble:
-          enabled: true
-        encryption:
-          enabled: true
-```
+## Dans la console
 
----
+Cilium fait partie de la **Configuration avancée** de l'étape **Addons** : il est toujours présent dans le cluster et ne se désactive pas. Vous pouvez seulement surcharger sa configuration.
 
-## `cilium` (Object) — **Obligatoire**
+1. À la création (étape **Addons**) ou depuis **Modifier** > **Extensions & Addons**, dépliez le bloc **Cilium** de la section **Configuration avancée**.
+2. Saisissez vos valeurs dans **Configuration Helm (YAML) — optionnel**.
+3. Validez avec **Suivant** puis **Déployer** (création) ou **Enregistrer** (modification).
 
-### Description
+:::warning
+Sur un cluster existant, la console n'enregistre pas une première surcharge saisie depuis **Modifier** : le bouton **Enregistrer** confirme la mise à jour, mais la valeur est ignorée. Définissez la surcharge à la création du cluster, ou [contactez le support](mailto:support@hidora.io). Une surcharge définie à la création reste modifiable depuis **Modifier**.
+:::
 
-Le champ `cilium` représente la configuration principale de l’add-on réseau.
-Il regroupe les paramètres nécessaires à l’installation et à la personnalisation de Cilium dans le cluster.
+Sur la page de détail du cluster, la ligne **CNI** de la section **Réseau** indique **Personnalisé** lorsqu'une configuration Cilium est appliquée.
 
-### Exemple
+## Surcharger la configuration
 
-```yaml
+La valeur YAML est transmise au chart Helm de Cilium, sous la clé `cilium`. Par exemple, pour activer Hubble :
+
+```yaml title="cilium-override.yaml"
 cilium:
-  valuesOverride:
-    cilium:
-      hubble:
-        enabled: true
+  hubble:
+    enabled: true
 ```
 
----
+Les options disponibles sont décrites dans la [référence Helm de Cilium](https://docs.cilium.io/en/stable/helm-reference/).
 
-## `valuesOverride` (Object) — **Obligatoire**
+:::warning
+Le réseau du cluster dépend de Cilium. Une surcharge erronée peut couper la communication entre les pods ou avec le control plane : modifiez uniquement les options dont vous maîtrisez l'effet.
+:::
 
-### Description
+## Utilisation dans le cluster
 
-Le champ `valuesOverride` permet de **surcharger les valeurs par défaut** utilisées lors du déploiement de Cilium.
-Il sert à ajuster le comportement du CNI sans modifier le chart principal.
-Ces valeurs peuvent inclure la configuration de **Hubble**, du chiffrement, des politiques réseau, ou encore des ressources allouées.
-Pour plus de valeurs à définir : https://docs.cilium.io/en/stable/helm-reference/
+```bash
+# Pods Cilium (un par nœud)
+kubectl get pods -A -l k8s-app=cilium
 
-### Exemple
-
-```yaml
-valuesOverride:
-  cilium:
-    hubble:
-      enabled: true
-    encryption:
-      enabled: true
+# État de l'agent Cilium
+CILIUM_NS=$(kubectl get ds -A -l k8s-app=cilium -o jsonpath='{.items[0].metadata.namespace}')
+kubectl exec -n "$CILIUM_NS" -it ds/cilium -- cilium status
 ```
 
----
+Voir [Comment configurer le networking](../how-to/configure-networking.md) pour les `NetworkPolicy` et Hubble.
 
-## 💡 Bonnes pratiques
+## Bonnes pratiques
 
-- Toujours définir `valuesOverride` pour garder la maîtrise de la configuration réseau.
-- Activer **Hubble** (`hubble.enabled: true`) pour bénéficier de la visibilité réseau et du suivi des flux.
-- Utiliser `encryption.enabled: true` pour chiffrer le trafic inter-Pod dans les environnements sensibles.
-- Vérifier la compatibilité de la version de Cilium avec la version du cluster Kubernetes.
-
----
+- Activez **Hubble** pour bénéficier de la visibilité réseau et du suivi des flux.
+- Utilisez des `NetworkPolicy` pour restreindre le trafic entre vos applications.
+- Testez toute surcharge sur un cluster de recette avant la production.

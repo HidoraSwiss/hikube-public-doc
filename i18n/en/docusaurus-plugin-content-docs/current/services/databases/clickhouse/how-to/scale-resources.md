@@ -1,145 +1,73 @@
 ---
-title: "How to vertically scale ClickHouse"
+title: "How to scale ClickHouse vertically"
+sidebar_position: 2
 ---
 
-# How to vertically scale ClickHouse
+# How to scale ClickHouse vertically
 
-This guide explains how to adjust the CPU, memory, and storage resources of your ClickHouse instance on Hikube, either via a predefined preset or by defining explicit values.
+:::info Availability
+ClickHouse is not yet available as self-service in the [Hikube console](https://console.hikube.cloud).
+To provision an instance or change its configuration, [contact support](mailto:support@hidora.io).
+:::
 
-## Prerequisites
+This guide helps you decide when and how to increase the resources of a ClickHouse instance.
 
-- A ClickHouse instance deployed on Hikube (see the [quick start](../quick-start.md))
-- `kubectl` configured to interact with the Hikube API
-- The YAML configuration file for your ClickHouse instance
+## Available presets
+
+The resources of each ClickHouse replica are defined by a preset:
+
+| Preset | CPU | Memory |
+|--------|-----|--------|
+| `nano` | 250m | 128Mi |
+| `micro` | 500m | 256Mi |
+| `small` | 1 | 512Mi |
+| `medium` | 1 | 1Gi |
+| `large` | 2 | 2Gi |
+| `xlarge` | 4 | 4Gi |
+| `2xlarge` | 8 | 8Gi |
 
 ## Steps
 
-### 1. Check current resources
+### 1. Measure current consumption
 
-Review the current configuration of your ClickHouse instance:
+Identify the most memory-intensive queries:
 
-```bash
-kubectl get clickhouse my-clickhouse -o yaml
+```sql
+SELECT query, memory_usage, elapsed
+FROM system.query_log
+WHERE type = 'QueryFinish'
+ORDER BY memory_usage DESC
+LIMIT 10;
 ```
 
-Note the values of `resourcesPreset`, `resources`, `replicas`, `shards` and `size` in the `spec` section.
+And the disk space used per table:
 
-### 2. Modify the resourcesPreset or explicit resources
-
-#### Option A: Use a preset
-
-Here are the available presets:
-
-| **Preset** | **CPU** | **Memory** |
-|------------|---------|------------|
-| `nano`     | 250m    | 128Mi      |
-| `micro`    | 500m    | 256Mi      |
-| `small`    | 1       | 512Mi      |
-| `medium`   | 1       | 1Gi        |
-| `large`    | 2       | 2Gi        |
-| `xlarge`   | 4       | 4Gi        |
-| `2xlarge`  | 8       | 8Gi        |
-
-For example, to go from `small` (default value) to `large`:
-
-```yaml title="clickhouse-large.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: ClickHouse
-metadata:
-  name: my-clickhouse
-spec:
-  replicas: 2
-  shards: 1
-  resourcesPreset: large
-  size: 20Gi
-  clickhouseKeeper:
-    enabled: true
-    replicas: 3
-    resourcesPreset: micro
-    size: 1Gi
+```sql
+SELECT database, table, formatReadableSize(sum(bytes_on_disk)) AS size
+FROM system.parts
+WHERE active
+GROUP BY database, table
+ORDER BY sum(bytes_on_disk) DESC;
 ```
 
-#### Option B: Define explicit resources
+### 2. Request the change
 
-For precise control, specify CPU and memory directly:
-
-```yaml title="clickhouse-custom-resources.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: ClickHouse
-metadata:
-  name: my-clickhouse
-spec:
-  replicas: 2
-  shards: 1
-  resources:
-    cpu: 4000m
-    memory: 8Gi
-  size: 50Gi
-  clickhouseKeeper:
-    enabled: true
-    replicas: 3
-    resourcesPreset: small
-    size: 2Gi
-```
+[Contact support](mailto:support@hidora.io) with the project, the instance name and the target: preset, storage size, or number of shards if a single node is no longer enough (see [Configure sharding](./configure-sharding.md)).
 
 :::warning
-If the `resources` field is defined, the `resourcesPreset` value is entirely ignored. Remove `resourcesPreset` from the manifest to avoid confusion.
+Changing the preset restarts the replicas. With several replicas per shard, the service remains available during the operation.
 :::
-
-### 3. Adjust storage if needed
-
-ClickHouse stores data on disk (unlike Redis). Remember to increase the persistent volume (`size`) based on the expected data volume:
-
-```yaml title="clickhouse-storage.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: ClickHouse
-metadata:
-  name: my-clickhouse
-spec:
-  replicas: 2
-  shards: 1
-  resourcesPreset: xlarge
-  size: 100Gi
-  storageClass: replicated
-  clickhouseKeeper:
-    enabled: true
-    replicas: 3
-    resourcesPreset: micro
-    size: 1Gi
-```
-
-:::tip
-Use `storageClass: replicated` in production to protect data against physical node loss.
-:::
-
-### 4. Apply the update
-
-```bash
-kubectl apply -f clickhouse-large.yaml
-```
 
 ## Verification
 
-Verify that the resources have been updated:
+After the change, check the resources as seen by ClickHouse:
 
-```bash
-# Verifier la configuration de la ressource ClickHouse
-kubectl get clickhouse my-clickhouse -o yaml | grep -A 5 resources
-
-# Verifier l'etat des pods ClickHouse
-kubectl get pods -l app.kubernetes.io/instance=my-clickhouse
+```sql
+SELECT name, value FROM system.settings WHERE name = 'max_memory_usage';
+SELECT * FROM system.disks;
 ```
 
-**Expected output:**
+## Further reading
 
-```console
-NAME                READY   STATUS    RESTARTS   AGE
-my-clickhouse-0-0   1/1     Running   0          3m
-my-clickhouse-0-1   1/1     Running   0          3m
-```
-
-## Going further
-
-- [API Reference](../api-reference.md) -- `resources`, `resourcesPreset`, `size` and `storageClass` parameters
-- [How to configure sharding](./configure-sharding.md) -- Horizontal data distribution
-- [How to manage users and profiles](./manage-users.md) -- User access management
+- [ClickHouse concepts](../concepts.md)
+- [Configure sharding](./configure-sharding.md)

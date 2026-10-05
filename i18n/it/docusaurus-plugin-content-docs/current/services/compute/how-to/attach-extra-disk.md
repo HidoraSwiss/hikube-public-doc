@@ -4,105 +4,53 @@ title: "Come collegare un disco supplementare"
 
 # Come collegare un disco supplementare
 
-Separare i dati applicativi dal disco di sistema è una buona pratica per l'affidabilità e la flessibilità delle vostre VM. Questa guida spiega come creare un disco supplementare, collegarlo a una VMInstance esistente, poi formattarlo e montarlo nel sistema operativo.
+Separare i dati applicativi dal disco di sistema semplifica i backup, le migrazioni e il ridimensionamento. Questa guida spiega come aggiungere un disco dati a una VM dalla console, quindi formattarlo e montarlo nel sistema operativo.
 
 ## Prerequisiti
 
-- **kubectl** configurato con il vostro kubeconfig Hikube
-- Una **VMInstance** esistente e funzionante
-- Un accesso **SSH** o **console** alla VM
+- Un account Hikube e un progetto con quota di **Storage** disponibile
+- Un'**istanza VM** esistente
+- Un accesso **SSH** alla VM
 
-## Passi
+## Passaggi
 
-### 1. Creare un VMDisk supplementare
+### 1. Aprire la modifica della VM
 
-Create un disco vuoto della dimensione desiderata. Un disco vuoto utilizza `source: {}` senza URL né immagine:
+1. Apra **Infrastructure** > **VM Instances** e faccia clic sul nome della VM.
+2. Faccia clic su **Edit**.
 
-```yaml title="data-disk.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: VMDisk
-metadata:
-  name: vm-data-disk
-spec:
-  source: {}
-  optical: false
-  storage: 50Gi
-  storageClass: replicated
-```
+### 2. Aggiungere il disco
 
-Applicate il manifest:
+Nella sezione **Storage**, faccia clic su **Add a disk**. Compare un blocco **Storage Volume #1**. Due opzioni:
 
-```bash
-kubectl apply -f data-disk.yaml
-```
+**Nuovo disco** (scheda **New**):
 
-Verificate che il disco sia pronto:
+1. **Volume Name**: mantenga il nome proposto o inserisca il suo (lettere minuscole, cifre e trattini).
+2. **Size (GB)**: minimo 20 GB, ad esempio `50`.
+3. **Replication Type**: **Asynchronous Replication** (Recommended) o **Synchronous Replication**.
+4. **Disk Encryption**: la attivi per cifrare i dati a riposo.
 
-```bash
-kubectl get vmdisk vm-data-disk -w
-```
+**Disco esistente** (scheda **Existing**): in **Select an existing volume**, scelga un disco dati del progetto che non sia collegato ad alcuna VM. I dischi si creano anche in modo indipendente nel menu **Disks** (vedere [Dischi](../../storage/disks/quick-start.md)).
 
-**Risultato atteso:**
+### 3. Salvare
 
-```
-NAME            STATUS   SIZE   STORAGECLASS   AGE
-vm-data-disk    Ready    50Gi   replicated     30s
-```
+Verifichi il riepilogo delle quote in cima alla pagina, quindi faccia clic su **Save**.
 
-### 2. Referenziare il disco nella VMInstance
+La console mostra **Restart required**: la VM si riavvia per prendere in carico il nuovo disco. Attenda che torni allo stato **Running**. Il disco compare nella sezione **Storage & Disks** della pagina di dettaglio.
 
-Aggiungete il nome del nuovo disco nella lista `spec.disks[]` della vostra VMInstance. Ad esempio, se la vostra VM utilizza già un disco di sistema `vm-system-disk`:
-
-```yaml title="vm-instance.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: VMInstance
-metadata:
-  name: my-vm
-spec:
-  runStrategy: Always
-  instanceType: u1.xlarge
-  instanceProfile: ubuntu
-  external: true
-  externalMethod: PortList
-  externalPorts:
-    - 22
-  disks:
-    - name: vm-system-disk
-    - name: vm-data-disk
-  sshKeys:
-    - ssh-ed25519 AAAA... user@host
-```
-
-### 3. Applicare le modifiche
-
-```bash
-kubectl apply -f vm-instance.yaml
-```
-
-:::warning
-La VM non si riavvia automaticamente dopo l'aggiunta di un disco. Dovete riavviarla manualmente:
-
-```bash
-# Opzione 1: tramite virtctl
-virtctl restart my-vm
-
-# Opzione 2: tramite runStrategy
-kubectl patch vminstance my-vm --type='merge' -p '{"spec":{"runStrategy":"Halted"}}'
-kubectl patch vminstance my-vm --type='merge' -p '{"spec":{"runStrategy":"Always"}}'
-```
-
-Attendete che la VM sia di nuovo in stato `Running` prima di continuare.
+:::note Disco aggiunto alla creazione
+Può anche aggiungere dischi direttamente alla creazione della VM, con **Add a disk** al passaggio **Storage** della procedura guidata. Prendono allora il nome della VM con un suffisso (`ma-vm-2`, `ma-vm-3`…).
 :::
 
 ### 4. Formattare e montare il disco nella VM
 
-Connettetevi alla VM:
+Si connetta alla VM con il comando del blocco **SSH Connection**:
 
 ```bash
-virtctl ssh -i ~/.ssh/id_ed25519 ubuntu@my-vm
+ssh -i ~/.ssh/hikube-vm ubuntu@<ip-pubblico>
 ```
 
-Identificate il nuovo disco con `lsblk`:
+Identifichi il nuovo disco:
 
 ```bash
 lsblk
@@ -118,30 +66,29 @@ vda     252:0    0   20G  0 disk
 vdb     252:16   0   50G  0 disk
 ```
 
-Il nuovo disco appare come `vdb` (senza partizione né punto di montaggio).
+Il nuovo disco compare come `vdb`, senza partizione né punto di montaggio.
 
-Formattate il disco in ext4:
+Lo formatti in ext4:
 
 ```bash
 sudo mkfs.ext4 /dev/vdb
 ```
 
-Create il punto di montaggio e montate il disco:
+Lo monti:
 
 ```bash
 sudo mkdir -p /mnt/data
 sudo mount /dev/vdb /mnt/data
 ```
 
-Per rendere il montaggio persistente al riavvio, aggiungete una voce in `/etc/fstab`:
+Renda il montaggio persistente utilizzando l'UUID del file system, più stabile del nome del dispositivo:
 
 ```bash
-echo '/dev/vdb /mnt/data ext4 defaults 0 2' | sudo tee -a /etc/fstab
+UUID=$(sudo blkid -s UUID -o value /dev/vdb)
+echo "UUID=$UUID /mnt/data ext4 defaults,nofail 0 2" | sudo tee -a /etc/fstab
 ```
 
 ## Verifica
-
-Verificate che il disco sia correttamente montato e accessibile:
 
 ```bash
 df -h /mnt/data
@@ -154,17 +101,19 @@ Filesystem      Size  Used Avail Use% Mounted on
 /dev/vdb         49G   24K   47G   1% /mnt/data
 ```
 
-Testate la scrittura:
+Verifichi la scrittura:
 
 ```bash
 sudo touch /mnt/data/test.txt && echo "OK"
 ```
 
-:::tip Storage replicato
-Utilizzate sempre `storageClass: replicated` per i dischi dati in produzione. Questo garantisce la replica su più datacenter.
-:::
+## Scollegare un disco
+
+In **Edit** > **Storage**, faccia clic sull'icona di eliminazione del volume, confermi inserendone il nome, quindi faccia clic su **Save**. Il disco viene scollegato dalla VM (che si riavvia) e resta disponibile nel menu **Disks**. Prima lo smonti nel sistema operativo e rimuova la sua riga da `/etc/fstab`.
 
 ## Per approfondire
 
-- [Riferimento API](../api-reference.md)
-- [Avvio rapido](../quick-start.md)
+- [Dischi: panoramica](../../storage/disks/overview.md)
+- [Collegare un disco esistente a una VM](../../storage/disks/how-to/attach-to-vm.md)
+- [Ridimensionare un disco](../../storage/disks/how-to/resize.md)
+- [Avvio rapido VM](../quick-start.md)

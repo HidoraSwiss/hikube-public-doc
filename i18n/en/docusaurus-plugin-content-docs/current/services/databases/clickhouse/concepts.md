@@ -5,23 +5,23 @@ title: Concepts
 
 # Concepts — ClickHouse
 
+:::info Availability
+ClickHouse is not yet available as self-service in the [Hikube console](https://console.hikube.cloud).
+To provision an instance or change its configuration, [contact support](mailto:support@hidora.io).
+:::
+
 ## Architecture
 
-ClickHouse on Hikube is a managed service based on the **ClickHouse Operator**. It is a column-oriented SQL database optimized for data analytics (OLAP). The architecture relies on **shards** (horizontal partitioning) and **replicas** (high availability), coordinated by **ClickHouse Keeper**.
+ClickHouse on Hikube is a managed service. It is a column-oriented SQL database optimized for data analysis (OLAP). The architecture relies on **shards** (horizontal partitioning) and **replicas** (high availability), coordinated by **ClickHouse Keeper**.
 
 ```mermaid
 graph TB
     subgraph "Hikube Platform"
-        subgraph "Tenant namespace"
-            CR[ClickHouse CRD]
-            SEC[Secret credentials]
+        subgraph "Control"
+            OP[Hikube platform]
         end
 
-        subgraph "ClickHouse Operator"
-            OP[Controller]
-        end
-
-        subgraph "ClickHouse Cluster"
+        subgraph "ClickHouse cluster"
             subgraph "Shard 1"
                 S1R1[Replica 1]
                 S1R2[Replica 2]
@@ -39,12 +39,11 @@ graph TB
         end
 
         subgraph "Backup"
-            S3[S3 Bucket]
-            RES[Restic]
+            S3[S3 bucket]
+            RES[Automated backup]
         end
     end
 
-    CR --> OP
     OP --> S1R1
     OP --> S1R2
     OP --> S2R1
@@ -55,7 +54,6 @@ graph TB
     K2 <--> K3
     S1R1 -.-> K1
     S2R1 -.-> K1
-    OP --> SEC
     S1R1 --> RES
     RES --> S3
 ```
@@ -66,13 +64,12 @@ graph TB
 
 | Term | Description |
 |------|-------------|
-| **ClickHouse** | Kubernetes resource (`apps.cozystack.io/v1alpha1`) representing a managed ClickHouse cluster. |
-| **Shard** | Horizontal data partition. Each shard contains a subset of the total data. |
+| **ClickHouse cluster** | Managed ClickHouse instance, provisioned on request in your project. |
+| **Shard** | Horizontal partition of the data. Each shard contains a subset of the total data. |
 | **Replica** | Copy of a shard. Provides redundancy and enables parallel reads. |
 | **ClickHouse Keeper** | Distributed coordination service (alternative to ZooKeeper) that manages replication and consensus between nodes. |
-| **Restic** | Backup tool for creating encrypted snapshots to S3 storage. |
 | **OLAP** | Online Analytical Processing — data access model optimized for analytical queries (aggregations, column scans). |
-| **resourcesPreset** | Predefined resource profile (nano to 2xlarge). |
+| **Preset** | Predefined resource profile (nano to 2xlarge) allocated to each replica. |
 
 ---
 
@@ -80,19 +77,19 @@ graph TB
 
 ### Sharding
 
-Sharding distributes data horizontally across multiple nodes:
+Sharding distributes data horizontally across several nodes:
 
-- Each **shard** contains a portion of the data
-- `SELECT` queries are executed in parallel across all shards
-- The `shards` parameter in the manifest determines the number of partitions
+- Each **shard** contains part of the data
+- `SELECT` queries run in parallel on all shards
+- The number of shards is set at provisioning time
 
 ### Replication
 
-Each shard can have multiple replicas:
+Each shard can have several replicas:
 
 - Replicas of the same shard contain **identical data**
 - Coordination is handled by **ClickHouse Keeper**
-- In case of a replica failure, reads are redirected to the others
+- If a replica fails, reads are redirected to the others
 
 ```mermaid
 graph LR
@@ -110,7 +107,7 @@ graph LR
 ```
 
 :::tip
-For small data volumes, a single shard with 2 replicas is sufficient. Add shards when the volume exceeds the capacity of a single node.
+For small data volumes, a single shard with 2 replicas is enough. Add shards when the volume exceeds the capacity of a single node.
 :::
 
 ---
@@ -123,32 +120,30 @@ ClickHouse Keeper replaces ZooKeeper for cluster coordination:
 - Stores cluster **metadata** (distributed tables, replication)
 - Requires an **odd** number of instances (3 recommended) for quorum
 
-| Keeper parameter | Description |
-|------------------|-------------|
-| `keeper.replicas` | Number of Keeper instances (3 recommended) |
-| `keeper.resources` / `keeper.resourcesPreset` | Resources allocated to Keeper |
-| `keeper.size` | Keeper storage size |
+The number of Keeper instances, their resources and their storage are defined at provisioning time.
 
 ---
 
 ## Backup
 
-ClickHouse on Hikube uses **Restic** for backups, following the same model as MySQL:
+ClickHouse backups on Hikube provide:
 
 - **Encrypted** snapshots stored in an S3 bucket
-- Scheduling via cron (`backup.schedule`)
-- Configurable retention strategy (`backup.cleanupStrategy`)
+- Regular scheduling
+- Configurable retention strategy
+
+Backups are set up on request to support.
 
 ---
 
 ## User management
 
-Users are declared in the manifest with:
+Users are defined at provisioning time, with:
 
-- **Password** for authentication
-- **Readonly flag**: `true` for read-only access, `false` for full access
+- A **password** for authentication
+- **Read-only** or **full access**
 
-An `admin` user is automatically created with full privileges.
+An `admin` user is created automatically with full rights.
 
 ---
 
@@ -170,14 +165,14 @@ An `admin` user is automatically created with full privileges.
 
 | Parameter | Value |
 |-----------|-------|
-| Max shards | Depending on tenant quota |
-| Replicas per shard | Depending on tenant quota |
-| Storage size (`size`) | Variable (in Gi) |
-| Keeper instances | 3 recommended (odd number) |
+| Max shards | Depends on project quotas |
+| Replicas per shard | Depends on project quotas |
+| Storage size | Variable (in GB) |
+| Keeper instances | 3 recommended (odd) |
 
 ---
 
 ## Further reading
 
 - [Overview](./overview.md): service presentation
-- [API Reference](./api-reference.md): all parameters of the ClickHouse resource
+- [FAQ](./faq.md): frequently asked questions

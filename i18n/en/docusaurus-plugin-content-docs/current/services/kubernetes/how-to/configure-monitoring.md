@@ -4,113 +4,54 @@ title: "How to configure monitoring"
 
 # How to configure monitoring
 
-This guide explains how to enable and configure monitoring on a Hikube Kubernetes cluster, including metrics collection, logs, and visualization dashboards.
+This guide explains how to enable metrics and log collection on a Hikube Kubernetes cluster with the **Monitoring Agents** addon, and how to check that it works in the cluster.
 
 ## Prerequisites
 
 - A deployed Hikube Kubernetes cluster (see the [quick start](../quick-start.md))
-- `kubectl` configured to interact with the Hikube API
-- Your cluster YAML configuration file
+- The cluster kubeconfig downloaded from the console (**Kubeconfig** button)
 
 ## Steps
 
-### 1. Enable the monitoringAgents addon
+### 1. Enable the Monitoring Agents addon
 
-Modify your cluster configuration to enable the monitoring addon:
+The **Monitoring Agents** addon ("Monitoring agents for logs and metrics") is checked by default when a cluster is created. To enable it on an existing cluster:
 
-```yaml title="cluster-monitoring.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Kubernetes
-metadata:
-  name: my-cluster
-spec:
-  controlPlane:
-    replicas: 3
+1. In **Infrastructure** > **Kubernetes**, open the cluster's **Actions** menu and choose **Edit**.
+2. In the **Extensions & Addons** section, check **Monitoring Agents**.
+3. Click **Save**.
 
-  nodeGroups:
-    general:
-      minReplicas: 2
-      maxReplicas: 5
-      instanceType: "s1.large"
-      ephemeralStorage: 50Gi
-      roles:
-        - ingress-nginx
+The cluster detail page then shows **Monitoring Agents** in the **Extensions** section.
 
-    monitoring:
-      minReplicas: 2
-      maxReplicas: 4
-      instanceType: "m1.xlarge"
-      ephemeralStorage: 200Gi
-      roles:
-        - monitoring
+### 2. Understand what is deployed
 
-  addons:
-    monitoringAgents:
-      enabled: true
-      valuesOverride:
-        fluentbit:
-          enabled: true
-```
+The addon installs collection agents in the cluster that forward data to the Hikube platform's monitoring. There is no option to enable in the project:
+
+| Component | Role |
+|-----------|------|
+| **VictoriaMetrics Agent** (`vmagent`) | Collects and sends metrics |
+| **Fluent Bit** | Collects and sends container logs |
+| **kube-state-metrics** | Exposes the state of Kubernetes objects as metrics |
+| **Node exporter** | Exposes the nodes' system metrics |
+
+The agents run on the cluster nodes; the storage of metrics and logs does not use your nodes.
 
 :::note
-Enabling Fluent Bit (`fluentbit.enabled: true`) allows collecting and forwarding your application logs to the observability stack.
+Access to the project's monitoring dashboards is not offered in the console; contact support.
 :::
 
-### 2. Create a dedicated monitoring node group
-
-Monitoring components (VictoriaMetrics, Grafana, Fluent Bit) consume significant resources. It is recommended to dedicate a node group with memory-optimized instances:
-
-```yaml title="cluster-monitoring.yaml"
-nodeGroups:
-  monitoring:
-    minReplicas: 2
-    maxReplicas: 4
-    instanceType: "m1.xlarge"    # 4 vCPU, 32 GB RAM
-    ephemeralStorage: 200Gi       # Significant storage for metrics and logs
-    roles:
-      - monitoring
-```
-
-:::tip
-The M series (Memory Optimized) is ideal for monitoring because metrics databases (VictoriaMetrics) and log indexing engines require a lot of memory.
-:::
-
-### 3. Apply the configuration
+### 3. Check the agents in the cluster
 
 ```bash
-kubectl apply -f cluster-monitoring.yaml
+export KUBECONFIG=~/Downloads/kubeconfig-<cluster-name>.yaml
 
-# Wait for the cluster to be ready
-kubectl get kubernetes my-cluster -w
+# List the monitoring agent pods
+kubectl get pods -A | grep -E "vmagent|fluent-bit|kube-state-metrics|node-exporter"
 ```
 
-### 4. Access the monitoring tools
+**Expected result**: the agent pods are in `Running` state, with one Fluent Bit pod and one node exporter pod per node.
 
-Once the cluster is updated, verify that the monitoring components are deployed in the child cluster:
-
-```bash
-export KUBECONFIG=cluster-admin.yaml
-
-# List monitoring pods
-kubectl get pods -n monitoring
-
-# Check available services
-kubectl get svc -n monitoring
-
-# Access Grafana (if available via Ingress)
-kubectl get ingress -n monitoring
-```
-
-To access Grafana locally:
-
-```bash
-kubectl port-forward -n monitoring svc/grafana 3000:80 &
-# Open http://localhost:3000 in the browser
-```
-
-### 5. Verify the metrics
-
-Confirm that metrics are being collected correctly:
+### 4. View the metrics in the cluster
 
 ```bash
 # Node metrics
@@ -120,40 +61,31 @@ kubectl top nodes
 kubectl top pods -A
 
 # Cluster events
-kubectl get events --sort-by=.metadata.creationTimestamp
+kubectl get events -A --sort-by=.metadata.creationTimestamp
 ```
 
-**Expected output for `kubectl top nodes`:**
+**Example result for `kubectl top nodes`:**
 
 ```console
 NAME                          CPU(cores)   CPU%   MEMORY(bytes)   MEMORY%
 my-cluster-general-xxxxx      250m         6%     1200Mi          15%
-my-cluster-monitoring-yyyyy   800m         20%    4500Mi          14%
+my-cluster-general-yyyyy      310m         7%     1350Mi          17%
 ```
 
 ## Verification
 
-Verify that the entire monitoring stack is operational:
-
 ```bash
-# Check all monitoring components
-kubectl get pods -n monitoring
-
-# Check Fluent Bit logs
-kubectl logs -n monitoring -l app.kubernetes.io/name=fluent-bit --tail=20
+# Logs of a Fluent Bit agent, if in doubt about log forwarding
+# Namespace of the Fluent Bit agents
+FLUENTBIT_NS=$(kubectl get ds -A -l app.kubernetes.io/name=fluent-bit -o jsonpath='{.items[0].metadata.namespace}')
+kubectl logs -n "$FLUENTBIT_NS" -l app.kubernetes.io/name=fluent-bit --tail=20 --prefix
 ```
 
-**Expected output:**
+:::warning
+The destinations of metrics and logs are configured by the platform. To change the behavior of the agents (resources, collection filters), contact support.
+:::
 
-```console
-NAME                                 READY   STATUS    RESTARTS   AGE
-grafana-xxxxx-yyyyy                  1/1     Running   0          10m
-vmagent-xxxxx-yyyyy                  1/1     Running   0          10m
-fluent-bit-xxxxx                     1/1     Running   0          10m
-```
+## Going further
 
-## Next steps
-
-- [API reference](../api-reference.md) -- `monitoringAgents` addon configuration
-- [Concepts](../concepts.md) -- Architecture and observability
-- [Access and tools](./toolbox.md) -- Debugging commands and metrics
+- [Monitoring Agents](../plugins/monitoring-agents.md): addon details
+- [Access and tools](./toolbox.md): diagnostic commands and metrics

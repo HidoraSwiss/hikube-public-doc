@@ -1,6 +1,7 @@
 ---
 sidebar_position: 3
 title: Référence API
+unlisted: true
 ---
 
 # Référence API Kafka
@@ -148,7 +149,7 @@ resources:
   memory: 4Gi
 ```
 
-⚠️ Attention : si `resources` est défini, la valeur de `resourcesPreset` est ignorée.
+Attention : si `resources` est défini, la valeur de `resourcesPreset` est ignorée.
 
 | **Preset name** | **CPU** | **Mémoire** |
 | --------------- | ------- | ----------- |

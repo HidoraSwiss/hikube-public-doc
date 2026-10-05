@@ -4,171 +4,87 @@ title: "How to manage users"
 
 # How to manage NATS users
 
-This guide explains how to create and manage users for a NATS cluster on Hikube declaratively via Kubernetes manifests.
+:::info Availability
+NATS is not yet available as self-service in the [Hikube console](https://console.hikube.cloud).
+To provision an instance or change its configuration, [contact support](mailto:support@hidora.io).
+:::
+
+This guide explains how to organize the users of a NATS cluster on Hikube and how to check their access from the `nats` CLI.
+
+Users (name and password) are part of the instance configuration. Creating or deleting users, or renewing their passwords, is requested from support. This option is not offered in the console; contact support.
 
 ## Prerequisites
 
-- **kubectl** configured with your Hikube kubeconfig
-- A **NATS** cluster deployed on Hikube (or a manifest ready to deploy)
-- (Optional) the **nats** CLI installed locally to test connections
+- A **NATS** cluster provisioned on Hikube and its URL (`<nats-url>`)
+- The **nats** CLI installed locally
 
 ## Steps
 
-### 1. Add users
+### 1. Define the accounts you need
 
-Users are declared in the `users` section of the manifest. Each user is identified by a name and has a password.
+Create separate users per purpose for fine-grained access control, for example:
 
-```yaml title="nats-users.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: NATS
-metadata:
-  name: my-nats
-spec:
-  replicas: 3
-  resourcesPreset: small
+| User | Purpose |
+|-------------|-------|
+| `admin` | Administration (stream creation, server reports) |
+| `appuser` | Application account, one per service |
+| `monitoring` | Monitoring |
 
-  jetstream:
-    enabled: true
-    size: 10Gi
+### 2. Request the creation of the users
 
-  users:
-    admin:
-      password: SecureAdminPassword
-    appuser:
-      password: AppUserPassword456
-    monitoring:
-      password: MonitoringPassword789
-```
-
-**User parameters:**
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `users[name].password` | `string` | Password associated with the user |
-
-:::tip
-Create separate users per application for granular access control. Use an **admin** account for administration, **application** accounts per service, and a dedicated **monitoring** account for supervision.
-:::
-
-### 2. Apply the changes
-
-```bash
-kubectl apply -f nats-users.yaml
-```
-
-Monitor the rolling update of the pods:
-
-```bash
-kubectl get po -w | grep my-nats
-```
-
-Wait for all pods to be in `Running` state:
-
-```bash
-kubectl get po | grep my-nats
-```
-
-**Expected output:**
-
-```console
-my-nats-0   1/1     Running   0   2m
-my-nats-1   1/1     Running   0   4m
-my-nats-2   1/1     Running   0   6m
-```
+Send the list of users to [support](mailto:support@hidora.io), stating the project and the instance name. Support sends you the passwords; store them in a password manager.
 
 ### 3. Test the connection with the nats CLI
 
-Open a port-forward to the NATS service:
+Save one context per user, then test publishing:
 
 ```bash
-kubectl port-forward svc/my-nats 4222:4222
+nats context save hikube-admin --server <nats-url> --user admin --password <admin-password>
+nats --context hikube-admin pub test "Hello from admin"
 ```
 
-Test the connection with each user:
-
-**Connection with the admin user:**
-
-```bash
-nats pub test "Hello from admin" \
-  --server nats://admin:SecureAdminPassword@127.0.0.1:4222
-```
-
-**Expected output:**
+**Expected result:**
 
 ```console
 Published 16 bytes to "test"
 ```
 
-**Connection with the appuser user:**
+**Testing an incorrect password:**
 
 ```bash
-nats pub app.events "Hello from appuser" \
-  --server nats://appuser:AppUserPassword456@127.0.0.1:4222
+nats pub test "This should fail" --server <nats-url> --user admin --password wrongpassword
 ```
 
-**Expected output:**
-
-```console
-Published 18 bytes to "app.events"
-```
-
-**Test with an incorrect password:**
-
-```bash
-nats pub test "This should fail" \
-  --server nats://admin:wrongpassword@127.0.0.1:4222
-```
-
-**Expected output:**
+**Expected result:**
 
 ```console
 nats: error: Authorization Violation
 ```
 
 :::warning
-If `external: true` is enabled, the NATS cluster is accessible from outside the Kubernetes cluster. Ensure that all users have strong passwords.
+If external access is enabled on the instance, the NATS cluster is reachable from the Internet. Make sure every user has a strong password.
 :::
 
 ### 4. Check active connections
 
-You can check active connections on the NATS cluster:
+With an account that has sufficient rights, view the active connections:
 
 ```bash
-nats server report connections \
-  --server nats://admin:SecureAdminPassword@127.0.0.1:4222
+nats --context hikube-admin server report connections
 ```
 
-**Expected output:**
-
-```console
-╭──────────────────────────────────────────────────────────╮
-│                   Connection Report                       │
-├──────────┬──────────┬──────────┬──────────┬──────────────┤
-│ Server   │ Conns    │ In Msgs  │ Out Msgs │ In Bytes     │
-├──────────┼──────────┼──────────┼──────────┼──────────────┤
-│ my-nats-0│ 2        │ 5        │ 3        │ 128B         │
-│ my-nats-1│ 1        │ 2        │ 1        │ 64B          │
-│ my-nats-2│ 0        │ 0        │ 0        │ 0B           │
-╰──────────┴──────────┴──────────┴──────────┴──────────────╯
-```
-
-To see connection details per user:
-
-```bash
-nats server report connz \
-  --server nats://admin:SecureAdminPassword@127.0.0.1:4222
-```
+:::note
+The `nats server …` reports require access to the NATS server's system account. If the command is refused, ask support for the connection status.
+:::
 
 ## Verification
 
-The configuration is successful if:
+The configuration is correct if:
 
-- All NATS pods are in `Running` state after the update
 - Each user can connect with their password
 - An incorrect password is rejected (`Authorization Violation`)
-- Active connections are visible in the server report
 
-## Next steps
+## Further reading
 
-- **[NATS API reference](../api-reference.md)**: full documentation of `users` parameters
+- **[Concepts](../concepts.md)**: user management and JetStream
 - **[How to configure JetStream](./configure-jetstream.md)**: enable message persistence and streaming

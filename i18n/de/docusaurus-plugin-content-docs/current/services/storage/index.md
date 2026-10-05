@@ -7,36 +7,41 @@ import ServiceCardGrid from '@site/src/components/ServiceCardGrid';
 
 # Speicher
 
-Hikube bietet verwaltete Speicherlosungen, verschlusselt und uber mehrere Schweizer Rechenzentren repliziert.
+Hikube bietet verwaltete Speicherlösungen, verschlüsselbar und über mehrere Schweizer Rechenzentren repliziert. Disks und S3-Buckets verwalten Sie im Self-Service in der [Hikube-Konsole](https://console.hikube.cloud), im Menü **Infrastructure** Ihres Projekts.
 
 ## Speichertypen
 
-| Typ | Technologie | Anwendungsfall | Zugriff |
-|-----|-------------|----------------|---------|
-| Objektspeicher (S3) | S3-kompatibel | Dateien, Backups, statische Assets | S3 API |
-| Blockspeicher | LINSTOR/DRBD | Kubernetes Persistent Volumes | PVC in Ihren Clustern |
-| Lokaler Speicher | NVMe SSD | Workloads mit niedriger Latenz | Automatisch uber StorageClass |
+| Typ | Menü der Konsole | Verwendung | Zugriff |
+|------|--------------------|-------|-------|
+| Disks (Blockspeicher) | **Infrastructure** → **Disks** | System-Disks und Daten-Disks der virtuellen Maschinen | An eine VM angebunden, vom Betriebssystem eingehängt |
+| Objektspeicher (S3) | **Infrastructure** → **S3 Buckets** | Dateien, Backups, statische Assets, Archive | S3-API (HTTPS) |
 
 :::note
-Block- und lokaler Speicher werden automatisch von der Plattform uber Kubernetes StorageClasses verwaltet.
-Nur S3-Objektspeicher wird als eigenstandiger Dienst bereitgestellt.
+Die persistenten Volumes Ihrer Kubernetes-Cluster werden innerhalb jedes Clusters über dessen StorageClasses bereitgestellt. Sie werden nicht über das Menü **Disks** verwaltet.
 :::
 
 ## Merkmale
 
-- **Verschlusselung**: Daten im Ruhezustand und bei der Ubertragung verschlusselt
-- **Replikation**: synchrone Replikation uber 3 Rechenzentren fur Blockspeicher
-- **Isolation**: jeder Tenant hat eigene Zugangsdaten und Speicherbereiche
-- **Hohe Verfugbarkeit**: automatisches Failover bei Ausfall
+- **Verschlüsselung**: optionale Verschlüsselung im Ruhezustand (LUKS) für Disks und Buckets; S3-Zugriff über HTTPS
+- **Replikation**: Disks mit synchroner oder asynchroner Replikation; Buckets über 3 Rechenzentren repliziert
+- **Isolation**: Jede Ressource gehört zu einem Projekt; jeder S3-Benutzer hat eigene Schlüssel, die auf seinen Bucket beschränkt sind
+- **Quotas**: Die Größe der Disks wird auf das Speicher-Quota des Projekts angerechnet
 
-## Verfugbare Dienste
+## Verfügbare Dienste
 
 <ServiceCardGrid items={[
   {
-    title: "S3 Buckets",
-    description: "S3-kompatibler Objektspeicher fur Ihre Dateien, Backups und Assets. Bereitstellung uber kubectl apply.",
+    title: "Disks",
+    description: "Persistente und replizierte Block-Volumes für Ihre virtuellen Maschinen: System-Disks und Daten-Disks.",
+    icon: "/img/services/disks.svg",
+    href: "./disks/overview",
+    tags: ["Block Storage", "VM"],
+  },
+  {
+    title: "S3-Buckets",
+    description: "S3-kompatibler Objektspeicher für Ihre Dateien, Backups und Assets, mit Benutzern und Zugriffsschlüsseln pro Bucket.",
     icon: "/img/services/s3.svg",
     href: "./buckets/overview",
-    tags: ["Objektspeicher", "S3"],
+    tags: ["Object Storage", "S3"],
   },
 ]} />

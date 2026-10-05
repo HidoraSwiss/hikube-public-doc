@@ -1,39 +1,36 @@
 ---
 sidebar_position: 3
-title: GatewayAPI
+title: Gateway API
 ---
 
-# 🧩 Details zum Feld `addons.gatewayAPI`
+# Gateway API
 
-Das Feld `addons.gatewayAPI` definiert die Konfiguration des Add-ons **Gateway API**, einer modernen Kubernetes-Erweiterung für die Verwaltung von **Netzwerk-Eingängen** (Ingress, Routes, Gateways).
-Sie ersetzt schrittweise die traditionellen `Ingress`-Objekte durch ein flexibleres und erweiterbares Modell.
+**Gateway API** ist eine Kubernetes-Erweiterung zur Verwaltung des **eingehenden Netzwerkverkehrs** (Gateways, Routen). Sie bietet ein flexibleres und erweiterbareres Modell als die klassischen `Ingress`-Objekte.
 
-```yaml
-addons:
-  gatewayAPI:
-    enabled: true
+Das Addon installiert die **CRDs der Kubernetes Gateway API** (experimenteller Kanal): `GatewayClass`, `Gateway`, `HTTPRoute` usw. Außerdem aktiviert es die Unterstützung der Gateway API in [Cilium](./cilium.md) (mit seinem Envoy-Proxy) sowie, sofern ausgewählt, in [Cert-Manager](./cert-manager.md) und [Ouroboros](./ouroboros.md).
+
+## In der Konsole
+
+1. Wählen Sie bei der Erstellung im Schritt **Addons** **Gateway API** aus (standardmäßig deaktiviert).
+2. Auf einem bestehenden Cluster: **Edit** > **Extensions & Addons**, **Gateway API** aktivieren, dann **Save**.
+
+Dieses Addon hat kein Helm-Override: Es wird ausschließlich aktiviert oder deaktiviert.
+
+Die Detailseite des Clusters zeigt **Gateway API** im Abschnitt **Extensions** an, wenn es aktiv ist.
+
+## Nutzung im Cluster
+
+```bash
+# Installierte CRDs
+kubectl get crds | grep gateway.networking.k8s.io
+
+# Verfügbare Gateway-Klassen
+kubectl get gatewayclass
 ```
 
----
+Eine Beschreibung der Ressourcen finden Sie in der [Gateway-API-Dokumentation](https://gateway-api.sigs.k8s.io).
 
-## `enabled` (boolean) — **Erforderlich**
+## Best Practices
 
-### Beschreibung
-
-Gibt an, ob das Modul **Gateway API** aktiviert (`true`) oder deaktiviert (`false`) ist.
-Wenn es aktiviert ist, werden die zugehörigen **Custom Resource Definitions (CRDs)** der Gateway API (wie `GatewayClass`, `Gateway`, `HTTPRoute` usw.) installiert und im Cluster verfügbar gemacht.
-
-### Beispiel
-
-```yaml
-enabled: true
-```
-
----
-
-## 💡 Best Practices
-
-- Aktivieren Sie `enabled: true`, um die neue, von der CNCF standardisierte Netzwerk-API zu nutzen.
-- Testen Sie die Kompatibilität der Ressourcen (`HTTPRoute`, `TCPRoute`, `ReferencePolicy` usw.) vor der Migration von `Ingress`.
-
----
+- Testen Sie Ihre Ressourcen (`HTTPRoute`, `TLSRoute` usw.) auf einem Testcluster, bevor Sie von `Ingress` migrieren.
+- Der experimentelle Kanal kann sich von Version zu Version ändern: Prüfen Sie bei Updates die Kompatibilität Ihrer Manifeste.

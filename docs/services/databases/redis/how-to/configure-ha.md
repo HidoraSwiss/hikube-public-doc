@@ -1,123 +1,74 @@
 ---
-title: "Comment configurer la haute disponibilite Redis"
+title: "Comment configurer la haute disponibilité Redis"
+sidebar_position: 1
 ---
 
-# Comment configurer la haute disponibilite Redis
+# Comment configurer la haute disponibilité Redis
 
-Ce guide explique comment deployer un cluster Redis hautement disponible sur Hikube. Le service s'appuie sur l'operateur **Spotahome Redis Operator** qui utilise **Redis Sentinel** pour assurer le failover automatique lorsque 3 replicas ou plus sont configures.
+Ce guide explique comment créer un cluster Redis hautement disponible depuis la [console Hikube](https://console.hikube.cloud). Le service utilise **Redis Sentinel** pour assurer le failover automatique dès que le cluster compte au moins 2 réplicas. Trois sentinelles sont toujours déployées, quel que soit le nombre de réplicas.
 
-## Prerequis
+## Prérequis
 
-- `kubectl` configure pour interagir avec l'API Hikube
-- Connaissance des bases de Redis (voir le [demarrage rapide](../quick-start.md))
-- Un environnement de production necessitant de la haute disponibilite
+- Un **projet** Hikube disposant de quotas suffisants : la consommation CPU, mémoire et stockage est multipliée par le nombre de réplicas
+- Connaissance des bases de Redis (voir le [démarrage rapide](../quick-start.md))
 
-## Etapes
-
-### 1. Configurer le manifeste avec 3+ replicas
-
-Pour activer la haute disponibilite, configurez au minimum 3 replicas. Redis Sentinel est automatiquement deploye par l'operateur Spotahome pour orchestrer l'election du leader et le failover :
-
-```yaml title="redis-ha.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Redis
-metadata:
-  name: my-redis-ha
-spec:
-  replicas: 3
-  resourcesPreset: medium
-  size: 5Gi
-  storageClass: replicated
-  authEnabled: true
-```
-
-:::note
-Le `storageClass: replicated` garantit que les volumes persistants sont repliques au niveau du stockage, protegeant les donnees contre la perte d'un noeud physique.
+:::warning
+La haute disponibilité se décide **à la création** : le nombre de réplicas ne peut plus être modifié ensuite. Pour transformer un cluster existant, [contactez le support](mailto:support@hidora.io) ou créez un nouveau cluster.
 :::
 
-### 2. Appliquer la configuration
+## Étapes
 
-```bash
-kubectl apply -f redis-ha.yaml
-```
+### 1. Ouvrir l'assistant
 
-### 3. Verifier le cluster Redis
+Ouvrez **DB & Messaging** → **Redis**, puis cliquez sur **Créer un cluster**. Renseignez le **Nom du cluster** et cliquez sur **Suivant**.
 
-Attendez que tous les pods soient prets :
+### 2. Configurer au moins 3 réplicas
 
-```bash
-# Verifier l'etat des pods Redis
-kubectl get pods -l app.kubernetes.io/instance=my-redis-ha -w
-```
+À l'étape **Configuration** :
 
-**Resultat attendu :**
+| Champ | Valeur recommandée en production |
+|-------|----------------------------------|
+| **Nombre de réplicas** | `3` (ou `5` pour une tolérance à deux pannes) |
+| **Préconfiguration** | `medium` ou supérieur, selon la taille du jeu de données |
+| **Taille du volume (Go)** | Supérieure au volume de données attendu |
+| **Activer l'authentification** | Activé |
+| **Réseau public** | Désactivé, sauf besoin d'accès depuis Internet |
 
-```console
-NAME                READY   STATUS    RESTARTS   AGE
-my-redis-ha-0       1/1     Running   0          3m
-my-redis-ha-1       1/1     Running   0          2m
-my-redis-ha-2       1/1     Running   0          1m
-```
+:::tip
+Le quorum repose sur les trois sentinelles, pas sur le nombre de réplicas : 2 réplicas suffisent au failover, 3 ou plus permettent de tolérer davantage de pannes.
+:::
 
-Verifiez egalement le statut de Redis Sentinel :
+### 3. Créer le cluster
 
-```bash
-# Verifier les pods Sentinel
-kubectl get pods -l app.kubernetes.io/component=sentinel,app.kubernetes.io/instance=my-redis-ha
-```
+À l'étape **Vérification**, contrôlez la ligne **Réplicas** et le coût estimé, puis cliquez sur **Déployer**. Copiez le mot de passe affiché à l'étape **Résumé**.
 
 ### 4. Comprendre le failover automatique
 
-Avec 3 replicas, Redis Sentinel assure les fonctions suivantes :
+Lorsque le master devient indisponible :
 
-- **Detection de panne** : Sentinel surveille en continu le noeud maitre et les replicas
-- **Election automatique** : si le maitre tombe, Sentinel elit un nouveau maitre parmi les replicas disponibles
-- **Reconfiguration** : les replicas restants sont automatiquement reconfigures pour repliquer depuis le nouveau maitre
+1. Les Sentinels détectent la panne et se mettent d'accord par quorum.
+2. Un réplica est promu nouveau master.
+3. Les autres réplicas sont reconfigurés pour le suivre.
 
-:::tip
-Le failover est entierement automatique. Aucune intervention manuelle n'est necessaire. Le temps de basculement est generalement de quelques secondes.
+Avec le réseau public activé, l'adresse affichée dans le champ **Hôte** pointe vers le master courant : vos clients n'ont pas à changer d'adresse après un failover, mais les connexions ouvertes sont coupées et doivent être rétablies.
+
+:::note
+Configurez vos clients Redis avec une reconnexion automatique et des délais de nouvelle tentative pour absorber la bascule.
 :::
 
-### 5. Recuperer le mot de passe
+## Vérification
 
-Avec `authEnabled: true`, un mot de passe est genere automatiquement et stocke dans un Secret Kubernetes :
-
-```bash
-# Recuperer le nom du secret
-kubectl get secrets | grep my-redis-ha
-
-# Extraire le mot de passe
-kubectl get secret my-redis-ha -o jsonpath='{.data.password}' | base64 -d
-```
-
-:::warning
-Activez toujours `authEnabled: true` en production. Sans authentification, toute application ayant acces au reseau du cluster peut lire et ecrire dans Redis.
-:::
-
-## Verification
-
-Verifiez que le cluster HA fonctionne correctement :
+- Dans la page du cluster, section **Général**, le champ **Réplicas** affiche le nombre choisi.
+- La section **Connexion** affiche le **Statut** **Prêt**.
+- Depuis un client, vérifiez le rôle du nœud joint :
 
 ```bash
-# Verifier la ressource Redis
-kubectl get redis my-redis-ha
-
-# Verifier que tous les pods sont Running
-kubectl get pods -l app.kubernetes.io/instance=my-redis-ha
-
-# Verifier les services exposes
-kubectl get svc -l app.kubernetes.io/instance=my-redis-ha
+redis-cli -h <hôte> -p 6379 INFO replication
 ```
 
-**Resultat attendu :**
-
-```console
-NAME                     TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)     AGE
-my-redis-ha              ClusterIP   10.96.xxx.xxx   <none>        6379/TCP    5m
-my-redis-ha-sentinel     ClusterIP   10.96.xxx.xxx   <none>        26379/TCP   5m
-```
+**Résultat attendu :** `role:master` et `connected_slaves` égal au nombre de réplicas moins un.
 
 ## Pour aller plus loin
 
-- [Référence API](../api-reference.md) -- Parametres `replicas`, `authEnabled` et `storageClass`
-- [Comment scaler verticalement Redis](./scale-resources.md) -- Ajuster les ressources CPU et memoire
+- [Concepts Redis](../concepts.md) : Sentinel, persistance, authentification
+- [Modifier les ressources](./scale-resources.md)

@@ -4,16 +4,23 @@ title: "Come scalare il cluster"
 
 # Come scalare il cluster Kafka
 
-Questa guida spiega come regolare le risorse di un cluster Kafka su Hikube: numero di broker, risorse CPU/memoria, archiviazione, nonché la configurazione ZooKeeper associata.
+:::info Disponibilità
+Kafka non è ancora disponibile in modalità self-service nella [console Hikube](https://console.hikube.cloud).
+Per effettuare il provisioning di un'istanza o modificarne la configurazione, [contatti il supporto](mailto:support@hidora.io).
+:::
+
+Questa guida presenta i parametri di dimensionamento di un cluster Kafka su Hikube (numero di broker, risorse CPU/memoria, storage, ZooKeeper) e i punti da verificare prima e dopo una modifica.
+
+Il dimensionamento fa parte della configurazione dell'istanza. Questa opzione non è disponibile nella console; contatti il supporto.
 
 ## Prerequisiti
 
-- **kubectl** configurato con il vostro kubeconfig Hikube
-- Un cluster **Kafka** distribuito su Hikube
+- Un cluster **Kafka** fornito su Hikube e l'indirizzo dei suoi server bootstrap (`<bootstrap-servers>`)
+- Gli script client Kafka installati sul suo computer (per la verifica)
 
 ## Preset disponibili
 
-Hikube propone dei preset di risorse predefiniti, applicabili ai broker Kafka e ai nodi ZooKeeper:
+I preset si applicano separatamente ai broker Kafka e ai nodi ZooKeeper:
 
 | Preset | CPU | Memoria |
 |--------|-----|---------|
@@ -25,207 +32,56 @@ Hikube propone dei preset di risorse predefiniti, applicabili ai broker Kafka e 
 | `xlarge` | 4 | 4Gi |
 | `2xlarge` | 8 | 8Gi |
 
-:::warning
-Se il campo `resources` (CPU/memoria espliciti) è definito, il valore di `resourcesPreset` viene **completamente ignorato**. Assicuratevi di svuotare il campo `resources` se desiderate utilizzare un preset.
+:::note
+È possibile richiedere valori espliciti di CPU/memoria al posto di un preset; in tal caso sostituiscono il preset.
 :::
 
-## Passi
+## Passaggi
 
-### 1. Verificare le risorse attuali
+### 1. Identificare l'esigenza
 
-Consultate la configurazione attuale del cluster:
+| Sintomo | Leva |
+|---------|------|
+| Throughput insufficiente, consumer lag su tutte le partizioni | Più broker e/o più partizioni |
+| Broker riavviati per mancanza di memoria | Preset superiore per i broker |
+| Spazio su disco insufficiente sui broker | Storage dei broker più grande |
+| Instabilità del coordinamento | Risorse o storage di ZooKeeper |
 
-```bash
-kubectl get kafka my-kafka -o yaml | grep -A 8 -E "kafka:|zookeeper:"
-```
+### 2. Preparare la richiesta
 
-**Esempio di risultato:**
+Indichi al supporto, per il progetto e l'istanza interessati:
 
-```console
-  kafka:
-    replicas: 3
-    resourcesPreset: small
-    size: 10Gi
-  zookeeper:
-    replicas: 3
-    resourcesPreset: small
-    size: 5Gi
-```
-
-### 2. Scalare i broker Kafka
-
-Potete regolare il numero di broker, le risorse e l'archiviazione indipendentemente.
-
-**Opzione A: cambiare il preset dei broker**
-
-```bash
-kubectl patch kafka my-kafka --type='merge' -p='
-spec:
-  kafka:
-    replicas: 5
-    resourcesPreset: large
-    resources: {}
-'
-```
-
-**Opzione B: definire risorse esplicite**
-
-```bash
-kubectl patch kafka my-kafka --type='merge' -p='
-spec:
-  kafka:
-    replicas: 5
-    resources:
-      cpu: 4000m
-      memory: 8Gi
-'
-```
-
-Potete anche modificare il manifesto completo:
-
-```yaml title="kafka-scaled.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Kafka
-metadata:
-  name: my-kafka
-spec:
-  kafka:
-    replicas: 5
-    resources:
-      cpu: 4000m
-      memory: 8Gi
-    size: 50Gi
-  zookeeper:
-    replicas: 3
-    resourcesPreset: small
-    size: 5Gi
-  topics: []
-```
-
-```bash
-kubectl apply -f kafka-scaled.yaml
-```
+- **Broker**: numero di broker, preset (o CPU/memoria espliciti), dimensione dello storage per broker;
+- **ZooKeeper**: numero di istanze (dispari: 1, 3, 5), preset, dimensione dello storage.
 
 :::warning
-Ridurre il numero di broker su un cluster esistente può comportare una perdita di dati se le partizioni non vengono redistribuite preventivamente. Aumentate sempre il numero di broker piuttosto che ridurlo.
+Ridurre il numero di broker su un cluster esistente può causare una perdita di dati se le partizioni non vengono prima ridistribuite. Privilegi l'aumento del numero di broker.
 :::
-
-### 3. Scalare ZooKeeper
-
-ZooKeeper utilizza un meccanismo di quorum: il numero di repliche deve essere **dispari** (1, 3, 5) per garantire l'elezione di un leader.
-
-```bash
-kubectl patch kafka my-kafka --type='merge' -p='
-spec:
-  zookeeper:
-    replicas: 3
-    resourcesPreset: medium
-    resources: {}
-'
-```
-
-Oppure con risorse esplicite:
-
-```yaml title="kafka-zookeeper-scaled.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Kafka
-metadata:
-  name: my-kafka
-spec:
-  kafka:
-    replicas: 5
-    resourcesPreset: large
-    size: 50Gi
-  zookeeper:
-    replicas: 3
-    resources:
-      cpu: 1000m
-      memory: 1Gi
-    size: 10Gi
-  topics: []
-```
-
-```bash
-kubectl apply -f kafka-zookeeper-scaled.yaml
-```
 
 :::tip
-In produzione, 3 repliche ZooKeeper sono sufficienti nella maggior parte dei casi. 5 repliche sono raccomandate solo per cluster molto grandi (10+ broker).
+In produzione, 3 istanze ZooKeeper sono sufficienti nella maggior parte dei casi. 5 istanze si giustificano solo per cluster molto grandi (10 broker e oltre).
 :::
 
-### 4. Aumentare l'archiviazione se necessario
+### 3. Adattare i topic se necessario
 
-Se i broker esauriscono lo spazio su disco, aumentate la dimensione del volume persistente:
+Il numero di repliche di un topic non può superare il numero di broker. Dopo un aumento del numero di broker, può richiedere l'aumento del fattore di replica o del numero di partizioni dei suoi topic (vedere [Come creare e gestire i topic](./manage-topics.md)).
 
-```bash
-kubectl patch kafka my-kafka --type='merge' -p='
-spec:
-  kafka:
-    size: 100Gi
-'
-```
+### 4. Inviare la richiesta
 
-:::warning
-Il numero di repliche di un topic non può superare il numero di broker. Dopo uno scale-up dei broker, potete aumentare il fattore di replica dei vostri topic esistenti.
-:::
-
-### 5. Applicare e verificare
-
-Se non avete ancora applicato le modifiche:
-
-```bash
-kubectl apply -f kafka-scaled.yaml
-```
-
-Monitorate il rolling update dei pod:
-
-```bash
-kubectl get po -w | grep my-kafka
-```
-
-**Risultato atteso (durante il rolling update):**
-
-```console
-my-kafka-kafka-0       1/1     Running       0   45m
-my-kafka-kafka-1       1/1     Running       0   44m
-my-kafka-kafka-2       1/1     Terminating   0   43m
-my-kafka-kafka-2       0/1     Pending       0   0s
-my-kafka-kafka-2       1/1     Running       0   30s
-```
-
-Attendete che tutti i pod siano nello stato `Running`:
-
-```bash
-kubectl get po | grep my-kafka
-```
-
-```console
-my-kafka-kafka-0       1/1     Running   0   10m
-my-kafka-kafka-1       1/1     Running   0   8m
-my-kafka-kafka-2       1/1     Running   0   6m
-my-kafka-kafka-3       1/1     Running   0   4m
-my-kafka-kafka-4       1/1     Running   0   2m
-my-kafka-zookeeper-0   1/1     Running   0   10m
-my-kafka-zookeeper-1   1/1     Running   0   8m
-my-kafka-zookeeper-2   1/1     Running   0   6m
-```
+Invii la richiesta al [supporto](mailto:support@hidora.io). L'applicazione delle modifiche può comportare il riavvio successivo dei broker; preveda client in grado di riconnettersi.
 
 ## Verifica
 
-Confermate che le nuove risorse siano applicate:
+Una volta applicata la modifica, verifichi che il cluster risponda e che tutti i topic abbiano le repliche sincronizzate:
 
 ```bash
-kubectl get kafka my-kafka -o yaml | grep -A 8 -E "kafka:|zookeeper:"
+kafka-topics.sh --bootstrap-server <bootstrap-servers> --list
+kafka-topics.sh --bootstrap-server <bootstrap-servers> --describe --under-replicated-partitions
 ```
 
-Verificate che il cluster sia funzionante elencando i topic:
-
-```bash
-kubectl run kafka-debug --rm -it --image=bitnami/kafka:latest --restart=Never -- \
-  kafka-topics.sh --bootstrap-server my-kafka-kafka-bootstrap:9092 --list
-```
+Il secondo comando non deve restituire nulla quando tutte le partizioni sono replicate.
 
 ## Per approfondire
 
-- **[Riferimento API Kafka](../api-reference.md)**: documentazione completa dei parametri `kafka`, `zookeeper` e della tabella dei preset
+- **[Concetti](../concepts.md)**: architettura, ZooKeeper e preset
 - **[Come creare e gestire i topic](./manage-topics.md)**: configurare i topic dopo lo scaling

@@ -5,108 +5,79 @@ title: Troubleshooting
 
 # Troubleshooting — Kafka
 
-### ZooKeeper loses quorum
+:::info Availability
+Kafka is not yet available as self-service in the [Hikube console](https://console.hikube.cloud).
+To provision an instance or change its configuration, [contact support](mailto:support@hidora.io).
+:::
 
-**Cause**: the number of ZooKeeper replicas is insufficient or even, preventing the formation of a majority quorum. A quorum requires a strict majority (e.g., 2/3 nodes).
+The diagnostics below are run from your Kafka client tools. When an action is needed on the platform side (resources, storage, restart, server logs), [contact support](mailto:support@hidora.io) with the project and the instance name.
+
+### Unable to connect to the cluster
+
+**Cause**: wrong bootstrap server address or port, external access not enabled while the client is outside the platform, or missing client security settings.
 
 **Solution**:
 
-1. Check the configured ZooKeeper replicas count:
+1. Check that you are using the address provided by support.
+2. Query the cluster metadata:
    ```bash
-   kubectl get kafka -o yaml | grep -A 5 zookeeper
+   kcat -b <bootstrap-servers> -L
    ```
-2. Ensure `zookeeper.replicas` is an **odd number** (3, 5, or 7)
-3. Check ZooKeeper pod status:
-   ```bash
-   kubectl get pods -l app.kubernetes.io/component=zookeeper
-   ```
-4. Check available disk space on ZooKeeper volumes — a full disk causes quorum loss:
-   ```bash
-   kubectl exec <zookeeper-pod> -- df -h /data
-   ```
-5. If needed, increase `zookeeper.size` in your manifest and reapply it
+3. If the command fails from outside the platform, check with support that external access is enabled on the instance.
+
+### ZooKeeper loses quorum
+
+**Cause**: the number of ZooKeeper instances is insufficient or even, or a ZooKeeper volume is full. A quorum requires a strict majority (e.g. 2 nodes out of 3).
+
+**Solution**: this diagnosis and its fix (odd number of instances, larger ZooKeeper storage) are handled on the platform side. Contact support.
 
 ### Topic inaccessible or broker unavailable
 
-**Cause**: one or more Kafka brokers are not functioning properly, or the topic does not have enough synchronized replicas relative to `min.insync.replicas`.
+**Cause**: one or more brokers are not working properly, or the topic does not have enough in-sync replicas relative to `min.insync.replicas`.
 
 **Solution**:
 
-1. Check Kafka pod status:
+1. Describe the topic from your client to check the leaders and the ISR (In-Sync Replicas):
    ```bash
-   kubectl get pods -l app.kubernetes.io/component=kafka
+   kafka-topics.sh --describe --topic <topic-name> --bootstrap-server <bootstrap-servers>
    ```
-2. Inspect events on a failing pod:
-   ```bash
-   kubectl describe pod <kafka-pod>
-   ```
-3. Verify that the topic's replica count is consistent with the number of available brokers:
-   ```bash
-   kubectl exec <kafka-pod> -- kafka-topics.sh --describe --topic <topic-name> --bootstrap-server localhost:9092
-   ```
-4. Check storage space — a full volume prevents the broker from operating:
-   ```bash
-   kubectl exec <kafka-pod> -- df -h /bitnami/kafka
-   ```
+2. Check that the topic's number of replicas is consistent with the number of brokers.
+3. If partitions have no leader or brokers are missing, contact support (broker state, disk space).
 
-### Significant consumer lag
+### High consumer lag
 
-**Cause**: consumers are not processing messages fast enough compared to the production rate. This can be due to insufficient partitions, too few consumers in the group, or under-provisioned consumers.
+**Cause**: consumers do not process messages fast enough compared to the production rate. This can be due to too few partitions, too few consumers in the group, or undersized consumers.
 
 **Solution**:
 
-1. Identify consumer group lag:
+1. Measure the consumer group lag:
    ```bash
-   kubectl exec <kafka-pod> -- kafka-consumer-groups.sh --describe --group <group-id> --bootstrap-server localhost:9092
+   kafka-consumer-groups.sh --describe --group <group-id> --bootstrap-server <bootstrap-servers>
    ```
-2. If lag is spread across many partitions, **increase the number of consumers** in the group (without exceeding the number of partitions)
-3. If all partitions have lag, consider **increasing the number of partitions** for the topic:
-   ```yaml title="kafka.yaml"
-   topics:
-     - name: events
-       partitions: 12
-       replicas: 3
-   ```
-4. Verify that consumers have sufficient resources (CPU, memory) to process messages
+2. If the lag is spread over many partitions, **increase the number of consumers** in the group (without exceeding the number of partitions).
+3. If all partitions have lag, consider **increasing the number of partitions** of the topic. This option is not available in the console; contact support.
+4. Check that your consumers have enough resources (CPU, memory) to process the messages.
 
-### Broker OOMKilled
+### Broker restarted due to lack of memory
 
-**Cause**: the Kafka broker consumes more memory than the allocated limit. This frequently occurs with the `nano` or `micro` preset under load.
+**Cause**: the broker consumes more memory than its allocated limit. This frequently happens with the `nano` or `micro` presets under load.
 
-**Solution**:
-
-1. Check pod events to confirm the OOMKill:
-   ```bash
-   kubectl describe pod <kafka-pod> | grep -A 5 "Last State"
-   ```
-2. Increase broker memory resources using a higher preset or explicit resources:
-   ```yaml title="kafka.yaml"
-   kafka:
-     replicas: 3
-     resources:
-       cpu: 2000m
-       memory: 4Gi
-     size: 20Gi
-   ```
-3. Reapply the manifest:
-   ```bash
-   kubectl apply -f kafka.yaml
-   ```
+**Solution**: request a larger preset or explicit resources for the brokers. This option is not available in the console; contact support.
 
 ### Duplicate messages
 
-**Cause**: by default, Kafka operates in **at-least-once delivery** mode. In case of producer retries or consumer rebalancing, messages may be delivered multiple times.
+**Cause**: by default, Kafka works in **at-least-once delivery** mode. When the producer retries or consumers rebalance, messages can be delivered several times.
 
 **Solution**:
 
-1. **Producer side**: enable idempotence to avoid duplicates during retries:
-   ```
+1. **Producer side**: enable idempotence to avoid duplicates on retries:
+   ```properties title="producer.properties"
    enable.idempotence=true
    acks=all
    ```
-2. **Consumer side**: implement a **deduplication** mechanism based on a unique message identifier (key, UUID, etc.)
-3. For critical use cases, combine `acks=all` and `enable.idempotence=true` on the producer with idempotent processing on the consumer side
+2. **Consumer side**: implement a **deduplication** mechanism based on a unique message identifier (key, UUID, etc.).
+3. For critical cases, combine `acks=all`, `enable.idempotence=true` on the producer and idempotent processing on the consumer side.
 
 :::tip
-Producer idempotence ensures that a message sent multiple times (due to network retries) is written only once to the partition. Idempotent processing on the consumer side remains necessary to cover rebalancing scenarios.
+Producer idempotence guarantees that a message sent several times (because of network retries) is written only once to the partition. Idempotent processing on the consumer side is still needed to cover rebalancing scenarios.
 :::

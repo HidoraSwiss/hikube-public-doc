@@ -5,122 +5,85 @@ title: FAQ
 
 # FAQ — Kafka
 
-### Was ist der Unterschied zwischen `partitions` und `replicationFactor`?
+:::info Verfügbarkeit
+Kafka ist in der [Hikube-Konsole](https://console.hikube.cloud) noch nicht als Self-Service verfügbar.
+Um eine Instanz bereitzustellen oder ihre Konfiguration zu ändern, [wenden Sie sich an den Support](mailto:support@hidora.io).
+:::
+
+### Wie erhalte ich einen Kafka-Cluster?
+
+Richten Sie Ihre Anfrage mit den Parametern der Instanz (Anzahl der Broker, Presets, Speicher, Topics, externer Zugriff) an den [Support](mailto:support@hidora.io). Der [Schnellstart](./quick-start.md) listet die vorzubereitenden Informationen auf.
+
+### Was ist der Unterschied zwischen Partitionen und Replikationsfaktor?
 
 Diese beiden Parameter dienen unterschiedlichen Zwecken:
 
-- **`partitions`**: Bestimmt die **Parallelität und den Durchsatz** eines Topics. Je mehr Partitionen vorhanden sind, desto mehr Consumer können parallel lesen. Jede Partition ist eine geordnete Sequenz von Nachrichten.
-- **`replicas`** (Replikationsfaktor): Bestimmt die Anzahl der **Kopien** jeder Partition, die auf verschiedene Broker verteilt sind, und gewährleistet die **Hochverfügbarkeit**. Wenn ein Broker ausfällt, übernimmt ein Replikat.
+- **Partitionen**: bestimmen die **Parallelität und den Durchsatz** eines Topics. Je mehr Partitionen, desto mehr Consumer können parallel lesen. Jede Partition ist eine geordnete Folge von Nachrichten.
+- **Replicas** (Replikationsfaktor): bestimmen die Anzahl der **Kopien** jeder Partition, die auf verschiedene Broker verteilt sind, und gewährleisten so die **Hochverfügbarkeit**. Fällt ein Broker aus, übernimmt eine Replica.
 
 :::warning
-Die Anzahl der Replikate eines Topics **darf nicht** die Anzahl der verfügbaren Broker überschreiten. Beispielsweise können Sie mit 3 Brokern (`kafka.replicas: 3`) maximal `replicas: 3` für ein Topic konfigurieren.
+Die Anzahl der Replicas eines Topics **darf** die Anzahl der verfügbaren Broker **nicht übersteigen**. Mit 3 Brokern kann ein Topic zum Beispiel höchstens 3 Replicas haben.
 :::
 
 ### Warum verwendet Kafka ZooKeeper?
 
-ZooKeeper sorgt für die **Koordination des Kafka-Clusters**:
+ZooKeeper übernimmt die **Koordination des Kafka-Clusters**:
 
-- **Controller-Wahl**: Bestimmt den Leader-Broker, der für die Verwaltung der Partitionen verantwortlich ist
-- **Topic-Metadaten**: Speichert die Liste der Topics, Partitionen und deren Zuordnung zu den Brokern
-- **Ausfallerkennung**: Überwacht den Status der Broker und löst bei Ausfall die Neuzuordnung aus
+- **Wahl des Controllers**: bestimmt den Leader-Broker, der für die Verwaltung der Partitionen zuständig ist
+- **Metadaten der Topics**: speichert die Liste der Topics und Partitionen sowie deren Zuordnung zu den Brokern
+- **Erkennung von Ausfällen**: überwacht den Zustand der Broker und löst bei einem Ausfall die Neuzuordnung aus
 
 :::tip
-ZooKeeper erfordert eine **ungerade Anzahl von Replikaten** (3, 5, 7...), um das Quorum aufrechtzuerhalten. Verwenden Sie in der Produktion mindestens `zookeeper.replicas: 3`.
+ZooKeeper benötigt eine **ungerade Anzahl von Instanzen** (3, 5, 7 …), um das Quorum aufrechtzuerhalten. Sehen Sie in der Produktion mindestens 3 Instanzen vor.
 :::
 
 ### Wozu dient `cleanup.policy` bei einem Topic?
 
-Die Bereinigungsrichtlinie definiert, wie Kafka alte Nachrichten verwaltet:
+Die Cleanup-Policy legt fest, wie Kafka mit alten Nachrichten umgeht:
 
-- **`delete`** (Standard): Löscht Log-Segmente, die die durch `retention.ms` definierte Aufbewahrungsdauer überschreiten. Geeignet für Ereignisströme.
-- **`compact`**: Behält nur den **letzten Wert für jeden Schlüssel** bei. Geeignet für Referenztabellen oder Zustände (Changelog).
+- **`delete`** (Standard): löscht die Log-Segmente, die die durch `retention.ms` festgelegte Aufbewahrungsdauer überschreiten. Geeignet für Ereignisströme.
+- **`compact`**: bewahrt nur den **letzten Wert für jeden Schlüssel** auf. Geeignet für Referenztabellen oder Zustände (Changelog).
 
-Konfigurationsbeispiel:
-
-```yaml title="kafka.yaml"
-topics:
-  - name: user-profiles
-    partitions: 3
-    replicas: 3
-    config:
-      cleanup.policy: compact
-```
+Die Policy jedes Topics ist Teil der Konfiguration der Instanz. Diese Option wird in der Konsole nicht angeboten; wenden Sie sich an den Support.
 
 ### Wie funktionieren Consumer Groups?
 
-Eine **Consumer Group** ist eine Gruppe von Consumern, die sich das Lesen der Partitionen eines Topics aufteilen:
+Eine **Consumer Group** ist eine Gruppe von Consumern, die das Lesen der Partitionen eines Topics untereinander aufteilen:
 
 - Jede Partition wird zu einem bestimmten Zeitpunkt von **einem einzigen Consumer** der Gruppe gelesen
-- Wenn ein Consumer ausfällt, werden seine Partitionen an die anderen Mitglieder der Gruppe umverteilt (**Rebalancing**)
-- Mehrere Consumer Groups können dasselbe Topic unabhängig lesen (jede behält ihren eigenen Offset bei)
+- Fällt ein Consumer aus, werden seine Partitionen auf die anderen Mitglieder der Gruppe umverteilt (**Rebalancing**)
+- Mehrere Consumer Groups können denselben Topic unabhängig voneinander lesen (jede verwaltet ihren eigenen Offset)
 
-Dies ermöglicht einen **parallelen Konsum** bei gleichzeitiger Gewährleistung der Nachrichtenreihenfolge innerhalb jeder Partition.
+Dies ermöglicht ein **paralleles Konsumieren** und garantiert zugleich die Reihenfolge der Nachrichten innerhalb jeder Partition.
 
-### Was ist der Unterschied zwischen `resourcesPreset` und `resources`?
+### Welche Ressourcen-Presets sind verfügbar?
 
-Das Feld `resourcesPreset` wendet eine vordefinierte CPU-/Speicherkonfiguration an, während `resources` die Angabe expliziter Werte ermöglicht. Wenn `resources` definiert ist, wird `resourcesPreset` **ignoriert**.
+Die Presets gelten getrennt für die Broker und für ZooKeeper:
 
-| **Preset** | **CPU** | **Speicher** |
-| ---------- | ------- | ------------ |
-| `nano` | 250m | 128Mi |
-| `micro` | 500m | 256Mi |
-| `small` | 1 | 512Mi |
-| `medium` | 1 | 1Gi |
-| `large` | 2 | 2Gi |
-| `xlarge` | 4 | 4Gi |
-| `2xlarge` | 8 | 8Gi |
+| **Preset** | **CPU** | **Arbeitsspeicher** |
+| ---------- | ------- | ----------- |
+| `nano`     | 250m    | 128Mi       |
+| `micro`    | 500m    | 256Mi       |
+| `small`    | 1       | 512Mi       |
+| `medium`   | 1       | 1Gi         |
+| `large`    | 2       | 2Gi         |
+| `xlarge`   | 4       | 4Gi         |
+| `2xlarge`  | 8       | 8Gi         |
 
-Beispiel mit expliziten Ressourcen:
+Explizite CPU-/Arbeitsspeicherwerte können ebenfalls angefordert werden; sie ersetzen dann das Preset. Diese Option wird in der Konsole nicht angeboten; wenden Sie sich an den Support.
 
-```yaml title="kafka.yaml"
-kafka:
-  replicas: 3
-  resources:
-    cpu: 2000m
-    memory: 4Gi
-  size: 50Gi
-```
+### Wie mache ich Kafka außerhalb der Plattform erreichbar?
 
-### Wie kann Kafka außerhalb des Clusters exponiert werden?
-
-Aktivieren Sie den Parameter `external: true` in Ihrem Manifest:
-
-```yaml title="kafka.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Kafka
-metadata:
-  name: kafka
-spec:
-  external: true
-  kafka:
-    replicas: 3
-    resourcesPreset: small
-    size: 10Gi
-  zookeeper:
-    replicas: 3
-    resourcesPreset: small
-    size: 5Gi
-```
-
-Dies erstellt einen **LoadBalancer**-Service für jeden Broker, der den Zugang von außerhalb des Kubernetes-Clusters ermöglicht.
+Der externe Zugriff ist eine Option der Instanz: Ist sie aktiviert, werden die Broker von außerhalb der Plattform erreichbar. Diese Option wird in der Konsole nicht angeboten; wenden Sie sich an den Support.
 
 :::warning
-Die externe Exposition macht Ihre Broker über das Internet zugänglich. Stellen Sie sicher, dass Authentifizierung und Verschlüsselung korrekt konfiguriert sind, bevor Sie diese Option aktivieren.
+Die externe Bereitstellung macht Ihre Broker über das Internet auf Port `9094` erreichbar. Dieser Listener ist standardmäßig per TLS verschlüsselt, es ist jedoch keine Client-Authentifizierung konfiguriert: Jede Person, die die Adresse kennt, kann Nachrichten produzieren und konsumieren. Klären Sie mit dem Support die Einrichtung einer Authentifizierung (SCRAM oder mTLS), bevor Sie diese Option aktivieren.
 :::
 
-### Wie konfiguriert man `min.insync.replicas`?
+### Wie konfiguriere ich `min.insync.replicas`?
 
-Der Parameter `min.insync.replicas` stellt sicher, dass eine Mindestanzahl von Replikaten jeden Schreibvorgang bestätigt, bevor er als erfolgreich gilt. Dies ist eine Konfiguration auf **Topic**-Ebene:
-
-```yaml title="kafka.yaml"
-topics:
-  - name: orders
-    partitions: 6
-    replicas: 3
-    config:
-      min.insync.replicas: "2"
-```
+Der Parameter `min.insync.replicas` stellt sicher, dass eine Mindestanzahl von Replicas jeden Schreibvorgang bestätigt, bevor er als erfolgreich gilt. Es handelt sich um eine Konfiguration auf **Topic**-Ebene, die in der Konfiguration der Instanz festgelegt wird.
 
 :::tip
-Konfigurieren Sie für einen Produktionscluster mit 3 Replikaten `min.insync.replicas: 2`. Dies toleriert den Ausfall eines Brokers und gewährleistet gleichzeitig die Datenhaltbarkeit.
+Für einen Produktions-Topic mit 3 Replicas toleriert `min.insync.replicas: 2` den Verlust eines Brokers und gewährleistet zugleich die Dauerhaftigkeit der Daten. Kombinieren Sie es auf der Producer-Seite mit `acks=all`.
 :::

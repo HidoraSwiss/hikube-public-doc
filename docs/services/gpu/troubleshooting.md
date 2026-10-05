@@ -5,155 +5,121 @@ title: Dépannage
 
 # Dépannage — GPU
 
-### GPU non détecté dans la VM
+### La section GPU n'apparaît pas dans l'assistant
 
-**Cause** : le champ `gpus` n'est pas configuré dans le manifeste, ou le PCI passthrough n'a pas correctement attaché le GPU à la VM.
+**Cause** : la section **Accélération Matérielle (GPU)** (VM) ou **GPU** (groupe de nœuds Kubernetes) n'est affichée que si la plateforme propose au moins un modèle.
 
-**Solution** :
-
-1. Vérifiez que le champ `gpus` est bien présent dans votre manifeste :
-   ```yaml title="vm-gpu.yaml"
-   spec:
-     gpus:
-       - name: "nvidia.com/AD102GL_L40S"
-   ```
-
-2. Dans la VM, vérifiez la détection PCI :
-   ```bash
-   lspci | grep -i nvidia
-   ```
-
-3. Vérifiez que le module kernel NVIDIA est chargé :
-   ```bash
-   lsmod | grep nvidia
-   ```
-
-4. Si aucun résultat, les drivers ne sont pas installés. Consultez la section suivante.
+**Solution** : rechargez la page. Si la section reste absente, contactez le [support](mailto:support@hidora.io).
 
 ---
 
-### Drivers NVIDIA manquants
+### Tous les modèles sont Indisponible
 
-**Cause** : les drivers NVIDIA ne sont pas installés dans la VM, ou les kernel headers ne correspondent pas à la version du noyau.
+**Cause** : aucune unité libre pour ces modèles au moment de la création.
+
+**Solution** : réessayez plus tard ou contactez [sales@hidora.io](mailto:sales@hidora.io) pour un besoin de capacité.
+
+---
+
+### « Les GPUs suivants ne sont pas disponibles : … » à la création ou à l'enregistrement
+
+**Cause** : les GPU demandés ne sont pas libres ensemble sur un même serveur physique, ou ont été attribués entre l'ouverture de l'assistant et le déploiement. Une VM, comme un nœud Kubernetes, s'exécute sur un seul serveur.
 
 **Solution** :
 
-1. Installez les prérequis et les drivers via cloud-init ou manuellement :
+1. Réduisez le nombre de GPU par VM ou par nœud.
+2. Évitez de combiner plusieurs modèles sur une même VM.
+3. Choisissez un autre modèle disponible.
+
+---
+
+### La VM avec GPU ne redémarre pas
+
+**Cause** : l'arrêt a libéré le GPU, qui a été attribué à un autre workload. La console affiche **Ces GPUs ne sont plus disponibles, ils ont peut-être été réclamés par un autre workload : …**.
+
+**Solution** :
+
+1. Dans la boîte **Sélectionner un GPU alternatif**, choisissez un modèle dans **GPU disponible**.
+2. Cliquez sur **Mettre à jour et démarrer** : la configuration de la VM est mise à jour, puis la VM démarre.
+3. Si la boîte indique **Aucun GPU n'est actuellement disponible.**, réessayez plus tard.
+
+---
+
+### GPU non détecté dans la VM
+
+**Cause** : le GPU n'est pas attaché à la VM, ou la VM n'a pas redémarré après l'ajout.
+
+**Solution** :
+
+1. Sur la page de détail, vérifiez que le GPU figure sous **GPUs** (section **Ressources & Caractéristiques**). Sinon, ajoutez-le via **Modifier** > **Ressources (CPU / RAM)**, puis **Enregistrer**.
+2. Après un ajout, attendez que la VM soit revenue au statut **Actif**.
+3. Dans la VM :
    ```bash
-   sudo apt-get update
+   lspci | grep -i nvidia
+   ```
+4. Si le GPU apparaît dans `lspci` mais pas dans `nvidia-smi`, les drivers manquent : voir la section suivante.
+
+---
+
+### Drivers NVIDIA manquants dans la VM
+
+**Cause** : les images Hikube ne contiennent pas les drivers NVIDIA, ou les en-têtes du noyau ne correspondent pas à la version du noyau.
+
+**Solution** :
+
+1. Installez les drivers en suivant [Installer CUDA et les drivers GPU](../compute/how-to/install-cuda-drivers.md). Sur Ubuntu, vérifiez que les en-têtes du noyau sont présents :
+   ```bash
    sudo apt-get install -y linux-headers-$(uname -r)
-   sudo apt-get install -y nvidia-driver-550 nvidia-utils-550
    ```
-
-2. Redémarrez la VM après l'installation :
-   ```bash
-   sudo reboot
-   ```
-
-3. Vérifiez l'installation :
+2. Redémarrez la VM (`sudo reboot` ou **Redémarrer** dans la console).
+3. Vérifiez :
    ```bash
    nvidia-smi
    ```
-
-:::tip
-Pour automatiser l'installation, utilisez le champ `cloudInit` dans votre manifeste VM afin que les drivers soient installés au premier démarrage.
-:::
 
 ---
 
 ### Pod GPU en état Pending
 
-**Cause** : aucun nœud avec GPU disponible, la configuration GPU du cluster est absente, ou le GPU Operator n'est pas actif.
+**Cause** : aucun nœud du cluster n'a de GPU libre, le groupe GPU est à 0 nœud, ou le GPU Operator n'est pas prêt.
 
 **Solution** :
 
-1. Vérifiez les événements du pod :
+1. Consultez les événements du pod :
    ```bash
-   kubectl describe pod <pod-name>
+   kubectl describe pod <pod>
    ```
-   Recherchez le message `Insufficient nvidia.com/gpu`.
-
-2. Vérifiez que des nœuds GPU existent et ont des GPU allocables :
+   Le message `Insufficient nvidia.com/gpu` indique qu'aucun nœud n'a de GPU libre.
+2. Vérifiez les GPU allouables :
    ```bash
-   kubectl get nodes -o json | jq '.items[] | {name: .metadata.name, gpu: .status.allocatable["nvidia.com/gpu"]}'
+   kubectl get nodes -o custom-columns=NAME:.metadata.name,GPU:.status.allocatable.'nvidia\.com/gpu'
    ```
-
-3. Vérifiez la configuration du nodeGroup GPU dans le manifeste du cluster :
-   ```yaml title="cluster.yaml"
-   spec:
-     nodeGroups:
-       gpu-workers:
-         minReplicas: 1
-         maxReplicas: 4
-         instanceType: "u1.2xlarge"
-         gpus:
-           - name: "nvidia.com/AD102GL_L40S"
-   ```
-
-4. Assurez-vous que l'addon GPU Operator est activé :
-   ```yaml title="cluster.yaml"
-   spec:
-     addons:
-       gpuOperator:
-         enabled: true
-   ```
+3. Dans la console, ouvrez le cluster et vérifiez le groupe de nœuds GPU (**Pools de Nœuds**) : nombre de nœuds actifs, modèle de GPU. Augmentez **Nombre maximum de nœuds** via **Modifier** si tous les GPU sont occupés.
+4. Vérifiez que l'addon **GPU Operator** est actif (il l'est automatiquement dès qu'un groupe a des GPU).
 
 ---
 
 ### `nvidia-smi` échoue dans un pod
 
-**Cause** : le GPU Operator n'est pas activé sur le cluster, ce qui empêche l'installation automatique des drivers et la mise à disposition du device plugin.
+**Cause** : les composants du GPU Operator ne sont pas encore prêts sur le nœud, ou le pod ne demande pas de GPU.
 
 **Solution** :
 
-1. Activez l'addon GPU Operator sur le cluster :
-   ```yaml title="cluster.yaml"
-   spec:
-     addons:
-       gpuOperator:
-         enabled: true
-   ```
-
-2. Appliquez la modification :
+1. Vérifiez que le pod déclare `nvidia.com/gpu` dans `resources.limits`.
+2. Vérifiez l'état des pods du GPU Operator :
    ```bash
-   kubectl apply -f cluster.yaml
+   kubectl get pods -A | grep -i gpu-operator
    ```
-
-3. Vérifiez que les pods du GPU Operator sont en cours d'exécution :
+3. Si des pods sont en `CrashLoopBackOff`, consultez leurs logs :
    ```bash
-   kubectl get pods -n gpu-operator
+   kubectl logs -n <namespace> <pod>
    ```
-
-4. Une fois le GPU Operator opérationnel, recréez votre pod GPU.
+4. Une fois l'opérateur prêt, recréez votre pod. Si le problème persiste, contactez le [support](mailto:support@hidora.io).
 
 ---
 
-### GPU Operator non fonctionnel
+### Impossible d'ajouter un GPU à un groupe de nœuds existant
 
-**Cause** : l'addon n'est pas activé, les pods de l'opérateur sont en erreur, ou les nœuds n'ont pas de GPU physique.
+**Cause** : un groupe créé sans GPU ne peut pas en recevoir (**Un groupe de nœuds existant ne peut pas recevoir de GPU : ajoutez un nouveau groupe de nœuds GPU**). À l'inverse, un groupe GPU doit garder au moins un GPU.
 
-**Solution** :
-
-1. Vérifiez que l'addon est activé dans le manifeste du cluster :
-   ```yaml title="cluster.yaml"
-   spec:
-     addons:
-       gpuOperator:
-         enabled: true
-   ```
-
-2. Vérifiez l'état des pods du GPU Operator :
-   ```bash
-   kubectl get pods -n gpu-operator
-   kubectl describe pod -n gpu-operator <pod-name>
-   ```
-
-3. Vérifiez que les nœuds possèdent bien du hardware GPU :
-   ```bash
-   kubectl get nodes -o json | jq '.items[] | {name: .metadata.name, gpu: .status.capacity["nvidia.com/gpu"]}'
-   ```
-
-4. Si les pods sont en `CrashLoopBackOff`, consultez les logs :
-   ```bash
-   kubectl logs -n gpu-operator <pod-name>
-   ```
+**Solution** : dans **Modifier** > **Groupes de nœuds**, cliquez sur **Ajouter un groupe de nœuds** et configurez le GPU sur ce nouveau groupe.

@@ -1,270 +1,173 @@
 ---
-sidebar_position: 2
+sidebar_position: 3
 title: Avvio rapido
 ---
 
+import NavigationFooter from '@site/src/components/NavigationFooter';
+
 # Distribuire Redis in 5 minuti
 
-Questa guida vi accompagna passo dopo passo nel deployment del vostro primo cluster **Redis** su Hikube, dal manifesto YAML fino ai primi test di connessione.
+Questa guida la accompagna nella creazione del suo primo cluster **Redis** dalla [console Hikube](https://console.hikube.cloud), fino ai primi test con `redis-cli`.
 
 ---
 
 ## Obiettivi
 
-Alla fine di questa guida, avrete:
+Al termine di questa guida, avrà:
 
-- Un cluster **Redis** distribuito su Hikube
-- Un'architettura composta da un **master** e delle **repliche** per garantire l'alta disponibilità
-- **Redis Sentinel** configurato per l'auto-failover
-- Un accesso Redis sicuro con le vostre credenziali di autenticazione
-- Un'archiviazione persistente collegata per conservare i dati oltre i riavvii
+- Un cluster **Redis** distribuito nel suo progetto Hikube
+- Una password di accesso generata dalla piattaforma
+- Una connessione funzionante con `redis-cli`
 
 ---
 
 ## Prerequisiti
 
-Prima di iniziare, assicuratevi di avere:
-
-- **kubectl** configurato con il vostro kubeconfig Hikube
-- **Diritti di amministratore** sul vostro tenant
-- Un **namespace** dedicato per ospitare il vostro cluster Redis
-- **redis-cli** installato sulla vostra postazione (opzionale, per i test di connessione)
+- Un **account Hikube** e un **progetto** con quote sufficienti (CPU, memoria, storage)
+- Il client **`redis-cli`** installato sul suo computer, se desidera testare una connessione da Internet
 
 ---
 
-## Passo 1: Creare il manifesto Redis
+## Passo 1: Creare il cluster
 
-Create un file `redis.yaml` con la seguente configurazione:
+1. Acceda alla [console Hikube](https://console.hikube.cloud) e selezioni il suo progetto.
+2. Nel menu laterale, apra **DB & Messaging** → **Redis**. Viene visualizzata la pagina **Redis Clusters**.
+3. Faccia clic su **Create a cluster**. Si apre la procedura guidata **Create a Redis cluster**.
 
-```yaml title="redis.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Redis
-metadata:
-  name: example
-spec:
-  # Numero di repliche Redis (alta disponibilità se >1)
-  replicas: 3
+---
 
-  # Profilo di risorse predefinito (nano, micro, small, medium, large, xlarge, 2xlarge)
-  resourcesPreset: nano
+## Passo 2: Configurare e confermare
 
-  # Oppure definire le risorse esplicitamente (sostituisce resourcesPreset)
-  resources:
-    cpu: 3000m
-    memory: 3Gi
+La procedura guidata comprende quattro passaggi: **General**, **Configuration**, **Summary** e **Done**.
 
-  # Dimensione del disco persistente per istanza
-  size: 1Gi
-  storageClass: ""
+### General
 
-  # Attivare l'autenticazione Redis
-  authEnabled: true
+Inserisca il **Cluster Name**, ad esempio `demo-cache` (da 3 a 16 caratteri: minuscole, cifre e trattini; inizia con una lettera, termina con una lettera o una cifra). Faccia clic su **Next**.
 
-  # Esporre il servizio Redis all'esterno del cluster
-  external: true
-```
+### Configuration
 
-:::tip
-Se `resources` e definito, il valore di `resourcesPreset` viene ignorato. Consultate il [Riferimento API](./api-reference.md) per la lista completa dei preset disponibili.
+| Campo | Valore consigliato per questa guida | Nota |
+|-------|----------------------------------|----------|
+| **Version** | `8 (Latest)` | Versioni proposte: 8 e 7 |
+| **Preset** | `Small (1 CPU, 512Mi)` | Capacità allocata a ogni nodo |
+| **Volume size (GB)** | `10` | Storage allocato a ogni nodo |
+| **Number of replicas** | `3` | Da 1 a 8; minimo 2 per il failover automatico |
+| **Public network** | Attivato | Necessario per connettersi dal suo computer |
+| **Enable authentication** | Attivato | Attiva per impostazione predefinita; da mantenere |
+
+Il banner nella parte superiore della procedura guidata mostra l'**Estimated Cost** e l'impatto sulle quote del progetto. Faccia clic su **Next**.
+
+:::warning
+Il **Number of replicas** non può più essere modificato dopo la creazione.
 :::
 
----
+### Summary
 
-## Passo 2: Distribuire il cluster Redis
-
-Applicate il manifesto e verificate che il deployment inizi:
-
-```bash
-# Applicare il manifesto
-kubectl apply -f redis.yaml
-```
-
-Verificate lo stato del cluster (può richiedere 1-2 minuti):
-
-```bash
-kubectl get redis
-```
-
-**Risultato atteso:**
-
-```console
-NAME      READY   AGE     VERSION
-example   True    1m39s   0.10.0
-```
+Rilegga il riepilogo (**Name**, **Version**, **Preset**, **Replicas**, **Storage size**, **Network**: **Public** o **Private**), quindi faccia clic su **Create**.
 
 ---
 
-## Passo 3: Verifica dei pod
+## Passo 3: Verificare lo stato
 
-Verificate che tutti i pod siano nello stato `Running`:
+Il passaggio **Done** mostra «Cluster successfully created». Faccia clic su **Finish** per tornare all'elenco **Redis Clusters**, quindi apra il cluster.
 
-```bash
-kubectl get po -o wide | grep redis
-```
+| Stato | Significato |
+|--------|---------------|
+| **Creating** | Il cluster è in fase di provisioning |
+| **Ready** / **Running** | Il cluster è operativo |
+| **Error** / **Failed** | Il provisioning non è riuscito |
 
-**Risultato atteso:**
-
-```console
-rfr-redis-example-0                               2/2     Running     0     7m7s    10.244.2.109   gld-csxhk-006   <none>   <none>
-rfr-redis-example-1                               2/2     Running     0     7m7s    10.244.2.114   luc-csxhk-005   <none>   <none>
-rfr-redis-example-2                               2/2     Running     0     7m7s    10.244.2.111   plo-csxhk-004   <none>   <none>
-rfs-redis-example-7b65c79ccb-dkqqz                1/1     Running     0     7m7s    10.244.2.112   luc-csxhk-005   <none>   <none>
-rfs-redis-example-7b65c79ccb-kvjt8                1/1     Running     0     7m7s    10.244.2.108   gld-csxhk-006   <none>   <none>
-rfs-redis-example-7b65c79ccb-xwk7v                1/1     Running     0     7m7s    10.244.2.110   plo-csxhk-004   <none>   <none>
-```
-
-Con `replicas: 3`, ottenete **6 pod** distribuiti su diversi datacenter:
-
-| Prefisso | Ruolo | Numero |
-|---------|------|--------|
-| `rfr-redis-example-*` | **Redis** (master + repliche) | 3 |
-| `rfs-redis-example-*` | **Redis Sentinel** (supervisione e auto-failover) | 3 |
+**Risultato atteso:** dopo alcuni minuti, la sezione **Connection** della pagina del cluster mostra lo **Status** **Ready** e l'**Host** del cluster.
 
 ---
 
 ## Passo 4: Recuperare le credenziali
 
-Se `authEnabled: true`, una password viene generata automaticamente in un Secret Kubernetes:
+Quando l'autenticazione è attivata, il passaggio **Done** della procedura guidata mostra, in **User Credentials**:
 
-```bash
-kubectl get secret redis-example-auth -o json | jq -r '.data | to_entries[] | "\(.key): \(.value|@base64d)"'
-```
+- l'utente **`default`**;
+- la sua **Password**;
+- la **Internal Connection String**: l'indirizzo del cluster, quando la rete pubblica è attivata.
 
-**Risultato atteso:**
+:::warning
+Copi subito la password: non verrà più mostrata. In caso di smarrimento, ne generi una nuova dalla sezione **Security** della pagina del cluster (**Rotate password**). Si veda [Rinnovare la password](./how-to/rotate-password.md).
+:::
 
-```console
-password: QkP9bhppEFCQcXIXLzEAhAUBlMYEVFNZ
-```
+L'indirizzo resta consultabile nella pagina del cluster, sezione **Connection**, campo **Host** (pulsante di copia a destra).
 
 ---
 
 ## Passo 5: Connessione e test
 
-### Accesso esterno (se `external: true`)
-
-Recuperate l'IP esterno del LoadBalancer:
-
 ```bash
-kubectl get svc | grep redis
-```
-
-```console
-redis-example-external-lb            LoadBalancer   10.96.156.151   91.223.132.41   6379/TCP    13m
-redis-example-metrics                ClusterIP      10.96.58.67     <none>          9121/TCP    13m
-rfr-redis-example                    ClusterIP      None            <none>          9121/TCP    13m
-rfrm-redis-example                   ClusterIP      10.96.109.194   <none>          6379/TCP    13m
-rfrs-redis-example                   ClusterIP      10.96.118.28    <none>          6379/TCP    13m
-rfs-redis-example                    ClusterIP      10.96.176.169   <none>          26379/TCP   13m
-```
-
-Il servizio `redis-example-external-lb` espone Redis sull'IP esterno `91.223.132.41`.
-
-### Accesso tramite port-forward (se `external: false`)
-
-```bash
-kubectl port-forward svc/rfrm-redis-example 6379:6379 &
-```
-
-### Test con redis-cli
-
-```bash
-# Recuperare la password
-REDIS_PASSWORD=$(kubectl get secret redis-example-auth -o jsonpath="{.data.password}" | base64 -d)
+export REDIS_HOST=<host>
+export REDISCLI_AUTH='<password>'
 
 # Test PING
-redis-cli -h 91.223.132.41 -p 6379 -a "$REDIS_PASSWORD" ping
+redis-cli -h "$REDIS_HOST" -p 6379 ping
 # PONG
 
 # Creare una chiave
-redis-cli -h 91.223.132.41 -p 6379 -a "$REDIS_PASSWORD" SET hello "hikube"
+redis-cli -h "$REDIS_HOST" -p 6379 SET hello "hikube"
 # OK
 
 # Leggere la chiave
-redis-cli -h 91.223.132.41 -p 6379 -a "$REDIS_PASSWORD" GET hello
+redis-cli -h "$REDIS_HOST" -p 6379 GET hello
 # "hikube"
 ```
 
-:::note
-Se usate il port-forward, sostituite `91.223.132.41` con `127.0.0.1` nei comandi qui sopra.
-Si raccomanda di non esporre il database all'esterno se non ne avete necessità.
+:::tip
+La variabile `REDISCLI_AUTH` evita che la password compaia nella cronologia della shell, a differenza dell'opzione `-a`.
 :::
 
 ---
 
 ## Passo 6: Risoluzione rapida dei problemi
 
-### Pod in CrashLoopBackOff
+### L'host mostra «Waiting for allocation...»
 
-```bash
-# Verificare i log del pod in errore
-kubectl logs rfr-redis-example-0
+La rete pubblica è disattivata, oppure l'indirizzo IP pubblico non è ancora stato assegnato. Se necessario, attivi **External access** tramite **Edit**, quindi attenda qualche istante.
 
-# Verificare gli eventi
-kubectl describe pod rfr-redis-example-0
-```
+### `NOAUTH Authentication required` o `WRONGPASS`
 
-**Cause frequenti:** memoria insufficiente (`resources.memory` troppo bassa), volume di archiviazione pieno.
+La password è assente o errata. Verifichi la variabile `REDISCLI_AUTH`, oppure generi una nuova password dalla sezione **Security**.
 
-### Redis non accessibile
+### Il pulsante Next resta inattivo
 
-```bash
-# Verificare che il servizio esista
-kubectl get svc | grep redis
+La configurazione supera le quote del progetto. Riduca il preset, la dimensione del volume o il numero di repliche.
 
-# Verificare che il LoadBalancer abbia un IP esterno
-kubectl describe svc redis-example-external-lb
-```
+### Il cluster resta in Error
 
-**Cause frequenti:** `external: false` nel manifesto, LoadBalancer in attesa di assegnazione IP.
-
-### Sentinel non rileva il master
-
-```bash
-# Verificare i log di Sentinel
-kubectl logs rfs-redis-example-7b65c79ccb-dkqqz
-
-# Verificare la topologia Sentinel
-kubectl exec -it rfs-redis-example-7b65c79ccb-dkqqz -- redis-cli -p 26379 SENTINEL masters
-```
-
-### Comandi di diagnostica generali
-
-```bash
-# Eventi recenti sul namespace
-kubectl get events --sort-by=.metadata.creationTimestamp
-
-# Stato dettagliato del cluster Redis
-kubectl describe redis example
-```
+[Contatti il supporto](mailto:support@hidora.io) indicando il nome del progetto e del cluster.
 
 ---
 
 ## Passo 7: Pulizia
 
-Per eliminare le risorse di test:
-
-```bash
-kubectl delete -f redis.yaml
-```
+1. Apra la pagina del cluster (**DB & Messaging** → **Redis** → nome del cluster).
+2. Faccia clic su **Delete**.
+3. Inserisca il nome esatto del cluster nel campo **Resource name to confirm**, quindi faccia clic su **Permanently delete**.
 
 :::warning
-Questa azione elimina il cluster Redis e tutti i dati associati. Questa operazione e **irreversibile**.
+Questa azione elimina il cluster Redis e tutti i dati associati. È **irreversibile**.
 :::
 
 ---
 
 ## Riepilogo
 
-Avete distribuito:
+Dalla console ha creato:
 
-- Un cluster Redis con **3 repliche** distribuite su datacenter diversi
-- **3 pod Sentinel** per la supervisione e l'auto-failover
-- Un accesso sicuro tramite password generata automaticamente
-- Un'archiviazione persistente per la durabilita dei dati
+- Un cluster **Redis** replicato, supervisionato da Sentinel
+- Una password di accesso
+- Una connessione `redis-cli` tramite la rete pubblica
 
----
-
-## Prossimi passi
-
-- **[Riferimento API](./api-reference.md)**: Configurazione completa di tutte le opzioni Redis
-- **[Panoramica](./overview.md)**: Architettura dettagliata e casi d'uso Redis su Hikube
+<NavigationFooter
+  nextSteps={[
+    {label: "Alta disponibilità", href: "../how-to/configure-ha"},
+    {label: "FAQ", href: "../faq"},
+  ]}
+  seeAlso={[
+    {label: "Tutti i database", href: "../../"},
+  ]}
+/>

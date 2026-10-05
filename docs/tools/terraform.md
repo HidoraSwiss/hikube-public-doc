@@ -1,11 +1,15 @@
 ---
 sidebar_position: 1
-title: Terraform avec Hikube
+title: Terraform (legacy)
 ---
 
-# Infrastructure as Code avec Hikube
+# Infrastructure as Code avec Hikube (legacy)
 
-Hikube étant basé sur Kubernetes, vous pouvez utiliser **Terraform** pour gérer votre infrastructure de manière déclarative et reproductible. Cette approche vous permet de versionner, tester et déployer votre infrastructure Hikube de façon automatisée.
+:::warning Méthode legacy
+Cette méthode pilote Hikube au travers d'un kubeconfig de projet et de manifestes Kubernetes. Elle est **dépréciée** : elle reste fonctionnelle pour les clients qui l'utilisent déjà, mais n'évoluera plus. Pour gérer vos ressources, utilisez la [console Hikube](https://console.hikube.cloud).
+:::
+
+Vous pouvez utiliser **Terraform** pour gérer votre infrastructure Hikube de manière déclarative et reproductible, au travers des providers Kubernetes.
 
 ---
 
@@ -13,10 +17,9 @@ Hikube étant basé sur Kubernetes, vous pouvez utiliser **Terraform** pour gér
 
 ### Prérequis
 
+- **Un kubeconfig de projet fourni par Hidora.** Il n'est plus délivré par défaut : [contactez le support](mailto:support@hidora.io) pour en obtenir un.
 - [Terraform](https://www.terraform.io/downloads) (version >= 1.0)
 - [kubectl](https://kubernetes.io/docs/tasks/tools/)
-- Accès à un tenant Hikube
-- Kubeconfig configuré
 
 ### Provider Kubernetes
 
@@ -76,8 +79,7 @@ resource "kubectl_manifest" "kubernetes_cluster" {
     apiVersion = "apps.cozystack.io/v1alpha1"
     kind       = "Kubernetes"
     metadata = {
-      name      = var.cluster_name
-      namespace = "default"
+      name = var.cluster_name
     }
     spec = {
       version      = "v1.34"
@@ -130,8 +132,7 @@ data "kubernetes_secret" "cluster_kubeconfig" {
   depends_on = [kubectl_manifest.kubernetes_cluster]
   
   metadata {
-    name      = "${var.cluster_name}-admin-kubeconfig"
-    namespace = "default"
+    name = "kubernetes-${var.cluster_name}-admin-kubeconfig"
   }
 }
 

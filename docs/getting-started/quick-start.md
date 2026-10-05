@@ -3,293 +3,112 @@ sidebar_position: 3
 title: Démarrage rapide
 ---
 
-# 🚀 Démarrage rapide avec Hikube
+# Démarrage rapide avec Hikube
 
-Bienvenue ! Ce guide vous accompagne pas à pas pour créer votre premier projet sur Hikube. À la fin de ce tutoriel, vous aurez déployé votre première application dans un environnement complètement sécurisé.
+Ce guide vous accompagne de la première connexion à votre premier cluster Kubernetes, entièrement depuis la [console Hikube](https://console.hikube.cloud). Comptez une dizaine de minutes.
 
 ---
 
 ## Prérequis
 
-### **Accès à la plateforme**
-Si vous n'avez pas encore de compte Hikube, contactez notre équipe à **sales@hidora.io** pour obtenir vos accès.
-
-### **Installation des outils requis**
-
-#### **kubectl** (obligatoire)
-
-**macOS**
-```bash
-# Homebrew
-brew install kubectl
-```
-
-**Linux**
-```bash
-# Ubuntu/Debian
-sudo apt-get update && sudo apt-get install -y kubectl
-
-# RHEL/CentOS/Fedora
-sudo dnf install kubectl
-# ou pour les versions plus anciennes
-sudo yum install kubectl
-
-# Alpine Linux
-sudo apk add kubectl
-```
-
-**Windows**
-```powershell
-# Chocolatey
-choco install kubernetes-cli
-
-# winget
-winget install Kubernetes.kubectl
-```
-
-📖 **Documentation officielle** : [Install kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)
-
-#### **kubelogin** (requis pour l'authentification OIDC)
-
-[kubelogin](https://github.com/int128/kubelogin) est un plugin kubectl pour l'authentification OpenID Connect (OIDC).
-
-**macOS / Linux (Homebrew)**
-```bash
-brew install kubelogin
-```
-
-**Krew (macOS, Linux, Windows)**
-```bash
-kubectl krew install oidc-login
-```
-
-**Windows (Chocolatey)**
-```powershell
-choco install kubelogin
-```
-
-📖 **Documentation officielle** : [int128/kubelogin](https://github.com/int128/kubelogin)
-
-:::warning Attention
-N'utilisez **pas** le kubelogin d'Azure (`Azure/kubelogin`). Hikube utilise l'authentification OIDC standard et nécessite le plugin [int128/kubelogin](https://github.com/int128/kubelogin).
-:::
-
-### **Outils optionnels recommandés**
-
-Pour une meilleure expérience de gestion Kubernetes :
-
-- **[Lens](https://k8slens.dev/)** - Interface graphique moderne pour Kubernetes
-- **[K9s](https://k9scli.io/)** - Interface terminal interactive pour Kubernetes  
-- **[Helm](https://helm.sh/)** - Gestionnaire de paquets pour Kubernetes
-- **[kubectx + kubens](https://github.com/ahmetb/kubectx)** - Outils pour changer rapidement de contexte et namespace
+- **Un compte Hikube.** Si vous n'en avez pas encore, contactez notre équipe à **sales@hidora.io**.
+- **Un navigateur web récent.**
+- **kubectl**, uniquement pour l'étape finale qui interroge votre cluster Kubernetes. Voir [Install kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl).
 
 ---
 
-## Étape 1 : Accéder à votre Tenant
+## Étape 1 : Se connecter à la console
 
-### **Configuration kubectl**
-1. **Récupérez votre kubeconfig** auprès de votre administrateur Hikube
-2. **Configurez kubectl** avec votre fichier de configuration :
-   ```bash
-   # Option 1: Variable d'environnement
-   export KUBECONFIG=/path/to/your/hikube-kubeconfig.yaml
-   
-   # Option 2: Copie dans le répertoire par défaut
-   cp hikube-kubeconfig.yaml ~/.kube/config
-   ```
-3. **Vérifiez la connexion** :
-   ```bash
-   kubectl get pods
-   ```
+1. Ouvrez [https://console.hikube.cloud](https://console.hikube.cloud).
+2. Connectez-vous avec les identifiants fournis par Hidora.
+3. Vous arrivez sur votre **organisation**. Son nom est affiché dans le menu de profil, sous **Organisation actuelle**.
 
-:::tip Configuration multiple
-Vous pouvez gérer plusieurs clusters avec `kubectl config get-contexts` et `kubectl config use-context <context-name>`
-:::
-
-### **Vérification de votre tenant**
-Votre tenant est votre **espace de travail isolé**. Vérifiez que vous êtes dans le bon contexte :
-```bash
-kubectl config current-context
-```
-
-:::warning Ne pas utiliser -A / --all-namespaces
-Le flag `-A` (`--all-namespaces`) effectue une requête au niveau cluster, ce qui est interdit pour un utilisateur tenant. Utilisez toujours les commandes sans `-A` : votre kubeconfig cible déjà votre namespace.
+:::note Aucune organisation ?
+Si la console affiche **Aucune organisation**, votre compte n'est pas encore rattaché à une organisation. Actualisez la page si vous venez d'en recevoir une, sinon [contactez le support](mailto:support@hidora.io).
 :::
 
 ---
 
-## Étape 2 : Créer votre premier Cluster Kubernetes
+## Étape 2 : Créer un projet
 
-### **Déploiement via kubectl**
-1. **Créez un fichier YAML** pour votre cluster Kubernetes
-2. **Personnalisez la configuration** selon vos besoins
-3. **Déployez avec kubectl** :
+Un **projet** est un espace isolé qui regroupe vos ressources (VM, clusters, bases de données…) et porte ses propres quotas.
 
-```yaml
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Kubernetes
-metadata:
-  name: kube
-spec:
-  addons:
-    certManager:
-      enabled: true
-      valuesOverride: {}
-    fluxcd:
-      enabled: false
-      valuesOverride: {}
-    ingressNginx:
-      enabled: true
-      hosts:
-      - mon-app.example.com
-      valuesOverride: {}
-    monitoringAgents:
-      enabled: false
-      valuesOverride: {}
-    verticalPodAutoscaler:
-      valuesOverride: {}
-  controlPlane:
-    replicas: 3
-  host: k8s-api.example.com
-  kamajiControlPlane:
-    addons:
-      konnectivity:
-        server:
-          resources: {}
-          resourcesPreset: small
-    apiServer:
-      resources: {}
-      resourcesPreset: small
-    controllerManager:
-      resources: {}
-      resourcesPreset: small
-    scheduler:
-      resources: {}
-      resourcesPreset: small
-  nodeGroups:
-    md0:
-      ephemeralStorage: 30Gi
-      instanceType: u1.large
-      maxReplicas: 6
-      minReplicas: 3
-      roles:
-      - ingress-nginx
-  storageClass: replicated
-```
+1. Ouvrez le sélecteur de projet et cliquez sur **Créer un projet**. Lors de votre première connexion, l'assistant **Bienvenue sur Hikube** s'ouvre directement.
+2. Étape **Général** : saisissez le **Nom du projet**. Il doit commencer par une lettre et ne contenir que des minuscules et des chiffres, sans tiret, entre 3 et 16 caractères (exemple : `demo01`).
 
-4. **Déployez le cluster** :
-   ```bash
-   # Sauvegardez la configuration dans un fichier
-   kubectl apply -f my-kubernetes-cluster.yaml
-   ```
+   ![Assistant de création de projet, étape Général](/img/console/projects/wizard-general.fr.png)
 
-### **⏳ Suivi du déploiement**
-- Le cluster sera prêt en **1-3 minutes**
-- Suivez l'état avec kubectl :
-  ```bash
-  kubectl get kubernetes
-  kubectl describe kubernetes kube
-  ```
-- Status "Ready" = Cluster opérationnel ✅
+3. Étape **Quotas** (optionnelle) : fixez les limites de **CPU** (vCPU), **Mémoire** (Go) et **Stockage** (Go) du projet.
+4. Étape **Vérification** : relisez le récapitulatif puis cliquez sur **Créer le projet**.
+
+Le tableau de bord affiche **Projet en cours de création…** pendant la préparation du projet, puis s'ouvre automatiquement.
 
 ---
 
-## Configuration DNS
+## Étape 3 : Créer un cluster Kubernetes
 
-### **Enregistrements DNS requis**
+1. Dans le menu latéral, ouvrez **Infrastructure** → **Kubernetes**, puis cliquez sur **Créer un cluster**.
+2. Étape **Général** : choisissez un **Nom du cluster**, une **Version de Kubernetes** et la **Taille de l'instance Control Plane**. Laissez **Endpoint API (Host)** vide : la plateforme le génère pour vous.
+3. Étape **Nœuds** : configurez au moins un groupe de nœuds (type d'instance, nombre de nœuds, stockage éphémère).
+4. Étape **Addons** : activez les extensions dont vous avez besoin (par exemple cert-manager ou ingress-nginx).
+5. Étape **Vérification** : contrôlez le récapitulatif et le coût estimé, puis lancez la création.
 
-Pour que votre cluster soit accessible, vous devez créer les enregistrements DNS suivants chez votre fournisseur DNS :
+Le détail de chaque champ est décrit dans le [démarrage rapide Kubernetes](../services/kubernetes/quick-start.md).
+
+---
+
+## Étape 4 : Suivre le déploiement
+
+La liste **Clusters Kubernetes** affiche le statut du cluster :
+
+- **En création** : le control plane et les nœuds sont en cours de provisionnement ;
+- **Prêt** / **Actif** : le cluster est opérationnel.
+
+Le passage à **Prêt** prend généralement quelques minutes.
+
+---
+
+## Étape 5 : Récupérer le kubeconfig du cluster
+
+1. Cliquez sur le cluster pour ouvrir sa page de détail.
+2. Cliquez sur **Kubeconfig**. La console télécharge un fichier `kubeconfig-<nom-du-cluster>.yaml`.
+
+:::warning Fichier sensible
+Ce fichier donne un accès administrateur à votre cluster. Ne le versionnez pas et stockez-le dans un emplacement protégé (par exemple `~/.kube/`).
+:::
+
+---
+
+## Étape 6 : Interroger le cluster
 
 ```bash
-# Récupérez l'IP publique de votre cluster via les Ingress
-kubectl get ingress
+export KUBECONFIG=~/.kube/kubeconfig-<nom-du-cluster>.yaml
+kubectl get nodes
 ```
 
 **Résultat attendu :**
 
 ```console
-NAME                            CLASS           HOSTS                 ADDRESS        PORTS   AGE
-kubernetes-kube                 tenant-myco     k8s-api.example.com   91.x.x.x      80      2m
-kubernetes-kube-ingress-nginx   tenant-myco     mon-app.example.com   91.x.x.x      80      2m
+NAME                       STATUS   ROLES    AGE   VERSION
+<nom-du-cluster>-<groupe>-xxxxx   Ready    <none>   3m    v1.xx.x
 ```
 
-Créez les enregistrements DNS chez votre fournisseur :
-
-```
-Type A : k8s-api.example.com → <ADDRESS>
-Type A : mon-app.example.com → <ADDRESS>
-```
-
-:::tip Configuration DNS
-- **k8s-api.example.com** : Point d'accès à l'API Kubernetes
-- **mon-app.example.com** : Domaine pour vos applications via Ingress
-- Remplacez `example.com` par votre vraie zone DNS
-:::
-
----
-
-## Étape 3 : Récupérer le Kubeconfig
-
-### **Extraction du kubeconfig du cluster**
-Une fois votre cluster déployé et prêt, récupérez ses credentials avec cette commande :
-
-```bash
-# Récupérez le kubeconfig du cluster créé (adaptez le nom du cluster)
-kubectl get secret kubernetes-<clusterName>-admin-kubeconfig \
-  -o go-template='{{ printf "%s\n" (index .data "admin.conf" | base64decode) }}' > admin.conf
-
-# Exemple concret avec le cluster "kube" :
-kubectl get secret kubernetes-kube-admin-kubeconfig \
-  -o go-template='{{ printf "%s\n" (index .data "admin.conf" | base64decode) }}' > admin.conf
-```
-
-:::info Variable à personnaliser
-- `<clusterName>` : Remplacez par le nom de votre cluster (ex: `kube` selon le manifeste YAML)
-:::
-
-### **Configuration locale**
-```bash
-# Utilisez le kubeconfig du nouveau cluster
-export KUBECONFIG=./admin.conf
-
-# Vérifiez la connexion au cluster créé
-kubectl get nodes
-```
-
-:::note
-Cette commande ne fonctionnera qu'après avoir configuré les enregistrements DNS (section précédente). Les nœuds workers peuvent prendre quelques minutes supplémentaires à apparaître.
-:::
-
-:::success Félicitations !
-Votre cluster Kubernetes est maintenant opérationnel avec **haute disponibilité native** !
-:::
+Les nœuds workers peuvent mettre quelques minutes de plus à apparaître après le passage du cluster à **Prêt**.
 
 ---
 
 ## Résumé
 
-Vous avez créé :
+Vous avez :
 
-- Un **cluster Kubernetes haute disponibilité**
-- Un **environnement totalement sécurisé** (isolation réseau)
-- Un **stockage résilient** (réplication automatique)
----
+- créé un **projet** isolé, avec ses quotas ;
+- déployé un **cluster Kubernetes managé** depuis la console ;
+- récupéré son kubeconfig et vérifié l'accès avec `kubectl`.
 
 ## Besoin d'aide ?
 
-### **Documentation**
-- **[FAQ](../resources/faq.md)** → Réponses aux questions courantes
-- **[Troubleshooting](../resources/troubleshooting.md)** → Solutions aux problèmes
+- **[FAQ](../resources/faq.md)** : réponses aux questions courantes
+- **[Dépannage](../resources/troubleshooting.md)** : solutions aux problèmes fréquents
+- **Support** : bouton **Contacter le support** dans le menu de profil de la console, ou **support@hidora.io**
 
-### **Support**
-- **Email :** support@hidora.io
-- **Documentation :** Cette plateforme
-- **Communauté :** Forums et chat en temps réel
-
-:::tip Bravo ! 🎊
-Vous venez de faire vos premiers pas sur Hikube. Votre infrastructure est maintenant prête à accueillir tous vos projets les plus ambitieux !
-:::
-
----
-
-**Prochaine étape recommandée :** [📖 Concepts clés](./concepts.md) → Maîtrisez les fondamentaux d'Hikube 
+**Prochaine étape recommandée :** [Concepts clés](./concepts.md)

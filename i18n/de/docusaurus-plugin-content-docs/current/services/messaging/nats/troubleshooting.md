@@ -5,122 +5,92 @@ title: Fehlerbehebung
 
 # Fehlerbehebung — NATS
 
+:::info Verfügbarkeit
+NATS ist in der [Hikube-Konsole](https://console.hikube.cloud) noch nicht im Self-Service verfügbar.
+Um eine Instanz bereitzustellen oder ihre Konfiguration zu ändern, [wenden Sie sich an den Support](mailto:support@hidora.io).
+:::
+
+Die folgenden Diagnosen erfolgen über das CLI `nats` (siehe den [Schnellstart](./quick-start.md), um einen Verbindungskontext zu speichern). Wenn eine Aktion auf Plattformseite erforderlich ist (Ressourcen, Speicher, Neustart, Serverprotokolle), [wenden Sie sich an den Support](mailto:support@hidora.io) und geben Sie das Projekt und den Namen der Instanz an.
+
 ### Verlorene Nachrichten (kein JetStream)
 
-**Ursache**: JetStream ist nicht aktiviert oder es ist kein Stream konfiguriert, um die Nachrichten zu erfassen. Ohne JetStream arbeitet NATS im Fire-and-Forget-Modus: Nachrichten werden nur an zum Zeitpunkt der Veröffentlichung verbundene Abonnenten zugestellt.
+**Ursache**: JetStream ist nicht aktiviert oder es ist kein Stream konfiguriert, der die Nachrichten erfasst. Ohne JetStream arbeitet NATS im Fire-and-Forget-Modus: Nachrichten werden nur an die Subscribers zugestellt, die zum Zeitpunkt der Veröffentlichung verbunden sind.
 
 **Lösung**:
 
-1. Überprüfen Sie, ob JetStream in Ihrem Manifest aktiviert ist:
-   ```yaml title="nats.yaml"
-   jetstream:
-     enabled: true
-     size: 10Gi
-   ```
-2. Wenden Sie das Manifest bei Bedarf erneut an:
+1. Prüfen Sie, ob JetStream für Ihr Konto verfügbar ist:
    ```bash
-   kubectl apply -f nats.yaml
+   nats account info
    ```
-3. Erstellen Sie einen Stream, um die Nachrichten der gewünschten Subjects zu erfassen:
+   Wenn JetStream auf der Instanz nicht aktiviert ist, wenden Sie sich an den Support.
+2. Erstellen Sie einen Stream, um die Nachrichten der gewünschten Subjects zu erfassen:
    ```bash
    nats stream add --subjects "orders.>" --storage file --replicas 3 --retention limits orders-stream
    ```
-4. Überprüfen Sie, ob der Stream erstellt wurde und Nachrichten erfasst:
+3. Prüfen Sie, ob der Stream erstellt wurde und die Nachrichten erfasst:
    ```bash
    nats stream info orders-stream
    ```
 
 ### Consumer empfängt keine Nachrichten
 
-**Ursache**: Der Consumer ist auf ein Subject abonniert, das nicht dem vom Produzenten verwendeten entspricht. Häufige Fehler sind ein Tippfehler im Subject-Namen, eine falsche Verwendung von Wildcards oder eine fehlerhafte Queue-Group-Konfiguration.
+**Ursache**: Der Consumer hat ein Subject abonniert, das nicht dem vom Producer verwendeten entspricht. Häufige Fehler sind ein Tippfehler im Namen des Subjects, eine falsche Verwendung von Wildcards oder eine fehlerhafte Queue-Group-Konfiguration.
 
 **Lösung**:
 
-1. Überprüfen Sie das genaue Subject, das vom Produzenten und Consumer verwendet wird — Subjects sind **case-sensitive**
+1. Prüfen Sie das genaue Subject, das vom Producer und vom Consumer verwendet wird — Subjects **unterscheiden zwischen Groß- und Kleinschreibung**.
 2. Testen Sie den Empfang mit einem Diagnose-Abonnement:
    ```bash
    nats sub ">"
    ```
-   Dies ermöglicht es, **alle Nachrichten** auf dem Server zu sehen
-3. Überprüfen Sie die verwendeten Wildcards:
-   - `orders.*` matcht **nicht** `orders.new.urgent` (verwenden Sie `orders.>` für Unterebenen)
-4. Wenn Sie Queue Groups verwenden, überprüfen Sie, ob der Consumer Mitglied der erwarteten Gruppe ist und der Gruppenname identisch ist
+   So sehen Sie **alle Nachrichten**, die Ihr Benutzer empfangen darf.
+3. Prüfen Sie die verwendeten Wildcards: `orders.*` passt **nicht** auf `orders.new.urgent` (verwenden Sie `orders.>` für Unterebenen).
+4. Wenn Sie Queue Groups verwenden, prüfen Sie, ob der Consumer Mitglied der erwarteten Gruppe ist und der Gruppenname identisch ist.
 
 ### JetStream-Speicher voll
 
-**Ursache**: Das JetStream-Volume hat seine maximale Kapazität erreicht (`jetstream.size`). Neue Nachrichten können nicht mehr persistiert werden und Veröffentlichungen schlagen fehl.
+**Ursache**: Das JetStream-Volume hat seine maximale Kapazität erreicht. Neue Nachrichten können nicht mehr gespeichert werden und Veröffentlichungen schlagen fehl.
 
 **Lösung**:
 
-1. Überprüfen Sie die JetStream-Speichernutzung:
+1. Prüfen Sie die Belegung des JetStream-Speichers:
    ```bash
    nats account info
    ```
-2. Identifizieren Sie die größten Streams:
+2. Ermitteln Sie die größten Streams:
    ```bash
    nats stream list
    ```
-3. Löschen Sie alte Nachrichten aus Streams, die dies erlauben:
+3. Löschen Sie alte Nachrichten aus den Streams, bei denen dies möglich ist:
    ```bash
    nats stream purge <stream-name>
    ```
-4. Überprüfen Sie die Aufbewahrungsrichtlinie der Streams — verwenden Sie `limits` mit `max-age`, um alte Nachrichten automatisch zu löschen:
+4. Passen Sie die Aufbewahrungsrichtlinie der Streams an — verwenden Sie `limits` mit `max-age`, um alte Nachrichten automatisch zu löschen:
    ```bash
    nats stream edit <stream-name> --max-age 72h
    ```
-5. Erhöhen Sie bei Bedarf `jetstream.size` in Ihrem Manifest:
-   ```yaml title="nats.yaml"
-   jetstream:
-     enabled: true
-     size: 50Gi
-   ```
+5. Beantragen Sie bei Bedarf eine Vergrößerung des JetStream-Volumes. Diese Option wird in der Konsole nicht angeboten; wenden Sie sich an den Support.
 
 ### Unzureichender Arbeitsspeicher
 
-**Ursache**: Der NATS-Server verbraucht mehr Speicher als das zugewiesene Limit, oft aufgrund einer hohen Anzahl von Verbindungen, großer Nachrichten (`max_payload` zu hoch) oder JetStream-Streams im Speicher.
+**Ursache**: Der NATS-Server verbraucht mehr Arbeitsspeicher als das zugewiesene Limit, häufig aufgrund einer hohen Anzahl von Verbindungen, großer Nachrichten (hoher `max_payload`) oder JetStream-Streams im Arbeitsspeicher.
 
 **Lösung**:
 
-1. Überprüfen Sie die Pod-Ereignisse, um einen OOMKill zu bestätigen:
-   ```bash
-   kubectl describe pod <pod-nats> | grep -A 5 "Last State"
-   ```
-2. Erhöhen Sie die NATS zugewiesenen Ressourcen:
-   ```yaml title="nats.yaml"
-   replicas: 3
-   resources:
-     cpu: 1
-     memory: 2Gi
-   ```
-3. Überprüfen Sie den Wert von `max_payload` in `config.merge` — reduzieren Sie ihn, wenn sehr große Nachrichten nicht erforderlich sind
-4. Wenden Sie das Manifest erneut an:
-   ```bash
-   kubectl apply -f nats.yaml
-   ```
+1. Bevorzugen Sie für große Streams den Speichertyp `file` statt `memory`.
+2. Verringern Sie die Größe der veröffentlichten Nachrichten, wenn sehr große Nachrichten nicht erforderlich sind.
+3. Wenn das Problem weiterhin besteht, beantragen Sie ein größeres Preset oder eine Anpassung von `max_payload`. Diese Option wird in der Konsole nicht angeboten; wenden Sie sich an den Support.
 
 ### Verbindung abgelehnt
 
-**Ursache**: Der Client kann keine Verbindung zum NATS-Server herstellen. Dies kann an nicht gestarteten Pods, falschen Zugangsdaten oder einem externen Verbindungsversuch ohne `external: true` liegen.
+**Ursache**: falsche URL oder falscher Port, fehlerhafte Zugangsdaten oder ein Verbindungsversuch von außerhalb der Plattform ohne aktivierten externen Zugriff.
 
 **Lösung**:
 
-1. Überprüfen Sie, ob die NATS-Pods im Status `Running` sind:
+1. Prüfen Sie, ob Sie die vom Support mitgeteilte URL und die mitgeteilten Zugangsdaten verwenden.
+2. Testen Sie die Verbindung:
    ```bash
-   kubectl get pods -l app.kubernetes.io/component=nats
+   nats server check connection --server <nats-url> --user <user> --password <password>
    ```
-2. Überprüfen Sie die Pod-Logs auf Fehler:
-   ```bash
-   kubectl logs <pod-nats>
-   ```
-3. Überprüfen Sie die Benutzerzugangsdaten im Kubernetes Secret:
-   ```bash
-   kubectl get tenantsecret <nats-name>-credentials -o jsonpath='{.data}' | base64 -d
-   ```
-4. Wenn Sie sich von außerhalb des Clusters verbinden, stellen Sie sicher, dass `external: true` konfiguriert ist:
-   ```yaml title="nats.yaml"
-   external: true
-   ```
-5. Testen Sie die Konnektivität von einem Pod innerhalb des Clusters:
-   ```bash
-   kubectl exec <pod-nats> -- nats-server --help 2>&1 | head -1
-   ```
+3. Ein Fehler `Authorization Violation` weist auf falsche Zugangsdaten hin; bitten Sie den Support, das Passwort zu prüfen oder zu erneuern.
+4. Wenn Sie sich von außerhalb der Plattform verbinden, klären Sie mit dem Support, ob der externe Zugriff auf der Instanz aktiviert ist.

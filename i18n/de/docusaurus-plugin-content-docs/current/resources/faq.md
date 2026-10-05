@@ -5,20 +5,32 @@ title: FAQ
 
 # Häufig gestellte Fragen
 
-Hier finden Sie Antworten auf die häufigsten Fragen zur Nutzung von Hikube.
+Hier finden Sie Antworten auf die häufigsten Fragen zur Nutzung von Hikube. Jeder Service hat außerdem eine eigene FAQ.
 
 ---
 
-## 1. Wie rufe ich meine kubeconfig ab?
+## 1. Wie greife ich auf Hikube zu?
 
-Sobald Ihr Kubernetes-Cluster bereitgestellt ist, rufen Sie die kubeconfig ab mit:
+Melden Sie sich mit den von Hidora bereitgestellten Zugangsdaten bei der Konsole an: [https://console.hikube.cloud](https://console.hikube.cloud). Wenn Sie noch kein Konto haben, wenden Sie sich an **sales@hidora.io**.
+
+Siehe: [Schnellstart](../getting-started/quick-start.md)
+
+---
+
+## 2. Was ist der Unterschied zwischen Organisation und Projekt?
+
+Die **Organisation** repräsentiert Ihr Unternehmen; sie wird von Hidora erstellt. **Projekte** sind die isolierten Bereiche, die Sie in der Organisation anlegen, um Ihre Ressourcen mit eigenen Quotas zu bündeln. In früheren Versionen der Dokumentation hieß ein Projekt **Tenant**.
+
+Siehe: [Schlüsselkonzepte](../getting-started/concepts.md)
+
+---
+
+## 3. Wie rufe ich die kubeconfig meines Kubernetes-Clusters ab?
+
+Öffnen Sie **Infrastructure** → **Kubernetes**, klicken Sie auf Ihren Cluster und dann auf **Kubeconfig**. Die Konsole lädt die Datei `kubeconfig-<cluster-name>.yaml` herunter.
 
 ```bash
-kubectl get secret <cluster-name>-admin-kubeconfig \
-  -o go-template='{{ printf "%s\n" (index .data "super-admin.conf" | base64decode) }}' \
-  > my-cluster-kubeconfig.yaml
-
-export KUBECONFIG=my-cluster-kubeconfig.yaml
+export KUBECONFIG=~/.kube/kubeconfig-<cluster-name>.yaml
 kubectl get nodes
 ```
 
@@ -26,215 +38,72 @@ Siehe: [Kubernetes - Schnellstart](../services/kubernetes/quick-start.md)
 
 ---
 
-## 2. Wie rufe ich die Zugangsdaten meiner Datenbank ab?
+## 4. Brauche ich noch eine kubeconfig, um meine Hikube-Ressourcen zu verwalten?
 
-Die Zugangsdaten sind in einem Kubernetes-Secret gespeichert. Der Befehl variiert je nach Dienst:
+Nein. VMs, Disks, Buckets, Netzwerke, Kubernetes-Cluster und Datenbanken werden in der Konsole erstellt und verwaltet. Die Projekt-kubeconfig wird nicht mehr standardmäßig ausgegeben; für Legacy-Anwendungsfälle wie [Terraform](../tools/terraform.md) ist sie weiterhin auf Anfrage beim Support erhältlich.
 
-```bash
-# Redis
-kubectl get secret redis-<name>-auth -o json | jq -r '.data | to_entries[] | "\(.key): \(.value|@base64d)"'
-
-# PostgreSQL
-kubectl get secret pg-<name>-app -o json | jq -r '.data | to_entries[] | "\(.key): \(.value|@base64d)"'
-
-# MySQL
-kubectl get secret mysql-<name>-auth -o json | jq -r '.data | to_entries[] | "\(.key): \(.value|@base64d)"'
-```
-
-Siehe: [Redis - Schnellstart](../services/databases/redis/quick-start.md), [PostgreSQL - Schnellstart](../services/databases/postgresql/quick-start.md), [MySQL - Schnellstart](../services/databases/mysql/quick-start.md)
+Die kubeconfig eines **Kubernetes-Clusters** (Frage 3) bleibt hingegen der normale Weg, auf diesen Cluster zuzugreifen.
 
 ---
 
-## 3. Wie mache ich einen Dienst extern erreichbar?
+## 5. Wo finde ich die Zugangsdaten meiner Datenbank?
 
-Zwei Optionen stehen zur Verfügung:
+Auf der Detailseite des Datenbank-Clusters in der Konsole (**DB & Messaging** → Service → Cluster). Dort werden die Benutzer, ihre Passwörter und der Verbindungshost angezeigt.
 
-**Option 1: Externer Zugang über LoadBalancer** (empfohlen für die Produktion)
+Siehe: [PostgreSQL](../services/databases/postgresql/quick-start.md), [MariaDB](../services/databases/mariadb/quick-start.md), [MongoDB](../services/databases/mongodb/quick-start.md), [Redis](../services/databases/redis/quick-start.md), [RabbitMQ](../services/messaging/rabbitmq/quick-start.md)
 
-Fügen Sie `external: true` im YAML-Manifest Ihres Dienstes hinzu. Ein LoadBalancer mit einer öffentlichen IP wird automatisch erstellt.
+---
 
-```yaml
-spec:
-  external: true
-```
+## 6. Wie mache ich eine Datenbank im Internet erreichbar?
 
-**Option 2: Port-Forward** (empfohlen für die Entwicklung)
+Aktivieren Sie die Option **External access** bei der Erstellung des Clusters oder über **Edit**. Daraufhin wird eine öffentliche IP zugewiesen und im Feld **Host** der Detailseite angezeigt.
 
-```bash
-kubectl port-forward svc/<service-name> <lokaler-port>:<service-port>
-```
-
-:::note
-Es wird empfohlen, Datenbanken nicht extern zu exponieren, wenn Sie dies nicht benötigen.
+:::warning
+Machen Sie eine Datenbank nur erreichbar, wenn es nötig ist, und verwenden Sie starke Passwörter.
 :::
 
 ---
 
-## 4. Was ist der Unterschied zwischen `resources` und `resourcesPreset`?
+## 7. Wie wähle ich die Größe meiner Ressourcen?
 
-- **`resourcesPreset`**: Vordefiniertes Profil (nano, micro, small, medium, large, xlarge, 2xlarge), das automatisch CPU und Arbeitsspeicher zuweist.
-- **`resources`**: Ermöglicht die **explizite** Definition von CPU- und Arbeitsspeicher-Werten.
+Die Erstellungsassistenten bieten vordefinierte Größen an:
 
-Wenn `resources` definiert ist, wird `resourcesPreset` **ignoriert**.
+- **VMs und Kubernetes-Nodes**: Instanztypen der Serien `s1`, `u1` und `m1` (von 1 bis 64 vCPU). Siehe [Kubernetes-Konzepte](../services/kubernetes/concepts.md) und [Konzepte virtueller Maschinen](../services/compute/concepts.md).
+- **Datenbanken**: Presets von `nano` bis `2xlarge`. Siehe die Konzeptseite des jeweiligen Services.
 
-| Preset | CPU | Arbeitsspeicher |
-|--------|-----|---------|
-| `nano` | 250m | 128Mi |
-| `micro` | 500m | 256Mi |
-| `small` | 1 | 512Mi |
-| `medium` | 1 | 1Gi |
-| `large` | 2 | 2Gi |
-| `xlarge` | 4 | 4Gi |
-| `2xlarge` | 8 | 8Gi |
-
-Siehe: [Redis - API-Referenz](../services/databases/redis/api-reference.md)
+Jeder Assistent zeigt vor der Erstellung die Auswirkung auf die Quota des Projekts und die geschätzten Kosten an.
 
 ---
 
-## 5. Wie wähle ich meinen instanceType für Kubernetes?
+## 8. Wie erhöhe ich die Quotas eines Projekts?
 
-Der Parameter `instanceType` in den `nodeGroups` bestimmt die Ressourcen jedes Worker-Knotens:
+Die Administratoren des Projekts oder der Organisation ändern die Quotas in den Projekteinstellungen. Eine Quota kann nicht unter den aktuellen Verbrauch gesenkt werden. Reicht die Kapazität Ihrer Organisation nicht aus, wenden Sie sich an den Support.
 
-| Instance Type | vCPU | RAM |
-|---------------|------|-----|
-| `s1.small` | 1 | 2 GB |
-| `s1.medium` | 2 | 4 GB |
-| `s1.large` | 4 | 8 GB |
-| `s1.xlarge` | 8 | 16 GB |
-| `s1.2xlarge` | 16 | 32 GB |
-
-Wählen Sie entsprechend Ihrer Workloads:
-- **Klassische Webanwendungen**: `s1.large` (gutes Kosten-Leistungs-Verhältnis)
-- **Speicherintensive Anwendungen**: `s1.xlarge` oder `s1.2xlarge`
-- **Entwicklungsumgebungen**: `s1.small` oder `s1.medium`
-
-Siehe: [Kubernetes - API-Referenz](../services/kubernetes/api-reference.md)
+Siehe: [Schlüsselkonzepte - Quotas](../getting-started/concepts.md#quotas)
 
 ---
 
-## 6. Wie aktiviere ich S3-Backups?
+## 9. Wie skaliere ich meine Ressourcen?
 
-Für Datenbanken, die dies unterstützen (PostgreSQL, ClickHouse), fügen Sie den Abschnitt `backup` in Ihrem Manifest hinzu:
-
-```yaml
-spec:
-  backup:
-    enabled: true
-    s3:
-      endpoint: "https://s3.example.com"
-      bucket: "my-backups"
-      accessKey: "ACCESS_KEY"
-      secretKey: "SECRET_KEY"
-```
-
-Siehe: [PostgreSQL - API-Referenz](../services/databases/postgresql/api-reference.md)
+- **Kubernetes-Cluster**: Ändern Sie die Minimal- und Maximalwerte der Node-Gruppen über **Edit**. Die Nodes passen sich innerhalb dieser Grenzen automatisch an die Last an. Siehe [Node-Gruppen verwalten](../services/kubernetes/how-to/manage-node-groups.md).
+- **Datenbanken**: Je nach Service werden Preset und Speicher über **Edit** geändert. Siehe die Anleitung zur Skalierung des jeweiligen Services.
 
 ---
 
-## 7. Wie greife ich auf Grafana und meine Dashboards zu?
+## 10. Wie funktioniert die Hochverfügbarkeit der Datenbanken?
 
-Wenn das Monitoring in Ihrem Tenant aktiviert ist, ist Grafana über eine dedizierte URL erreichbar. Um sie zu finden:
+Mit mehreren Replicas wechselt jeder verwaltete Service bei einem Ausfall der primären Instanz automatisch auf ein gesundes Replica. Die Anzahl der Replicas wird bei der Erstellung gewählt.
 
-```bash
-# Monitoring-Ingress überprüfen
-kubectl get ingress -n monitoring
-
-# Oder Services überprüfen
-kubectl get svc -n monitoring | grep grafana
-```
-
-Die Dashboards sind für jeden Ressourcentyp vorkonfiguriert (Kubernetes, Datenbanken, VMs usw.).
-
-Siehe: [Schlüsselkonzepte - Observability](../getting-started/concepts.md)
+Siehe: [PostgreSQL - Konzepte](../services/databases/postgresql/concepts.md), [Redis - Konzepte](../services/databases/redis/concepts.md)
 
 ---
 
-## 8. Wie skaliere ich meinen Cluster?
+## 11. Sind Datenbank-Backups in der Konsole verfügbar?
 
-### Replicas einer Datenbank skalieren
-
-Ändern Sie das Feld `replicas` in Ihrem Manifest und wenden Sie es erneut an:
-
-```yaml
-spec:
-  replicas: 5  # Anzahl der Replicas erhöhen
-```
-
-```bash
-kubectl apply -f <manifest>.yaml
-```
-
-### Kubernetes-Knoten skalieren
-
-Die Knoten skalieren automatisch zwischen `minReplicas` und `maxReplicas` je nach Last. Um die Grenzen zu ändern, passen Sie die `nodeGroup`-Konfiguration an:
-
-```yaml
-spec:
-  nodeGroups:
-    general:
-      minReplicas: 2
-      maxReplicas: 10
-```
-
-Siehe: [Kubernetes - Schnellstart](../services/kubernetes/quick-start.md)
+Noch nicht. Die Konfiguration der Backups und die Wiederherstellung erfolgen derzeit über den Support. Siehe zum Beispiel [PostgreSQL - Backups](../services/databases/postgresql/how-to/configure-backups.md).
 
 ---
 
-## 9. Welche storageClass sind verfügbar?
+## 12. Wie erreiche ich den Support?
 
-| StorageClass | Beschreibung |
-|-------------|-------------|
-| `""` (Standard) | Standardspeicher, Daten in einem einzelnen Rechenzentrum |
-| `replicated` | Replizierter Speicher über mehrere Rechenzentren, Hochverfügbarkeit |
-
-Verwenden Sie `replicated` für Produktions-Workloads, die Toleranz gegenüber Hardware-Ausfällen erfordern.
-
-```yaml
-spec:
-  storageClass: replicated
-```
-
-Siehe: [Kubernetes - API-Referenz](../services/kubernetes/api-reference.md)
-
----
-
-## 10. Wie funktioniert das Auto-Failover bei Datenbanken?
-
-Jeder verwaltete Datenbankdienst verfügt über einen Auto-Failover-Mechanismus:
-
-| Dienst | Mechanismus | Funktionsweise |
-|---------|-----------|----------------|
-| **Redis** | Redis Sentinel | Überwacht den Master, befördert automatisch ein Replica bei Ausfall |
-| **PostgreSQL** | CloudNativePG | Ausfallerkennung und automatische Beförderung eines Standby |
-| **MySQL** | MySQL Operator | Semi-synchrone Replikation mit automatischem Failover |
-| **ClickHouse** | ClickHouse Keeper | Verteilter Konsens für die Koordination von Shards und Replicas |
-| **RabbitMQ** | Quorum Queues | Raft-Replikation für Fehlertoleranz der Nachrichten |
-
-Auto-Failover ist **standardmässig aktiviert**, wenn `replicas > 1`. Keine zusätzliche Konfiguration ist erforderlich.
-
-Siehe: [Redis - Übersicht](../services/databases/redis/overview.md), [PostgreSQL - Übersicht](../services/databases/postgresql/overview.md)
-
----
-
-## 11. Warum gibt `kubectl get ... -A` "Forbidden" zurück?
-
-Das Flag `-A` (`--all-namespaces`) führt eine Abfrage auf **Cluster-Ebene** (Cluster Scope) durch. Tenant-Benutzer verfügen jedoch nur über **auf ihren Namespace beschränkte Rollen**. Kubernetes filtert nicht automatisch die autorisierten Namespaces: Die Cluster-Scope-Abfrage wird vollständig abgelehnt.
-
-**Lösung:** Verwenden Sie nicht `-A`. Ihre kubeconfig definiert bereits Ihren Ziel-Namespace, die Befehle funktionieren direkt:
-
-```bash
-# Korrekt
-kubectl get pods
-kubectl get kubernetes
-
-# Falsch (Forbidden)
-kubectl get pods -A
-kubectl get kubernetes -A
-```
-
-Die `kubectl config`-Befehle (lokal) sind davon nicht betroffen:
-```bash
-# Funktioniert immer
-kubectl config current-context
-kubectl config get-contexts
-```
+Öffnen Sie in der Konsole das Profilmenü und klicken Sie auf **Contact support**: Der technische Kontext der Seite wird Ihrer Anfrage beigefügt. Sie können auch an **support@hidora.io** schreiben.

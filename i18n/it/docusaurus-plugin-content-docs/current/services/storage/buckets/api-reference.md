@@ -1,4 +1,5 @@
 ---
+unlisted: true
 sidebar_position: 3
 title: Riferimento API
 ---
@@ -23,7 +24,7 @@ metadata:
   name: example-bucket
 ```
 
-> 📌 La creazione di un oggetto `Bucket` nel vostro tenant comporta automaticamente la creazione del bucket corrispondente nel backend S3.
+> La creazione di un oggetto `Bucket` nel vostro tenant comporta automaticamente la creazione del bucket corrispondente nel backend S3.
 
 ---
 
@@ -34,7 +35,7 @@ L'unica parte necessaria è il **metadato `metadata.name`**, che definisce il no
 
 | **Parametro**        | **Tipo** | **Descrizione**                                      | **Richiesto** |
 | -------------------- | -------- | ---------------------------------------------------- | ------------- |
-| `metadata.name`      | string   | Nome unico del bucket (utilizzato come nome S3)     | ✅             |
+| `metadata.name`      | string   | Nome unico del bucket (utilizzato come nome S3)     | Sì             |
 
 ---
 
@@ -49,7 +50,7 @@ metadata:
 
 ---
 
-## 🔐 Secret di Accesso S3
+## Secret di Accesso S3
 
 Quando un bucket viene creato, Hikube genera automaticamente un secret Kubernetes associato.
 Questo secret è nominato secondo il pattern seguente:
@@ -124,7 +125,7 @@ kubectl get secret bucket-bckprd -o jsonpath='{.data.BucketInfo}' \
 
 ---
 
-## 🌐 Endpoint S3
+## Endpoint S3
 
 L'endpoint pubblico per accedere ai vostri bucket è:
 
@@ -140,7 +141,7 @@ Potete utilizzarlo con:
 
 ---
 
-## ⚠️ Buone Pratiche
+## Buone Pratiche
 
 ### **Sicurezza**
 

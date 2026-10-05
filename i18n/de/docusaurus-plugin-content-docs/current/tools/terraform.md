@@ -1,11 +1,15 @@
 ---
 sidebar_position: 1
-title: Terraform mit Hikube
+title: Terraform (Legacy)
 ---
 
-# Infrastructure as Code mit Hikube
+# Infrastructure as Code mit Hikube (Legacy)
 
-Da Hikube auf Kubernetes basiert, können Sie **Terraform** verwenden, um Ihre Infrastruktur deklarativ und reproduzierbar zu verwalten. Dieser Ansatz ermöglicht es Ihnen, Ihre Hikube-Infrastruktur automatisiert zu versionieren, zu testen und bereitzustellen.
+:::warning Legacy-Methode
+Diese Methode steuert Hikube über eine Projekt-kubeconfig und Kubernetes-Manifeste. Sie ist **veraltet**: Für Kunden, die sie bereits nutzen, funktioniert sie weiterhin, sie wird aber nicht mehr weiterentwickelt. Verwenden Sie zur Verwaltung Ihrer Ressourcen die [Hikube-Konsole](https://console.hikube.cloud).
+:::
+
+Sie können **Terraform** verwenden, um Ihre Hikube-Infrastruktur deklarativ und reproduzierbar über die Kubernetes-Provider zu verwalten.
 
 ---
 
@@ -13,12 +17,11 @@ Da Hikube auf Kubernetes basiert, können Sie **Terraform** verwenden, um Ihre I
 
 ### Voraussetzungen
 
-- [Terraform](https://www.terraform.io/downloads) (Version >= 1.0)
+- **Eine von Hidora bereitgestellte Projekt-kubeconfig.** Sie wird nicht mehr standardmäßig ausgegeben: [Wenden Sie sich an den Support](mailto:support@hidora.io), um eine zu erhalten.
+- [Terraform](https://www.terraform.io/downloads) (version >= 1.0)
 - [kubectl](https://kubernetes.io/docs/tasks/tools/)
-- Zugang zu einem Hikube-Tenant
-- Konfigurierte Kubeconfig
 
-### Kubernetes-Provider
+### Provider Kubernetes
 
 ```hcl title="main.tf"
 terraform {
@@ -43,11 +46,11 @@ provider "kubectl" {
 }
 ```
 
-### Variablen
+### Variables
 
 ```hcl title="variables.tf"
 variable "ssh_public_key" {
-  description = "Öffentlicher SSH-Schlüssel für den VM-Zugang"
+  description = "Öffentlicher SSH-Schlüssel für den Zugriff auf die VMs"
   type        = string
 }
 
@@ -68,7 +71,7 @@ variable "vm_name" {
 
 ## Beispiele
 
-### Kubernetes-Cluster bereitstellen
+### Einen Kubernetes-Cluster bereitstellen
 
 ```hcl title="kubernetes.tf"
 resource "kubectl_manifest" "kubernetes_cluster" {
@@ -76,8 +79,7 @@ resource "kubectl_manifest" "kubernetes_cluster" {
     apiVersion = "apps.cozystack.io/v1alpha1"
     kind       = "Kubernetes"
     metadata = {
-      name      = var.cluster_name
-      namespace = "default"
+      name = var.cluster_name
     }
     spec = {
       version      = "v1.34"
@@ -95,7 +97,7 @@ resource "kubectl_manifest" "kubernetes_cluster" {
           ephemeralStorage = "50Gi"
           roles            = ["ingress-nginx"]
         }
-        # Beispiel für eine GPU-Knotengruppe (erfordert das gpuOperator-Addon unten)
+        # Beispiel für eine GPU-Gruppe (erfordert das Addon gpuOperator unten)
         # gpu = {
         #   minReplicas      = 0
         #   maxReplicas      = 4
@@ -116,7 +118,7 @@ resource "kubectl_manifest" "kubernetes_cluster" {
             "${var.cluster_name}.example.com"
           ]
         }
-        # Erforderlich, um GPUs den Pods einer GPU-Knotengruppe verfügbar zu machen
+        # Erforderlich, um die GPUs den Pods einer GPU-Node-Gruppe bereitzustellen
         # gpuOperator = {
         #   enabled = true
         # }
@@ -125,17 +127,16 @@ resource "kubectl_manifest" "kubernetes_cluster" {
   })
 }
 
-# Kubeconfig abrufen
+# kubeconfig abrufen
 data "kubernetes_secret" "cluster_kubeconfig" {
   depends_on = [kubectl_manifest.kubernetes_cluster]
   
   metadata {
-    name      = "${var.cluster_name}-admin-kubeconfig"
-    namespace = "default"
+    name = "kubernetes-${var.cluster_name}-admin-kubeconfig"
   }
 }
 
-# Kubeconfig speichern
+# kubeconfig speichern
 resource "local_file" "kubeconfig" {
   content = base64decode(
     data.kubernetes_secret.cluster_kubeconfig.data["super-admin.conf"]
@@ -145,10 +146,10 @@ resource "local_file" "kubeconfig" {
 }
 ```
 
-### Virtuelle Maschine bereitstellen
+### Eine virtuelle Maschine bereitstellen
 
 ```hcl title="virtual-machine.tf"
-# Der Datenträger ist eine separate VMDisk-Ressource, auf die die VM verweist
+# Die Disk ist eine eigene VMDisk-Ressource, auf die die VM verweist
 resource "kubectl_manifest" "vm_disk" {
   yaml_body = yamlencode({
     apiVersion = "apps.cozystack.io/v1alpha1"
@@ -220,7 +221,7 @@ resource "kubectl_manifest" "virtual_machine" {
 }
 ```
 
-### VM mit GPU bereitstellen
+### Eine VM mit GPU bereitstellen
 
 ```hcl title="vm-gpu.tf"
 resource "kubectl_manifest" "vm_gpu_disk" {
@@ -290,7 +291,7 @@ resource "kubectl_manifest" "vm_gpu" {
           - build-essential
         
         runcmd:
-          # NVIDIA-Treiber installieren
+          # Installation der NVIDIA-Treiber
           - wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.0-1_all.deb
           - dpkg -i cuda-keyring_1.0-1_all.deb
           - apt-get update
@@ -336,7 +337,7 @@ resource "kubectl_manifest" "postgres" {
 }
 
 variable "postgres_password" {
-  description = "Passwort für den PostgreSQL-Admin-Benutzer"
+  description = "Password for PostgreSQL admin user"
   type        = string
   sensitive   = true
 }
@@ -350,12 +351,12 @@ variable "postgres_password" {
 
 ```hcl title="outputs.tf"
 output "cluster_kubeconfig" {
-  description = "Pfad zur Kubeconfig des Clusters"
+  description = "Pfad zur kubeconfig des Clusters"
   value       = local_file.kubeconfig.filename
 }
 
 output "vm_status" {
-  description = "Befehl zur Überprüfung des VM-Status"
+  description = "Befehl zum Prüfen des VM-Status"
   value       = "kubectl get vminstance ${var.vm_name}"
 }
 
@@ -369,7 +370,7 @@ output "postgres_connection" {
 ### Datei terraform.tfvars
 
 ```hcl title="terraform.tfvars"
-# Grundkonfiguration
+# Basiskonfiguration
 cluster_name = "my-prod-cluster"
 vm_name      = "my-app-vm"
 
@@ -413,7 +414,7 @@ terraform plan
 # Konfiguration anwenden
 terraform apply
 
-# Erstellte Ressourcen überprüfen
+# Erstellte Ressourcen prüfen
 terraform show
 
 # Ressourcen bereinigen

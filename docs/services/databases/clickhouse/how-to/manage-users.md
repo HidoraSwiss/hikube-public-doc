@@ -1,172 +1,69 @@
 ---
-title: "Comment gerer les utilisateurs et profils ClickHouse"
+title: "Comment gérer les utilisateurs et profils ClickHouse"
+sidebar_position: 1
 ---
 
-# Comment gerer les utilisateurs et profils ClickHouse
+# Comment gérer les utilisateurs et profils ClickHouse
 
-Ce guide explique comment creer et gerer les utilisateurs ClickHouse sur Hikube, definir des permissions en lecture seule pour les analystes, et configurer la retention des logs de requetes.
-
-## Prerequis
-
-- Une instance ClickHouse deployee sur Hikube (voir le [demarrage rapide](../quick-start.md))
-- `kubectl` configure pour interagir avec l'API Hikube
-- Le fichier YAML de configuration de votre instance ClickHouse
-
-## Etapes
-
-### 1. Creer un utilisateur admin
-
-Definissez un utilisateur avec un acces complet en ecriture et lecture dans le champ `users` du manifeste :
-
-```yaml title="clickhouse-users.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: ClickHouse
-metadata:
-  name: my-clickhouse
-spec:
-  replicas: 2
-  shards: 1
-  resourcesPreset: small
-  size: 10Gi
-  clickhouseKeeper:
-    enabled: true
-    replicas: 3
-    resourcesPreset: micro
-    size: 1Gi
-  users:
-    admin:
-      password: MonMotDePasseAdmin2024
-```
-
-:::warning
-Utilisez des mots de passe forts en production. Les mots de passe sont stockes dans le manifeste en clair -- assurez-vous de proteger l'acces a vos fichiers YAML et aux Secrets Kubernetes associes.
+:::info Disponibilité
+ClickHouse n'est pas encore disponible en libre-service dans la [console Hikube](https://console.hikube.cloud).
+Pour en provisionner une instance ou modifier sa configuration, [contactez le support](mailto:support@hidora.io).
 :::
 
-### 2. Creer un utilisateur en lecture seule
+Ce guide présente les options de gestion des utilisateurs d'une instance ClickHouse Hikube et la manière de vérifier leurs permissions.
 
-Ajoutez un utilisateur `analyst` avec le flag `readonly: true` pour limiter l'acces aux requetes de lecture (SELECT) uniquement :
+## Options disponibles
 
-```yaml title="clickhouse-users-readonly.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: ClickHouse
-metadata:
-  name: my-clickhouse
-spec:
-  replicas: 2
-  shards: 1
-  resourcesPreset: small
-  size: 10Gi
-  clickhouseKeeper:
-    enabled: true
-    replicas: 3
-    resourcesPreset: micro
-    size: 1Gi
-  users:
-    admin:
-      password: MonMotDePasseAdmin2024
-    analyst:
-      password: AnalysteSecure2024
-      readonly: true
-```
+Les utilisateurs d'une instance ClickHouse sont définis par la plateforme, sur demande auprès du support. Pour chaque utilisateur, précisez :
+
+| Option | Description |
+|--------|-------------|
+| Nom d'utilisateur | Identifiant de connexion |
+| Accès | **Complet** (lecture et écriture) ou **lecture seule** (requêtes `SELECT` uniquement) |
+
+La rétention des journaux de requêtes (`system.query_log`, `system.query_thread_log`) et la taille du stockage qui leur est dédié se règlent également sur demande.
 
 :::tip
-Creez un utilisateur en lecture seule pour les outils d'analyse et de reporting (Grafana, Metabase, etc.). Cela limite les risques de modification accidentelle des donnees.
+Créez un utilisateur en lecture seule pour les outils d'analyse et de reporting (Grafana, Metabase, etc.). Cela limite les risques de modification accidentelle des données.
 :::
 
-### 3. Configurer les logs de requetes
+## Étapes
 
-ClickHouse enregistre les requetes executees dans les tables systeme `query_log` et `query_thread_log`. Configurez la taille de stockage et la duree de retention des logs :
+### 1. Demander la création ou la modification d'un utilisateur
 
-```yaml title="clickhouse-users-logs.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: ClickHouse
-metadata:
-  name: my-clickhouse
-spec:
-  replicas: 2
-  shards: 1
-  resourcesPreset: small
-  size: 10Gi
-  logStorageSize: 5Gi
-  logTTL: 30
-  clickhouseKeeper:
-    enabled: true
-    replicas: 3
-    resourcesPreset: micro
-    size: 1Gi
-  users:
-    admin:
-      password: MonMotDePasseAdmin2024
-    analyst:
-      password: AnalysteSecure2024
-      readonly: true
-```
+[Contactez le support](mailto:support@hidora.io) en indiquant le projet, le nom de l'instance, le nom de l'utilisateur et le niveau d'accès souhaité.
 
-- **`logStorageSize`** : taille du volume persistant dedie aux logs (defaut : `2Gi`)
-- **`logTTL`** : duree de retention en jours pour `query_log` et `query_thread_log` (defaut : `15`)
-
-:::note
-Ajustez `logTTL` en fonction de vos besoins d'audit. Une valeur elevee consomme plus d'espace disque (`logStorageSize`). Pour un environnement de developpement, `7` jours est generalement suffisant.
-:::
-
-### 4. Appliquer les changements
+### 2. Se connecter avec clickhouse-client
 
 ```bash
-kubectl apply -f clickhouse-users-logs.yaml
+clickhouse-client --host <hôte> --port 9000 --user analyst --password
 ```
 
-### 5. Se connecter avec clickhouse-client
+### 3. Vérifier les permissions
 
-Testez la connexion avec chaque utilisateur :
-
-```bash
-# Connexion avec l'utilisateur admin
-kubectl exec -it my-clickhouse-0-0 -- clickhouse-client --user admin --password MonMotDePasseAdmin2024
-```
-
-```bash
-# Connexion avec l'utilisateur analyst
-kubectl exec -it my-clickhouse-0-0 -- clickhouse-client --user analyst --password AnalysteSecure2024
-```
-
-### 6. Verifier les permissions
-
-Une fois connecte avec l'utilisateur `analyst`, verifiez que l'ecriture est bloquee :
+Une fois connecté avec un utilisateur en lecture seule, vérifiez que l'écriture est bloquée :
 
 ```sql
--- Cette requete doit reussir (lecture autorisee)
+-- Cette requête doit réussir (lecture autorisée)
 SELECT count() FROM system.tables;
 
--- Cette requete doit echouer (ecriture interdite)
+-- Cette requête doit échouer (écriture interdite)
 CREATE TABLE test_write (id UInt32) ENGINE = Memory;
 ```
 
-L'utilisateur en lecture seule recevra une erreur du type :
+L'utilisateur en lecture seule reçoit une erreur du type :
 
 ```console
 Code: 164. DB::Exception: analyst: Not enough privileges.
 ```
 
-## Verification
-
-Verifiez que les utilisateurs sont correctement configures :
-
-```bash
-# Verifier la configuration de la ressource ClickHouse
-kubectl get clickhouse my-clickhouse -o yaml | grep -A 10 users
-
-# Verifier que les pods sont en etat Running
-kubectl get pods -l app.kubernetes.io/instance=my-clickhouse
-```
-
-Connectez-vous en tant qu'admin et listez les utilisateurs :
+## Vérification
 
 ```sql
-SELECT name, storage, auth_type FROM system.users;
+SHOW GRANTS;
 ```
 
 ## Pour aller plus loin
 
-- [Référence API](../api-reference.md) -- Parametres `users`, `logStorageSize` et `logTTL`
-- [Comment scaler verticalement ClickHouse](./scale-resources.md) -- Ajuster les ressources CPU et memoire
-- [Comment configurer le sharding](./configure-sharding.md) -- Distribution horizontale des donnees
+- [Concepts ClickHouse](../concepts.md)
+- [Dépannage](../troubleshooting.md)

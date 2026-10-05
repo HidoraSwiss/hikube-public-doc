@@ -1,130 +1,125 @@
 ---
-title: Zugang und Tools
+title: Zugriff und Werkzeuge
 ---
 
-# Zugang und Tools
+# Zugriff und Werkzeuge
 
-## Kubeconfig abrufen
+Diese Anleitung erklärt, wie Sie nach der Erstellung auf einen Hikube-Kubernetes-Cluster zugreifen, und fasst die nützlichen Befehle für seinen Betrieb zusammen. Den Lebenszyklus des Clusters (Erstellung, Änderung, Löschung) verwalten Sie in der Konsole; alles andere erledigen Sie im Cluster mit Ihren gewohnten Werkzeugen.
 
-Sobald der Cluster bereitgestellt ist, rufen Sie die Zugangsdaten ab:
+## Die kubeconfig herunterladen
+
+1. Öffnen Sie in der Konsole **Infrastructure** > **Kubernetes** und klicken Sie auf den Cluster.
+2. Warten Sie, bis der Cluster den Status **Ready** hat.
+3. Klicken Sie im Abschnitt **Actions** der Detailseite auf **Kubeconfig**.
+
+Der Browser lädt die Datei `kubeconfig-<cluster-name>.yaml` herunter. Sie gewährt administrativen Zugriff auf den Cluster.
+
+:::warning
+Bewahren Sie diese Datei sicher auf (Secret-Manager, Tresor) und versionieren Sie sie niemals. Um anderen Personen Zugriff zu geben, richten Sie ihnen mit RBAC eigene Berechtigungen ein, statt diese Datei weiterzugeben.
+:::
+
+## Die kubeconfig verwenden
 
 ```bash
-# Vollständige Admin-Kubeconfig
-kubectl get secret <cluster-name>-admin-kubeconfig \
-  -o go-template='{{ printf "%s\n" (index .data "super-admin.conf" | base64decode) }}' \
-  > cluster-admin.yaml
+# Für die aktuelle Sitzung
+export KUBECONFIG=~/Downloads/kubeconfig-<cluster-name>.yaml
 
-# Schreibgeschützte Kubeconfig (falls konfiguriert)
-kubectl get secret <cluster-name>-readonly-kubeconfig \
-  -o go-template='{{ printf "%s\n" (index .data "readonly.conf" | base64decode) }}' \
-  > cluster-readonly.yaml
+# Oder für einen einzelnen Befehl
+kubectl --kubeconfig ~/Downloads/kubeconfig-<cluster-name>.yaml get nodes
+
+# Verbindung prüfen
+kubectl cluster-info
+kubectl get nodes
 ```
 
-## RBAC-Konfiguration
+Dieselbe Datei funktioniert mit `helm`, `k9s`, `flux` oder jedem anderen Kubernetes-Client.
 
-Nach der Bereitstellung konfigurieren Sie die Benutzerzugriffe:
+## RBAC konfigurieren
+
+Erstellen Sie eigene Rollen und Konten für Ihre Teams und Pipelines, zum Beispiel einen Nur-Lese-Zugriff auf einen Namespace:
+
+```yaml title="rbac-readonly.yaml"
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: production
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: viewer
+  namespace: production
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: viewer-view
+  namespace: production
+subjects:
+  - kind: ServiceAccount
+    name: viewer
+    namespace: production
+roleRef:
+  kind: ClusterRole
+  name: view
+  apiGroup: rbac.authorization.k8s.io
+```
 
 ```bash
-# Mit dem Cluster verbinden
-export KUBECONFIG=cluster-admin.yaml
-
-# Rollen und Bindings erstellen
-kubectl apply -f rbac-config.yaml
+kubectl apply -f rbac-readonly.yaml
 ```
 
 ---
 
 ## Monitoring und Observability
 
-### Cluster-Metriken
+### In der Konsole
+
+Die Detailseite des Clusters zeigt Status, Version, Control Plane, die **Node Pools** (Anzahl aktiver Nodes pro Gruppe) und die aktivierten Erweiterungen an.
+
+### Im Cluster
 
 ```bash
-# Allgemeiner Status des Hikube-Clusters
-kubectl get kubernetes <cluster-name> -o yaml
+# Nodes des Clusters
+kubectl get nodes -o wide
 
-# Knoten des Kubernetes-Clusters
-kubectl --kubeconfig=cluster-admin.yaml get nodes
+# Ressourcenverbrauch
+kubectl top nodes
+kubectl top pods -A
 
-# Ressourcen-Metriken
-kubectl --kubeconfig=cluster-admin.yaml top nodes
-kubectl --kubeconfig=cluster-admin.yaml top pods
-```
-
-### Logs und Debugging
-
-```bash
-# Cluster-Events
-kubectl describe kubernetes <cluster-name>
-
-# Komponenten-Logs
-kubectl logs -n kamaji -l app.kubernetes.io/instance=<cluster-name>
-
-# Detaillierter Status der Maschinen
-kubectl get machines -l cluster.x-k8s.io/cluster-name=<cluster-name>
+# Aktuelle Events
+kubectl get events -A --sort-by=.metadata.creationTimestamp
 ```
 
 ---
 
-## Lebenszyklusverwaltung
+## Verwaltung des Lebenszyklus
 
-### Update
+Diese Vorgänge erfolgen in der Konsole:
 
-```bash
-# Cluster aktualisieren
-kubectl patch kubernetes <cluster-name> --type='merge' -p='
-spec:
-  version: "v1.29.0"  # Neue Kubernetes-Version
-'
-```
-
-### Skalierung
-
-```bash
-# Node Group skalieren
-kubectl patch kubernetes <cluster-name> --type='merge' -p='
-spec:
-  nodeGroups:
-    compute:
-      maxReplicas: 20  # Grenze erhöhen
-'
-```
-
-### Löschung
-
-```bash
-# ACHTUNG: Irreversible Löschung des Clusters
-kubectl delete kubernetes <cluster-name>
-```
+| Vorgang | Wo |
+|---------|----|
+| Version aktualisieren | **Edit** > **Kubernetes Version** ([Anleitung](./upgrade-cluster.md)) |
+| Node-Gruppe hinzufügen, ändern oder löschen | **Edit** > **Node groups** ([Anleitung](./manage-node-groups.md)) |
+| Skalierung anpassen | **Edit** > **Minimum nodes** / **Maximum nodes** ([Anleitung](./configure-autoscaling.md)) |
+| Addon aktivieren oder konfigurieren | **Edit** > **Extensions & Addons** |
+| Cluster löschen | **Delete**, dann Bestätigung des Namens ([Schnellstart](../quick-start.md), Schritt 7) |
 
 ---
 
-## Fehlerbehebung
-
-### Häufige Probleme
+## Diagnose
 
 ```bash
-# Cluster hängt bei der Erstellung
-kubectl describe kubernetes <cluster-name>
-kubectl get events --field-selector involvedObject.name=<cluster-name>
+# Nicht bereite Nodes
+kubectl describe node <node-name>
 
-# Knoten nicht bereit
-kubectl --kubeconfig=cluster-admin.yaml describe nodes
-kubectl get machines -l cluster.x-k8s.io/cluster-name=<cluster-name>
+# Fehlerhafte Pods
+kubectl get pods -A --field-selector=status.phase!=Running
+kubectl describe pod <pod-name> -n <namespace>
+kubectl logs <pod-name> -n <namespace> --previous
 
-# Add-ons fehlerhaft
-kubectl --kubeconfig=cluster-admin.yaml get pods -A
-kubectl --kubeconfig=cluster-admin.yaml describe helmreleases -A
+# Komponenten der Addons (Cilium, CoreDNS, Ingress NGINX usw.)
+kubectl get pods -A | grep -E "cilium|coredns|ingress-nginx|cert-manager"
 ```
 
-### Detaillierte Logs
-
-```bash
-# Cluster API Logs
-kubectl logs -n capi-system -l control-plane=controller-manager
-
-# Kamaji Logs (Control Plane)
-kubectl logs -n kamaji-system -l app.kubernetes.io/name=kamaji
-
-# KubeVirt Logs (Workers)
-kubectl logs -n kubevirt -l kubevirt.io=virt-controller
-```
+Wenn ein Cluster im Status **Creating** bleibt, ein Addon nicht bereitgestellt wird oder ein Node dem Cluster nie beitritt, [wenden Sie sich an den Support](mailto:support@hidora.io) und geben Sie den Namen des Clusters und das Projekt an.

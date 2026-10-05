@@ -1,4 +1,5 @@
 ---
+unlisted: true
 sidebar_position: 3
 title: API Reference
 ---
@@ -322,8 +323,8 @@ spec:
 
 | Paramètre      | Type            | Description                                  | Défaut       | Requis |
 | -------------- | --------------- | -------------------------------------------- | ------------ | ------ |
-| `storage`      | `int`/`string`  | Taille du disque                             | `5Gi`        | ✅     |
-| `storageClass` | `string`        | Classe de stockage                           | `replicated` | ✅     |
+| `storage`      | `int`/`string`  | Taille du disque                             | `5Gi`        | Oui     |
+| `storageClass` | `string`        | Classe de stockage                           | `replicated` | Oui     |
 | `source`       | `object`        | Source de l’image disque (voir ci-dessous)   | `{}`         | non    |
 | `optical`      | `boolean`       | Disque optique / ISO (installeur)            | `false`      | non    |
 
@@ -420,14 +421,14 @@ Hikube expose plusieurs `storageClass` basées sur LINSTOR. Pour une VM, `replic
 
 | Classe                                 | Réplication | Chiffrement | Notes                                            |
 | -------------------------------------- | :---------: | :---------: | ------------------------------------------------ |
-| `local`                                | ❌          | ❌          | Stockage local au nœud (défaut), non résilient   |
-| `local-encrypted`                      | ❌          | ✅ (LUKS)   | Local + chiffré                                  |
-| `replicated`                           | ✅          | ❌          | Répliqué synchrone — **recommandé** pour les VMs |
-| `replicated-encrypted`                 | ✅          | ✅ (LUKS)   | Répliqué + chiffré                               |
-| `replicated-async`                     | ✅ (async)  | ❌          | Réplication asynchrone                           |
-| `replicated-async-encrypted`           | ✅ (async)  | ✅ (LUKS)   | Réplication asynchrone + chiffré                 |
-| `replicated-async-windows`             | ✅ (async)  | ❌          | Variante adaptée aux disques Windows             |
-| `replicated-async-windows-encrypted`   | ✅ (async)  | ✅ (LUKS)   | Variante Windows + chiffré                       |
+| `local`                                | Non          | Non          | Stockage local au nœud (défaut), non résilient   |
+| `local-encrypted`                      | Non          | Oui (LUKS)   | Local + chiffré                                  |
+| `replicated`                           | Oui          | Non          | Répliqué synchrone — **recommandé** pour les VMs |
+| `replicated-encrypted`                 | Oui          | Oui (LUKS)   | Répliqué + chiffré                               |
+| `replicated-async`                     | Oui (async)  | Non          | Réplication asynchrone                           |
+| `replicated-async-encrypted`           | Oui (async)  | Oui (LUKS)   | Réplication asynchrone + chiffré                 |
+| `replicated-async-windows`             | Oui (async)  | Non          | Variante adaptée aux disques Windows             |
+| `replicated-async-windows-encrypted`   | Oui (async)  | Oui (LUKS)   | Variante Windows + chiffré                       |
 
 :::note
 Les variantes `-windows` sont optimisées pour les disques de VMs Windows. Le chiffrement (`-encrypted`) s’appuie sur LUKS au niveau du volume.

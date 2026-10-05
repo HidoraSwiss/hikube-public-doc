@@ -5,114 +5,86 @@ title: Troubleshooting
 
 # Troubleshooting — RabbitMQ
 
-### Queue blocked (flow control)
+### The cluster stays "Creating" or switches to "Error"
 
-**Cause**: RabbitMQ has triggered a **memory alarm** or **disk alarm**, blocking publications to protect the system. This occurs when memory consumption exceeds the threshold (high watermark) or when disk space is insufficient.
-
-**Solution**:
-
-1. Check cluster status and active alarms:
-   ```bash
-   kubectl exec <rabbitmq-pod> -- rabbitmqctl status | grep -A 10 "alarms"
-   ```
-2. Identify the resource causing the issue (memory or disk):
-   ```bash
-   kubectl exec <rabbitmq-pod> -- rabbitmqctl status | grep -E "mem_|disk_"
-   ```
-3. Increase allocated resources in your manifest:
-   ```yaml title="rabbitmq.yaml"
-   replicas: 3
-   resources:
-     cpu: 1
-     memory: 2Gi
-   size: 20Gi
-   ```
-4. Purge unused queues if necessary:
-   ```bash
-   kubectl exec <rabbitmq-pod> -- rabbitmqctl purge_queue <queue-name>
-   ```
-
-### RabbitMQ node not joining the cluster
-
-**Cause**: a RabbitMQ node cannot join the cluster, often due to DNS resolution issues, Erlang cookie inconsistency, or restrictive network policies.
+**Cause**: provisioning is in progress, or it has failed (for example due to a lack of available resources).
 
 **Solution**:
 
-1. Check cluster status from a working node:
-   ```bash
-   kubectl exec <rabbitmq-pod> -- rabbitmqctl cluster_status
-   ```
-2. Check the logs of the failing pod:
-   ```bash
-   kubectl logs <problematic-rabbitmq-pod>
-   ```
-3. Verify DNS resolution works between pods:
-   ```bash
-   kubectl exec <rabbitmq-pod> -- nslookup <problematic-rabbitmq-pod>.<headless-service>
-   ```
-4. If the problem persists, delete the failing pod to force its recreation:
-   ```bash
-   kubectl delete pod <problematic-rabbitmq-pod>
-   ```
+1. Wait a few minutes: the detail page and the list refresh automatically.
+2. If the status stays **Creating** for an abnormally long time or switches to **Error** / **Failed**, [contact support](mailto:support@hidora.io), giving the project name, the cluster name and its identifier (displayed under the cluster name, with a copy button).
 
-### Messages not routed (misconfigured exchange)
+### "Storage quota exceeded for this project" in the wizard
 
-**Cause**: published messages are not reaching queues, usually because of a wrong exchange type, incorrect routing key, or missing binding between the exchange and the queue.
+**Cause**: the disk size multiplied by the number of replicas exceeds the remaining storage of the project quota.
 
 **Solution**:
 
-1. List existing bindings to identify configured routes:
-   ```bash
-   kubectl exec <rabbitmq-pod> -- rabbitmqctl list_bindings -p <vhost>
-   ```
-2. Check the exchange type and expected routing key:
-   ```bash
-   kubectl exec <rabbitmq-pod> -- rabbitmqctl list_exchanges -p <vhost>
-   ```
-3. Configure a **dead letter exchange** to capture unrouted messages and facilitate diagnosis:
-   ```bash
-   kubectl exec <rabbitmq-pod> -- rabbitmqctl set_policy DLX ".*" '{"dead-letter-exchange":"dlx"}' -p <vhost>
-   ```
-4. Verify that the producer uses the correct exchange and routing key in its configuration
+1. Reduce the **Disk size (GB)** or the **Number of replicas**.
+2. If needed, free up storage in the project or have the project quota increased.
 
-### Memory saturated (memory alarm)
+### "A cluster with this name already exists"
 
-**Cause**: RabbitMQ has reached the memory threshold (**high watermark**, 40% of available memory by default). All publications are blocked until memory drops below the threshold.
+**Cause**: a RabbitMQ cluster in the project already has this name.
+
+**Solution**: go back to the **General** step and choose another **Cluster Name**.
+
+### The "Host" field displays "Not available / Creating"
+
+**Cause**: the public address has not been assigned yet, or **External Access** is disabled.
 
 **Solution**:
 
-1. Check memory consumption:
-   ```bash
-   kubectl exec <rabbitmq-pod> -- rabbitmqctl status | grep "mem_used"
-   ```
-2. Identify the largest queues:
-   ```bash
-   kubectl exec <rabbitmq-pod> -- rabbitmqctl list_queues name messages memory -p <vhost> --formatter table
-   ```
-3. Increase memory allocated to RabbitMQ:
-   ```yaml title="rabbitmq.yaml"
-   resources:
-     cpu: 1
-     memory: 4Gi
-   ```
-4. Purge unused queues or queues containing a large number of unconsumed messages
+1. In the **Connection** section, check that **External Access** shows **Enabled**. If not, enable it (see [Configure external access](./how-to/configure-external-access.md)).
+2. If external access is enabled, wait and then reload the page.
 
-### AMQP connection refused
+### AMQP connection refused (`ACCESS_REFUSED`)
 
-**Cause**: the client cannot connect to the RabbitMQ broker. This can be due to incorrect credentials, missing vhost permissions, or a network accessibility issue.
+**Cause**: incorrect credentials, or the user has no right on the requested vhost.
 
 **Solution**:
 
-1. Check connection credentials in the Kubernetes Secret:
+1. In the **Users** table (**VHosts** column), check that the user has a right on the vhost used by the client.
+2. If needed, add the access with **Manage Access**.
+3. If the password has been lost or is in doubt, generate a new one with **Change Password** and update the client.
+4. Check that the client specifies the right vhost (exact name, case-sensitive).
+
+### Unable to connect (timeout, connection refused)
+
+**Cause**: external access disabled, wrong address or wrong port, or network filtering on the client side.
+
+**Solution**:
+
+1. Check the **Host** and the state of **External Access** in the **Connection** section.
+2. Use port **5672**.
+3. Test whether the port is open from the client machine:
    ```bash
-   kubectl get tenantsecret <rabbitmq-name>-credentials -o jsonpath='{.data}' | base64 -d
+   nc -zv <host> 5672
    ```
-2. Verify the user has the necessary permissions on the vhost:
-   ```bash
-   kubectl exec <rabbitmq-pod> -- rabbitmqctl list_permissions -p <vhost>
-   ```
-3. Test connectivity to the AMQP port (5672):
-   ```bash
-   kubectl exec <rabbitmq-pod> -- rabbitmq-diagnostics check_port_connectivity
-   ```
-4. If connecting from outside the cluster, make sure `external: true` is configured in your manifest
+4. Check that your local network or firewall allows outgoing connections to this port.
+
+### Publishing blocked (flow control, memory or disk alarm)
+
+**Cause**: RabbitMQ blocks publishing when it reaches its memory threshold (high watermark) or when disk space is insufficient, to protect the broker. Clients then receive a `connection.blocked` notification.
+
+**Solution**:
+
+1. On the application side, check that consumers keep up with producers and purge the queues that accumulate unconsumed messages.
+2. Increase the **Disk size (GB)** from **Edit** if the alarm concerns the disk (see [Change a cluster's configuration](./how-to/scale-resources.md)).
+3. The preset (memory) cannot be changed after creation: create a cluster with a larger preset, or [contact support](mailto:support@hidora.io).
+
+### Unrouted messages
+
+**Cause**: the producer publishes to an exchange without a matching binding (wrong exchange type, incorrect routing key, missing binding). The message is then dropped.
+
+**Solution**:
+
+1. Check the exchange name and the routing key in the producer code.
+2. Check that the consumer declares the binding between the queue and the exchange.
+3. Publish with the `mandatory` flag to be notified of unrouted messages, or declare an *alternate exchange* to capture them.
+
+### Deleting the cluster fails
+
+**Cause**: a conflict prevents deletion ("Cannot delete this cluster (conflict).") or the service is temporarily unavailable.
+
+**Solution**: try again a few minutes later. If the error persists, [contact support](mailto:support@hidora.io).

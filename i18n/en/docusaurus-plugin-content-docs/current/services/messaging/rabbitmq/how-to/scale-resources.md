@@ -1,195 +1,63 @@
 ---
-title: "How to scale the cluster"
+title: "How to change a cluster's configuration"
 ---
 
-# How to scale the RabbitMQ cluster
+# How to change a RabbitMQ cluster's configuration
 
-This guide explains how to adjust the resources of a RabbitMQ cluster on Hikube: number of replicas, CPU/memory resources, and storage.
+This guide explains which parameters of a RabbitMQ cluster can be changed after its creation from the [Hikube console](https://console.hikube.cloud), and how to proceed.
 
 ## Prerequisites
 
-- **kubectl** configured with your Hikube kubeconfig
-- A **RabbitMQ** cluster deployed on Hikube
+- A **RabbitMQ cluster** created in your project
+- Enough project quota if you increase the disk size
 
-## Available presets
+## Editable parameters
 
-Hikube offers predefined resource presets for RabbitMQ:
-
-| Preset | CPU | Memory |
-|--------|-----|--------|
-| `nano` | 100m | 128Mi |
-| `micro` | 250m | 256Mi |
-| `small` | 500m | 512Mi |
-| `medium` | 500m | 1Gi |
-| `large` | 1 | 2Gi |
-| `xlarge` | 2 | 4Gi |
-| `2xlarge` | 4 | 8Gi |
-
-:::warning
-If the `resources` field (explicit CPU/memory) is defined, the `resourcesPreset` value is **entirely ignored**. Make sure to clear the `resources` field if you want to use a preset.
-:::
-
-:::note
-RabbitMQ presets differ slightly from other services (Kafka, NATS, databases). Refer to the table above for exact values.
-:::
+| Parameter | Editable after creation | Note |
+|-----------|---------------------------|----------|
+| **RabbitMQ Version** | Yes | Available versions: 4.2, 4.1, 4.0, 3.13 |
+| **Disk size (GB)** | Yes | Capacity per node, within the project's storage quota |
+| **External access** | Yes | See [Configure external access](./configure-external-access.md) |
+| **Preset** | No | "The resources preset cannot be changed after creation" |
+| **Number of replicas** | No | "The mode cannot be changed after creation" |
 
 ## Steps
 
-### 1. Check current resources
+### 1. Open the edit form
 
-Review the current cluster configuration:
+1. In the **DB & Messaging** → **RabbitMQ** menu, click the cluster.
+2. Click **Edit**. You can also open the cluster's action menu in the list and choose **Edit**.
 
-```bash
-kubectl get rabbitmq my-rabbitmq -o yaml | grep -A 5 -E "replicas:|resources:|resourcesPreset|size:"
-```
+The **Edit RabbitMQ cluster** page displays the **Cluster settings** card. The **Preset** and **Number of replicas** fields are greyed out.
 
-**Example output:**
+### 2. Adjust the parameters
 
-```console
-  replicas: 3
-  resourcesPreset: small
-  resources: {}
-  size: 10Gi
-```
+- **RabbitMQ Version**: select the target version.
+- **Disk size (GB)**: enter the new capacity per node. The size can only increase: a lower value is accepted by the form but refused by the platform, and the cluster keeps its current size.
+- **External access**: turn the switch on or off.
 
-### 2. Modify the number of replicas
-
-The number of replicas determines the number of nodes in the RabbitMQ cluster.
-
-```bash
-kubectl patch rabbitmq my-rabbitmq --type='merge' -p='
-spec:
-  replicas: 3
-'
-```
-
-:::warning
-With fewer than 3 replicas, quorum queues cannot guarantee message durability in case of failure. Use **3 replicas minimum** in production.
+:::warning Version change
+Changing the version recreates the RabbitMQ nodes one by one: with a single replica, the cluster is unavailable during the restart (about one to two minutes) and clients must reconnect. The address in the **Host** field does not change. Test the version change on a non-production cluster before applying it to a production cluster, and check that your clients are compatible with the target version.
 :::
 
-**Recommendations by environment:**
+### 3. Save
 
-| Environment | Replicas | Justification |
-|-------------|----------|---------------|
-| Development | 1 | Sufficient for testing |
-| Staging | 3 | Simulates production |
-| Production | 3 or 5 | High availability and quorum queues |
+Click **Save**. The message "Cluster updated" confirms that the parameters have been applied and the console returns to the detail page.
 
-### 3. Modify the preset or explicit resources
+If the project quota does not allow the new configuration, the **Save** button stays disabled.
 
-**Option A: change the preset**
+## Change the preset or the number of replicas
 
-```bash
-kubectl patch rabbitmq my-rabbitmq --type='merge' -p='
-spec:
-  resourcesPreset: large
-  resources: {}
-'
-```
+The preset and the number of replicas are set at creation. Two options:
 
-:::note
-It is important to reset `resources: {}` when switching to a preset, so that the preset is properly applied.
-:::
-
-**Option B: define explicit resources**
-
-For fine-grained control, directly define CPU and memory values:
-
-```bash
-kubectl patch rabbitmq my-rabbitmq --type='merge' -p='
-spec:
-  resources:
-    cpu: 2000m
-    memory: 4Gi
-'
-```
-
-You can also modify the full manifest:
-
-```yaml title="rabbitmq-scaled.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: RabbitMQ
-metadata:
-  name: my-rabbitmq
-spec:
-  replicas: 3
-  resources:
-    cpu: 2000m
-    memory: 4Gi
-  size: 20Gi
-  storageClass: replicated
-
-  users:
-    admin:
-      password: SecureAdminPassword
-
-  vhosts:
-    production:
-      roles:
-        admin:
-          - admin
-```
-
-```bash
-kubectl apply -f rabbitmq-scaled.yaml
-```
-
-### 4. Apply and verify
-
-Monitor the rolling update of the pods:
-
-```bash
-kubectl get po -w | grep my-rabbitmq
-```
-
-**Expected output (during rolling update):**
-
-```console
-my-rabbitmq-server-0   1/1     Running       0   45m
-my-rabbitmq-server-1   1/1     Terminating   0   44m
-my-rabbitmq-server-1   0/1     Pending       0   0s
-my-rabbitmq-server-1   1/1     Running       0   30s
-```
-
-Wait for all pods to be in `Running` state:
-
-```bash
-kubectl get po | grep my-rabbitmq
-```
-
-```console
-my-rabbitmq-server-0   1/1     Running   0   10m
-my-rabbitmq-server-1   1/1     Running   0   8m
-my-rabbitmq-server-2   1/1     Running   0   6m
-```
-
-Check the RabbitMQ cluster status:
-
-```bash
-kubectl exec -it my-rabbitmq-server-0 -- rabbitmqctl cluster_status
-```
+- **Create a new cluster** with the desired configuration, recreate the vhosts and users, then switch your applications over;
+- **Contact support**: these options are not offered in the console; [contact support](mailto:support@hidora.io).
 
 ## Verification
 
-Confirm that the new resources are applied:
+On the cluster detail page, the **General Information** section shows the updated **Version** and **Volume Size**, and the **Connection** section shows the state of **External Access**.
 
-```bash
-kubectl get rabbitmq my-rabbitmq -o yaml | grep -A 5 -E "replicas:|resources:|resourcesPreset|size:"
-```
+## Further reading
 
-Verify that the cluster is functional:
-
-```bash
-kubectl exec -it my-rabbitmq-server-0 -- rabbitmqctl node_health_check
-```
-
-**Expected output:**
-
-```console
-Health check passed
-```
-
-## Next steps
-
-- **[RabbitMQ API reference](../api-reference.md)**: full documentation of `replicas`, `resources`, `resourcesPreset` parameters and the presets table
-- **[How to manage vhosts and users](./manage-vhosts-users.md)**: configure users and permissions
+- [Concepts](../concepts.md): deployment modes and presets
+- [Manage vhosts and users](./manage-vhosts-users.md)

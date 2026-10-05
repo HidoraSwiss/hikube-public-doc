@@ -1,119 +1,136 @@
 ---
-sidebar_position: 5
+sidebar_position: 3
 title: Avvio rapido
 ---
 
-# 🚀 Distribuire Kubernetes in 5 minuti
+import NavigationFooter from '@site/src/components/NavigationFooter';
 
-Questa guida vi accompagna nella creazione del vostro primo cluster Kubernetes su Hikube, dalla configurazione di base alla distribuzione di un'applicazione di test.
+# Creare un cluster Kubernetes in pochi minuti
+
+Questa guida la accompagna nella creazione del suo primo cluster Kubernetes dalla console Hikube, fino alla distribuzione di un'applicazione di test.
 
 ---
 
 ## Prerequisiti
 
-Prima di iniziare, assicuratevi di avere:
-
-- **Accesso a un tenant Hikube** con permessi appropriati
-- **CLI kubectl configurato** per interagire con l'API Hikube
-- **Nozioni di base Kubernetes** (pod, servizi, deployment)
+- **Un account Hikube** e l'accesso alla [console Hikube](https://console.hikube.cloud)
+- **Un progetto** con quota sufficienti (CPU, memoria, storage)
+- **`kubectl` installato sulla sua postazione**, per lavorare nel cluster una volta creato
+- **Nozioni di base di Kubernetes** (pod, service, deployment)
 
 ---
 
-## Fase 1: Configurazione del Cluster
+## Passaggio 1: Creare il cluster
 
-### **Cluster Kubernetes Base**
+1. Acceda alla [console Hikube](https://console.hikube.cloud) e selezioni il suo progetto.
+2. Nel menu laterale, apra **Infrastructure** > **Kubernetes**. Viene visualizzata la pagina **Kubernetes Clusters**.
+3. Faccia clic su **Create cluster**. La procedura guidata **Create a new cluster** si apre sul passaggio **General**.
 
-Create un file `my-first-cluster.yaml` con la seguente configurazione:
+---
 
-```yaml title="my-first-cluster.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Kubernetes
-metadata:
-  name: my-first-cluster
-spec:
-  # Configurazione del piano di controllo
-  controlPlane:
-    replicas: 2  # Alta disponibilità
+## Passaggio 2: Configurare e convalidare
 
-  # Configurazione dei nodi worker
-  nodeGroups:
-    general:
-      minReplicas: 1
-      maxReplicas: 5
-      instanceType: "s1.large"     # 4 vCPU, 8 GB RAM
-      ephemeralStorage: 50Gi       # Archiviazione partizione sistema
-      resources: {}               # Richiesto — instanceType definisce i valori
-      roles:
-        - ingress-nginx           # Supporto Ingress
+La procedura guidata comprende quattro passaggi: **General**, **Nodes**, **Addons** e **Summary**. Gli indicatori **Project Quotas** mostrano in ogni momento la parte di quota che il cluster riserverà.
 
-  # Attiva la replica sull'archiviazione
-  storageClass: "replicated"
+### General
 
-  # Add-on essenziali attivati
-  addons:
-    certManager:
-      enabled: true
-    ingressNginx:
-      enabled: true
-      hosts:
-        - my-app.example.com
-```
+| Campo | Valore per questa guida |
+|-------|----------------------|
+| **Cluster name** | `demo-cluster` (da 3 a 16 caratteri: lettere minuscole, cifre e trattini) |
+| **Kubernetes Version** | La versione preselezionata (la più recente proposta) |
+| **API Endpoint (Host)** | Lasci vuoto: l'indirizzo viene generato automaticamente dalla piattaforma, senza alcuna configurazione DNS da parte sua |
+| **Control Plane Instance Size** | **Medium** (il preset **Small** proposto per impostazione predefinita può non avere memoria sufficiente) |
+| **Control Plane High Availability** | **3 (HA)** |
 
-:::warning Campo `resources` obbligatorio
-Il campo `resources` e richiesto in ogni node group, anche se utilizzate `instanceType`. Con `resources: {}`, i valori CPU/memoria sono determinati da `instanceType`. Se specificate valori espliciti (es. `cpu: 4, memory: 8Gi`), questi **sovrascrivono** `instanceType`.
+![Procedura guidata di creazione del cluster Kubernetes, passo General](/img/console/kubernetes/wizard-general.en.png)
+
+Faccia clic su **Next**.
+
+### Nodes
+
+È già presente un primo gruppo, `worker-pool-1`. Lo espanda e compili:
+
+| Campo | Valore per questa guida |
+|-------|----------------------|
+| **Group name** | `worker-pool-1` |
+| **Ephemeral storage size** | 20 GB |
+| **Minimum nodes** | 1 |
+| **Maximum nodes** | 3 |
+| **Instance type** | Serie **Standard (S)**, dimensione **Large** (`s1.large`, 4 vCPU, 8 GB) |
+| **Exposed on the internet (Public IP)** | Attivato (imposto per il primo gruppo) |
+
+![Procedura guidata Kubernetes, passo Nodes: gruppo di nodi e tipo di istanza](/img/console/kubernetes/wizard-nodes.en.png)
+
+Faccia clic su **Next**.
+
+### Addons
+
+**Cert-Manager**, **Ingress NGINX** e **Monitoring Agents** sono selezionati per impostazione predefinita. Mantenga questa selezione per la presente guida. I blocchi della **Advanced Configuration** (Cilium, CoreDNS, Vertical Pod Autoscaler) non devono essere modificati.
+
+![Procedura guidata Kubernetes, passo Addons](/img/console/kubernetes/wizard-addons.en.png)
+
+Faccia clic su **Next**.
+
+### Summary
+
+Il **Summary** riprende l'identità del cluster, il control plane, i gruppi di nodi e gli **Enabled Extensions & Addons**. Verifichi la configurazione, quindi faccia clic su **Create cluster**.
+
+![Procedura guidata Kubernetes, passo Summary](/img/console/kubernetes/wizard-review.en.png)
+
+
+---
+
+## Passaggio 3: Verificare lo stato
+
+Dopo la distribuzione, la console torna all'elenco **Kubernetes Clusters**. Il cluster `demo-cluster` vi compare con lo stato **Creating**.
+
+Il provisioning richiede alcuni minuti. Lo stato passa quindi a **Ready**.
+
+Faccia clic sul cluster (oppure su **View Details** nel relativo menu **Actions**) per aprirne la pagina di dettaglio:
+
+- **General**: versione di Kubernetes, preset del control plane e numero di istanze;
+- **Node Pools**: ogni gruppo con il proprio tipo di istanza e il numero di nodi attivi, ad esempio «1 active node (1 to 3)»;
+- **Extensions**: addon attivati.
+
+**Risultato atteso**: stato **Ready** e almeno un nodo attivo in `worker-pool-1`.
+
+---
+
+## Passaggio 4: Recuperare le credenziali
+
+Nella pagina di dettaglio del cluster, sezione **Actions**, faccia clic su **Kubeconfig**. Il browser scarica il file `kubeconfig-demo-cluster.yaml` e la console conferma: «The kubeconfig file has been downloaded.»
+
+![Pagina di dettaglio di un cluster Kubernetes, con il pulsante Kubeconfig nella scheda Actions](/img/console/kubernetes/cluster-detail.en.png)
+
+
+:::warning
+Questo kubeconfig conferisce un accesso amministratore completo al cluster. Lo conservi in un luogo sicuro e non lo inserisca nel controllo di versione.
 :::
 
-### **Distribuire il Cluster**
-
-```bash
-# Applicare la configurazione
-kubectl apply -f my-first-cluster.yaml
-
-# Verificare lo stato di distribuzione
-kubectl get kubernetes my-first-cluster -w
-```
-
-**Tempo di attesa:** Il cluster sara pronto in 3-5 minuti
-
 ---
 
-## 🔐 Fase 2: Accesso al Cluster
+## Passaggio 5: Connessione e test
 
-### **Recuperare il Kubeconfig**
-
-Una volta distribuito il cluster, recuperate le informazioni di accesso:
+### Connettersi al cluster
 
 ```bash
-# Recuperare il kubeconfig del cluster
-kubectl get tenantsecret my-first-cluster-admin-kubeconfig \
-  -o go-template='{{ index .data "super-admin.conf" | base64decode }}' \
-  > my-cluster-kubeconfig.yaml
-
-# Configurare kubectl per il nuovo cluster
-export KUBECONFIG=my-cluster-kubeconfig.yaml
+# Utilizzare il kubeconfig scaricato
+export KUBECONFIG=~/Downloads/kubeconfig-demo-cluster.yaml
 
 # Testare la connessione
 kubectl get nodes
 ```
 
-**Risultato atteso:**
+**Risultato atteso**: un nodo per ogni nodo attivo del gruppo, con lo stato `Ready`.
 
 ```console
-NAME                         STATUS   ROLES    AGE   VERSION
-my-first-cluster-md0-xxxxx   Ready    <none>   2m    v1.29.0
+NAME                        STATUS   ROLES    AGE   VERSION
+demo-cluster-worker-xxxxx   Ready    <none>   2m    v1.xx.x
 ```
 
----
-
-## 🚀 Fase 3: Distribuzione di un'Applicazione
-
-### **Applicazione dimostrativa**
-
-Distribuiamo un'applicazione web semplice per testare il nostro cluster:
+### Distribuire un'applicazione dimostrativa
 
 ```yaml title="demo-app.yaml"
----
-# Deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -131,23 +148,18 @@ spec:
         app: hello-hikube
     spec:
       containers:
-      - name: app
-        image: nginx:alpine
-        ports:
-        - containerPort: 80
-        resources:
-          requests:
-            memory: "64Mi"
-            cpu: "50m"
-          limits:
-            memory: "128Mi"
-            cpu: "100m"
-        env:
-        - name: WELCOME_MESSAGE
-          value: "Hello from Hikube Kubernetes!"
-
+        - name: app
+          image: nginx:alpine
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "128Mi"
+              cpu: "100m"
 ---
-# Service
 apiVersion: v1
 kind: Service
 metadata:
@@ -156,54 +168,33 @@ spec:
   selector:
     app: hello-hikube
   ports:
-  - port: 80
-    targetPort: 80
+    - port: 80
+      targetPort: 80
   type: ClusterIP
-
 ---
-# Ingress
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: hello-hikube-ingress
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: nginx
   rules:
-  - host: my-app.example.com
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: hello-hikube-service
-            port:
-              number: 80
+    - host: demo.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: hello-hikube-service
+                port:
+                  number: 80
 ```
 
-### **Distribuire l'Applicazione**
-
 ```bash
-# Distribuire l'applicazione
 kubectl apply -f demo-app.yaml
 
 # Verificare la distribuzione
-kubectl get deployments
-kubectl get pods
-kubectl get services
-kubectl get ingress
-```
-
----
-
-## ✅ Fase 4: Verifica e Test
-
-### **Verificare che tutto funzioni**
-
-```bash
-# Stato dei pod
 kubectl get pods -l app=hello-hikube
 ```
 
@@ -216,164 +207,76 @@ hello-hikube-xxxxx-yyyy        1/1     Running   0          1m
 hello-hikube-xxxxx-zzzz        1/1     Running   0          1m
 ```
 
-### **Accesso all'applicazione**
+### Testare l'accesso
 
 ```bash
-# Ottenere l'IP esterno dell'Ingress Controller
-kubectl get svc -n ingress-nginx ingress-nginx-controller
-
-# Test locale (in attesa della configurazione DNS)
+# Test diretto del Service, senza passare dall'Ingress
 kubectl port-forward svc/hello-hikube-service 8080:80 &
 curl http://localhost:8080
+
+# Recuperare l'IP esterno del controller Ingress NGINX (colonna EXTERNAL-IP)
+kubectl get svc -A | grep ingress-nginx-controller
+
+# Testare l'Ingress senza configurare il DNS
+curl -H "Host: demo.example.com" http://<EXTERNAL-IP>
 ```
+
+Per pubblicare l'applicazione con il suo dominio, crei un record DNS che punti a questo IP esterno, quindi segua [Come distribuire un Ingress con TLS](./how-to/deploy-ingress-tls.md).
 
 ---
 
-## 📊 Fase 5: Monitoring e Osservabilita
+## Passaggio 6: Risoluzione rapida dei problemi
 
-### **Dashboard Integrate**
+| Sintomo | Verifica |
+|----------|--------------|
+| Il pulsante **Next** resta disattivato e un indicatore **Project Quotas** è superato | Il progetto non dispone di quota sufficiente per il control plane e il **massimo** di nodi di ogni gruppo. Riduca il numero massimo di nodi, il modello o lo storage effimero. |
+| Il cluster resta in **Creating** oltre qualche decina di minuti | [Contatti il supporto](mailto:support@hidora.io) indicando il nome del cluster e il progetto. |
+| **Kubeconfig** mostra «Could not download the kubeconfig file.» | Attenda che il cluster sia **Ready**, quindi riprovi. |
+| `kubectl get nodes` non elenca alcun nodo `Ready` | Verifichi in **Node Pools** il numero di nodi attivi, quindi `kubectl describe node <nome-del-nodo>`. |
+| Pod in `Pending` | `kubectl describe pod <nome-del-pod>`; se i nodi sono saturi, aumenti i **Maximum nodes** tramite **Edit**. |
+| L'Ingress non risponde | Verifichi che l'addon **Ingress NGINX** sia attivato e che almeno un gruppo sia **Exposed on the internet (Public IP)**. |
 
-Se avete attivato il monitoring durante la configurazione del tenant:
-
-```bash
-# Verificare i servizi di monitoring
-kubectl get pods -n monitoring
-
-# Accedere a Grafana (secondo la configurazione del tenant)
-kubectl get ingress -n monitoring
-```
-
-### **Metriche del Cluster**
-
-```bash
-# Metriche dei nodi
-kubectl top nodes
-
-# Metriche dei pod
-kubectl top pods
-
-# Eventi del cluster
-kubectl get events --sort-by=.metadata.creationTimestamp
-```
+Per approfondire, consulti la pagina [Risoluzione dei problemi](./troubleshooting.md).
 
 ---
 
-## 🎛️ Fase 6: Gestione e Scaling
+## Passaggio 7: Pulizia
 
-### **Scaling del Cluster**
-
-Il cluster Hikube può regolare automaticamente il numero di nodi in base alla domanda:
+Elimini prima l'applicazione di test:
 
 ```bash
-# Verificare il numero di nodi attuale
-kubectl get nodes
-
-# Vedere la configurazione del nodeGroup
-kubectl get kubernetes my-first-cluster -o yaml | grep -A 10 nodeGroups
-
-# Lo scaling automatico si attiva in base alle risorse richieste
-# Esempio: distribuire più pod richiederà più nodi
-kubectl scale deployment hello-hikube --replicas=6
-```
-
-### **Osservare lo Scaling**
-
-```bash
-# Vedere l'aggiunta automatica di nodi
-kubectl get nodes -w
-
-# Verificare le metriche di scaling
-kubectl describe hpa  # Se HPA è configurato
-```
-
----
-
-## 🔧 Fase 7: Prossime Azioni
-
-### **Configurazione Avanzata**
-
-Ora che il vostro cluster funziona, esplorate le funzionalità avanzate:
-
-```bash
-# Per aggiungere node group, modificate il file YAML e ri-applicate
-# Esempio in my-first-cluster.yaml:
-# nodeGroups:
-#   general:
-#     # ... configurazione esistente
-#   compute:
-#     minReplicas: 0
-#     maxReplicas: 3
-#     instanceType: "s1.2xlarge"
-#     ephemeralStorage: 100Gi
-
-# Poi applicare le modifiche
-kubectl apply -f my-first-cluster.yaml
-```
-
-### **Archiviazione Persistente**
-
-```yaml title="persistent-app.yaml"
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: my-app-storage
-spec:
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: replicated  # Archiviazione altamente disponibile
-  resources:
-    requests:
-      storage: 10Gi
-```
-
----
-
-## 🚨 Risoluzione Rapida dei Problemi
-
-### **Problemi Comuni**
-
-```bash
-# Cluster in creazione troppo lungo
-kubectl describe kubernetes my-first-cluster
-
-# Nodi non Ready
-kubectl describe nodes
-
-# Pod in errore
-kubectl logs -l app=hello-hikube
-kubectl describe pod <pod-name>
-
-# Ingress non funzionante
-kubectl describe ingress hello-hikube-ingress
-kubectl logs -n ingress-nginx deploy/ingress-nginx-controller
-```
-
-### **Pulizia**
-
-```bash
-# Eliminare l'applicazione di test
 kubectl delete -f demo-app.yaml
-
-# Eliminare il cluster (ATTENZIONE: azione irreversibile)
-kubectl delete kubernetes my-first-cluster
 ```
 
----
+Quindi elimini il cluster dalla console:
 
-## 📋 Riepilogo
+1. In **Infrastructure** > **Kubernetes**, apra il menu **Actions** del cluster e scelga **Delete** (oppure faccia clic su **Delete** dalla relativa pagina di dettaglio).
+2. Nella finestra «Delete demo-cluster?», inserisca il nome esatto del cluster per confermare.
+3. Faccia clic su **Permanently delete**.
 
-Avete creato:
-
-- Un cluster Kubernetes con piano di controllo gestito
-- Nodi worker con scaling automatico (1-5 nodi)
-- Un'applicazione d'esempio con Ingress
-- Un certificato SSL automatico tramite cert-manager
-
-## 🚀 Prossimi Passi
-
-- **[Riferimento API](./api-reference.md)** → Configurazione completa dei cluster
-- **[GPU](../gpu/overview.md)** → Utilizzare GPU con Kubernetes
+:::warning
+L'eliminazione è irreversibile: tutti i dati associati al cluster vanno persi definitivamente.
+:::
 
 ---
 
-**💡 Consiglio:** Conservate il vostro file `kubeconfig` in modo sicuro e pensate a configurare RBAC per controllare l'accesso al vostro cluster secondo i vostri team e ambienti.
+## Riepilogo
+
+Lei ha creato:
+
+- un cluster Kubernetes con un control plane gestito in alta disponibilità;
+- un gruppo di nodi con auto-scaling da 1 a 3 nodi;
+- un'applicazione di esempio esposta tramite Ingress NGINX.
+
+## Prossimi passi
+
+- **[Concetti](./concepts.md)**: dettaglio di ogni campo della procedura guidata
+- **[Come aggiungere e modificare un gruppo di nodi](./how-to/manage-node-groups.md)**
+- **[GPU](../gpu/overview.md)**: utilizzare GPU con Kubernetes
+
+<NavigationFooter
+  nextSteps={[
+    {label: "Guide pratiche", href: "../how-to/manage-node-groups"},
+    {label: "FAQ", href: "../faq"},
+  ]}
+/>

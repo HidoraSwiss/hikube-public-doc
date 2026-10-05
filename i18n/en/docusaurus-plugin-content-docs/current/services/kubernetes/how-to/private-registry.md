@@ -7,20 +7,20 @@ title: "How to connect a private image registry"
 This guide explains how to configure access to a private container image registry (Docker Hub, GitLab Registry, GitHub Container Registry, etc.) from your Hikube Kubernetes cluster.
 
 :::note
-This guide uses native Kubernetes mechanisms for image registry authentication. It applies to any Hikube Kubernetes cluster.
+This guide uses native Kubernetes mechanisms for image registry authentication. All commands run in your cluster.
 :::
 
 ## Prerequisites
 
 - A deployed Hikube Kubernetes cluster (see the [quick start](../quick-start.md))
-- The child cluster kubeconfig configured (`export KUBECONFIG=cluster-admin.yaml`)
-- Access credentials for your private registry (URL, username, password or token)
+- The cluster kubeconfig downloaded from the console (**Kubeconfig** button) and loaded in your session (`export KUBECONFIG=~/Downloads/kubeconfig-<cluster-name>.yaml`)
+- The credentials for your private registry (URL, username, password or token)
 
 ## Steps
 
 ### 1. Create a docker-registry Secret
 
-Create a Kubernetes Secret containing the credentials for your private registry:
+Create a Kubernetes Secret containing the credentials of your private registry:
 
 ```bash
 kubectl create secret docker-registry my-registry \
@@ -54,19 +54,19 @@ kubectl create secret docker-registry ghcr \
 
 ### 2. Attach the secret to the default ServiceAccount
 
-To have all pods in the namespace automatically use the private registry, attach the secret to the `default` ServiceAccount:
+For all pods in the namespace to use the private registry automatically, attach the secret to the `default` ServiceAccount:
 
 ```bash
 kubectl patch serviceaccount default -p '{"imagePullSecrets": [{"name": "my-registry"}]}'
 ```
 
 :::tip
-This method is convenient for environments where all pods in a namespace need to access the same registry. New pods automatically inherit the secret.
+This method is convenient when all pods in a namespace must access the same registry. New pods inherit the secret automatically.
 :::
 
-### 3. Or reference directly in the Pod spec
+### 3. Or reference it directly in the Pod spec
 
-Alternatively, you can specify the `imagePullSecrets` secret directly in the spec of each Pod or Deployment:
+You can also specify `imagePullSecrets` directly in the spec of each Pod or Deployment:
 
 ```yaml title="deployment-private-image.yaml"
 apiVersion: apps/v1
@@ -94,7 +94,7 @@ spec:
 
 ### 4. Test with a deployment using a private image
 
-Deploy your application and verify that the image is correctly pulled:
+Deploy your application and check that the image is pulled correctly:
 
 ```bash
 kubectl apply -f deployment-private-image.yaml
@@ -108,14 +108,14 @@ kubectl describe pod -l app=my-app
 
 ## Verification
 
-Verify that the pods are correctly using the private image:
+Check that the pods are using the private image correctly:
 
 ```bash
 # Check that the pods are Running
 kubectl get pods -l app=my-app
 ```
 
-**Expected output:**
+**Expected result:**
 
 ```console
 NAME                      READY   STATUS    RESTARTS   AGE
@@ -124,15 +124,14 @@ my-app-6b8d5f7c9d-def34   1/1     Running   0          1m
 ```
 
 :::warning
-If pods remain in `ImagePullBackOff` or `ErrImagePull` state, check:
-- The registry URL in the Secret (`--docker-server`)
-- The credentials (username and password/token)
-- The full image name with the registry prefix
-- That the secret is in the same namespace as the Pod
+If the pods remain in `ImagePullBackOff` or `ErrImagePull` state, check:
+- the registry URL in the Secret (`--docker-server`);
+- the credentials (username and password or token);
+- the full image name with the registry prefix;
+- that the secret is in the same namespace as the Pod.
 :::
 
-## Next steps
+## Going further
 
-- [API reference](../api-reference.md) -- Full cluster configuration
-- [Concepts](../concepts.md) -- Hikube Kubernetes architecture
-- [Quick start](../quick-start.md) -- Deploy a first cluster
+- [Concepts](../concepts.md): Hikube Kubernetes architecture
+- [Access and tools](./toolbox.md): kubeconfig and useful commands

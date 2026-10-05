@@ -4,97 +4,71 @@ title: "How to provision a GPU on Kubernetes"
 
 # How to provision a GPU on Kubernetes
 
-Hikube allows you to add node groups equipped with NVIDIA GPUs to your Kubernetes clusters. This guide explains how to configure a cluster with GPU workers, deploy pods that leverage GPU acceleration, and set up specialized node groups.
+Hikube lets you add node groups equipped with NVIDIA GPUs to your managed Kubernetes clusters. This guide explains how to configure this group in the console, then deploy pods that use the GPU.
 
 ## Prerequisites
 
-- **kubectl** configured with your Hikube kubeconfig
-- An existing **Kubernetes cluster** on Hikube (or a manifest ready to deploy)
-- Familiarity with [Kubernetes](../overview.md) concepts on Hikube
+- A Hikube account and a project with sufficient quotas
+- [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl) installed on your workstation
+- Familiarity with Hikube [managed Kubernetes](../../kubernetes/overview.md)
 
 ## Steps
 
-### 1. Add a GPU node group to the cluster
+### 1. Add a GPU node group
 
-Modify your cluster manifest to add a node group with GPU. GPU configuration is done at the node group level via `gpus[].name`:
+**New cluster**: open **Infrastructure** > **Kubernetes** > **Create cluster**, fill in the **General** step, then move on to the **Nodes** step.
 
-```yaml title="cluster-gpu.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Kubernetes
-metadata:
-  name: cluster-gpu
-spec:
-  controlPlane:
-    replicas: 1
+**Existing cluster**: open the cluster, click **Edit** and go to **Node groups**.
 
-  nodeGroups:
-    default-workers:
-      minReplicas: 1
-      maxReplicas: 3
-      instanceType: "u1.large"
-      ephemeralStorage: 50Gi
+Then:
 
-    gpu-workers:
-      minReplicas: 1
-      maxReplicas: 5
-      instanceType: "u1.xlarge"
-      ephemeralStorage: 100Gi
-      gpus:
-        - name: "nvidia.com/AD102GL_L40S"
+1. Click **Add node group**.
+2. **Group name**: for example `gpu-workers`.
+3. **Instance type**: choose the series and size, for example **Universal (U)** > **2XLarge** (8 vCPU, 32 GB).
+4. **Ephemeral storage size**: plan enough space for the CUDA container images, for example `100` GB.
+5. **Minimum nodes** and **Maximum nodes**: for example `1` and `3`.
+6. **GPU** section: click the card of the model you want (for example **NVIDIA L40S**); **+** and **−** set the number of GPUs **per node**.
 
-  addons:
-    # Required: installs the NVIDIA drivers and the device plugin
-    gpuOperator:
-      enabled: true
-```
-
-:::warning `gpuOperator` addon required
-Attaching GPUs to the node groups is not enough: without `addons.gpuOperator.enabled: true`, the NVIDIA drivers and the device plugin are not installed in the tenant cluster, and `nvidia.com/gpu` stays at 0 on the nodes.
+:::tip Separate CPU and GPU
+Keep a node group without GPUs for standard workloads and reserve the GPU group for the pods that need it: each group is sized independently.
 :::
 
-:::tip
-Separate your CPU and GPU workloads into distinct node groups. This allows independent scaling and better cost control.
+:::warning Existing groups
+A group created **without** GPUs cannot receive any (**This node group was created without GPUs and cannot get any.**). A group created **with** GPUs can change model or count, but must keep at least one GPU. To change category, add a new node group.
 :::
 
-### 2. Apply the cluster configuration
+### 2. Check the addons
+
+At the **Addons** step (**Extensions & Addons** section when editing), **GPU Operator** is checked and locked (**Required when a node group has GPUs**): it installs the NVIDIA drivers and the device plugin on the GPU nodes.
+
+Also enable **HAMi** if you want to share the same GPU between several pods.
+
+### 3. Deploy
+
+At the **Summary** step, the GPU group shows the model and quantity (for example `l40s (x1)`). Click **Create cluster** (or **Save** for an existing cluster).
+
+Wait for the cluster to be **Ready** or **Running** in the cluster list.
+
+### 4. Retrieve the cluster's kubeconfig
+
+On the cluster's detail page, click **Kubeconfig**. The console downloads `kubeconfig-<cluster-name>.yaml`.
 
 ```bash
-kubectl apply -f cluster-gpu.yaml
+export KUBECONFIG=~/Downloads/kubeconfig-<cluster-name>.yaml
+kubectl get nodes
 ```
 
-Wait for the GPU nodes to be ready:
+### 5. Check the GPUs on the nodes
 
-```bash
-kubectl get nodes -w
-```
-
-**Expected output:**
-
-```
-NAME                        STATUS   ROLES    AGE   VERSION
-cluster-gpu-cp-0            Ready    master   5m    v1.29.x
-cluster-gpu-gpu-workers-0   Ready    <none>   3m    v1.29.x
-```
-
-### 3. Verify GPU availability on the nodes
-
-Confirm that GPUs are properly exposed as Kubernetes resources:
+Once the GPU Operator pods have started (a few minutes after the nodes arrive):
 
 ```bash
 kubectl get nodes -o custom-columns=NAME:.metadata.name,GPU:.status.allocatable.'nvidia\.com/gpu'
 ```
 
-**Expected output:**
+**Expected result:** the nodes of the GPU group show `1` (or the number of GPUs per node you chose), the others `<none>`.
 
-```
-NAME                        GPU
-cluster-gpu-cp-0            <none>
-cluster-gpu-gpu-workers-0   1
-```
-
-### 4. Deploy a pod with GPU
-
-Create a test pod that uses a GPU via `resources.limits`:
+### 6. Deploy a pod with a GPU
 
 ```yaml title="gpu-pod.yaml"
 apiVersion: v1
@@ -102,90 +76,31 @@ kind: Pod
 metadata:
   name: gpu-test
 spec:
+  restartPolicy: Never
   containers:
   - name: cuda-test
-    image: nvidia/cuda:12.0-runtime-ubuntu22.04
+    image: nvidia/cuda:12.4.1-base-ubuntu22.04
     command: ["nvidia-smi"]
     resources:
       limits:
         nvidia.com/gpu: 1
-      requests:
-        nvidia.com/gpu: 1
 ```
-
-Apply and verify:
 
 ```bash
 kubectl apply -f gpu-pod.yaml
-```
-
-Wait for the pod to complete its execution:
-
-```bash
-kubectl wait --for=condition=Ready pod/gpu-test --timeout=120s
-```
-
-Check the logs to confirm the GPU is visible:
-
-```bash
+kubectl wait --for=jsonpath='{.status.phase}'=Succeeded pod/gpu-test --timeout=300s
 kubectl logs gpu-test
 ```
 
-**Expected output:**
+**Expected result:** the `nvidia-smi` table lists the GPU (for example `NVIDIA L40S`).
 
+### 7. Target a GPU model
+
+If your groups use different models, target them with the label set by the GPU Operator (GPU feature discovery):
+
+```bash
+kubectl get nodes -L nvidia.com/gpu.product
 ```
-+-----------------------------------------------------------------------------+
-| NVIDIA-SMI 535.xx.xx    Driver Version: 535.xx.xx    CUDA Version: 12.x     |
-|-------------------------------+----------------------+----------------------+
-| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
-|===============================+======================+======================|
-|   0  NVIDIA L40S         Off  | 00000000:00:06.0 Off |                    0 |
-+-------------------------------+----------------------+----------------------+
-```
-
-### 5. Configure specialized node groups
-
-For production environments, create dedicated node groups for inference and training with different GPUs:
-
-```yaml title="cluster-multi-gpu.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Kubernetes
-metadata:
-  name: cluster-ml
-spec:
-  controlPlane:
-    replicas: 3
-
-  nodeGroups:
-    default-workers:
-      minReplicas: 2
-      maxReplicas: 5
-      instanceType: "u1.large"
-      ephemeralStorage: 50Gi
-
-    gpu-inference:
-      minReplicas: 2
-      maxReplicas: 10
-      instanceType: "u1.large"
-      ephemeralStorage: 100Gi
-      gpus:
-        - name: "nvidia.com/AD102GL_L40S"
-
-    gpu-training:
-      minReplicas: 1
-      maxReplicas: 3
-      instanceType: "u1.4xlarge"
-      ephemeralStorage: 200Gi
-      gpus:
-        - name: "nvidia.com/GA100_A100_PCIE_80GB"
-        - name: "nvidia.com/GA100_A100_PCIE_80GB"
-
-  addons:
-    gpuOperator:
-      enabled: true
-```
-
-To target a specific node group in your deployments, use `nodeSelector`:
 
 ```yaml title="inference-deployment.yaml"
 apiVersion: apps/v1
@@ -193,7 +108,7 @@ kind: Deployment
 metadata:
   name: model-serving
 spec:
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
       app: model-serving
@@ -203,48 +118,31 @@ spec:
         app: model-serving
     spec:
       nodeSelector:
-        gpu-type: "L40S"
+        nvidia.com/gpu.product: <value shown by the previous command>
       containers:
       - name: inference
         image: my-model:latest
         resources:
           limits:
             nvidia.com/gpu: 1
-          requests:
-            nvidia.com/gpu: 1
 ```
-
-:::note
-The GPUs available for Kubernetes are the same as for VMs: **L40S** (inference/dev), **A100 PCIe/SXM4** (ML training), and **RTX PRO 6000 Blackwell** (LLM/intensive computing). See the [GPU API reference](../api-reference.md) for the exact resource names and specifications.
-:::
 
 ## Verification
 
-After deployment, confirm that your GPU configuration is working:
-
-1. **Check GPU nodes**:
-
 ```bash
+# Allocatable GPUs per node
 kubectl get nodes -o custom-columns=NAME:.metadata.name,GPU:.status.allocatable.'nvidia\.com/gpu'
+
+# GPUs already assigned on a node
+kubectl describe node <node-name> | grep -A 8 "Allocated resources"
+
+# GPU Operator pods
+kubectl get pods -A | grep -i gpu-operator
 ```
 
-2. **Check GPU allocation on a node**:
+## Further reading
 
-```bash
-kubectl describe node cluster-gpu-gpu-workers-0 | grep -A 5 "Allocated resources"
-```
-
-3. **Test with an interactive pod**:
-
-```bash
-kubectl run gpu-debug --rm -it --image=nvidia/cuda:12.0-runtime-ubuntu22.04 \
-  --overrides='{"spec":{"containers":[{"name":"gpu-debug","image":"nvidia/cuda:12.0-runtime-ubuntu22.04","command":["nvidia-smi"],"resources":{"limits":{"nvidia.com/gpu":"1"},"requests":{"nvidia.com/gpu":"1"}}}]}}' \
-  --restart=Never
-```
-
-## Next steps
-
-- [GPU API reference](../api-reference.md)
-- [How to provision a GPU on a VM](./provision-gpu-vm.md)
-- [How to configure autoscaling](../../../services/kubernetes/how-to/configure-autoscaling.md)
-- [How to manage node groups](../../../services/kubernetes/how-to/manage-node-groups.md)
+- [GPU Operator plugin](../../kubernetes/plugins/gpu-operator.md)
+- [Manage node groups](../../kubernetes/how-to/manage-node-groups.md)
+- [Configure autoscaling](../../kubernetes/how-to/configure-autoscaling.md)
+- [Provision a GPU on a VM](./provision-gpu-vm.md)

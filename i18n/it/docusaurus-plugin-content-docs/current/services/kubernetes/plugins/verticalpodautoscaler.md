@@ -1,77 +1,71 @@
 ---
 sidebar_position: 4
-title: Pod Auto Scaler
+title: Vertical Pod Autoscaler
 ---
 
-# 🧩 Dettagli del campo `addons.verticalPodAutoscaler`
+# Vertical Pod Autoscaler
 
-Il campo `addons.verticalPodAutoscaler` definisce la configurazione dell'add-on **Vertical Pod Autoscaler (VPA)**, responsabile della regolazione automatica delle risorse CPU e memoria dei Pod.
-Analizza in modo continuo il consumo reale dei workload e raccomanda o applica regolazioni per ottimizzare le prestazioni e l'utilizzo delle risorse.
+Il **Vertical Pod Autoscaler (VPA)** regola automaticamente le risorse CPU e memoria dei pod. Analizza in modo continuo il consumo reale dei workload, quindi raccomanda o applica gli adeguamenti.
 
-```yaml
-addons:
-  verticalPodAutoscaler:
-    valuesOverride:
-      verticalPodAutoscaler:
-        recommender:
-          enabled: true
-        updater:
-          enabled: true
-        admissionController:
-          enabled: true
+| Componente | Ruolo |
+|-----------|------|
+| `recommender` | Analizza le metriche e raccomanda le risorse per i pod |
+| `updater` | Ricrea i pod quando le raccomandazioni cambiano |
+| `admissionController` | Applica le risorse raccomandate alla creazione dei pod |
+
+## Nella console
+
+Il Vertical Pod Autoscaler fa parte della **Advanced Configuration** del passaggio **Addons**: è sempre presente nel cluster e non si può disattivare. È possibile soltanto sovrascriverne la configurazione.
+
+1. Alla creazione (passaggio **Addons**) oppure da **Edit** > **Extensions & Addons**, espanda il blocco **Vertical Pod Autoscaler** della sezione **Advanced Configuration**.
+2. Inserisca i suoi valori in **Helm Configuration (YAML) — optional**.
+3. Confermi con **Next** e poi **Create cluster** (creazione) oppure **Save** (modifica).
+
+:::warning
+Su un cluster esistente, la console non salva una prima sovrascrittura inserita da **Edit**: il pulsante **Save** conferma l'aggiornamento, ma il valore viene ignorato. Definisca la sovrascrittura alla creazione del cluster, oppure [contatti il supporto](mailto:support@hidora.io). Una sovrascrittura definita alla creazione resta modificabile da **Edit**.
+:::
+
+Nella pagina di dettaglio del cluster, la riga **VPA** della sezione **Network** indica **VPA** quando l'addon è configurato.
+
+## Sovrascrivere la configurazione
+
+Il valore YAML viene trasmesso al chart Helm del VPA, sotto la chiave `vertical-pod-autoscaler`. Ad esempio, per disattivare l'updater e utilizzare solo le raccomandazioni:
+
+```yaml title="vpa-override.yaml"
+vertical-pod-autoscaler:
+  updater:
+    enabled: false
 ```
 
----
+Le opzioni disponibili sono descritte nel [chart Helm del Vertical Pod Autoscaler](https://github.com/cowboysysop/charts/tree/master/charts/vertical-pod-autoscaler).
 
-## `verticalPodAutoscaler` (Object) — **Obbligatorio**
+## Utilizzo nel cluster
 
-### Descrizione
+Crei un oggetto `VerticalPodAutoscaler` per ogni workload da monitorare:
 
-Il campo `verticalPodAutoscaler` raggruppa la configurazione principale dell'add-on VPA.
-Permette di distribuire e personalizzare i componenti del Vertical Pod Autoscaler per automatizzare la gestione delle risorse dei Pod.
-
-### Esempio
-
-```yaml
-verticalPodAutoscaler:
-  valuesOverride:
-    verticalPodAutoscaler:
-      recommender:
-        enabled: true
+```yaml title="vpa-my-app.yaml"
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: my-app
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: my-app
+  updatePolicy:
+    updateMode: "Off"
 ```
 
----
+```bash
+kubectl apply -f vpa-my-app.yaml
 
-## `valuesOverride` (Object) — **Obbligatorio**
-
-### Descrizione
-
-Il campo `valuesOverride` permette di **sovrascrivere i valori Helm** della distribuzione del Vertical Pod Autoscaler.
-E utilizzato per attivare o disattivare i diversi sotto-componenti:
-
-| Componente | Descrizione |
-|------------|-------------|
-| `recommender` | Analizza le metriche e raccomanda risorse ottimali per i Pod. |
-| `updater` | Aggiorna automaticamente i Pod quando le raccomandazioni cambiano. |
-| `admissionController` | Intercetta le richieste di creazione/modifica dei Pod per regolare le risorse al volo. |
-
-### Esempio
-
-```yaml
-valuesOverride:
-  verticalPodAutoscaler:
-    recommender:
-      enabled: true
-    updater:
-      enabled: true
-    admissionController:
-      enabled: true
+# Leggere le raccomandazioni
+kubectl describe vpa my-app
 ```
 
----
+## Buone pratiche
 
-## 💡 Buone pratiche
-
-- Attivare sempre `recommender` per beneficiare dei suggerimenti automatici sulle risorse.
-- Utilizzare `updater.enabled: false` inizialmente per osservare le raccomandazioni prima di applicare le modifiche.
-- Adattare la configurazione tramite `valuesOverride` in base alle esigenze di carico e agli ambienti (staging, produzione).
+- Inizi con `updateMode: "Off"` per osservare le raccomandazioni prima di applicarle.
+- Non utilizzi il VPA e un `HorizontalPodAutoscaler` sulla stessa metrica (CPU o memoria) di uno stesso workload.
+- Combini il VPA con l'[autoscaling dei gruppi di nodi](../how-to/configure-autoscaling.md) per adattare sia i pod sia la capacità del cluster.

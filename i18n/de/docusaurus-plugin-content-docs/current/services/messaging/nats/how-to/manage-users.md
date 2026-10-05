@@ -4,93 +4,43 @@ title: "Benutzer verwalten"
 
 # NATS-Benutzer verwalten
 
-Diese Anleitung erklärt, wie Sie Benutzer eines NATS-Clusters auf Hikube deklarativ über Kubernetes-Manifeste erstellen und verwalten.
+:::info Verfügbarkeit
+NATS ist in der [Hikube-Konsole](https://console.hikube.cloud) noch nicht im Self-Service verfügbar.
+Um eine Instanz bereitzustellen oder ihre Konfiguration zu ändern, [wenden Sie sich an den Support](mailto:support@hidora.io).
+:::
+
+Diese Anleitung erklärt, wie Sie die Benutzer eines NATS-Clusters auf Hikube organisieren und deren Zugriff über das CLI `nats` überprüfen.
+
+Die Benutzer (Name und Passwort) sind Teil der Instanzkonfiguration. Ihre Erstellung, Löschung oder die Erneuerung ihres Passworts beantragen Sie beim Support. Diese Option wird in der Konsole nicht angeboten; wenden Sie sich an den Support.
 
 ## Voraussetzungen
 
-- **kubectl** konfiguriert mit Ihrer Hikube-Kubeconfig
-- Ein auf Hikube bereitgestellter **NATS**-Cluster (oder ein Manifest zur Bereitstellung)
-- (Optional) das **nats** CLI lokal installiert zum Testen der Verbindungen
+- Ein auf Hikube bereitgestellter **NATS**-Cluster und seine URL (`<nats-url>`)
+- Das CLI **nats** lokal installiert
 
 ## Schritte
 
-### 1. Benutzer hinzufügen
+### 1. Die benötigten Konten festlegen
 
-Die Benutzer werden im Abschnitt `users` des Manifests deklariert. Jeder Benutzer wird durch einen Namen identifiziert und hat ein Passwort.
+Legen Sie für eine granulare Zugriffskontrolle getrennte Benutzer pro Verwendungszweck an, zum Beispiel:
 
-```yaml title="nats-users.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: NATS
-metadata:
-  name: my-nats
-spec:
-  replicas: 3
-  resourcesPreset: small
+| Benutzer | Verwendung |
+|-------------|-------|
+| `admin` | Administration (Erstellung von Streams, Serverberichte) |
+| `appuser` | Anwendungskonto, eines pro Dienst |
+| `monitoring` | Überwachung |
 
-  jetstream:
-    enabled: true
-    size: 10Gi
+### 2. Die Erstellung der Benutzer beantragen
 
-  users:
-    admin:
-      password: SecureAdminPassword
-    appuser:
-      password: AppUserPassword456
-    monitoring:
-      password: MonitoringPassword789
-```
+Senden Sie die Liste der Benutzer an den [Support](mailto:support@hidora.io) und geben Sie dabei das Projekt und den Namen der Instanz an. Der Support übermittelt Ihnen die Passwörter; bewahren Sie sie in einem Passwort-Manager auf.
 
-**Benutzerparameter:**
+### 3. Die Verbindung mit dem CLI nats testen
 
-| Parameter | Typ | Beschreibung |
-|-----------|-----|--------------|
-| `users[name].password` | `string` | Dem Benutzer zugeordnetes Passwort |
-
-:::tip
-Erstellen Sie separate Benutzer pro Anwendung für eine granulare Zugriffskontrolle. Verwenden Sie ein **Admin**-Konto für die Administration, **Anwendungskonten** pro Dienst und ein dediziertes **Monitoring**-Konto für die Überwachung.
-:::
-
-### 2. Änderungen anwenden
+Speichern Sie einen Kontext pro Benutzer und testen Sie anschließend das Veröffentlichen:
 
 ```bash
-kubectl apply -f nats-users.yaml
-```
-
-Überwachen Sie das Rolling Update der Pods:
-
-```bash
-kubectl get po -w | grep my-nats
-```
-
-Warten Sie, bis alle Pods im Status `Running` sind:
-
-```bash
-kubectl get po | grep my-nats
-```
-
-**Erwartetes Ergebnis:**
-
-```console
-my-nats-0   1/1     Running   0   2m
-my-nats-1   1/1     Running   0   4m
-my-nats-2   1/1     Running   0   6m
-```
-
-### 3. Verbindung mit dem nats CLI testen
-
-Öffnen Sie einen Port-Forward zum NATS-Service:
-
-```bash
-kubectl port-forward svc/my-nats 4222:4222
-```
-
-Testen Sie die Verbindung mit jedem Benutzer:
-
-**Verbindung mit dem Benutzer admin:**
-
-```bash
-nats pub test "Hello from admin" \
-  --server nats://admin:SecureAdminPassword@127.0.0.1:4222
+nats context save hikube-admin --server <nats-url> --user admin --password <admin-password>
+nats --context hikube-admin pub test "Hello from admin"
 ```
 
 **Erwartetes Ergebnis:**
@@ -99,24 +49,10 @@ nats pub test "Hello from admin" \
 Published 16 bytes to "test"
 ```
 
-**Verbindung mit dem Benutzer appuser:**
+**Test mit einem falschen Passwort:**
 
 ```bash
-nats pub app.events "Hello from appuser" \
-  --server nats://appuser:AppUserPassword456@127.0.0.1:4222
-```
-
-**Erwartetes Ergebnis:**
-
-```console
-Published 18 bytes to "app.events"
-```
-
-**Test mit falschem Passwort:**
-
-```bash
-nats pub test "This should fail" \
-  --server nats://admin:wrongpassword@127.0.0.1:4222
+nats pub test "This should fail" --server <nats-url> --user admin --password wrongpassword
 ```
 
 **Erwartetes Ergebnis:**
@@ -126,49 +62,29 @@ nats: error: Authorization Violation
 ```
 
 :::warning
-Wenn `external: true` aktiviert ist, ist der NATS-Cluster von außerhalb des Kubernetes-Clusters erreichbar. Stellen Sie sicher, dass alle Benutzer über starke Passwörter verfügen.
+Wenn der externe Zugriff auf der Instanz aktiviert ist, ist der NATS-Cluster aus dem Internet erreichbar. Stellen Sie sicher, dass alle Benutzer über starke Passwörter verfügen.
 :::
 
-### 4. Aktive Verbindungen überprüfen
+### 4. Aktive Verbindungen prüfen
 
-Sie können die aktiven Verbindungen auf dem NATS-Cluster überprüfen:
-
-```bash
-nats server report connections \
-  --server nats://admin:SecureAdminPassword@127.0.0.1:4222
-```
-
-**Erwartetes Ergebnis:**
-
-```console
-╭──────────────────────────────────────────────────────────╮
-│                   Connection Report                       │
-├──────────┬──────────┬──────────┬──────────┬──────────────┤
-│ Server   │ Conns    │ In Msgs  │ Out Msgs │ In Bytes     │
-├──────────┼──────────┼──────────┼──────────┼──────────────┤
-│ my-nats-0│ 2        │ 5        │ 3        │ 128B         │
-│ my-nats-1│ 1        │ 2        │ 1        │ 64B          │
-│ my-nats-2│ 0        │ 0        │ 0        │ 0B           │
-╰──────────┴──────────┴──────────┴──────────┴──────────────╯
-```
-
-Um die Verbindungsdetails pro Benutzer anzuzeigen:
+Sehen Sie sich mit einem Konto mit ausreichenden Rechten die aktiven Verbindungen an:
 
 ```bash
-nats server report connz \
-  --server nats://admin:SecureAdminPassword@127.0.0.1:4222
+nats --context hikube-admin server report connections
 ```
+
+:::note
+Die Berichte `nats server …` erfordern Zugriff auf das Systemkonto des NATS-Servers. Wird der Befehl abgelehnt, erfragen Sie den Status der Verbindungen beim Support.
+:::
 
 ## Überprüfung
 
-Die Konfiguration ist erfolgreich, wenn:
+Die Konfiguration ist korrekt, wenn:
 
-- Alle NATS-Pods nach dem Update im Status `Running` sind
-- Jeder Benutzer sich mit seinem Passwort verbinden kann
-- Ein falsches Passwort abgelehnt wird (`Authorization Violation`)
-- Aktive Verbindungen im Serverbericht sichtbar sind
+- sich jeder Benutzer mit seinem Passwort verbinden kann
+- ein falsches Passwort abgelehnt wird (`Authorization Violation`)
 
 ## Weiterführende Informationen
 
-- **[NATS API-Referenz](../api-reference.md)**: Vollständige Dokumentation der `users`-Parameter
-- **[JetStream konfigurieren](./configure-jetstream.md)**: Nachrichtenpersistenz und Streaming aktivieren
+- **[Konzepte](../concepts.md)**: Benutzerverwaltung und JetStream
+- **[JetStream konfigurieren](./configure-jetstream.md)**: Persistenz von Nachrichten und Streaming aktivieren

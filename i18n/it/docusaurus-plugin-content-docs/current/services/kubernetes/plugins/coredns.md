@@ -3,98 +3,54 @@ sidebar_position: 2
 title: CoreDNS
 ---
 
-  <!--coredns     <Object> -required-
-    valuesOverride    <Object> -required--->
+# CoreDNS
 
-# 🧩 Dettagli del campo `addons.coredns`
+**CoreDNS** è il **server DNS** dei cluster Kubernetes Hikube. Garantisce la risoluzione dei nomi dei service e dei pod interni al cluster e l'inoltro delle richieste verso i nomi esterni.
 
-Il campo `addons.coredns` definisce la configurazione dell'add-on **CoreDNS**, utilizzato come **servizio DNS** del cluster Kubernetes.
-CoreDNS gestisce la risoluzione dei nomi dei servizi e dei pod interni al cluster, e può essere personalizzato tramite parametri Helm.
+## Nella console
 
-```yaml
-addons:
-  coredns:
-    valuesOverride:
-        coredns:
-          replicaCount: 2
-          servers:
-            - plugins:
-                - name: errors
-                - configBlock: lameduck 10s
-                  name: health
-                - name: ready
-                - configBlock: |-
-                    pods insecure
-                    fallthrough in-addr.arpa ip6.arpa
-                    ttl 33
-                  name: kubernetes
-                  parameters: cluster.local in-addr.arpa ip6.arpa
-                - name: prometheus
-                  parameters: 0.0.0.0:9153
-                - name: forward
-                  parameters: . 10.1.1.2 10.4.1.11
-                - name: cache
-                  parameters: 333
-                - name: loop
-                - name: reload
-                - name: loadbalance
-              port: 53
-              zones:
-                - use_tcp: true
-                  zone: .
-```
+CoreDNS fa parte della **Advanced Configuration** del passaggio **Addons**: è sempre presente nel cluster e non si può disattivare. È possibile soltanto sovrascriverne la configurazione.
 
----
+1. Alla creazione (passaggio **Addons**) oppure da **Edit** > **Extensions & Addons**, espanda il blocco **CoreDNS** della sezione **Advanced Configuration**.
+2. Inserisca i suoi valori in **Helm Configuration (YAML) — optional**.
+3. Confermi con **Next** e poi **Create cluster** (creazione) oppure **Save** (modifica).
 
-## `coredns` (Object) — **Obbligatorio**
+:::warning
+Su un cluster esistente, la console non salva una prima sovrascrittura inserita da **Edit**: il pulsante **Save** conferma l'aggiornamento, ma il valore viene ignorato. Definisca la sovrascrittura alla creazione del cluster, oppure [contatti il supporto](mailto:support@hidora.io). Una sovrascrittura definita alla creazione resta modificabile da **Edit**.
+:::
 
-### Descrizione
+Nella pagina di dettaglio del cluster, la riga **DNS** della sezione **Network** indica **CoreDNS** quando viene applicata una configurazione CoreDNS.
 
-Il campo `coredns` raggruppa la configurazione principale del servizio DNS del cluster.
-Definisce i parametri necessari alla distribuzione e al corretto funzionamento di CoreDNS.
+## Sovrascrivere la configurazione
 
-### Esempio
+Il valore YAML viene trasmesso al chart Helm di CoreDNS, sotto la chiave `coredns`. Ad esempio, per impostare il numero di repliche e le risorse:
 
-```yaml
+```yaml title="coredns-override.yaml"
 coredns:
-  valuesOverride:
-    corends:
-      replicaCount: 2
+  replicaCount: 2
+  resources:
+    limits:
+      cpu: 500m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
 ```
 
----
+Le opzioni disponibili (plugin, zone, cache, forward…) sono descritte nel [chart Helm di CoreDNS](https://github.com/coredns/helm/tree/master/charts/coredns).
 
-## `valuesOverride` (Object) — **Obbligatorio**
+## Utilizzo nel cluster
 
-### Descrizione
+```bash
+# Pod CoreDNS
+kubectl get pods -A | grep coredns
 
-Il campo `valuesOverride` permette di **sovrascrivere i valori predefiniti** della distribuzione CoreDNS, generalmente tramite Helm.
-E utilizzato per personalizzare le risorse, il numero di repliche o la configurazione del servizio DNS (es: plugin, zone, cache).
-Vedere le altre opzioni: https://github.com/coredns/helm/blob/master/charts/coredns/values.yaml
-
-### Esempio
-
-```yaml
-valuesOverride:
-  corends:
-    replicaCount: 2
-    resources:
-      limits:
-        cpu: 500m
-        memory: 256Mi
-      requests:
-        cpu: 100m
-        memory: 128Mi
+# Testare la risoluzione da un pod
+kubectl run dns-test --rm -it --image=busybox --restart=Never -- nslookup kubernetes.default
 ```
 
----
+## Buone pratiche
 
-## 💡 Buone pratiche
-
-- Definire sempre `valuesOverride` per regolare le risorse in base alla dimensione del cluster.
-- Configurare `replicaCount` ad **almeno 2** per garantire l'alta disponibilità del servizio DNS.
-- Monitorare l'utilizzo della memoria: CoreDNS può consumare di più in base al numero di servizi e richieste DNS.
-- Adattare la configurazione dei plugin (es: `forward`, `cache`, `rewrite`) in base alle esigenze del vostro ambiente.
-- Evitare di modificare manualmente il `ConfigMap` di CoreDNS: preferire una distribuzione gestita tramite `valuesOverride`.
-
----
+- Mantenga almeno **2 repliche** per garantire l'alta disponibilità del DNS.
+- Monitori la memoria: il consumo di CoreDNS aumenta con il numero di service e di richieste.
+- Non modifichi manualmente il `ConfigMap` di CoreDNS nel cluster: utilizzi la sovrascrittura nella console, altrimenti le sue modifiche verranno sovrascritte.

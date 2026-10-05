@@ -1,176 +1,106 @@
 ---
-title: "Come aggiungere e modificare un node group"
+title: "Come aggiungere e modificare un gruppo di nodi"
 ---
 
-# Come aggiungere e modificare un node group
+# Come aggiungere e modificare un gruppo di nodi
 
-I node group permettono di segmentare i nodi del vostro cluster Kubernetes in base alle esigenze dei vostri workload. Questa guida spiega come aggiungere, modificare e rimuovere node group nella vostra configurazione Hikube.
+I gruppi di nodi consentono di suddividere i nodi del cluster Kubernetes in base alle esigenze dei suoi workload. Questa guida spiega come aggiungere, modificare ed eliminare gruppi di nodi dalla console Hikube.
 
 ## Prerequisiti
 
 - Un cluster Kubernetes Hikube distribuito (vedere l'[avvio rapido](../quick-start.md))
-- `kubectl` configurato per interagire con l'API Hikube
-- Il file YAML di configurazione del vostro cluster
+- Il kubeconfig del cluster scaricato dalla console (pulsante **Kubeconfig**), per verificare i nodi con `kubectl`
 
-## Fasi
+## Passaggi
 
-### 1. Comprendere i tipi di istanze
+### 1. Comprendere i tipi di istanza
 
 Hikube propone tre serie di istanze adatte a diversi casi d'uso:
 
-| Serie | Rapporto CPU:RAM | Caso d'uso |
-|-------|------------------|------------|
-| **S (Standard)** | 1:2 | Workload generali, applicazioni web |
-| **U (Universal)** | 1:4 | Workload bilanciati, database |
-| **M (Memory Optimized)** | 1:8 | Applicazioni ad alta intensita di memoria, cache |
+| Serie | Rapporto CPU:RAM | Casi d'uso |
+|-------|---------------|-------------|
+| **Standard (S)** | 1:2 | Uso economico, sviluppo, test |
+| **Universal (U)** | 1:4 | Uso generale: server web, applicazioni |
+| **Memory (M)** | 1:8 | Ottimizzata per la memoria: database, cache |
 
-**Dettaglio delle istanze disponibili:**
+Il dettaglio dei modelli di ogni serie si trova nei [concetti](../concepts.md#tipi-di-istanza).
 
-| Istanza | vCPU | RAM |
-|---------|------|-----|
-| `s1.small` | 1 | 2 GB |
-| `s1.medium` | 2 | 4 GB |
-| `s1.large` | 4 | 8 GB |
-| `s1.xlarge` | 8 | 16 GB |
-| `s1.2xlarge` | 16 | 32 GB |
-| `s1.4xlarge` | 32 | 64 GB |
-| `s1.8xlarge` | 64 | 128 GB |
-| `u1.medium` | 1 | 4 GB |
-| `u1.large` | 2 | 8 GB |
-| `u1.xlarge` | 4 | 16 GB |
-| `u1.2xlarge` | 8 | 32 GB |
-| `u1.4xlarge` | 16 | 64 GB |
-| `u1.8xlarge` | 32 | 128 GB |
-| `m1.large` | 2 | 16 GB |
-| `m1.xlarge` | 4 | 32 GB |
-| `m1.2xlarge` | 8 | 64 GB |
-| `m1.4xlarge` | 16 | 128 GB |
-| `m1.8xlarge` | 32 | 256 GB |
+### 2. Aprire la pagina di modifica del cluster
 
-### 2. Aggiungere un node group
+1. Nella console, apra **Infrastructure** > **Kubernetes**.
+2. Apra il menu **Actions** del cluster e scelga **Edit** (oppure faccia clic su **Edit** dalla pagina di dettaglio del cluster).
 
-Per aggiungere un nuovo node group, aggiungete una voce sotto `spec.nodeGroups` nel vostro file di configurazione del cluster:
+La pagina di modifica presenta le sezioni **General information**, **Node groups** ed **Extensions & Addons**, oltre agli indicatori di quota del progetto.
 
-```yaml title="cluster-with-compute.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Kubernetes
-metadata:
-  name: my-cluster
-spec:
-  controlPlane:
-    replicas: 3
+### 3. Aggiungere un gruppo di nodi
 
-  nodeGroups:
-    # Node group esistente
-    general:
-      minReplicas: 2
-      maxReplicas: 5
-      instanceType: "s1.large"
-      ephemeralStorage: 50Gi
-      roles:
-        - ingress-nginx
-
-    # Nuovo node group per il compute intensivo
-    compute:
-      minReplicas: 1
-      maxReplicas: 10
-      instanceType: "u1.4xlarge"
-      ephemeralStorage: 100Gi
-      roles: []
-```
+1. Nella sezione **Node groups**, faccia clic su **Add node group**. Si apre una nuova scheda.
+2. Compili i campi:
+   - **Group name**: ad esempio `compute` (da 3 a 16 caratteri: lettere minuscole, cifre e trattini);
+   - **Ephemeral storage size**: ad esempio 100 GB;
+   - **Minimum nodes** e **Maximum nodes**: ad esempio 1 e 10;
+   - **Instance type**: ad esempio serie **Universal (U)**, dimensione **4XLarge** (`u1.4xlarge`);
+   - **Exposed on the internet (Public IP)**: da attivare solo se questo gruppo deve ricevere il traffico in ingresso (Ingress NGINX);
+   - **GPU**: se necessario, vedere [Aggiungere GPU](#5-aggiungere-gpu).
+3. Faccia clic su **Save**.
 
 :::tip
-Scegliete un nome descrittivo per i vostri node group (`compute`, `web`, `monitoring`, `gpu`) per facilitare la gestione del cluster.
+Scelga un nome descrittivo per i gruppi (`compute`, `web`, `monitoring`, `gpu`) per facilitare la gestione del cluster.
 :::
 
-### 3. Modificare un node group esistente
+### 4. Modificare un gruppo esistente
 
-Per modificare un node group, aggiornate i campi desiderati nel vostro file YAML. Ad esempio, per cambiare il tipo di istanza e aumentare l'archiviazione effimera:
-
-```yaml title="cluster-updated.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Kubernetes
-metadata:
-  name: my-cluster
-spec:
-  controlPlane:
-    replicas: 3
-
-  nodeGroups:
-    general:
-      minReplicas: 2
-      maxReplicas: 5
-      instanceType: "u1.xlarge"       # Modificato: da s1.large a u1.xlarge
-      ephemeralStorage: 100Gi          # Modificato: da 50Gi a 100Gi
-      roles:
-        - ingress-nginx
-```
+Nella sezione **Node groups**, espanda la scheda del gruppo, modifichi i campi desiderati (tipo di istanza, storage effimero, numero minimo o massimo di nodi, esposizione), quindi faccia clic su **Save**.
 
 :::warning
-Il cambio di `instanceType` provoca un rolling update dei nodi del gruppo. Assicuratevi che il vostro cluster disponga di capacità sufficiente per assorbire il carico durante l'aggiornamento.
+La modifica del tipo di istanza sostituisce tutti i nodi del gruppo: la piattaforma crea i nuovi nodi e rimuove i vecchi uno alla volta, senza attendere che ciascun sostituto sia pronto. Un gruppo con un solo nodo è quindi indisponibile durante la sostituzione (alcuni minuti): preveda almeno due nodi per i carichi di lavoro che non tollerano interruzioni. La quota del progetto deve poter accogliere i nodi aggiuntivi durante la sostituzione.
 :::
 
-### 4. Rimuovere un node group
+:::note
+Eviti di rinominare un gruppo esistente: un gruppo rinominato viene trattato come un nuovo gruppo.
+:::
 
-Per rimuovere un node group, eliminate semplicemente il suo blocco dalla configurazione e ri-applicate:
+### 5. Aggiungere GPU
 
-```yaml title="cluster-simplified.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Kubernetes
-metadata:
-  name: my-cluster
-spec:
-  controlPlane:
-    replicas: 3
+La sezione **GPU** di una scheda compare solo se sono disponibili GPU per il suo progetto.
 
-  nodeGroups:
-    general:
-      minReplicas: 2
-      maxReplicas: 5
-      instanceType: "s1.large"
-      ephemeralStorage: 50Gi
-      roles:
-        - ingress-nginx
-    # Il node group "compute" è stato rimosso
-```
+- Per un **nuovo** gruppo, selezioni il modello e il numero di GPU per nodo. L'addon **GPU Operator** viene quindi attivato automaticamente e non può più essere deselezionato.
+- Un gruppo **creato senza GPU** non può riceverne: aggiunga un nuovo gruppo di nodi GPU.
+- Un gruppo **creato con GPU** può cambiare modello o numero, ma deve mantenere almeno una GPU: per tornare a nodi senza GPU, aggiunga piuttosto un nuovo gruppo senza GPU.
+
+Vedere anche [Effettuare il provisioning di GPU in Kubernetes](../../gpu/how-to/provision-gpu-kubernetes.md).
+
+### 6. Eliminare un gruppo di nodi
 
 :::warning
-Prima di rimuovere un node group, assicuratevi che i workload in esecuzione su di esso possano essere ripianificati su altri gruppi. Utilizzate `kubectl drain` sui nodi interessati se necessario.
+Prima di eliminare un gruppo, si assicuri che i workload in esecuzione possano essere ripianificati su altri gruppi. Se necessario, utilizzi `kubectl drain` sui nodi interessati.
 :::
 
-### 5. Applicare le modifiche
+1. Nella sezione **Node groups**, faccia clic sull'icona **Remove this group** della scheda interessata.
+2. Faccia clic su **Save**.
 
-Applicate le modifiche con `kubectl`:
-
-```bash
-kubectl apply -f cluster-updated.yaml
-```
+Il primo gruppo del cluster non può essere eliminato; un cluster deve sempre mantenere almeno un gruppo di nodi.
 
 ## Verifica
 
-Verificate che le modifiche siano state prese in carico:
+Dopo il salvataggio, la console mostra «Cluster updated» e torna alla pagina di dettaglio. La sezione **Node Pools** elenca ogni gruppo con il relativo tipo di istanza e il numero di nodi attivi.
+
+Nel cluster, osservi l'arrivo dei nuovi nodi:
 
 ```bash
-# Verificare la configurazione del cluster
-kubectl get kubernetes my-cluster -o yaml | grep -A 15 nodeGroups
-
-# Osservare i nodi del cluster figlio
-kubectl --kubeconfig=cluster-admin.yaml get nodes -w
-
-# Verificare le macchine in corso di provisioning
-kubectl get machines -l cluster.x-k8s.io/cluster-name=my-cluster
+export KUBECONFIG=~/Downloads/kubeconfig-<nome-del-cluster>.yaml
+kubectl get nodes -w
 ```
 
 **Risultato atteso:**
 
 ```console
-NAME                         STATUS   ROLES    AGE   VERSION
-my-cluster-general-xxxxx     Ready    <none>   10m   v1.29.0
-my-cluster-compute-yyyyy     Ready    <none>   2m    v1.29.0
+NAME                        STATUS   ROLES    AGE   VERSION
+my-cluster-general-xxxxx    Ready    <none>   10m   v1.xx.x
+my-cluster-compute-yyyyy    Ready    <none>   2m    v1.xx.x
 ```
 
 ## Per approfondire
 
-- [Riferimento API](../api-reference.md) -- Dettaglio completo dei campi `nodeGroups`
-- [Concetti](../concepts.md) -- Architettura dei node group Hikube
-- [Come configurare l'autoscaling](./configure-autoscaling.md) -- Gestire lo scaling automatico dei node group
+- [Concetti](../concepts.md): descrizione di ogni campo di un gruppo di nodi
+- [Come configurare l'autoscaling](./configure-autoscaling.md): gestire lo scaling automatico dei gruppi

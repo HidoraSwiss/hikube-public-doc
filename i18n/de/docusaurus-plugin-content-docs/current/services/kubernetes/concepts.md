@@ -5,46 +5,57 @@ title: Konzepte
 
 # Konzepte — Kubernetes
 
+## Terminologie
+
+| Begriff | Definition |
+|---------|------------|
+| **Projekt** | Isolierter Bereich Ihrer Organisation mit Quotas (CPU, Arbeitsspeicher, Speicher), in dem der Cluster und seine Nodes erstellt werden. Früher „Tenant“ genannt. |
+| **Cluster** | Verwalteter Kubernetes-Cluster: eine von Hikube betriebene Control Plane und eine oder mehrere Node-Gruppen. |
+| **Control Plane** | Komponenten, die den Cluster steuern (API Server, Scheduler, Controller Manager, etcd), von Hikube gehostet. |
+| **Node-Gruppe** | Gruppe homogener Worker-Nodes (gleicher Instanztyp, gleicher Speicher) mit eigenen Autoscaling-Grenzen. Die Detailseite des Clusters zeigt sie unter **Node Pools** an. |
+| **Addon** | Optionale Komponente, die von der Plattform im Cluster installiert und gewartet wird (Cert-Manager, Ingress NGINX usw.). |
+| **Kubeconfig** | Zugriffsdatei für den Cluster, die über die Detailseite des Clusters in der Konsole heruntergeladen wird. |
+
 ## Architektur
 
-Das folgende Schema veranschaulicht die Struktur und die wichtigsten Interaktionen des **Kubernetes-Clusters von Hikube**, einschließlich der Hochverfügbarkeit der Steuerungsebene, der Knotenverwaltung, der Datenpersistenz und der regionsübergreifenden Replikation.
+Das folgende Schema veranschaulicht die Struktur und die wichtigsten Interaktionen des **Hikube-Kubernetes-Clusters**, einschließlich der Hochverfügbarkeit der Control Plane, der Verwaltung der Nodes, der Datenpersistenz und der regionenübergreifenden Replikation.
 
 <div class="only-light">
-  <img src="/img/hikube-kubernetes-architecture.svg" alt="Helles Logo"/>
+  <img src="/img/hikube-kubernetes-architecture.svg" alt="Architekturdiagramm eines Hikube-Kubernetes-Clusters"/>
 </div>
 <div class="only-dark">
-  <img src="/img/hikube-kubernetes-architecture-dark.svg" alt="Dunkles Logo"/>
+  <img src="/img/hikube-kubernetes-architecture-dark.svg" alt="Architekturdiagramm eines Hikube-Kubernetes-Clusters"/>
 </div>
 
 ---
 
 ### Hauptkomponenten des Clusters
 
-#### Etcd-Cluster
+#### Etcd Cluster
 
 - Enthält mehrere untereinander replizierte **etcd**-Instanzen.
 - Gewährleistet die **Konsistenz der Zustandsspeicherung des Kubernetes-Clusters** (Informationen zu Pods, Services, Konfigurationen usw.).
-- Die interne Replikation zwischen den `etcd`-Knoten garantiert die **Fehlertoleranz**.
+- Die interne Replikation zwischen den `etcd`-Nodes garantiert die **Ausfalltoleranz**.
 
 #### Control Plane
 
-- Bestehend aus dem API Server, dem Scheduler und dem Controller Manager.
+- Besteht aus API Server, Scheduler und Controller Manager.
 - Aufgabe:
-  - **Plant die Workloads** (Pods, Deployments usw.) auf den verfügbaren Knoten.
-  - **Interagiert mit etcd**, um den Clusterzustand zu lesen/schreiben.
+  - **Plant die Workloads** (Pods, Deployments usw.) auf den verfügbaren Nodes ein.
+  - **Interagiert mit etcd**, um den Zustand des Clusters zu lesen und zu schreiben.
 
 #### Node Groups
 
-- Jede Gruppe enthält mehrere **Worker-Knoten (Worker Nodes)**.
-- Die Workloads (Pods) werden auf diesen Knoten bereitgestellt.
-- Die Knoten kommunizieren mit dem Control Plane, um ihre Aufgaben zu empfangen.
-- Sie lesen und schreiben ihre Daten in den **Persistent Volumes (PV)** von Kubernetes.
+- Jede Gruppe enthält mehrere **Worker-Nodes**.
+- Die Workloads (Pods) werden auf diesen Nodes bereitgestellt.
+- Die Nodes kommunizieren mit der Control Plane, um ihre Aufgaben zu erhalten.
+- Sie lesen und schreiben ihre Daten in die Kubernetes-**Persistent Volumes (PV)**.
 
 #### Kubernetes PV Data
 
-- Repräsentiert den **persistenten Speicher**, der von den Pods genutzt wird.
+- Stellt den von den Pods verwendeten **persistenten Speicher** dar.
 - Die Daten der Workloads werden **in diesen Speicher geschrieben und daraus gelesen**.
-- Diese Schicht ist in die Hikube-Replikation integriert, um die Datenverfügbarkeit zu gewährleisten.
+- Diese Schicht ist in die Hikube-Replikation integriert, um die Verfügbarkeit der Daten zu gewährleisten.
 
 ---
 
@@ -53,10 +64,10 @@ Das folgende Schema veranschaulicht die Struktur und die wichtigsten Interaktion
 #### Hikube Replication Data Layer
 
 - Dient als Schnittstelle zwischen Kubernetes und den **regionalen Speichersystemen**.
-- Repliziert automatisch die PV-Daten in mehrere Regionen für:
+- Repliziert die Daten der PVs automatisch in mehrere Regionen für:
   - **Hochverfügbarkeit**,
-  - **Resilienz bei regionalen Ausfällen**,
-  - und **Dienstkontinuität**.
+  - **Resilienz gegenüber regionalen Ausfällen**,
+  - und **Betriebskontinuität**.
 
 #### Regionale Speicher
 
@@ -64,297 +75,218 @@ Das folgende Schema veranschaulicht die Struktur und die wichtigsten Interaktion
 - **Region 2** → Gland Data Storage
 - **Region 3** → Lucerne Data Storage
 
-Jede Region verfügt über ein eigenes Speicher-Backend, die alle über die Hikube-Schicht synchronisiert werden.
+Jede Region verfügt über ein eigenes Speicher-Backend, alle über die Hikube-Schicht synchronisiert.
 
 ---
 
-### Kommunikationsflüsse
+### Kommunikationsfluss
 
-1. Die **etcd-Knoten** synchronisieren sich untereinander, um einen konsistenten globalen Zustand aufrechtzuerhalten.
-2. Das **Control Plane** liest/schreibt in etcd, um den Clusterzustand zu speichern.
-3. Das **Control Plane** plant die Workloads auf den **Node Groups**.
+1. Die **etcd-Nodes** synchronisieren sich untereinander, um einen konsistenten globalen Zustand zu erhalten.
+2. Die **Control Plane** liest und schreibt in etcd, um den Zustand des Clusters zu speichern.
+3. Die **Control Plane** plant die Workloads auf den **Node Groups** ein.
 4. Die **Node Groups** interagieren mit den **Kubernetes-PVs**, um Daten zu speichern oder abzurufen.
-5. Die **PV-Daten** werden über den **Hikube Replication Data Layer** in die **3 Regionen** repliziert.
+5. Die **PV Data** werden über die **Hikube Replication Data Layer** in die **3 Regionen** repliziert.
 
 ---
 
 ### Funktionale Zusammenfassung
 
 | Schicht | Hauptfunktion | Technologie |
-|--------|---------------------|-------------|
-| Etcd-Cluster | Speicherung des Clusterzustands | etcd |
-| Control Plane | Verwaltung und Planung der Workloads | Kubernetes |
-| Node Groups | Ausführung der Workloads | kubelet, Container Runtime |
+|---------|---------------|-------------|
+| Etcd Cluster | Speicherung des Cluster-Zustands | etcd |
+| Control Plane | Verwaltung und Einplanung der Workloads | Kubernetes |
+| Node Groups | Ausführung der Workloads | kubelet, container runtime |
 | PV Data | Persistenter Speicher | Kubernetes Persistent Volumes |
-| Hikube Data Layer | Multi-Regions-Replikation und -Synchronisation | Hikube |
-| Data Storage | Regionaler physischer Speicher | Geneva / Gland / Lucerne |
+| Hikube Data Layer | Replikation und Synchronisation über mehrere Regionen | Hikube |
+| Data Storage | Physischer regionaler Speicher | Geneva / Gland / Lucerne |
 
 ---
 
-### Globales Ziel
+### Gesamtziel
 
 Diese Architektur gewährleistet:
 
 - **Hochverfügbarkeit** des Kubernetes-Clusters.
-- **Geografische Resilienz** durch regionsübergreifende Replikation.
+- **Geografische Resilienz** dank regionenübergreifender Replikation.
 - **Datenintegrität** über etcd und den persistenten Speicher.
-- **Horizontale Skalierbarkeit** mit den Node Groups.
+- Horizontale **Skalierbarkeit** mit den Node Groups.
 
 ---
+
 
 ## Control Plane
 
-Das Feld `controlPlane` definiert die Konfiguration der Steuerungsebene des verwalteten Kubernetes-Clusters.
-Es legt die zugewiesenen Ressourcen für jede Schlüsselkomponente (API Server, Scheduler, Controller Manager, Konnectivity) sowie die Anzahl der Replikas für die Hochverfügbarkeit fest.
+Die Control Plane wird im Schritt **General** des Erstellungsassistenten mit zwei Feldern dimensioniert.
 
-```yaml title="control-plane.yaml"
-controlPlane:
-  apiServer:
-    resources:
-      cpu: 2
-      memory: 4Gi
-    resourcesPreset: small
-  controllerManager:
-    resources:
-      cpu: 2
-      memory: 2Gi
-    resourcesPreset: small
-  konnectivity:
-    server:
-      resources:
-        cpu: 1
-        memory: 1Gi
-      resourcesPreset: nano
-  scheduler:
-    resources:
-      cpu: 1
-      memory: 512Mi
-    resourcesPreset: micro
-  replicas: 3
-```
+### Control Plane Instance Size
 
----
+Ressourcen-Preset, das auf alle Komponenten der Control Plane angewendet wird (API Server, Controller Manager, Scheduler). Die Liste wird von der Plattform bereitgestellt, und jede Option zeigt ihre CPU und ihren Arbeitsspeicher an. Das Preset **Small** ist standardmäßig ausgewählt.
 
-### `apiServer` (Object)
+| Preset | Empfohlene Nutzung (Hilfetext der Konsole) |
+|--------|--------------------------------------------|
+| **Small** | Geringe Last, Entwicklung oder Tests. Kostenoptimiert. |
+| **Medium** | Standardnutzung mit moderater Last. Gutes Verhältnis von Leistung zu Kosten. |
+| **Large** | Intensive Nutzung oder hoher Traffic. Maximale Leistung. |
 
-Der `apiServer` ist die zentrale Komponente der Kubernetes-Steuerungsebene.
-Er verarbeitet alle Anfragen an die Kubernetes-API und stellt die Kommunikation zwischen den internen Clusterkomponenten sicher.
+Die Plattform bietet außerdem kleinere (`nano`, `micro`) und größere (`xlarge`, `2xlarge`) Presets an.
 
-| Feld | Typ | Erforderlich | Beschreibung |
-|-------|------|-------------|--------------|
-| `resources` | Object | Ja | Definiert die dem API Server zugewiesenen CPU- und Speicherressourcen |
-| `resources.cpu` | string | Nein | Anzahl der zugewiesenen vCPUs (z.B.: `2`) |
-| `resources.memory` | string | Nein | Zugewiesene Speichermenge (z.B.: `4Gi`) |
-| `resourcesPreset` | string | Ja | Vordefiniertes Ressourcenprofil (`nano`, `micro`, `small`, `medium`, `large`, `xlarge`, `2xlarge`) |
+:::warning
+Mit **Small** (512 MiB pro Komponente) kann dem API Server der Speicher ausgehen, sodass er in einer Schleife neu startet, insbesondere während der Installation der Addons. Wählen Sie mindestens **Medium**: Die Größe der Control Plane lässt sich nach der Erstellung in der Konsole nicht mehr ändern.
+:::
 
-### `controllerManager` (Object)
+:::note
+Eine Dimensionierung pro Komponente (dedizierte Ressourcen für API Server, Scheduler usw.) wird in der Konsole nicht angeboten; wenden Sie sich an den Support.
+:::
 
-Der `controllerManager` führt die **Kontrollschleifen** von Kubernetes (Reconciliation Loops) aus.
-Er stellt die Erstellung, Aktualisierung und Löschung von Ressourcen (Pods, Services usw.) gemäß dem gewünschten Clusterzustand sicher.
+### Control Plane High Availability
 
-| Feld | Typ | Erforderlich | Beschreibung |
-|-------|------|-------------|--------------|
-| `resources` | Object | Ja | Legt die CPU-/Speicherressourcen für den Controller Manager fest |
-| `resources.cpu` | string | Nein | Anzahl der reservierten vCPUs |
-| `resources.memory` | string | Nein | Zugewiesene Speichermenge |
-| `resourcesPreset` | string | Ja | Vordefinierte Größe (`nano`, `micro`, `small`, `medium` usw.) |
+Anzahl der Instanzen der Control Plane: **1**, **3 (HA)** oder **5 (HA)**. Der Standardwert ist 3.
+Eine ungerade Anzahl an Instanzen garantiert das Quorum von `etcd`; verwenden Sie in der Produktion mindestens 3 Instanzen.
 
-### `konnectivity` (Object)
+Unter dem Feld zeigt die Konsole den auf die Projekt-Quota angerechneten Verbrauch an, zum Beispiel „→ 3 × Small = … CPU · … GiB counted against the quota“.
 
-Der **Konnectivity**-Dienst verwaltet die sichere Kommunikation zwischen der Steuerungsebene und den Knoten (Agents).
-Er ersetzt den ehemaligen `kube-proxy` für ausgehende Verbindungen der Knoten und optimiert die Netzwerkkonnektivität.
-
-| Feld | Typ | Erforderlich | Beschreibung |
-|-------|------|-------------|--------------|
-| `server.resources` | Object | Ja | Legt die CPU-/Speicherressourcen des Konnectivity-Servers fest |
-| `server.resources.cpu` | string | Nein | Anzahl der vCPUs |
-| `server.resources.memory` | string | Nein | Speichermenge |
-| `server.resourcesPreset` | string | Ja | Vordefiniertes Profil (`nano`, `micro`, `small`, `medium` usw.) |
-
-### `scheduler` (Object)
-
-Der `scheduler` bestimmt, auf welchem Knoten jeder Pod ausgeführt werden soll, basierend auf Ressourcenbeschränkungen, Affinitäten und Topologien.
-
-| Feld | Typ | Erforderlich | Beschreibung |
-|-------|------|-------------|--------------|
-| `resources` | Object | Ja | Definiert die dem Scheduler zugewiesenen Ressourcen |
-| `resources.cpu` | string | Nein | Anzahl der vCPUs |
-| `resources.memory` | string | Nein | Speichermenge |
-| `resourcesPreset` | string | Ja | Vordefinierte Größe (`nano`, `micro`, `small`, `medium` usw.) |
-
-### `replicas` (integer)
-
-Das Feld `replicas` definiert die **Anzahl der Instanzen der Steuerungsebene**.
-Eine ungerade Anzahl von Replikas (üblicherweise `3`) wird empfohlen, um die Hochverfügbarkeit und das Quorum in `etcd` zu gewährleisten.
-
----
-
-### Typen von resourcesPreset
-
-```yaml
-resourcesPreset: "nano"     # 0.1 CPU, 128 MiB RAM
-resourcesPreset: "micro"    # 0.25 CPU, 256 MiB RAM
-resourcesPreset: "small"    # 0.5 CPU, 512 MiB RAM
-resourcesPreset: "medium"   # 0.5 CPU, 1 GiB RAM
-resourcesPreset: "large"    # 1 CPU, 2 GiB RAM
-resourcesPreset: "xlarge"   # 2 CPU, 4 GiB RAM
-resourcesPreset: "2xlarge"  # 4 CPU, 8 GiB RAM
-```
-
-:::tip Best Practices für das Control Plane
-- Setzen Sie immer `replicas: 3` für Redundanz.
-- Verwenden Sie konsistente `resourcesPreset` zwischen den Komponenten.
-- Passen Sie die Ressourcen je nach Last an (Produktionscluster → `medium` oder `large`).
-- Dimensionieren Sie den `apiServer` nicht zu gering, er ist die am stärksten beanspruchte Komponente.
+:::warning
+Größe und Anzahl der Instanzen der Control Plane lassen sich nach der Erstellung des Clusters in der Konsole nicht ändern. Um sie zu ändern, wenden Sie sich an den Support.
 :::
 
 ---
 
-## Node Groups
+## Node-Gruppen
 
-Das Feld `nodeGroup` definiert die Konfiguration einer Knotengruppe (Workers) innerhalb des Kubernetes-Clusters.
-Es ermöglicht die Angabe des Instanztyps, der Ressourcen, der Anzahl der Replikas sowie der zugehörigen Rollen und GPUs.
+Die Node-Gruppen werden im Schritt **Nodes** des Assistenten konfiguriert (Titel **Worker Node Groups**). Ein Cluster enthält mindestens eine Gruppe; **Add node group** legt eine neue an. Jede Gruppe ist eine einklappbare Karte, die ihre Größe, ihre Grenzen und ihren Speicher zusammenfasst.
 
-```yaml title="node-group.yaml"
-nodeGroups:
-  <name>:
-    ephemeralStorage: 100Gi
-    gpus:
-      - name: nvidia.com/AD102GL_L40S
-    instanceType: u1.xlarge
-    maxReplicas: 5
-    minReplicas: 2
-    resources:
-      cpu: 4
-      memory: 16Gi
-    roles:
-      - ingress-nginx
-```
+| Feld | Beschreibung | Standardwert |
+|------|--------------|--------------|
+| **Group name** | 3 bis 16 Zeichen: Kleinbuchstaben, Ziffern und Bindestriche; beginnt mit einem Buchstaben, endet mit einem Buchstaben oder einer Ziffer | `worker-pool-1`, `worker-pool-2`… |
+| **Ephemeral storage size** | Speicherplatz, der den Pods auf jedem Node zugewiesen wird, in GB (mindestens 5 GB) | 20 GB |
+| **Minimum nodes** | Anzahl der Nodes, die immer vorhanden sind. 0 ist zulässig | 1 |
+| **Maximum nodes** | Obergrenze des Autoscalings (zwischen 1 und 100, größer oder gleich dem Minimum; empfohlenes Maximum 50) | 3 |
+| **Instance type** | Größe der Nodes, gewählt nach Serie und dann nach Größe | keiner (Auswahl erforderlich) |
+| **Exposed on the internet (Public IP)** | Die Nodes der Gruppe hosten den Ingress-NGINX-Controller und empfangen den eingehenden Traffic | für die erste Gruppe aktiviert |
+| **GPU** | Modell und Anzahl der GPUs, die an jeden Node der Gruppe angebunden werden | keine |
 
----
-
-### `ephemeralStorage` (string)
-
-Definiert die Größe des **ephemeren Speichers** pro Knoten der Gruppe (z.B.: `100Gi`).
-Dieser Speicher wird für temporäre Daten, Caches oder Logdateien verwendet. Es ist ein Skalarwert (kein Objekt `{size: …}`).
-
-### `gpus` (Array)
-
-Listet die auf den Knoten der Gruppe verfügbaren **GPUs** auf, die für rechenintensive Workloads (KI, ML usw.) verwendet werden.
-
-| Feld | Typ | Erforderlich | Beschreibung |
-|-------|------|-------------|--------------|
-| `name` | string | Ja | Name der GPU oder Kartentyp (`nvidia.com/AD102GL_L40S` oder `nvidia.com/GA100_A100_PCIE_80GB`) |
-
-### `instanceType` (string)
-
-Gibt den **Instanztyp** an, der für die Knoten verwendet wird.
-
-#### Serie S (Standard) — Verhältnis 1:2
-
-Optimiert für allgemeine Workloads mit geteilter und burstfähiger CPU.
-
-```yaml
-instanceType: "s1.small"     # 1 vCPU, 2 GB RAM
-instanceType: "s1.medium"    # 2 vCPU, 4 GB RAM
-instanceType: "s1.large"     # 4 vCPU, 8 GB RAM
-instanceType: "s1.xlarge"    # 8 vCPU, 16 GB RAM
-instanceType: "s1.3large"    # 12 vCPU, 24 GB RAM
-instanceType: "s1.2xlarge"   # 16 vCPU, 32 GB RAM
-instanceType: "s1.3xlarge"   # 24 vCPU, 48 GB RAM
-instanceType: "s1.4xlarge"   # 32 vCPU, 64 GB RAM
-instanceType: "s1.8xlarge"   # 64 vCPU, 128 GB RAM
-```
-
-#### Serie U (Universal) — Verhältnis 1:4
-
-Optimiert für ausgewogene Workloads mit mehr Speicher.
-
-```yaml
-instanceType: "u1.medium"    # 1 vCPU, 4 GB RAM
-instanceType: "u1.large"     # 2 vCPU, 8 GB RAM
-instanceType: "u1.xlarge"    # 4 vCPU, 16 GB RAM
-instanceType: "u1.2xlarge"   # 8 vCPU, 32 GB RAM
-instanceType: "u1.4xlarge"   # 16 vCPU, 64 GB RAM
-instanceType: "u1.8xlarge"   # 32 vCPU, 128 GB RAM
-```
-
-#### Serie M (Memory Optimized) — Verhältnis 1:8
-
-Optimiert für Anwendungen mit hohem Speicherbedarf.
-
-```yaml
-instanceType: "m1.large"     # 2 vCPU, 16 GB RAM
-instanceType: "m1.xlarge"    # 4 vCPU, 32 GB RAM
-instanceType: "m1.2xlarge"   # 8 vCPU, 64 GB RAM
-instanceType: "m1.4xlarge"   # 16 vCPU, 128 GB RAM
-instanceType: "m1.8xlarge"   # 32 vCPU, 256 GB RAM
-```
-
-### `maxReplicas` / `minReplicas` (integer)
-
-- `maxReplicas`: **maximale** Anzahl von Knoten, die bereitgestellt werden können (begrenzt das Autoscaling).
-- `minReplicas`: **minimale** Anzahl garantierter Knoten in dieser Gruppe.
-
-### `resources` (Object)
-
-Definiert die jedem Knoten der Gruppe **zugewiesenen Ressourcen** (CPU und Speicher).
-
-| Feld | Typ | Erforderlich | Beschreibung |
-|-------|------|-------------|--------------|
-| `cpu` | string | Nein | Anzahl der pro Knoten zugewiesenen vCPUs (z.B.: `4`) |
-| `memory` | string | Nein | Zugewiesene Speichermenge pro Knoten (z.B.: `16Gi`) |
-
-### `roles` (Array)
-
-Listet die den Knoten der Gruppe zugewiesenen **Rollen** auf (z.B.: `ingress-nginx`).
-
----
-
-### Beispiele für Node Groups
-
-#### Allgemeine Node Group
-
-```yaml title="node-group-general.yaml"
-nodeGroups:
-  general:
-    minReplicas: 2
-    maxReplicas: 10
-    instanceType: "s1.large"
-    ephemeralStorage: 50Gi
-    roles:
-      - ingress-nginx
-```
-
-#### Rechenintensive Node Group
-
-```yaml title="node-group-compute.yaml"
-nodeGroups:
-  compute:
-    minReplicas: 0
-    maxReplicas: 5
-    instanceType: "u1.4xlarge"  # 16 vCPU, 64 GB RAM
-    ephemeralStorage: 100Gi
-    roles: []
-```
-
-#### Speicheroptimierte Node Group
-
-```yaml title="node-group-memory.yaml"
-nodeGroups:
-  memory-intensive:
-    minReplicas: 1
-    maxReplicas: 3
-    instanceType: "m1.xlarge"   # 4 vCPU, 32 GB RAM
-    ephemeralStorage: 30Gi
-    resources:
-      cpu: "6"       # Override: 6 vCPU statt 4
-      memory: "48Gi" # Override: 48 GB statt 32
-```
-
-:::tip Best Practices für Node Groups
-- Passen Sie `minReplicas` und `maxReplicas` an die Skalierungsanforderungen an.
-- Verwenden Sie `instanceType` passend zur Arbeitslast.
-- Definieren Sie ausreichend ephemeren Speicher für temporäre Lasten (Logs, Caches).
-- Legen Sie die Rollen klar fest, um die Funktionen der Knoten zu segmentieren (z.B.: Trennung `worker` / `ingress`).
+:::note
+Die erste Node-Gruppe ist immer aus dem Internet erreichbar und kann nicht gelöscht werden. Später hinzugefügte Gruppen sind standardmäßig nicht erreichbar.
 :::
+
+### Instanztypen
+
+Die Auswahl bietet drei Serien. Die genaue Liste der verfügbaren Größen wird von der Plattform bereitgestellt.
+
+#### Serie Standard (S) — Verhältnis 1:2
+
+Kostengünstige Nutzung, für Entwicklung und Tests.
+
+| Größe | vCPU | RAM |
+|-------|------|-----|
+| `s1.small` | 1 | 2 GB |
+| `s1.medium` | 2 | 4 GB |
+| `s1.large` | 4 | 8 GB |
+| `s1.xlarge` | 8 | 16 GB |
+| `s1.3large` | 12 | 24 GB |
+| `s1.2xlarge` | 16 | 32 GB |
+| `s1.3xlarge` | 24 | 48 GB |
+| `s1.4xlarge` | 32 | 64 GB |
+| `s1.8xlarge` | 64 | 128 GB |
+
+#### Serie Universal (U) — Verhältnis 1:4
+
+Allgemeine Nutzung: Webserver, Anwendungen.
+
+| Größe | vCPU | RAM |
+|-------|------|-----|
+| `u1.medium` | 1 | 4 GB |
+| `u1.large` | 2 | 8 GB |
+| `u1.xlarge` | 4 | 16 GB |
+| `u1.2xlarge` | 8 | 32 GB |
+| `u1.4xlarge` | 16 | 64 GB |
+| `u1.8xlarge` | 32 | 128 GB |
+
+#### Serie Memory (M) — Verhältnis 1:8
+
+Speicheroptimiert: Datenbanken, Caches.
+
+| Größe | vCPU | RAM |
+|-------|------|-----|
+| `m1.large` | 2 | 16 GB |
+| `m1.xlarge` | 4 | 32 GB |
+| `m1.2xlarge` | 8 | 64 GB |
+| `m1.4xlarge` | 16 | 128 GB |
+| `m1.8xlarge` | 32 | 256 GB |
+
+### GPU
+
+Der Abschnitt **GPU** einer Gruppe erscheint nur, wenn für Ihr Projekt GPUs verfügbar sind. Dort wählen Sie ein oder mehrere Modelle und deren Anzahl; diese GPUs werden an **jeden** Node der Gruppe angebunden.
+
+Von der Konsole angewendete Regeln:
+
+- sobald eine Gruppe GPUs hat, wird das Addon **GPU Operator** aktiviert und kann nicht mehr abgewählt werden;
+- eine ohne GPU erstellte Gruppe kann keine erhalten: Fügen Sie eine neue Node-Gruppe hinzu, um GPUs zu erhalten;
+- eine mit GPUs erstellte Gruppe kann Modell oder Anzahl ändern, muss aber mindestens eine GPU behalten.
+
+:::warning
+Die GPU-Reservierung wird anhand der maximalen Anzahl an Nodes der Gruppe berechnet: Eine Gruppe mit maximal 4 Nodes und 1 GPU pro Node reserviert 4 GPUs.
+:::
+
+### Nicht angebotene Optionen
+
+Benutzerdefinierte Node-Rollen (außer der Erreichbarkeit aus dem Internet) und das Überschreiben der CPU-/Arbeitsspeicher-Ressourcen einer Größe werden in der Konsole nicht angeboten; wenden Sie sich an den Support.
+
+:::tip Best Practices für Node-Gruppen
+- Passen Sie Minimum und Maximum der Nodes an Ihren Skalierungsbedarf an.
+- Wählen Sie eine Serie, die zur Workload passt (S für allgemeine, U für ausgewogene, M für speicherintensive Workloads).
+- Sehen Sie ausreichend ephemeren Speicher für Images, Logs und Caches vor.
+- Trennen Sie die Rollen nach Gruppen: eine erreichbare Gruppe für eingehenden Traffic, interne Gruppen für Rechenlast.
+:::
+
+---
+
+## Addons
+
+Die Addons werden im Schritt **Addons** des Assistenten ausgewählt (Titel **Extensions and Addons**) und anschließend über die Bearbeitungsseite des Clusters geändert.
+
+### Addons des Clusters
+
+Sie werden über ein Kontrollkästchen aktiviert oder deaktiviert.
+
+| Addon | Beschreibung | Standardmäßig aktiviert |
+|-------|--------------|-------------------------|
+| [Cert-Manager](./plugins/cert-manager.md) | Automatische Verwaltung von SSL/TLS-Zertifikaten | Ja |
+| [Ingress NGINX](./plugins/ingress-nginx.md) | Auf NGINX basierender Ingress-Controller | Ja |
+| [Gateway API](./plugins/gateway-api.md) | Installiert die CRDs der Kubernetes Gateway API (experimenteller Kanal) | Nein |
+| [GPU Operator](./plugins/gpu-operator.md) | Verwaltung der NVIDIA-GPUs im Cluster | Nein (vorgegeben, wenn eine Gruppe GPUs hat) |
+| [HAMi](./plugins/hami.md) | Teilen einer GPU zwischen mehreren Pods | Nein |
+| [Flux CD](./plugins/fluxcd.md) | GitOps Continuous Deployment | Nein |
+| [Monitoring Agents](./plugins/monitoring-agents.md) | Monitoring-Agents für Logs und Metriken | Ja |
+| [Ouroboros](./plugins/ouroboros.md) | Behebt Hairpin-NAT von Ingress NGINX mit dem PROXY-Protokoll | Nein |
+| [Velero](./plugins/velero.md) | Backup und Wiederherstellung | Nein |
+
+Von der Konsole geprüfte Abhängigkeiten:
+
+- **HAMi** erfordert das Addon **GPU Operator**;
+- **Ouroboros** erfordert das Addon **Ingress NGINX**.
+
+### Advanced Configuration
+
+[Cilium](./plugins/cilium.md), [CoreDNS](./plugins/coredns.md) und [Vertical Pod Autoscaler](./plugins/verticalpodautoscaler.md) sind immer im Cluster vorhanden. Sie lassen sich nicht deaktivieren: Sie können lediglich ihren Block aufklappen, um ihre Konfiguration zu überschreiben.
+
+### Überschreiben der Helm-Werte
+
+Jedes Addon (außer Gateway API) akzeptiert ein Feld **Helm Configuration (YAML) — optional**. Der YAML-Wert wird direkt an das Helm-Chart des Addons übergeben und überschreibt dessen Standardwerte. Er muss ein YAML-Mapping (`key: value`) sein; die Konsole lehnt ungültiges YAML ab. Das Link-Symbol neben dem Namen des Addons öffnet die Dokumentation des Charts.
+
+---
+
+## Zugriff auf den Cluster
+
+Sobald der Cluster bereit ist, lädt die Schaltfläche **Kubeconfig** im Abschnitt **Actions** der Detailseite die Datei `kubeconfig-<cluster-name>.yaml` herunter. Diese Datei gewährt administrativen Zugriff auf den Cluster mit `kubectl`, `helm` oder jedem anderen Kubernetes-Client. Das darin enthaltene Client-Zertifikat ist ab der Erstellung des Clusters ein Jahr lang gültig. Siehe [Zugriff und Werkzeuge](./how-to/toolbox.md).
+
+Die API-Adresse des Clusters wird durch das Feld **API Endpoint (Host)** im Schritt **General** festgelegt. Es ist optional: Bleibt es leer, wird sie automatisch von der Plattform erzeugt und ohne Ihr Zutun aufgelöst. Wenn Sie Ihren eigenen Domainnamen eingeben, deckt das Zertifikat des API-Servers ihn ab, der DNS-Eintrag muss jedoch noch bei Ihrem DNS-Anbieter angelegt werden: Fragen Sie beim [Support](mailto:support@hidora.io) nach der Adresse, auf die er zeigen soll.
+
+---
+
+## Lebenszyklus und Quotas
+
+- **Status**: Ein neu erstellter Cluster erscheint in der Liste **Kubernetes Clusters** mit dem Status **Creating** und danach **Ready**, sobald er betriebsbereit ist.
+- **Quotas**: Die Anzeigen **Project Quotas** des Assistenten zählen die Control Plane und jede Node-Gruppe **mit ihrer maximalen Anzahl an Nodes**. Die Erstellung wird blockiert, wenn das Projekt nicht genügend Quota hat.
+- **Änderung**: Über die Schaltfläche **Edit** können Sie Version, API-Endpoint, Node-Gruppen und Addons ändern. Der Name des Clusters kann nicht geändert werden.
+- **Löschen**: Die Schaltfläche **Delete** löscht den Cluster nach Bestätigung seines Namens.

@@ -5,60 +5,68 @@ title: Vue d'ensemble
 
 import NavigationFooter from '@site/src/components/NavigationFooter';
 
-# Machines Virtuelles sur Hikube
+# Machines virtuelles sur Hikube
 
-Les **Machines Virtuelles (VMs)** d'Hikube offrent une virtualisation complète de l'infrastructure matérielle, garantissant l'exécution de systèmes d'exploitation hétérogènes et d'applications métier dans des environnements cloisonnés et conformes aux exigences de sécurité d'entreprise.
+Les **machines virtuelles (VM)** d'Hikube offrent une virtualisation complète de l'infrastructure matérielle, pour exécuter des systèmes d'exploitation hétérogènes et des applications métier dans des environnements cloisonnés.
+
+Dans la [console Hikube](https://console.hikube.cloud), les VM se gèrent depuis le menu **Infrastructure** > **Instances VM** : création guidée, démarrage et arrêt, modification des ressources, des disques et du réseau, suppression.
 
 ---
 
-## 🏗️ Architecture et Fonctionnement
+## Ce que vous pouvez faire depuis la console
 
-### **Séparation Compute et Stockage**
+| Besoin | Où le faire |
+|--------|-------------|
+| Créer une VM (image, gabarit, disques, réseau, clés SSH, cloud-init, GPU) | **Instances VM** > **Créer une Instance** |
+| Démarrer, arrêter, redémarrer | Menu **Actions** de la liste, ou section **Actions** de la page de détail |
+| Changer de gabarit, ajouter un disque ou un GPU, modifier les ports ouverts | Page de détail > **Modifier** |
+| Rejouer le script cloud-init | **Recharger UserData**, puis **Redémarrer** |
+| Obtenir la commande SSH prête à copier | Page de détail, section **Réseau et Sécurité** > **Connexion SSH** |
+| Relier la VM à un réseau privé | Étape **Réseau** de l'assistant, ou menu **Réseau** (voir [VPC et sous-réseaux](../networking/overview.md)) |
 
-Hikube utilise une architecture **découplée** entre le calcul et le stockage qui garantit une résilience optimale :
+---
 
-**💻 Couche Compute**
+## Architecture et fonctionnement
 
-- La VM s'exécute sur des **serveurs physiques** sur un des 3 datacenters
-- Si un nœud tombe en panne, la VM est **automatiquement redémarrée** sur un autre nœud
-- Si un datacenter tombe en panne, la VM est **automatiquement redémarrée** sur un autre noeud dans un des 2 datacenters restant
-- Le temps d'indisponibilité se limite au redémarrage (généralement < 2 minutes)
+### Séparation calcul et stockage
 
-**💾 Couche Stockage (Persistante)**
+Hikube découple le calcul et le stockage :
 
-- Les disques des VMs sont **répliqués automatiquement** sur plusieurs nœuds physiques avec le stockage "replicated"
-- **Aucune perte de données** même en cas de panne matérielle multiple
-- Les disques survivent aux pannes et restent attachables à la VM relocalisée
+**Couche calcul**
 
-Cette séparation garantit que **vos données sont toujours sûres**, même si le serveur physique hébergeant votre VM devient indisponible où qu'un datacenter devienne indisponible.
-Nous garantissons les ressources !
+- La VM s'exécute sur des serveurs physiques répartis sur 3 datacenters.
+- Si le nœud qui l'héberge tombe en panne, la VM est redémarrée sur un autre nœud.
+- L'indisponibilité se limite au temps de redémarrage.
 
-### **Architecture Multi-Datacenter**
+**Couche stockage**
+
+- Les disques des VM sont **répliqués** sur plusieurs nœuds physiques, en mode synchrone ou asynchrone (choix fait disque par disque dans l'assistant).
+- Les disques survivent aux pannes matérielles et restent attachables à la VM relocalisée.
+- Ils existent indépendamment de la VM : supprimer une VM détache ses disques sans les supprimer. Ils restent visibles dans le menu **Disques** (voir [Disques](../storage/disks/overview.md)).
+
+### Architecture multi-datacenter
 
 ```mermaid
 flowchart TD
-    subgraph DC1["🏢 Datacenter Genève"]
-        VM1["🖥️ VM-Production"]
-        STORAGE1["💾 Storage"]
+    subgraph DC1["Datacenter Genève"]
+        VM1["VM de production"]
+        STORAGE1["Stockage"]
     end
-    
-    subgraph DC2["🏢 Datacenter Lucerne"]
-        STORAGE2["💾 Storage"]
+
+    subgraph DC2["Datacenter Lucerne"]
+        STORAGE2["Stockage"]
     end
-    
-    subgraph DC3["🏢 Datacenter Gland"]
-        STORAGE3["💾 Storage"]
+
+    subgraph DC3["Datacenter Gland"]
+        STORAGE3["Stockage"]
     end
-    
-    %% VM utilise le stockage local
+
     VM1 --> STORAGE1
-    
-    %% Réplication du stockage entre les 3 DC
+
     STORAGE1 <-.->|"Réplication"| STORAGE2
     STORAGE2 <-.->|"Réplication"| STORAGE3
     STORAGE1 <-.->|"Réplication"| STORAGE3
-    
-    %% Styles
+
     style DC1 fill:#e3f2fd
     style DC2 fill:#e8f5e8
     style DC3 fill:#fff2e1
@@ -67,111 +75,113 @@ flowchart TD
 
 ---
 
-## ⚙️ Types d'Instances
+## Types d'instance
 
-### **Gamme Complète pour Tous les Besoins**
+À l'étape **Configuration** de l'assistant, la console propose trois séries. Choisissez d'abord la série, puis la taille de l'instance.
 
-Hikube propose trois séries d'instances optimisées pour différents profils d'usage, garantissant des performances adaptées à chaque workload :
+### Série Standard (S) — ratio 1:2
 
-### **Série S - Standard (Ratio 1:2)**
+*Usage économique, pour le développement et les tests.*
 
-Instances **orientées calcul** avec un ratio CPU/mémoire de 1:2, idéales pour les charges CPU-intensives.
+| Instance | vCPU | RAM |
+|----------|------|-----|
+| `s1.small` | 1 | 2 Go |
+| `s1.medium` | 2 | 4 Go |
+| `s1.large` | 4 | 8 Go |
+| `s1.xlarge` | 8 | 16 Go |
+| `s1.3large` | 12 | 24 Go |
+| `s1.2xlarge` | 16 | 32 Go |
+| `s1.3xlarge` | 24 | 48 Go |
+| `s1.4xlarge` | 32 | 64 Go |
+| `s1.8xlarge` | 64 | 128 Go |
 
-| **Instance** | **vCPU** | **RAM** | **Cas d'Usage Typiques** |
-|--------------|----------|---------|---------------------------|
-| `s1.small`   | 1        | 2 GB    | Services légers, proxies |
-| `s1.medium`  | 2        | 4 GB    | Workers, batch processing |
-| `s1.large`   | 4        | 8 GB    | Calcul scientifique |
-| `s1.xlarge`  | 8        | 16 GB   | Rendu, compilation |
-| `s1.3large`  | 12       | 24 GB   | Applications intensives |
-| `s1.2xlarge` | 16       | 32 GB   | HPC, simulations |
-| `s1.3xlarge` | 24       | 48 GB   | Calcul distribué |
-| `s1.4xlarge` | 32       | 64 GB   | Calcul massif |
-| `s1.8xlarge` | 64       | 128 GB  | Calcul exascale |
+### Série Universel (U) — ratio 1:4
 
-### **Série U - Universal (Ratio 1:4)**
+*Usage général : serveurs web, applications.*
 
-Instances **polyvalentes** offrant un équilibre optimal entre CPU et mémoire pour la majorité des applications d'entreprise.
+| Instance | vCPU | RAM |
+|----------|------|-----|
+| `u1.medium` | 1 | 4 Go |
+| `u1.large` | 2 | 8 Go |
+| `u1.xlarge` | 4 | 16 Go |
+| `u1.2xlarge` | 8 | 32 Go |
+| `u1.4xlarge` | 16 | 64 Go |
+| `u1.8xlarge` | 32 | 128 Go |
 
-| **Instance** | **vCPU** | **RAM** | **Cas d'Usage Typiques** |
-|--------------|----------|---------|---------------------------|
-| `u1.medium`  | 1        | 4 GB    | Dev, tests, micro-services |
-| `u1.large`   | 2        | 8 GB    | Applications web, APIs |
-| `u1.xlarge`  | 4        | 16 GB   | Applications métier |
-| `u1.2xlarge` | 8        | 32 GB   | Workloads intensifs |
-| `u1.4xlarge` | 16       | 64 GB   | Applications critiques |
-| `u1.8xlarge` | 32       | 128 GB  | Applications enterprise |
+### Série Mémoire (M) — ratio 1:8
 
-### **Série M - Memory (Ratio 1:8)**
+*Optimisée mémoire : bases de données, caches.*
 
-Instances **haute mémoire** avec un ratio CPU/mémoire de 1:8 pour les applications gourmandes en RAM.
+| Instance | vCPU | RAM |
+|----------|------|-----|
+| `m1.large` | 2 | 16 Go |
+| `m1.xlarge` | 4 | 32 Go |
+| `m1.2xlarge` | 8 | 64 Go |
+| `m1.3xlarge` | 12 | 96 Go |
+| `m1.4xlarge` | 16 | 128 Go |
+| `m1.8xlarge` | 32 | 256 Go |
 
-| **Instance** | **vCPU** | **RAM** | **Cas d'Usage Typiques** |
-|--------------|----------|---------|---------------------------|
-| `m1.large`   | 2        | 16 GB   | Caches Redis, Memcached |
-| `m1.xlarge`  | 4        | 32 GB   | Bases de données in-memory |
-| `m1.2xlarge` | 8        | 64 GB   | Analytics, Big Data |
-| `m1.4xlarge` | 16       | 128 GB  | SAP HANA, Oracle |
-| `m1.8xlarge` | 32       | 256 GB  | Data warehouses |
+:::tip Guide de sélection
+- **Développement, tests, services légers** : série **S**.
+- **Applications web et métier** : série **U**.
+- **Bases de données, caches, analytique** : série **M**.
 
-:::tip **Guide de Sélection**
-
-- **Calcul intensif, CI/CD** → Série **S** (ratio 1:2, CPU optimisé)
-- **Applications web classiques** → Série **U** (ratio 1:4, équilibrée)  
-- **Bases de données, Analytics** → Série **M** (ratio 1:8, mémoire optimisée)
+Le gabarit se change après coup depuis **Modifier** ; la VM redémarre pour appliquer le changement.
 :::
 
 ---
 
-## 🔒 Isolation et Sécurité
+## Systèmes d'exploitation
 
-### **Multi-Tenant par Design**
+Le disque système est créé à partir d'une image fournie par Hikube. L'assistant affiche les images disponibles sous forme de cartes, avec un sélecteur de version :
 
-Chaque VM bénéficie d'une **isolation complète** grâce à une architecture sécurisée qui cloisonne strictement les ressources entre les différents tenants. Cette isolation s'appuie sur plusieurs couches de protection complémentaires :
+| Image | Versions |
+|-------|----------|
+| AlmaLinux | 8, 9 |
+| CentOS Stream | 9, 10 |
+| CloudLinux | 8, 9 |
+| Debian | 12, 13 |
+| openSUSE | 15.6, 16.0 |
+| Oracle Linux | 8, 9, 10 |
+| Rocky Linux | 8, 9, 10 |
+| Ubuntu | 22.04, 24.04 |
+| Windows Server | 2022, 2025 |
 
-- **Tenant** : Séparation logique des ressources au niveau applicatif, chaque tenant disposant de son propre espace d'exécution
-- **Isolation kernel** : Isolation réseau et processus au niveau du noyau Linux, garantissant qu'aucune VM ne peut accéder aux ressources d'une autre
-- **Storage classes** : Chiffrement automatique et isolation des données, avec séparation cryptographique des volumes par tenant
+La liste affichée dans la console fait foi : elle évolue avec les versions supportées.
 
----
-
-## 🌐 Connectivité et Accès
-
-### **Méthodes d'Accès Natives**
-
-L'accès aux machines virtuelles Hikube s'effectue via des mécanismes natifs intégrés à la plateforme, éliminant le besoin d'infrastructure réseau complexe. La **console série** fournit un accès direct de bas niveau indépendant du réseau, idéal pour le debugging et la maintenance système. Pour les environnements graphiques, **VNC** permet une connexion à l'interface utilisateur de la VM via des tunnels sécurisés. L'accès **SSH** traditionnel reste disponible soit via `virtctl ssh` qui gère automatiquement la connectivité, soit directement via l'IP externe assignée. Les services applicatifs peuvent être exposés sélectivement via des **listes de ports contrôlées** qui filtrent intelligemment le trafic sans compromettre la sécurité du tenant.
-
-### **Réseau Défini par Logiciel**
-
-L'architecture réseau d'Hikube repose sur une approche Software-Defined qui virtualise complètement la couche réseau. Chaque VM reçoit automatiquement une **IP privée** dans un segment réseau isolé par tenant, garantissant l'isolation tout en permettant la communication interne. Le système peut optionnellement assigner une **IP publique IPv4** pour l'exposition externe, avec un routage automatique qui maintient la segmentation sécurisée. Le **firewall distribué** applique des politiques de sécurité granulaires directement au niveau de chaque VM, avec des règles restrictives par défaut qui s'adaptent dynamiquement aux besoins de l'application.
-
----
-
-## 📦 Migration et Portabilité
-
-### **Import de Workloads Existants**
-
-La plateforme Hikube facilite la migration d'infrastructures existantes grâce à des mécanismes d'import universels qui préservent l'intégrité des workloads. Les **images cloud standardisées** (Ubuntu Cloud Images, CentOS Cloud) s'intègrent nativement pour un déploiement immédiat avec les optimisations cloud natives. Pour les installations personnalisées, l'import d'**images ISO** permet de recréer des environnements sur mesure en conservant toutes les configurations spécifiques. Les **snapshots VMware** sont convertis automatiquement du format VMDK vers RAW, assurant une transition transparente depuis les infrastructures de virtualisation traditionnelles. La compatibilité avec les **formats Proxmox et OpenStack** (QCOW2) garantit l'interopérabilité avec la majorité des solutions cloud existantes.
-
-### **Gestion du Cycle de Vie**
-
-Le système de gestion du cycle de vie intègre des mécanismes automatisés qui assurent la continuité opérationnelle des machines virtuelles. Les **snapshots** capturent instantanément l'état complet de la VM, incluant la mémoire et le stockage, pour permettre des retours arrière précis lors de maintenance ou d'incidents. Le **backup automatique** orchestre des sauvegardes programmées des disques avec rétention configurable, répliquées automatiquement sur les trois datacenters pour garantir la récupération en cas de sinistre. La **migration live** déplace les VMs entre nœuds physiques sans interruption de service, facilitant la maintenance matérielle et l'optimisation des charges sans impact sur les applications critiques.
-
----
-
-## 🚀 Prochaines Étapes
-
-Maintenant que vous comprenez l'architecture des VMs Hikube :
-
-**🏃‍♂️ Démarrage Immédiat**  
-→ [Créer votre première VM en 5 minutes](./quick-start.md)
-
-**📖 Configuration Avancée**  
-→ [Référence API complète](./api-reference.md)
-
-:::tip Architecture Recommandée
-Pour la production, utilisez toujours la classe de stockage `replicated` et dimensionnez vos VMs avec au moins 2 vCPU pour bénéficier de meilleures performances.
+:::note Image personnalisée
+L'import d'une image personnalisée (ISO ou QCOW2 depuis une URL HTTPS) se fait en créant un disque dans le menu **Disques**. Ce disque peut ensuite être choisi comme disque système d'une nouvelle VM (option **Existant**). Voir [Créer un disque système à partir d'une image](../storage/disks/how-to/create-from-image.md).
 :::
+
+---
+
+## Connectivité et accès
+
+- **IP publique** : option **Adresse IPv4 Publique**, activée par défaut. La VM est alors accessible depuis Internet.
+- **Pare-feu** : option **Activer le Pare-feu**, activée par défaut. Seuls les ports cochés (22 par défaut ; 80, 443 ou tout port personnalisé en option) sont ouverts en entrée. Sans pare-feu, tous les ports de l'IP publique sont ouverts.
+- **Réseaux privés** : la VM peut être reliée à un ou plusieurs [VPC](../networking/overview.md) pour communiquer en privé avec d'autres VM du projet.
+- **SSH** : la page de détail affiche la commande `ssh <utilisateur>@<ip>` prête à copier. L'accès se fait avec les clés SSH publiques saisies dans l'assistant.
+- **Windows** : un mot de passe administrateur est généré à la création et affiché une seule fois. L'accès se fait en RDP.
+
+:::note Console série et VNC
+L'accès console série ou VNC n'est pas proposé dans la console ; contactez le [support](mailto:support@hidora.io) si vous en avez besoin pour un diagnostic.
+:::
+
+---
+
+## Isolation et sécurité
+
+- Chaque **projet** est un espace isolé : les VM d'un projet ne voient pas celles d'un autre.
+- Chaque VM s'exécute dans son propre processus de virtualisation, isolé au niveau du noyau.
+- Les disques peuvent être **chiffrés au repos** (LUKS), option **Chiffrement du disque** à la création.
+
+---
+
+## Prochaines étapes
+
+- [Créer votre première VM](./quick-start.md)
+- [Comprendre les concepts](./concepts.md)
+- [Configurer le réseau et le pare-feu](./how-to/configure-network.md)
 
 <NavigationFooter
   nextSteps={[

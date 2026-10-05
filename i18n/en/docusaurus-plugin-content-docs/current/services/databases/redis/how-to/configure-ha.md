@@ -1,123 +1,74 @@
 ---
 title: "How to configure Redis high availability"
+sidebar_position: 1
 ---
 
 # How to configure Redis high availability
 
-This guide explains how to deploy a highly available Redis cluster on Hikube. The service relies on the **Spotahome Redis Operator** which uses **Redis Sentinel** to ensure automatic failover when 3 or more replicas are configured.
+This guide explains how to create a highly available Redis cluster from the [Hikube console](https://console.hikube.cloud). The service uses **Redis Sentinel** to provide automatic failover as soon as the cluster has at least 2 replicas. Three sentinels are always deployed, whatever the number of replicas.
 
 ## Prerequisites
 
-- `kubectl` configured to interact with the Hikube API
+- A Hikube **project** with sufficient quotas: CPU, memory and storage consumption is multiplied by the number of replicas
 - Knowledge of Redis basics (see the [quick start](../quick-start.md))
-- A production environment requiring high availability
+
+:::warning
+High availability is decided **at creation**: the number of replicas cannot be changed afterwards. To convert an existing cluster, [contact support](mailto:support@hidora.io) or create a new cluster.
+:::
 
 ## Steps
 
-### 1. Configure the manifest with 3+ replicas
+### 1. Open the wizard
 
-To enable high availability, configure at least 3 replicas. Redis Sentinel is automatically deployed by the Spotahome operator to orchestrate leader election and failover:
+Open **DB & Messaging** → **Redis**, then click **Create a cluster**. Fill in the **Cluster Name** and click **Next**.
 
-```yaml title="redis-ha.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Redis
-metadata:
-  name: my-redis-ha
-spec:
-  replicas: 3
-  resourcesPreset: medium
-  size: 5Gi
-  storageClass: replicated
-  authEnabled: true
-```
+### 2. Configure at least 3 replicas
 
-:::note
-The `storageClass: replicated` ensures that persistent volumes are replicated at the storage level, protecting data against physical node loss.
+At the **Configuration** step:
+
+| Field | Recommended value in production |
+|-------|---------------------------------|
+| **Number of replicas** | `3` (or `5` to tolerate two failures) |
+| **Preset** | `medium` or higher, depending on the dataset size |
+| **Volume size (GB)** | Greater than the expected data volume |
+| **Enable authentication** | Enabled |
+| **Public network** | Disabled, unless you need access from the Internet |
+
+:::tip
+The quorum relies on the three sentinels, not on the number of replicas: 2 replicas are enough for failover, 3 or more let you tolerate more failures.
 :::
 
-### 2. Apply the configuration
+### 3. Create the cluster
 
-```bash
-kubectl apply -f redis-ha.yaml
-```
-
-### 3. Verify the Redis cluster
-
-Wait for all pods to be ready:
-
-```bash
-# Verifier l'etat des pods Redis
-kubectl get pods -l app.kubernetes.io/instance=my-redis-ha -w
-```
-
-**Expected output:**
-
-```console
-NAME                READY   STATUS    RESTARTS   AGE
-my-redis-ha-0       1/1     Running   0          3m
-my-redis-ha-1       1/1     Running   0          2m
-my-redis-ha-2       1/1     Running   0          1m
-```
-
-Also verify the Redis Sentinel status:
-
-```bash
-# Verifier les pods Sentinel
-kubectl get pods -l app.kubernetes.io/component=sentinel,app.kubernetes.io/instance=my-redis-ha
-```
+At the **Summary** step, check the **Replicas** line and the estimated cost, then click **Create**. Copy the password displayed at the **Done** step.
 
 ### 4. Understanding automatic failover
 
-With 3 replicas, Redis Sentinel provides the following functions:
+When the master becomes unavailable:
 
-- **Failure detection**: Sentinel continuously monitors the master node and replicas
-- **Automatic election**: if the master goes down, Sentinel elects a new master from the available replicas
-- **Reconfiguration**: the remaining replicas are automatically reconfigured to replicate from the new master
+1. The Sentinels detect the failure and agree by quorum.
+2. A replica is promoted to new master.
+3. The other replicas are reconfigured to follow it.
 
-:::tip
-Failover is fully automatic. No manual intervention is required. The switchover time is typically a few seconds.
-:::
+With the public network enabled, the address displayed in the **Host** field points to the current master: your clients do not have to change address after a failover, but open connections are dropped and must be re-established.
 
-### 5. Retrieve the password
-
-With `authEnabled: true`, a password is automatically generated and stored in a Kubernetes Secret:
-
-```bash
-# Recuperer le nom du secret
-kubectl get secrets | grep my-redis-ha
-
-# Extraire le mot de passe
-kubectl get secret my-redis-ha -o jsonpath='{.data.password}' | base64 -d
-```
-
-:::warning
-Always enable `authEnabled: true` in production. Without authentication, any application with access to the cluster network can read and write to Redis.
+:::note
+Configure your Redis clients with automatic reconnection and retry delays to absorb the switchover.
 :::
 
 ## Verification
 
-Verify that the HA cluster is working correctly:
+- On the cluster page, **General** section, the **Replicas** field shows the chosen number.
+- The **Connection** section shows the **Status** **Ready**.
+- From a client, check the role of the node you reached:
 
 ```bash
-# Verifier la ressource Redis
-kubectl get redis my-redis-ha
-
-# Verifier que tous les pods sont Running
-kubectl get pods -l app.kubernetes.io/instance=my-redis-ha
-
-# Verifier les services exposes
-kubectl get svc -l app.kubernetes.io/instance=my-redis-ha
+redis-cli -h <host> -p 6379 INFO replication
 ```
 
-**Expected output:**
+**Expected result:** `role:master` and `connected_slaves` equal to the number of replicas minus one.
 
-```console
-NAME                     TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)     AGE
-my-redis-ha              ClusterIP   10.96.xxx.xxx   <none>        6379/TCP    5m
-my-redis-ha-sentinel     ClusterIP   10.96.xxx.xxx   <none>        26379/TCP   5m
-```
+## Further reading
 
-## Going further
-
-- [API Reference](../api-reference.md) -- `replicas`, `authEnabled` and `storageClass` parameters
-- [How to vertically scale Redis](./scale-resources.md) -- Adjust CPU and memory resources
+- [Redis concepts](../concepts.md): Sentinel, persistence, authentication
+- [Change resources](./scale-resources.md)

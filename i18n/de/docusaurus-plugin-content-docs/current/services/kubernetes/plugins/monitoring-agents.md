@@ -3,140 +3,47 @@ sidebar_position: 10
 title: Monitoring Agents
 ---
 
-# 🧩 Details zum Feld `addons.monitoringAgents`
+# Monitoring Agents
 
-Das Feld `addons.monitoringAgents` definiert die Konfiguration des Add-ons **Monitoring Agents**, das für die Erfassung von Metriken und Logs innerhalb des Kubernetes-Clusters verantwortlich ist.
-Dieses Add-on umfasst die Monitoring-Agents (Prometheus Node Exporter, kube-state-metrics oder andere Collectoren), die auf den Cluster-Knoten bereitgestellt werden.
+Das Addon **Monitoring Agents** stellt im Cluster die Agents zur Erfassung von **Metriken** und **Logs** bereit, die die Daten an das Monitoring der Hikube-Plattform übermitteln. Im Projekt muss keine Option aktiviert werden.
 
-```yaml
-addons:
-  monitoringAgents:
-    enabled: true
-    valuesOverride:
-      monitoringAgents:
-        nodeExporter:
-          enabled: true
-        kubeStateMetrics:
-          enabled: true
+| Komponente | Aufgabe |
+|------------|---------|
+| **VictoriaMetrics Agent** (`vmagent`) | Erfasst und sendet die Metriken |
+| **Fluent Bit** | Erfasst und sendet die Logs der Container |
+| **kube-state-metrics** | Stellt den Zustand der Kubernetes-Objekte als Metriken bereit |
+| **Node exporter** | Stellt die Systemmetriken der Nodes bereit |
+
+## In der Konsole
+
+1. Bei der Erstellung ist **Monitoring Agents** im Schritt **Addons** standardmäßig ausgewählt.
+2. Auf einem bestehenden Cluster: **Edit** > **Extensions & Addons**, **Monitoring Agents** aktivieren oder deaktivieren, dann **Save**.
+
+Die Detailseite des Clusters zeigt **Monitoring Agents** im Abschnitt **Extensions** an, wenn es aktiv ist.
+
+:::note
+Der Zugriff auf die Monitoring-Dashboards des Projekts wird in der Konsole nicht angeboten; wenden Sie sich an den Support.
+:::
+
+## Die Konfiguration überschreiben
+
+Sobald das Addon ausgewählt ist, erscheint das Feld **Helm Configuration (YAML) — optional**, die Plattform wendet es für dieses Addon jedoch nicht an: Ein hier eingegebenes Override bleibt wirkungslos. Die Ziele der Metriken und Logs werden von der Plattform festgelegt. Um das Verhalten der Agents anzupassen (Ressourcen, Erfassungsfilter), wenden Sie sich an den Support.
+
+## Nutzung im Cluster
+
+```bash
+# Pods der Agents
+kubectl get pods -A -l app.kubernetes.io/name=vmagent
+kubectl get pods -A -l app.kubernetes.io/name=fluent-bit
+
+# Ressourcenmetriken
+kubectl top nodes
+kubectl top pods -A
 ```
 
----
+Siehe [Das Monitoring konfigurieren](../how-to/configure-monitoring.md).
 
-## `monitoringAgents` (Object) — **Erforderlich**
+## Best Practices
 
-### Beschreibung
-
-Das Feld `monitoringAgents` gruppiert die Hauptkonfiguration der im Cluster bereitgestellten Monitoring-Agents.
-Es ermöglicht die Aktivierung der Komponente und die Anpassung ihres Verhaltens über Helm-Werte.
-
-### Beispiel
-
-```yaml
-monitoringAgents:
-  enabled: true
-  valuesOverride:
-    monitoringAgents:
-      nodeExporter:
-        enabled: true
-```
-
----
-
-## `enabled` (boolean) — **Erforderlich**
-
-### Beschreibung
-
-Gibt an, ob die **Monitoring-Agents** aktiviert (`true`) oder deaktiviert (`false`) sind.
-Wenn sie aktiviert sind, erfassen die Agents automatisch System- und Kubernetes-Metriken für den Export an einen Überwachungsserver (z.B. Prometheus, Grafana Agent, OpenTelemetry Collector usw.).
-
-### Beispiel
-
-```yaml
-enabled: true
-```
-
----
-
-## `valuesOverride` (Object) — **Erforderlich**
-
-### Beschreibung
-
-Das Feld `valuesOverride` ermöglicht das **Überschreiben der Helm-Werte**, die für die Bereitstellung der Monitoring-Agents verwendet werden.
-Es wird zur Anpassung der Konfiguration verwendet (Aktivierung der Module, Ressourcen, Listening-Ports, Labels usw.).
-
-### Beispiel
-
-### **Monitoring-Agents**
-
-Erfassung von Logs und Metriken mit FluentBit und anderen Agents.
-
-```yaml
-valuesOverride:
-  # FluentBit-Konfiguration
-  fluentbit:
-    enabled: true
-    config:
-      outputs: |
-        [OUTPUT]
-            Name forward
-            Match *
-            Host fluent-aggregator.logging
-            Port 24224
-```
-
-#### **Erweiterte Monitoring-Konfiguration**
-
-```yaml
-valuesOverride:
-  monitoringAgents:
-    # FluentBit für Logs
-    fluentbit:
-      enabled: true
-      resources:
-        requests:
-          cpu: 5m
-          memory: 10Mi
-        limits:
-          cpu: 50m
-          memory: 60Mi
-      config:
-        service: |
-          [SERVICE]
-              Flush         1
-              Log_Level     info
-              Daemon        off
-              Parsers_File  parsers.conf
-        inputs: |
-          [INPUT]
-              Name              tail
-              Path              /var/log/containers/*.log
-              Parser            cri
-              Tag               kube.*
-              Refresh_Interval  5
-              Mem_Buf_Limit     50MB
-        outputs: |
-          [OUTPUT]
-              Name  forward
-              Match *
-              Host  logs.company.com
-              Port  24224
-
-    # Node Exporter für Systemmetriken
-    nodeExporter:
-      enabled: true
-      resources:
-        requests:
-          cpu: 10m
-          memory: 32Mi
-        limits:
-          cpu: 200m
-          memory: 128Mi
-```
-
----
-
-## 💡 Best Practices
-
-- Aktivieren Sie `enabled: true`, um die kontinuierliche Erfassung von System- und Anwendungsmetriken sicherzustellen.
-- Verwenden Sie `valuesOverride`, um die Agent-Konfiguration je nach Bedarf anzupassen (z.B. Erfassung auf bestimmte Knoten beschränken).
-- Konfigurieren Sie angemessene `resource limits`, um zu verhindern, dass die Agents die Cluster-Last beeinträchtigen.
+- Lassen Sie das Addon auf Produktionsclustern aktiviert, um den Verlauf der Metriken und Logs zu behalten.
+- Schreiben Sie Ihre Anwendungslogs auf die Standardausgabe der Container: Diese erfasst Fluent Bit.

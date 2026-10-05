@@ -1,4 +1,5 @@
 ---
+unlisted: true
 sidebar_position: 3
 title: API Reference
 ---
@@ -322,8 +323,8 @@ spec:
 
 | Parameter      | Type            | Description                                  | Default      | Required |
 | -------------- | --------------- | -------------------------------------------- | ------------ | -------- |
-| `storage`      | `int`/`string`  | Disk size                                    | `5Gi`        | ✅       |
-| `storageClass` | `string`        | Storage class                                | `replicated` | ✅       |
+| `storage`      | `int`/`string`  | Disk size                                    | `5Gi`        | Yes       |
+| `storageClass` | `string`        | Storage class                                | `replicated` | Yes       |
 | `source`       | `object`        | Disk image source (see below)                | `{}`         | no       |
 | `optical`      | `boolean`       | Optical disk / ISO (installer)               | `false`      | no       |
 
@@ -420,14 +421,14 @@ Hikube exposes several `storageClass` options based on LINSTOR. For a VM, `repli
 
 | Class                                  | Replication | Encryption  | Notes                                            |
 | -------------------------------------- | :---------: | :---------: | ------------------------------------------------ |
-| `local`                                | ❌          | ❌          | Node-local storage (default), not resilient      |
-| `local-encrypted`                      | ❌          | ✅ (LUKS)   | Local + encrypted                                |
-| `replicated`                           | ✅          | ❌          | Synchronous replication — **recommended** for VMs |
-| `replicated-encrypted`                 | ✅          | ✅ (LUKS)   | Replicated + encrypted                           |
-| `replicated-async`                     | ✅ (async)  | ❌          | Asynchronous replication                         |
-| `replicated-async-encrypted`           | ✅ (async)  | ✅ (LUKS)   | Asynchronous replication + encrypted             |
-| `replicated-async-windows`             | ✅ (async)  | ❌          | Variant tailored for Windows disks               |
-| `replicated-async-windows-encrypted`   | ✅ (async)  | ✅ (LUKS)   | Windows variant + encrypted                      |
+| `local`                                | No          | No          | Node-local storage (default), not resilient      |
+| `local-encrypted`                      | No          | Yes (LUKS)   | Local + encrypted                                |
+| `replicated`                           | Yes          | No          | Synchronous replication — **recommended** for VMs |
+| `replicated-encrypted`                 | Yes          | Yes (LUKS)   | Replicated + encrypted                           |
+| `replicated-async`                     | Yes (async)  | No          | Asynchronous replication                         |
+| `replicated-async-encrypted`           | Yes (async)  | Yes (LUKS)   | Asynchronous replication + encrypted             |
+| `replicated-async-windows`             | Yes (async)  | No          | Variant tailored for Windows disks               |
+| `replicated-async-windows-encrypted`   | Yes (async)  | Yes (LUKS)   | Windows variant + encrypted                      |
 
 :::note
 The `-windows` variants are optimized for Windows VM disks. Encryption (`-encrypted`) relies on LUKS at the volume level.

@@ -7,24 +7,19 @@ title: FAQ
 
 ### Come funziona Redis Sentinel su Hikube?
 
-Redis su Hikube viene distribuito tramite l'operatore **Spotahome Redis Operator**, che implementa un'architettura **Redis Sentinel** per l'alta disponibilità:
+Redis su Hikube è distribuito in architettura **Redis Sentinel** per l'alta disponibilità:
 
-- **Redis Sentinel** sorveglia le istanze Redis ed effettua una **commutazione automatica** (failover) in caso di guasto del primary.
-- Un **quorum** è necessario per decidere il failover: servono almeno **3 repliche** per garantire un quorum funzionale (maggioranza di 2 su 3).
-- I client devono connettersi tramite il **servizio Sentinel** per beneficiare del failover automatico.
-
-```yaml title="redis.yaml"
-spec:
-  replicas: 3    # Minimo raccomandato per il quorum Sentinel
-```
+- **Redis Sentinel** monitora le istanze Redis ed esegue una **commutazione automatica** (failover) in caso di guasto del master.
+- Un **quorum** di Sentinel decide il failover. Vengono sempre distribuiti tre Sentinel, qualunque sia il numero di repliche Redis: la commutazione funziona a partire da **2 repliche**.
+- L'indirizzo del campo **Host** segue il master: dopo una commutazione, punta automaticamente al nuovo master, senza cambio di indirizzo.
 
 :::tip
-In produzione, usate sempre almeno 3 repliche per garantire il corretto funzionamento del quorum Sentinel.
+In produzione, scelga almeno 3 repliche alla creazione: questo numero non potrà più essere modificato in seguito.
 :::
 
-### Qual e la differenza tra `resourcesPreset` e `resources`?
+### Quali preset sono disponibili?
 
-Il campo `resourcesPreset` permette di scegliere un profilo di risorse predeterminato per ogni replica Redis. Se il campo `resources` (CPU/memoria espliciti) e definito, `resourcesPreset` viene **completamente ignorato**.
+Il **Preset** definisce la CPU e la memoria di ogni nodo. Fa fede l'elenco mostrato dalla procedura guidata; a titolo indicativo:
 
 | **Preset** | **CPU** | **Memoria** |
 |------------|---------|-------------|
@@ -36,79 +31,39 @@ Il campo `resourcesPreset` permette di scegliere un profilo di risorse predeterm
 | `xlarge`   | 4       | 4Gi         |
 | `2xlarge`  | 8       | 8Gi         |
 
-```yaml title="redis.yaml"
-spec:
-  # Utilizzo di un preset
-  resourcesPreset: small
+Può essere cambiato dopo la creazione da **Edit**.
 
-  # OPPURE configurazione esplicita (il preset viene allora ignorato)
-  resources:
-    cpu: 1000m
-    memory: 1Gi
-```
+### Redis rende persistenti i dati?
 
-### Redis persiste i dati?
+Sì. Ogni nodo dispone di un volume persistente (**Volume size (GB)**) su cui Redis scrive i dati tramite i propri meccanismi nativi. I dati sopravvivono ai riavvii.
 
-Si. Redis su Hikube utilizza la **persistenza RDB/AOF** combinata con volumi persistenti (PVC). I dati vengono scritti su disco e sopravvivono ai riavvii dei pod.
+### A cosa serve l'opzione «Enable authentication»?
 
-La scelta di `storageClass` influenza la durabilita:
-
-- **`local`**: dati persistiti sul nodo fisico. Veloce ma vulnerabile al guasto del nodo. Raccomandato se `replicas` > 1 (la replica Redis Sentinel assicura già l'HA).
-- **`replicated`**: dati replicati su più nodi. Più lento ma resiliente ai guasti. Raccomandato se `replicas` = 1 (lo storage replicato compensa l'assenza di replica applicativa).
-
-```yaml title="redis.yaml"
-spec:
-  size: 2Gi
-  storageClass: local    # Se replicas > 1 (Sentinel assicura l'HA)
-```
-
-### A cosa serve il parametro `authEnabled`?
-
-Quando `authEnabled` e impostato su `true` (valore predefinito), una password viene **generata automaticamente** e memorizzata in un Secret Kubernetes. Questa password e richiesta per ogni connessione a Redis.
-
-```yaml title="redis.yaml"
-spec:
-  authEnabled: true    # Valore predefinito
-```
+Attivata (valore predefinito), protegge il cluster con una password generata automaticamente, mostrata una sola volta alla creazione insieme all'utente `default`. Questa password è richiesta per qualsiasi connessione.
 
 :::warning
-Attivate sempre `authEnabled: true` in produzione. Disattivare l'autenticazione espone i vostri dati a qualsiasi pod che possa accedere al servizio Redis.
+Mantenga sempre l'autenticazione attivata, in particolare se la rete pubblica è attivata.
 :::
+
+### Ho smarrito la password. Come recuperarla?
+
+Non può essere riletta. Ne generi una nuova dalla sezione **Security** della pagina del cluster (**Rotate password**). Si veda [Rinnovare la password](./how-to/rotate-password.md).
 
 ### Come scalare Redis?
 
-Per aumentare il numero di repliche Redis, modificate il campo `replicas` nel vostro manifesto e applicate la modifica:
+- **Verticalmente**: cambi il **Preset** e la **Volume Size (GB)** tramite **Edit**. Si veda [Modificare le risorse](./how-to/scale-resources.md).
+- **Orizzontalmente**: il numero di repliche è fissato alla creazione. Per modificarlo, [contatti il supporto](mailto:support@hidora.io).
 
-```yaml title="redis.yaml"
-spec:
-  replicas: 5    # Aumentare il numero di repliche
-```
+### Come connettersi a Redis?
+
+Con la rete pubblica attivata, utilizzi l'indirizzo del campo **Host** (sezione **Connection** della pagina del cluster) sulla porta `6379`:
 
 ```bash
-kubectl apply -f redis.yaml
+REDISCLI_AUTH='<password>' redis-cli -h <host> -p 6379 ping
 ```
 
-Redis Sentinel **riconfigura automaticamente** il cluster per integrare le nuove repliche. Nessun intervento manuale è necessario.
+Senza rete pubblica, l'istanza resta raggiungibile dalle VM e dai cluster Kubernetes del progetto tramite un indirizzo interno, che la console non mostra. [Contatti il supporto](mailto:support@hidora.io) per ottenerlo.
 
-### Come connettersi a Redis da un pod?
+### È possibile creare più utenti Redis (ACL)?
 
-1. Recuperate la password dal Secret (se `authEnabled: true`):
-   ```bash
-   kubectl get tenantsecret redis-<name>-auth -o jsonpath='{.data.password}' | base64 -d
-   ```
-
-2. Connettetevi tramite il servizio **Sentinel** (raccomandato per il failover automatico):
-   ```bash
-   # Servizio Sentinel
-   redis-cli -h rfs-redis-<name> -p 26379 SENTINEL get-master-addr-by-name mymaster
-   ```
-
-3. Oppure connettetevi direttamente al servizio Redis:
-   ```bash
-   # Servizio diretto
-   redis-cli -h rfr-redis-<name> -p 6379 -a <password>
-   ```
-
-:::tip
-Privilegiate la connessione tramite il servizio Sentinel (`rfs-redis-<name>`) affinche le vostre applicazioni seguano automaticamente il primary in caso di failover.
-:::
+No, la console non offre la gestione degli utenti Redis: l'accesso si basa su una password globale del cluster.

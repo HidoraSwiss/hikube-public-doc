@@ -1,98 +1,82 @@
 ---
-title: "How to install CUDA and GPU drivers"
+title: "How to install CUDA and the GPU drivers"
 ---
 
-# How to install CUDA and GPU drivers
+# How to install CUDA and the GPU drivers
 
-Hikube VMs with an attached GPU do not come with pre-installed NVIDIA drivers. This guide details the installation of NVIDIA drivers and the CUDA toolkit on an Ubuntu VM to leverage the GPU.
+Hikube VMs with GPUs do not come with preinstalled NVIDIA drivers. This guide details how to install the NVIDIA drivers and the CUDA toolkit on an Ubuntu 24.04 VM.
 
 ## Prerequisites
 
-- A Hikube **VMInstance** with an attached GPU (see the [GPU API reference](../../gpu/api-reference.md))
-- VM based on **Ubuntu 24.04** (commands are tailored for this version)
-- **SSH** or **console** access to the VM
+- A Hikube VM with at least one GPU (chosen at the **Configuration** step of the wizard, see [Provision a GPU on a VM](../../gpu/how-to/provision-gpu-vm.md))
+- **Ubuntu 24.04** image (the commands are tailored to this version)
+- A system disk of at least **50 GB**: the CUDA toolkit and frameworks take up several tens of GB
+- **SSH** access to the VM
 - **root** or **sudo** privileges
 
-:::warning No pre-installed drivers
-Hikube golden images do not include NVIDIA GPU drivers. You must install them manually or via cloud-init after creating the VM.
+:::warning No preinstalled drivers
+Hikube images do not contain the NVIDIA GPU drivers. Install them manually or via cloud-init after creating the VM.
 :::
 
 ## Steps
 
 ### 1. Connect to the VM
 
-```bash
-virtctl ssh -i ~/.ssh/id_ed25519 ubuntu@my-gpu-vm
-```
-
-Or via direct SSH if the VM is exposed:
+Copy the command from the **SSH Connection** block on the detail page and add your key:
 
 ```bash
-ssh -i ~/.ssh/hikube-vm ubuntu@<IP-EXTERNE>
+ssh -i ~/.ssh/hikube-vm ubuntu@<public-ip>
 ```
 
-### 2. Verify the GPU is detected
-
-Before installing the drivers, verify that the GPU is properly detected by the system:
+### 2. Check that the GPU is present
 
 ```bash
 lspci | grep -i nvidia
 ```
 
-**Expected output:**
+**Expected result:**
 
 ```
 06:00.0 3D controller: NVIDIA Corporation ...
 ```
 
-If no GPU appears, verify that your VMInstance has a GPU attached in its configuration.
+If no GPU appears, check on the VM detail page that the **Resources & Characteristics** section lists the GPU under **GPUs**.
 
-### 3. Install NVIDIA drivers and CUDA
-
-Add the NVIDIA repository and install the drivers:
+### 3. Install the NVIDIA drivers and CUDA
 
 ```bash
-# Télécharger et installer le keyring NVIDIA
+# NVIDIA repository
 wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/cuda-keyring_1.1-1_all.deb
 sudo dpkg -i cuda-keyring_1.1-1_all.deb
-
-# Mettre à jour les paquets
 sudo apt-get update
 
-# Installer le toolkit CUDA et le driver
+# CUDA toolkit and driver
 sudo apt-get install -y cuda-toolkit nvidia-driver-560
 ```
 
-:::tip Reboot required
-A reboot is required after installing the drivers to load the NVIDIA kernel modules.
+:::tip Restart required
+A restart is needed to load the NVIDIA kernel modules.
 :::
-
-Reboot the VM:
 
 ```bash
 sudo reboot
 ```
 
-Reconnect after the reboot (wait approximately 1 minute):
+You can also run **Restart** from the **Actions** section of the detail page. Reconnect once the VM is back to **Running** status.
 
-```bash
-virtctl ssh -i ~/.ssh/id_ed25519 ubuntu@my-gpu-vm
-```
-
-### 4. Verify the driver installation
+### 4. Check the driver installation
 
 ```bash
 nvidia-smi
 ```
 
-**Expected output:**
+**Expected result:**
 
 ```
 +---------------------------------------------------------------------------------------+
 | NVIDIA-SMI 560.xx.xx    Driver Version: 560.xx.xx    CUDA Version: 12.x              |
 |-----------------------------------------+----------------------+----------------------+
 | GPU  Name                 Persistence-M | Bus-Id        Disp.A | Volatile Uncorr. ECC |
-| Fan  Temp   Perf          Pwr:Usage/Cap |         Memory-Usage | GPU-Util  Compute M. |
 |=========================================+======================+======================|
 |   0  NVIDIA L40S                    Off | 00000000:06:00.0 Off |                    0 |
 | N/A   30C    P8              20W / 350W |      0MiB / 46068MiB |      0%      Default |
@@ -105,9 +89,7 @@ Check the CUDA version:
 nvcc --version
 ```
 
-### 5. Configure environment variables (optional)
-
-Add CUDA to PATH for permanent access:
+### 5. Configure the environment variables (optional)
 
 ```bash
 echo 'export PATH=/usr/local/cuda/bin:$PATH' >> ~/.bashrc
@@ -117,58 +99,66 @@ source ~/.bashrc
 
 ### 6. Test with PyTorch
 
-Install PyTorch with CUDA support to validate that the GPU is fully functional:
-
 ```bash
 pip3 install torch --index-url https://download.pytorch.org/whl/cu124
 ```
 
-Test GPU detection:
-
 ```bash
 python3 -c "
 import torch
-print(f'CUDA disponible : {torch.cuda.is_available()}')
-print(f'GPU détecté : {torch.cuda.get_device_name(0)}')
-print(f'Mémoire GPU : {torch.cuda.get_device_properties(0).total_mem / 1e9:.1f} Go')
+print(f'CUDA available: {torch.cuda.is_available()}')
+print(f'GPU detected: {torch.cuda.get_device_name(0)}')
+print(f'GPU memory: {torch.cuda.get_device_properties(0).total_memory / 1e9:.1f} GB')
 "
 ```
 
-**Expected output:**
+**Expected result:**
 
 ```
-CUDA disponible : True
-GPU détecté : NVIDIA L40S
-Mémoire GPU : 46.1 Go
+CUDA available: True
+GPU detected: NVIDIA L40S
+GPU memory: 46.1 GB
 ```
 
 ## Verification
 
-Run a simple computation on the GPU to confirm proper operation:
-
 ```bash
 python3 -c "
 import torch
-# Créer un tenseur sur le GPU
 x = torch.randn(1000, 1000, device='cuda')
 y = torch.randn(1000, 1000, device='cuda')
 z = torch.mm(x, y)
-print(f'Calcul GPU réussi, taille du résultat : {z.shape}')
+print(f'GPU computation succeeded, result size: {z.shape}')
 "
 ```
 
-**Expected output:**
+**Expected result:**
 
 ```
-Calcul GPU réussi, taille du résultat : torch.Size([1000, 1000])
+GPU computation succeeded, result size: torch.Size([1000, 1000])
 ```
 
-:::tip Automate installation via cloud-init
-To automate GPU driver installation at startup, use the `cloudInit` parameter of the VMInstance. See the guide [How to configure cloud-init](./configure-cloud-init.md) for a complete example.
+:::tip Automate the installation via cloud-init
+To install the drivers from creation, paste this script into **Cloud-Init script (User Data)** at the **Network** step of the wizard:
+
+```yaml title="user-data.yaml"
+#cloud-config
+package_update: true
+runcmd:
+  - wget -q https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/cuda-keyring_1.1-1_all.deb
+  - dpkg -i cuda-keyring_1.1-1_all.deb
+  - apt-get update
+  - apt-get install -y cuda-toolkit nvidia-driver-560
+power_state:
+  mode: reboot
+  condition: true
+```
+
+See [Configure cloud-init](./configure-cloud-init.md).
 :::
 
-## Going further
+## Further reading
 
-- [API Reference](../api-reference.md)
-- [GPU API Reference](../../gpu/api-reference.md)
-- [How to configure cloud-init](./configure-cloud-init.md)
+- [GPU: overview](../../gpu/overview.md)
+- [GPU troubleshooting](../../gpu/troubleshooting.md)
+- [Configure cloud-init](./configure-cloud-init.md)

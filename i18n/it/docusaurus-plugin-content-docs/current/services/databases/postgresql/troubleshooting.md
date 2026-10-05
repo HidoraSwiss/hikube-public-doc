@@ -5,115 +5,74 @@ title: Risoluzione dei problemi
 
 # Risoluzione dei problemi — PostgreSQL
 
-### Pod PostgreSQL in stato Pending
+### Il cluster resta nello stato « Creating »
 
-**Causa**: il PersistentVolumeClaim (PVC) non riesce a legarsi a un volume. Questo può essere dovuto a una `storageClass` inesistente, una quota di archiviazione superata o una mancanza di risorse sui nodi.
-
-**Soluzione**:
-
-1. Verificate lo stato del pod e gli eventi associati:
-   ```bash
-   kubectl describe pod pg-<name>-1
-   ```
-2. Verificate lo stato del PVC:
-   ```bash
-   kubectl get pvc
-   kubectl describe pvc pg-<name>-1
-   ```
-3. Verificate che la `storageClass` utilizzata sia una delle classi disponibili: `local`, `replicated` o `replicated-async`.
-4. Verificate che la vostra quota di archiviazione non sia stata raggiunta.
-5. Se necessario, correggete la `storageClass` nel vostro manifesto e riapplicate:
-   ```bash
-   kubectl apply -f postgresql.yaml
-   ```
-
-### Replica desincronizzata tra primary e standby
-
-**Causa**: un ritardo (lag) di replica può verificarsi a causa di un carico di rete elevato, risorse insufficienti sugli standby, o un volume di transazioni importante sul primary.
+**Causa**: il provisioning delle istanze e dei relativi volumi è in corso. Può richiedere diversi minuti, di più con più repliche.
 
 **Soluzione**:
 
-1. Connettetevi al primary e verificate lo stato della replica:
-   ```sql
-   SELECT client_addr, state, sent_lsn, write_lsn, flush_lsn, replay_lsn
-   FROM pg_stat_replication;
-   ```
-2. Confrontate le posizioni LSN tra `sent_lsn` e `replay_lsn`. Un divario importante indica un lag.
-3. Verificate le risorse allocate agli standby (CPU, memoria). Se necessario, aumentate il `resourcesPreset` o le `resources` esplicite.
-4. Verificate la connettività di rete tra i pod:
-   ```bash
-   kubectl logs pg-<name>-2
-   ```
-5. Se il lag persiste, considerate la riduzione del carico di scrittura sul primary o l'aumento delle risorse.
+1. Attenda qualche minuto e aggiorni la pagina del cluster.
+2. Se lo stato non cambia dopo una quindicina di minuti, oppure passa a **Error** o **Failed**, [contatti il supporto](mailto:support@hidora.io) indicando il progetto e il nome del cluster.
 
-### Connessione rifiutata a PostgreSQL
+### Impossibile superare il passaggio Configuration della procedura guidata
 
-**Causa**: i pod non sono in esecuzione, il nome del Secret e errato, o il servizio non è accessibile.
+**Causa**: la configurazione richiesta supera la quota del progetto (CPU, memoria o storage). Sotto il campo **Disk size (GB)** può comparire il messaggio « Storage quota exceeded for this project ».
 
 **Soluzione**:
 
-1. Verificate che i pod PostgreSQL siano nello stato `Running`:
-   ```bash
-   kubectl get pods -l app=pg-<name>
-   ```
-2. Verificate che il servizio esista e punti agli endpoint corretti:
-   ```bash
-   kubectl get svc pg-<name>-rw
-   kubectl get endpoints pg-<name>-rw
-   ```
-3. Assicuratevi di usare il nome corretto del Secret per le credenziali. Il pattern e `pg-<name>-app`:
-   ```bash
-   kubectl get tenantsecret pg-<name>-app
-   ```
-4. Testate la connessione da un pod nello stesso namespace:
-   ```bash
-   kubectl run test-pg --rm -it --image=postgres:16 -- psql -h pg-<name>-rw -p 5432 -U <user>
-   ```
+1. Consulti il banner della quota nella parte superiore della procedura guidata.
+2. Riduca l'**Instance preset**, la **Disk size (GB)** o il **Number of replicas**: il consumo è moltiplicato per il numero di repliche.
+3. Se il progetto necessita di una quota aggiuntiva, contatti il supporto.
 
-### Ripristino PITR fallito
+### Connessione rifiutata o timeout
 
-**Causa**: i parametri di bootstrap sono mal configurati. Il campo `bootstrap.oldName` deve corrispondere esattamente al nome dell'istanza originale, e il nome della nuova istanza deve essere diverso.
+**Causa**: l'accesso esterno è disattivato, l'indirizzo IP non è ancora stato assegnato, oppure il client utilizza un indirizzo o una porta errati.
 
 **Soluzione**:
 
-1. Verificate che `bootstrap.oldName` corrisponda esattamente al nome dell'istanza PostgreSQL originale:
-   ```yaml title="postgresql-restore.yaml"
-   apiVersion: apps.cozystack.io/v1alpha1
-   kind: Postgres
-   metadata:
-     name: restored-db       # Deve essere un nuovo nome
-   spec:
-     bootstrap:
-       enabled: true
-       oldName: "original-db"  # Nome esatto della vecchia istanza
-       recoveryTime: "2025-06-15T14:30:00Z"  # Formato RFC 3339
+1. Nella pagina del cluster, verifichi che il riquadro **External Access** indichi **Enabled**. Altrimenti, lo attivi tramite **Edit**.
+2. Verifichi che il campo **Host** contenga un indirizzo e non **Not defined**.
+3. Utilizzi la porta `5432` e testi la connettività:
+   ```bash
+   pg_isready -h <host> -p 5432
    ```
-2. Il `recoveryTime` deve essere nel formato **RFC 3339** (es: `2025-06-15T14:30:00Z`). Se lasciato vuoto, il ripristino avviene all'ultimo stato disponibile.
-3. Il nome in `metadata.name` deve essere **diverso** da `bootstrap.oldName`.
-4. Assicuratevi che i backup dell'istanza originale siano ancora accessibili nello storage S3.
+4. Verifichi che nessun firewall in uscita della sua rete blocchi la porta `5432`.
+
+### Autenticazione rifiutata (`password authentication failed`)
+
+**Causa**: password errata o revocata da una rotazione, oppure utente senza diritti sul database di destinazione.
+
+**Soluzione**:
+
+1. Nella scheda **Users**, verifichi che l'utente esista e che abbia un accesso sul database utilizzato (colonna **Databases**).
+2. Se necessario, aggiunga l'accesso tramite **Actions** → **Manage Access**.
+3. Se la password è stata smarrita o è cambiata, ne generi una nuova tramite **Actions** → **Change Password**, quindi aggiorni le sue applicazioni.
+
+### Permesso negato su una tabella (`permission denied`)
+
+**Causa**: l'utente dispone del diritto **Read-only** sul database, oppure non ha accesso a tale database.
+
+**Soluzione**: tramite **Actions** → **Manage Access**, assegni il diritto **Administrator (Admin)** sul database interessato, quindi si riconnetta.
 
 ### Prestazioni lente
 
-**Causa**: i parametri PostgreSQL non sono adatti al carico di lavoro, o le risorse allocate sono insufficienti.
+**Causa**: le risorse assegnate sono insufficienti per il carico, oppure alcune query non sono ottimizzate.
 
 **Soluzione**:
 
-1. Regolate i parametri PostgreSQL nel vostro manifesto:
-   ```yaml title="postgresql.yaml"
-   spec:
-     postgresql:
-       parameters:
-         shared_buffers: 512MB       # ~25% della RAM allocata
-         work_mem: 64MB              # Memoria per operazione di ordinamento
-         max_connections: 200        # Adattare in base al carico
-         effective_cache_size: 1536MB  # ~75% della RAM
+1. Attivi l'estensione `pg_stat_statements` sul database (**Actions** → **Manage extensions**) e individui le query più onerose:
+   ```sql
+   SELECT query, calls, mean_exec_time
+   FROM pg_stat_statements
+   ORDER BY mean_exec_time DESC
+   LIMIT 10;
    ```
-2. Verificate che il `resourcesPreset` sia adatto al vostro carico:
-   - Sviluppo: `nano` o `micro`
-   - Produzione: `medium`, `large` o superiore
-3. Monitorate l'utilizzo delle risorse:
-   ```bash
-   kubectl top pod pg-<name>-1
-   ```
-4. Se le query sono lente, identificatele con `pg_stat_statements` e ottimizzate gli indici.
-5. Aumentate le risorse se necessario passando a un preset superiore o definendo `resources` esplicite.
+2. Aggiunga gli indici mancanti.
+3. Se le risorse sono sature, passi a un preset superiore tramite **Edit**. Consulti [Modificare le risorse](./how-to/scale-resources.md).
+4. Per regolare i parametri PostgreSQL (`shared_buffers`, `work_mem`, `max_connections`), contatti il supporto: questi parametri non sono proposti nella console.
+
+### Disco pieno
+
+**Causa**: il volume dei dati ha raggiunto l'**Allocated Size**.
+
+**Soluzione**: aumenti la **Disk size (GB)** tramite **Edit**, entro il limite della quota di storage del progetto. Se necessario, elimini i dati obsoleti ed esegua `VACUUM` per recuperare spazio.

@@ -1,308 +1,136 @@
 ---
-sidebar_position: 2
+sidebar_position: 3
 title: Avvio rapido
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';
 
-# Utilizzare le GPU su Hikube
+# Creare una VM con GPU
 
-Questa guida presenta i due metodi di utilizzo delle GPU: con macchine virtuali e con cluster Kubernetes.
-
----
-
-## 🎯 Metodi di Utilizzo
-
-Hikube propone due approcci per utilizzare le GPU:
-
-1. **GPU con VM**: Collegamento diretto di una GPU a una macchina virtuale
-2. **GPU con Kubernetes**: Allocazione di GPU ai worker per l'utilizzo da parte dei pod
+Questa guida crea una VM Ubuntu con una GPU NVIDIA dalla [console Hikube](https://console.hikube.cloud), quindi verifica che la GPU sia utilizzabile. Per GPU in un cluster Kubernetes, vedere [Assegnare una GPU su Kubernetes](./how-to/provision-gpu-kubernetes.md).
 
 ---
 
-## 🖥️ Metodo 1: GPU con Macchina Virtuale
+## Prerequisiti
 
-### **Passo 1: Creare il disco**
+- Un account Hikube e un **progetto** (vedere [Avvio rapido Hikube](../../getting-started/quick-start.md)).
+- Quote disponibili: almeno 8 vCPU, 32 GB di memoria e 50 GB di storage.
+- Una chiave SSH pubblica (`cat ~/.ssh/id_ed25519.pub`).
 
-```yaml title="vm-disk.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: VMDisk
-metadata:
-  name: ubuntu-gpu-disk
-spec:
-  source:
-    http:
-      url: https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img
-  optical: false
-  storage: 50Gi
-  storageClass: "replicated"
-```
+---
 
-### **Passo 2: Creare la VM con GPU**
+## Passo 1: Aprire la procedura guidata di creazione
 
-```yaml title="vm-gpu.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: VMInstance
-metadata:
-  name: vm-gpu-example
-spec:
-  runStrategy: Always
-  instanceProfile: ubuntu
-  instanceType: u1.xlarge  # 4 vCPU, 16 GB RAM
-  gpus:
-    - name: "nvidia.com/AD102GL_L40S"
-  disks:
-    - name: ubuntu-gpu-disk
-  external: true
-  externalMethod: PortList
-  externalPorts:
-    - 22
-  sshKeys:
-    - "ssh-rsa AAAAB3NzaC... vostra-chiave-pubblica"
-  cloudInit: |
-    #cloud-config
-    users:
-      - name: ubuntu
-        sudo: ALL=(ALL) NOPASSWD:ALL
-        shell: /bin/bash
-    
-    package_update: true
-    packages:
-      - curl
-      - wget
-      - build-essential
-    
-    runcmd:
-      # Installazione driver NVIDIA
-      - wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.0-1_all.deb
-      - dpkg -i cuda-keyring_1.0-1_all.deb
-      - apt-get update
-      - apt-get install -y cuda-toolkit nvidia-driver-535
-      - nvidia-smi -pm 1
-```
+1. Nel menu laterale, apra **Infrastructure** > **VM Instances**.
+2. Faccia clic su **Create an Instance**.
+3. Passaggio **General**: inserisca il nome nel campo **Instance name**, ad esempio `vm-gpu01`, quindi **Next**.
 
-### **Passo 3: Distribuire**
+---
+
+## Passo 2: Configurare e confermare
+
+### Configuration: formato e GPU
+
+1. In **Resources (CPU / RAM)**, scelga **Universal (U)** > **2XLARGE** (8 vCPU, 32 GB).
+2. In **Hardware Acceleration (GPU)**, faccia clic sulla scheda **NVIDIA L40S** (o su un altro modello disponibile). Compare il badge **1 GPU total**. I pulsanti **+** e **−** della scheda regolano il numero di GPU.
+3. Faccia clic su **Next**.
+
+I modelli contrassegnati come **Unavailable** non possono essere selezionati per il momento.
+
+### Storage
+
+1. In **Operating System**, selezioni **ubuntu** nella versione **24.04**.
+2. Porti **Size (GB)** a `50`: i driver, CUDA e i framework ML occupano diverse decine di GB.
+3. Faccia clic su **Next**.
+
+### Network
+
+1. Lasci **Public IPv4 Address** attivato e **SSH (22)** selezionato in **Allowed Ports**.
+2. Aggiunga la sua chiave in **Authorized SSH keys**.
+3. Facoltativo: attivi **Cloud-Init script (User Data)** per installare i driver automaticamente (script in [Installare CUDA](../compute/how-to/install-cuda-drivers.md)).
+4. Faccia clic su **Next**.
+
+### Summary
+
+Il **Summary** mostra una riga **Hardware Acceleration (GPU)** con il modello e la quantità. Verifichi il costo stimato, quindi faccia clic su **Create instance**.
+
+---
+
+## Passo 3: Verificare lo stato
+
+Nell'elenco **VM Instances**, attenda lo stato **Running**. Nella pagina di dettaglio, la sezione **Resources & Characteristics** elenca la GPU in **GPUs**.
+
+**Risultato atteso:** stato **Running** e un badge per GPU in **GPUs**, nella sezione **Resources & Characteristics**. Il badge riporta il nome tecnico del modello (ad esempio `l40s` per una NVIDIA L40S).
+
+---
+
+## Passo 4: Recuperare le informazioni di connessione
+
+Copi il comando del blocco **SSH Connection** (sezione **Network & Security** della pagina di dettaglio), ad esempio `ssh ubuntu@203.0.113.20`.
+
+---
+
+## Passo 5: Connessione e test
 
 ```bash
-kubectl apply -f vm-disk.yaml
-kubectl apply -f vm-gpu.yaml
+ssh -i ~/.ssh/id_ed25519 ubuntu@203.0.113.20
 
-# Verificare lo stato
-kubectl get vminstance vm-gpu-example
+# La GPU è visibile sul bus PCI
+lspci | grep -i nvidia
 ```
 
-### **Passo 4: Accedere e testare**
+**Risultato atteso:**
+
+```
+06:00.0 3D controller: NVIDIA Corporation ...
+```
+
+Installi quindi i driver NVIDIA e CUDA seguendo [Installare CUDA e i driver GPU](../compute/how-to/install-cuda-drivers.md), poi:
 
 ```bash
-# Accesso SSH
-virtctl ssh ubuntu@vm-gpu-example
-
-# Verificare la GPU
 nvidia-smi
 ```
 
----
-
-## ☸️ Metodo 2: GPU con Kubernetes
-
-### **Passo 1: Creare un cluster con worker GPU**
-
-```yaml title="cluster-gpu.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Kubernetes
-metadata:
-  name: cluster-gpu
-spec:
-  controlPlane:
-    replicas: 1
-  
-  nodeGroups:
-    # Worker GPU
-    gpu-nodes:
-      minReplicas: 1
-      maxReplicas: 3
-      instanceType: "u1.xlarge"
-      ephemeralStorage: 100Gi
-      gpus:
-        - name: "nvidia.com/AD102GL_L40S"
-    
-    # Worker standard (opzionale)
-    standard-nodes:
-      minReplicas: 1
-      maxReplicas: 2
-      instanceType: "s1.medium"
-      ephemeralStorage: 50Gi
-
-  storageClass: "replicated"
-
-  addons:
-    # Indispensabile: installa i driver NVIDIA e il device plugin
-    # che espongono nvidia.com/gpu ai pod del cluster tenant
-    gpuOperator:
-      enabled: true
-```
-
-:::warning Addon `gpuOperator` richiesto
-Senza l'addon `gpuOperator` attivato, le GPU collegate ai worker **non** sono esposte ai pod (`nvidia.com/gpu` resta a 0). Esso installa i driver NVIDIA e il device plugin nel cluster tenant.
-:::
-
-### **Passo 2: Distribuire il cluster**
-
-```bash
-kubectl apply -f cluster-gpu.yaml
-
-# Attendere che il cluster sia pronto
-kubectl get kubernetes cluster-gpu -w
-```
-
-### **Passo 3: Configurare l'accesso**
-
-```bash
-# Recuperare il kubeconfig
-kubectl get secret cluster-gpu-admin-kubeconfig \
-  -o go-template='{{ printf "%s\n" (index .data "super-admin.conf" | base64decode) }}' \
-  > cluster-gpu-kubeconfig.yaml
-
-# Utilizzare il cluster GPU
-export KUBECONFIG=cluster-gpu-kubeconfig.yaml
-kubectl get nodes
-```
-
-### **Passo 4: Distribuire un pod GPU**
-
-```yaml title="pod-gpu.yaml"
-apiVersion: v1
-kind: Pod
-metadata:
-  name: gpu-test
-spec:
-  containers:
-  - name: gpu-container
-    image: nvidia/cuda:12.0-runtime-ubuntu20.04
-    command: ["sleep", "infinity"]
-    resources:
-      limits:
-        nvidia.com/gpu: 1
-      requests:
-        nvidia.com/gpu: 1
-```
-
-```bash
-kubectl apply -f pod-gpu.yaml
-
-# Verificare l'allocazione GPU
-kubectl describe pod gpu-test
-
-# Testare la GPU
-kubectl exec -it gpu-test -- nvidia-smi
-```
+**Risultato atteso:** la tabella `nvidia-smi` elenca la GPU (ad esempio `NVIDIA L40S`) con la sua memoria.
 
 ---
 
-## 📋 Confronto Pratico
+## Passo 6: Risoluzione rapida dei problemi
 
-| **Aspetto** | **VM GPU** | **Kubernetes GPU** |
-|------------|------------|-------------------|
-| **Tempo setup** | ~5 minuti | ~10 minuti |
-| **Complessità** | Semplice | Moderata |
-| **Isolamento** | Totale | Parziale |
-| **Flessibilità** | Limitata | Elevata |
-| **Scaling** | Manuale | Automatico |
+| Sintomo | Azione |
+|----------|--------|
+| La sezione **Hardware Acceleration (GPU)** non compare | La piattaforma non offre alcuna GPU al momento: contatti il [supporto](mailto:support@hidora.io). |
+| Tutte le schede sono **Unavailable** | Nessuna GPU libera: riprovi più tardi o contatti il supporto. |
+| **The following GPUs are not available: …** durante la creazione | Le GPU richieste non sono libere contemporaneamente su uno stesso server: riduca il numero di GPU o cambi modello. |
+| `lspci` non mostra alcuna GPU NVIDIA | Verifichi nella pagina di dettaglio che la GPU sia elencata; altrimenti la aggiunga tramite **Edit**. |
+| `nvidia-smi: command not found` | I driver non sono installati: vedere [Installare CUDA](../compute/how-to/install-cuda-drivers.md). |
 
----
-
-## 🔧 Tipi di GPU Disponibili
-
-### **Configurazione secondo l'uso**
-
-```yaml
-# Per inferenza/sviluppo
-gpus:
-  - name: "nvidia.com/AD102GL_L40S"  # 48 GB GDDR6
-
-# Per addestramento ML (A100, due varianti secondo l'hardware)
-gpus:
-  - name: "nvidia.com/GA100_A100_PCIE_80GB"  # 80 GB HBM2e (PCIe)
-  # oppure
-  - name: "nvidia.com/GA100_A100_SXM4_80GB"  # 80 GB HBM2e (SXM4)
-
-# Per LLM/calcolo exascale
-gpus:
-  - name: "nvidia.com/GB202GL_RTX_PRO_6000_BLACKWELL_SERVER_EDITION"  # 96 GB GDDR7
-```
+Altri casi nella [risoluzione dei problemi GPU](./troubleshooting.md).
 
 ---
 
-## ✅ Verifiche Post-Deployment
+## Passo 7: Pulizia
 
-### **VM GPU**
+1. Nella pagina di dettaglio della VM, faccia clic su **Delete**.
+2. Inserisca il nome della VM e faccia clic su **Permanently delete**.
+3. Il disco di sistema resta nel menu **Disks**: lo elimini da questo menu se non le serve più.
 
-```bash
-# Verificare la GPU
-virtctl ssh ubuntu@vm-gpu-example -- nvidia-smi
-
-# Test CUDA
-virtctl ssh ubuntu@vm-gpu-example -- nvcc --version
-```
-
-### **Kubernetes GPU**
-
-```bash
-# Vedere le risorse GPU disponibili
-kubectl describe nodes
-
-# Verificare l'allocazione
-kubectl top nodes
-```
-
----
-
-## Pulizia
-
-### Eliminare una VM GPU
-
-```bash
-kubectl delete -f vm-gpu.yaml
-kubectl delete -f vm-disk.yaml
-```
-
-### Eliminare un cluster Kubernetes GPU
-
-```bash
-kubectl delete -f cluster-gpu.yaml
-```
-
-:::warning
-Queste azioni eliminano le risorse GPU e tutti i dati associati. Queste operazioni sono **irreversibili**.
+:::tip Arrestare anziché eliminare?
+**Stop** sulla VM libera la GPU, che può essere assegnata a un altro carico di lavoro: al riavvio potrebbe essere necessario scegliere un altro modello. Elimini la VM se non le serve più, la arresti se intende riavviarla.
 :::
 
 ---
 
-## 🚀 Prossimi Passi
+## Passi successivi
 
-### **Per approfondire VM GPU:**
-
-- [Configurazione avanzata VM](./api-reference.md)
-- [Tipi di istanze ottimizzate](../compute/api-reference.md)
-
-### **Per approfondire Kubernetes GPU:**
-
-- [Cluster con GPU](../kubernetes/api-reference.md)
-- [Scaling automatico](../kubernetes/overview.md)
-
----
-
-## 💡 Consigli
-
-- **VM GPU**: Ideale per prototipazione e applicazioni legacy
-- **Kubernetes GPU**: Raccomandato per workload di produzione scalabili
-- Iniziate con **L40S** per testare prima di utilizzare A100 o RTX PRO 6000 (Blackwell)
-- Utilizzate la storage class `replicated` per la produzione
+- [Assegnare una GPU su Kubernetes](./how-to/provision-gpu-kubernetes.md)
+- [Concetti GPU](./concepts.md)
+- [FAQ](./faq.md)
 
 <NavigationFooter
   nextSteps={[
+    {label: "Guide pratiche", href: "../how-to/provision-gpu-vm"},
     {label: "FAQ", href: "../faq"},
-    {label: "Riferimento API", href: "../api-reference"},
   ]}
   seeAlso={[
     {label: "Risorse di calcolo", href: "../../compute/"},

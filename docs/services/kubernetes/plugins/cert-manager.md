@@ -1,116 +1,69 @@
 ---
 sidebar_position: 6
-title: Cert-manager
+title: Cert-Manager
 ---
 
-# 🧩 Détails du champ `certManager`
+# Cert-Manager
 
-Le champ `certManager` définit la configuration du gestionnaire de certificats intégré au cluster Kubernetes.
-Il permet d’activer ou de désactiver le composant et de personnaliser son comportement via des valeurs spécifiques.
+L'addon **Cert-Manager** gère automatiquement les certificats SSL/TLS du cluster : émission, renouvellement et stockage dans des Secrets Kubernetes. Il prend en charge Let's Encrypt (ACME) et les autorités privées.
 
-```yaml
-certManager:
-  enabled: true
-  valuesOverride:
-    certManager:
-      installCRDs: true
-      prometheus:
-        enabled: false
+## Dans la console
+
+1. À la création, étape **Addons**, **Cert-Manager** est coché par défaut.
+2. Sur un cluster existant : **Modifier** > **Extensions & Addons**, cochez ou décochez **Cert-Manager**, puis **Enregistrer**.
+
+La page de détail du cluster affiche **Cert-Manager** dans la section **Extensions** lorsqu'il est actif.
+
+## Surcharger la configuration
+
+Une fois l'addon coché, le champ **Configuration Helm (YAML) — optionnel** apparaît. La valeur est transmise au chart Helm de Cert-Manager, sous la clé `cert-manager`. Par exemple, pour ajuster les ressources :
+
+```yaml title="cert-manager-override.yaml"
+cert-manager:
+  resources:
+    requests:
+      cpu: 10m
+      memory: 32Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
 ```
 
----
+Les options disponibles sont décrites dans le [chart Helm de Cert-Manager](https://artifacthub.io/packages/helm/cert-manager/cert-manager).
 
-## `enabled` (boolean) — **Obligatoire**
+## Utilisation dans le cluster
 
-### Description
+Aucun émetteur n'est créé par l'addon : déclarez votre `ClusterIssuer` (ou `Issuer`) dans le cluster, puis référencez-le dans vos Ingress.
 
-Indique si le **cert-manager** est activé (`true`) ou désactivé (`false`) dans la configuration du cluster.
-Lorsqu’il est désactivé, aucun composant lié au cert-manager n’est déployé.
-
-### Exemple
-
-```yaml
-enabled: true
-```
-
----
-
-## `valuesOverride` (Object) — **Obligatoire**
-
-### Description
-
-Permet de **surcharger les valeurs par défaut** utilisées pour le déploiement du cert-manager.
-Ce champ est généralement utilisé pour injecter des paramètres Helm personnalisés (comme les images, les ressources, ou les configurations ACME).
-
-### Champs internes
-
-| Champ | Type | Obligatoire | Description |
-|-------|------|-------------|--------------|
-| `installCRDs` | boolean | ❌ | Installe les Custom Resource Definitions nécessaires au cert-manager |
-| `prometheus.enabled` | boolean | ❌ | Active ou désactive l’export des métriques Prometheus |
-
-### Exemple
-
-```yaml
-valuesOverride:
-  certManager:
-    installCRDs: true
-```
-
----
-
-## Exemples complets
-
-### **Cert-Manager**
-
-Gestion automatisée des certificats SSL/TLS.
-
-```yaml
+```yaml title="cluster-issuer.yaml"
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
 spec:
-  addons:
-    certManager:
-      enabled: true
-      valuesOverride:
-        certManager:
-          installCRDs: true
-          prometheus:
-            enabled: true
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: admin@example.com
+    privateKeySecretRef:
+      name: letsencrypt-prod-account-key
+    solvers:
+      - http01:
+          ingress:
+            ingressClassName: nginx
 ```
 
-#### **Configuration Avancée Cert-Manager**
+```bash
+kubectl apply -f cluster-issuer.yaml
 
-```yaml
-spec:
-  addons:
-    certManager:
-      enabled: true
-      valuesOverride:
-        certManager:
-          # Configuration des issuers par défaut
-          global:
-            leaderElection:
-              namespace: cert-manager
-          # Métriques Prometheus
-          prometheus:
-            enabled: true
-            servicemonitor:
-              enabled: true
-          # Resources des pods
-          resources:
-            requests:
-              cpu: 10m
-              memory: 32Mi
-            limits:
-              cpu: 100m
-              memory: 128Mi
+# Suivre les certificats
+kubectl get certificates -A
+kubectl describe certificate <nom> -n <namespace>
 ```
 
----
+Le parcours complet est décrit dans [Comment déployer un Ingress avec TLS](../how-to/deploy-ingress-tls.md).
 
-## 💡 Bonnes pratiques
+## Bonnes pratiques
 
-- Laisser `enabled: true` pour assurer la gestion automatique des certificats TLS.
-- Utiliser `valuesOverride` pour ajuster les paramètres Helm sans modifier les valeurs par défaut globales.
-- Vérifier la compatibilité des versions de `cert-manager` avec la version de Kubernetes utilisée.
-- Activer `installCRDs` uniquement lors de la première installation pour éviter les conflits de ressources.
-- Désactiver `prometheus.enabled` si la surveillance n’est pas requise, afin de réduire la charge sur le cluster.
+- Gardez Cert-Manager activé dès que vous exposez des applications en HTTPS.
+- Testez avec le serveur de staging de Let's Encrypt avant d'utiliser le serveur de production.
+- Vérifiez régulièrement l'état `READY` de vos certificats pour anticiper les échecs de renouvellement.

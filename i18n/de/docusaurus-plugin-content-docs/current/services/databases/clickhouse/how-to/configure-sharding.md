@@ -1,149 +1,71 @@
 ---
 title: "ClickHouse-Sharding konfigurieren"
+sidebar_position: 3
 ---
 
 # ClickHouse-Sharding konfigurieren
 
-Diese Anleitung erklärt, wie Sie Sharding (horizontale Partitionierung) auf ClickHouse konfigurieren, um Daten auf mehrere Shards zu verteilen und Hochverfügbarkeit mit Replikas zu gewährleisten. Die Cluster-Koordination wird durch **ClickHouse Keeper** sichergestellt.
+:::info Verfügbarkeit
+ClickHouse ist in der [Hikube-Konsole](https://console.hikube.cloud) noch nicht als Self-Service verfügbar.
+Um eine Instanz bereitzustellen oder ihre Konfiguration zu ändern, [wenden Sie sich an den Support](mailto:support@hidora.io).
+:::
 
-## Voraussetzungen
-
-- Eine ClickHouse-Instanz auf Hikube bereitgestellt (siehe [Schnellstart](../quick-start.md))
-- `kubectl` konfiguriert für die Interaktion mit der Hikube-API
-- Kenntnis der Sharding- und Replikationskonzepte (siehe [Konzepte](../concepts.md))
+Diese Anleitung erklärt, wie Sie die Anzahl der Shards und Replicas einer ClickHouse-Instanz wählen und anschließend Tabellen erstellen, die diese Topologie nutzen.
 
 ## Schritte
 
-### 1. Shards vs. Replikas verstehen
+### 1. Shards und Replicas verstehen
 
-Bevor Sie Sharding konfigurieren, ist es wichtig, diese beiden Konzepte zu unterscheiden:
+- **Shards**: verteilen die Daten horizontal. Jeder Shard enthält einen Teil der Daten. Mehr Shards = mehr Speicher- und Parallelverarbeitungskapazität.
+- **Replicas**: duplizieren die Daten innerhalb jedes Shards für die Redundanz. Mehr Replicas = höhere Verfügbarkeit bei einem Ausfall.
 
-- **Shards**: Verteilen die Daten horizontal. Jeder Shard enthält einen Teil der Daten. Mehr Shards = mehr Speicher- und Verarbeitungskapazität parallel.
-- **Replikas**: Duplizieren die Daten innerhalb jedes Shards für Redundanz. Mehr Replikas = mehr Verfügbarkeit bei Ausfällen.
-
-Zum Beispiel erhalten Sie mit `shards: 2` und `replicas: 2` insgesamt 4 ClickHouse-Pods (2 Shards x 2 Replikas pro Shard).
+Mit 2 Shards und 2 Replicas pro Shard umfasst die Instanz zum Beispiel insgesamt 4 ClickHouse-Knoten.
 
 :::note
-Sharding ist nützlich, wenn das Datenvolumen die Kapazität eines einzelnen Knotens übersteigt, oder wenn Sie Abfragen auf mehreren Servern parallelisieren möchten.
+Sharding ist sinnvoll, wenn das Datenvolumen die Kapazität eines einzelnen Knotens übersteigt oder wenn Sie Abfragen auf mehrere Server parallelisieren möchten.
 :::
 
-### 2. Sharding konfigurieren
+### 2. Topologie anfragen
 
-Erstellen Sie ein Manifest mit mehreren Shards und Replikas:
+[Wenden Sie sich an den Support](mailto:support@hidora.io) und geben Sie die Anzahl der Shards, die Anzahl der Replicas pro Shard, das Preset und die Speichergröße an. Eine replizierte oder geshardete Konfiguration stützt sich auf **ClickHouse Keeper** (3 Instanzen empfohlen, immer in ungerader Anzahl).
 
-```yaml title="clickhouse-sharded.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: ClickHouse
-metadata:
-  name: my-clickhouse-sharded
-spec:
-  shards: 2
-  replicas: 2
-  resourcesPreset: large
-  size: 50Gi
-  storageClass: replicated
-  clickhouseKeeper:
-    enabled: true
-    replicas: 3
-    resourcesPreset: micro
-    size: 2Gi
-```
+### 3. Verteilte Tabellen erstellen
 
-Diese Konfiguration erstellt:
-- **2 Shards** zur Datenverteilung
-- **2 Replikas pro Shard** für Redundanz (4 ClickHouse-Pods insgesamt)
-- **3 Keeper-Replikas** für die Cluster-Koordination
+Erstellen Sie auf einer geshardeten Instanz auf jedem Shard eine replizierte lokale Tabelle und anschließend eine `Distributed`-Tabelle, die die Abfragen verteilt:
 
-### 3. ClickHouse Keeper konfigurieren
+```sql
+-- Lokale Tabelle, auf allen Knoten des Clusters erstellt
+CREATE TABLE default.events_local ON CLUSTER '{cluster}'
+(
+    ts DateTime,
+    user_id UInt64,
+    action String
+)
+ENGINE = ReplicatedMergeTree
+ORDER BY (ts, user_id);
 
-ClickHouse Keeper gewährleistet die Cluster-Koordination: Leader-Wahl, Datenreplikation und Shard-Statusverfolgung. Er muss für Shard-Konfigurationen unbedingt aktiviert sein.
-
-```yaml title="clickhouse-keeper-config.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: ClickHouse
-metadata:
-  name: my-clickhouse-sharded
-spec:
-  shards: 2
-  replicas: 2
-  resourcesPreset: large
-  size: 50Gi
-  storageClass: replicated
-  clickhouseKeeper:
-    enabled: true
-    replicas: 3
-    resourcesPreset: small
-    size: 5Gi
+-- Verteilte Tabelle, Einstiegspunkt der Abfragen
+CREATE TABLE default.events ON CLUSTER '{cluster}'
+AS default.events_local
+ENGINE = Distributed('{cluster}', default, events_local, cityHash64(user_id));
 ```
 
 :::tip
-Stellen Sie den Keeper immer in ungerader Anzahl bereit (3 oder 5 Replikas), um das Quorum zu gewährleisten. Mit 3 Replikas toleriert der Cluster den Verlust eines Keeper-Knotens. Mit 5 toleriert er zwei.
+Wählen Sie einen Verteilungsschlüssel (hier `cityHash64(user_id)`), der die Daten gleichmäßig verteilt und gemeinsam abgefragte Daten zusammenfasst.
 :::
-
-:::warning
-Das Ändern der Shard-Anzahl auf einem bestehenden Cluster kann eine komplexe Datenumverteilung verursachen. Planen Sie die Shard-Anzahl möglichst bereits bei der ersten Bereitstellung.
-:::
-
-### 4. Anwenden und überprüfen
-
-Wenden Sie die Konfiguration an:
-
-```bash
-kubectl apply -f clickhouse-sharded.yaml
-```
-
-Warten Sie, bis alle Pods bereit sind:
-
-```bash
-# Bereitstellung in Echtzeit beobachten
-kubectl get pods -l app.kubernetes.io/instance=my-clickhouse-sharded -w
-```
-
-**Erwartetes Ergebnis:**
-
-```console
-NAME                          READY   STATUS    RESTARTS   AGE
-my-clickhouse-sharded-0-0     1/1     Running   0          4m
-my-clickhouse-sharded-0-1     1/1     Running   0          4m
-my-clickhouse-sharded-1-0     1/1     Running   0          3m
-my-clickhouse-sharded-1-1     1/1     Running   0          3m
-```
-
-Überprüfen Sie auch die Keeper-Pods:
-
-```bash
-kubectl get pods -l app.kubernetes.io/instance=my-clickhouse-sharded,app.kubernetes.io/component=keeper
-```
-
-**Erwartetes Ergebnis:**
-
-```console
-NAME                                  READY   STATUS    RESTARTS   AGE
-my-clickhouse-sharded-keeper-0        1/1     Running   0          4m
-my-clickhouse-sharded-keeper-1        1/1     Running   0          4m
-my-clickhouse-sharded-keeper-2        1/1     Running   0          4m
-```
 
 ## Überprüfung
 
-Verbinden Sie sich mit ClickHouse und überprüfen Sie die Cluster-Topologie:
-
-```bash
-# Mit dem ersten ClickHouse-Pod verbinden
-kubectl exec -it my-clickhouse-sharded-0-0 -- clickhouse-client
-```
-
-Führen Sie dann folgende Abfrage aus, um Shards und Replikas aufzulisten:
-
 ```sql
+-- Topologie aus Sicht von ClickHouse
 SELECT cluster, shard_num, replica_num, host_name
-FROM system.clusters
-WHERE cluster = 'default'
-ORDER BY shard_num, replica_num;
+FROM system.clusters;
+
+-- Verteilung der Zeilen pro Shard
+SELECT _shard_num, count() FROM default.events GROUP BY _shard_num;
 ```
 
 ## Weiterführende Informationen
 
-- [API-Referenz](../api-reference.md) -- Parameter `shards`, `replicas` und `clickhouseKeeper`
-- [ClickHouse vertikal skalieren](./scale-resources.md) -- CPU- und Speicherressourcen anpassen
-- [Benutzer und Profile verwalten](./manage-users.md) -- Benutzerzugriffsverwaltung
+- [ClickHouse-Konzepte](../concepts.md): Sharding, Replikation, Keeper
+- [Vertikal skalieren](./scale-resources.md)

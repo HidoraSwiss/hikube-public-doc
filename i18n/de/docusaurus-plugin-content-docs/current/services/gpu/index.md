@@ -7,35 +7,37 @@ import ServiceCardGrid from '@site/src/components/ServiceCardGrid';
 
 # GPU as a Service
 
-Hikube bietet Zugang zu **NVIDIA**-Beschleunigern uber GPU Passthrough fur hardwarebeschleunigte Workloads (KI/ML, Rendering, HPC).
+Hikube bietet Zugang zu **NVIDIA**-Beschleunigern im Passthrough für Workloads, die Hardwarebeschleunigung benötigen (KI/ML, Rendering, HPC).
 
-## Nutzungsmodi
+Die Konsole hat keine eigene GPU-Seite: Die GPU wird **bei der Erstellung der Ressource gewählt, die sie nutzt**, in der [Hikube-Konsole](https://console.hikube.cloud).
 
-| Modus | Beschreibung | Anwendungsfall |
-|-------|-------------|----------------|
-| GPU auf Kubernetes | Dedizierte GPU-Nodegroup in einem verwalteten Cluster | ML-Training, Inferenz, Batch-Verarbeitung |
-| GPU auf VM | GPU direkt an eine virtuelle Maschine angeschlossen | Natives CUDA, Grafikrendering, Legacy-HPC |
+## Nutzungsarten
 
-## Bereitstellungsanleitungen
+| Modus | Wo die GPU gewählt wird | Anwendungsfall |
+|------|-------------------|-------------|
+| GPU auf VM | **VM Instances** > **Create an Instance**, Schritt **Configuration**, Abschnitt **Hardware Acceleration (GPU)** | Natives CUDA, interaktive Umgebungen, Rendering |
+| GPU auf Kubernetes | **Kubernetes** > **Create cluster**, Schritt **Nodes**, Abschnitt **GPU** einer Node-Gruppe | Containerisiertes Training und Inferenz, Batch |
+
+## Anleitungen
 
 <ServiceCardGrid items={[
   {
-    title: "GPU auf Kubernetes",
-    description: "Bereitstellung einer GPU-Nodegroup in einem verwalteten Kubernetes-Cluster mit dem GPU Operator.",
-    icon: "/img/services/gpu.svg",
-    href: "./how-to/provision-gpu-kubernetes",
-    tags: ["Kubernetes", "GPU Operator"],
-  },
-  {
     title: "GPU auf VM",
-    description: "NVIDIA-GPU uber GPU Passthrough an eine KubeVirt-VM anschliessen.",
+    description: "Eine VM mit einer oder mehreren NVIDIA-GPUs über den Assistenten der Konsole erstellen.",
     icon: "/img/services/gpu.svg",
     href: "./how-to/provision-gpu-vm",
     tags: ["VM", "Passthrough"],
   },
   {
-    title: "Ubersicht",
-    description: "Architektur, verfugbare GPU-Typen und Abrechnungsmodell.",
+    title: "GPU auf Kubernetes",
+    description: "Einem verwalteten Kubernetes-Cluster eine GPU-Node-Gruppe mit dem GPU Operator hinzufügen.",
+    icon: "/img/services/gpu.svg",
+    href: "./how-to/provision-gpu-kubernetes",
+    tags: ["Kubernetes", "GPU Operator"],
+  },
+  {
+    title: "Übersicht",
+    description: "Angebotene GPU-Modelle, Verfügbarkeit und Wahl zwischen VM und Kubernetes.",
     icon: "/img/services/gpu.svg",
     href: "./overview",
   },

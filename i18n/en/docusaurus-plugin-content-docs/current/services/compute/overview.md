@@ -5,60 +5,68 @@ title: Overview
 
 import NavigationFooter from '@site/src/components/NavigationFooter';
 
-# Virtual Machines on Hikube
+# Virtual machines on Hikube
 
-Hikube **Virtual Machines (VMs)** offer complete hardware infrastructure virtualization, ensuring the execution of heterogeneous operating systems and business applications in isolated environments that meet enterprise security requirements.
+Hikube **virtual machines (VMs)** provide full virtualization of the hardware infrastructure, to run heterogeneous operating systems and business applications in isolated environments.
+
+In the [Hikube console](https://console.hikube.cloud), VMs are managed from the **Infrastructure** > **VM Instances** menu: guided creation, start and stop, changes to resources, disks and network, deletion.
 
 ---
 
-## 🏗️ Architecture and Operation
+## What you can do from the console
 
-### **Compute and Storage Separation**
+| Need | Where to do it |
+|--------|-------------|
+| Create a VM (image, instance type, disks, network, SSH keys, cloud-init, GPU) | **VM Instances** > **Create an Instance** |
+| Start, stop, restart | **Actions** menu in the list, or **Actions** section of the detail page |
+| Change the instance type, add a disk or a GPU, change the open ports | Detail page > **Edit** |
+| Replay the cloud-init script | **Reload UserData**, then **Restart** |
+| Get the ready-to-copy SSH command | Detail page, **Network & Security** section > **SSH Connection** |
+| Connect the VM to a private network | **Network** step of the wizard, or **Networking** menu (see [VPCs and subnets](../networking/overview.md)) |
 
-Hikube uses a **decoupled** architecture between compute and storage that ensures optimal resilience:
+---
 
-**💻 Compute Layer**
+## Architecture and operation
 
-- The VM runs on **physical servers** in one of the 3 datacenters
-- If a node fails, the VM is **automatically restarted** on another node
-- If a datacenter fails, the VM is **automatically restarted** on another node in one of the 2 remaining datacenters
-- Downtime is limited to restart time (generally < 2 minutes)
+### Separation of compute and storage
 
-**💾 Storage Layer (Persistent)**
+Hikube decouples compute and storage:
 
-- VM disks are **automatically replicated** across multiple physical nodes with "replicated" storage
-- **No data loss** even in case of multiple hardware failures
-- Disks survive failures and remain attachable to the relocated VM
+**Compute layer**
 
-This separation ensures that **your data is always safe**, even if the physical server hosting your VM becomes unavailable or if a datacenter becomes unavailable.
-We guarantee the resources!
+- The VM runs on physical servers spread across 3 datacenters.
+- If the node hosting it fails, the VM is restarted on another node.
+- Downtime is limited to the restart time.
 
-### **Multi-Datacenter Architecture**
+**Storage layer**
+
+- VM disks are **replicated** across several physical nodes, in synchronous or asynchronous mode (chosen disk by disk in the wizard).
+- Disks survive hardware failures and remain attachable to the relocated VM.
+- They exist independently of the VM: deleting a VM detaches its disks without deleting them. They remain visible in the **Disks** menu (see [Disks](../storage/disks/overview.md)).
+
+### Multi-datacenter architecture
 
 ```mermaid
 flowchart TD
-    subgraph DC1["🏢 Geneva Datacenter"]
-        VM1["🖥️ VM-Production"]
-        STORAGE1["💾 Storage"]
+    subgraph DC1["Geneva datacenter"]
+        VM1["Production VM"]
+        STORAGE1["Storage"]
     end
-    
-    subgraph DC2["🏢 Lucerne Datacenter"]
-        STORAGE2["💾 Storage"]
+
+    subgraph DC2["Lucerne datacenter"]
+        STORAGE2["Storage"]
     end
-    
-    subgraph DC3["🏢 Gland Datacenter"]
-        STORAGE3["💾 Storage"]
+
+    subgraph DC3["Gland datacenter"]
+        STORAGE3["Storage"]
     end
-    
-    %% VM uses local storage
+
     VM1 --> STORAGE1
-    
-    %% Storage replication between the 3 DCs
+
     STORAGE1 <-.->|"Replication"| STORAGE2
     STORAGE2 <-.->|"Replication"| STORAGE3
     STORAGE1 <-.->|"Replication"| STORAGE3
-    
-    %% Styles
+
     style DC1 fill:#e3f2fd
     style DC2 fill:#e8f5e8
     style DC3 fill:#fff2e1
@@ -67,116 +75,117 @@ flowchart TD
 
 ---
 
-## ⚙️ Instance Types
+## Instance types
 
-### **Complete Range for All Needs**
+At the **Configuration** step of the wizard, the console offers three series. Choose the series first, then the instance size.
 
-Hikube offers three instance series optimized for different usage profiles, ensuring performance adapted to each workload:
+### Standard (S) series — 1:2 ratio
 
-### **S Series - Standard (Ratio 1:2)**
+*Economical use, for development and testing.*
 
-**Compute-oriented** instances with a CPU/memory ratio of 1:2, ideal for CPU-intensive workloads.
+| Instance | vCPU | RAM |
+|----------|------|-----|
+| `s1.small` | 1 | 2 GB |
+| `s1.medium` | 2 | 4 GB |
+| `s1.large` | 4 | 8 GB |
+| `s1.xlarge` | 8 | 16 GB |
+| `s1.3large` | 12 | 24 GB |
+| `s1.2xlarge` | 16 | 32 GB |
+| `s1.3xlarge` | 24 | 48 GB |
+| `s1.4xlarge` | 32 | 64 GB |
+| `s1.8xlarge` | 64 | 128 GB |
 
-| **Instance** | **vCPU** | **RAM** | **Typical Use Cases** |
-|--------------|----------|---------|---------------------------|
-| `s1.small`   | 1        | 2 GB    | Light services, proxies |
-| `s1.medium`  | 2        | 4 GB    | Workers, batch processing |
-| `s1.large`   | 4        | 8 GB    | Scientific computing |
-| `s1.xlarge`  | 8        | 16 GB   | Rendering, compilation |
-| `s1.3large`  | 12       | 24 GB   | Intensive applications |
-| `s1.2xlarge` | 16       | 32 GB   | HPC, simulations |
-| `s1.3xlarge` | 24       | 48 GB   | Distributed computing |
-| `s1.4xlarge` | 32       | 64 GB   | Massive computing |
-| `s1.8xlarge` | 64       | 128 GB  | Exascale computing |
+### Universal (U) series — 1:4 ratio
 
-### **U Series - Universal (Ratio 1:4)**
+*General use: web servers, applications.*
 
-**Versatile** instances offering optimal balance between CPU and memory for most enterprise applications.
+| Instance | vCPU | RAM |
+|----------|------|-----|
+| `u1.medium` | 1 | 4 GB |
+| `u1.large` | 2 | 8 GB |
+| `u1.xlarge` | 4 | 16 GB |
+| `u1.2xlarge` | 8 | 32 GB |
+| `u1.4xlarge` | 16 | 64 GB |
+| `u1.8xlarge` | 32 | 128 GB |
 
-| **Instance** | **vCPU** | **RAM** | **Typical Use Cases** |
-|--------------|----------|---------|---------------------------|
-| `u1.medium`  | 1        | 4 GB    | Dev, tests, micro-services |
-| `u1.large`   | 2        | 8 GB    | Web applications, APIs |
-| `u1.xlarge`  | 4        | 16 GB   | Business applications |
-| `u1.2xlarge` | 8        | 32 GB   | Intensive workloads |
-| `u1.4xlarge` | 16       | 64 GB   | Critical applications |
-| `u1.8xlarge` | 32       | 128 GB  | Enterprise applications |
+### Memory (M) series — 1:8 ratio
 
-### **M Series - Memory (Ratio 1:8)**
+*Memory-optimized: databases, caches.*
 
-**High memory** instances with a CPU/memory ratio of 1:8 for memory-hungry applications.
+| Instance | vCPU | RAM |
+|----------|------|-----|
+| `m1.large` | 2 | 16 GB |
+| `m1.xlarge` | 4 | 32 GB |
+| `m1.2xlarge` | 8 | 64 GB |
+| `m1.3xlarge` | 12 | 96 GB |
+| `m1.4xlarge` | 16 | 128 GB |
+| `m1.8xlarge` | 32 | 256 GB |
 
-| **Instance** | **vCPU** | **RAM** | **Typical Use Cases** |
-|--------------|----------|---------|---------------------------|
-| `m1.large`   | 2        | 16 GB   | Redis caches, Memcached |
-| `m1.xlarge`  | 4        | 32 GB   | In-memory databases |
-| `m1.2xlarge` | 8        | 64 GB   | Analytics, Big Data |
-| `m1.4xlarge` | 16       | 128 GB  | SAP HANA, Oracle |
-| `m1.8xlarge` | 32       | 256 GB  | Data warehouses |
+:::tip Selection guide
+- **Development, testing, lightweight services**: **S** series.
+- **Web and business applications**: **U** series.
+- **Databases, caches, analytics**: **M** series.
 
-:::tip **Selection Guide**
-
-- **Intensive computing, CI/CD** → **S** Series (ratio 1:2, CPU optimized)
-- **Classic web applications** → **U** Series (ratio 1:4, balanced)  
-- **Databases, Analytics** → **M** Series (ratio 1:8, memory optimized)
+The instance type can be changed afterwards from **Edit**; the VM restarts to apply the change.
 :::
 
 ---
 
-## 🔒 Isolation and Security
+## Operating systems
 
-### **Multi-Tenant by Design**
+The system disk is created from an image provided by Hikube. The wizard shows the available images as cards, with a version selector:
 
-Each VM benefits from **complete isolation** thanks to a secure architecture that strictly partitions resources between different tenants. This isolation relies on several complementary protection layers:
+| Image | Versions |
+|-------|----------|
+| AlmaLinux | 8, 9 |
+| CentOS Stream | 9, 10 |
+| CloudLinux | 8, 9 |
+| Debian | 12, 13 |
+| openSUSE | 15.6, 16.0 |
+| Oracle Linux | 8, 9, 10 |
+| Rocky Linux | 8, 9, 10 |
+| Ubuntu | 22.04, 24.04 |
+| Windows Server | 2022, 2025 |
 
-- **Tenant** : Logical separation of resources at the application level, each tenant having its own execution space
-- **Kernel isolation** : Network and process isolation at the Linux kernel level, ensuring no VM can access another's resources
-- **Storage classes** : Automatic encryption and data isolation, with cryptographic separation of volumes by tenant
+The list shown in the console is authoritative: it changes with the supported versions.
 
----
-
-## 🌐 Connectivity and Access
-
-### **Native Access Methods**
-
-Access to Hikube virtual machines is done via native mechanisms integrated into the platform, eliminating the need for complex network infrastructure. The **serial console** provides direct low-level access independent of the network, ideal for debugging and system maintenance. For graphical environments, **VNC** allows connection to the VM's user interface via secure tunnels. Traditional **SSH** access remains available either via `virtctl ssh` which automatically manages connectivity, or directly via the assigned external IP. Application services can be selectively exposed via **controlled port lists** that intelligently filter traffic without compromising tenant security.
-
-### **Software-Defined Network**
-
-Hikube's network architecture is based on a Software-Defined approach that completely virtualizes the network layer. Each VM automatically receives a **private IP** in a network segment isolated by tenant, ensuring isolation while allowing internal communication. The system can optionally assign a **public IPv4 IP** for external exposure, with automatic routing that maintains secure segmentation. The **distributed firewall** applies granular security policies directly at each VM level, with restrictive default rules that dynamically adapt to application needs.
-
----
-
-## 📦 Migration and Portability
-
-### **Import of Existing Workloads**
-
-The Hikube platform facilitates migration of existing infrastructures thanks to universal import mechanisms that preserve workload integrity. **Standardized cloud images** (Ubuntu Cloud Images, CentOS Cloud) integrate natively for immediate deployment with cloud-native optimizations. For custom installations, importing **ISO images** allows recreating custom environments while preserving all specific configurations. **VMware snapshots** are automatically converted from VMDK to RAW format, ensuring seamless transition from traditional virtualization infrastructures. Compatibility with **Proxmox and OpenStack formats** (QCOW2) guarantees interoperability with most existing cloud solutions.
-
-### **Lifecycle Management**
-
-The lifecycle management system integrates automated mechanisms that ensure operational continuity of virtual machines. **Snapshots** instantly capture the complete state of the VM, including memory and storage, to enable precise rollbacks during maintenance or incidents. **Automatic backup** orchestrates scheduled disk backups with configurable retention, automatically replicated across the three datacenters to guarantee recovery in case of disaster. **Live migration** moves VMs between physical nodes without service interruption, facilitating hardware maintenance and load optimization without impact on critical applications.
-
----
-
-## 🚀 Next Steps
-
-Now that you understand Hikube VM architecture:
-
-**🏃‍♂️ Immediate Start**  
-→ [Create your first VM in 5 minutes](./quick-start.md)
-
-**📖 Advanced Configuration**  
-→ [Complete API Reference](./api-reference.md)
-
-:::tip Recommended Architecture
-For production, always use the `replicated` storage class and size your VMs with at least 2 vCPU to benefit from better performance.
+:::note Custom image
+Importing a custom image (ISO or QCOW2 from an HTTPS URL) is done by creating a disk in the **Disks** menu. That disk can then be chosen as the system disk of a new VM (**Existing** option). See [Create a system disk from an image](../storage/disks/how-to/create-from-image.md).
 :::
+
+---
+
+## Connectivity and access
+
+- **Public IP**: **Public IPv4 Address** option, enabled by default. The VM is then reachable from the Internet.
+- **Firewall**: **Enable Firewall** option, enabled by default. Only the checked ports (22 by default; 80, 443 or any custom port optionally) are open for inbound traffic. Without the firewall, all ports of the public IP are open.
+- **Private networks**: the VM can be connected to one or more [VPCs](../networking/overview.md) to communicate privately with other VMs in the project.
+- **SSH**: the detail page shows the ready-to-copy `ssh <user>@<ip>` command. Access uses the public SSH keys entered in the wizard.
+- **Windows**: an administrator password is generated at creation and shown only once. Access is over RDP.
+
+:::note Serial console and VNC
+Serial console or VNC access is not offered in the console; contact [support](mailto:support@hidora.io) if you need it for diagnostics.
+:::
+
+---
+
+## Isolation and security
+
+- Each **project** is an isolated space: the VMs of one project cannot see those of another.
+- Each VM runs in its own virtualization process, isolated at the kernel level.
+- Disks can be **encrypted at rest** (LUKS), with the **Disk Encryption** option at creation.
+
+---
+
+## Next steps
+
+- [Create your first VM](./quick-start.md)
+- [Understand the concepts](./concepts.md)
+- [Configure the network and firewall](./how-to/configure-network.md)
 
 <NavigationFooter
   nextSteps={[
     {label: "Concepts", href: "../concepts"},
-    {label: "Quick Start", href: "../quick-start"},
+    {label: "Quick start", href: "../quick-start"},
   ]}
 />
-

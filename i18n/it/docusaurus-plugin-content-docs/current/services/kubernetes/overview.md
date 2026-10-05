@@ -3,198 +3,154 @@ sidebar_position: 1
 title: Panoramica
 ---
 
-<!--- Presentazione del Kubernetes Gestito su Hikube
-- Schema architettura (replica, control plane, worker, infra, addon, versioning k8s)
-- Composizione dei diversi elementi di configurazione del k8s gestito
-- Spiegazione del funzionamento:
-  - control plane
-  - worker/nodeGroup
-    - Esempio
-  - storageclass
-  - versioning
-  - addons-->
+import NavigationFooter from '@site/src/components/NavigationFooter';
 
-# Presentazione del Kubernetes Gestito su Hikube
+# Presentazione del Kubernetes gestito su Hikube
 
-Hikube offre un servizio di **Kubernetes gestito** progettato per fornire un'infrastruttura altamente disponibile, sicura e performante.
-Il piano di controllo e interamente gestito dalla piattaforma, mentre i **nodi worker** vengono distribuiti nel vostro tenant sotto forma di macchine virtuali.
+Hikube propone un servizio di **Kubernetes gestito** progettato per offrire un'infrastruttura ad alta disponibilità, sicura e performante.
+Il piano di controllo è interamente gestito dalla piattaforma, mentre i **nodi worker** vengono distribuiti nel suo progetto sotto forma di macchine virtuali.
+
+I cluster si creano, si modificano e si eliminano dalla [console Hikube](https://console.hikube.cloud), menu **Infrastructure** > **Kubernetes**. Una volta pronto il cluster, se ne scarica il kubeconfig dalla console e si lavora nel cluster con i propri strumenti abituali (`kubectl`, `helm`, client SDK, ecc.).
 
 ---
 
-## 🏗️ Schema di Architettura
-
-### **Panoramica**
+## Architettura
 
 I cluster Kubernetes Hikube si basano su un'**infrastruttura multi-datacenter** (3 siti svizzeri) che garantisce la replica, la tolleranza ai guasti e la continuità del servizio.
 
-- **Piano di controllo (Control Plane)**: ospitato è gestito da Hikube
-  Composto da:
+- **Piano di controllo (Control Plane)**: ospitato e gestito da Hikube. È composto da:
   - `kube-apiserver`
   - `etcd`
   - `kube-scheduler`
   - `kube-controller-manager`
-- **Nodi worker**: macchine virtuali nel vostro tenant
-- **Rete**: CNI con supporto `LoadBalancer`, `Ingress` e policy di rete (`NetworkPolicy`)
-- **Archiviazione**: volumi persistenti replicati sui 3 datacenter
-- **Add-on**: integrazione cert-manager, FluxCD, monitoring, ecc.
-- **Versioning Kubernetes**: supporto multi-versione con aggiornamenti progressivi
+- **Nodi worker**: macchine virtuali nel suo progetto, raggruppate in gruppi di nodi
+- **Rete**: CNI Cilium, supporto dei Service `LoadBalancer`, degli `Ingress` e delle `NetworkPolicy`
+- **Storage**: volumi persistenti replicati sui 3 datacenter
+- **Addon**: Cert-Manager, Ingress NGINX, Flux CD, agenti di monitoring, Velero, GPU Operator, ecc.
+- **Versioni Kubernetes**: la versione si sceglie tra quelle proposte dalla piattaforma
 
 ---
 
-## ⚙️ Composizione e Configurazione del Cluster
+## Che cosa si configura nella console
 
-I cluster sono interamente dichiarativi e configurabili tramite API o manifesto YAML.
-I principali elementi di configurazione includono:
+La procedura guidata **Create cluster** raggruppa la configurazione in quattro passaggi:
 
-| Elemento | Descrizione |
-|----------|-------------|
-| **nodeGroups** | Gruppi di nodi omogenei (dimensione, ruolo, GPU, ecc.) |
-| **storageClass** | Definisce il tipo di persistenza e la replica |
-| **addons** | Insieme delle funzionalità opzionali attivabili |
-| **version** | Versione del server Kubernetes utilizzata |
-| **network** | Gestione del CNI, LoadBalancer e Ingress |
+| Passaggio | Che cosa si definisce |
+|-------|------------------------|
+| **General** | Nome del cluster, versione di Kubernetes, endpoint API (facoltativo), dimensione e numero di istanze del control plane |
+| **Nodes** | Uno o più gruppi di nodi: nome, tipo di istanza, storage effimero, numero minimo e massimo di nodi, esposizione su internet, GPU |
+| **Addons** | Attivazione degli addon del cluster e sovrascrittura facoltativa dei relativi valori Helm |
+| **Summary** | Riepilogo prima della distribuzione |
 
----
-
-## ⚙️ Funzionamento Dettagliato
-
-### 🧠 **Control Plane**
-
-- Gestito da Hikube, senza manutenzione necessaria lato cliente
-- Componenti critici replicati su più siti
-- Gestione dell'alta disponibilità, del monitoring e degli aggiornamenti automatici
-- Accesso tramite l'API standard Kubernetes (`kubectl`, client SDK, ecc.)
-
-### 🧩 **Worker Nodes / NodeGroups**
-
-I **NodeGroups** permettono di adattare le risorse alle vostre esigenze. Ogni gruppo può essere configurato con un tipo di istanza, dei ruoli e uno scaling automatico.
-
-#### Esempio di NodeGroup
-
-```yaml
-nodeGroups:
-  web:
-    minReplicas: 2
-    maxReplicas: 10
-    instanceType: "s1.large"
-    roles: ["ingress-nginx"]
-```
-
-#### Caratteristiche principali
-
-- **Autoscaling**: parametri `minReplicas` e `maxReplicas`
-- **Supporto GPU**: collegamento dinamico di GPU NVIDIA
-- **Tipi di istanza**: `S1` (standard), `U1` (universal), `M1` (memory-optimized)
+Il dettaglio di ogni campo è descritto nei [concetti](./concepts.md) e nell'[avvio rapido](./quick-start.md).
 
 ---
 
-## 💾 Archiviazione Persistente
+## Funzionamento dettagliato
 
-### **Classe di archiviazione: `replicated`**
+### Control Plane
+
+- Gestito da Hikube, senza alcuna manutenzione da parte sua
+- Dimensionato tramite un preset (**Control Plane Instance Size**) e un numero di istanze (**Control Plane High Availability**: 1, 3 o 5)
+- Accesso tramite l'API standard Kubernetes (`kubectl`, client SDK, ecc.) con il kubeconfig scaricato dalla console
+
+### Gruppi di nodi
+
+I **gruppi di nodi** consentono di adattare le risorse ai suoi workload. Ogni gruppo ha il proprio tipo di istanza e i propri limiti di auto-scaling.
+
+- **Auto-scaling**: numero minimo e massimo di nodi per gruppo
+- **Supporto GPU**: collegamento di GPU NVIDIA ai nodi di un gruppo, scelte nella procedura guidata
+- **Tipi di istanza**: serie Standard (S), Universal (U) e Memory (M)
+
+---
+
+## Storage persistente
+
+I volumi persistenti (PVC) creati nel cluster utilizzano la classe di storage **`replicated`**:
 
 - Replica automatica sui **3 datacenter svizzeri**
-- Provisioning dinamico dei volumi persistenti (PVC)
+- Provisioning dinamico dei volumi persistenti
 - Tolleranza ai guasti e alta disponibilità nativa
 
-Esempio di utilizzo:
+Esempio di PVC da distribuire nel cluster:
 
-```yaml
-storageClassName: replicated
-resources:
-  requests:
-    storage: 20Gi
+```yaml title="pvc.yaml"
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: my-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: replicated
+  resources:
+    requests:
+      storage: 20Gi
 ```
 
 ---
 
-## 🔢 Versioning Kubernetes
+## Versioni Kubernetes
 
-- I cluster possono essere creati con una **versione Kubernetes specifica**
-- Hikube garantisce gli aggiornamenti minori e correttivi in modo controllato
-- Il cliente mantiene la possibilità di pianificare gli upgrade maggiori
-
-Esempio:
-
-```yaml
-version: "1.30.3"
-```
+- La versione si sceglie alla creazione del cluster, tra quelle proposte dalla piattaforma (la più recente è preselezionata)
+- L'aggiornamento si effettua dalla pagina di modifica del cluster (vedere [Come aggiornare un cluster](./how-to/upgrade-cluster.md))
 
 ---
 
-## 🧩 Add-on Integrati
+## Addon integrati
 
-### **Cert-Manager**
+### Cert-Manager
 
 - Gestione automatizzata dei certificati SSL/TLS
-- Supporto Let's Encrypt e autorita private
+- Supporto di Let's Encrypt e di autorità private
 - Rinnovo automatico
 
-### **Ingress NGINX**
+### Ingress NGINX
 
-- Controller di ingress integrato
-- Supporto wildcard, SNI e metriche Prometheus
+- Controller Ingress integrato, esposto tramite un Service `LoadBalancer`
+- Distribuito sui gruppi di nodi esposti su internet
 
-### **Flux CD (GitOps)**
+### Flux CD (GitOps)
 
-- Sincronizzazione continua con i vostri repository Git
+- Sincronizzazione continua con i suoi repository Git
 - Distribuzione automatizzata e rollback
 
-### **Monitoring Stack**
+### Monitoring Agents
 
-- **Node Exporter**, **FluentBit**, **Kube-State-Metrics**
-- Integrazione completa con Grafana e Prometheus del tenant
+- Raccolta delle metriche e dei log del cluster (VictoriaMetrics Agent, Fluent Bit, kube-state-metrics, node exporter)
 
----
-
-## 🚀 Esempi di Casi d'Uso
-
-### **Applicazioni Web**
-
-```yaml
-nodeGroups:
-  web:
-    minReplicas: 2
-    maxReplicas: 10
-    instanceType: "s1.large"
-    roles: ["ingress-nginx"]
-```
-
-### **Workload ML/AI**
-
-```yaml
-nodeGroups:
-  ml:
-    minReplicas: 1
-    maxReplicas: 5
-    instanceType: "u1.xlarge"
-    gpus:
-      - name: "nvidia.com/AD102GL_L40S"
-```
-
-### **Applicazioni Critiche**
-
-```yaml
-nodeGroups:
-  production:
-    minReplicas: 3
-    maxReplicas: 20
-    instanceType: "m1.large"
-```
+L'elenco completo si trova nella sezione [Plugin](./plugins/cilium.md).
 
 ---
 
-## 📚 Risorse
+## Esempi di casi d'uso
 
-- **[Concetti e Architettura](./concepts.md)** → Comprendere come viene distribuito un cluster Kubernetes Hikube
-- **[Avvio rapido](./quick-start.md)** → Create il vostro primo cluster Hikube
-- **[Riferimento API](./api-reference.md)** → Documentazione completa della configurazione
+| Caso d'uso | Gruppo di nodi consigliato |
+|-------------|---------------------------|
+| **Applicazioni web** | Serie Standard (S), da 2 a 10 nodi, gruppo esposto su internet per ospitare l'Ingress |
+| **Workload ML/IA** | Serie Universal (U) con GPU, addon GPU Operator attivato |
+| **Applicazioni critiche** | Almeno 3 nodi minimi, control plane in alta disponibilità (3 istanze) |
 
 ---
 
-## 💡 Punti Chiave
+## Risorse
 
-- **Piano di controllo gestito**: nessuna manutenzione dei master necessaria
-- **Nodi nel vostro tenant**: controllo completo sui worker
-- **Scaling automatico**: adeguamento dinamico in base al carico
+- **[Concetti e architettura](./concepts.md)**: comprendere come viene distribuito un cluster Kubernetes Hikube
+- **[Avvio rapido](./quick-start.md)**: creare il primo cluster dalla console
+
+---
+
+## Punti chiave
+
+- **Piano di controllo gestito**: nessuna manutenzione dei master richiesta
+- **Nodi nel suo progetto**: controllo completo sui worker
+- **Auto-scaling**: adeguamento dinamico in base al carico
 - **Multi-datacenter**: alta disponibilità nativa e replica
-- **Compatibilita totale**: API Kubernetes standard supportata
+- **Compatibilità totale**: API Kubernetes standard
+
+<NavigationFooter
+  nextSteps={[
+    {label: "Concetti", href: "../concepts"},
+    {label: "Avvio rapido", href: "../quick-start"},
+  ]}
+/>

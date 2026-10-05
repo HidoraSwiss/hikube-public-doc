@@ -7,39 +7,31 @@ title: Concepts
 
 ## Architecture
 
-Hikube permet d'attacher des GPU NVIDIA directement aux machines virtuelles et aux clusters Kubernetes. L'allocation GPU est gérée par le **NVIDIA GPU Operator** côté Kubernetes, et par le **passthrough PCI** côté machines virtuelles (KubeVirt).
+Hikube attache des GPU NVIDIA physiques aux machines virtuelles et aux nœuds des clusters Kubernetes. Côté VM, le GPU est attribué en **passthrough PCI**. Côté Kubernetes, le nœud reçoit le GPU de la même façon, puis le **NVIDIA GPU Operator** l'expose aux pods.
 
 ```mermaid
 graph TB
-    subgraph "Hikube Platform"
-        subgraph "GPU physiques"
-            G1[NVIDIA L40S]
-            G2[NVIDIA A100]
-            G3[NVIDIA RTX PRO 6000<br/>Blackwell]
-        end
-
-        subgraph "Allocation VM"
-            VMI[VMInstance]
-            PT[PCI Passthrough]
-        end
-
-        subgraph "Allocation Kubernetes"
-            K8S[Cluster Kubernetes]
-            DP[Device Plugin]
-            GO[GPU Operator]
-        end
+    subgraph "GPU physiques"
+        G1[NVIDIA L40S]
+        G2[NVIDIA A100 80GB]
+        G3[NVIDIA H100 80GB]
+        G4[NVIDIA RTX 6000 Pro]
     end
 
-    G1 --> PT
-    G2 --> PT
-    G3 --> PT
-    PT --> VMI
+    subgraph "Instances VM"
+        VMI[Instance VM]
+    end
 
-    G1 --> DP
-    G2 --> DP
-    G3 --> DP
-    GO --> DP
-    DP --> K8S
+    subgraph "Kubernetes managé"
+        NG[Groupe de nœuds GPU]
+        GO[GPU Operator]
+        POD[Pods]
+    end
+
+    G1 & G2 & G3 & G4 -->|passthrough| VMI
+    G1 & G2 & G3 & G4 -->|passthrough| NG
+    GO --> NG
+    NG --> POD
 ```
 
 ---
@@ -48,101 +40,88 @@ graph TB
 
 | Terme | Description |
 |-------|-------------|
-| **GPU Operator** | NVIDIA GPU Operator — gère automatiquement les pilotes, le device plugin et le runtime GPU sur les nœuds Kubernetes. |
-| **Device Plugin** | Plugin Kubernetes qui expose les GPU comme ressources planifiables (`nvidia.com/<model>`). |
-| **PCI Passthrough** | Technique qui attribue un GPU physique directement à une VM, offrant des performances natives. |
-| **CUDA** | Plateforme de calcul parallèle NVIDIA, utilisée pour l'accélération GPU (ML, HPC, rendu). |
-| **Instance Type** | Profil de ressources CPU/RAM de la VM. Dimensionné en fonction du nombre de GPU (8-16 vCPU par GPU recommandé). |
+| **Accélération Matérielle (GPU)** | Section de l'assistant VM où l'on choisit les GPU de l'instance. |
+| **Groupe de nœuds** | Ensemble de nœuds worker d'un cluster Kubernetes partageant un type d'instance et, le cas échéant, des GPU. |
+| **Passthrough PCI** | Attribution d'un GPU physique directement à une VM ou à un nœud, avec des performances natives. |
+| **GPU Operator** | Addon Kubernetes NVIDIA qui installe les drivers, le device plugin et le runtime GPU sur les nœuds. Activé automatiquement dès qu'un groupe de nœuds a des GPU. |
+| **Device plugin** | Composant qui expose les GPU aux pods comme ressource planifiable `nvidia.com/gpu`. |
+| **HAMi** | Addon de virtualisation de GPU : partage d'un même GPU entre plusieurs pods. Nécessite le GPU Operator. |
+| **CUDA** | Plateforme de calcul parallèle NVIDIA, utilisée pour l'accélération (ML, HPC, rendu). |
 
 ---
 
-## Types de GPU disponibles
+## Modèles et disponibilité
 
-| GPU | Architecture | Mémoire | Cas d'usage |
-|-----|-------------|---------|-------------|
-| **L40S** | Ada Lovelace | 48 GB GDDR6 | Inférence, développement, prototypage |
-| **A100 (PCIe / SXM4)** | Ampere | 80 GB HBM2e | Entraînement ML, fine-tuning |
-| **RTX PRO 6000 Blackwell** | Blackwell | 96 GB GDDR7 | LLM, calcul intensif, entraînement distribué |
+| Modèle | Mémoire |
+|--------|---------|
+| **NVIDIA L40S** | 48 Go |
+| **NVIDIA A100 80GB** | 80 Go |
+| **NVIDIA H100 80GB** | 80 Go |
+| **NVIDIA RTX 6000 Pro** | 96 Go |
 
-### Identifiants GPU dans les manifestes
+Le sélecteur de GPU affiche tous les modèles de la plateforme. Un modèle sans unité libre est marqué **Indisponible** et ne peut pas être sélectionné. La disponibilité est globale : la console n'affiche pas le nombre d'unités libres.
 
-| GPU | Valeur `gpus[].name` |
-|-----|----------------------|
-| L40S | `nvidia.com/AD102GL_L40S` |
-| A100 PCIe 80 Go | `nvidia.com/GA100_A100_PCIE_80GB` |
-| A100 SXM4 80 Go | `nvidia.com/GA100_A100_SXM4_80GB` |
-| RTX PRO 6000 Blackwell | `nvidia.com/GB202GL_RTX_PRO_6000_BLACKWELL_SERVER_EDITION` |
+:::note Co-localisation
+Une VM, comme un nœud Kubernetes, s'exécute sur un seul serveur physique. Quand vous demandez plusieurs GPU pour une même VM (ou pour chaque nœud d'un groupe), ils doivent tous être disponibles sur un même serveur. Sinon, la création échoue avec le message **Les GPUs suivants ne sont pas disponibles : …**, même si chaque modèle apparaît disponible.
+:::
 
 ---
 
-## GPU sur machines virtuelles
+## GPU sur machine virtuelle
 
-Les GPU sont attachés aux VM via **PCI passthrough** :
+- Sélection à l'étape **Configuration** de l'assistant, sous **Accélération Matérielle (GPU)** : cliquez sur une carte pour ajouter un GPU, puis utilisez **+** et **−** pour en changer le nombre. Le badge indique le total (par exemple **2 GPU au total**).
+- La section n'apparaît que si la plateforme propose des GPU.
+- Les GPU se modifient après coup dans **Modifier** > **Ressources (CPU / RAM)** ; la VM redémarre.
+- **Arrêter** une VM libère ses GPU. Au redémarrage, s'ils ont été attribués ailleurs, la console propose de **Sélectionner un GPU alternatif**.
+- Les drivers NVIDIA ne sont pas préinstallés dans les images.
 
-- Le GPU physique est dédié à la VM (performances natives)
-- Déclaré dans `spec.gpus[]` du manifeste `VMInstance`
-- Multi-GPU possible (répéter les entrées dans `gpus[]`)
-- Les pilotes NVIDIA doivent être installés dans la VM
-
-:::tip Ratio CPU/GPU recommandé
-Prévoyez **8 à 16 vCPU par GPU**. Pour un seul GPU, un `u1.2xlarge` (8 vCPU, 32 GB RAM) est un bon point de départ.
+:::tip Ratio CPU/GPU
+Prévoyez **8 à 16 vCPU par GPU**. Pour un GPU, un `u1.2xlarge` (8 vCPU, 32 Go) est un bon point de départ.
 :::
 
 ---
 
 ## GPU sur Kubernetes
 
-Les GPU sont exposés aux pods via le **NVIDIA Device Plugin** :
-
-- Le GPU Operator doit être activé sur le cluster (`addons.gpuOperator.enabled: true`)
-- Les pods demandent un GPU via `resources.limits` (`nvidia.com/gpu: 1`)
-- Le scheduler Kubernetes place le pod sur un nœud disposant du GPU demandé
-- Les nœuds GPU sont configurés dans les **node groups** avec le champ `gpus[]`
+- Sélection à l'étape **Nœuds** de l'assistant de cluster, section **GPU** de chaque groupe de nœuds. Chaque nœud du groupe reçoit les GPU sélectionnés.
+- Dès qu'un groupe a des GPU, l'addon **GPU Operator** est activé et ne peut plus être désactivé (**Requis lorsqu'un groupe de nœuds a des GPU**).
+- Les pods demandent un GPU via `resources.limits` (`nvidia.com/gpu: 1`).
+- Un groupe créé **sans** GPU ne peut pas en recevoir ; un groupe créé **avec** GPU peut changer de modèle ou de nombre mais doit garder au moins un GPU. Pour changer de catégorie, ajoutez un nouveau groupe de nœuds.
 
 ```mermaid
 graph LR
-    subgraph "Node Group GPU"
-        N1[Worker Node]
-        GPU[NVIDIA L40S]
-        DP[Device Plugin]
+    subgraph "Groupe de nœuds GPU"
+        N1[Nœud worker]
+        GPU[GPU NVIDIA]
+        DP[Device plugin]
     end
 
     subgraph "Pod"
-        C[Container]
-        RL[resources.limits:<br/>nvidia.com/gpu: 1]
+        C[Conteneur]
+        RL["resources.limits : nvidia.com/gpu: 1"]
     end
 
     GPU --> DP
     DP -->|expose| N1
-    N1 -->|schedule| C
+    N1 -->|planifie| C
 ```
 
 ---
 
-## Comparaison VM vs Kubernetes
+## Comparaison VM et Kubernetes
 
 | Critère | GPU sur VM | GPU sur Kubernetes |
 |---------|-----------|-------------------|
-| **Isolation** | GPU dédié (passthrough) | GPU partagé via device plugin |
-| **Performance** | Performances natives | Performances natives |
-| **Flexibilité** | OS complet, pilotes manuels | Conteneurs, scaling automatique |
-| **Multi-GPU** | Via `spec.gpus[]` | Via `resources.limits` |
-| **Cas d'usage** | Workstations, environnements interactifs | Pipelines ML, inférence à grande échelle |
-
----
-
-## Limites et quotas
-
-| Paramètre | Valeur |
-|-----------|--------|
-| GPU par VM | Multiples (selon disponibilité) |
-| GPU par pod Kubernetes | Multiples (via `resources.limits`) |
-| Types de GPU | L40S, A100 (PCIe/SXM4), RTX PRO 6000 Blackwell |
-| Mémoire GPU max | 96 GB (RTX PRO 6000 Blackwell) |
+| **Accès** | GPU dédié à la VM | GPU attribué aux pods par le scheduler |
+| **Drivers** | Installés par vous dans l'OS | Installés par le GPU Operator |
+| **Multi-GPU** | Plusieurs GPU dans la VM | Plusieurs GPU par nœud, `resources.limits` par pod |
+| **Partage** | Non | Oui avec HAMi |
+| **Cas d'usage** | Stations de travail, environnements interactifs | Pipelines ML, inférence à grande échelle |
 
 ---
 
 ## Pour aller plus loin
 
-- [Overview](./overview.md) : présentation du service GPU
-- [Référence API](./api-reference.md) : configuration GPU détaillée
+- [Vue d'ensemble](./overview.md)
+- [Provisionner un GPU sur une VM](./how-to/provision-gpu-vm.md)
+- [Provisionner un GPU sur Kubernetes](./how-to/provision-gpu-kubernetes.md)

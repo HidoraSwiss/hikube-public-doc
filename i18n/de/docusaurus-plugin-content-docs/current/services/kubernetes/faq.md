@@ -5,124 +5,102 @@ title: FAQ
 
 # FAQ — Kubernetes
 
-### Welche Instanztypen sind verfügbar?
+### Wie erstelle ich einen Kubernetes-Cluster?
 
-Hikube bietet drei Instanzreihen für Kubernetes-Knoten:
-
-| Reihe | Präfix | Verhältnis vCPU:RAM | Empfohlene Verwendung |
-|-------|---------|----------------|------------------|
-| **Standard** | `s1` | 1:2 | Allgemeine Workloads, Webserver |
-| **Universal** | `u1` | 1:4 | Geschäftsanwendungen, Datenbanken |
-| **Memory** | `m1` | 1:8 | Cache, Analytics, In-Memory-Verarbeitung |
-
-Jede Reihe ist in Größen von `small` bis `8xlarge` verfügbar. Zum Beispiel: `s1.small`, `u1.large`, `m1.2xlarge`.
+Öffnen Sie in der [Hikube-Konsole](https://console.hikube.cloud) **Infrastructure** > **Kubernetes** und klicken Sie auf **Create cluster**. Der Assistent umfasst vier Schritte: **General**, **Nodes**, **Addons** und **Summary**. Der [Schnellstart](./quick-start.md) beschreibt jeden Schritt im Detail.
 
 ---
 
-### Wie funktioniert die `storageClass` in einem Kubernetes-Cluster?
+### Welche Instanztypen sind verfügbar?
 
-Die im Cluster-Manifest gewählte storageClass wird **innerhalb des Tenant-Clusters repliziert**. Wenn Ihre Workloads PVCs im Cluster erstellen, wird der Speicher mit dieser storageClass auf Infrastrukturebene bereitgestellt.
+Hikube bietet drei Instanzserien für Kubernetes-Nodes an:
 
-Die verfügbaren storageClasses sind: `local`, `replicated` und `replicated-async`.
+| Serie | Präfix | Verhältnis vCPU:RAM | Empfohlene Nutzung |
+|-------|--------|---------------------|--------------------|
+| **Standard (S)** | `s1` | 1:2 | Kostengünstige Nutzung, Entwicklung, Tests |
+| **Universal (U)** | `u1` | 1:4 | Allgemeine Nutzung: Webserver, Anwendungen |
+| **Memory (M)** | `m1` | 1:8 | Datenbanken, Caches, In-Memory-Verarbeitung |
 
-| Eigenschaft | `local` | `replicated` / `replicated-async` |
-|----------------|---------|-------------------------------------|
-| **Replikation** | Ein einziges Rechenzentrum | Multi-Datacenter (synchron oder asynchron) |
-| **Leistung** | Schneller (geringe Latenz) | Etwas langsamer |
-| **Hochverfügbarkeit** | Nein (auf Speicherebene) | Ja |
+Jede Serie ist in mehreren Größen verfügbar, zum Beispiel `s1.small`, `u1.large`, `m1.2xlarge`. Die vollständige Liste finden Sie in den [Konzepten](./concepts.md#instanztypen).
 
-:::tip
-Die Standardempfehlung für Kubernetes ist **`replicated`**, die die Datenhaltbarkeit auf Speicherebene gewährleistet.
-:::
+---
 
-:::note
-**Aktuelle Einschränkung**: Nur eine storageClass kann an den Tenant-Cluster übergeben werden. Eine Verbesserung ist in Arbeit, um alle storageClasses zu übergeben und den Kunden je nach Bedarf wählen zu lassen.
-:::
+### Welche Speicherklasse sollte ich in meinem Cluster verwenden?
+
+Die persistenten Volumes Ihrer Workloads verwenden die Speicherklasse **`replicated`**, die über mehrere Rechenzentren repliziert wird:
+
+```yaml title="pvc.yaml"
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: my-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: replicated
+  resources:
+    requests:
+      storage: 10Gi
+```
+
+Die Wahl einer anderen Speicherklasse für den Cluster wird in der Konsole nicht angeboten; wenden Sie sich an den Support.
 
 ---
 
 ### Welche Addons sind verfügbar?
 
-Die folgenden Addons können auf Ihrem Cluster aktiviert werden:
+Der Schritt **Addons** des Assistenten bietet an:
 
-| Addon | Beschreibung |
-|-------|-------------|
-| `certManager` | Automatische Verwaltung von TLS-Zertifikaten (Let's Encrypt) |
-| `ingressNginx` | NGINX-Ingress-Controller für HTTP/HTTPS-Routing |
-| `fluxcd` | Kontinuierliche GitOps-Bereitstellung |
-| `monitoringAgents` | Monitoring-Agents (Metriken, Logs) |
-| `gpuOperator` | NVIDIA GPU Operator für GPU-Workloads |
+| Addon | Beschreibung | Standardmäßig aktiviert |
+|-------|--------------|-------------------------|
+| **Cert-Manager** | Automatische Verwaltung von SSL/TLS-Zertifikaten | Ja |
+| **Ingress NGINX** | Auf NGINX basierender Ingress-Controller | Ja |
+| **Gateway API** | CRDs der Kubernetes Gateway API | Nein |
+| **GPU Operator** | Verwaltung der NVIDIA-GPUs | Nein (vorgegeben, wenn eine Gruppe GPUs hat) |
+| **HAMi** | Teilen einer GPU zwischen mehreren Pods (erfordert GPU Operator) | Nein |
+| **Flux CD** | GitOps Continuous Deployment | Nein |
+| **Monitoring Agents** | Monitoring-Agents für Logs und Metriken | Ja |
+| **Ouroboros** | Behebung des Hairpin-NAT von Ingress NGINX (erfordert Ingress NGINX) | Nein |
+| **Velero** | Backup und Wiederherstellung | Nein |
 
-Jedes Addon wird im Cluster-Manifest aktiviert:
-
-```yaml title="cluster.yaml"
-spec:
-  addons:
-    certManager:
-      enabled: true
-    ingressNginx:
-      enabled: true
-```
+**Cilium**, **CoreDNS** und **Vertical Pod Autoscaler** sind immer vorhanden; ihre Konfiguration wird im Abschnitt **Advanced Configuration** überschrieben. Die Addons werden bei der Erstellung oder über **Edit** > **Extensions & Addons** aktiviert. Siehe den Abschnitt Plugins, beginnend mit [Cilium](./plugins/cilium.md).
 
 ---
 
 ### Wie rufe ich meine kubeconfig ab?
 
-Die kubeconfig ist in einem Kubernetes-Secret gespeichert, das automatisch bei der Cluster-Erstellung generiert wird:
+Öffnen Sie die Detailseite des Clusters in der Konsole und klicken Sie im Abschnitt **Actions** auf **Kubeconfig**. Der Browser lädt die Datei `kubeconfig-<cluster-name>.yaml` herunter:
 
 ```bash
-kubectl get tenantsecret <cluster-name>-admin-kubeconfig -o jsonpath='{.data.super-admin\.conf}' | base64 -d > kubeconfig.yaml
-```
-
-Anschließend können Sie sie verwenden:
-
-```bash
-export KUBECONFIG=kubeconfig.yaml
+export KUBECONFIG=~/Downloads/kubeconfig-<cluster-name>.yaml
 kubectl get nodes
 ```
 
----
-
-### Wie skaliere ich die nodeGroups?
-
-Die Skalierung wird durch die Parameter `minReplicas` und `maxReplicas` jeder nodeGroup gesteuert. Der Autoscaler passt die Anzahl der Knoten automatisch zwischen diesen beiden Grenzen je nach Last an.
-
-Um die Grenzen zu ändern, aktualisieren Sie Ihr Manifest und wenden Sie es an:
-
-```yaml title="cluster.yaml"
-spec:
-  nodeGroups:
-    workers:
-      minReplicas: 3
-      maxReplicas: 15
-      instanceType: "s1.large"
-```
-
-```bash
-kubectl apply -f cluster.yaml
-```
+Siehe [Zugriff und Werkzeuge](./how-to/toolbox.md).
 
 ---
 
-### Wie füge ich GPU-Knoten zu meinem Cluster hinzu?
+### Wie skaliere ich die Node-Gruppen?
 
-Fügen Sie eine dedizierte nodeGroup mit dem Feld `gpus` hinzu, das das gewünschte GPU-Modell angibt:
+Die Skalierung wird über **Minimum nodes** und **Maximum nodes** jeder Gruppe gesteuert. Der Autoscaler passt die Anzahl der Nodes innerhalb dieser beiden Grenzen automatisch an die Last an.
 
-```yaml title="cluster-gpu.yaml"
-spec:
-  nodeGroups:
-    gpu-workers:
-      minReplicas: 1
-      maxReplicas: 4
-      instanceType: "u1.2xlarge"
-      gpus:
-        - name: "nvidia.com/AD102GL_L40S"
-  addons:
-    gpuOperator:
-      enabled: true
-```
+Um die Grenzen zu ändern: **Edit** > **Node groups**, klappen Sie die Gruppe auf, ändern Sie die Werte und klicken Sie dann auf **Save**. Siehe [Autoscaling konfigurieren](./how-to/configure-autoscaling.md).
+
+---
+
+### Wie füge ich meinem Cluster GPU-Nodes hinzu?
+
+Fügen Sie eine neue Node-Gruppe hinzu (**Edit** > **Add node group**) und wählen Sie in ihrem Abschnitt **GPU** das Modell und die Anzahl der GPUs. Die Konsole aktiviert dann automatisch das Addon **GPU Operator**, das die NVIDIA-Treiber installiert.
 
 :::warning
-- Vergessen Sie nicht, das Addon `gpuOperator` zu aktivieren, damit die NVIDIA-Treiber automatisch auf den GPU-Knoten installiert werden.
-- Jeder Knoten der GPU-nodeGroup verbraucht **1 physische GPU**. Eine nodeGroup mit `minReplicas: 4` benötigt 4 verfügbare GPUs, mit direkter Auswirkung auf die Abrechnung.
+- Die gewählten GPUs werden an **jeden** Node der Gruppe angebunden, und die Reservierung wird anhand der maximalen Anzahl an Nodes berechnet: Eine Gruppe mit maximal 4 Nodes und 1 GPU pro Node reserviert 4 GPUs, mit direkter Auswirkung auf die Abrechnung.
+- Eine bestehende, ohne GPU erstellte Gruppe kann keine erhalten: Erstellen Sie eine neue Gruppe.
 :::
+
+Siehe [Eine Node-Gruppe hinzufügen und ändern](./how-to/manage-node-groups.md).
+
+---
+
+### Kann ich die Control Plane nach der Erstellung ändern?
+
+Nein. **Control Plane Instance Size** und **Control Plane High Availability** lassen sich nach der Erstellung in der Konsole nicht ändern; wenden Sie sich an den Support. Kubernetes-Version, API-Endpoint, Node-Gruppen und Addons bleiben änderbar.

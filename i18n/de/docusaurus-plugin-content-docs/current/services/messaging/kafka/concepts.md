@@ -5,19 +5,19 @@ title: Konzepte
 
 # Konzepte — Kafka
 
+:::info Verfügbarkeit
+Kafka ist in der [Hikube-Konsole](https://console.hikube.cloud) noch nicht als Self-Service verfügbar.
+Um eine Instanz bereitzustellen oder ihre Konfiguration zu ändern, [wenden Sie sich an den Support](mailto:support@hidora.io).
+:::
+
 ## Architektur
 
-Kafka auf Hikube ist ein verwalteter verteilter Streaming-Dienst. Jede über die Ressource `Kafka` bereitgestellte Instanz erstellt einen Cluster aus **Brokern**, die von **ZooKeeper** koordiniert werden und Millionen von Nachrichten pro Sekunde mit garantierter Persistenz verarbeiten können.
+Kafka auf Hikube ist ein verwalteter Dienst für verteiltes Streaming. Jede Instanz ist ein Cluster aus **Brokern**, die von **ZooKeeper** koordiniert werden. Sie gehört zu einem Hikube-Projekt und verfügt über persistenten Speicher für jeden Broker.
 
 ```mermaid
 graph TB
-    subgraph "Hikube Platform"
-        subgraph "Tenant namespace"
-            CR[Kafka CRD]
-            SEC[Secret credentials]
-        end
-
-        subgraph "Cluster Kafka"
+    subgraph "Hikube-Projekt"
+        subgraph "Kafka-Cluster"
             B1[Broker 1]
             B2[Broker 2]
             B3[Broker 3]
@@ -35,15 +35,12 @@ graph TB
         end
 
         subgraph "Speicher"
-            PV1[PV Broker 1]
-            PV2[PV Broker 2]
-            PV3[PV Broker 3]
+            PV1[Volume Broker 1]
+            PV2[Volume Broker 2]
+            PV3[Volume Broker 3]
         end
     end
 
-    CR --> B1
-    CR --> B2
-    CR --> B3
     B1 --> PV1
     B2 --> PV2
     B3 --> PV3
@@ -64,16 +61,16 @@ graph TB
 ## Terminologie
 
 | Begriff | Beschreibung |
-|---------|--------------|
-| **Kafka** | Kubernetes-Ressource (`apps.cozystack.io/v1alpha1`), die einen verwalteten Kafka-Cluster darstellt. |
-| **Broker** | Kafka-Instanz, die Nachrichten speichert und Produzenten/Konsumenten bedient. |
-| **ZooKeeper** | Verteilter Koordinierungsdienst, der die Metadaten des Clusters, die Leader-Wahl und die Topic-Konfiguration verwaltet. |
-| **Topic** | Benannter Nachrichtenkanal. Produzenten schreiben in ein Topic, Konsumenten lesen aus einem Topic. |
-| **Partition** | Unterteilung eines Topics. Jede Partition ist ein geordnetes Nachrichtenlog, das auf einem Broker verteilt ist. |
+|-------|-------------|
+| **Kafka (Instanz)** | Von Hikube verwalteter Kafka-Cluster, der zu einem Projekt gehört. Seine Konfiguration wird bei der Erstellung festgelegt und auf Anfrage beim Support geändert. |
+| **Broker** | Kafka-Instanz, die die Nachrichten speichert und Producer/Consumer bedient. |
+| **ZooKeeper** | Verteilter Koordinationsdienst, der die Metadaten des Clusters, die Leader-Wahl und die Konfiguration der Topics verwaltet. |
+| **Topic** | Benannter Nachrichtenkanal. Producer schreiben in einen Topic, Consumer lesen aus einem Topic. |
+| **Partition** | Unterteilung eines Topics. Jede Partition ist ein geordnetes Log von Nachrichten, das auf einem Broker liegt. |
 | **Replication Factor** | Anzahl der Kopien jeder Partition auf verschiedenen Brokern. |
-| **Consumer Group** | Gruppe von Konsumenten, die sich die Partitionen eines Topics für die parallele Verarbeitung aufteilen. |
-| **Retention** | Maximale Aufbewahrungsdauer oder -größe von Nachrichten in einem Topic. |
-| **resourcesPreset** | Vordefiniertes Ressourcenprofil (nano bis 2xlarge). |
+| **Consumer Group** | Gruppe von Consumern, die die Partitionen eines Topics für die parallele Verarbeitung untereinander aufteilen. |
+| **Retention** | Maximale Dauer oder Größe, für die Nachrichten in einem Topic aufbewahrt werden. |
+| **Ressourcen-Preset** | Vordefiniertes CPU-/Arbeitsspeicherprofil (nano bis 2xlarge), das auf die Broker und auf ZooKeeper angewendet wird. |
 
 ---
 
@@ -81,7 +78,7 @@ graph TB
 
 ### Funktionsweise
 
-Ein **Topic** wird in **Partitionen** aufgeteilt, die jeweils auf einem anderen Broker verteilt sind:
+Ein **Topic** ist in **Partitionen** unterteilt, die jeweils auf einem anderen Broker liegen:
 
 ```mermaid
 graph LR
@@ -91,7 +88,7 @@ graph LR
         P2[Partition 2<br/>Broker 3]
     end
 
-    Prod[Produzent] --> P0
+    Prod[Producer] --> P0
     Prod --> P1
     Prod --> P2
 
@@ -101,44 +98,47 @@ graph LR
 ```
 
 - Mehr Partitionen = mehr Parallelität
-- Jede Partition hat einen **Leader** (einen Broker) und **Follower** (Replikate)
-- Der `replicationFactor` bestimmt die Anzahl der Kopien jeder Partition
+- Jede Partition hat einen **Leader** (einen Broker) und **Follower** (Replicas)
+- Der Replikationsfaktor bestimmt die Anzahl der Kopien jeder Partition
 
 ### Konfiguration der Topics
 
-Die Topics werden direkt im Kafka-Manifest deklariert:
+Die verwalteten Topics sind Teil der Konfiguration der Instanz. Für jeden Topic können die folgenden Parameter festgelegt werden:
 
 | Parameter | Beschreibung |
-|-----------|--------------|
-| `topics[name].partitions` | Anzahl der Partitionen des Topics |
-| `topics[name].config.replicationFactor` | Anzahl der Replikate pro Partition |
-| `topics[name].config.retentionMs` | Aufbewahrungsdauer in ms (z.B. `604800000` = 7 Tage) |
-| `topics[name].config.cleanupPolicy` | `delete` (Löschung nach TTL) oder `compact` (Aufbewahrung der letzten Nachricht pro Schlüssel) |
+|-----------|-------------|
+| Partitionen | Anzahl der Partitionen des Topics |
+| Replicas | Anzahl der Kopien jeder Partition (darf die Anzahl der Broker nicht übersteigen) |
+| `retention.ms` | Aufbewahrungsdauer in ms (z. B. `604800000` = 7 Tage) |
+| `cleanup.policy` | `delete` (Löschen nach Ablauf der Aufbewahrung) oder `compact` (Aufbewahrung der letzten Nachricht pro Schlüssel) |
+| `min.insync.replicas` | Mindestanzahl synchronisierter Replicas, um einen Schreibvorgang zu bestätigen |
+
+Diese Option wird in der Konsole nicht angeboten; wenden Sie sich an den Support.
 
 ---
 
 ## ZooKeeper
 
-ZooKeeper sorgt für die Koordination des Kafka-Clusters:
+ZooKeeper übernimmt die Koordination des Kafka-Clusters:
 
 - **Leader-Wahl** für jede Partition
 - **Speicherung der Metadaten** (Topics, Partitionen, Offsets)
-- **Ausfallerkennung** der Broker
+- **Erkennung von Ausfällen** der Broker
 
 :::tip
-Konfigurieren Sie immer eine ungerade Anzahl von ZooKeeper-Instanzen (`zookeeper.replicas: 3`), um das Quorum zu gewährleisten.
+Eine ungerade Anzahl von ZooKeeper-Instanzen (in der Regel 3) ist erforderlich, um das Quorum zu gewährleisten. Geben Sie sie bei Ihrer Instanzanfrage an.
 :::
 
-Die ZooKeeper-Ressourcen werden unabhängig von den Brokern über `zookeeper.resources` oder `zookeeper.resourcesPreset` konfiguriert.
+Die Ressourcen von ZooKeeper (Anzahl der Instanzen, Preset, Speichergröße) werden unabhängig von denen der Broker festgelegt.
 
 ---
 
 ## Ressourcen-Presets
 
-Die Presets werden getrennt auf die **Kafka-Broker** und den **ZooKeeper** angewendet:
+Die Presets gelten getrennt für die **Kafka-Broker** und für **ZooKeeper**:
 
-| Preset | CPU | Speicher |
-|--------|-----|----------|
+| Preset | CPU | Arbeitsspeicher |
+|--------|-----|---------|
 | `nano` | 250m | 128Mi |
 | `micro` | 500m | 256Mi |
 | `small` | 1 | 512Mi |
@@ -149,19 +149,19 @@ Die Presets werden getrennt auf die **Kafka-Broker** und den **ZooKeeper** angew
 
 ---
 
-## Grenzen und Kontingente
+## Limits und Quotas
 
 | Parameter | Wert |
-|-----------|------|
-| Max. Kafka-Broker | Je nach Tenant-Kontingent |
+|-----------|--------|
+| Max. Kafka-Broker | Abhängig von den Quotas des Projekts |
 | ZooKeeper-Instanzen | 3 empfohlen (ungerade) |
-| Topics pro Cluster | Unbegrenzt (je nach Ressourcen) |
+| Topics pro Cluster | Unbegrenzt (abhängig von den Ressourcen) |
 | Partitionen pro Topic | Konfigurierbar |
-| Speichergröße | Variabel (`kafka.size`, `zookeeper.size`) |
+| Speichergröße | Getrennt für die Broker und für ZooKeeper festgelegt |
 
 ---
 
 ## Weiterführende Informationen
 
 - [Übersicht](./overview.md): Vorstellung des Dienstes
-- [API-Referenz](./api-reference.md): Alle Parameter der Kafka-Ressource
+- [Schnellstart](./quick-start.md): eine Instanz anfragen und testen

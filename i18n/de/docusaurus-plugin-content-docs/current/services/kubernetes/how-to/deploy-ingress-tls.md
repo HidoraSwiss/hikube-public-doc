@@ -1,99 +1,79 @@
 ---
-title: "Ingress mit TLS bereitstellen"
+title: "Einen Ingress mit TLS bereitstellen"
 ---
 
-# Ingress mit TLS bereitstellen
+# Einen Ingress mit TLS bereitstellen
 
-Diese Anleitung erklärt, wie Sie eine Anwendung über HTTPS mit einem automatischen TLS-Zertifikat auf einem Kubernetes-Hikube-Cluster exponieren, unter Verwendung der Addons cert-manager und ingress-nginx.
+Diese Anleitung erklärt, wie Sie eine Anwendung auf einem Hikube-Kubernetes-Cluster mit einem automatischen TLS-Zertifikat per HTTPS erreichbar machen, mithilfe der Addons Cert-Manager und Ingress NGINX.
 
 ## Voraussetzungen
 
-- Ein bereitgestellter Kubernetes-Hikube-Cluster (siehe [Schnellstart](../quick-start.md))
-- `kubectl` konfiguriert für die Interaktion mit der Hikube-API
-- Ein Domainname, der auf Ihren Cluster zeigt (DNS A- oder CNAME-Eintrag)
-- Die kubeconfig des Child-Clusters abgerufen
+- Ein bereitgestellter Hikube-Kubernetes-Cluster (siehe [Schnellstart](../quick-start.md))
+- Die über die Konsole heruntergeladene kubeconfig des Clusters (Schaltfläche **Kubeconfig**)
+- Ein Domainname, dessen DNS-Zone Sie verwalten
 
 ## Schritte
 
-### 1. Addons certManager und ingressNginx aktivieren
+### 1. Die Addons Cert-Manager und Ingress NGINX aktivieren
 
-Ändern Sie die Konfiguration Ihres Clusters, um die erforderlichen Addons zu aktivieren:
+Beide Addons sind bei der Erstellung eines Clusters standardmäßig ausgewählt. Um sie auf einem bestehenden Cluster zu prüfen oder zu aktivieren:
 
-```yaml title="cluster-ingress-tls.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Kubernetes
-metadata:
-  name: my-cluster
-spec:
-  controlPlane:
-    replicas: 3
+1. Öffnen Sie unter **Infrastructure** > **Kubernetes** die Detailseite des Clusters: Der Abschnitt **Extensions** listet die aktiven Addons auf.
+2. Wenn sie dort nicht aufgeführt sind, klicken Sie auf **Edit**, aktivieren Sie **Cert-Manager** und **Ingress NGINX** im Abschnitt **Extensions & Addons** und klicken Sie dann auf **Save**.
 
-  nodeGroups:
-    web:
-      minReplicas: 2
-      maxReplicas: 5
-      instanceType: "s1.large"
-      ephemeralStorage: 50Gi
-      roles:
-        - ingress-nginx
+### 2. Die erreichbare Node-Gruppe prüfen
 
-  addons:
-    certManager:
-      enabled: true
-    ingressNginx:
-      enabled: true
-      hosts:
-        - app.example.com
-```
+Der Ingress-NGINX-Controller läuft auf den Nodes der Gruppen, die als **Exposed on the internet (Public IP)** markiert sind. Die erste Gruppe des Clusters ist es immer. Um eine andere Gruppe dem eingehenden Traffic zu widmen, aktivieren Sie diese Option auf ihrer Karte im Abschnitt **Node groups** der Seite **Edit**.
 
-:::note
-Das Feld `hosts` unter `ingressNginx` definiert die Domains, für die der Ingress Controller Datenverkehr akzeptiert. Sie können Wildcards (`*.example.com`) verwenden, um mehrere Subdomains abzudecken.
+:::tip
+Wenn Sie eine Node-Gruppe dem Ingress widmen, isolieren Sie den eingehenden Traffic und dimensionieren die Ressourcen für die HTTP/HTTPS-Bereitstellung unabhängig.
 :::
 
-### 2. Die Rolle ingress-nginx einer Node Group zuweisen
+### 3. Die externe IP abrufen und DNS konfigurieren
 
-Die Node Group, die den Ingress Controller hostet, muss die Rolle `ingress-nginx` in ihrer Konfiguration haben. Prüfen Sie, ob Ihre Node Group korrekt konfiguriert ist:
+```bash
+export KUBECONFIG=~/Downloads/kubeconfig-<cluster-name>.yaml
 
-```yaml title="cluster-ingress.yaml"
-nodeGroups:
-  web:
-    minReplicas: 2
-    maxReplicas: 5
-    instanceType: "s1.large"
-    ephemeralStorage: 50Gi
-    roles:
-      - ingress-nginx
+# Pods von Cert-Manager und Ingress NGINX
+kubectl get pods -A | grep -E "cert-manager|ingress-nginx"
+
+# Externe IP des Ingress-NGINX-Controllers (Spalte EXTERNAL-IP)
+kubectl get svc -A | grep ingress-nginx-controller
+```
+
+Legen Sie bei Ihrem DNS-Anbieter einen `A`-Eintrag an, der Ihre Domain (zum Beispiel `app.example.com`) auf diese externe IP zeigen lässt.
+
+### 4. Einen Zertifikataussteller erstellen
+
+Deklarieren Sie einen Let's-Encrypt-`ClusterIssuer`, der Ihre Domains per HTTP-01-Challenge über Ingress NGINX validiert:
+
+```yaml title="cluster-issuer.yaml"
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: admin@example.com
+    privateKeySecretRef:
+      name: letsencrypt-prod-account-key
+    solvers:
+      - http01:
+          ingress:
+            ingressClassName: nginx
+```
+
+```bash
+kubectl apply -f cluster-issuer.yaml
+kubectl get clusterissuer letsencrypt-prod
 ```
 
 :::tip
-Eine dedizierte Node Group für den Ingress ermöglicht es, den eingehenden Datenverkehr zu isolieren und die HTTP/HTTPS-Expositionsressourcen unabhängig zu dimensionieren.
+Verwenden Sie für Ihre Tests zunächst den Staging-Server von Let's Encrypt (`https://acme-staging-v02.api.letsencrypt.org/directory`), um die Anfragelimits nicht zu erreichen.
 :::
 
-### 3. Cluster-Konfiguration anwenden
-
-```bash
-kubectl apply -f cluster-ingress-tls.yaml
-
-# Warten, bis der Cluster bereit ist
-kubectl get kubernetes my-cluster -w
-```
-
-Prüfen Sie, ob die Addons im Child-Cluster bereitgestellt sind:
-
-```bash
-export KUBECONFIG=cluster-admin.yaml
-
-# cert-manager prüfen
-kubectl get pods -n cert-manager
-
-# Ingress Controller prüfen
-kubectl get pods -n ingress-nginx
-
-# Externe IP des Ingress Controllers abrufen
-kubectl get svc -n ingress-nginx ingress-nginx-controller
-```
-
-### 4. Einen Ingress mit TLS im Child-Cluster erstellen
+### 5. Einen Ingress mit TLS erstellen
 
 Stellen Sie Ihre Anwendung bereit und erstellen Sie dann einen Ingress mit automatischer TLS-Terminierung:
 
@@ -123,33 +103,27 @@ spec:
                   number: 80
 ```
 
-Wenden Sie die Konfiguration im Child-Cluster an:
-
 ```bash
 kubectl apply -f ingress-tls.yaml
 ```
 
 :::note
-Die Annotation `cert-manager.io/cluster-issuer: letsencrypt-prod` weist cert-manager an, automatisch ein Let's-Encrypt-Zertifikat für die angegebene Domain zu beschaffen.
+Die Annotation `cert-manager.io/cluster-issuer: letsencrypt-prod` weist Cert-Manager an, automatisch ein Zertifikat für die Domains im Abschnitt `tls` zu beziehen.
 :::
 
-### 5. Zertifikat überprüfen
+### 6. Das Zertifikat prüfen
 
 ```bash
-# Zertifikatsstatus prüfen
 kubectl get certificate
 
 # Erwartetes Ergebnis
 # NAME      READY   SECRET    AGE
 # app-tls   True    app-tls   2m
 
-# Zertifikatsdetails
 kubectl describe certificate app-tls
 ```
 
 ## Überprüfung
-
-Testen Sie den HTTPS-Zugriff auf Ihre Anwendung:
 
 ```bash
 # Ingress prüfen
@@ -167,11 +141,14 @@ my-app   nginx   app.example.com   203.0.113.10   80, 443   5m
 ```
 
 :::warning
-Die Bereitstellung des Let's-Encrypt-Zertifikats kann einige Minuten dauern. Wenn das Zertifikat im Zustand `False` verbleibt, prüfen Sie, ob Ihr DNS-Eintrag korrekt auf die IP des Ingress Controllers zeigt und ob Port 80 erreichbar ist (erforderlich für die HTTP-01-Validierung).
+Die Ausstellung des Let's-Encrypt-Zertifikats kann einige Minuten dauern. Wenn das Zertifikat im Zustand `False` bleibt, prüfen Sie, ob Ihr DNS-Eintrag auf die externe IP des Ingress-NGINX-Controllers zeigt und Port 80 erreichbar ist (erforderlich für die HTTP-01-Validierung).
+:::
+
+:::tip
+Wenn Pods des Clusters Ihre eigenen öffentlichen Domains erreichen müssen (Hairpin-NAT), aktivieren Sie das Addon [Ouroboros](../plugins/ouroboros.md).
 :::
 
 ## Weiterführende Informationen
 
-- [API-Referenz](../api-reference.md) -- Konfiguration der Addons `certManager` und `ingressNginx`
-- [Konzepte](../concepts.md) -- Cluster-Architektur und Netzwerkkomponenten
-- [Networking konfigurieren](./configure-networking.md) -- Erweiterte Netzwerkverwaltung
+- [Cert-Manager](../plugins/cert-manager.md) und [Ingress NGINX](../plugins/ingress-nginx.md): Details zu den Addons
+- [Das Networking konfigurieren](./configure-networking.md): erweiterte Netzwerkverwaltung

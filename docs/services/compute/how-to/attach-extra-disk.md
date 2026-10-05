@@ -4,105 +4,53 @@ title: "Comment attacher un disque supplémentaire"
 
 # Comment attacher un disque supplémentaire
 
-Séparer les données applicatives du disque système est une bonne pratique pour la fiabilité et la flexibilité de vos VMs. Ce guide explique comment créer un disque supplémentaire, l'attacher à une VMInstance existante, puis le formater et le monter dans le système d'exploitation.
+Séparer les données applicatives du disque système facilite les sauvegardes, les migrations et le redimensionnement. Ce guide explique comment ajouter un disque de données à une VM depuis la console, puis le formater et le monter dans le système d'exploitation.
 
 ## Prérequis
 
-- **kubectl** configuré avec votre kubeconfig Hikube
-- Une **VMInstance** existante et fonctionnelle
-- Un accès **SSH** ou **console** à la VM
+- Un compte Hikube et un projet avec du quota de **Stockage** disponible
+- Une **instance VM** existante
+- Un accès **SSH** à la VM
 
 ## Étapes
 
-### 1. Créer un VMDisk supplémentaire
+### 1. Ouvrir la modification de la VM
 
-Créez un disque vide de la taille souhaitée. Un disque vide utilise `source: {}` sans URL ni image :
+1. Ouvrez **Infrastructure** > **Instances VM** et cliquez sur le nom de la VM.
+2. Cliquez sur **Modifier**.
 
-```yaml title="data-disk.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: VMDisk
-metadata:
-  name: vm-data-disk
-spec:
-  source: {}
-  optical: false
-  storage: 50Gi
-  storageClass: replicated
-```
+### 2. Ajouter le disque
 
-Appliquez le manifeste :
+Dans la section **Stockage**, cliquez sur **Ajouter un disque**. Un bloc **Volume de Stockage #1** apparaît. Deux options :
 
-```bash
-kubectl apply -f data-disk.yaml
-```
+**Nouveau disque** (onglet **Nouveau**) :
 
-Vérifiez que le disque est prêt :
+1. **Nom du volume** : conservez le nom proposé ou saisissez le vôtre (minuscules, chiffres et tirets).
+2. **Taille (Go)** : 20 Go minimum, par exemple `50`.
+3. **Type de réplication** : **Réplication Asynchrone** (Recommandé) ou **Réplication Synchrone**.
+4. **Chiffrement du disque** : activez-le pour chiffrer les données au repos.
 
-```bash
-kubectl get vmdisk vm-data-disk -w
-```
+**Disque existant** (onglet **Existant**) : sous **Sélectionner un volume existant**, choisissez un disque de données du projet qui n'est attaché à aucune VM. Les disques se créent aussi indépendamment dans le menu **Disques** (voir [Disques](../../storage/disks/quick-start.md)).
 
-**Résultat attendu :**
+### 3. Enregistrer
 
-```
-NAME            STATUS   SIZE   STORAGECLASS   AGE
-vm-data-disk    Ready    50Gi   replicated     30s
-```
+Vérifiez le récapitulatif de quota en haut de la page, puis cliquez sur **Enregistrer**.
 
-### 2. Référencer le disque dans la VMInstance
+La console affiche **Redémarrage requis** : la VM redémarre pour prendre en compte le nouveau disque. Attendez qu'elle revienne au statut **Actif**. Le disque apparaît dans la section **Stockage & Disques** de la page de détail.
 
-Ajoutez le nom du nouveau disque dans la liste `spec.disks[]` de votre VMInstance. Par exemple, si votre VM utilise déjà un disque système `vm-system-disk` :
-
-```yaml title="vm-instance.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: VMInstance
-metadata:
-  name: my-vm
-spec:
-  runStrategy: Always
-  instanceType: u1.xlarge
-  instanceProfile: ubuntu
-  external: true
-  externalMethod: PortList
-  externalPorts:
-    - 22
-  disks:
-    - name: vm-system-disk
-    - name: vm-data-disk
-  sshKeys:
-    - ssh-ed25519 AAAA... user@host
-```
-
-### 3. Appliquer les changements
-
-```bash
-kubectl apply -f vm-instance.yaml
-```
-
-:::warning
-La VM ne redémarre pas automatiquement après l'ajout d'un disque. Vous devez la redémarrer manuellement :
-
-```bash
-# Option 1 : via virtctl
-virtctl restart my-vm
-
-# Option 2 : via runStrategy
-kubectl patch vminstance my-vm --type='merge' -p '{"spec":{"runStrategy":"Halted"}}'
-kubectl patch vminstance my-vm --type='merge' -p '{"spec":{"runStrategy":"Always"}}'
-```
-
-Attendez que la VM soit de nouveau en état `Running` avant de continuer.
+:::note Disque ajouté à la création
+Vous pouvez aussi ajouter des disques directement à la création de la VM, avec **Ajouter un disque** à l'étape **Stockage** de l'assistant. Ils prennent alors le nom de la VM suffixé (`ma-vm-2`, `ma-vm-3`…).
 :::
 
 ### 4. Formater et monter le disque dans la VM
 
-Connectez-vous à la VM :
+Connectez-vous à la VM avec la commande du bloc **Connexion SSH** :
 
 ```bash
-virtctl ssh -i ~/.ssh/id_ed25519 ubuntu@my-vm
+ssh -i ~/.ssh/hikube-vm ubuntu@<ip-publique>
 ```
 
-Identifiez le nouveau disque avec `lsblk` :
+Identifiez le nouveau disque :
 
 ```bash
 lsblk
@@ -118,30 +66,29 @@ vda     252:0    0   20G  0 disk
 vdb     252:16   0   50G  0 disk
 ```
 
-Le nouveau disque apparait comme `vdb` (sans partition ni point de montage).
+Le nouveau disque apparaît comme `vdb`, sans partition ni point de montage.
 
-Formatez le disque en ext4 :
+Formatez-le en ext4 :
 
 ```bash
 sudo mkfs.ext4 /dev/vdb
 ```
 
-Créez le point de montage et montez le disque :
+Montez-le :
 
 ```bash
 sudo mkdir -p /mnt/data
 sudo mount /dev/vdb /mnt/data
 ```
 
-Pour rendre le montage persistant au redémarrage, ajoutez une entrée dans `/etc/fstab` :
+Rendez le montage persistant en utilisant l'UUID du système de fichiers, plus stable que le nom du périphérique :
 
 ```bash
-echo '/dev/vdb /mnt/data ext4 defaults 0 2' | sudo tee -a /etc/fstab
+UUID=$(sudo blkid -s UUID -o value /dev/vdb)
+echo "UUID=$UUID /mnt/data ext4 defaults,nofail 0 2" | sudo tee -a /etc/fstab
 ```
 
 ## Vérification
-
-Vérifiez que le disque est correctement monté et accessible :
 
 ```bash
 df -h /mnt/data
@@ -160,11 +107,13 @@ Testez l'écriture :
 sudo touch /mnt/data/test.txt && echo "OK"
 ```
 
-:::tip Stockage répliqué
-Utilisez toujours `storageClass: replicated` pour les disques de données en production. Cela garantit la réplication sur plusieurs datacenters.
-:::
+## Détacher un disque
+
+Dans **Modifier** > **Stockage**, cliquez sur l'icône de suppression du volume, confirmez en saisissant son nom, puis cliquez sur **Enregistrer**. Le disque est détaché de la VM (qui redémarre) et reste disponible dans le menu **Disques**. Démontez-le d'abord dans l'OS et retirez sa ligne de `/etc/fstab`.
 
 ## Pour aller plus loin
 
-- [Référence API](../api-reference.md)
-- [Démarrage rapide](../quick-start.md)
+- [Disques : vue d'ensemble](../../storage/disks/overview.md)
+- [Attacher un disque existant à une VM](../../storage/disks/how-to/attach-to-vm.md)
+- [Redimensionner un disque](../../storage/disks/how-to/resize.md)
+- [Démarrage rapide VM](../quick-start.md)

@@ -7,116 +7,99 @@ title: Dépannage
 
 ### AccessDenied lors de l'accès au bucket
 
-**Cause** : les credentials utilisées sont incorrectes, ou le nom de bucket utilisé ne correspond pas au nom réel dans le backend S3.
+**Cause** : les clés utilisées sont incorrectes, le nom de bucket utilisé n'est pas le nom S3 réel, ou l'utilisateur est en lecture seule et tente une écriture.
 
 **Solution** :
 
-1. Récupérez les credentials depuis le Secret Kubernetes :
+1. Ouvrez la page du bucket et relevez le **Nom du bucket** dans la carte **Accès & Configuration**. Utilisez ce nom, et non le nom saisi dans l'assistant :
    ```bash
-   kubectl get tenantsecret bucket-<name> -o jsonpath='{.data.BucketInfo}' | base64 -d | jq
+   aws --endpoint-url https://<endpoint> s3 ls s3://<nom-du-bucket-s3>/
    ```
-
-2. Utilisez le champ `spec.bucketName` comme nom de bucket (et non `metadata.name`) :
-   ```bash
-   aws --endpoint-url https://prod.s3.hikube.cloud s3 ls s3://<spec.bucketName>/
-   ```
-
-3. Vérifiez que `accessKeyID` et `accessSecretKey` sont correctement configurés dans votre outil S3.
+2. Vérifiez dans la carte **Utilisateurs et Accès** le droit de l'utilisateur (**Lecture seule** ou **Lecture / Écriture**) ; modifiez-le si besoin avec **Modifier l'accès**.
+3. Vérifiez que l'Access Key ID et la Secret Access Key sont correctement configurées dans votre outil. Si la clé secrète est perdue, créez un nouvel utilisateur.
 
 ---
 
 ### ListBucket échoue sur la racine
 
-**Cause** : chaque bucket possède ses propres credentials isolées. Il n'est pas possible de lister tous les buckets avec un seul jeu de credentials.
+**Cause** : les clés d'un utilisateur sont limitées à son bucket. Il n'est pas possible de lister tous les buckets de l'endpoint.
 
 **Solution** :
 
-1. Utilisez les credentials spécifiques au bucket que vous souhaitez lister :
+1. Ciblez toujours le bucket dans vos commandes :
    ```bash
-   aws --endpoint-url https://prod.s3.hikube.cloud s3 ls s3://<spec.bucketName>/
+   aws --endpoint-url https://<endpoint> s3 ls s3://<nom-du-bucket-s3>/
+   mc ls hikube/<nom-du-bucket-s3>/
    ```
-
-2. Pour lister tous vos buckets, utilisez `kubectl` :
-   ```bash
-   kubectl get buckets
-   ```
-
-3. Pour chaque bucket, récupérez les credentials individuelles depuis le Secret correspondant.
+2. Pour voir tous vos buckets, utilisez la page **Buckets Object Storage** de la console.
 
 ---
 
-### Credentials introuvables
+### Identifiants introuvables
 
-**Cause** : le nom du Secret suit le pattern `bucket-<name>` où `<name>` est le `metadata.name` de la ressource Bucket.
+**Cause** : la clé secrète n'est affichée qu'à la création de l'utilisateur, ou aucun utilisateur n'a été créé (par exemple si le bucket n'était pas prêt à la fin de l'assistant).
 
 **Solution** :
 
-1. Listez les Secrets disponibles :
-   ```bash
-   kubectl get tenantsecrets | grep bucket-
-   ```
+1. Ouvrez la page du bucket et vérifiez la carte **Utilisateurs et Accès**.
+2. Cliquez sur **Ajouter un utilisateur** pour créer un utilisateur et obtenir de nouvelles clés.
+3. L'endpoint et le nom S3 restent consultables à tout moment dans **Accès & Configuration**.
 
-2. Extrayez les informations d'accès :
-   ```bash
-   kubectl get tenantsecret bucket-<name> -o jsonpath='{.data.BucketInfo}' | base64 -d | jq
-   ```
+---
 
-3. Pour extraire uniquement les clés :
-   ```bash
-   kubectl get tenantsecret bucket-<name> -o jsonpath='{.data.BucketInfo}' \
-     | base64 -d \
-     | jq -r '.spec.secretS3 | "\(.accessKeyID) \(.accessSecretKey)"'
-   ```
+### « Aucune information de connexion S3 disponible pour l'instant »
+
+**Cause** : le bucket est encore en cours de provisionnement.
+
+**Solution** : attendez que le statut du bucket passe à **Prêt**, puis rechargez la page. Si le statut reste **En création** ou passe à **Erreur**, [contactez le support](mailto:support@hidora.io) en indiquant le nom du bucket et son identifiant.
+
+---
+
+### Échec de création : « Un bucket avec ce nom existe déjà »
+
+**Cause** : un bucket du projet porte déjà ce nom.
+
+**Solution** : revenez à l'étape **Général** de l'assistant et choisissez un autre **Nom du bucket**.
+
+---
+
+### Les objets ont disparu après la suppression d'un bucket
+
+**Cause** : la suppression d'un bucket n'est pas bloquée lorsqu'il contient des objets ; elle les supprime avec lui, sans possibilité de récupération.
+
+**Solution** : avant de supprimer un bucket, copiez les objets à conserver, par exemple sur votre poste :
+
+```bash
+aws --endpoint-url https://<endpoint> s3 sync s3://<nom-du-bucket-s3>/ ./sauvegarde-bucket/
+```
+
+### La suppression du bucket échoue
+
+**Solution** : réessayez la suppression depuis la console. Si l'erreur persiste, [contactez le support](mailto:support@hidora.io) en indiquant le nom du bucket.
 
 ---
 
 ### Upload lent ou timeout
 
-**Cause** : problème réseau, taille de fichier importante sans multipart upload, ou endpoint distant.
+**Cause** : problème réseau, fichier volumineux envoyé sans multipart upload.
 
 **Solution** :
 
 1. Vérifiez votre connectivité vers l'endpoint :
    ```bash
-   curl -s -o /dev/null -w "%{time_total}" https://prod.s3.hikube.cloud
+   curl -s -o /dev/null -w "%{time_total}\n" https://<endpoint>
    ```
-
-2. Utilisez l'endpoint régional `https://prod.s3.hikube.cloud` (pas de CDN intermédiaire).
-
-3. Pour les fichiers volumineux, activez le multipart upload :
-   ```bash
-   aws --endpoint-url https://prod.s3.hikube.cloud s3 cp large-file.tar.gz s3://<bucket-name>/ \
-     --expected-size $(stat -c%s large-file.tar.gz)
-   ```
-
-4. Avec `mc`, le multipart est automatique pour les fichiers de plus de 64 Mo.
+2. Pour les fichiers volumineux, utilisez un client qui gère le multipart upload : `aws s3 cp` et `mc cp` le font automatiquement au-delà d'une certaine taille.
+3. Augmentez si besoin le parallélisme côté client (par exemple `aws configure set default.s3.max_concurrent_requests 20`).
 
 ---
 
-### Bucket non trouvé après création
+### Bucket non trouvé (`NoSuchBucket`)
 
-**Cause** : le nom réel du bucket dans le backend S3 (`spec.bucketName`) diffère du `metadata.name` de la ressource Kubernetes.
+**Cause** : le nom utilisé est le nom choisi dans la console et non le nom S3 réel.
 
-**Solution** :
-
-1. Vérifiez le statut de la ressource Bucket :
-   ```bash
-   kubectl get bucket <name>
-   kubectl describe bucket <name>
-   ```
-
-2. Récupérez le nom réel du bucket depuis le Secret :
-   ```bash
-   kubectl get tenantsecret bucket-<name> -o jsonpath='{.data.BucketInfo}' \
-     | base64 -d \
-     | jq -r '.spec.bucketName'
-   ```
-
-3. Utilisez ce nom réel pour accéder au bucket :
-   ```bash
-   aws --endpoint-url https://prod.s3.hikube.cloud s3 ls s3://<real-bucket-name>/
-   ```
+**Solution** : relevez le **Nom du bucket** dans la carte **Accès & Configuration** de la page du bucket et utilisez-le dans vos commandes.
 
 :::warning
-Ne confondez pas `metadata.name` (nom Kubernetes) et `spec.bucketName` (nom réel dans S3). Seul le second fonctionne pour l'accès S3.
+Ne confondez pas le nom du bucket dans la console et son nom S3. Seul le second fonctionne avec les clients S3.
 :::

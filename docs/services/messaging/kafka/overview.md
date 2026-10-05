@@ -7,12 +7,17 @@ import NavigationFooter from '@site/src/components/NavigationFooter';
 
 # Kafka sur Hikube
 
+:::info Disponibilité
+Kafka n'est pas encore disponible en libre-service dans la [console Hikube](https://console.hikube.cloud).
+Pour en provisionner une instance ou modifier sa configuration, [contactez le support](mailto:support@hidora.io).
+:::
+
 Les **clusters Kafka** d’Hikube offrent une plateforme de **streaming de données distribuée, scalable et hautement disponible**, conçue pour la **collecte, le traitement et la distribution d’événements en temps réel**.
 Grâce à son intégration native avec **ZooKeeper**, chaque cluster Kafka sur Hikube bénéficie d’une **gestion coordonnée et résiliente des brokers**, assurant la **stabilité et la cohérence** des métadonnées du cluster.
 
 ---
 
-## 🏗️ Architecture et Fonctionnement
+## Architecture et Fonctionnement
 
 Un déploiement Kafka sur Hikube repose sur deux composants clés :
 
@@ -26,9 +31,9 @@ Un déploiement Kafka sur Hikube repose sur deux composants clés :
 
 ---
 
-## 🚀 Cas d’usage typiques
+## Cas d’usage typiques
 
-### 📡 Intégration et synchronisation de systèmes
+### Intégration et synchronisation de systèmes
 
 Kafka joue le rôle de **bus d’événements central** entre les différentes applications d’une organisation.
 **Exemples :**
@@ -39,7 +44,7 @@ Kafka joue le rôle de **bus d’événements central** entre les différentes a
 
 ---
 
-### ⚙️ Traitement temps réel et analytics
+### Traitement temps réel et analytics
 
 Kafka permet d’analyser et de transformer les données **au moment où elles sont produites**.
 **Exemples :**
@@ -50,7 +55,7 @@ Kafka permet d’analyser et de transformer les données **au moment où elles s
 
 ---
 
-### 🛰️ Collecte de données IoT et logs
+### Collecte de données IoT et logs
 
 Kafka simplifie la **collecte massive de données hétérogènes** provenant de capteurs, d’applications ou de serveurs.
 **Exemples :**
@@ -61,7 +66,7 @@ Kafka simplifie la **collecte massive de données hétérogènes** provenant de 
 
 ---
 
-### 💬 Communication inter-services
+### Communication inter-services
 
 Kafka permet une **communication asynchrone** entre microservices, améliorant la résilience et réduisant la dépendance entre composants.
 **Exemples :**

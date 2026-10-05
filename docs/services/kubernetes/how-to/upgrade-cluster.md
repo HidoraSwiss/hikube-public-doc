@@ -1,154 +1,89 @@
 ---
-title: "Comment mettre a jour un cluster"
+title: "Comment mettre à jour un cluster"
 ---
 
-# Comment mettre a jour un cluster
+# Comment mettre à jour un cluster
 
-Ce guide explique comment mettre a jour la version de Kubernetes sur un cluster Hikube. Les mises a jour se font par rolling update, sans interruption du plan de controle.
+Ce guide explique comment mettre à jour la version de Kubernetes d'un cluster Hikube depuis la console. Les mises à jour se font par rolling update.
 
-## Prerequis
+## Prérequis
 
-- Un cluster Kubernetes Hikube deploye (voir le [demarrage rapide](../quick-start.md))
-- `kubectl` configure pour interagir avec l'API Hikube
-- Le kubeconfig du cluster enfant recupere
+- Un cluster Kubernetes Hikube déployé (voir le [démarrage rapide](../quick-start.md))
+- Le kubeconfig du cluster téléchargé depuis la console (bouton **Kubeconfig**), pour vérifier le résultat
 
-## Etapes
+## Étapes
 
-### 1. Verifier la version actuelle
+### 1. Vérifier la version actuelle
 
-Identifiez la version Kubernetes actuellement deployee sur votre cluster :
+Dans **Infrastructure** > **Kubernetes**, la colonne **Version** de la liste indique la version de chaque cluster. La page de détail l'affiche aussi dans la section **Général** (**Version**).
 
-```bash
-# Version dans la configuration Hikube
-kubectl get kubernetes my-cluster -o yaml | grep version
-
-# Version reportee par les noeuds
-kubectl --kubeconfig=cluster-admin.yaml get nodes
-```
-
-**Resultat attendu :**
-
-```console
-NAME                         STATUS   ROLES    AGE   VERSION
-my-cluster-general-xxxxx     Ready    <none>   30d   v1.29.0
-my-cluster-general-yyyyy     Ready    <none>   30d   v1.29.0
-```
-
-### 2. Consulter les versions disponibles
-
-Avant de mettre a jour, verifiez les versions supportees par Hikube :
+Côté cluster, la version des nœuds est visible avec :
 
 ```bash
-# Verifier la configuration actuelle du cluster
-kubectl get kubernetes my-cluster -o yaml
+export KUBECONFIG=~/Downloads/kubeconfig-<nom-du-cluster>.yaml
+kubectl get nodes
 ```
+
+### 2. Préparer la mise à jour
 
 :::warning
-Testez toujours la mise a jour en environnement de staging avant la production. Certaines applications peuvent ne pas etre compatibles avec les nouvelles versions de Kubernetes.
+Testez toujours la mise à jour sur un cluster de recette avant la production. Certaines applications peuvent ne pas être compatibles avec une nouvelle version de Kubernetes (API dépréciées puis supprimées).
 :::
 
 :::note
-Les mises a jour doivent se faire de maniere incrementale (par exemple, v1.29 vers v1.30). Ne sautez pas plusieurs versions mineures d'un coup.
+Faites les mises à jour de manière incrémentale (par exemple, v1.29 vers v1.30). Ne sautez pas plusieurs versions mineures d'un coup.
 :::
 
-### 3. Mettre a jour la version
+### 3. Changer la version
 
-**Option A : Patch direct**
+1. Ouvrez le menu **Actions** du cluster et choisissez **Modifier** (ou cliquez sur **Modifier** depuis la page de détail).
+2. Dans la section **Informations générales**, ouvrez la liste **Version de Kubernetes** et sélectionnez la version cible. La liste ne contient que les versions proposées par la plateforme.
+3. Cliquez sur **Enregistrer**. La console affiche « Cluster mis à jour » et revient sur la page de détail.
 
-```bash
-kubectl patch kubernetes my-cluster --type='merge' -p='
-spec:
-  version: "v1.30.0"
-'
-```
-
-**Option B : Modifier le fichier YAML**
-
-```yaml title="cluster-upgrade.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Kubernetes
-metadata:
-  name: my-cluster
-spec:
-  version: "v1.30.0"
-
-  controlPlane:
-    replicas: 3
-
-  nodeGroups:
-    general:
-      minReplicas: 2
-      maxReplicas: 5
-      instanceType: "s1.large"
-      ephemeralStorage: 50Gi
-      roles:
-        - ingress-nginx
-```
-
-```bash
-kubectl apply -f cluster-upgrade.yaml
-```
+:::note
+Si la version actuelle du cluster n'est plus proposée par la plateforme, la console l'indique (« version actuelle ») et vous invite à sélectionner une version supportée.
+:::
 
 ### 4. Suivre le rolling update
 
-Observez le deroulement de la mise a jour :
+Les nœuds sont remplacés progressivement. Suivez le remplacement dans le cluster :
 
 ```bash
-# Suivre l'etat du cluster Hikube
-kubectl get kubernetes my-cluster -w
-
-# Observer le remplacement des machines
-kubectl get machines -l cluster.x-k8s.io/cluster-name=my-cluster -w
-
-# Verifier les events
-kubectl describe kubernetes my-cluster
+kubectl get nodes -w
 ```
 
 :::tip
-Les mises a jour se font par rolling update : les noeuds sont remplaces un par un. Le plan de controle est mis a jour en premier, suivi des node groups. Vos workloads continuent de fonctionner pendant la mise a jour.
+Pendant un rolling update, les nœuds sont remplacés un par un : vos workloads continuent de fonctionner s'ils disposent de plusieurs réplicas. Définissez des `PodDisruptionBudget` pour vos applications critiques.
 :::
 
-### 5. Verifier la mise a jour
+## Vérification
 
-Une fois le rolling update termine, confirmez la nouvelle version :
-
-```bash
-# Verifier la version des noeuds
-kubectl --kubeconfig=cluster-admin.yaml get nodes
-
-# Verifier la version de l'API server
-kubectl --kubeconfig=cluster-admin.yaml version
-```
-
-## Verification
-
-Validez que le cluster fonctionne correctement apres la mise a jour :
+Une fois le remplacement terminé, confirmez la nouvelle version :
 
 ```bash
-# Noeuds en etat Ready avec la nouvelle version
-kubectl --kubeconfig=cluster-admin.yaml get nodes
+# Nœuds en état Ready avec la nouvelle version
+kubectl get nodes
 
-# Pods systeme operationnels
-kubectl --kubeconfig=cluster-admin.yaml get pods -n kube-system
+# Version de l'API server
+kubectl version
 
 # Vos workloads fonctionnent
-kubectl --kubeconfig=cluster-admin.yaml get pods -A
+kubectl get pods -A
 ```
 
-**Resultat attendu :**
+**Résultat attendu :**
 
 ```console
 NAME                         STATUS   ROLES    AGE   VERSION
-my-cluster-general-xxxxx     Ready    <none>   5m    v1.30.0
-my-cluster-general-yyyyy     Ready    <none>   3m    v1.30.0
+my-cluster-general-xxxxx     Ready    <none>   5m    v1.30.x
+my-cluster-general-yyyyy     Ready    <none>   3m    v1.30.x
 ```
 
 :::warning
-Si des pods restent en erreur apres la mise a jour, verifiez la compatibilite de vos manifestes avec la nouvelle version Kubernetes. Certaines API deprecees peuvent avoir ete supprimees.
+Si des pods restent en erreur après la mise à jour, vérifiez la compatibilité de vos manifestes avec la nouvelle version de Kubernetes. Certaines API dépréciées peuvent avoir été supprimées.
 :::
 
 ## Pour aller plus loin
 
-- [Référence API](../api-reference.md) -- Champ `version` et configuration complete
-- [Concepts](../concepts.md) -- Architecture du plan de controle et rolling updates
-- [Acces et outils](./toolbox.md) -- Commandes de debugging et monitoring
+- [Concepts](../concepts.md) : architecture du control plane
+- [Accès et outils](./toolbox.md) : commandes de diagnostic dans le cluster

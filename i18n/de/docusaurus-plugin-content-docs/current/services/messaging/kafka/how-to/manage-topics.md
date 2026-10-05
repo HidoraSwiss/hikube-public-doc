@@ -4,129 +4,68 @@ title: "Topics erstellen und verwalten"
 
 # Topics erstellen und verwalten
 
-Diese Anleitung erklärt, wie Sie Kafka-Topics auf Hikube deklarativ über Kubernetes-Manifeste erstellen, konfigurieren und verwalten. Sie lernen, wie Sie Partitionen, Replikate sowie Aufbewahrungs- und Bereinigungsrichtlinien definieren.
+:::info Verfügbarkeit
+Kafka ist in der [Hikube-Konsole](https://console.hikube.cloud) noch nicht als Self-Service verfügbar.
+Um eine Instanz bereitzustellen oder ihre Konfiguration zu ändern, [wenden Sie sich an den Support](mailto:support@hidora.io).
+:::
+
+Diese Anleitung stellt die Parameter eines Kafka-Topics auf Hikube vor (Partitionen, Replicas, Aufbewahrung, Cleanup-Policy) und zeigt, wie Sie die Konfiguration von einem Kafka-Client aus überprüfen.
+
+Die verwalteten Topics sind Teil der Konfiguration der Instanz: Ihre Erstellung und Änderung beantragen Sie beim Support. Diese Option wird in der Konsole nicht angeboten; wenden Sie sich an den Support.
 
 ## Voraussetzungen
 
-- **kubectl** konfiguriert mit Ihrer Hikube-Kubeconfig
-- Ein auf Hikube bereitgestellter **Kafka**-Cluster (oder ein Manifest zur Bereitstellung)
+- Ein auf Hikube bereitgestellter **Kafka**-Cluster und die Adresse seiner Bootstrap-Server (`<bootstrap-servers>`)
+- Die Kafka-Client-Skripte (`kafka-topics.sh`), auf Ihrem Rechner installiert
 
 ## Schritte
 
-### 1. Ein Topic zum Manifest hinzufügen
+### 1. Topics festlegen
 
-Die Topics werden im Abschnitt `topics` des Kafka-Manifests deklariert. Jedes Topic hat einen Namen, eine Anzahl von Partitionen und eine Anzahl von Replikaten.
+Bereiten Sie für jeden Topic Folgendes vor:
 
-```yaml title="kafka-topics.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Kafka
-metadata:
-  name: my-kafka
-spec:
-  kafka:
-    replicas: 3
-    resourcesPreset: small
-    size: 10Gi
-  zookeeper:
-    replicas: 3
-    resourcesPreset: small
-    size: 5Gi
-  topics:
-    - name: events
-      partitions: 6
-      replicas: 3
-    - name: orders
-      partitions: 3
-      replicas: 3
-```
-
-**Topic-Parameter:**
-
-| Parameter | Typ | Beschreibung |
-|-----------|-----|--------------|
-| `topics[i].name` | `string` | Name des Topics |
-| `topics[i].partitions` | `int` | Anzahl der Partitionen (Parallelität des Konsums) |
-| `topics[i].replicas` | `int` | Anzahl der Replikate (Datenhaltbarkeit) |
-| `topics[i].config` | `object` | Erweiterte Topic-Konfiguration |
+| Parameter | Beschreibung |
+|-----------|-------------|
+| Name | Name des Topics |
+| Partitionen | Anzahl der Partitionen (Parallelität beim Konsumieren) |
+| Replicas | Anzahl der Kopien jeder Partition (Dauerhaftigkeit der Daten) |
+| Optionen | Erweiterte Konfiguration des Topics (siehe unten) |
 
 :::warning
-Die Anzahl der Replikate eines Topics darf die Anzahl der verfügbaren Broker nicht überschreiten. Beispielsweise ist bei 3 Brokern das Maximum `replicas: 3`.
+Die Anzahl der Replicas eines Topics darf die Anzahl der verfügbaren Broker nicht übersteigen. Mit 3 Brokern liegt das Maximum zum Beispiel bei 3 Replicas.
 :::
 
-### 2. Aufbewahrung und Bereinigungsrichtlinie konfigurieren
+### 2. Aufbewahrung und Cleanup-Policy wählen
 
-Jedes Topic kann über das Feld `config` angepasst werden. Die beiden wichtigsten Bereinigungsrichtlinien sind:
+Die beiden wichtigsten Cleanup-Policies sind:
 
-- **`delete`**: Nachrichten werden nach Ablauf der Aufbewahrungsfrist gelöscht (`retention.ms`)
-- **`compact`**: Nur der letzte Wert jedes Schlüssels wird beibehalten (ideal für Referenztabellen, Zustände)
-
-```yaml title="kafka-topics-config.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Kafka
-metadata:
-  name: my-kafka
-spec:
-  kafka:
-    replicas: 3
-    resourcesPreset: small
-    size: 20Gi
-  zookeeper:
-    replicas: 3
-    resourcesPreset: small
-    size: 5Gi
-  topics:
-    - name: events
-      partitions: 6
-      replicas: 3
-      config:
-        cleanup.policy: "delete"
-        retention.ms: "604800000"
-        min.insync.replicas: "2"
-    - name: orders
-      partitions: 3
-      replicas: 3
-      config:
-        cleanup.policy: "compact"
-        segment.ms: "3600000"
-        max.compaction.lag.ms: "5400000"
-        min.insync.replicas: "2"
-```
+- **`delete`**: Die Nachrichten werden nach Ablauf der Aufbewahrungsdauer (`retention.ms`) gelöscht
+- **`compact`**: Nur der letzte Wert jedes Schlüssels wird aufbewahrt (ideal für Referenztabellen und Zustände)
 
 **Gängige Konfigurationsoptionen:**
 
 | Parameter | Beschreibung | Beispiel |
-|-----------|--------------|----------|
-| `cleanup.policy` | Bereinigungsrichtlinie: `delete` oder `compact` | `"delete"` |
+|-----------|-------------|---------|
+| `cleanup.policy` | Cleanup-Policy: `delete` oder `compact` | `"delete"` |
 | `retention.ms` | Aufbewahrungsdauer der Nachrichten in Millisekunden | `"604800000"` (7 Tage) |
-| `min.insync.replicas` | Mindestanzahl synchronisierter Replikate zur Bestätigung eines Schreibvorgangs | `"2"` |
-| `segment.ms` | Dauer vor Rotation eines Log-Segments (in ms) | `"3600000"` (1 Stunde) |
-| `max.compaction.lag.ms` | Maximale Verzögerung vor der Kompaktierung einer Nachricht (in ms) | `"5400000"` (1h30) |
+| `min.insync.replicas` | Mindestanzahl synchronisierter Replicas, um einen Schreibvorgang zu bestätigen | `"2"` |
+| `segment.ms` | Dauer bis zur Rotation eines Log-Segments (in ms) | `"3600000"` (1 Stunde) |
+| `max.compaction.lag.ms` | Maximale Verzögerung bis zur Compaction einer Nachricht (in ms) | `"5400000"` (1 h 30) |
 
 :::tip
-Konfigurieren Sie für Produktions-Topics immer `min.insync.replicas: "2"` mit 3 Replikaten. Dies stellt sicher, dass mindestens 2 Broker jeden Schreibvorgang bestätigen und schützt vor Datenverlust bei Ausfall eines Brokers.
+Sehen Sie für Produktions-Topics `min.insync.replicas: "2"` mit 3 Replicas vor. Dann bestätigen mindestens 2 Broker jeden Schreibvorgang, was bei einem Broker-Ausfall vor Datenverlust schützt.
 :::
 
-### 3. Änderungen anwenden
+### 3. Anfrage übermitteln
 
-```bash
-kubectl apply -f kafka-topics-config.yaml
-```
-
-Der Kafka-Operator erstellt oder aktualisiert automatisch die im Manifest deklarierten Topics.
+Senden Sie die Liste der Topics und ihrer Optionen an den [Support](mailto:support@hidora.io) und geben Sie das Projekt und den Namen der Kafka-Instanz an.
 
 ### 4. Topics überprüfen
 
-Überprüfen Sie, ob die Kafka-Ressource aktualisiert wurde:
+Sobald die Konfiguration angewendet ist, listen Sie die Topics von Ihrem Client aus auf:
 
 ```bash
-kubectl get kafka my-kafka -o yaml | grep -A 10 "topics:"
-```
-
-Für eine eingehendere Überprüfung können Sie einen Debug-Pod mit dem Kafka-CLI starten:
-
-```bash
-kubectl run kafka-debug --rm -it --image=bitnami/kafka:latest --restart=Never -- \
-  kafka-topics.sh --bootstrap-server my-kafka-kafka-bootstrap:9092 --list
+kafka-topics.sh --bootstrap-server <bootstrap-servers> --list
 ```
 
 **Erwartetes Ergebnis:**
@@ -139,8 +78,7 @@ orders
 Um die Details eines Topics anzuzeigen:
 
 ```bash
-kubectl run kafka-debug --rm -it --image=bitnami/kafka:latest --restart=Never -- \
-  kafka-topics.sh --bootstrap-server my-kafka-kafka-bootstrap:9092 --describe --topic events
+kafka-topics.sh --bootstrap-server <bootstrap-servers> --describe --topic events
 ```
 
 **Erwartetes Ergebnis:**
@@ -154,13 +92,13 @@ Topic: events   TopicId: AbC123...   PartitionCount: 6   ReplicationFactor: 3
 
 ## Überprüfung
 
-Die Konfiguration ist erfolgreich, wenn:
+Die Konfiguration ist korrekt, wenn:
 
 - Die Topics in der Liste erscheinen (`--list`)
-- Die Anzahl der Partitionen und der Replikationsfaktor mit dem Manifest übereinstimmen
+- Die Anzahl der Partitionen und der Replikationsfaktor Ihrer Anfrage entsprechen
 - Die ISR (In-Sync Replicas) die erwartete Anzahl von Brokern enthalten
 
 ## Weiterführende Informationen
 
-- **[Kafka API-Referenz](../api-reference.md)**: Vollständige Dokumentation der `topics`-Parameter und der erweiterten Konfiguration
-- **[Kafka-Cluster skalieren](./scale-resources.md)**: Ressourcen der Broker und ZooKeeper anpassen
+- **[Konzepte](../concepts.md)**: Topics, Partitionen und Replikation
+- **[Kafka-Cluster skalieren](./scale-resources.md)**: Ressourcen der Broker und von ZooKeeper anpassen

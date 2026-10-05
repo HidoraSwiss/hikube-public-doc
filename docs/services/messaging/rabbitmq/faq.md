@@ -10,10 +10,12 @@ title: FAQ
 RabbitMQ propose deux types principaux de queues :
 
 - **Quorum queues** : basées sur le protocole **Raft**, les données sont répliquées sur plusieurs nœuds du cluster. Elles garantissent la **durabilité** et la **haute disponibilité** des messages. Recommandées pour la production.
-- **Classic queues** : stockées sur un seul nœud, plus rapides en écriture mais **sans réplication**. En cas de panne du nœud, les messages sont perdus.
+- **Classic queues** : stockées sur un seul nœud, sans réplication entre nœuds. En cas de panne de ce nœud, les messages ne sont plus disponibles.
+
+Le type de queue est choisi par l'application au moment de la déclaration (argument `x-queue-type: quorum`).
 
 :::tip
-Avec 3 réplicas ou plus (`replicas: 3`), RabbitMQ utilise les quorum queues par défaut, garantissant la durabilité des messages en cas de panne d'un nœud.
+Pour bénéficier de la réplication des quorum queues, créez le cluster avec **3 (Haute disponibilité max)** ou **5 (Très haute disponibilité)** réplicas.
 :::
 
 ### À quoi servent les virtual hosts (vhosts) ?
@@ -21,21 +23,10 @@ Avec 3 réplicas ou plus (`replicas: 3`), RabbitMQ utilise les quorum queues par
 Les **virtual hosts** (vhosts) fournissent une **isolation logique** au sein d'un même cluster RabbitMQ :
 
 - Chaque vhost possède ses propres exchanges, queues et bindings
-- Les permissions sont gérées **par vhost**, permettant de contrôler l'accès par application
-- Un utilisateur peut avoir des rôles différents selon le vhost (admin sur l'un, readonly sur l'autre)
+- Les droits sont gérés **par vhost**, ce qui permet de contrôler l'accès par application
+- Un utilisateur peut avoir des droits différents selon le vhost (**Administrateur** sur l'un, **Lecture seule** sur l'autre)
 
-Exemple de configuration avec plusieurs vhosts :
-
-```yaml title="rabbitmq.yaml"
-vhosts:
-  production:
-    roles:
-      admin: ["admin"]
-      readonly: ["monitoring"]
-  staging:
-    roles:
-      admin: ["admin", "dev"]
-```
+Les vhosts se créent dans l'assistant de création (étape **VHosts**) ou ensuite avec **Ajouter un VHost** sur la page du cluster. Voir [Gérer les vhosts et utilisateurs](./how-to/manage-vhosts-users.md).
 
 ### Comment fonctionnent les exchanges dans RabbitMQ ?
 
@@ -48,69 +39,31 @@ Un **exchange** reçoit les messages des producteurs et les route vers les queue
 | `topic`     | Route selon un **pattern** de routing key (ex. `orders.*`, `logs.#`)          |
 | `headers`   | Route selon les **headers** du message plutôt que la routing key              |
 
-Le producteur publie vers un exchange, jamais directement vers une queue.
+Le producteur publie vers un exchange, jamais directement vers une queue. Les exchanges et bindings sont déclarés par vos applications.
 
-### Quels protocoles sont supportés ?
+### Sur quel port se connecter ?
 
-RabbitMQ sur Hikube supporte les protocoles suivants :
+Les clients AMQP se connectent sur le port **5672**, sur l'adresse affichée dans le champ **Hôte (Host)** de la section **Connexion** du cluster (lorsque l'**Accès externe** est activé).
 
-| **Protocole**        | **Port** | **Usage**                              |
-| -------------------- | -------- | -------------------------------------- |
-| AMQP                 | 5672     | Protocole principal pour les messages  |
-| Management HTTP API  | 15672    | Interface web et API de gestion        |
+### Peut-on changer le nombre de réplicas ou le preset après la création ?
 
-### Quelle est la différence entre `resourcesPreset` et `resources` ?
+Non. Le **Nombre de réplicas** (et donc le mode standalone ou cluster) et la **Préconfiguration (Preset)** sont fixés à la création. La version, la taille du disque et l'accès externe restent modifiables. Voir [Modifier la configuration d'un cluster](./how-to/scale-resources.md).
 
-Le champ `resourcesPreset` applique une configuration CPU/mémoire prédéfinie, tandis que `resources` permet de spécifier des valeurs explicites. Si `resources` est défini, `resourcesPreset` est **ignoré**.
+### J'ai perdu le mot de passe d'un utilisateur. Comment le récupérer ?
 
-| **Preset** | **CPU** | **Mémoire** |
-| ---------- | ------- | ----------- |
-| `nano`     | 100m    | 128Mi       |
-| `micro`    | 250m    | 256Mi       |
-| `small`    | 500m    | 512Mi       |
-| `medium`   | 500m    | 1Gi         |
-| `large`    | 1       | 2Gi         |
-| `xlarge`   | 2       | 4Gi         |
-| `2xlarge`  | 4       | 8Gi         |
+Le mot de passe n'est affiché qu'une seule fois et ne peut pas être relu. Générez-en un nouveau avec l'action **Changer le mot de passe** de l'utilisateur, puis mettez à jour vos applications : l'ancien mot de passe est révoqué immédiatement.
 
-Exemple avec des ressources explicites :
+### Quels droits donnent « Administrateur » et « Lecture seule » ?
 
-```yaml title="rabbitmq.yaml"
-replicas: 3
-resources:
-  cpu: 2000m
-  memory: 4Gi
-size: 20Gi
-```
+- **Administrateur** : lecture, écriture et configuration sur le vhost (déclarer des exchanges et des queues, publier, consommer).
+- **Lecture seule** : lecture seule sur le vhost.
 
-### Comment accéder à l'interface de management ?
+Un utilisateur sans accès à un vhost ne peut pas s'y connecter.
 
-L'interface de management RabbitMQ est accessible sur le port **15672**. Deux options :
+### Comment accéder à l'interface de management RabbitMQ ?
 
-**Option 1 — Port-forward (accès local)** :
+La console Hikube ne propose pas d'accès à l'interface web de management de RabbitMQ. Avec l'**Accès externe**, le port 15672 de cette interface est joignable sur l'adresse du cluster, en HTTP non chiffré, mais les utilisateurs créés depuis la console n'ont pas le tag d'administration RabbitMQ qu'elle exige : ils ne peuvent pas s'y connecter. Les vhosts et utilisateurs se gèrent depuis la console ; les exchanges et queues, depuis vos applications. Pour un besoin spécifique, [contactez le support](mailto:support@hidora.io).
 
-```bash
-kubectl port-forward svc/<nom-rabbitmq> 15672:15672
-```
+### Comment le coût d'un cluster est-il estimé ?
 
-Puis ouvrez `http://localhost:15672` dans votre navigateur.
-
-**Option 2 — Accès externe** :
-
-Activez `external: true` dans votre manifeste pour exposer le service via un LoadBalancer :
-
-```yaml title="rabbitmq.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: RabbitMQ
-metadata:
-  name: rabbitmq
-spec:
-  external: true
-  replicas: 3
-  resourcesPreset: small
-  size: 10Gi
-```
-
-:::warning
-L'accès externe expose les ports AMQP (5672) et Management (15672) sur Internet. Assurez-vous d'utiliser des mots de passe forts pour tous les utilisateurs.
-:::
+L'assistant de création affiche un **Coût estimé** mensuel et horaire, calculé à partir de la préconfiguration, du nombre de réplicas, de la taille du disque et de l'accès externe. La facturation réelle est calculée à l'heure d'utilisation.

@@ -3,77 +3,78 @@ sidebar_position: 1
 title: Übersicht
 ---
 
+import NavigationFooter from '@site/src/components/NavigationFooter';
+
 # Redis auf Hikube
 
-Hikube bietet einen **verwalteten Redis-Dienst**, basierend auf dem Operator **[Spotahome Redis Operator](https://github.com/spotahome/redis-operator)**, der in der Community weit verbreitet ist.
-Die Plattform unterstützt die Bereitstellung und Verwaltung eines **replizierten und selbstheilenden** Redis-Clusters und stützt sich auf **Redis Sentinel** zur Fehlererkennung und zum Auto-Failover.
-Dieser Dienst garantiert Geschwindigkeit, geringe Latenz und Hochverfügbarkeit, ohne Aufwand seitens des Benutzers.
+Hikube bietet einen **verwalteten Redis-Dienst**.
+Die Plattform übernimmt die Bereitstellung und Verwaltung eines **replizierten und selbstheilenden** Redis-Clusters und stützt sich dabei auf **Redis Sentinel** für die Fehlererkennung und das Auto-Failover. Sie erstellen und verwalten Ihre Cluster über die [Hikube-Konsole](https://console.hikube.cloud) (Menü **DB & Messaging** → **Redis**).
 
 ---
 
-## Grundstruktur
+## Architektur und Funktionsweise
 
-### **Redis-Ressource**
+Der verwaltete Redis-Dienst auf Hikube ist darauf ausgelegt, dank einer replizierten Architektur **Hochverfügbarkeit** und **Resilienz** zu bieten:
 
-#### YAML-Konfigurationsbeispiel
+- Ein **Master-Knoten** verarbeitet alle Schreibvorgänge und dient als maßgebliche Quelle für die Daten.
+- Ein oder mehrere **Replica-Knoten** erhalten die Daten per Replikation, um die Leseskalierbarkeit sicherzustellen.
+- **Redis Sentinel** überwacht fortlaufend den Zustand des Clusters, erkennt Ausfälle und kann automatisch eine Replica zum neuen Master befördern (**Auto-Failover**).
 
-```yaml
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Redis
-metadata:
-  name: example
-spec:
-```
+Diese Kombination gewährleistet:
 
----
-
-## 🏗️ Architektur und Funktionsweise
-
-Der verwaltete Redis-Dienst auf Hikube ist für **Hochverfügbarkeit** und **Resilienz** durch eine replizierte Architektur konzipiert.
-
-- Ein **Master-Knoten** verwaltet alle Schreibvorgänge und dient als Datenquelle der Wahrheit.
-- Ein oder mehrere **Replika-Knoten** empfangen Daten über Replikation für Lese-Skalierbarkeit.
-- **Redis Sentinel** überwacht permanent den Clusterstatus, erkennt Ausfälle und kann automatisch ein Replika zum neuen Master befördern (**Auto-Failover**).
-
-Diese Kombination garantiert:
-
-- **Kontinuierliche Verfügbarkeit** auch bei einem Ausfall des Masters
-- **Hohe Leistung** durch Verteilung der Lesevorgänge auf die Replikas
-- **Betriebliche Einfachheit**, da die Verwaltung durch die Plattform und den Spotahome-Operator automatisiert ist
+- **Kontinuierliche Verfügbarkeit**, auch bei einem Ausfall des Masters
+- **Hohe Leistung** durch die Verteilung der Lesezugriffe auf die Replicas
+- **Einfachen Betrieb**, da die Verwaltung von der Plattform automatisiert wird
 
 ```mermaid
 graph TD
     subgraph Gland
-        M1[Redis Master] --> PVC1[(PVC - Storage)]
+        M1[Redis master] --> PVC1[(Speicher)]
     end
 
-    subgraph Lucerne
-        R1[Redis Replica] --> PVC2[(PVC - Storage)]
+    subgraph Luzern
+        R1[Redis Replica] --> PVC2[(Speicher)]
     end
 
-    subgraph Genève
-        R2[Redis Replica] --> PVC3[(PVC - Storage)]
+    subgraph Genf
+        R2[Redis Replica] --> PVC3[(Speicher)]
     end
 
-    %% Sentinel Cluster
     S1[Sentinel] -.-> M1
     S2[Sentinel] -.-> R1
     S3[Sentinel] -.-> R2
 
     M1 -->|Replikation| R1
     M1 -->|Replikation| R2
-
-    S1 -.->|Überwachung + Auto-Failover| M1
-    S2 -.->|Überwachung + Auto-Failover| R1
-    S3 -.->|Überwachung + Auto-Failover| R2
 ```
 
-## 🎯 Anwendungsfälle
+---
 
-Der **verwaltete Redis-Dienst auf Hikube** eignet sich besonders für:
+## Was Sie über die Konsole verwalten
 
-- **Anwendungs-Cache**: Beschleunigung von Webanwendungen (E-Commerce, SaaS, API) durch Reduzierung der Antwortzeit dank In-Memory-Speicherung.
-- **Verteilte Sessions**: Schnelle und zuverlässige Verwaltung von Benutzersitzungen in Multi-Instanz-Umgebungen.
-- **Warteschlangen und leichtes Streaming**: Verwendung von Redis als Message Broker (Pub/Sub, Queues) für Echtzeitkommunikation.
-- **Echtzeit-Analytics**: Schnelle Verarbeitung von Metriken, Logs oder Events im Streaming.
-- **Gaming und IoT**: Verwaltung temporärer Zustände, Ranglisten und flüchtiger Daten mit geringer Latenz.
+| Funktion | Verfügbar |
+|----------|------------|
+| Erstellung eines Clusters (Version 7 oder 8, Preset, 1 bis 8 Replicas, Volume-Größe, öffentliches Netzwerk, Authentifizierung) | Ja |
+| Passwortrotation | Ja |
+| Änderung der Version, des Presets, der Volume-Größe, des externen Zugriffs und der Authentifizierung | Ja |
+| Änderung der Anzahl der Replicas nach der Erstellung | Nein, [wenden Sie sich an den Support](mailto:support@hidora.io) |
+
+---
+
+## Anwendungsfälle
+
+- **Anwendungscache**: Webanwendungen (E-Commerce, SaaS, API) beschleunigen, indem die Antwortzeit dank In-Memory-Speicherung verkürzt wird.
+- **Verteilte Sitzungen**: Benutzersitzungen in Umgebungen mit mehreren Instanzen schnell und zuverlässig verwalten.
+- **Warteschlangen und leichtgewichtiges Streaming**: Pub/Sub, Listen und Streams für Echtzeitkommunikation.
+- **Echtzeit-Analytics**: schnelle Verarbeitung von Metriken, Zählern oder Ereignissen.
+- **Gaming und IoT**: Ranglisten, temporäre Zustände und flüchtige Daten mit geringer Latenz.
+
+<NavigationFooter
+  nextSteps={[
+    {label: "Konzepte", href: "../concepts"},
+    {label: "Schnellstart", href: "../quick-start"},
+  ]}
+  seeAlso={[
+    {label: "Alle Datenbanken", href: "../../"},
+  ]}
+/>

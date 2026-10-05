@@ -1,6 +1,7 @@
 ---
 sidebar_position: 6
 title: API Reference
+unlisted: true
 ---
 
 # API Reference – Kubernetes

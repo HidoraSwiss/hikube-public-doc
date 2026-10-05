@@ -7,116 +7,99 @@ title: Troubleshooting
 
 ### AccessDenied when accessing the bucket
 
-**Cause**: the credentials used are incorrect, or the bucket name used does not match the real name in the S3 backend.
+**Cause**: the keys used are incorrect, the bucket name used is not the actual S3 name, or the user is read-only and is attempting a write.
 
 **Solution**:
 
-1. Retrieve credentials from the Kubernetes Secret:
+1. Open the bucket page and note the **Bucket name** in the **Access & Configuration** card. Use this name, not the name entered in the wizard:
    ```bash
-   kubectl get tenantsecret bucket-<name> -o jsonpath='{.data.BucketInfo}' | base64 -d | jq
+   aws --endpoint-url https://<endpoint> s3 ls s3://<s3-bucket-name>/
    ```
-
-2. Use the `spec.bucketName` field as the bucket name (not `metadata.name`):
-   ```bash
-   aws --endpoint-url https://prod.s3.hikube.cloud s3 ls s3://<spec.bucketName>/
-   ```
-
-3. Verify that `accessKeyID` and `accessSecretKey` are correctly configured in your S3 tool.
+2. In the **Users & Access** card, check the user's permission (**Read-only** or **Read / Write**); change it if needed with **Edit access**.
+3. Check that the Access Key ID and the Secret Access Key are correctly configured in your tool. If the secret key is lost, create a new user.
 
 ---
 
 ### ListBucket fails on the root
 
-**Cause**: each bucket has its own isolated credentials. It is not possible to list all buckets with a single set of credentials.
+**Cause**: a user's keys are limited to their bucket. It is not possible to list all the buckets of the endpoint.
 
 **Solution**:
 
-1. Use the specific credentials for the bucket you want to list:
+1. Always target the bucket in your commands:
    ```bash
-   aws --endpoint-url https://prod.s3.hikube.cloud s3 ls s3://<spec.bucketName>/
+   aws --endpoint-url https://<endpoint> s3 ls s3://<s3-bucket-name>/
+   mc ls hikube/<s3-bucket-name>/
    ```
-
-2. To list all your buckets, use `kubectl`:
-   ```bash
-   kubectl get buckets
-   ```
-
-3. For each bucket, retrieve the individual credentials from the corresponding Secret.
+2. To see all your buckets, use the **Object Storage Buckets** page of the console.
 
 ---
 
 ### Credentials not found
 
-**Cause**: the Secret name follows the pattern `bucket-<name>` where `<name>` is the `metadata.name` of the Bucket resource.
+**Cause**: the secret key is only displayed when the user is created, or no user was created (for example if the bucket was not ready at the end of the wizard).
 
 **Solution**:
 
-1. List available Secrets:
-   ```bash
-   kubectl get tenantsecrets | grep bucket-
-   ```
+1. Open the bucket page and check the **Users & Access** card.
+2. Click **Add User** to create a user and get new keys.
+3. The endpoint and the S3 name remain available at any time in **Access & Configuration**.
 
-2. Extract access information:
-   ```bash
-   kubectl get tenantsecret bucket-<name> -o jsonpath='{.data.BucketInfo}' | base64 -d | jq
-   ```
+---
 
-3. To extract only the keys:
-   ```bash
-   kubectl get tenantsecret bucket-<name> -o jsonpath='{.data.BucketInfo}' \
-     | base64 -d \
-     | jq -r '.spec.secretS3 | "\(.accessKeyID) \(.accessSecretKey)"'
-   ```
+### "No S3 connection information available currently."
+
+**Cause**: the bucket is still being provisioned.
+
+**Solution**: wait until the bucket status switches to **Ready**, then reload the page. If the status remains **Creating** or switches to **Error**, [contact support](mailto:support@hidora.io) with the bucket name and its identifier.
+
+---
+
+### Creation fails: "A bucket with this name already exists."
+
+**Cause**: a bucket in the project already has this name.
+
+**Solution**: go back to the **General** step of the wizard and choose another **Bucket name**.
+
+---
+
+### Objects disappeared after deleting a bucket
+
+**Cause**: deleting a bucket is not blocked when it contains objects; it deletes them along with it, with no possibility of recovery.
+
+**Solution**: before deleting a bucket, copy the objects you want to keep, for example to your workstation:
+
+```bash
+aws --endpoint-url https://<endpoint> s3 sync s3://<s3-bucket-name>/ ./bucket-backup/
+```
+
+### Bucket deletion fails
+
+**Solution**: retry the deletion from the console. If the error persists, [contact support](mailto:support@hidora.io) and specify the bucket name.
 
 ---
 
 ### Slow upload or timeout
 
-**Cause**: network issue, large file size without multipart upload, or distant endpoint.
+**Cause**: network issue, large file uploaded without multipart upload.
 
 **Solution**:
 
 1. Check your connectivity to the endpoint:
    ```bash
-   curl -s -o /dev/null -w "%{time_total}" https://prod.s3.hikube.cloud
+   curl -s -o /dev/null -w "%{time_total}\n" https://<endpoint>
    ```
-
-2. Use the regional endpoint `https://prod.s3.hikube.cloud` (no intermediate CDN).
-
-3. For large files, enable multipart upload:
-   ```bash
-   aws --endpoint-url https://prod.s3.hikube.cloud s3 cp large-file.tar.gz s3://<bucket-name>/ \
-     --expected-size $(stat -c%s large-file.tar.gz)
-   ```
-
-4. With `mc`, multipart is automatic for files larger than 64 MB.
+2. For large files, use a client that handles multipart upload: `aws s3 cp` and `mc cp` do so automatically above a certain size.
+3. If needed, increase client-side parallelism (for example `aws configure set default.s3.max_concurrent_requests 20`).
 
 ---
 
-### Bucket not found after creation
+### Bucket not found (`NoSuchBucket`)
 
-**Cause**: the real bucket name in the S3 backend (`spec.bucketName`) differs from the Kubernetes resource's `metadata.name`.
+**Cause**: the name used is the name chosen in the console, not the actual S3 name.
 
-**Solution**:
-
-1. Check the Bucket resource status:
-   ```bash
-   kubectl get bucket <name>
-   kubectl describe bucket <name>
-   ```
-
-2. Retrieve the real bucket name from the Secret:
-   ```bash
-   kubectl get tenantsecret bucket-<name> -o jsonpath='{.data.BucketInfo}' \
-     | base64 -d \
-     | jq -r '.spec.bucketName'
-   ```
-
-3. Use this real name to access the bucket:
-   ```bash
-   aws --endpoint-url https://prod.s3.hikube.cloud s3 ls s3://<real-bucket-name>/
-   ```
+**Solution**: note the **Bucket name** in the **Access & Configuration** card of the bucket page and use it in your commands.
 
 :::warning
-Do not confuse `metadata.name` (Kubernetes name) with `spec.bucketName` (real name in S3). Only the latter works for S3 access.
+Do not confuse the bucket's name in the console with its S3 name. Only the latter works with S3 clients.
 :::

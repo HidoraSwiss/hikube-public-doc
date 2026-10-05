@@ -1,20 +1,20 @@
 ---
-title: "Private Container-Registry verbinden"
+title: "Eine private Image-Registry anbinden"
 ---
 
-# Private Container-Registry verbinden
+# Eine private Image-Registry anbinden
 
-Diese Anleitung erklärt, wie Sie den Zugriff auf eine private Container-Image-Registry (Docker Hub, GitLab Registry, GitHub Container Registry usw.) von Ihrem Kubernetes-Hikube-Cluster aus konfigurieren.
+Diese Anleitung erklärt, wie Sie von Ihrem Hikube-Kubernetes-Cluster aus den Zugriff auf eine private Container-Image-Registry (Docker Hub, GitLab Registry, GitHub Container Registry usw.) konfigurieren.
 
 :::note
-Diese Anleitung verwendet die nativen Kubernetes-Mechanismen zur Authentifizierung bei Image-Registries. Sie gilt für jeden Kubernetes-Hikube-Cluster.
+Diese Anleitung verwendet die nativen Kubernetes-Mechanismen zur Authentifizierung bei Image-Registries. Alle Befehle werden in Ihrem Cluster ausgeführt.
 :::
 
 ## Voraussetzungen
 
-- Ein bereitgestellter Kubernetes-Hikube-Cluster (siehe [Schnellstart](../quick-start.md))
-- Die kubeconfig des Child-Clusters konfiguriert (`export KUBECONFIG=cluster-admin.yaml`)
-- Die Zugangsdaten zu Ihrer privaten Registry (URL, Benutzername, Passwort oder Token)
+- Ein bereitgestellter Hikube-Kubernetes-Cluster (siehe [Schnellstart](../quick-start.md))
+- Die über die Konsole heruntergeladene kubeconfig des Clusters (Schaltfläche **Kubeconfig**), in Ihre Sitzung geladen (`export KUBECONFIG=~/Downloads/kubeconfig-<cluster-name>.yaml`)
+- Die Zugangsdaten für Ihre private Registry (URL, Benutzername, Passwort oder Token)
 
 ## Schritte
 
@@ -52,21 +52,21 @@ kubectl create secret docker-registry ghcr \
   --docker-password=ghp_xxxxxxxxxxxx
 ```
 
-### 2. Secret an den ServiceAccount default anhängen
+### 2. Das Secret an den ServiceAccount default anhängen
 
-Damit alle Pods des Namespace automatisch die private Registry verwenden, hängen Sie das Secret an den ServiceAccount `default` an:
+Damit alle Pods des Namespace die private Registry automatisch verwenden, hängen Sie das Secret an den ServiceAccount `default` an:
 
 ```bash
 kubectl patch serviceaccount default -p '{"imagePullSecrets": [{"name": "my-registry"}]}'
 ```
 
 :::tip
-Diese Methode ist praktisch für Umgebungen, in denen alle Pods eines Namespace auf dieselbe Registry zugreifen müssen. Neue Pods erben das Secret automatisch.
+Diese Methode ist praktisch, wenn alle Pods eines Namespace auf dieselbe Registry zugreifen müssen. Neue Pods erben das Secret automatisch.
 :::
 
-### 3. Oder direkt im Pod-Spec referenzieren
+### 3. Oder direkt in der Pod-Spec referenzieren
 
-Alternativ können Sie das Secret `imagePullSecrets` direkt im Spec jedes Pods oder Deployments angeben:
+Sie können `imagePullSecrets` auch direkt in der Spec jedes Pods oder Deployments angeben:
 
 ```yaml title="deployment-private-image.yaml"
 apiVersion: apps/v1
@@ -99,10 +99,10 @@ Stellen Sie Ihre Anwendung bereit und prüfen Sie, ob das Image korrekt herunter
 ```bash
 kubectl apply -f deployment-private-image.yaml
 
-# Pod-Status prüfen
+# Status der Pods prüfen
 kubectl get pods -l app=my-app
 
-# Bei Fehlern die Events inspizieren
+# Bei einem Fehler die Events untersuchen
 kubectl describe pod -l app=my-app
 ```
 
@@ -124,15 +124,14 @@ my-app-6b8d5f7c9d-def34   1/1     Running   0          1m
 ```
 
 :::warning
-Wenn die Pods im Zustand `ImagePullBackOff` oder `ErrImagePull` verbleiben, prüfen Sie:
-- Die Registry-URL im Secret (`--docker-server`)
-- Die Zugangsdaten (Benutzername und Passwort/Token)
-- Den vollständigen Image-Namen mit dem Registry-Präfix
-- Ob das Secret im selben Namespace wie der Pod liegt
+Wenn die Pods im Zustand `ImagePullBackOff` oder `ErrImagePull` bleiben, prüfen Sie:
+- die URL der Registry im Secret (`--docker-server`);
+- die Zugangsdaten (Benutzername und Passwort oder Token);
+- den vollständigen Namen des Images mit dem Präfix der Registry;
+- ob sich das Secret im selben Namespace wie der Pod befindet.
 :::
 
 ## Weiterführende Informationen
 
-- [API-Referenz](../api-reference.md) -- Vollständige Cluster-Konfiguration
-- [Konzepte](../concepts.md) -- Kubernetes-Hikube-Architektur
-- [Schnellstart](../quick-start.md) -- Ersten Cluster bereitstellen
+- [Konzepte](../concepts.md): Architektur von Hikube-Kubernetes
+- [Zugriff und Werkzeuge](./toolbox.md): kubeconfig und nützliche Befehle

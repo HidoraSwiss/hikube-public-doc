@@ -1,4 +1,5 @@
 ---
+unlisted: true
 sidebar_position: 3
 title: API-Referenz
 ---
@@ -9,7 +10,7 @@ Diese Referenz beschreibt die Nutzung von GPUs auf Hikube, sowohl mit virtuellen
 
 ---
 
-## 🎮 Verfügbare GPUs
+## Verfügbare GPUs
 
 GPUs werden über ihren **Ressourcennamen** (`nvidia.com/<modell>`) angehängt. Die auf Hikube verfügbaren Modelle:
 
@@ -26,7 +27,7 @@ Die verfügbare GPU-Hardware variiert je nach Zone. Überprüfen Sie die zuteilb
 
 ---
 
-## 🖥️ GPU mit Virtuellen Maschinen
+## GPU mit Virtuellen Maschinen
 
 Auf einer VM wird der GPU im **PCI Passthrough** (exklusive Zuweisung) über das Feld `gpus` einer [`VMInstance`](../compute/api-reference.md)-Ressource angehängt. Die Festplatte wird separat durch eine [`VMDisk`](../compute/api-reference.md#vmdisk)-Ressource definiert.
 
@@ -121,7 +122,7 @@ spec:
 
 ---
 
-## ☸️ GPU mit Kubernetes
+## GPU mit Kubernetes
 
 Auf einem verwalteten Kubernetes-Cluster werden die GPUs an die **Node Groups** angehängt, und der Addon **`gpuOperator`** muss aktiviert sein, um die GPUs den Pods bereitzustellen.
 
@@ -199,7 +200,7 @@ spec:
 
 ---
 
-## 📋 VM GPU vs Kubernetes GPU
+## VM GPU vs Kubernetes GPU
 
 | **Aspekt** | **VM GPU** | **Kubernetes GPU** |
 |------------|------------|-------------------|
@@ -216,7 +217,7 @@ spec:
 
 ---
 
-## ✅ Überprüfung
+## Überprüfung
 
 ### VM GPU
 
@@ -238,7 +239,7 @@ kubectl exec -it <pod-name> -- nvidia-smi
 
 ---
 
-## 💡 Best Practices
+## Best Practices
 
 - **L40S** für Inferenz und Entwicklung, **A100** für ML-Training, **RTX PRO 6000 (Blackwell)** für die anspruchsvollsten Workloads.
 - Testen Sie mit einem L40S, bevor Sie die teureren GPUs reservieren.

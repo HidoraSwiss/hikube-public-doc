@@ -5,60 +5,60 @@ title: FAQ
 
 # FAQ — Kafka
 
-### What is the difference between `partitions` and `replicationFactor`?
+:::info Availability
+Kafka is not yet available as self-service in the [Hikube console](https://console.hikube.cloud).
+To provision an instance or change its configuration, [contact support](mailto:support@hidora.io).
+:::
 
-These two parameters serve distinct purposes:
+### How do I get a Kafka cluster?
 
-- **`partitions`**: determines the **parallelism and throughput** of a topic. More partitions allow more consumers to read in parallel. Each partition is an ordered sequence of messages.
-- **`replicas`** (replication factor): determines the number of **copies** of each partition spread across different brokers, ensuring **high availability**. If a broker goes down, a replica takes over.
+Send your request to [support](mailto:support@hidora.io) with the instance parameters (number of brokers, presets, storage, topics, external access). The [quick start](./quick-start.md) lists the information to prepare.
+
+### What is the difference between partitions and the replication factor?
+
+These two parameters serve different purposes:
+
+- **Partitions**: determine the **parallelism and throughput** of a topic. The more partitions, the more consumers can read in parallel. Each partition is an ordered sequence of messages.
+- **Replicas** (replication factor): determine the number of **copies** of each partition spread across different brokers, ensuring **high availability**. If a broker goes down, a replica takes over.
 
 :::warning
-The number of topic replicas **cannot exceed** the number of available brokers. For example, with 3 brokers (`kafka.replicas: 3`), you can configure at most `replicas: 3` on a topic.
+The number of replicas of a topic **cannot exceed** the number of available brokers. For example, with 3 brokers, a topic can have at most 3 replicas.
 :::
 
 ### Why does Kafka use ZooKeeper?
 
 ZooKeeper handles **Kafka cluster coordination**:
 
-- **Controller election**: designates the leader broker responsible for partition management
-- **Topic metadata**: stores the list of topics, partitions, and their assignment to brokers
-- **Failure detection**: monitors broker health and triggers reassignment in case of failure
+- **Controller election**: designates the leader broker responsible for managing partitions
+- **Topic metadata**: stores the list of topics, partitions and their assignment to brokers
+- **Failure detection**: monitors broker state and triggers reassignment in case of failure
 
 :::tip
-ZooKeeper requires an **odd number of replicas** (3, 5, 7...) to maintain quorum. In production, use at least `zookeeper.replicas: 3`.
+ZooKeeper requires an **odd number of instances** (3, 5, 7…) to maintain quorum. In production, plan for at least 3 instances.
 :::
 
-### What does `cleanup.policy` do on a topic?
+### What is `cleanup.policy` used for on a topic?
 
-The cleanup policy defines how Kafka manages old messages:
+The cleanup policy defines how Kafka handles old messages:
 
-- **`delete`** (default): removes log segments that exceed the retention period defined by `retention.ms`. Suitable for event streams.
-- **`compact`**: keeps only the **latest value for each key**. Suitable for reference tables or state (changelog).
+- **`delete`** (default): deletes log segments that exceed the retention period set by `retention.ms`. Suited to event streams.
+- **`compact`**: keeps only the **latest value for each key**. Suited to reference tables or state (changelog).
 
-Configuration example:
-
-```yaml title="kafka.yaml"
-topics:
-  - name: user-profiles
-    partitions: 3
-    replicas: 3
-    config:
-      cleanup.policy: compact
-```
+The policy of each topic is part of the instance configuration. This option is not available in the console; contact support.
 
 ### How do consumer groups work?
 
 A **consumer group** is a set of consumers that share the reading of a topic's partitions:
 
-- Each partition is read by **only one consumer** in the group at any given time
-- If a consumer goes down, its partitions are redistributed to other group members (**rebalancing**)
-- Multiple consumer groups can read the same topic independently (each maintains its own offset)
+- Each partition is read by **a single consumer** of the group at any given time
+- If a consumer goes down, its partitions are redistributed to the other members of the group (**rebalancing**)
+- Several consumer groups can read the same topic independently (each keeps its own offset)
 
-This enables **parallel consumption** while guaranteeing message ordering within each partition.
+This enables **parallel consumption** while guaranteeing message order within each partition.
 
-### What is the difference between `resourcesPreset` and `resources`?
+### Which resource presets are available?
 
-The `resourcesPreset` field applies a predefined CPU/memory configuration, while `resources` allows you to specify explicit values. If `resources` is defined, `resourcesPreset` is **ignored**.
+Presets apply separately to the brokers and to ZooKeeper:
 
 | **Preset** | **CPU** | **Memory** |
 | ---------- | ------- | ---------- |
@@ -70,57 +70,20 @@ The `resourcesPreset` field applies a predefined CPU/memory configuration, while
 | `xlarge`   | 4       | 4Gi        |
 | `2xlarge`  | 8       | 8Gi        |
 
-Example with explicit resources:
+Explicit CPU/memory values can also be requested; they then replace the preset. This option is not available in the console; contact support.
 
-```yaml title="kafka.yaml"
-kafka:
-  replicas: 3
-  resources:
-    cpu: 2000m
-    memory: 4Gi
-  size: 50Gi
-```
+### How do I expose Kafka outside the platform?
 
-### How to expose Kafka outside the cluster?
-
-Enable the `external: true` parameter in your manifest:
-
-```yaml title="kafka.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Kafka
-metadata:
-  name: kafka
-spec:
-  external: true
-  kafka:
-    replicas: 3
-    resourcesPreset: small
-    size: 10Gi
-  zookeeper:
-    replicas: 3
-    resourcesPreset: small
-    size: 5Gi
-```
-
-This creates a **LoadBalancer** service for each broker, allowing access from outside the Kubernetes cluster.
+External access is an instance option: when enabled, the brokers become reachable from outside the platform. This option is not available in the console; contact support.
 
 :::warning
-External exposure makes your brokers accessible on the Internet. Ensure authentication and encryption are properly configured before enabling this option.
+External exposure makes your brokers reachable on the Internet, on port `9094`. This listener is TLS-encrypted by default, but no client authentication is configured: anyone who knows the address can produce and consume messages. Discuss setting up authentication (SCRAM or mTLS) with support before enabling this option.
 :::
 
-### How to configure `min.insync.replicas`?
+### How do I configure `min.insync.replicas`?
 
-The `min.insync.replicas` parameter ensures that a minimum number of replicas acknowledge each write before it is considered successful. This is a **topic-level** configuration:
-
-```yaml title="kafka.yaml"
-topics:
-  - name: orders
-    partitions: 6
-    replicas: 3
-    config:
-      min.insync.replicas: "2"
-```
+The `min.insync.replicas` parameter guarantees that a minimum number of replicas acknowledges each write before it is considered successful. It is a **topic**-level setting, defined in the instance configuration.
 
 :::tip
-For a production cluster with 3 replicas, set `min.insync.replicas: 2`. This tolerates the loss of one broker while ensuring data durability.
+For a production topic with 3 replicas, `min.insync.replicas: 2` tolerates the loss of one broker while guaranteeing data durability. On the producer side, combine it with `acks=all`.
 :::

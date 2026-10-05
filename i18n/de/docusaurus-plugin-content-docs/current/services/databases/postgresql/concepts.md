@@ -7,50 +7,32 @@ title: Konzepte
 
 ## Architektur
 
-PostgreSQL auf Hikube ist ein verwalteter Dienst basierend auf dem Operator **CloudNativePG**. Jede über die Ressource `Postgres` bereitgestellte Instanz erstellt einen replizierten Cluster mit automatischem Failover, Streaming-Replikation und integrierter Sicherung.
+PostgreSQL auf Hikube ist ein verwalteter Service. Jeder in der Konsole erstellte Cluster ist eine Gruppe replizierter PostgreSQL-Instanzen mit automatischem Failover und Streaming-Replikation. Er gehört zu einem **Projekt** und verbraucht die Quotas dieses Projekts (CPU, Arbeitsspeicher, Speicher).
 
 ```mermaid
 graph TB
-    subgraph "Hikube Platform"
-        subgraph "Tenant namespace"
-            CR[Postgres CRD]
-            SEC[Secret credentials]
-        end
-
-        subgraph "CloudNativePG Operator"
-            OP[Controller]
-        end
-
-        subgraph "Cluster PostgreSQL"
-            P[Primary - R/W]
-            R1[Replica 1 - RO]
-            R2[Replica 2 - RO]
-        end
-
-        subgraph "Speicher"
-            PV1[PV Primary]
-            PV2[PV Replica 1]
-            PV3[PV Replica 2]
-        end
-
-        subgraph "Sicherung"
-            S3[Bucket S3]
-            WAL[WAL Archive]
-        end
+    subgraph "Hikube-Konsole"
+        UI[Projekt → DB & Messaging → PostgreSQL]
     end
 
-    CR --> OP
-    OP --> P
-    OP --> R1
-    OP --> R2
-    P -->|streaming replication| R1
-    P -->|streaming replication| R2
+    subgraph "PostgreSQL-Cluster"
+        P[Primary - R/W]
+        R1[Replica 1 - RO]
+        R2[Replica 2 - RO]
+    end
+
+    subgraph "Speicher"
+        PV1[Volume Primary]
+        PV2[Volume Replica 1]
+        PV3[Volume Replica 2]
+    end
+
+    UI -->|Erstellung / Änderung| P
+    P -->|Streaming-Replikation| R1
+    P -->|Streaming-Replikation| R2
     P --> PV1
     R1 --> PV2
     R2 --> PV3
-    P -->|WAL shipping| WAL
-    WAL --> S3
-    OP --> SEC
 ```
 
 ---
@@ -58,25 +40,24 @@ graph TB
 ## Terminologie
 
 | Begriff | Beschreibung |
-|---------|-------------|
-| **Postgres** | Kubernetes-Ressource (`apps.cozystack.io/v1alpha1`), die einen verwalteten PostgreSQL-Cluster darstellt. |
-| **Primary** | Hauptinstanz, die Lese- und Schreibvorgänge akzeptiert. |
-| **Replica** | Schreibgeschützte Instanz, die über Streaming-Replikation vom Primary synchronisiert wird. |
-| **CloudNativePG** | Kubernetes-Operator, der den Lebenszyklus von PostgreSQL-Clustern verwaltet (Bereitstellung, Failover, Backup). |
-| **PITR** | Point-In-Time Recovery — Wiederherstellung zu einem bestimmten Zeitpunkt dank kontinuierlicher WAL-Archivierung. |
-| **WAL** | Write-Ahead Log — Transaktionsjournal von PostgreSQL, Grundlage für PITR und Replikation. |
-| **Quorum** | Mindestanzahl synchroner Replikas, die vor der Bestätigung eines Schreibvorgangs erforderlich sind. |
-| **resourcesPreset** | Vordefiniertes Ressourcenprofil (nano bis 2xlarge) zur Vereinfachung der Dimensionierung. |
+|-------|-------------|
+| **PostgreSQL-Cluster** | Verwaltete Instanz, die in der Konsole erstellt wird und aus einem Primary und gegebenenfalls Replicas besteht. |
+| **Projekt** | Isolierter Bereich, der Ihre Ressourcen bündelt und die Quotas trägt. |
+| **Primary** | Hauptinstanz, die Lese- und Schreibvorgänge annimmt. |
+| **Replica** | Schreibgeschützte Instanz, die per Streaming-Replikation vom Primary synchronisiert wird. |
+| **Instanz-Preset** | Ressourcenvorlage (CPU, Arbeitsspeicher), die jedem Knoten des Clusters zugewiesen wird. |
+| **Externer Zugriff** | Option, die den Cluster über eine öffentliche IP-Adresse im Internet verfügbar macht. |
+| **Erweiterung (Extension)** | PostgreSQL-Modul (zum Beispiel `pgcrypto`, `vector`), das pro Datenbank aktiviert wird. |
+| **WAL** | Write-Ahead Log — das Transaktionsprotokoll von PostgreSQL, Grundlage der Replikation. |
 
 ---
 
 ## Replikation und Hochverfügbarkeit
 
-CloudNativePG gewährleistet Hochverfügbarkeit durch:
+Die Hochverfügbarkeit beruht auf:
 
-1. **Streaming Replication**: Die Replikas erhalten die WAL in Echtzeit vom Primary
-2. **Automatisches Failover**: Wenn der Primary ausfällt, wird automatisch ein Replika befördert
-3. **Synchrone Replikation** (optional): Der Primary wartet auf die Schreibbestätigung der Replikas, bevor eine Transaktion validiert wird
+1. **Streaming-Replikation**: Die Replicas erhalten die WAL fortlaufend vom Primary
+2. **Automatisches Failover**: Fällt der Primary aus, wird automatisch eine Replica befördert
 
 ```mermaid
 sequenceDiagram
@@ -87,58 +68,57 @@ sequenceDiagram
 
     Client->>Primary: INSERT INTO ...
     Primary->>Primary: WAL schreiben
-    Primary->>Replica1: WAL streaming
-    Primary->>Replica2: WAL streaming
-    Replica1-->>Primary: ACK (wenn synchron)
+    Primary->>Replica1: WAL-Streaming
+    Primary->>Replica2: WAL-Streaming
     Primary-->>Client: COMMIT OK
 ```
 
-Das Feld `quorum` definiert die Anzahl der synchronen Replikas:
-- `quorum: 0` (Standard) — asynchrone Replikation, beste Leistung
-- `quorum: 1` — mindestens 1 synchrones Replika, Schutz vor Datenverlust
+Die Anzahl der Replicas wird bei der Erstellung im Feld **Number of replicas** festgelegt:
 
-:::tip
-Konfigurieren Sie für die Produktion `replicas: 3` und `quorum: 1` für einen guten Kompromiss zwischen Leistung und Haltbarkeit.
+| Angebotener Wert | Verwendung |
+|-----------------|-------|
+| **1 (Standalone)** | Entwicklung, Tests |
+| **2 (High Availability)** | Produktion mit einem Standby |
+| **3 (Max High Availability)** | Kritische Produktion |
+
+:::warning
+Die Anzahl der Replicas kann nach der Erstellung nicht mehr geändert werden („The mode cannot be changed after creation“). Wählen Sie sie entsprechend Ihrem Verfügbarkeitsbedarf. Um sie zu ändern, [wenden Sie sich an den Support](mailto:support@hidora.io).
 :::
 
----
-
-## Sicherung und Wiederherstellung
-
-PostgreSQL auf Hikube unterstützt zwei Sicherungsmechanismen:
-
-### Kontinuierliche Sicherung (WAL-Archivierung)
-
-Die WAL werden kontinuierlich in einen S3-Bucket archiviert. Dies ermöglicht **PITR** (Point-In-Time Recovery) — die Wiederherstellung der Datenbank zu jedem beliebigen Zeitpunkt in der Vergangenheit.
-
-### Geplante Sicherung
-
-Ein Cron-Zeitplan löst vollständige Sicherungen (Base Backup) in regelmäßigen Abständen aus. Die Aufbewahrungsrichtlinie (`retentionPolicy`) bestimmt die Aufbewahrungsdauer.
-
-| Parameter | Beschreibung |
-|-----------|-------------|
-| `backup.schedule` | Cron-Zeitplan (z.B.: `0 2 * * *`) |
-| `backup.retentionPolicy` | Aufbewahrungsdauer (z.B.: `30d`) |
-| `backup.s3*` | Anmeldedaten und Endpoint des S3-Buckets |
+Synchrone Replikation (Quorum) wird in der Konsole nicht angeboten; wenden Sie sich an den Support.
 
 ---
 
-## Benutzer- und Datenbankverwaltung
+## Datenbanken, Benutzer und Rechte
 
-Jeder PostgreSQL-Cluster ermöglicht die Deklaration von:
+Jeder Cluster verfügt über:
 
-- **Benutzern** mit Passwort
-- **Datenbanken** mit Owner
-- **Rollen**: `admin` (Lesen/Schreiben), `readonly` (nur Lesen)
+- eine automatisch erstellte Datenbank **`postgres`**;
+- die **Datenbanken**, die Sie bei der Erstellung oder später hinzufügen (Registerkarte **Databases**), mit ihren **Erweiterungen**;
+- die **Benutzer**, die Sie anlegen (Registerkarte **Users**). Jeder Benutzer erhält pro Datenbank eines der beiden folgenden Rechte:
+  - **Administrator (Admin)**: Lesen und Schreiben;
+  - **Read-only**: nur Lesen.
 
-Die Anmeldedaten werden in einem **Kubernetes-Secret** namens `<instance>-credentials` gespeichert.
+Das Passwort eines Benutzers wird von der Plattform generiert und **nur ein einziges Mal** angezeigt, bei der Erstellung oder nach einer Rotation. Danach ist es nicht mehr einsehbar: Wenn Sie es verlieren, generieren Sie mit **Change Password** ein neues.
+
+### Benennungsregeln
+
+| Element | Regel |
+|---------|-------|
+| Clustername | 3 bis 16 Zeichen: Kleinbuchstaben, Ziffern und Bindestriche; beginnt mit einem Buchstaben, endet mit einem Buchstaben oder einer Ziffer |
+| Benutzername | 3 bis 16 Zeichen: Kleinbuchstaben, Ziffern und Unterstriche (`_`); beginnt mit einem Kleinbuchstaben oder einem Unterstrich. Kein Bindestrich (`-`). |
+| Datenbankname | 1 bis 63 Zeichen: Kleinbuchstaben, Ziffern und Unterstriche |
+
+Die Benutzernamen `postgres`, `admin`, `root`, `owner`, `superuser`, `streaming_replica`, `cnpg_pooler_pgbouncer` sowie alle Namen, die mit `pg_` beginnen, sind reserviert.
 
 ---
 
-## Ressourcen-Presets
+## Instanz-Presets
 
-| Preset | CPU | Speicher |
-|--------|-----|----------|
+Das **Instance preset** legt die Kapazität fest, die **jedem Knoten** des Clusters zugewiesen wird. Maßgeblich ist die im Assistenten angezeigte Liste; zur Orientierung:
+
+| Preset | CPU | Arbeitsspeicher |
+|--------|-----|---------|
 | `nano` | 250m | 128Mi |
 | `micro` | 500m | 256Mi |
 | `small` | 1 | 512Mi |
@@ -147,23 +127,37 @@ Die Anmeldedaten werden in einem **Kubernetes-Secret** namens `<instance>-creden
 | `xlarge` | 4 | 4Gi |
 | `2xlarge` | 8 | 8Gi |
 
-:::warning
-Wenn das Feld `resources` (explizite CPU/Speicher) definiert ist, wird `resourcesPreset` ignoriert. Die beiden Ansätze schließen sich gegenseitig aus.
-:::
+Das Standard-Preset des Assistenten ist `small`. Die Festlegung freier CPU-/Arbeitsspeicher-Ressourcen (außerhalb der Presets) wird in der Konsole nicht angeboten; wenden Sie sich an den Support.
 
 ---
 
-## Limits und Kontingente
+## Netzwerkzugriff
+
+- **Externer Zugriff deaktiviert** (Standard): Der Cluster ist nicht im Internet erreichbar. Das Feld **Host** auf der Seite des Clusters zeigt **Not defined** an.
+- **Externer Zugriff aktiviert**: Die Plattform weist eine öffentliche IP-Adresse zu, die im Feld **Host** angezeigt wird. Der Port ist der PostgreSQL-Standardport `5432`.
+
+Der externe Zugriff kann nach der Erstellung über **Edit** aktiviert oder deaktiviert werden. Seine Kosten (öffentliche IP-Adresse) sind in der Angabe **Estimated cost** des Assistenten enthalten.
+
+---
+
+## Backup und Wiederherstellung
+
+Die Konfiguration von Backups und die Wiederherstellung werden in der Konsole nicht angeboten; wenden Sie sich an den Support. Siehe [Backups konfigurieren](./how-to/configure-backups.md).
+
+---
+
+## Quotas und Kosten
+
+Der Erstellungsassistent zeigt ab dem Schritt **Configuration** die **Estimated cost** (monatlich und stündlich) sowie die Auswirkung des Clusters auf die Quotas des Projekts (CPU, Arbeitsspeicher, Speicher) an. Der Verbrauch berücksichtigt das Preset, die Anzahl der Replicas und die Disk-Größe. Überschreitet der Cluster die verfügbaren Quotas, bleibt die Schaltfläche **Next** inaktiv.
 
 | Parameter | Wert |
-|-----------|------|
-| Max. Replikas | Je nach Tenant-Kontingent |
-| Speichergröße | Variabel (`size` in Gi) |
-| Verbindungen pro Benutzer | Pro Datenbank konfigurierbar |
+|-----------|--------|
+| Disk-Größe | 1 bis 4 096 GB, im Rahmen des Speicher-Quotas des Projekts |
+| Replicas | 1, 2 oder 3 |
 
 ---
 
 ## Weiterführende Informationen
 
-- [Übersicht](./overview.md): Vorstellung des Dienstes
-- [API-Referenz](./api-reference.md): Alle Parameter der Postgres-Ressource
+- [Übersicht](./overview.md): Vorstellung des Service
+- [Schnellstart](./quick-start.md): Ihren ersten Cluster erstellen

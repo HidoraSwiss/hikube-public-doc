@@ -1,4 +1,5 @@
 ---
+unlisted: true
 sidebar_position: 3
 title: Riferimento API
 ---
@@ -108,7 +109,7 @@ resources:
   memory: 4Gi
 ```
 
-⚠️ **Nota:** se `resources` è definito, il valore di `resourcesPreset` viene ignorato.
+**Nota:** se `resources` è definito, il valore di `resourcesPreset` viene ignorato.
 
 | **Nome Preset** | **CPU** | **Memoria** |
 | --------------- | ------- | ----------- |

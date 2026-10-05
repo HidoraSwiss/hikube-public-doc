@@ -1,319 +1,201 @@
 ---
-sidebar_position: 2
+sidebar_position: 3
 title: Schnellstart
 ---
 
+import NavigationFooter from '@site/src/components/NavigationFooter';
+
 # PostgreSQL in 5 Minuten bereitstellen
 
-Diese Anleitung begleitet Sie bei der Bereitstellung Ihrer ersten **PostgreSQL**-Datenbank auf Hikube, von der Installation bis zur ersten Verbindung.
+Diese Anleitung begleitet Sie bei der Erstellung Ihres ersten **PostgreSQL**-Clusters in der [Hikube-Konsole](https://console.hikube.cloud) bis zur ersten Verbindung mit `psql`.
 
 ---
 
 ## Ziele
 
-Am Ende dieser Anleitung haben Sie:
+Am Ende dieser Anleitung verfügen Sie über:
 
-- Eine **PostgreSQL**-Datenbank auf Hikube bereitgestellt
-- Einen replizierten Cluster mit einem **Primary** und **Replikas** für Hochverfügbarkeit
-- Einen Benutzer und ein Passwort für die Verbindung
-- Einen persistenten Speicher zur Aufbewahrung Ihrer Daten
+- Einen **PostgreSQL**-Cluster, der in Ihrem Hikube-Projekt bereitgestellt ist
+- Eine Anwendungsdatenbank und einen Benutzer, um sich damit zu verbinden
+- Ein von der Plattform generiertes Passwort
+- Eine funktionierende Verbindung mit `psql`
 
 ---
 
 ## Voraussetzungen
 
-Stellen Sie vor dem Start sicher, dass Sie Folgendes haben:
-
-- **kubectl** konfiguriert mit Ihrer Hikube-Kubeconfig
-- **Administratorrechte** auf Ihrem Tenant
-- Einen verfügbaren **Namespace** für Ihre Datenbank
-- (Optional) Einen **S3-kompatiblen** Bucket, wenn Sie automatische Sicherungen über CloudNativePG aktivieren möchten
+- Ein **Hikube-Konto** und ein **Projekt** mit ausreichenden Quotas (CPU, Arbeitsspeicher, Speicher)
+- Den Client **`psql`** auf Ihrem Rechner, falls Sie eine Verbindung aus dem Internet testen möchten
 
 ---
 
-## Schritt 1: PostgreSQL-Manifest erstellen
+## Schritt 1: Den Cluster erstellen
 
-### **Manifest-Datei vorbereiten**
-
-Erstellen Sie eine Datei `postgresql.yaml` wie folgt:
-
-```yaml title="postgresql.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: Postgres
-metadata:
-  name: example
-spec:
-  # configuration backup
-  backup:
-    enabled: false
-    destinationPath: s3://bucket/path/to/folder/
-    endpointURL: https://prod.s3.hikube.cloud
-    retentionPolicy: 30d
-    s3AccessKey: <your-access-key>
-    s3SecretKey: <your-secret-key>
-    schedule: 0 2 * * * *
-  bootstrap:
-    enabled: false
-    oldName: ""
-    recoveryTime: ""
-  # creation databases
-  databases:
-    airflow:
-      extensions:
-      - hstore
-      roles: # assign roles to the database
-        admin:
-        - airflow
-    myapp:
-      roles:
-        admin:
-        - user1
-        - debezium
-        readonly:
-        - user2
-  external: true # create service LoadBalancer if true (with public IP)
-  # define parameters about postgresql
-  postgresql:
-    parameters:
-      max_connections: 200
-  quorum:
-    maxSyncReplicas: 0
-    minSyncReplicas: 0
-  replicas: 3 # total number of postgresql instance
-  resources:
-    cpu: 3000m
-    memory: 3Gi
-  resourcesPreset: micro
-  size: 10Gi
-  storageClass: ""
-  # create users
-  users:
-    airflow:
-      password: qwerty123
-    debezium:
-      replication: true
-    user1:
-      password: strongpassword
-    user2:
-      password: hackme
-```
-
-### **PostgreSQL-YAML bereitstellen**
-
-```bash
-# YAML anwenden
-kubectl apply -f postgresql.yaml
-```
+1. Melden Sie sich in der [Hikube-Konsole](https://console.hikube.cloud) an und wählen Sie Ihr Projekt aus.
+2. Öffnen Sie im Seitenmenü **DB & Messaging** → **PostgreSQL**. Die Seite **PostgreSQL Clusters** wird angezeigt.
+3. Klicken Sie auf **Create a cluster**. Der Assistent **Create a PostgreSQL cluster** öffnet sich.
 
 ---
 
-## Schritt 2: Überprüfung der Bereitstellung
+## Schritt 2: Konfigurieren und bestätigen
 
-Überprüfen Sie den Status Ihres PostgreSQL-Clusters (kann 1-2 Minuten dauern):
+Der Assistent umfasst sechs Schritte: **General**, **Configuration**, **Databases**, **Users**, **Summary** und **Finish**. Mit **Next** und **Previous** wechseln Sie zwischen ihnen.
 
-```bash
-kubectl get postgreses
-```
+### General
 
-**Erwartetes Ergebnis:**
+Geben Sie den **Cluster Name** ein (standardmäßig wird ein zufälliger Name vorgeschlagen), zum Beispiel `demo-pg`. Er muss 3 bis 16 Zeichen lang sein (Kleinbuchstaben, Ziffern und Bindestriche), mit einem Buchstaben beginnen und mit einem Buchstaben oder einer Ziffer enden.
 
-```console
-NAME      READY   AGE     VERSION
-example   True    1m36s   0.18.0
-```
+### Configuration
+
+| Feld | Empfohlener Wert für diese Anleitung | Hinweis |
+|-------|----------------------------------|----------|
+| **PostgreSQL Version** | `18` | Angebotene Versionen: 15, 16, 17, 18 |
+| **Instance preset** | `Small (1 CPU, 512Mi)` | Kapazität, die jedem Knoten zugewiesen wird |
+| **Disk size (GB)** | `10` | Speicherkapazität pro Knoten |
+| **Number of replicas** | `1 (Standalone)` | `2` oder `3` für Hochverfügbarkeit |
+| **External access** | Aktiviert | Erforderlich, um sich von Ihrem Rechner aus zu verbinden |
+
+![PostgreSQL-Assistent, Schritt Configuration](/img/console/postgresql/wizard-configuration.en.png)
+
+
+Das Banner oben im Assistenten zeigt die **Estimated cost** und die Auswirkung auf die Quotas des Projekts an.
+
+:::warning
+Die **Number of replicas** kann nach der Erstellung nicht mehr geändert werden. Wählen Sie für die Produktion direkt **2 (High Availability)** oder **3 (Max High Availability)**.
+:::
+
+:::note
+Aktivieren Sie den **External access** nur, wenn Sie ihn benötigen: Er macht die Datenbank im öffentlichen Internet verfügbar.
+:::
+
+### Databases
+
+Geben Sie einen **Database name** ein, zum Beispiel `myapp`, und klicken Sie dann auf **Add**. Wenn Sie keine Datenbank hinzufügen, wird nur die Standarddatenbank **`postgres`** erstellt.
+
+### Users
+
+Fügen Sie mindestens einen Benutzer hinzu:
+
+1. **Username**: zum Beispiel `app_user` (nur Kleinbuchstaben, Ziffern und Unterstriche, kein Bindestrich).
+2. **Database name**: Wählen Sie `myapp` aus.
+3. **Rights**: **Administrator (Admin)** oder **Read-only**.
+4. Klicken Sie auf **Add**.
+
+### Summary
+
+Prüfen Sie die Zusammenfassung (**Version**, **Instance preset**, **Data volume**, **Replicas**, **External exposure**, **Databases to create**, **Users to create**, **Estimated cost**) und klicken Sie dann auf **Create cluster**.
 
 ---
 
-## Schritt 3: Überprüfung der Pods
+## Schritt 3: Status prüfen
 
-Überprüfen Sie, dass die Anwendungs-Pods den Status `Running` haben:
+Der Schritt **Finish** bestätigt die Erstellung („Creation complete!“). Klicken Sie auf **Finish**, um die Seite des Clusters zu öffnen.
 
-```bash
-kubectl get po -o wide | grep postgres
-```
+Der Status des Clusters wird neben seinem Namen angezeigt, sowohl auf der Seite des Clusters als auch in der Liste **PostgreSQL Clusters**:
 
-**Erwartetes Ergebnis:**
+| Status | Bedeutung |
+|--------|---------------|
+| **Creating** / **Provisioning** | Der Cluster wird bereitgestellt |
+| **Ready** / **Running** | Der Cluster ist betriebsbereit |
+| **Error** / **Failed** | Die Bereitstellung ist fehlgeschlagen |
 
-```console
-postgres-example-1                                1/1     Running     0             23m   10.244.117.142   gld-csxhk-006   <none>           <none>
-postgres-example-2                                1/1     Running     0             19m   10.244.117.168   luc-csxhk-005   <none>           <none>
-postgres-example-3                                1/1     Running     0             18m   10.244.117.182   plo-csxhk-004   <none>           <none>
-```
-
-Mit `replicas: 3` erhalten Sie **3 PostgreSQL-Instanzen**, die für Hochverfügbarkeit auf verschiedene Rechenzentren verteilt sind.
-
-Überprüfen Sie, dass jede Instanz ein Persistent Volume (PVC) hat:
-
-```bash
-kubectl get pvc | grep postgres
-```
-
-**Erwartetes Ergebnis:**
-
-```console
-postgres-example-1                         Bound     pvc-36fbac70-f976-4ef5-ae64-29b06817b18a   10Gi       RWO            local          <unset>                 9m43s
-postgres-example-2                         Bound     pvc-f042a765-0ffd-46e5-a1f2-c703fe59b56c   10Gi       RWO            local          <unset>                 8m38s
-postgres-example-3                         Bound     pvc-1dcbab1f-18c1-4eae-9b12-931c8c2f9a74   10Gi       RWO            local          <unset>                 4m28s
-```
+**Erwartetes Ergebnis:** Nach einigen Minuten wechselt der Status zu **Ready**. Die Seite des Clusters zeigt die **PostgreSQL Version**, die **Replicas**, die **Allocated Size** und den **External Access** (**Enabled**) an.
 
 ---
 
-## Schritt 4: Anmeldedaten abrufen
+## Schritt 4: Zugangsdaten abrufen
 
-Die Passwörter sind in einem Kubernetes-Secret gespeichert:
+Die Passwörter werden **nur ein einziges Mal** angezeigt, im Schritt **Finish** des Assistenten, im Abschnitt **User Credentials**:
 
-```bash
-kubectl get secret postgres-example-credentials -o json | jq -r '.data | to_entries[] | "\(.key): \(.value|@base64d)"'
-```
+- **Password** jedes erstellten Benutzers;
+- **Internal Connection String**: die Adresse des Clusters, wenn der externe Zugriff aktiviert ist.
 
-**Erwartetes Ergebnis:**
+![PostgreSQL-Assistent, Schritt Finish: Benutzer-Zugangsdaten (Passwort verdeckt)](/img/console/postgresql/wizard-credentials.en.png)
 
-```console
-airflow: qwerty123
-debezium: tJ7H4RLTEYckNY7C
-user1: strongpassword
-user2: hackme
-```
+
+:::warning
+Kopieren Sie diese Passwörter in einen Passwort-Manager, bevor Sie den Bildschirm verlassen: Sie werden nicht mehr angezeigt. Bei Verlust generieren Sie in der Registerkarte **Users** ein neues (**Actions** → **Change Password**).
+:::
+
+Die Adresse des Clusters bleibt auf der Seite des Clusters einsehbar, in der Karte **Connection and Databases**, Feld **Host**.
 
 ---
 
 ## Schritt 5: Verbindung und Tests
 
-### Externer Zugriff (wenn `external: true`)
-
-Überprüfen Sie die verfügbaren Services:
+Verbinden Sie sich mit `psql` über die Adresse aus dem Feld **Host**:
 
 ```bash
-kubectl get svc | grep postgre
+psql "host=<host> port=5432 dbname=myapp user=app_user sslmode=require"
 ```
+
+Geben Sie das Passwort ein, wenn Sie dazu aufgefordert werden, und prüfen Sie dann die Verbindung:
+
+```sql
+SELECT version();
+CREATE TABLE test (id serial PRIMARY KEY, message text);
+INSERT INTO test (message) VALUES ('Bonjour Hikube');
+SELECT * FROM test;
+```
+
+**Erwartetes Ergebnis:**
 
 ```console
-postgres-example-external-write      LoadBalancer   10.96.171.243   91.223.132.64   5432/TCP                     10m
-postgres-example-r                   ClusterIP      10.96.18.28     <none>          5432/TCP                     10m
-postgres-example-ro                  ClusterIP      10.96.238.251   <none>          5432/TCP                     10m
-postgres-example-rw                  ClusterIP      10.96.59.254    <none>          5432/TCP                     10m
-```
-
-### Zugriff über Port-Forward (wenn `external: false`)
-
-```bash
-kubectl port-forward svc/postgres-example-rw 5432:5432
-```
-
-:::note
-Es wird empfohlen, die Datenbank nicht extern freizugeben, wenn dies nicht erforderlich ist.
-:::
-
-### Verbindungstest mit psql
-
-```bash
-psql -h 91.223.132.64 -U user1 myapp
-```
-
-```console
-psql (17.4, server 17.2 (Debian 17.2-1.pgdg110+1))
-SSL connection (protocol: TLSv1.3, cipher: TLS_AES_256_GCM_SHA384, compression: off, ALPN: postgresql)
-Type "help" for help.
-
-myapp=> \du
-                                 List of roles
-     Role name     |                         Attributes
--------------------+------------------------------------------------------------
- airflow           |
- airflow_admin     | No inheritance, Cannot login
- airflow_readonly  | No inheritance, Cannot login
- app               |
- debezium          | Replication
- myapp_admin       | No inheritance, Cannot login
- myapp_readonly    | No inheritance, Cannot login
- postgres          | Superuser, Create role, Create DB, Replication, Bypass RLS
- streaming_replica | Replication
- user1             |
- user2             |
-
-myapp=>
+ id |    message
+----+----------------
+  1 | Bonjour Hikube
+(1 row)
 ```
 
 ---
 
 ## Schritt 6: Schnelle Fehlerbehebung
 
-### Pods im CrashLoopBackOff
+### Das Feld Host zeigt „Not defined“ an
 
-```bash
-# Logs des fehlerhaften Pods prüfen
-kubectl logs postgres-example-1
+Der **External Access** ist deaktiviert, oder die öffentliche IP-Adresse ist noch nicht zugewiesen. Prüfen Sie die Karte **External Access** auf der Seite des Clusters; aktivieren Sie ihn bei Bedarf über **Edit** und warten Sie einen Moment.
 
-# Events des Pods prüfen
-kubectl describe pod postgres-example-1
-```
+### Die Schaltfläche Next bleibt inaktiv
 
-**Häufige Ursachen:** Unzureichender Speicher (`resources.memory` zu niedrig), Speichervolumen voll, Konfigurationsfehler in `postgresql.parameters`.
+- Im Schritt **Configuration**: Der Cluster überschreitet die Quotas des Projekts. Verringern Sie das Preset, die Disk-Größe oder die Anzahl der Replicas.
+- Im Schritt **Users**: Fügen Sie mindestens einen Benutzer hinzu.
 
-### PostgreSQL nicht erreichbar
+### Authentifizierung abgelehnt
 
-```bash
-# Prüfen, ob die Services existieren
-kubectl get svc | grep postgres
+Prüfen Sie den Benutzernamen, die Zieldatenbank und das Passwort. Wenn das Passwort verloren gegangen ist, führen Sie in der Registerkarte **Users** eine Rotation durch. Siehe [Benutzer und Datenbanken verwalten](./how-to/manage-users-databases.md).
 
-# Prüfen, ob der LoadBalancer eine externe IP hat
-kubectl describe svc postgres-example-external-write
-```
+### Der Cluster bleibt im Status Error
 
-**Häufige Ursachen:** `external: false` im Manifest, LoadBalancer wartet auf IP-Zuweisung, falscher Service-Name in der Verbindungszeichenkette.
-
-### Replikation fehlgeschlagen
-
-```bash
-# Status des CloudNativePG-Clusters prüfen
-kubectl describe postgres example
-
-# Logs des Primary prüfen
-kubectl logs postgres-example-1 -c postgres
-```
-
-**Häufige Ursachen:** Unzureichender Speicher auf einem Replika, Netzwerkproblem zwischen den Knoten, falsch konfigurierte `quorum`-Parameter.
-
-### Allgemeine Diagnosebefehle
-
-```bash
-# Letzte Events im Namespace
-kubectl get events --sort-by=.metadata.creationTimestamp
-
-# Detaillierter Status des PostgreSQL-Clusters
-kubectl describe postgres example
-```
+[Wenden Sie sich an den Support](mailto:support@hidora.io) und geben Sie dabei den Namen des Projekts und des Clusters an.
 
 ---
 
-## 📋 Zusammenfassung
+## Schritt 7: Bereinigung
 
-Sie haben bereitgestellt:
-
-- Eine **PostgreSQL**-Datenbank auf Ihrem Hikube-Tenant
-- Einen replizierten Cluster mit einem **Primary** und **Standbys** für Hochverfügbarkeit
-- Konfigurierte Benutzer und Rollen mit Passwörtern, die in Kubernetes-Secrets gespeichert sind
-- Einen persistenten Speicher (PVC), der an jede PostgreSQL-Instanz angebunden ist
-- Einen sicheren Zugriff über `psql` (interner Service oder LoadBalancer)
-- Die Möglichkeit, automatische **S3-Sicherungen** zu aktivieren
-
----
-
-## Bereinigung
-
-Um die Testressourcen zu entfernen:
-
-```bash
-kubectl delete -f postgresql.yaml
-```
+1. Öffnen Sie die Seite des Clusters (**DB & Messaging** → **PostgreSQL** → Name des Clusters).
+2. Klicken Sie auf **Delete cluster**.
+3. Geben Sie den exakten Namen des Clusters in das Feld **Resource name to confirm** ein und klicken Sie dann auf **Permanently delete**.
 
 :::warning
-Diese Aktion löscht den PostgreSQL-Cluster und alle zugehörigen Daten. Dieser Vorgang ist **unwiderruflich**.
+Diese Aktion löscht den PostgreSQL-Cluster und alle zugehörigen Daten. Sie ist **unwiderruflich**.
 :::
 
 ---
 
-## Nächste Schritte
+## Zusammenfassung
 
-- **[API-Referenz](./api-reference.md)**: Vollständige Konfiguration aller PostgreSQL-Optionen
-- **[Übersicht](./overview.md)**: Detaillierte Architektur und Anwendungsfälle für PostgreSQL auf Hikube
+Sie haben in der Konsole Folgendes erstellt:
+
+- Einen **PostgreSQL**-Cluster in Ihrem Projekt
+- Eine Datenbank und einen Benutzer mit seinen Rechten
+- Einen externen Zugriff und eine `psql`-Verbindung
+
+<NavigationFooter
+  nextSteps={[
+    {label: "Benutzer und Datenbanken verwalten", href: "../how-to/manage-users-databases"},
+    {label: "FAQ", href: "../faq"},
+  ]}
+  seeAlso={[
+    {label: "Alle Datenbanken", href: "../../"},
+  ]}
+/>

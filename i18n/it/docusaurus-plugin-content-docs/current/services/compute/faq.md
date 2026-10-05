@@ -5,151 +5,102 @@ title: FAQ
 
 # FAQ — Macchine virtuali
 
-### Qual è la differenza tra PortList e WholeIP?
+### Qual è la differenza tra firewall attivato e disattivato?
 
-| Caratteristica | `PortList` | `WholeIP` |
-|----------------|-----------|-----------|
-| **Funzionamento** | Solo le porte elencate in `externalPorts` sono esposte | Tutte le porte della VM sono esposte |
-| **Sicurezza** | Controllo fine, superficie d'attacco ridotta | Necessita un firewall a livello dell'OS |
-| **Caso d'uso** | Produzione, servizi mirati | Sviluppo, test rapidi |
+| | **Enable Firewall** selezionato | Firewall non selezionato |
+|---|---|---|
+| **Porte aperte sull'IP pubblico** | Solo le **Allowed Ports** | Tutte |
+| **Sicurezza** | Superficie di attacco ridotta | Firewall da configurare nel sistema operativo (ufw, firewalld, nftables) |
+| **Casi d'uso** | Produzione, servizi mirati | VPN, gateway, protocolli a porte dinamiche |
 
-:::warning
-Con `WholeIP`, dovete obbligatoriamente configurare un firewall nella VM (iptables, nftables, ufw) per proteggere i servizi non esposti.
-:::
-
-```yaml title="vm-portlist.yaml"
-spec:
-  external: true
-  externalMethod: PortList
-  externalPorts:
-    - 22
-    - 443
-```
+Le porte si modificano in qualsiasi momento dalla pagina di dettaglio > **Edit** > **Network & Security**. Vedere [Configurare la rete](./how-to/configure-network.md).
 
 ---
 
 ### Quali immagini sono disponibili?
 
-Hikube propone delle **Golden Image** preconfigurate:
-
-| Sistema operativo | Versioni disponibili |
-|----------------------|---------------------|
-| **Ubuntu** | 22.04, 24.04 |
-| **Debian** | 11, 12, 13 |
-| **CentOS Stream** | 9, 10 |
-| **Rocky Linux** | 8, 9, 10 |
-| **AlmaLinux** | 8, 9, 10 |
-
-Le immagini sono specificate nel campo `source.image.name` della risorsa **VMDisk**, nel formato `{os}-{version}`. Ad esempio: `ubuntu-2404`, `debian-12`, `rocky-9`.
+AlmaLinux, CentOS Stream, CloudLinux, Debian, openSUSE, Oracle Linux, Rocky Linux, Ubuntu e Windows Server. Il dettaglio delle versioni si trova nella [panoramica](./overview.md#sistemi-operativi); fa fede l'elenco mostrato al passaggio **Storage** della procedura guidata.
 
 ---
 
-### Come scegliere il mio instanceType?
+### Posso usare una mia immagine?
 
-Le istanze seguono tre gamme con rapporti vCPU:RAM differenti:
+Sì, in due fasi: crei prima un disco a partire dall'URL della sua immagine (ISO o QCOW2, in HTTPS) nel menu **Disks**, poi, nella procedura guidata di creazione della VM, scelga **Existing** per il **System Disk (Boot)** e selezioni questo disco. La scheda **Custom Image** è disattivata (**Reserved**) nella procedura guidata della VM: è utilizzabile solo durante la creazione di un disco. Vedere [Creare un disco di sistema da un'immagine](../storage/disks/how-to/create-from-image.md).
 
-| Gamma | Prefisso | Rapporto | Esempio d'uso |
+---
+
+### Come scegliere il tipo di istanza?
+
+| Serie | Etichetta | Rapporto | Esempio d'uso |
 |-------|---------|-------|-----------------|
-| **Standard** | `s1` | 1:2 | Server web, applicazioni leggere |
-| **Universal** | `u1` | 1:4 | Applicazioni aziendali, database |
-| **Memory** | `m1` | 1:8 | Cache, elaborazioni in memoria |
+| `s1` | **Standard (S)** | 1:2 | Sviluppo, test |
+| `u1` | **Universal (U)** | 1:4 | Server web, applicazioni |
+| `m1` | **Memory (M)** | 1:8 | Database, cache |
 
-Le dimensioni disponibili vanno da `small` a `8xlarge`. Ad esempio: `u1.xlarge` offre 4 vCPU e 16 GB di RAM.
+Ad esempio, `u1.xlarge` offre 4 vCPU e 16 GB di RAM. Il formato può essere cambiato in seguito da **Edit**; la VM si riavvia.
 
 ---
 
 ### Come aggiungere un disco supplementare?
 
-Create prima una risorsa `VMDisk`, poi referenziatela nella vostra `VMInstance`:
-
-```yaml title="data-disk.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: VMDisk
-metadata:
-  name: data-volume
-spec:
-  storage: 100Gi
-  storageClass: replicated
-```
-
-```yaml title="vm.yaml"
-apiVersion: apps.cozystack.io/v1alpha1
-kind: VMInstance
-metadata:
-  name: my-vm
-spec:
-  instanceType: u1.large
-  instanceProfile: ubuntu
-  disks:
-    - name: data-volume
-```
+Alla creazione, faccia clic su **Add a disk** al passaggio **Storage**. Su una VM esistente, apra la pagina di dettaglio, faccia clic su **Edit**, poi su **Add a disk** nella sezione **Storage**, quindi su **Save**. La VM si riavvia. La guida completa, inclusa la formattazione nel sistema operativo, è disponibile [qui](./how-to/attach-extra-disk.md).
 
 ---
 
-### Come accedere alla mia VM in SSH?
+### Come connettersi in SSH?
 
-1. Iniettate la vostra chiave SSH pubblica nel manifest della VM:
-   ```yaml title="vm-ssh.yaml"
-   spec:
-     sshKeys:
-       - "ssh-ed25519 AAAAC3... user@laptop"
-   ```
-
-2. Esponete la porta 22 tramite `PortList`:
-   ```yaml title="vm-ssh.yaml"
-   spec:
-     external: true
-     externalMethod: PortList
-     externalPorts:
-       - 22
-   ```
-
-3. Recuperate l'indirizzo IP esterno:
+1. Aggiunga la sua chiave pubblica in **Authorized SSH keys** (passaggio **Network** della procedura guidata, oppure **Edit** > **Advanced Configuration** > **SSH Keys**).
+2. Lasci **Public IPv4 Address** attivato e la porta **SSH (22)** autorizzata.
+3. Copi il comando dal blocco **SSH Connection** nella pagina di dettaglio e aggiunga la sua chiave privata:
    ```bash
-   kubectl get svc
+   ssh -i ~/.ssh/ma-cle ubuntu@<ip-pubblico>
    ```
 
-4. Connettetevi:
-   ```bash
-   ssh user@<external-ip>
-   ```
+Utenti predefiniti in base all'immagine:
 
-:::note
-Il nome utente predefinito dipende dall'immagine: `ubuntu` per Ubuntu, `debian` per Debian, `cloud-user` per CentOS/Rocky/AlmaLinux.
-:::
+| Immagine | Utente |
+|-------|-------------|
+| Ubuntu | `ubuntu` |
+| Debian | `debian` |
+| Rocky Linux | `rocky` |
+| AlmaLinux | `almalinux` |
+| CentOS Stream, CloudLinux | `cloud-user` |
+| Oracle Linux | `opc` |
+| openSUSE | `opensuse` |
+
+L'utente effettivo è sempre indicato nella pagina di dettaglio, in **System Image**.
 
 ---
 
 ### Come personalizzare la VM all'avvio?
 
-Utilizzate il campo `cloudInit` per iniettare una configurazione cloud-init in formato YAML:
+Al passaggio **Network** della procedura guidata, attivi **Cloud-Init script (User Data)** e inserisca la sua configurazione:
 
-```yaml title="vm-cloudinit.yaml"
-spec:
-  cloudInit: |
-    #cloud-config
-    packages:
-      - nginx
-      - htop
-    users:
-      - name: admin
-        sudo: ALL=(ALL) NOPASSWD:ALL
-        ssh_authorized_keys:
-          - ssh-ed25519 AAAAC3... admin@company
-    runcmd:
-      - systemctl enable nginx
-      - systemctl start nginx
+```yaml title="user-data.yaml"
+#cloud-config
+packages:
+  - nginx
+  - htop
+runcmd:
+  - systemctl enable --now nginx
 ```
 
-Cloud-init viene eseguito al primo avvio della VM e permette di installare pacchetti, creare utenti, eseguire comandi, ecc.
+Vedere [Configurare cloud-init](./how-to/configure-cloud-init.md).
 
 ---
 
-### Qual è la differenza tra `instanceProfile` e `instanceType`?
+### Cosa succede ai dischi quando elimino una VM?
 
-| Parametro | Ruolo | Esempi |
-|-----------|------|----------|
-| `instanceProfile` | Carica i **driver e i kernel** adatti all'OS | `ubuntu`, `centos.stream9`, `windows.2k25.virtio` |
-| `instanceType` | Definisce la **dimensione** della VM (CPU/RAM) | `s1.small`, `u1.large`, `m1.2xlarge` |
+Vengono scollegati, non eliminati. Restano nel menu **Disks**, possono essere ricollegati a un'altra VM (opzione **Existing**) e continuano a essere conteggiati nella quota di storage del progetto fino alla loro eliminazione.
 
-`instanceProfile` non determina l'immagine OS — questa è definita nella risorsa **VMDisk** tramite `source.image.name`. Il profilo serve a caricare i driver e i kernel ottimizzati per il sistema operativo. È principalmente utile per **Windows** (driver virtio). `instanceType` dimensiona le risorse CPU e memoria allocate alla VM.
+---
+
+### Posso accedere alla console seriale o VNC della VM?
+
+Questa opzione non è disponibile nella console; contatti il [supporto](mailto:support@hidora.io). L'accesso avviene in SSH (Linux) o in RDP (Windows).
+
+---
+
+### Perché il pulsante Edit è disattivato nell'elenco?
+
+Nel menu **Actions** dell'elenco, **Edit** è disponibile solo quando la VM è **Running**. Per modificare una VM arrestata, ne apra la pagina di dettaglio e faccia clic su **Edit**.

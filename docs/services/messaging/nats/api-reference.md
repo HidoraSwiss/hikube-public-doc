@@ -1,6 +1,7 @@
 ---
 sidebar_position: 3
 title: Référence API
+unlisted: true
 ---
 
 # Référence API NATS
@@ -108,7 +109,7 @@ resources:
   memory: 4Gi
 ```
 
-⚠️ **Note :** si `resources` est défini, la valeur de `resourcesPreset` est ignorée.
+**Note :** si `resources` est défini, la valeur de `resourcesPreset` est ignorée.
 
 | **Preset name** | **CPU** | **Mémoire** |
 | --------------- | ------- | ----------- |

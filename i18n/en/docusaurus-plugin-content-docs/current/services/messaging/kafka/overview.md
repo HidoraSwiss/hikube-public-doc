@@ -7,73 +7,78 @@ import NavigationFooter from '@site/src/components/NavigationFooter';
 
 # Kafka on Hikube
 
-Hikube's **Kafka clusters** provide a **distributed, scalable, and highly available data streaming platform**, designed for **real-time event collection, processing, and distribution**.
-Thanks to its native integration with **ZooKeeper**, each Kafka cluster on Hikube benefits from **coordinated and resilient broker management**, ensuring the **stability and consistency** of the cluster's metadata.
+:::info Availability
+Kafka is not yet available as self-service in the [Hikube console](https://console.hikube.cloud).
+To provision an instance or change its configuration, [contact support](mailto:support@hidora.io).
+:::
+
+Hikube **Kafka clusters** provide a **distributed, scalable and highly available data streaming** platform, designed for the **collection, processing and distribution of real-time events**.
+Thanks to its native integration with **ZooKeeper**, every Kafka cluster on Hikube benefits from **coordinated and resilient broker management**, ensuring the **stability and consistency** of the cluster metadata.
 
 ---
 
-## 🏗️ Architecture and Operation
+## Architecture and Operation
 
 A Kafka deployment on Hikube relies on two key components:
 
-* **Kafka** handles the **publishing, storage, and delivery** of messages via a *publish / subscribe* model.
-  Messages are organized into **topics**, divided into **partitions** distributed across multiple **brokers**.
-  This enables **high throughput**, **low latency**, and **horizontal scalability**.
+* **Kafka** → handles the **publication, storage and distribution** of messages through a *publish / subscribe* model.
+  Messages are organized into **topics**, divided into **partitions** spread across several **brokers**.
+  This delivers **high throughput**, **low latency** and **horizontal scalability**.
 
-* **ZooKeeper** acts as a **central coordination registry**.
-  It manages **broker configuration**, **partition and leader tracking**, as well as **synchronization between nodes**.
-  In the event of a broker failure, ZooKeeper automatically elects a new leader to maintain service continuity.
+* **ZooKeeper** → acts as a **central coordination registry**.
+  It manages the **broker configuration**, **partition and leader tracking**, and **synchronization between nodes**.
+  If a broker fails, ZooKeeper automatically elects a new leader to maintain service continuity.
 
 ---
 
-## 🚀 Typical Use Cases
+## Typical use cases
 
-### 📡 System Integration and Synchronization
+### System integration and synchronization
 
-Kafka serves as a **central event bus** between an organization's various applications.
+Kafka acts as the **central event bus** between an organization's applications.
 **Examples:**
 
 * Synchronize data between microservices or remote systems
-* Connect databases and analytics tools via **Kafka Connect**
+* Connect databases and analytics tools through **Kafka Connect**
 * Decouple exchanges between applications for a more robust architecture
 
 ---
 
-### ⚙️ Real-time Processing and Analytics
+### Real-time processing and analytics
 
-Kafka enables data analysis and transformation **at the moment it is produced**.
+Kafka lets you analyze and transform data **at the moment it is produced**.
 **Examples:**
 
 * Real-time fraud detection
-* Metric computation or instant alert generation
-* Continuous feeding of analytics dashboards (ClickHouse, Elasticsearch, Grafana, etc.)
+* Computing metrics or generating instant alerts
+* Continuously feeding analytics dashboards (ClickHouse, Elasticsearch, Grafana, etc.)
 
 ---
 
-### 🛰️ IoT Data and Log Collection
+### IoT and log data collection
 
-Kafka simplifies the **massive collection of heterogeneous data** from sensors, applications, or servers.
+Kafka simplifies the **massive collection of heterogeneous data** coming from sensors, applications or servers.
 **Examples:**
 
-* Centralized IoT telemetry for thousands of devices
-* Application log aggregation in a monitoring pipeline
-* Streaming to multiple destinations simultaneously
+* Centralizing IoT telemetry for thousands of devices
+* Aggregating application logs in a monitoring pipeline
+* Sending streams to several destinations simultaneously
 
 ---
 
-### 💬 Inter-service Communication
+### Inter-service communication
 
-Kafka enables **asynchronous communication** between microservices, improving resilience and reducing dependency between components.
+Kafka enables **asynchronous communication** between microservices, improving resilience and reducing dependencies between components.
 **Examples:**
 
-* Business event management (orders, payments, notifications)
+* Handling business events (orders, payments, notifications)
 * Distributed queue for complex tasks or workflows
 * Integration with specialized workers or consumers
 
 <NavigationFooter
   nextSteps={[
     {label: "Concepts", href: "../concepts"},
-    {label: "Quick Start", href: "../quick-start"},
+    {label: "Quick start", href: "../quick-start"},
   ]}
   seeAlso={[
     {label: "All messaging services", href: "../../"},

@@ -7,50 +7,32 @@ title: Concepts
 
 ## Architecture
 
-PostgreSQL sur Hikube est un service managé basé sur l'opérateur **CloudNativePG**. Chaque instance déployée via la ressource `Postgres` crée un cluster répliqué avec failover automatique, réplication streaming et sauvegarde intégrée.
+PostgreSQL sur Hikube est un service managé. Chaque cluster créé depuis la console est un ensemble d'instances PostgreSQL répliquées, avec failover automatique et réplication streaming. Il appartient à un **projet** et consomme les quotas de ce projet (CPU, mémoire, stockage).
 
 ```mermaid
 graph TB
-    subgraph "Hikube Platform"
-        subgraph "Tenant namespace"
-            CR[Postgres CRD]
-            SEC[Secret credentials]
-        end
-
-        subgraph "CloudNativePG Operator"
-            OP[Controller]
-        end
-
-        subgraph "Cluster PostgreSQL"
-            P[Primary - R/W]
-            R1[Replica 1 - RO]
-            R2[Replica 2 - RO]
-        end
-
-        subgraph "Stockage"
-            PV1[PV Primary]
-            PV2[PV Replica 1]
-            PV3[PV Replica 2]
-        end
-
-        subgraph "Sauvegarde"
-            S3[Bucket S3]
-            WAL[WAL Archive]
-        end
+    subgraph "Console Hikube"
+        UI[Projet → DB & Messaging → PostgreSQL]
     end
 
-    CR --> OP
-    OP --> P
-    OP --> R1
-    OP --> R2
+    subgraph "Cluster PostgreSQL"
+        P[Primary - R/W]
+        R1[Réplica 1 - RO]
+        R2[Réplica 2 - RO]
+    end
+
+    subgraph "Stockage"
+        PV1[Volume primary]
+        PV2[Volume réplica 1]
+        PV3[Volume réplica 2]
+    end
+
+    UI -->|création / modification| P
     P -->|streaming replication| R1
     P -->|streaming replication| R2
     P --> PV1
     R1 --> PV2
     R2 --> PV3
-    P -->|WAL shipping| WAL
-    WAL --> S3
-    OP --> SEC
 ```
 
 ---
@@ -59,24 +41,23 @@ graph TB
 
 | Terme | Description |
 |-------|-------------|
-| **Postgres** | Ressource Kubernetes (`apps.cozystack.io/v1alpha1`) représentant un cluster PostgreSQL managé. |
+| **Cluster PostgreSQL** | Instance managée créée depuis la console, composée d'un primary et de réplicas éventuels. |
+| **Projet** | Espace isolé qui regroupe vos ressources et porte les quotas. |
 | **Primary** | Instance principale qui accepte les lectures et écritures. |
-| **Replica** | Instance en lecture seule, synchronisée par streaming replication depuis le primary. |
-| **CloudNativePG** | Opérateur Kubernetes qui gère le cycle de vie des clusters PostgreSQL (déploiement, failover, backup). |
-| **PITR** | Point-In-Time Recovery — restauration à un instant précis grâce à l'archivage continu des WAL. |
-| **WAL** | Write-Ahead Log — journal des transactions PostgreSQL, base du PITR et de la réplication. |
-| **Quorum** | Nombre minimum de réplicas synchrones requis avant de confirmer une écriture. |
-| **resourcesPreset** | Profil de ressources prédéfini (nano à 2xlarge) pour simplifier le dimensionnement. |
+| **Réplica** | Instance en lecture seule, synchronisée par streaming replication depuis le primary. |
+| **Preset d'instance** | Gabarit de ressources (CPU, mémoire) alloué à chaque nœud du cluster. |
+| **Accès externe** | Option qui expose le cluster sur Internet via une adresse IP publique. |
+| **Extension** | Module PostgreSQL (par exemple `pgcrypto`, `vector`) activé par base de données. |
+| **WAL** | Write-Ahead Log — journal des transactions PostgreSQL, base de la réplication. |
 
 ---
 
 ## Réplication et haute disponibilité
 
-CloudNativePG assure la haute disponibilité via :
+La haute disponibilité repose sur :
 
-1. **Streaming replication** : les réplicas reçoivent les WAL en temps réel depuis le primary
+1. **Streaming replication** : les réplicas reçoivent les WAL en continu depuis le primary
 2. **Failover automatique** : si le primary tombe, un réplica est promu automatiquement
-3. **Réplication synchrone** (optionnel) : le primary attend la confirmation d'écriture des réplicas avant de valider une transaction
 
 ```mermaid
 sequenceDiagram
@@ -89,53 +70,52 @@ sequenceDiagram
     Primary->>Primary: Écriture WAL
     Primary->>Replica1: WAL streaming
     Primary->>Replica2: WAL streaming
-    Replica1-->>Primary: ACK (si synchrone)
     Primary-->>Client: COMMIT OK
 ```
 
-Le champ `quorum` définit le nombre de réplicas synchrones :
-- `quorum: 0` (défaut) — réplication asynchrone, meilleures performances
-- `quorum: 1` — au moins 1 réplica synchrone, protection contre la perte de données
+Le nombre de réplicas se choisit à la création, dans le champ **Nombre de réplicas** :
 
-:::tip
-Pour la production, configurez `replicas: 3` et `quorum: 1` pour un bon compromis entre performance et durabilité.
+| Valeur proposée | Usage |
+|-----------------|-------|
+| **1 (Standalone)** | Développement, tests |
+| **2 (Haute disponibilité)** | Production avec un standby |
+| **3 (Haute disponibilité max)** | Production critique |
+
+:::warning
+Le nombre de réplicas ne peut pas être modifié après la création (« Le mode ne peut pas être modifié après création »). Choisissez-le en fonction de votre besoin de disponibilité. Pour le changer, [contactez le support](mailto:support@hidora.io).
 :::
 
----
-
-## Sauvegarde et restauration
-
-PostgreSQL sur Hikube supporte deux mécanismes de sauvegarde :
-
-### Sauvegarde continue (WAL archiving)
-
-Les WAL sont archivés en continu vers un bucket S3. Cela permet le **PITR** (Point-In-Time Recovery) — restaurer la base à n'importe quel instant dans le passé.
-
-### Sauvegarde planifiée
-
-Un cron schedule déclenche des sauvegardes complètes (base backup) à intervalles réguliers. La politique de rétention (`retentionPolicy`) détermine la durée de conservation.
-
-| Paramètre | Description |
-|-----------|-------------|
-| `backup.schedule` | Planification cron (ex: `0 2 * * *`) |
-| `backup.retentionPolicy` | Durée de rétention (ex: `30d`) |
-| `backup.s3*` | Identifiants et endpoint du bucket S3 |
+La réplication synchrone (quorum) n'est pas proposée dans la console ; contactez le support.
 
 ---
 
-## Gestion des utilisateurs et bases
+## Bases de données, utilisateurs et droits
 
-Chaque cluster PostgreSQL permet de déclarer :
+Chaque cluster dispose :
 
-- **Utilisateurs** avec mot de passe
-- **Bases de données** avec owner
-- **Rôles** : `admin` (lecture/écriture), `readonly` (lecture seule)
+- d'une base **`postgres`** créée automatiquement ;
+- des **bases de données** que vous ajoutez, à la création ou ensuite (onglet **Bases de données**), avec leurs **extensions** ;
+- des **utilisateurs** que vous créez (onglet **Utilisateurs**). Chaque utilisateur reçoit, base par base, l'un des deux droits suivants :
+  - **Administrateur (Admin)** : lecture et écriture ;
+  - **Lecture seule (Read-only)** : lecture uniquement.
 
-Les credentials sont stockés dans un **Secret Kubernetes** nommé `<instance>-credentials`.
+Le mot de passe d'un utilisateur est généré par la plateforme et affiché **une seule fois**, à la création ou après une rotation. Il n'est plus consultable ensuite : en cas de perte, générez-en un nouveau avec **Changer le mot de passe**.
+
+### Règles de nommage
+
+| Élément | Règle |
+|---------|-------|
+| Nom du cluster | 3 à 16 caractères : minuscules, chiffres et tirets ; commence par une lettre, se termine par une lettre ou un chiffre |
+| Nom d'utilisateur | 3 à 16 caractères : minuscules, chiffres et tirets bas (`_`) ; commence par une lettre minuscule ou un tiret bas. Pas de tiret (`-`). |
+| Nom de base de données | 1 à 63 caractères : minuscules, chiffres et tirets bas |
+
+Les noms d'utilisateur `postgres`, `admin`, `root`, `owner`, `superuser`, `streaming_replica`, `cnpg_pooler_pgbouncer` ainsi que ceux commençant par `pg_` sont réservés.
 
 ---
 
-## Presets de ressources
+## Presets d'instance
+
+Le **Preset d'instance** définit la capacité allouée à **chaque nœud** du cluster. La liste affichée par l'assistant fait foi ; à titre indicatif :
 
 | Preset | CPU | Mémoire |
 |--------|-----|---------|
@@ -147,23 +127,37 @@ Les credentials sont stockés dans un **Secret Kubernetes** nommé `<instance>-c
 | `xlarge` | 4 | 4Gi |
 | `2xlarge` | 8 | 8Gi |
 
-:::warning
-Si le champ `resources` (CPU/mémoire explicites) est défini, `resourcesPreset` est ignoré. Les deux approches sont mutuellement exclusives.
-:::
+Le preset par défaut de l'assistant est `small`. La définition de ressources CPU/mémoire libres (hors preset) n'est pas proposée dans la console ; contactez le support.
 
 ---
 
-## Limites et quotas
+## Accès réseau
+
+- **Accès externe désactivé** (par défaut) : le cluster n'est pas exposé sur Internet. Le champ **Hôte (Host)** de la page du cluster affiche **Non défini**.
+- **Accès externe activé** : la plateforme attribue une adresse IP publique, affichée dans le champ **Hôte (Host)**. Le port est le port PostgreSQL standard, `5432`.
+
+L'accès externe peut être activé ou désactivé après la création, depuis **Modifier**. Son coût (adresse IP publique) est inclus dans le **Coût estimé** de l'assistant.
+
+---
+
+## Sauvegarde et restauration
+
+La configuration des sauvegardes et la restauration ne sont pas proposées dans la console ; contactez le support. Voir [Configurer les sauvegardes](./how-to/configure-backups.md).
+
+---
+
+## Quotas et coût
+
+L'assistant de création affiche, dès l'étape **Configuration**, le **Coût estimé** (mensuel et horaire) et l'impact du cluster sur les quotas du projet (CPU, mémoire, stockage). La consommation tient compte du preset, du nombre de réplicas et de la taille du disque. Si le cluster dépasse les quotas disponibles, le bouton **Suivant** reste inactif.
 
 | Paramètre | Valeur |
 |-----------|--------|
-| Réplicas max | Selon quota tenant |
-| Taille stockage | Variable (`size` en Gi) |
-| Connexions par utilisateur | Configurables par base |
+| Taille du disque | 1 à 4 096 Go, dans la limite du quota de stockage du projet |
+| Réplicas | 1, 2 ou 3 |
 
 ---
 
 ## Pour aller plus loin
 
-- [Overview](./overview.md) : présentation du service
-- [Référence API](./api-reference.md) : tous les paramètres de la ressource Postgres
+- [Vue d'ensemble](./overview.md) : présentation du service
+- [Démarrage rapide](./quick-start.md) : créer votre premier cluster

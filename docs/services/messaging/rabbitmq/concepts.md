@@ -7,20 +7,20 @@ title: Concepts
 
 ## Architecture
 
-RabbitMQ sur Hikube est un service de messaging managé basé sur le protocole **AMQP**. Chaque instance déployée via la ressource `RabbitMQ` crée un cluster haute disponibilité avec des **quorum queues** (protocole Raft) pour la réplication des messages.
+RabbitMQ sur Hikube est un service de messagerie managé basé sur le protocole **AMQP**. Chaque cluster créé depuis la [console Hikube](https://console.hikube.cloud) appartient à un **projet** et consomme les quotas de ce projet (CPU, mémoire, stockage).
 
 ```mermaid
 graph TB
-    subgraph "Hikube Platform"
-        subgraph "Tenant namespace"
-            CR[RabbitMQ CRD]
-            SEC[Secret credentials]
+    subgraph "Projet Hikube"
+        subgraph "Cluster RabbitMQ"
+            N1[Nœud 1]
+            N2[Nœud 2]
+            N3[Nœud 3]
         end
 
-        subgraph "Cluster RabbitMQ"
-            N1[Node 1 - Leader]
-            N2[Node 2 - Follower]
-            N3[Node 3 - Follower]
+        subgraph "Virtual Hosts"
+            VH1[vhost: production]
+            VH2[vhost: staging]
         end
 
         subgraph "Composants AMQP"
@@ -31,31 +31,22 @@ graph TB
         end
 
         subgraph "Stockage"
-            PV1[PV Node 1]
-            PV2[PV Node 2]
-            PV3[PV Node 3]
-        end
-
-        subgraph "Virtual Hosts"
-            VH1[vhost: production]
-            VH2[vhost: staging]
+            PV1[Volume nœud 1]
+            PV2[Volume nœud 2]
+            PV3[Volume nœud 3]
         end
     end
 
-    CR --> N1
-    CR --> N2
-    CR --> N3
     N1 <-->|Raft| N2
     N2 <-->|Raft| N3
     N1 --> PV1
     N2 --> PV2
     N3 --> PV3
+    VH1 --> EX
+    VH2 --> EX
     EX -->|routing| B
     B --> Q1
     B --> Q2
-    VH1 --> EX
-    VH2 --> EX
-    CR --> SEC
 ```
 
 ---
@@ -64,15 +55,32 @@ graph TB
 
 | Terme | Description |
 |-------|-------------|
-| **RabbitMQ** | Ressource Kubernetes (`apps.cozystack.io/v1alpha1`) représentant un cluster RabbitMQ managé. |
-| **AMQP** | Advanced Message Queuing Protocol — protocole standard de messaging supporté par RabbitMQ. |
+| **Cluster RabbitMQ** | Instance RabbitMQ managée, créée et gérée depuis la console (menu **DB & Messaging** → **RabbitMQ**). |
+| **AMQP** | Advanced Message Queuing Protocol, protocole standard de messagerie supporté par RabbitMQ. |
 | **Exchange** | Point d'entrée des messages. Route les messages vers les queues via des bindings. |
 | **Queue** | File d'attente qui stocke les messages en attendant qu'un consumer les traite. |
 | **Binding** | Règle de routage entre un exchange et une queue (basée sur une routing key). |
 | **Quorum Queue** | Type de queue utilisant le protocole **Raft** pour répliquer les messages sur plusieurs nœuds. |
 | **Virtual Host (vhost)** | Espace de noms logique qui isole les exchanges, queues et permissions au sein d'un même cluster. |
 | **Consumer** | Application qui lit et traite les messages d'une queue. |
-| **resourcesPreset** | Profil de ressources prédéfini (nano à 2xlarge). |
+| **Préconfiguration (Preset)** | Profil de ressources CPU/mémoire prédéfini, choisi à la création du cluster. |
+| **Réplicas** | Nombre de nœuds RabbitMQ du cluster. Détermine le mode de déploiement. |
+
+---
+
+## Modes de déploiement
+
+Le champ **Nombre de réplicas** de l'assistant propose trois valeurs :
+
+| Valeur | Libellé dans la console | Mode |
+|--------|-------------------------|------|
+| 1 | **1 (Standalone)** | Un seul nœud. Le volume de données est répliqué au niveau du stockage de la plateforme. |
+| 3 | **3 (Haute disponibilité max)** | Cluster de 3 nœuds. La réplication des messages est assurée par RabbitMQ (quorum queues). |
+| 5 | **5 (Très haute disponibilité)** | Cluster de 5 nœuds, tolérant la perte de deux nœuds. |
+
+:::warning Mode fixé à la création
+Le mode (standalone ou cluster) et le nombre de réplicas ne peuvent pas être modifiés après la création : la console affiche « Le mode ne peut pas être modifié après création ». Pour changer de mode, créez un nouveau cluster.
+:::
 
 ---
 
@@ -104,9 +112,11 @@ graph LR
 | **fanout** | Broadcast à toutes les queues liées |
 | **headers** | Routage basé sur les headers du message |
 
+Les exchanges, queues et bindings sont créés par vos applications, avec un client AMQP connecté au vhost voulu. La console gère le cluster, les vhosts et les utilisateurs, pas les objets AMQP eux-mêmes.
+
 ---
 
-## Quorum Queues et haute disponibilité
+## Quorum queues et haute disponibilité
 
 Les quorum queues utilisent le protocole **Raft** pour répliquer les messages :
 
@@ -117,9 +127,9 @@ Les quorum queues utilisent le protocole **Raft** pour répliquer les messages :
 ```mermaid
 sequenceDiagram
     participant P as Producer
-    participant L as Leader (Node 1)
-    participant F1 as Follower (Node 2)
-    participant F2 as Follower (Node 3)
+    participant L as Leader (Nœud 1)
+    participant F1 as Follower (Nœud 2)
+    participant F2 as Follower (Nœud 3)
 
     P->>L: Publish message
     L->>F1: Replicate (Raft)
@@ -131,58 +141,69 @@ sequenceDiagram
 ```
 
 :::tip
-Configurez `replicas: 3` minimum pour garantir le quorum Raft et la haute disponibilité des quorum queues.
+Choisissez **3 (Haute disponibilité max)** ou **5 (Très haute disponibilité)** réplicas pour garantir le quorum Raft, et déclarez vos queues critiques comme quorum queues (argument `x-queue-type: quorum` côté client).
 :::
 
 ---
 
-## Virtual Hosts
+## Virtual hosts
 
 Les **vhosts** isolent les ressources au sein d'un même cluster :
 
 - Chaque vhost a ses propres exchanges, queues et permissions
-- Les utilisateurs peuvent avoir des rôles différents par vhost : `admin` ou `readonly`
-- Utile pour séparer les environnements (production, staging) sur un même cluster
+- Un utilisateur peut avoir un droit différent sur chaque vhost
+- Utile pour séparer les environnements (production, staging) ou les applications sur un même cluster
+
+L'assistant de création demande au moins un vhost. D'autres vhosts peuvent être ajoutés ensuite depuis la page du cluster (bouton **Ajouter un VHost**).
 
 ---
 
-## Gestion des utilisateurs
+## Utilisateurs et droits
 
-Les utilisateurs sont déclarés dans le manifeste avec :
+Chaque utilisateur RabbitMQ reçoit un **mot de passe généré par la plateforme**, affiché **une seule fois** à la création (ou après une rotation). Ses droits sont définis **par vhost** :
 
-- **Mot de passe** pour l'authentification
-- **Rôles par vhost** : `admin` (lecture/écriture/configuration), `readonly` (lecture seule)
+| Droit dans la console | Effet |
+|-----------------------|-------|
+| **Administrateur** | Lecture, écriture et configuration sur le vhost |
+| **Lecture seule** | Lecture seule sur le vhost |
+| **Aucun accès** | L'utilisateur n'a pas accès au vhost |
 
-Les credentials sont stockés dans le Secret `<instance>-credentials`.
+Un utilisateur ne peut avoir qu'un seul droit par vhost. Les droits se modifient à tout moment avec l'action **Gérer les accès**.
 
 ---
 
-## Presets de ressources
+## Préconfigurations de ressources
+
+La **Préconfiguration (Preset)** fixe les ressources CPU et mémoire de chaque nœud. La console affiche les valeurs de chaque preset dans la liste déroulante.
 
 | Preset | CPU | Mémoire |
 |--------|-----|---------|
-| `nano` | 250m | 128Mi |
-| `micro` | 500m | 256Mi |
-| `small` | 1 | 512Mi |
-| `medium` | 1 | 1Gi |
-| `large` | 2 | 2Gi |
-| `xlarge` | 4 | 4Gi |
-| `2xlarge` | 8 | 8Gi |
+| **Micro** | 0,5 | 256 Mi |
+| **Small** | 1 | 512 Mi |
+| **Medium** | 1 | 1 Gi |
+| **Large** | 2 | 2 Gi |
+| **Extra Large** | 4 | 4 Gi |
+| **2x Extra Large** | 8 | 8 Gi |
+
+La préconfiguration **Small** est sélectionnée par défaut. Elle **ne peut pas être modifiée après création**.
 
 ---
 
-## Limites et quotas
+## Limites
 
 | Paramètre | Valeur |
 |-----------|--------|
-| Réplicas max | Selon quota tenant |
-| Taille stockage (`size`) | Variable (en Gi) |
-| Vhosts par cluster | Illimité (selon ressources) |
-| Protocoles supportés | AMQP 0-9-1, AMQP 1.0, MQTT, STOMP |
+| Nom du cluster | 3 à 16 caractères : minuscules, chiffres et tirets ; commence par une lettre, se termine par une lettre ou un chiffre |
+| Versions proposées | 4.2, 4.1, 4.0, 3.13 |
+| Réplicas | 1, 3 ou 5 (fixé à la création) |
+| Taille du disque | 1 à 4096 Go par nœud, dans la limite du quota de stockage du projet ; augmentation seulement |
+| Accès externe | Activable à la création ou ensuite |
+| Port AMQP | 5672, sans TLS |
 
 ---
 
 ## Pour aller plus loin
 
-- [Overview](./overview.md) : présentation du service
-- [Référence API](./api-reference.md) : tous les paramètres de la ressource RabbitMQ
+- [Vue d'ensemble](./overview.md) : présentation du service
+- [Démarrage rapide](./quick-start.md) : créer votre premier cluster
+- [Gérer les vhosts et utilisateurs](./how-to/manage-vhosts-users.md)
