@@ -40,7 +40,7 @@ Voir : [Kubernetes - Démarrage rapide](../services/kubernetes/quick-start.md)
 
 ## 4. Ai-je encore besoin d'un kubeconfig pour gérer mes ressources Hikube ?
 
-Non. Les VM, disques, buckets, réseaux, clusters Kubernetes et bases de données se créent et se gèrent depuis la console. Le kubeconfig de projet n'est plus délivré par défaut ; il reste disponible sur demande au support pour les usages legacy comme [Terraform](../tools/terraform.md).
+Non. Les VM, disques, buckets, réseaux, clusters Kubernetes et bases de données se créent et se gèrent depuis la console, et s'automatisent avec l'[API publique](../api/overview.md). Le kubeconfig de projet n'est plus disponible ; la méthode [Terraform legacy](../tools/terraform.md) qui en dépendait est retirée.
 
 Le kubeconfig d'un **cluster Kubernetes** (question 3) reste, lui, le moyen normal d'accéder à ce cluster.
 

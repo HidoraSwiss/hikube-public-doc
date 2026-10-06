@@ -57,7 +57,7 @@ Hikube est une plateforme cloud souveraine, hébergée en Suisse, pour déployer
   },
   {
     title: "Terraform",
-    description: "Infrastructure as Code via kubeconfig (méthode legacy, sur demande).",
+    description: "Infrastructure as Code via kubeconfig (méthode retirée, remplacée par l'API publique).",
     icon: "/img/services/terraform.svg",
     href: "tools/terraform",
     tags: ["IaC", "Legacy"],

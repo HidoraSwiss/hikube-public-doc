@@ -17,10 +17,10 @@ const require = createRequire(import.meta.url);
 // définie : les pages la lisent via `customFields.hikubeApiUrl` (composant
 // <HikubeApiUrl /> et <ApiEnv />), et la référence générée l'utilise comme
 // serveur à la place du `host` déclaré par la spécification OpenAPI.
-// api.demo.hikube.cloud dans un premier temps ; la migration vers
-// api.hikube.cloud (nom aujourd'hui pris par l'API Kubernetes de la
-// plateforme) est suivie à part. Le jour J, ne changer que cette ligne.
-const HIKUBE_API_URL = 'https://api.demo.hikube.cloud';
+// api.hikube.cloud depuis la migration qui a sorti l'API Kubernetes de la
+// plateforme de ce nom (passée en accès VPN) ; api.demo.hikube.cloud reste
+// servi le temps de la transition.
+const HIKUBE_API_URL = 'https://api.hikube.cloud';
 
 // La surface publique s'appelle avec une clé d'API. La spécification déclare
 // aussi le schéma OAuth2 de la session console : on ne l'affiche pas.
