@@ -1,0 +1,37 @@
+name: Plumber
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  plumber:
+    name: Plumber
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      security-events: write
+      # Nécessaire à score-push pour publier le score affiché par le badge du README.
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: getplumber/plumber@fb943e4efba61cf7b0a0c56f6648710a7453519b # v0.5.20
+        with:
+          # L'upload vers code scanning demande security-events: write, que les
+          # PR venant d'un fork n'ont pas. Le rapport reste disponible en artefact.
+          upload-sarif: ${{ github.event.pull_request.head.repo.fork != true }}
+          # Publie le score sur score.getplumber.io, qui alimente le badge du
+          # README. Un échec de publication ne fait jamais échouer le job.
+          score-push: true
+          # Seuil à 85 points plutôt que le tout-ou-rien par défaut : une
+          # petite remarque ne bloque pas une PR.
+          min-points: 85
