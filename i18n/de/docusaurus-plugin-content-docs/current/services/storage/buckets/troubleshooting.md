@@ -49,9 +49,9 @@ title: Fehlerbehebung
 
 ### „No S3 connection information available currently.“
 
-**Ursache**: Der Bucket wird noch bereitgestellt.
+**Ursache**: Der Bucket wird noch bereitgestellt, oder er hat noch keinen Benutzer: S3-Name und Endpunkt erscheinen mit seinem ersten Benutzer.
 
-**Lösung**: Warten Sie, bis der Status des Buckets auf **Ready** wechselt, und laden Sie die Seite dann neu. Bleibt der Status auf **Creating** oder wechselt er auf **Error**, [wenden Sie sich an den Support](mailto:support@hidora.io) und geben Sie den Namen des Buckets und seine Kennung an.
+**Lösung**: Warten Sie, bis der Status des Buckets auf **Ready** wechselt, erstellen Sie bei Bedarf mit **Add User** einen Benutzer und laden Sie die Seite dann neu. Bleibt der Status auf **Provisioning** oder wechselt er auf **Error**, [wenden Sie sich an den Support](mailto:support@hidora.io) und geben Sie den Namen des Buckets und seine Kennung an.
 
 ---
 
@@ -65,7 +65,7 @@ title: Fehlerbehebung
 
 ### Objekte sind nach dem Löschen eines Buckets verschwunden
 
-**Ursache**: Das Löschen eines Buckets wird nicht blockiert, wenn er Objekte enthält; sie werden mit ihm gelöscht und lassen sich nicht wiederherstellen.
+**Ursache**: Das Löschen eines Buckets ohne Sperre löscht auch alle seine Objekte, auch wenn er nicht leer ist; sie lassen sich nicht wiederherstellen. Das Bestätigungsfenster weist darauf hin. Ausnahme ist ein gesperrter Bucket (WORM): Seine Objekte bleiben nach dem Löschen erhalten.
 
 **Lösung**: Kopieren Sie vor dem Löschen eines Buckets die zu behaltenden Objekte, zum Beispiel auf Ihren Rechner:
 
@@ -94,11 +94,11 @@ aws --endpoint-url https://<endpoint> s3 sync s3://<s3-bucket-name>/ ./bucket-ba
 
 ---
 
-### Bucket nicht gefunden (`NoSuchBucket`)
+### `AccessDenied` mit dem beim Erstellen eines Benutzers angezeigten Namen
 
-**Ursache**: Der verwendete Name ist der in der Konsole gewählte Name und nicht der tatsächliche S3-Name.
+**Ursache**: Der S3-Client verwendet den in der Konsole gewählten Namen (zum Beispiel `demo-assets`) statt des tatsächlichen S3-Namens (`bucket-…`). Frühere Versionen der Konsole konnten beim Erstellen eines Buckets oder Benutzers diesen Namen anstelle des S3-Namens anzeigen. Die Schlüssel eines Benutzers gewähren nur Zugriff auf den tatsächlichen S3-Bucket: Jeder andere Name wird abgelehnt.
 
-**Lösung**: Notieren Sie den **Bucket name** in der Karte **Access & Configuration** der Seite des Buckets und verwenden Sie ihn in Ihren Befehlen.
+**Lösung**: Notieren Sie den **Bucket name** in der Karte **Access & Configuration** der Seite des Buckets und verwenden Sie ihn stattdessen in der Konfiguration Ihrer Clients. Die Schlüssel des Benutzers bleiben gültig.
 
 :::warning
 Verwechseln Sie nicht den Namen des Buckets in der Konsole und seinen S3-Namen. Nur Letzterer funktioniert mit den S3-Clients.

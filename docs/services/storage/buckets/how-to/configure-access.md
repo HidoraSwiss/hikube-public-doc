@@ -23,11 +23,11 @@ Chaque bucket Hikube peut avoir plusieurs **utilisateurs S3**, chacun avec sa pr
 1. Ouvrez **Infrastructure** → **Buckets S3**, puis cliquez sur le bucket.
 2. Dans la carte **Utilisateurs et Accès**, cliquez sur **Ajouter un utilisateur**.
 3. Dans la fenêtre **Nouvel Utilisateur** :
-   - saisissez le **Nom d'utilisateur** (3 à 16 caractères : minuscules, chiffres et tirets ; doit commencer par une lettre) ;
+   - saisissez le **Nom d'utilisateur** (3 à 16 caractères : minuscules, chiffres et tirets ; commence par une lettre et se termine par une lettre ou un chiffre ; certains noms sont réservés) ;
    - cochez **Accès en lecture seule** si l'utilisateur ne doit que lire les objets.
 4. Cliquez sur **Créer l'utilisateur**.
 
-La fenêtre **Identifiants générés** affiche le **Bucket S3**, l'**Endpoint S3**, l'**Access Key ID** et la **Secret Access Key**.
+La fenêtre **Identifiants générés** affiche le **Bucket S3** (le nom S3 réel, `bucket-…`), l'**Endpoint S3**, l'**Access Key ID** et la **Secret Access Key**. Si le nom S3 n'est pas encore connu, la fenêtre affiche à sa place « Le nom S3 sera disponible dans quelques instants, dans la fiche du bucket. » : relevez-le ensuite dans la carte **Accès & Configuration**.
 
 :::warning
 Copiez ces valeurs avant de cliquer sur **J'ai sauvegardé ces clés** : la clé secrète ne pourra pas être récupérée par la suite.
@@ -37,9 +37,9 @@ Copiez ces valeurs avant de cliquer sur **J'ai sauvegardé ces clés** : la clé
 
 1. Dans la carte **Utilisateurs et Accès**, ouvrez le menu d'actions de l'utilisateur.
 2. Choisissez **Modifier l'accès**.
-3. Cochez ou décochez **Accès en lecture seule**, puis cliquez sur **Enregistrer**.
+3. Cochez **Accès en lecture seule** pour limiter l'utilisateur à la lecture, ou décochez-la pour le repasser en lecture / écriture, puis cliquez sur **Enregistrer**.
 
-La colonne **Accès** du tableau affiche alors **Lecture seule** ou **Lecture / Écriture**. Les clés de l'utilisateur ne changent pas.
+Le message **Accès mis à jour** confirme la modification, et la colonne **Accès** du tableau affiche **Lecture seule** ou **Lecture / Écriture**. Les clés de l'utilisateur ne changent pas.
 
 ## Renouveler des clés
 

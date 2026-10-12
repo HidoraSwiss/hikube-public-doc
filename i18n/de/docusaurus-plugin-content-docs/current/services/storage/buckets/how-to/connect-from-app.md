@@ -22,7 +22,7 @@ Diese Anleitung erklärt, wie Sie die Anmeldedaten eines Hikube-S3-Benutzers aus
 | Access Key ID / Secret Access Key | Bei der Erstellung des Benutzers angezeigt |
 
 :::note
-Der Name des S3-Buckets wird von der Plattform generiert und unterscheidet sich vom in der Konsole gewählten Namen. Verwenden Sie in Ihrer Anwendung immer den S3-Namen.
+Der Name des S3-Buckets wird von der Plattform generiert (`bucket-…`) und unterscheidet sich vom in der Konsole gewählten Namen. Verwenden Sie in Ihrer Anwendung immer den S3-Namen: Mit dem Namen aus der Konsole werden die Anfragen abgelehnt (`AccessDenied`).
 :::
 
 ### 2. Die Anmeldedaten als Umgebungsvariablen bereitstellen

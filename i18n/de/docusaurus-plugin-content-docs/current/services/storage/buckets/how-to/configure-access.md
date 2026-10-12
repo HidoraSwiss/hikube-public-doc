@@ -23,11 +23,11 @@ Jeder Hikube-Bucket kann mehrere **S3-Benutzer** haben, jeder mit seinem eigenen
 1. Öffnen Sie **Infrastructure** → **S3 Buckets** und klicken Sie dann auf den Bucket.
 2. Klicken Sie in der Karte **Users & Access** auf **Add User**.
 3. Im Fenster **New User**:
-   - Geben Sie den **Username** ein (3 bis 16 Zeichen: Kleinbuchstaben, Ziffern und Bindestriche; muss mit einem Buchstaben beginnen);
+   - Geben Sie den **Username** ein (3 bis 16 Zeichen: Kleinbuchstaben, Ziffern und Bindestriche; beginnt mit einem Buchstaben und endet mit einem Buchstaben oder einer Ziffer; einige Namen sind reserviert);
    - Haken Sie **Read-only access** an, wenn der Benutzer die Objekte nur lesen soll.
 4. Klicken Sie auf **Create User**.
 
-Das Fenster **Generated Credentials** zeigt **S3 Bucket**, **S3 Endpoint**, **Access Key ID** und **Secret Access Key** an.
+Das Fenster **Generated Credentials** zeigt **S3 Bucket** (den tatsächlichen S3-Namen, `bucket-…`), **S3 Endpoint**, **Access Key ID** und **Secret Access Key** an. Ist der S3-Name noch nicht bekannt, zeigt das Fenster an seiner Stelle „The S3 name will be available in a few moments, on the bucket page.“ an: Entnehmen Sie ihn danach der Karte **Access & Configuration**.
 
 :::warning
 Kopieren Sie diese Werte, bevor Sie auf **I have saved these keys** klicken: Der geheime Schlüssel kann danach nicht wiederhergestellt werden.
@@ -37,9 +37,9 @@ Kopieren Sie diese Werte, bevor Sie auf **I have saved these keys** klicken: Der
 
 1. Öffnen Sie in der Karte **Users & Access** das Aktionsmenü des Benutzers.
 2. Wählen Sie **Edit access**.
-3. Setzen oder entfernen Sie den Haken bei **Read-only access** und klicken Sie dann auf **Save changes**.
+3. Setzen Sie den Haken bei **Read-only access**, um den Benutzer auf Lesen zu beschränken, oder entfernen Sie ihn, um dem Benutzer wieder Lese- und Schreibzugriff zu geben, und klicken Sie dann auf **Save changes**.
 
-Die Spalte **Access** der Tabelle zeigt dann **Read-only** oder **Read / Write** an. Die Schlüssel des Benutzers ändern sich nicht.
+Die Meldung **Access updated** bestätigt die Änderung, und die Spalte **Access** der Tabelle zeigt **Read-only** oder **Read / Write** an. Die Schlüssel des Benutzers ändern sich nicht.
 
 ## Schlüssel erneuern
 

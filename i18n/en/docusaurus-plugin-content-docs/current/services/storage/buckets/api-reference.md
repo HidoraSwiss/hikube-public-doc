@@ -35,7 +35,7 @@ The only required part is the **`metadata.name` metadata**, which defines the na
 
 | **Parameter**        | **Type** | **Description**                                      | **Required** |
 | -------------------- | -------- | ---------------------------------------------------- | ---------- |
-| `metadata.name`      | string   | Unique bucket name (used as S3 name)          | Yes          |
+| `metadata.name`      | string   | Unique bucket name (the actual S3 name, `bucketName`, is generated) | Yes          |
 
 ---
 

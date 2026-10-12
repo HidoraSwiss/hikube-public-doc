@@ -49,9 +49,9 @@ title: Dépannage
 
 ### « Aucune information de connexion S3 disponible pour l'instant »
 
-**Cause** : le bucket est encore en cours de provisionnement.
+**Cause** : le bucket est encore en cours de provisionnement, ou il n'a encore aucun utilisateur : le nom S3 et le point de terminaison apparaissent avec son premier utilisateur.
 
-**Solution** : attendez que le statut du bucket passe à **Prêt**, puis rechargez la page. Si le statut reste **En création** ou passe à **Erreur**, [contactez le support](mailto:support@hidora.io) en indiquant le nom du bucket et son identifiant.
+**Solution** : attendez que le statut du bucket passe à **Prêt**, créez au besoin un utilisateur avec **Ajouter un utilisateur**, puis rechargez la page. Si le statut reste **En création** ou passe à **Erreur**, [contactez le support](mailto:support@hidora.io) en indiquant le nom du bucket et son identifiant.
 
 ---
 
@@ -65,7 +65,7 @@ title: Dépannage
 
 ### Les objets ont disparu après la suppression d'un bucket
 
-**Cause** : la suppression d'un bucket n'est pas bloquée lorsqu'il contient des objets ; elle les supprime avec lui, sans possibilité de récupération.
+**Cause** : la suppression d'un bucket sans verrouillage supprime aussi tous ses objets, même s'il n'est pas vide, sans possibilité de récupération. La fenêtre de confirmation l'indique. Un bucket verrouillé (WORM) fait exception : ses objets sont conservés après la suppression.
 
 **Solution** : avant de supprimer un bucket, copiez les objets à conserver, par exemple sur votre poste :
 
@@ -94,11 +94,11 @@ aws --endpoint-url https://<endpoint> s3 sync s3://<nom-du-bucket-s3>/ ./sauvega
 
 ---
 
-### Bucket non trouvé (`NoSuchBucket`)
+### `AccessDenied` avec le nom affiché à la création d'un utilisateur
 
-**Cause** : le nom utilisé est le nom choisi dans la console et non le nom S3 réel.
+**Cause** : le client S3 utilise le nom choisi dans la console (par exemple `demo-assets`) au lieu du nom S3 réel (`bucket-…`). Les versions précédentes de la console pouvaient afficher ce nom à la place du nom S3 lors de la création d'un bucket ou d'un utilisateur. Les clés d'un utilisateur ne donnent accès qu'au bucket S3 réel : tout autre nom est refusé.
 
-**Solution** : relevez le **Nom du bucket** dans la carte **Accès & Configuration** de la page du bucket et utilisez-le dans vos commandes.
+**Solution** : relevez le **Nom du bucket** dans la carte **Accès & Configuration** de la page du bucket et utilisez-le à la place dans la configuration de vos clients. Les clés de l'utilisateur restent valables.
 
 :::warning
 Ne confondez pas le nom du bucket dans la console et son nom S3. Seul le second fonctionne avec les clients S3.

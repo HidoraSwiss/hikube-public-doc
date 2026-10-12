@@ -52,11 +52,11 @@ graph TB
 |-------|-------------|
 | **Bucket** | Spazio di storage a oggetti creato dalla console (menu **Infrastructure** → **S3 Buckets**). |
 | **Nome del bucket (console)** | Nome scelto alla creazione. Identifica il bucket nella console e non può essere modificato. |
-| **S3 Bucket Name** | Nome effettivo del bucket lato S3, generato dalla piattaforma. È **questo nome** che i suoi client S3 devono utilizzare. È visualizzato nella pagina del bucket. |
+| **S3 Bucket Name** | Nome effettivo del bucket lato S3, generato dalla piattaforma nella forma `bucket-<identificativo>`. È **questo nome** che i suoi client S3 devono utilizzare: con il nome della console ricevono `AccessDenied`. È visualizzato nella pagina del bucket non appena il bucket ha un utente. |
 | **S3 Endpoint** | Indirizzo del servizio S3 (ad esempio `prod.s3.hikube.cloud`), visualizzato nella pagina del bucket. |
 | **Utente S3** | Identità associata a un bucket, con un diritto **Read-only** o **Read / Write**. Un bucket può avere più utenti. |
 | **Access Key ID / Secret Access Key** | Coppia di chiavi di autenticazione S3 di un utente, generata alla sua creazione. La chiave segreta viene mostrata una sola volta. |
-| **Object Lock (WORM)** | Object Lock: impedisce l'eliminazione o la modifica degli oggetti per 365 giorni, in modalità `COMPLIANCE` (*Write Once, Read Many*). |
+| **Object Lock (WORM)** | Object Lock (*Write Once, Read Many*): ogni oggetto è bloccato per 365 giorni dopo la sua scrittura, in modalità `COMPLIANCE`; nessuno può modificarlo né eliminarlo prima della scadenza. |
 | **Encryption at rest (LUKS)** | Cifratura dei dati memorizzati su disco. |
 
 ---
@@ -83,11 +83,22 @@ Il nome, il blocco e la cifratura si scelgono alla creazione. La console non per
 | Lettura / scrittura | **Read / Write** | Elencare, leggere, scrivere ed eliminare oggetti del bucket |
 | Sola lettura | **Read-only** | Solo elencare e leggere gli oggetti |
 
-Il diritto di un utente si modifica in qualsiasi momento con **Edit access**. Le chiavi di un utente non possono essere visualizzate di nuovo: per ottenere nuove chiavi, crei un nuovo utente e poi elimini quello precedente.
+Il diritto di un utente si modifica in qualsiasi momento con **Edit access**, in entrambi i sensi: deselezionando **Read-only access** l'utente torna in **Read / Write**. Le chiavi di un utente non possono essere visualizzate di nuovo: per ottenere nuove chiavi, crei un nuovo utente e poi elimini quello precedente.
 
 ### Ambito delle chiavi
 
 Le chiavi di un utente danno accesso **unicamente al bucket a cui è associato**. Non permettono di elencare tutti i bucket dell'endpoint: i comandi devono sempre indicare il bucket (`s3://<nome-del-bucket-s3>/`).
+
+### Eliminazione
+
+L'eliminazione di un bucket si conferma inserendone il nome. Ciò che accade agli oggetti dipende dal blocco:
+
+| Bucket | Effetto dell'eliminazione |
+|--------|---------------------------|
+| Senza blocco | Il bucket e tutti i suoi oggetti vengono eliminati definitivamente, anche se non è vuoto. |
+| Bloccato (WORM) | Il bucket viene rimosso dalla console, ma la piattaforma conserva il suo storage e tutti i suoi oggetti. Ogni oggetto resta bloccato per 365 giorni dopo la sua scrittura (modalità `COMPLIANCE`). |
+
+La finestra di conferma indica il caso che si applica.
 
 ---
 

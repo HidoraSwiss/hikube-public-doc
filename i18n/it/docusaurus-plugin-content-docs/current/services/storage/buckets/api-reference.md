@@ -35,7 +35,7 @@ L'unica parte necessaria è il **metadato `metadata.name`**, che definisce il no
 
 | **Parametro**        | **Tipo** | **Descrizione**                                      | **Richiesto** |
 | -------------------- | -------- | ---------------------------------------------------- | ------------- |
-| `metadata.name`      | string   | Nome unico del bucket (utilizzato come nome S3)     | Sì             |
+| `metadata.name`      | string   | Nome unico del bucket (il nome S3 effettivo, `bucketName`, è generato) | Sì             |
 
 ---
 

@@ -35,7 +35,7 @@ La seule partie nécessaire est la **métadonnée `metadata.name`**, qui défini
 
 | **Paramètre**        | **Type** | **Description**                                      | **Requis** |
 | -------------------- | -------- | ---------------------------------------------------- | ---------- |
-| `metadata.name`      | string   | Nom unique du bucket (utilisé comme nom S3)          | Oui          |
+| `metadata.name`      | string   | Nom unique du bucket (le nom S3 réel, `bucketName`, est généré) | Oui          |
 
 ---
 

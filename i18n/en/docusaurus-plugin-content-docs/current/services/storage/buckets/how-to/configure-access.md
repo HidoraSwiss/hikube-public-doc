@@ -23,11 +23,11 @@ Each Hikube bucket can have several **S3 users**, each with their own key pair a
 1. Open **Infrastructure** → **S3 Buckets**, then click the bucket.
 2. In the **Users & Access** card, click **Add User**.
 3. In the **New User** window:
-   - enter the **Username** (3 to 16 characters: lowercase letters, digits and hyphens; must start with a letter);
+   - enter the **Username** (3 to 16 characters: lowercase letters, digits and hyphens; starts with a letter and ends with a letter or a digit; some names are reserved);
    - check **Read-only access** if the user should only read objects.
 4. Click **Create User**.
 
-The **Generated Credentials** window displays the **S3 Bucket**, the **S3 Endpoint**, the **Access Key ID** and the **Secret Access Key**.
+The **Generated Credentials** window displays the **S3 Bucket** (the actual S3 name, `bucket-…`), the **S3 Endpoint**, the **Access Key ID** and the **Secret Access Key**. If the S3 name is not known yet, the window displays "The S3 name will be available in a few moments, on the bucket page." in its place: get it afterwards from the **Access & Configuration** card.
 
 :::warning
 Copy these values before clicking **I have saved these keys**: the secret key cannot be retrieved afterwards.
@@ -37,9 +37,9 @@ Copy these values before clicking **I have saved these keys**: the secret key ca
 
 1. In the **Users & Access** card, open the user's actions menu.
 2. Choose **Edit access**.
-3. Check or uncheck **Read-only access**, then click **Save changes**.
+3. Check **Read-only access** to restrict the user to reading, or uncheck it to switch the user back to read / write, then click **Save changes**.
 
-The **Access** column of the table then shows **Read-only** or **Read / Write**. The user's keys do not change.
+The **Access updated** message confirms the change, and the **Access** column of the table shows **Read-only** or **Read / Write**. The user's keys do not change.
 
 ## Renew keys
 

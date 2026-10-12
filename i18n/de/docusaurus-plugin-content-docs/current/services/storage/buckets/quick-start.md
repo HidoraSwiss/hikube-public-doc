@@ -44,13 +44,13 @@ Der Assistent umfasst drei Schritte.
 
 1. Geben Sie den **Bucket name** ein (standardmäßig wird ein Name vorgeschlagen). Regeln: Kleinbuchstaben, Ziffern und Bindestriche; beginnt mit einem Buchstaben und endet mit einem Buchstaben oder einer Ziffer; höchstens 16 Zeichen. Beispiel: `demo-assets`.
 2. Lassen Sie für diese Anleitung folgende Optionen deaktiviert:
-   - **Enable Object Lock (WORM)**: verhindert das Löschen oder Ändern der Objekte während 365 Tagen (von der Plattform festgelegte Aufbewahrungsdauer);
+   - **Enable Object Lock (WORM)**: jedes Objekt wird nach dem Schreiben 365 Tage lang im Modus COMPLIANCE gesperrt; niemand kann es vor Ablauf ändern oder löschen. Die Dauer ist nicht änderbar, die Sperre lässt sich nach der Erstellung nicht mehr entfernen, und das Löschen des Buckets löscht seine Objekte nicht;
    - **Enable encryption at rest (LUKS)**: verschlüsselt die gespeicherten Daten; kann nach der Erstellung nicht geändert werden.
 3. Klicken Sie auf **Next**.
 
 ### Users
 
-1. Geben Sie den **Username** ein (zum Beispiel `app-user`).
+1. Geben Sie den **Username** ein (zum Beispiel `app-user`): 3 bis 16 Zeichen, gleiche Regeln wie für den Namen des Buckets.
 2. Lassen Sie **Read only** auf **No**, um Lese- und Schreibzugriff zu erhalten.
 3. Klicken Sie auf **Add** und dann auf **Next**.
 
@@ -58,7 +58,7 @@ Mindestens ein Benutzer ist erforderlich, um fortzufahren.
 
 ### Summary
 
-Die **Summary** zeigt den Namen, das Projekt, die Anzahl der zu erstellenden Benutzer, den Zustand der Sperre und der Verschlüsselung sowie die **Estimated Cost** pro GB an. Klicken Sie auf **Create bucket**.
+Die **Summary** zeigt den Namen, das Projekt, die Anzahl der zu erstellenden Benutzer, den Zustand der Sperre (**Enabled (365 days, COMPLIANCE)**, wenn sie aktiviert ist) und der Verschlüsselung sowie die **Estimated Cost** pro GB an. Klicken Sie auf **Create bucket**.
 
 Während der Erstellung zeigt die Schaltfläche **Creating...** und dann **Provisioning bucket…** an: Die Konsole wartet, bis der Bucket bereit ist, bevor sie die Benutzer erstellt.
 
@@ -70,7 +70,7 @@ Der Abschlussbildschirm zeigt **Bucket successfully created** an. Nachdem Sie di
 
 Auf dieser Seite:
 
-- zeigt das Status-Badge **Ready** an, sobald der Bucket betriebsbereit ist (**Creating** während der Bereitstellung);
+- zeigt das Status-Badge **Ready** an, sobald der Bucket betriebsbereit ist (**Provisioning** während der Bereitstellung, **Error**, wenn die Plattform ihn nicht erstellen konnte: siehe [Fehlerbehebung](./troubleshooting.md));
 - erinnern die Badges **WORM** und **LUKS** an den Zustand der Sperre und der Verschlüsselung;
 - zeigt die Karte **Access & Configuration** den S3-**Bucket name** und den **Endpoint** an;
 - listet die Karte **Users & Access** die Benutzer und ihr Recht auf (**Read-only** oder **Read / Write**).
@@ -103,7 +103,9 @@ Kopieren Sie diese Werte, bevor Sie auf **Finish** klicken, und bewahren Sie den
 :::
 
 :::note S3 Bucket Name
-Der **S3 Bucket Name** wird von der Plattform generiert und unterscheidet sich vom im Assistenten eingegebenen Namen. Verwenden Sie in Ihren Clients immer den S3-Namen. Er bleibt auf der Seite des Buckets einsehbar.
+Der **S3 Bucket Name** wird von der Plattform generiert, in der Form `bucket-` gefolgt von einer eindeutigen Kennung (zum Beispiel `bucket-1df67984-321d-492d-bb06-2f4527bb0f5b`). Er unterscheidet sich vom im Assistenten eingegebenen Namen: Ein S3-Client, der mit diesem konfiguriert ist, erhält `AccessDenied`. Verwenden Sie in Ihren Clients immer den S3-Namen. Er bleibt auf der Seite des Buckets einsehbar.
+
+Ist er noch nicht bekannt, zeigt der Bildschirm an seiner Stelle „The S3 name will be available in a few moments, on the bucket page.“ an: Entnehmen Sie ihn dann der Karte **Access & Configuration** auf der Seite des Buckets. Auch der Endpunkt erscheint erst, wenn er bekannt ist.
 :::
 
 Exportieren Sie die Werte in Ihrem Terminal:
@@ -160,7 +162,7 @@ Die Karte **Access & Configuration** auf der Seite des Buckets bietet diese Befe
 | Symptom | Wahrscheinliche Ursache | Maßnahme |
 |----------|----------------|--------|
 | `AccessDenied` bei `aws s3 ls` ohne Bucket | Auflisten des gesamten Endpunkts | Zielen Sie auf `s3://$BUCKET_NAME/` |
-| `NoSuchBucket` | Im Assistenten eingegebener Name statt des S3-Namens verwendet | Verwenden Sie den **Bucket name**, der unter **Access & Configuration** angezeigt wird |
+| `AccessDenied`, obwohl der Befehl auf den Bucket zielt | Im Assistenten eingegebener Name statt des S3-Namens verwendet | Verwenden Sie den **Bucket name** (`bucket-…`), der unter **Access & Configuration** angezeigt wird |
 | `AccessDenied` beim Schreiben | Benutzer mit **Read-only** | Ändern Sie sein Recht mit **Edit access** |
 | `SignatureDoesNotMatch` / `InvalidAccessKeyId` | Falsche oder unvollständige Schlüssel | Kopieren Sie die Schlüssel erneut; ist der geheime Schlüssel verloren, erstellen Sie einen neuen Benutzer |
 | Verbindungsfehler | Endpunkt ohne `https://` | Stellen Sie dem Endpunkt `https://` voran |
@@ -179,7 +181,7 @@ Siehe auch die [vollständige Fehlerbehebung](./troubleshooting.md).
 3. Geben Sie den genauen Namen des Buckets in **Resource name to confirm** ein und klicken Sie dann auf **Permanently delete**.
 
 :::warning Unwiderrufliches Löschen
-Das Löschen eines Buckets ist endgültig und entfernt alle seine Objekte: Die Konsole prüft nicht, ob der Bucket leer ist. Kopieren Sie die zu behaltenden Daten, bevor Sie ihn löschen.
+Das Löschen eines Buckets ist endgültig und entfernt alle seine Objekte, auch wenn er nicht leer ist. Kopieren Sie die zu behaltenden Daten, bevor Sie ihn löschen. Ausnahme ist ein gesperrter Bucket (WORM): Er wird aus der Konsole entfernt, seine Objekte bleiben jedoch erhalten und nach ihrem Schreiben 365 Tage lang gesperrt.
 :::
 
 <NavigationFooter

@@ -44,13 +44,13 @@ La procedura guidata comprende tre passaggi.
 
 1. Inserisca il nome nel campo **Bucket name** (viene proposto un nome predefinito). Regole: lettere minuscole, cifre e trattini; inizia con una lettera e termina con una lettera o una cifra; massimo 16 caratteri. Esempio: `demo-assets`.
 2. Per questa guida lasci deselezionate le opzioni:
-   - **Enable Object Lock (WORM)**: impedisce l'eliminazione o la modifica degli oggetti per 365 giorni (conservazione fissata dalla piattaforma);
+   - **Enable Object Lock (WORM)**: ogni oggetto è bloccato per 365 giorni dopo la sua scrittura, in modalità COMPLIANCE; nessuno può modificarlo né eliminarlo prima della scadenza. La durata non è modificabile, il blocco non può più essere rimosso dopo la creazione ed eliminare il bucket non ne elimina gli oggetti;
    - **Enable encryption at rest (LUKS)**: cifra i dati memorizzati; non può essere modificata dopo la creazione.
 3. Faccia clic su **Next**.
 
 ### Users
 
-1. Inserisca il nome nel campo **Username** (ad esempio `app-user`).
+1. Inserisca il nome nel campo **Username** (ad esempio `app-user`): da 3 a 16 caratteri, stesse regole del nome del bucket.
 2. Lasci **Read only** su **No** per ottenere un accesso in lettura e scrittura.
 3. Faccia clic su **Add**, quindi su **Next**.
 
@@ -58,7 +58,7 @@ Per continuare è necessario almeno un utente.
 
 ### Summary
 
-Il **Summary** mostra il nome, il progetto, il numero di utenti da creare, lo stato del blocco e della cifratura, nonché l'**Estimated Cost** per GB. Faccia clic su **Create bucket**.
+Il **Summary** mostra il nome, il progetto, il numero di utenti da creare, lo stato del blocco (**Enabled (365 days, COMPLIANCE)** se selezionato) e della cifratura, nonché l'**Estimated Cost** per GB. Faccia clic su **Create bucket**.
 
 Durante la creazione, il pulsante mostra **Creating...** e poi **Provisioning bucket…**: la console attende che il bucket sia pronto prima di creare gli utenti.
 
@@ -70,7 +70,7 @@ La schermata finale mostra **Bucket successfully created**. Dopo aver recuperato
 
 In questa pagina:
 
-- il badge di stato indica **Ready** quando il bucket è operativo (**Creating** durante il provisioning);
+- il badge di stato indica **Ready** quando il bucket è operativo (**Provisioning** durante il provisioning, **Error** se la piattaforma non è riuscita a crearlo: veda la [risoluzione dei problemi](./troubleshooting.md));
 - i badge **WORM** e **LUKS** ricordano lo stato del blocco e della cifratura;
 - la scheda **Access & Configuration** mostra il **Bucket name** S3 e l'**Endpoint**;
 - la scheda **Users & Access** elenca gli utenti e il loro diritto (**Read-only** o **Read / Write**).
@@ -103,7 +103,9 @@ Copi questi valori prima di cliccare su **Finish** e conservi la chiave segreta 
 :::
 
 :::note S3 Bucket Name
-Il **S3 Bucket Name** è generato dalla piattaforma e differisce dal nome inserito nella procedura guidata. Utilizzi sempre il nome S3 nei suoi client. Resta consultabile nella pagina del bucket.
+Il **S3 Bucket Name** è generato dalla piattaforma, nella forma `bucket-` seguito da un identificativo univoco (ad esempio `bucket-1df67984-321d-492d-bb06-2f4527bb0f5b`). Differisce dal nome inserito nella procedura guidata: un client S3 configurato con quest'ultimo riceve `AccessDenied`. Utilizzi sempre il nome S3 nei suoi client. Resta consultabile nella pagina del bucket.
+
+Se non è ancora noto, la schermata mostra al suo posto «The S3 name will be available in a few moments, on the bucket page.»: lo rilevi allora nella scheda **Access & Configuration** della pagina del bucket. Anche l'endpoint compare solo quando è noto.
 :::
 
 Esporti i valori nel suo terminale:
@@ -160,7 +162,7 @@ La scheda **Access & Configuration** della pagina del bucket propone questi coma
 | Sintomo | Causa probabile | Azione |
 |----------|----------------|--------|
 | `AccessDenied` su `aws s3 ls` senza bucket | Elenco dell'intero endpoint | Indichi `s3://$BUCKET_NAME/` |
-| `NoSuchBucket` | Utilizzato il nome inserito nella procedura guidata invece del nome S3 | Utilizzi il **Bucket name** visualizzato in **Access & Configuration** |
+| `AccessDenied` benché il comando indichi il bucket | Utilizzato il nome inserito nella procedura guidata invece del nome S3 | Utilizzi il **Bucket name** (`bucket-…`) visualizzato in **Access & Configuration** |
 | `AccessDenied` in scrittura | Utente in **Read-only** | Modifichi il suo diritto con **Edit access** |
 | `SignatureDoesNotMatch` / `InvalidAccessKeyId` | Chiavi errate o incomplete | Ricopi le chiavi; se la chiave segreta è andata persa, crei un nuovo utente |
 | Errore di connessione | Endpoint senza `https://` | Anteponga `https://` all'endpoint |
@@ -179,7 +181,7 @@ Vedere anche la [risoluzione dei problemi completa](./troubleshooting.md).
 3. Inserisca il nome esatto del bucket in **Resource name to confirm**, quindi faccia clic su **Permanently delete**.
 
 :::warning Eliminazione irreversibile
-L'eliminazione di un bucket è definitiva e comporta la perdita di tutti i suoi oggetti: la console non verifica che il bucket sia vuoto. Copi i dati da conservare prima di eliminarlo.
+L'eliminazione di un bucket è definitiva e comporta la perdita di tutti i suoi oggetti, anche se non è vuoto. Copi i dati da conservare prima di eliminarlo. Fa eccezione un bucket bloccato (WORM): viene rimosso dalla console, ma i suoi oggetti sono conservati e restano bloccati per 365 giorni dopo la loro scrittura.
 :::
 
 <NavigationFooter

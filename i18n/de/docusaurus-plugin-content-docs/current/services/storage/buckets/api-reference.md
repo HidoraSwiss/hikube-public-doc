@@ -35,7 +35,7 @@ Der einzige erforderliche Teil ist die **Metadaten `metadata.name`**, die den in
 
 | **Parameter** | **Typ** | **Beschreibung** | **Erforderlich** |
 | ------------- | ------- | ---------------- | ---------------- |
-| `metadata.name` | string | Eindeutiger Bucket-Name (als S3-Name verwendet) | Ja |
+| `metadata.name` | string | Eindeutiger Bucket-Name (der tatsächliche S3-Name, `bucketName`, wird generiert) | Ja |
 
 ---
 
