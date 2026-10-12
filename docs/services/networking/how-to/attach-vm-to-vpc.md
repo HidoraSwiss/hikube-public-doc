@@ -46,7 +46,7 @@ Sur la page de détail de la VM, section **Réseau et Sécurité** :
 ip -br addr
 ```
 
-**Résultat attendu :** une interface supplémentaire par sous-réseau relié. L'OS ne la configure pas automatiquement : elle apparaît d'abord sans adresse, par exemple :
+**Résultat attendu :** une interface supplémentaire par sous-réseau relié. Sur Debian et Ubuntu, l'OS ne la configure pas automatiquement : elle apparaît d'abord sans adresse, par exemple :
 
 ```
 lo               UNKNOWN        127.0.0.1/8 ::1/128
@@ -54,7 +54,9 @@ enp1s0           UP             10.x.x.x/xx ...
 enp2s0           DOWN
 ```
 
-Activez DHCP sur l'interface secondaire. Exemple avec netplan (Ubuntu) :
+L'adresse VPC est distribuée par DHCP. Les distributions à NetworkManager (AlmaLinux, Rocky…) la prennent automatiquement ; sur Debian et Ubuntu, activez DHCP sur l'interface secondaire. Le bail ne fournit pas de passerelle : la route par défaut reste sur l'interface principale.
+
+Exemple avec netplan (Debian, Ubuntu) :
 
 ```yaml title="/etc/netplan/60-vpc.yaml"
 network:

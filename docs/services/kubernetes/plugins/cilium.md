@@ -16,7 +16,7 @@ Cilium fait partie de la **Configuration avancée** de l'étape **Addons** : il 
 3. Validez avec **Suivant** puis **Déployer** (création) ou **Enregistrer** (modification).
 
 :::note
-Vider le champ depuis **Modifier** ne retire pas une surcharge déjà appliquée au cluster. Pour revenir aux valeurs par défaut, [contactez le support](mailto:support@hidora.io).
+Effacer le champ, ou une ligne de la surcharge, depuis **Modifier** ne retire pas une valeur déjà appliquée au cluster. [Contactez le support](mailto:support@hidora.io) pour revenir aux valeurs par défaut.
 :::
 
 Sur la page de détail du cluster, la ligne **CNI** de la section **Réseau** indique **Personnalisé** lorsqu'une configuration Cilium est appliquée.

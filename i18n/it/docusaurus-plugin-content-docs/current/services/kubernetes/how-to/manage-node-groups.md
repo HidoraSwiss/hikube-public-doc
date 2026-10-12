@@ -53,7 +53,7 @@ Scelga un nome descrittivo per i gruppi (`compute`, `web`, `monitoring`, `gpu`) 
 Nella sezione **Node groups**, espanda la scheda del gruppo, modifichi i campi desiderati (tipo di istanza, dimensione del disco dei nodi, numero minimo o massimo di nodi, esposizione), quindi faccia clic su **Save**.
 
 :::warning
-La modifica del tipo di istanza o della dimensione del disco sostituisce tutti i nodi del gruppo: la piattaforma crea i nuovi nodi e rimuove i vecchi uno alla volta, senza attendere che ciascun sostituto sia pronto. Un gruppo con un solo nodo è quindi indisponibile durante la sostituzione (alcuni minuti): preveda almeno due nodi per i carichi di lavoro che non tollerano interruzioni. La quota del progetto deve poter accogliere i nodi aggiuntivi durante la sostituzione.
+La modifica del tipo di istanza o della dimensione del disco, sia in aumento sia in diminuzione, sostituisce progressivamente tutti i nodi del gruppo, uno alla volta: la piattaforma crea i nuovi nodi e rimuove i vecchi uno alla volta, senza attendere che ciascun sostituto sia pronto. I dati memorizzati localmente sui nodi, al di fuori dei volumi persistenti, vanno persi. Un gruppo con un solo nodo è quindi indisponibile durante la sostituzione (alcuni minuti): preveda almeno due nodi per i carichi di lavoro che non tollerano interruzioni. La quota del progetto deve poter accogliere i nodi aggiuntivi durante la sostituzione.
 :::
 
 :::note

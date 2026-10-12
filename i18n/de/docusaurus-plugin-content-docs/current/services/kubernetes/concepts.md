@@ -274,7 +274,7 @@ Von der Konsole geprüfte Abhängigkeiten:
 
 Jedes Addon (außer Gateway API und Monitoring Agents) akzeptiert ein Feld **Helm Configuration (YAML) — optional**. Der YAML-Wert wird direkt an das Helm-Chart des Addons übergeben und überschreibt dessen Standardwerte. Er muss ein YAML-Mapping (`key: value`) sein; die Konsole lehnt ungültiges YAML ab. Das Link-Symbol neben dem Namen des Addons öffnet seine Seite in dieser Dokumentation.
 
-Eine Überschreibung wird bei der Erstellung oder über **Edit** eingegeben. Beim Bearbeiten entfernt das Leeren des Feldes eine bereits auf den Cluster angewendete Überschreibung nicht: Um zu den Standardwerten zurückzukehren, [wenden Sie sich an den Support](mailto:support@hidora.io).
+Eine Überschreibung wird bei der Erstellung oder über **Edit** eingegeben. Das Leeren des Feldes oder das Löschen einer Zeile der Überschreibung entfernt einen bereits auf den Cluster angewendeten Wert nicht, unabhängig vom Addon. [Wenden Sie sich an den Support](mailto:support@hidora.io), um zu den Standardwerten zurückzukehren.
 
 ---
 

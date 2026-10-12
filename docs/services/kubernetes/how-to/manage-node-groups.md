@@ -53,7 +53,7 @@ Choisissez un nom descriptif pour vos groupes (`compute`, `web`, `monitoring`, `
 Dans la section **Groupes de nœuds**, dépliez la carte du groupe, modifiez les champs souhaités (type d'instance, taille du disque des nœuds, nombre minimum ou maximum de nœuds, exposition) puis cliquez sur **Enregistrer**.
 
 :::warning
-Le changement de type d'instance ou de taille du disque remplace tous les nœuds du groupe : la plateforme crée les nouveaux nœuds et retire les anciens un par un, sans attendre que chaque remplaçant soit prêt. Un groupe d'un seul nœud est donc indisponible pendant le remplacement (plusieurs minutes) : prévoyez au moins deux nœuds pour les charges qui ne tolèrent pas d'interruption. Le quota du projet doit pouvoir accueillir les nœuds supplémentaires pendant le remplacement.
+Le changement de type d'instance ou de taille du disque, à la hausse comme à la baisse, remplace progressivement tous les nœuds du groupe, un à la fois : la plateforme crée les nouveaux nœuds et retire les anciens un par un, sans attendre que chaque remplaçant soit prêt. Les données stockées localement sur les nœuds, hors volumes persistants, sont perdues. Un groupe d'un seul nœud est donc indisponible pendant le remplacement (plusieurs minutes) : prévoyez au moins deux nœuds pour les charges qui ne tolèrent pas d'interruption. Le quota du projet doit pouvoir accueillir les nœuds supplémentaires pendant le remplacement.
 :::
 
 :::note

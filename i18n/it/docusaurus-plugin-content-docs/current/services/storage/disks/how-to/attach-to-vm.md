@@ -75,7 +75,7 @@ Utilizzi l'UUID anziché il nome del dispositivo (`/dev/vdb`) in `/etc/fstab`: l
 3. Faccia clic su **Detach disk** sul volume, quindi confermi con **Detach** nella finestra **Detach `<name>`?**. Non è richiesto di inserire il nome.
 4. Faccia clic su **Save**, poi su **Restart**: lo scollegamento ha effetto solo al successivo riavvio della VM; fino ad allora il disco resta visibile al sistema.
 
-Il disco viene **scollegato**, non eliminato: i suoi dati sono conservati e resta in **Infrastructure** → **Disks** con lo stato **Ready** e può essere collegato a un'altra VM. Per eliminarlo definitivamente, utilizzi l'azione **Delete** della pagina del disco.
+Il disco viene **scollegato**, non eliminato: i suoi dati sono conservati e resta in **Infrastructure** → **Disks** con lo stato **Ready** e può essere collegato a un'altra VM. Per eliminarlo definitivamente, utilizzi l'azione **Delete** della pagina del disco. Un disco scollegato resta in uso dalla VM fino al suo successivo riavvio. Riavvii la VM, quindi attenda qualche minuto prima di eliminare il disco: un'eliminazione troppo rapida può lasciare lo spazio occupato nella sua quota.
 
 :::note
 L'eliminazione di una VM scollega anche i suoi dischi senza eliminarli. Si ricordi di eliminare i dischi non più necessari: continuano a consumare la quota di storage del progetto.

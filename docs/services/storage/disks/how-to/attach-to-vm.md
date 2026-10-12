@@ -75,7 +75,7 @@ Utilisez l'UUID plutôt que le nom de périphérique (`/dev/vdb`) dans `/etc/fst
 3. Cliquez sur **Détacher le disque** sur le volume, puis confirmez avec **Détacher** dans la boîte **Détacher `<nom>` ?**. Aucune saisie du nom n'est demandée.
 4. Cliquez sur **Enregistrer**, puis sur **Redémarrer** : le détachement ne prend effet qu'au prochain redémarrage de la VM ; d'ici là, le disque reste visible par le système.
 
-Le disque est **détaché**, pas supprimé : ses données sont conservées et il reste dans **Infrastructure** → **Disques** avec le statut **Prêt**, et peut être attaché à une autre VM. Pour le supprimer définitivement, utilisez l'action **Supprimer** de la page du disque.
+Le disque est **détaché**, pas supprimé : ses données sont conservées et il reste dans **Infrastructure** → **Disques** avec le statut **Prêt**, et peut être attaché à une autre VM. Pour le supprimer définitivement, utilisez l'action **Supprimer** de la page du disque. Un disque détaché reste utilisé par la VM jusqu'à son prochain redémarrage. Redémarrez la VM, puis attendez quelques minutes avant de supprimer le disque : une suppression trop rapide peut laisser l'espace occupé dans votre quota.
 
 :::note
 La suppression d'une VM détache aussi ses disques sans les supprimer. Pensez à supprimer les disques devenus inutiles : ils continuent de consommer le quota de stockage du projet.

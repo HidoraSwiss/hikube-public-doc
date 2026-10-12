@@ -46,7 +46,7 @@ On the VM's detail page, **Network & Security** section:
 ip -br addr
 ```
 
-**Expected result:** one additional interface per connected subnet. The OS does not configure it automatically: it first appears without an address, for example:
+**Expected result:** one additional interface per connected subnet. On Debian and Ubuntu, the OS does not configure it automatically: it first appears without an address, for example:
 
 ```
 lo               UNKNOWN        127.0.0.1/8 ::1/128
@@ -54,7 +54,9 @@ enp1s0           UP             10.x.x.x/xx ...
 enp2s0           DOWN
 ```
 
-Enable DHCP on the secondary interface. Example with netplan (Ubuntu):
+The VPC address is assigned by DHCP. Distributions using NetworkManager (AlmaLinux, Rocky…) pick it up automatically; on Debian and Ubuntu, enable DHCP on the secondary interface. The lease does not provide a gateway: the default route stays on the primary interface.
+
+Example with netplan (Debian, Ubuntu):
 
 ```yaml title="/etc/netplan/60-vpc.yaml"
 network:

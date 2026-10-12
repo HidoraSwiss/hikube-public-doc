@@ -96,7 +96,7 @@ aws --endpoint-url https://<endpoint> s3 sync s3://<nom-du-bucket-s3>/ ./sauvega
 
 ### `AccessDenied` avec le nom affiché à la création d'un utilisateur
 
-**Cause** : le client S3 utilise le nom choisi dans la console (par exemple `demo-assets`) au lieu du nom S3 réel (`bucket-…`). Les versions précédentes de la console pouvaient afficher ce nom à la place du nom S3 lors de la création d'un bucket ou d'un utilisateur. Les clés d'un utilisateur ne donnent accès qu'au bucket S3 réel : tout autre nom est refusé.
+**Cause** : le client S3 utilise le nom choisi dans la console (par exemple `demo-assets`) au lieu du nom S3 réel (`bucket-…`). Les versions précédentes de la console pouvaient afficher ce nom à la place du nom S3 lors de la création d'un bucket ou d'un utilisateur. Les clés d'un utilisateur ne donnent accès qu'au bucket S3 réel : tout autre nom est refusé avec `AccessDenied`, jamais `NoSuchBucket`, même si un bucket de ce nom existe dans la console.
 
 **Solution** : relevez le **Nom du bucket** dans la carte **Accès & Configuration** de la page du bucket et utilisez-le à la place dans la configuration de vos clients. Les clés de l'utilisateur restent valables.
 

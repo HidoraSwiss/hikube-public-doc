@@ -274,7 +274,7 @@ Dependencies checked by the console:
 
 Each addon (except Gateway API and Monitoring Agents) accepts a **Helm Configuration (YAML) — optional** field. The YAML value is passed directly to the addon's Helm chart and overrides its default values. It must be a YAML mapping (`key: value`); the console rejects invalid YAML. The link icon next to the addon name opens its page in this documentation.
 
-An override can be entered at creation or from **Edit**. When editing, clearing the field does not remove an override already applied to the cluster: to return to the default values, [contact support](mailto:support@hidora.io).
+An override can be entered at creation or from **Edit**. Clearing the field, or a line of the override, does not remove a value already applied to the cluster, whatever the addon. [Contact support](mailto:support@hidora.io) to return to the default values.
 
 ---
 

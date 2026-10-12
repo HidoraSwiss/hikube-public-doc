@@ -49,7 +49,7 @@ Ces changements s'appliquent en quelques secondes, sans redémarrer la VM. Un ch
 
 ### 4. Relier la VM à un réseau privé (optionnel)
 
-Sous **Réseaux VPC (Secondaires)**, cochez un VPC puis un ou plusieurs de ses **Sous-réseaux**. Chaque sous-réseau ajoute une interface privée à la VM, que l'OS ne configure pas automatiquement (voir [Relier une VM à un VPC](../../networking/how-to/attach-vm-to-vpc.md#4-vérifier-dans-los)). Sur une image Debian ou Ubuntu, la console le rappelle par l'avertissement **Configuration manuelle requise sur Debian et Ubuntu**. Le bouton **+ VPC** crée un VPC sans quitter l'écran, et **Ajouter un sous-réseau** crée un sous-réseau dans le VPC coché. Le détail est dans [Réseau : démarrage rapide](../../networking/quick-start.md).
+Sous **Réseaux VPC (Secondaires)**, cochez un VPC puis un ou plusieurs de ses **Sous-réseaux**. Chaque sous-réseau ajoute une interface privée à la VM, dont l'adresse est distribuée par DHCP : AlmaLinux ou Rocky la prennent automatiquement, Debian et Ubuntu demandent d'activer DHCP sur l'interface (voir [Relier une VM à un VPC](../../networking/how-to/attach-vm-to-vpc.md#4-vérifier-dans-los)). Sur une image Debian ou Ubuntu, la console le rappelle par l'avertissement **Configuration manuelle requise sur Debian et Ubuntu**. Le bouton **+ VPC** crée un VPC sans quitter l'écran, et **Ajouter un sous-réseau** crée un sous-réseau dans le VPC coché. Le détail est dans [Réseau : démarrage rapide](../../networking/quick-start.md).
 
 ## Vérification
 

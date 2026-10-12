@@ -64,4 +64,4 @@ La procedura guidata mostra un **Estimated Cost**: una tariffa per GB al mese e 
 
 ### Perché non riesco a eliminare il mio disco?
 
-Un disco collegato a una VM non può essere eliminato: la console risponde «The disk cannot be deleted as it is in use.». Lo scolleghi prima dalla pagina di modifica della VM.
+Un disco collegato a una VM non può essere eliminato: la console risponde «The disk cannot be deleted as it is in use.». Lo scolleghi prima dalla pagina di modifica della VM. Un disco scollegato resta in uso dalla VM fino al suo successivo riavvio. Riavvii la VM, quindi attenda qualche minuto prima di eliminare il disco: un'eliminazione troppo rapida può lasciare lo spazio occupato nella sua quota.

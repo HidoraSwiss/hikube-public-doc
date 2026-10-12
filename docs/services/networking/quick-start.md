@@ -86,9 +86,11 @@ Connectez-vous à la première VM en SSH (commande du bloc **Connexion SSH**), p
 ip -br addr
 ```
 
-**Résultat attendu :** une interface supplémentaire apparaît (par exemple `enp2s0`), sans adresse : l'OS ne la configure pas automatiquement.
+**Résultat attendu :** une interface supplémentaire apparaît (par exemple `enp2s0`), sans adresse sur Debian et Ubuntu, dont l'OS ne la configure pas automatiquement.
 
-Activez DHCP sur cette interface. Exemple avec netplan (Ubuntu) :
+L'adresse VPC est distribuée par DHCP. Les distributions à NetworkManager (AlmaLinux, Rocky…) la prennent automatiquement ; sur Debian et Ubuntu, activez DHCP sur l'interface secondaire. Le bail ne fournit pas de passerelle : la route par défaut reste sur l'interface principale.
+
+Exemple avec netplan (Debian, Ubuntu) :
 
 ```yaml title="/etc/netplan/60-vpc.yaml"
 network:

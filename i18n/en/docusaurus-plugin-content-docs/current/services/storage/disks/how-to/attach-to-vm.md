@@ -75,7 +75,7 @@ Use the UUID rather than the device name (`/dev/vdb`) in `/etc/fstab`: the devic
 3. Click **Detach disk** on the volume, then confirm with **Detach** in the **Detach `<name>`?** dialog. You do not have to type the name.
 4. Click **Save**, then **Restart**: the detachment only takes effect on the next VM restart; until then, the disk remains visible to the system.
 
-The disk is **detached**, not deleted: its data is kept and it remains in **Infrastructure** → **Disks** with the **Ready** status, and can be attached to another VM. To delete it permanently, use the **Delete** action on the disk page.
+The disk is **detached**, not deleted: its data is kept and it remains in **Infrastructure** → **Disks** with the **Ready** status, and can be attached to another VM. To delete it permanently, use the **Delete** action on the disk page. A detached disk stays in use by the VM until its next restart. Restart the VM, then wait a few minutes before deleting the disk: deleting it too soon can leave the space occupied in your quota.
 
 :::note
 Deleting a VM also detaches its disks without deleting them. Remember to delete disks that are no longer needed: they keep consuming the project's storage quota.

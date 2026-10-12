@@ -130,7 +130,7 @@ Voir aussi le [dépannage complet](./troubleshooting.md).
    sudo umount /mnt/data
    sudo sed -i '\|/mnt/data|d' /etc/fstab
    ```
-2. Détachez le disque : page de la VM → **Modifier** → section **Stockage**, cliquez sur **Détacher le disque** sur le volume, confirmez avec **Détacher**, puis cliquez sur **Enregistrer**. Le disque revient au statut **Prêt** ; dans la VM, le détachement ne prend effet qu'au prochain redémarrage : cliquez sur **Redémarrer**.
+2. Détachez le disque : page de la VM → **Modifier** → section **Stockage**, cliquez sur **Détacher le disque** sur le volume, confirmez avec **Détacher**, puis cliquez sur **Enregistrer**. Le disque revient au statut **Prêt** ; dans la VM, le détachement ne prend effet qu'au prochain redémarrage : cliquez sur **Redémarrer**, puis attendez quelques minutes avant l'étape suivante. Un disque détaché reste utilisé par la VM jusqu'à son prochain redémarrage, et une suppression trop rapide peut laisser l'espace occupé dans votre quota.
 3. Supprimez le disque : page du disque → **Supprimer** (ou menu d'actions → **Supprimer** dans la liste), saisissez son nom exact dans **Nom de la ressource à confirmer**, puis cliquez sur **Supprimer définitivement**.
 
 :::warning

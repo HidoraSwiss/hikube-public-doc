@@ -49,7 +49,7 @@ These changes apply within a few seconds, without restarting the VM. A change of
 
 ### 4. Connect the VM to a private network (optional)
 
-Under **VPC Networks (Secondary)**, check a VPC, then one or more of its **Subnets**. Each subnet adds a private interface to the VM, which the OS does not configure automatically (see [Connect a VM to a VPC](../../networking/how-to/attach-vm-to-vpc.md#4-check-in-the-os)). On a Debian or Ubuntu image, the console reminds you with the **Manual setup required on Debian and Ubuntu** warning. The **+ VPC** button creates a VPC without leaving the screen, and **Add subnet** creates a subnet in the checked VPC. Details are in [Networking: quick start](../../networking/quick-start.md).
+Under **VPC Networks (Secondary)**, check a VPC, then one or more of its **Subnets**. Each subnet adds a private interface to the VM, whose address is assigned by DHCP: AlmaLinux or Rocky pick it up automatically, Debian and Ubuntu require enabling DHCP on the interface (see [Connect a VM to a VPC](../../networking/how-to/attach-vm-to-vpc.md#4-check-in-the-os)). On a Debian or Ubuntu image, the console reminds you with the **Manual setup required on Debian and Ubuntu** warning. The **+ VPC** button creates a VPC without leaving the screen, and **Add subnet** creates a subnet in the checked VPC. Details are in [Networking: quick start](../../networking/quick-start.md).
 
 ## Verification
 

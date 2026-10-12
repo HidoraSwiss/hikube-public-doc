@@ -130,7 +130,7 @@ Vedere anche la [risoluzione dei problemi completa](./troubleshooting.md).
    sudo umount /mnt/data
    sudo sed -i '\|/mnt/data|d' /etc/fstab
    ```
-2. Scolleghi il disco: pagina della VM → **Edit** → sezione **Storage**, faccia clic su **Detach disk** sul volume, confermi con **Detach**, quindi faccia clic su **Save**. Il disco torna allo stato **Ready**; nella VM lo scollegamento ha effetto solo al successivo riavvio: faccia clic su **Restart**.
+2. Scolleghi il disco: pagina della VM → **Edit** → sezione **Storage**, faccia clic su **Detach disk** sul volume, confermi con **Detach**, quindi faccia clic su **Save**. Il disco torna allo stato **Ready**; nella VM lo scollegamento ha effetto solo al successivo riavvio: faccia clic su **Restart**, quindi attenda qualche minuto prima del passaggio successivo. Un disco scollegato resta in uso dalla VM fino al suo successivo riavvio, e un'eliminazione troppo rapida può lasciare lo spazio occupato nella sua quota.
 3. Elimini il disco: pagina del disco → **Delete** (oppure menu delle azioni → **Delete** nell'elenco), inserisca il suo nome esatto in **Resource name to confirm**, quindi faccia clic su **Permanently delete**.
 
 :::warning

@@ -96,7 +96,7 @@ aws --endpoint-url https://<endpoint> s3 sync s3://<nome-del-bucket-s3>/ ./backu
 
 ### `AccessDenied` con il nome mostrato alla creazione di un utente
 
-**Causa**: il client S3 utilizza il nome scelto nella console (ad esempio `demo-assets`) invece del nome S3 effettivo (`bucket-…`). Le versioni precedenti della console potevano mostrare questo nome al posto del nome S3 alla creazione di un bucket o di un utente. Le chiavi di un utente danno accesso solo al bucket S3 effettivo: qualsiasi altro nome viene rifiutato.
+**Causa**: il client S3 utilizza il nome scelto nella console (ad esempio `demo-assets`) invece del nome S3 effettivo (`bucket-…`). Le versioni precedenti della console potevano mostrare questo nome al posto del nome S3 alla creazione di un bucket o di un utente. Le chiavi di un utente danno accesso solo al bucket S3 effettivo: qualsiasi altro nome viene rifiutato con `AccessDenied`, mai `NoSuchBucket`, anche se nella console esiste un bucket con questo nome.
 
 **Soluzione**: annoti il **Bucket name** nella scheda **Access & Configuration** della pagina del bucket e lo utilizzi al suo posto nella configurazione dei suoi client. Le chiavi dell'utente restano valide.
 

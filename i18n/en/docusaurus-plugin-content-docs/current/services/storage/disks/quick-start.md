@@ -130,7 +130,7 @@ See also the [full troubleshooting guide](./troubleshooting.md).
    sudo umount /mnt/data
    sudo sed -i '\|/mnt/data|d' /etc/fstab
    ```
-2. Detach the disk: VM page → **Edit** → **Storage** section, click **Detach disk** on the volume, confirm with **Detach**, then click **Save**. The disk returns to the **Ready** status; inside the VM, the detachment only takes effect on the next restart: click **Restart**.
+2. Detach the disk: VM page → **Edit** → **Storage** section, click **Detach disk** on the volume, confirm with **Detach**, then click **Save**. The disk returns to the **Ready** status; inside the VM, the detachment only takes effect on the next restart: click **Restart**, then wait a few minutes before the next step. A detached disk stays in use by the VM until its next restart, and deleting it too soon can leave the space occupied in your quota.
 3. Delete the disk: disk page → **Delete** (or actions menu → **Delete** in the list), enter its exact name in **Resource name to confirm**, then click **Permanently delete**.
 
 :::warning

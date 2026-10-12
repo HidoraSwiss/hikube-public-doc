@@ -86,9 +86,11 @@ Connect to the first VM over SSH (command from the **SSH Connection** block), th
 ip -br addr
 ```
 
-**Expected result:** an additional interface appears (for example `enp2s0`), without an address: the OS does not configure it automatically.
+**Expected result:** an additional interface appears (for example `enp2s0`), without an address on Debian and Ubuntu, where the OS does not configure it automatically.
 
-Enable DHCP on this interface. Example with netplan (Ubuntu):
+The VPC address is assigned by DHCP. Distributions using NetworkManager (AlmaLinux, Rocky…) pick it up automatically; on Debian and Ubuntu, enable DHCP on the secondary interface. The lease does not provide a gateway: the default route stays on the primary interface.
+
+Example with netplan (Debian, Ubuntu):
 
 ```yaml title="/etc/netplan/60-vpc.yaml"
 network:

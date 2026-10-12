@@ -274,7 +274,7 @@ Dipendenze verificate dalla console:
 
 Ogni addon (tranne Gateway API e Monitoring Agents) accetta un campo **Helm Configuration (YAML) — optional**. Il valore YAML viene trasmesso direttamente al chart Helm dell'addon e ne sovrascrive i valori predefiniti. Deve essere un dizionario YAML (`chiave: valore`); la console rifiuta un YAML non valido. L'icona di collegamento accanto al nome dell'addon apre la sua pagina in questa documentazione.
 
-Una sovrascrittura si inserisce alla creazione o da **Edit**. In modifica, svuotare il campo non rimuove una sovrascrittura già applicata al cluster: per tornare ai valori predefiniti, [contatti il supporto](mailto:support@hidora.io).
+Una sovrascrittura si inserisce alla creazione o da **Edit**. Svuotare il campo, o cancellare una riga della sovrascrittura, non rimuove un valore già applicato al cluster, qualunque sia l'addon. [Contatti il supporto](mailto:support@hidora.io) per tornare ai valori predefiniti.
 
 ---
 

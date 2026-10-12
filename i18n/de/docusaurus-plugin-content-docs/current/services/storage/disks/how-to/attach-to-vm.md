@@ -75,7 +75,7 @@ Verwenden Sie in `/etc/fstab` die UUID statt des Gerätenamens (`/dev/vdb`): Die
 3. Klicken Sie am Volume auf **Detach disk** und bestätigen Sie im Dialog **Detach `<name>`?** mit **Detach**. Eine Eingabe des Namens ist nicht erforderlich.
 4. Klicken Sie auf **Save** und dann auf **Restart**: Das Trennen wird erst beim nächsten Neustart der VM wirksam; bis dahin bleibt die Disk für das System sichtbar.
 
-Die Disk wird **getrennt**, nicht gelöscht: Ihre Daten bleiben erhalten, und sie bleibt unter **Infrastructure** → **Disks** mit dem Status **Ready** und kann an eine andere VM angebunden werden. Um sie endgültig zu löschen, verwenden Sie die Aktion **Delete** auf der Seite der Disk.
+Die Disk wird **getrennt**, nicht gelöscht: Ihre Daten bleiben erhalten, und sie bleibt unter **Infrastructure** → **Disks** mit dem Status **Ready** und kann an eine andere VM angebunden werden. Um sie endgültig zu löschen, verwenden Sie die Aktion **Delete** auf der Seite der Disk. Eine getrennte Disk wird von der VM bis zu ihrem nächsten Neustart weiter verwendet. Starten Sie die VM neu und warten Sie dann einige Minuten, bevor Sie die Disk löschen: Ein zu schnelles Löschen kann dazu führen, dass der Speicherplatz in Ihrem Quota belegt bleibt.
 
 :::note
 Auch das Löschen einer VM trennt ihre Disks, ohne sie zu löschen. Denken Sie daran, nicht mehr benötigte Disks zu löschen: Sie verbrauchen weiterhin das Speicher-Quota des Projekts.

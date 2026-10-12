@@ -64,7 +64,7 @@ Nein. Die Schlüssel eines Benutzers sind auf seinen Bucket beschränkt: `aws s3
 
 ### Wozu dient die Sperre (WORM)?
 
-Die Option **Enable Object Lock (WORM)** sperrt jedes Objekt nach dem Schreiben 365 Tage lang. Die Plattform wendet diese Aufbewahrung im Modus `COMPLIANCE` an: Niemand kann ein Objekt ändern oder löschen oder seine Aufbewahrung vor Ablauf verkürzen. Diese Standarddauer ist in der Konsole nicht einstellbar; wenden Sie sich bei einem anderen Bedarf an den Support. Die Option dient der regulatorischen Archivierung oder dem Schutz von Backups vor versehentlichem oder böswilligem Löschen. Sie wird bei der Erstellung des Buckets gewählt und lässt sich danach nicht mehr entfernen. Das Löschen eines gesperrten Buckets entfernt ihn aus der Konsole, löscht aber seine Objekte nicht: Sie bleiben bis zum Ablauf ihrer Aufbewahrung gesperrt.
+Die Option **Enable Object Lock (WORM)** sperrt jedes Objekt nach dem Schreiben 365 Tage lang. Die Plattform wendet diese Aufbewahrung im Modus `COMPLIANCE` an: Niemand kann ein Objekt ändern oder löschen oder seine Aufbewahrung vor Ablauf verkürzen. Die WORM-Aufbewahrung wird von der Plattform festgelegt: 365 Tage im Modus COMPLIANCE. Sie kann weder bei der Erstellung noch danach geändert werden. Die Option dient der regulatorischen Archivierung oder dem Schutz von Backups vor versehentlichem oder böswilligem Löschen. Sie wird bei der Erstellung des Buckets gewählt und lässt sich danach nicht mehr entfernen. Das Löschen eines gesperrten Buckets entfernt ihn aus der Konsole, löscht aber seine Objekte nicht: Sie bleiben bis zum Ablauf ihrer Aufbewahrung gesperrt.
 
 ---
 

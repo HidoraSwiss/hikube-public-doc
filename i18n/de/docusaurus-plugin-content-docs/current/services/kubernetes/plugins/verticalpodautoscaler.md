@@ -22,7 +22,7 @@ Der Vertical Pod Autoscaler gehört zur **Advanced Configuration** des Schritts 
 3. Bestätigen Sie mit **Next** und dann **Create cluster** (Erstellung) oder mit **Save** (Änderung).
 
 :::note
-Das Leeren des Feldes über **Edit** entfernt ein bereits auf den Cluster angewendetes Override nicht. Um zu den Standardwerten zurückzukehren, [wenden Sie sich an den Support](mailto:support@hidora.io).
+Das Leeren des Feldes oder das Löschen einer Zeile des Overrides über **Edit** entfernt einen bereits auf den Cluster angewendeten Wert nicht. [Wenden Sie sich an den Support](mailto:support@hidora.io), um zu den Standardwerten zurückzukehren.
 :::
 
 Auf der Detailseite des Clusters zeigt die Zeile **VPA** im Abschnitt **Network** **VPA** an, wenn das Addon konfiguriert ist.

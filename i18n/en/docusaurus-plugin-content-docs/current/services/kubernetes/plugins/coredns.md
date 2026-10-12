@@ -16,7 +16,7 @@ CoreDNS is part of the **Advanced Configuration** of the **Addons** step: it is 
 3. Confirm with **Next** then **Create cluster** (creation) or **Save** (modification).
 
 :::note
-Clearing the field from **Edit** does not remove an override already applied to the cluster. To return to the default values, [contact support](mailto:support@hidora.io).
+Clearing the field, or a line of the override, from **Edit** does not remove a value already applied to the cluster. [Contact support](mailto:support@hidora.io) to return to the default values.
 :::
 
 On the cluster detail page, the **DNS** line of the **Network** section shows **CoreDNS** when a CoreDNS configuration is applied.

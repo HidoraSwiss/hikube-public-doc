@@ -22,7 +22,7 @@ The Vertical Pod Autoscaler is part of the **Advanced Configuration** of the **A
 3. Confirm with **Next** then **Create cluster** (creation) or **Save** (modification).
 
 :::note
-Clearing the field from **Edit** does not remove an override already applied to the cluster. To return to the default values, [contact support](mailto:support@hidora.io).
+Clearing the field, or a line of the override, from **Edit** does not remove a value already applied to the cluster. [Contact support](mailto:support@hidora.io) to return to the default values.
 :::
 
 On the cluster detail page, the **VPA** line of the **Network** section shows **VPA** when the addon is configured.

@@ -274,7 +274,7 @@ Dépendances vérifiées par la console :
 
 Chaque addon (sauf Gateway API et Monitoring Agents) accepte un champ **Configuration Helm (YAML) — optionnel**. La valeur YAML est transmise directement au chart Helm de l'addon et surcharge ses valeurs par défaut. Elle doit être un dictionnaire YAML (`clé: valeur`) ; la console refuse un YAML invalide. L'icône de lien à côté du nom de l'addon ouvre sa page dans cette documentation.
 
-Une surcharge se saisit à la création ou depuis **Modifier**. En modification, vider le champ ne retire pas une surcharge déjà appliquée au cluster : pour revenir aux valeurs par défaut, [contactez le support](mailto:support@hidora.io).
+Une surcharge se saisit à la création ou depuis **Modifier**. Effacer le champ, ou une ligne de la surcharge, ne retire pas une valeur déjà appliquée au cluster, quel que soit l'addon. [Contactez le support](mailto:support@hidora.io) pour revenir aux valeurs par défaut.
 
 ---
 

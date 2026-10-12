@@ -23,7 +23,7 @@ Jeder Hikube-Bucket kann mehrere **S3-Benutzer** haben, jeder mit seinem eigenen
 1. Öffnen Sie **Infrastructure** → **S3 Buckets** und klicken Sie dann auf den Bucket.
 2. Klicken Sie in der Karte **Users & Access** auf **Add User**.
 3. Im Fenster **New User**:
-   - Geben Sie den **Username** ein (3 bis 16 Zeichen: Kleinbuchstaben, Ziffern und Bindestriche; beginnt mit einem Buchstaben und endet mit einem Buchstaben oder einer Ziffer; einige Namen sind reserviert);
+   - Geben Sie den **Username** ein (3 bis 16 Zeichen: Kleinbuchstaben, Ziffern und Bindestriche; beginnt mit einem Buchstaben und endet mit einem Buchstaben oder einer Ziffer; einige Namen sind reserviert, wie `admin`, `root` oder `postgres`);
    - Haken Sie **Read-only access** an, wenn der Benutzer die Objekte nur lesen soll.
 4. Klicken Sie auf **Create User**.
 

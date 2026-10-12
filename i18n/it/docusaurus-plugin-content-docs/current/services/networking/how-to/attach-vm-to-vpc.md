@@ -46,7 +46,7 @@ Nella pagina di dettaglio della VM, sezione **Network & Security**:
 ip -br addr
 ```
 
-**Risultato atteso:** un'interfaccia aggiuntiva per ogni sottorete collegata. Il sistema operativo non la configura automaticamente: compare inizialmente senza indirizzo, ad esempio:
+**Risultato atteso:** un'interfaccia aggiuntiva per ogni sottorete collegata. Su Debian e Ubuntu, il sistema operativo non la configura automaticamente: compare inizialmente senza indirizzo, ad esempio:
 
 ```
 lo               UNKNOWN        127.0.0.1/8 ::1/128
@@ -54,7 +54,9 @@ enp1s0           UP             10.x.x.x/xx ...
 enp2s0           DOWN
 ```
 
-Attivi DHCP sull'interfaccia secondaria. Esempio con netplan (Ubuntu):
+L'indirizzo VPC è distribuito tramite DHCP. Le distribuzioni con NetworkManager (AlmaLinux, Rocky…) lo ottengono automaticamente; su Debian e Ubuntu, attivi DHCP sull'interfaccia secondaria. Il lease non fornisce un gateway: la route predefinita resta sull'interfaccia principale.
+
+Esempio con netplan (Debian, Ubuntu):
 
 ```yaml title="/etc/netplan/60-vpc.yaml"
 network:

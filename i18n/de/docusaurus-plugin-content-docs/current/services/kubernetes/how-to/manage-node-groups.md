@@ -53,7 +53,7 @@ Wählen Sie aussagekräftige Namen für Ihre Gruppen (`compute`, `web`, `monitor
 Klappen Sie im Abschnitt **Node groups** die Karte der Gruppe auf, ändern Sie die gewünschten Felder (Instanztyp, Festplattengröße der Nodes, minimale oder maximale Anzahl der Nodes, Erreichbarkeit) und klicken Sie dann auf **Save**.
 
 :::warning
-Eine Änderung des Instanztyps oder der Festplattengröße ersetzt alle Nodes der Gruppe: Die Plattform erstellt die neuen Nodes und entfernt die alten einzeln, ohne abzuwarten, bis jeder Ersatz-Node bereit ist. Eine Gruppe mit nur einem Node ist daher während des Austauschs (mehrere Minuten) nicht verfügbar: Sehen Sie für Workloads, die keine Unterbrechung vertragen, mindestens zwei Nodes vor. Die Quota des Projekts muss die zusätzlichen Nodes während des Austauschs aufnehmen können.
+Eine Änderung des Instanztyps oder der Festplattengröße, ob nach oben oder nach unten, ersetzt schrittweise alle Nodes der Gruppe, einen nach dem anderen: Die Plattform erstellt die neuen Nodes und entfernt die alten einzeln, ohne abzuwarten, bis jeder Ersatz-Node bereit ist. Lokal auf den Nodes gespeicherte Daten außerhalb persistenter Volumes gehen verloren. Eine Gruppe mit nur einem Node ist daher während des Austauschs (mehrere Minuten) nicht verfügbar: Sehen Sie für Workloads, die keine Unterbrechung vertragen, mindestens zwei Nodes vor. Die Quota des Projekts muss die zusätzlichen Nodes während des Austauschs aufnehmen können.
 :::
 
 :::note

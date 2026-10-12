@@ -86,9 +86,11 @@ Verbinden Sie sich per SSH mit der ersten VM (Befehl aus dem Block **SSH Connect
 ip -br addr
 ```
 
-**Erwartetes Ergebnis:** Eine zusätzliche Schnittstelle erscheint (zum Beispiel `enp2s0`), ohne Adresse: Das Betriebssystem konfiguriert sie nicht automatisch.
+**Erwartetes Ergebnis:** Eine zusätzliche Schnittstelle erscheint (zum Beispiel `enp2s0`), unter Debian und Ubuntu ohne Adresse, da das Betriebssystem sie dort nicht automatisch konfiguriert.
 
-Aktivieren Sie DHCP auf dieser Schnittstelle. Beispiel mit netplan (Ubuntu):
+Die VPC-Adresse wird per DHCP vergeben. Distributionen mit NetworkManager (AlmaLinux, Rocky…) übernehmen sie automatisch; unter Debian und Ubuntu aktivieren Sie DHCP auf der sekundären Schnittstelle. Die DHCP-Lease liefert kein Gateway: Die Standardroute bleibt auf der primären Schnittstelle.
+
+Beispiel mit netplan (Debian, Ubuntu):
 
 ```yaml title="/etc/netplan/60-vpc.yaml"
 network:

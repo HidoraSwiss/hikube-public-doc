@@ -46,7 +46,7 @@ Auf der Detailseite der VM, Abschnitt **Network & Security**:
 ip -br addr
 ```
 
-**Erwartetes Ergebnis:** eine zusätzliche Schnittstelle pro verbundenem Subnetz. Das Betriebssystem konfiguriert sie nicht automatisch: Sie erscheint zunächst ohne Adresse, zum Beispiel:
+**Erwartetes Ergebnis:** eine zusätzliche Schnittstelle pro verbundenem Subnetz. Unter Debian und Ubuntu konfiguriert das Betriebssystem sie nicht automatisch: Sie erscheint zunächst ohne Adresse, zum Beispiel:
 
 ```
 lo               UNKNOWN        127.0.0.1/8 ::1/128
@@ -54,7 +54,9 @@ enp1s0           UP             10.x.x.x/xx ...
 enp2s0           DOWN
 ```
 
-Aktivieren Sie DHCP auf der sekundären Schnittstelle. Beispiel mit netplan (Ubuntu):
+Die VPC-Adresse wird per DHCP vergeben. Distributionen mit NetworkManager (AlmaLinux, Rocky…) übernehmen sie automatisch; unter Debian und Ubuntu aktivieren Sie DHCP auf der sekundären Schnittstelle. Die DHCP-Lease liefert kein Gateway: Die Standardroute bleibt auf der primären Schnittstelle.
+
+Beispiel mit netplan (Debian, Ubuntu):
 
 ```yaml title="/etc/netplan/60-vpc.yaml"
 network:

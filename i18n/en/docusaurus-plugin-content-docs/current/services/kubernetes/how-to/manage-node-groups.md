@@ -53,7 +53,7 @@ Choose a descriptive name for your groups (`compute`, `web`, `monitoring`, `gpu`
 In the **Node groups** section, expand the group's card, change the desired fields (instance type, node disk size, minimum or maximum number of nodes, exposure), then click **Save**.
 
 :::warning
-Changing the instance type or the disk size replaces all the nodes in the group: the platform creates the new nodes and removes the old ones one by one, without waiting for each replacement to be ready. A single-node group is therefore unavailable during the replacement (several minutes): plan at least two nodes for workloads that cannot tolerate interruption. The project quota must be able to accommodate the additional nodes during the replacement.
+Changing the instance type or the disk size, whether up or down, gradually replaces all the nodes in the group, one at a time: the platform creates the new nodes and removes the old ones one by one, without waiting for each replacement to be ready. Data stored locally on the nodes, outside persistent volumes, is lost. A single-node group is therefore unavailable during the replacement (several minutes): plan at least two nodes for workloads that cannot tolerate interruption. The project quota must be able to accommodate the additional nodes during the replacement.
 :::
 
 :::note
