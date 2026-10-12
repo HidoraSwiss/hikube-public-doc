@@ -10,7 +10,7 @@ import NavigationFooter from '@site/src/components/NavigationFooter';
 Hikube propose un service de **Kubernetes managé** conçu pour offrir une infrastructure hautement disponible, sécurisée et performante.
 Le plan de contrôle est entièrement géré par la plateforme, tandis que les **nœuds workers** sont déployés dans votre projet sous forme de machines virtuelles.
 
-Les clusters se créent, se modifient et se suppriment depuis la [console Hikube](https://console.hikube.cloud), menu **Infrastructure** > **Kubernetes**. Une fois le cluster prêt, vous téléchargez son kubeconfig depuis la console et vous travaillez dans le cluster avec vos outils habituels (`kubectl`, `helm`, client SDK, etc.).
+Les clusters se créent, se modifient et se suppriment depuis la [console Hikube](https://console.hikube.cloud), menu **Infrastructure** > **Kubernetes**. Une fois le cluster prêt, un administrateur du projet télécharge son kubeconfig depuis la console, et vous travaillez dans le cluster avec vos outils habituels (`kubectl`, `helm`, client SDK, etc.).
 
 ---
 
@@ -38,7 +38,7 @@ L'assistant **Créer un cluster** regroupe la configuration en quatre étapes :
 | Étape | Ce que vous définissez |
 |-------|------------------------|
 | **Général** | Nom du cluster, version de Kubernetes, endpoint API (optionnel), taille et nombre d'instances du control plane |
-| **Nœuds** | Un ou plusieurs groupes de nœuds : nom, type d'instance, stockage éphémère, nombre minimum et maximum de nœuds, exposition sur internet, GPU |
+| **Nœuds** | Un ou plusieurs groupes de nœuds : nom, type d'instance, taille du disque des nœuds, nombre minimum et maximum de nœuds, exposition sur internet, GPU |
 | **Addons** | Activation des addons du cluster et surcharge facultative de leurs valeurs Helm |
 | **Vérification** | Récapitulatif avant le déploiement |
 

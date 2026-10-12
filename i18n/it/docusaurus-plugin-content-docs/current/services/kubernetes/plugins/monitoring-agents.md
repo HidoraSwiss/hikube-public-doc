@@ -25,9 +25,9 @@ La pagina di dettaglio del cluster mostra **Monitoring Agents** nella sezione **
 L'accesso alle dashboard di monitoraggio del progetto non è disponibile nella console; contatti il supporto.
 :::
 
-## Sovrascrivere la configurazione
+## Configurazione
 
-Una volta selezionato l'addon, compare il campo **Helm Configuration (YAML) — optional**, ma la piattaforma non lo applica per questo addon: una sovrascrittura inserita qui resta senza effetto. Le destinazioni delle metriche e dei log sono definite dalla piattaforma. Per adattare il comportamento degli agenti (risorse, filtri di raccolta), contatti il supporto.
+Questo addon non prevede sovrascrittura Helm: si può soltanto attivare o disattivare. Le destinazioni delle metriche e dei log sono definite dalla piattaforma. Per adattare il comportamento degli agenti (risorse, filtri di raccolta), contatti il supporto.
 
 ## Utilizzo nel cluster
 

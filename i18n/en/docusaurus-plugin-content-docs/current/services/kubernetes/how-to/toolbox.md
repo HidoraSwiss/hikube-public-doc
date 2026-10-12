@@ -14,6 +14,8 @@ This guide explains how to access a Hikube Kubernetes cluster once it is created
 
 The browser downloads the `kubeconfig-<cluster-name>.yaml` file. It grants administrator access to the cluster.
 
+The download is reserved for project administrators. For other members, the **Kubeconfig** button is disabled with the note "Reserved for project administrators."
+
 :::warning
 Keep this file in a safe place (secrets manager, vault) and never commit it to version control. To give access to other people, create dedicated permissions for them with RBAC rather than sharing this file.
 :::
@@ -122,4 +124,4 @@ kubectl logs <pod-name> -n <namespace> --previous
 kubectl get pods -A | grep -E "cilium|coredns|ingress-nginx|cert-manager"
 ```
 
-If a cluster stays **Creating**, if an addon does not deploy or if a node never joins the cluster, [contact support](mailto:support@hidora.io), specifying the cluster name and the project.
+If a cluster stays **Creating** or changes to **Error**, if an addon does not deploy or if a node never joins the cluster, [contact support](mailto:support@hidora.io), specifying the cluster name and the project.

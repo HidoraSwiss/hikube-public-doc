@@ -9,7 +9,7 @@ Diese Anleitung erklärt, wie Sie Flux CD auf einem Hikube-Kubernetes-Cluster ak
 ## Voraussetzungen
 
 - Ein bereitgestellter Hikube-Kubernetes-Cluster (siehe [Schnellstart](../quick-start.md))
-- Die über die Konsole heruntergeladene kubeconfig des Clusters (Schaltfläche **Kubeconfig**)
+- Die über die Konsole heruntergeladene kubeconfig des Clusters (Schaltfläche **Kubeconfig**, Projektadministratoren vorbehalten)
 - Ein vom Cluster aus erreichbares Git-Repository mit Ihren Kubernetes-Manifesten
 
 ## Schritte

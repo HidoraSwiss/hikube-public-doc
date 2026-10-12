@@ -9,7 +9,7 @@ Les groupes de nœuds permettent de segmenter les nœuds de votre cluster Kubern
 ## Prérequis
 
 - Un cluster Kubernetes Hikube déployé (voir le [démarrage rapide](../quick-start.md))
-- Le kubeconfig du cluster téléchargé depuis la console (bouton **Kubeconfig**), pour vérifier les nœuds avec `kubectl`
+- Le kubeconfig du cluster téléchargé depuis la console (bouton **Kubeconfig**, réservé aux administrateurs du projet), pour vérifier les nœuds avec `kubectl`
 
 ## Étapes
 
@@ -37,7 +37,7 @@ La page de modification présente les sections **Informations générales**, **G
 1. Dans la section **Groupes de nœuds**, cliquez sur **Ajouter un groupe de nœuds**. Une nouvelle carte s'ouvre.
 2. Renseignez les champs :
    - **Nom du groupe** : par exemple `compute` (3 à 16 caractères : minuscules, chiffres et tirets) ;
-   - **Taille du stockage éphémère** : par exemple 100 Go ;
+   - **Taille du disque des nœuds** : par exemple 100 Go ;
    - **Nombre minimum de nœuds** et **Nombre maximum de nœuds** : par exemple 1 et 10 ;
    - **Type d'instance** : par exemple série **Universel (U)**, taille **4XLarge** (`u1.4xlarge`) ;
    - **Exposé sur internet (IP Publique)** : à activer seulement si ce groupe doit recevoir le trafic entrant (Ingress NGINX) ;
@@ -50,10 +50,10 @@ Choisissez un nom descriptif pour vos groupes (`compute`, `web`, `monitoring`, `
 
 ### 4. Modifier un groupe existant
 
-Dans la section **Groupes de nœuds**, dépliez la carte du groupe, modifiez les champs souhaités (type d'instance, stockage éphémère, nombre minimum ou maximum de nœuds, exposition) puis cliquez sur **Enregistrer**.
+Dans la section **Groupes de nœuds**, dépliez la carte du groupe, modifiez les champs souhaités (type d'instance, taille du disque des nœuds, nombre minimum ou maximum de nœuds, exposition) puis cliquez sur **Enregistrer**.
 
 :::warning
-Le changement de type d'instance remplace tous les nœuds du groupe : la plateforme crée les nouveaux nœuds et retire les anciens un par un, sans attendre que chaque remplaçant soit prêt. Un groupe d'un seul nœud est donc indisponible pendant le remplacement (plusieurs minutes) : prévoyez au moins deux nœuds pour les charges qui ne tolèrent pas d'interruption. Le quota du projet doit pouvoir accueillir les nœuds supplémentaires pendant le remplacement.
+Le changement de type d'instance ou de taille du disque remplace tous les nœuds du groupe : la plateforme crée les nouveaux nœuds et retire les anciens un par un, sans attendre que chaque remplaçant soit prêt. Un groupe d'un seul nœud est donc indisponible pendant le remplacement (plusieurs minutes) : prévoyez au moins deux nœuds pour les charges qui ne tolèrent pas d'interruption. Le quota du projet doit pouvoir accueillir les nœuds supplémentaires pendant le remplacement.
 :::
 
 :::note

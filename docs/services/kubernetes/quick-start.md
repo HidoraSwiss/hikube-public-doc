@@ -16,6 +16,7 @@ Ce guide vous accompagne dans la création de votre premier cluster Kubernetes d
 - **Un compte Hikube** et l'accès à la [console Hikube](https://console.hikube.cloud)
 - **Un projet** disposant de quotas suffisants (CPU, mémoire, stockage)
 - **`kubectl` installé sur votre poste**, pour travailler dans le cluster une fois créé
+- **Le rôle administrateur du projet**, pour télécharger le kubeconfig du cluster (étape 4)
 - **Notions de base Kubernetes** (pods, services, deployments)
 
 ---
@@ -53,7 +54,7 @@ Un premier groupe, `worker-pool-1`, est déjà présent. Dépliez-le et renseign
 | Champ | Valeur pour ce guide |
 |-------|----------------------|
 | **Nom du groupe** | `worker-pool-1` |
-| **Taille du stockage éphémère** | 20 Go |
+| **Taille du disque des nœuds** | 20 Go |
 | **Nombre minimum de nœuds** | 1 |
 | **Nombre maximum de nœuds** | 3 |
 | **Type d'instance** | Série **Standard (S)**, taille **Large** (`s1.large`, 4 vCPU, 8 Go) |
@@ -74,6 +75,10 @@ Cliquez sur **Suivant**.
 ### Vérification
 
 Le **Récapitulatif** reprend l'identité du cluster, le control plane, les groupes de nœuds et les **Extensions & Addons activés**. Vérifiez la configuration, puis cliquez sur **Déployer**.
+
+:::note Premier cluster du projet
+Pour le premier cluster d'un projet, la plateforme prépare d'abord l'environnement Kubernetes du projet, ce qui prend quelques minutes. L'assistant affiche alors le bandeau **Préparation de l'environnement Kubernetes** (« Préparation de l'environnement Kubernetes du projet, la création reprendra automatiquement. ») et relance la création seul, sans perdre votre configuration. Le bouton **Annuler** arrête l'attente.
+:::
 
 ![Assistant Kubernetes, étape Vérification : récapitulatif du cluster](/img/console/kubernetes/wizard-review.fr.png)
 
@@ -99,6 +104,8 @@ Cliquez sur le cluster (ou **Voir les détails** dans son menu **Actions**) pour
 ## Étape 4 : Récupérer les identifiants
 
 Sur la page de détail du cluster, section **Actions**, cliquez sur **Kubeconfig**. Le navigateur télécharge le fichier `kubeconfig-demo-cluster.yaml` et la console confirme : « Le fichier kubeconfig a été téléchargé. »
+
+Le kubeconfig est réservé aux administrateurs du projet. Pour les autres membres, le bouton **Kubeconfig** est désactivé avec la mention « Réservé aux administrateurs du projet. »
 
 ![Page de détail d'un cluster Kubernetes, avec le bouton Kubeconfig dans la carte Actions](/img/console/kubernetes/cluster-detail.fr.png)
 
@@ -229,9 +236,11 @@ Pour publier l'application sous votre propre domaine, créez un enregistrement D
 
 | Symptôme | Vérification |
 |----------|--------------|
-| Le bouton **Suivant** reste grisé et une jauge **Quotas du projet** est dépassée | Le projet n'a pas assez de quota pour le control plane et le **maximum** de nœuds de chaque groupe. Réduisez le nombre maximum de nœuds, le gabarit ou le stockage éphémère. |
-| Le cluster reste **En création** au-delà de quelques dizaines de minutes | [Contactez le support](mailto:support@hidora.io) en indiquant le nom du cluster et le projet. |
+| Le bouton **Suivant** reste grisé et une jauge **Quotas du projet** est dépassée | Le projet n'a pas assez de quota pour le control plane et le **maximum** de nœuds de chaque groupe. Réduisez le nombre maximum de nœuds, le gabarit ou la taille du disque des nœuds. |
+| Après **Déployer**, le bandeau **Préparation de l'environnement Kubernetes** reste affiché | Premier cluster du projet : patientez, la console relance la création seule. Si elle affiche « L'environnement Kubernetes du projet n'est toujours pas prêt. », réessayez quelques minutes plus tard : votre configuration est conservée. |
+| Le cluster reste **En création** au-delà de quelques dizaines de minutes, ou passe à **Erreur** | [Contactez le support](mailto:support@hidora.io) en indiquant le nom du cluster et le projet. |
 | **Kubeconfig** affiche « Impossible d'obtenir le fichier kubeconfig. » | Attendez que le cluster soit **Prêt**, puis réessayez. |
+| Le bouton **Kubeconfig** est désactivé (« Réservé aux administrateurs du projet. ») | Le kubeconfig est réservé aux administrateurs du projet : adressez-vous à un administrateur du projet. |
 | `kubectl get nodes` ne liste aucun nœud `Ready` | Vérifiez dans **Pools de Nœuds** le nombre de nœuds actifs, puis `kubectl describe node <nom-du-nœud>`. |
 | Pods en `Pending` | `kubectl describe pod <nom-du-pod>` ; si les nœuds sont saturés, augmentez le **Nombre maximum de nœuds** via **Modifier**. |
 | L'Ingress ne répond pas | Vérifiez que l'addon **Ingress NGINX** est activé et qu'au moins un groupe est **Exposé sur internet (IP Publique)**. |

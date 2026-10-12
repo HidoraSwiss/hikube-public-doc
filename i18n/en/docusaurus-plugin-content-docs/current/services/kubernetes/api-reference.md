@@ -72,7 +72,7 @@ See the [Upgrade a cluster](how-to/upgrade-cluster.md) guide for version upgrade
 | `minReplicas`      | `integer`       | Minimum number of nodes (0 = scale-to-zero possible)             | `0`         |
 | `maxReplicas`      | `integer`       | Maximum number of nodes                                          | `10`        |
 | `instanceType`     | `string`        | Node flavor (see [instance types](../compute/api-reference.md#instance-types)) | `u1.medium` |
-| `ephemeralStorage` | `int`/`string`  | Ephemeral storage size per node (e.g., `20Gi`)                   | `20Gi`      |
+| `ephemeralStorage` | `int`/`string`  | Size of each node's disk (e.g., `20Gi`), "Node disk size" in the console | `20Gi`      |
 | `resources`        | `object`        | Explicit `cpu` / `memory` override per node                      | `{}`        |
 | `gpus`             | `[]object`      | GPUs attached to the nodes (`gpus[].name`) — see [GPU with Kubernetes](../gpu/api-reference.md) | `[]` |
 | `roles`            | `[]string`      | Node roles (e.g., `ingress-nginx`)                               | `[]`        |
@@ -115,7 +115,7 @@ The `addons` block enables the add-ons installed in the tenant cluster. Most exp
 | `fluxcd`               | `enabled`, `valuesOverride`                     | GitOps (Flux)                                             |
 | `gatewayAPI`           | `enabled`                                       | Gateway API support                                       |
 | `gpuOperator`          | `enabled`, `valuesOverride`                     | NVIDIA GPU Operator (**required** for GPU workers)        |
-| `monitoringAgents`     | `enabled`, `valuesOverride`                     | Monitoring/logging agents                                 |
+| `monitoringAgents`     | `enabled`                                       | Monitoring/logging agents (`valuesOverride` is not applied) |
 | `velero`               | `enabled`, `valuesOverride`                     | Backup / restore                                          |
 | `cilium`               | `valuesOverride`                                | Cilium CNI (always on, override only)                     |
 | `coredns`              | `valuesOverride`                                | CoreDNS (always on, override only)                        |

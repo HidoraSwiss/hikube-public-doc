@@ -72,7 +72,7 @@ Voir le guide [Mettre à jour un cluster](how-to/upgrade-cluster.md) pour la mon
 | `minReplicas`      | `integer`       | Nombre minimal de nœuds (0 = scale-to-zero possible)              | `0`         |
 | `maxReplicas`      | `integer`       | Nombre maximal de nœuds                                           | `10`        |
 | `instanceType`     | `string`        | Gabarit des nœuds (voir [types d'instances](../compute/api-reference.md#types-dinstances)) | `u1.medium` |
-| `ephemeralStorage` | `int`/`string`  | Taille du stockage éphémère par nœud (ex : `20Gi`)               | `20Gi`      |
+| `ephemeralStorage` | `int`/`string`  | Taille du disque de chaque nœud (ex : `20Gi`), « Taille du disque des nœuds » dans la console | `20Gi`      |
 | `resources`        | `object`        | Surcharge explicite `cpu` / `memory` par nœud                    | `{}`        |
 | `gpus`             | `[]object`      | GPU attachés aux nœuds (`gpus[].name`) — voir [GPU avec Kubernetes](../gpu/api-reference.md) | `[]` |
 | `roles`            | `[]string`      | Rôles des nœuds (ex : `ingress-nginx`)                            | `[]`        |
@@ -115,7 +115,7 @@ Le bloc `addons` active les modules complémentaires installés dans le cluster 
 | `fluxcd`               | `enabled`, `valuesOverride`                     | GitOps (Flux)                                             |
 | `gatewayAPI`           | `enabled`                                       | Support de la Gateway API                                 |
 | `gpuOperator`          | `enabled`, `valuesOverride`                     | NVIDIA GPU Operator (**requis** pour les workers GPU)     |
-| `monitoringAgents`     | `enabled`, `valuesOverride`                     | Agents de monitoring/logs                                 |
+| `monitoringAgents`     | `enabled`                                       | Agents de monitoring/logs (`valuesOverride` n'est pas appliqué) |
 | `velero`               | `enabled`, `valuesOverride`                     | Sauvegarde / restauration                                 |
 | `cilium`               | `valuesOverride`                                | CNI Cilium (toujours actif, surcharge uniquement)         |
 | `coredns`              | `valuesOverride`                                | CoreDNS (toujours actif, surcharge uniquement)            |

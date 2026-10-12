@@ -9,7 +9,7 @@ Questa guida spiega come esporre un'applicazione in HTTPS con un certificato TLS
 ## Prerequisiti
 
 - Un cluster Kubernetes Hikube distribuito (vedere l'[avvio rapido](../quick-start.md))
-- Il kubeconfig del cluster scaricato dalla console (pulsante **Kubeconfig**)
+- Il kubeconfig del cluster scaricato dalla console (pulsante **Kubeconfig**, riservato agli amministratori del progetto)
 - Un nome di dominio di cui gestisce la zona DNS
 
 ## Passaggi

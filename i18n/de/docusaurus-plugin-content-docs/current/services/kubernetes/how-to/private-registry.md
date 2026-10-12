@@ -13,7 +13,7 @@ Diese Anleitung verwendet die nativen Kubernetes-Mechanismen zur Authentifizieru
 ## Voraussetzungen
 
 - Ein bereitgestellter Hikube-Kubernetes-Cluster (siehe [Schnellstart](../quick-start.md))
-- Die über die Konsole heruntergeladene kubeconfig des Clusters (Schaltfläche **Kubeconfig**), in Ihre Sitzung geladen (`export KUBECONFIG=~/Downloads/kubeconfig-<cluster-name>.yaml`)
+- Die über die Konsole heruntergeladene kubeconfig des Clusters (Schaltfläche **Kubeconfig**, Projektadministratoren vorbehalten), in Ihre Sitzung geladen (`export KUBECONFIG=~/Downloads/kubeconfig-<cluster-name>.yaml`)
 - Die Zugangsdaten für Ihre private Registry (URL, Benutzername, Passwort oder Token)
 
 ## Schritte

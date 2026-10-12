@@ -15,8 +15,8 @@ Cilium gehört zur **Advanced Configuration** des Schritts **Addons**: Es ist im
 2. Geben Sie Ihre Werte in **Helm Configuration (YAML) — optional** ein.
 3. Bestätigen Sie mit **Next** und dann **Create cluster** (Erstellung) oder mit **Save** (Änderung).
 
-:::warning
-Bei einem bestehenden Cluster speichert die Konsole ein erstes über **Edit** eingegebenes Override nicht: Die Schaltfläche **Save** bestätigt die Aktualisierung, der Wert wird jedoch ignoriert. Legen Sie das Override bei der Erstellung des Clusters fest oder [wenden Sie sich an den Support](mailto:support@hidora.io). Ein bei der Erstellung festgelegtes Override bleibt über **Edit** änderbar.
+:::note
+Das Leeren des Feldes über **Edit** entfernt ein bereits auf den Cluster angewendetes Override nicht. Um zu den Standardwerten zurückzukehren, [wenden Sie sich an den Support](mailto:support@hidora.io).
 :::
 
 Auf der Detailseite des Clusters zeigt die Zeile **CNI** im Abschnitt **Network** **Custom** an, wenn eine Cilium-Konfiguration angewendet wird.

@@ -9,7 +9,7 @@ Diese Anleitung erklärt, wie Sie auf einem Hikube-Kubernetes-Cluster die Erfass
 ## Voraussetzungen
 
 - Ein bereitgestellter Hikube-Kubernetes-Cluster (siehe [Schnellstart](../quick-start.md))
-- Die über die Konsole heruntergeladene kubeconfig des Clusters (Schaltfläche **Kubeconfig**)
+- Die über die Konsole heruntergeladene kubeconfig des Clusters (Schaltfläche **Kubeconfig**, Projektadministratoren vorbehalten)
 
 ## Schritte
 

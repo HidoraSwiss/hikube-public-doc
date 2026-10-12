@@ -9,7 +9,7 @@ Questa guida spiega come gestire la configurazione di rete del cluster Kubernete
 ## Prerequisiti
 
 - Un cluster Kubernetes Hikube distribuito (vedere l'[avvio rapido](../quick-start.md))
-- Il kubeconfig del cluster scaricato dalla console (pulsante **Kubeconfig**) e caricato nella sessione:
+- Il kubeconfig del cluster scaricato dalla console (pulsante **Kubeconfig**, riservato agli amministratori del progetto) e caricato nella sessione:
   ```bash
   export KUBECONFIG=~/Downloads/kubeconfig-<nome-del-cluster>.yaml
   ```
@@ -111,15 +111,13 @@ La policy `default-deny-all` blocca **tutto il traffico** nel namespace, compres
 
 ### 4. Utilizzare Hubble per il debugging di rete
 
-Hubble non è attivato per impostazione predefinita. Per attivarlo, alla creazione del cluster espanda **Cilium** nella sezione **Advanced Configuration** del passaggio **Addons** e inserisca la seguente sovrascrittura in **Helm Configuration (YAML) — optional**:
+Hubble non è attivato per impostazione predefinita. Per attivarlo, espanda **Cilium** nella sezione **Advanced Configuration** del passaggio **Addons** (alla creazione) o di **Edit** > **Extensions & Addons** (su un cluster esistente) e inserisca la seguente sovrascrittura in **Helm Configuration (YAML) — optional**:
 
 ```yaml title="cilium-override.yaml"
 cilium:
   hubble:
     enabled: true
 ```
-
-Su un cluster esistente, la console non salva una prima sovrascrittura Cilium inserita da **Edit**: [contatti il supporto](mailto:support@hidora.io) per applicarla.
 
 Una volta ridistribuito Cilium, utilizzi la CLI Hubble integrata nei pod Cilium:
 

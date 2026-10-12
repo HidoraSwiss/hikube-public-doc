@@ -15,8 +15,8 @@ CoreDNS fait partie de la **Configuration avancée** de l'étape **Addons** : il
 2. Saisissez vos valeurs dans **Configuration Helm (YAML) — optionnel**.
 3. Validez avec **Suivant** puis **Déployer** (création) ou **Enregistrer** (modification).
 
-:::warning
-Sur un cluster existant, la console n'enregistre pas une première surcharge saisie depuis **Modifier** : le bouton **Enregistrer** confirme la mise à jour, mais la valeur est ignorée. Définissez la surcharge à la création du cluster, ou [contactez le support](mailto:support@hidora.io). Une surcharge définie à la création reste modifiable depuis **Modifier**.
+:::note
+Vider le champ depuis **Modifier** ne retire pas une surcharge déjà appliquée au cluster. Pour revenir aux valeurs par défaut, [contactez le support](mailto:support@hidora.io).
 :::
 
 Sur la page de détail du cluster, la ligne **DNS** de la section **Réseau** indique **CoreDNS** lorsqu'une configuration CoreDNS est appliquée.

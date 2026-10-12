@@ -9,7 +9,7 @@ Node groups let you segment the nodes of your Kubernetes cluster according to th
 ## Prerequisites
 
 - A deployed Hikube Kubernetes cluster (see the [quick start](../quick-start.md))
-- The cluster kubeconfig downloaded from the console (**Kubeconfig** button), to check the nodes with `kubectl`
+- The cluster kubeconfig downloaded from the console (**Kubeconfig** button, reserved for project administrators), to check the nodes with `kubectl`
 
 ## Steps
 
@@ -37,7 +37,7 @@ The edit page shows the **General information**, **Node groups** and **Extension
 1. In the **Node groups** section, click **Add node group**. A new card opens.
 2. Fill in the fields:
    - **Group name**: for example `compute` (3 to 16 characters: lowercase letters, digits and hyphens);
-   - **Ephemeral storage size**: for example 100 GB;
+   - **Node disk size**: for example 100 GB;
    - **Minimum nodes** and **Maximum nodes**: for example 1 and 10;
    - **Instance type**: for example **Universal (U)** series, size **4XLarge** (`u1.4xlarge`);
    - **Exposed on the internet (Public IP)**: enable only if this group must receive incoming traffic (Ingress NGINX);
@@ -50,10 +50,10 @@ Choose a descriptive name for your groups (`compute`, `web`, `monitoring`, `gpu`
 
 ### 4. Modify an existing group
 
-In the **Node groups** section, expand the group's card, change the desired fields (instance type, ephemeral storage, minimum or maximum number of nodes, exposure), then click **Save**.
+In the **Node groups** section, expand the group's card, change the desired fields (instance type, node disk size, minimum or maximum number of nodes, exposure), then click **Save**.
 
 :::warning
-Changing the instance type replaces all the nodes in the group: the platform creates the new nodes and removes the old ones one by one, without waiting for each replacement to be ready. A single-node group is therefore unavailable during the replacement (several minutes): plan at least two nodes for workloads that cannot tolerate interruption. The project quota must be able to accommodate the additional nodes during the replacement.
+Changing the instance type or the disk size replaces all the nodes in the group: the platform creates the new nodes and removes the old ones one by one, without waiting for each replacement to be ready. A single-node group is therefore unavailable during the replacement (several minutes): plan at least two nodes for workloads that cannot tolerate interruption. The project quota must be able to accommodate the additional nodes during the replacement.
 :::
 
 :::note

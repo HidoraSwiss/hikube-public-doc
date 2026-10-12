@@ -9,7 +9,7 @@ This guide explains how to expose an application over HTTPS with an automatic TL
 ## Prerequisites
 
 - A deployed Hikube Kubernetes cluster (see the [quick start](../quick-start.md))
-- The cluster kubeconfig downloaded from the console (**Kubeconfig** button)
+- The cluster kubeconfig downloaded from the console (**Kubeconfig** button, reserved for project administrators)
 - A domain name whose DNS zone you manage
 
 ## Steps

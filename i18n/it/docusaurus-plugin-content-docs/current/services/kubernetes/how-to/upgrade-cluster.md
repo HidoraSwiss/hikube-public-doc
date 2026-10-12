@@ -9,7 +9,7 @@ Questa guida spiega come aggiornare la versione di Kubernetes di un cluster Hiku
 ## Prerequisiti
 
 - Un cluster Kubernetes Hikube distribuito (vedere l'[avvio rapido](../quick-start.md))
-- Il kubeconfig del cluster scaricato dalla console (pulsante **Kubeconfig**), per verificare il risultato
+- Il kubeconfig del cluster scaricato dalla console (pulsante **Kubeconfig**, riservato agli amministratori del progetto), per verificare il risultato
 
 ## Passaggi
 
@@ -43,6 +43,12 @@ Esegua gli aggiornamenti in modo incrementale (ad esempio, da v1.29 a v1.30). No
 :::note
 Se la versione attuale del cluster non è più proposta dalla piattaforma, la console lo indica («current version») e la invita a selezionare una versione supportata.
 :::
+
+:::warning Nessun ritorno indietro
+Una volta applicato, un aggiornamento di versione è definitivo. Un ritorno a una versione inferiore viene rifiutato: la console mostra un errore (`version downgrades are not supported`, codice `70206`) e il cluster resta nella versione attuale.
+:::
+
+Se la piattaforma non riesce ad applicare l'aggiornamento, il cluster passa allo stato **Error** nell'elenco. Può continuare a funzionare con la configurazione precedente, e tornare alla versione in servizio resta possibile. [Contatti il supporto](mailto:support@hidora.io) indicando il nome del cluster e il progetto.
 
 ### 4. Seguire il rolling update
 

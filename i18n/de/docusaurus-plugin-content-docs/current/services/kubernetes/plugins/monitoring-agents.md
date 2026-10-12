@@ -25,9 +25,9 @@ Die Detailseite des Clusters zeigt **Monitoring Agents** im Abschnitt **Extensio
 Der Zugriff auf die Monitoring-Dashboards des Projekts wird in der Konsole nicht angeboten; wenden Sie sich an den Support.
 :::
 
-## Die Konfiguration überschreiben
+## Konfiguration
 
-Sobald das Addon ausgewählt ist, erscheint das Feld **Helm Configuration (YAML) — optional**, die Plattform wendet es für dieses Addon jedoch nicht an: Ein hier eingegebenes Override bleibt wirkungslos. Die Ziele der Metriken und Logs werden von der Plattform festgelegt. Um das Verhalten der Agents anzupassen (Ressourcen, Erfassungsfilter), wenden Sie sich an den Support.
+Dieses Addon hat kein Helm-Override: Es wird nur aktiviert oder deaktiviert. Die Ziele der Metriken und Logs werden von der Plattform festgelegt. Um das Verhalten der Agents anzupassen (Ressourcen, Erfassungsfilter), wenden Sie sich an den Support.
 
 ## Nutzung im Cluster
 

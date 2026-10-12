@@ -9,7 +9,7 @@ Ce guide explique comment activer Flux CD sur un cluster Kubernetes Hikube et le
 ## Prérequis
 
 - Un cluster Kubernetes Hikube déployé (voir le [démarrage rapide](../quick-start.md))
-- Le kubeconfig du cluster téléchargé depuis la console (bouton **Kubeconfig**)
+- Le kubeconfig du cluster téléchargé depuis la console (bouton **Kubeconfig**, réservé aux administrateurs du projet)
 - Un dépôt Git accessible depuis le cluster, contenant vos manifestes Kubernetes
 
 ## Étapes

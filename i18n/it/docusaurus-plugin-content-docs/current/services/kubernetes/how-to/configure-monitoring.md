@@ -9,7 +9,7 @@ Questa guida spiega come attivare la raccolta di metriche e log su un cluster Ku
 ## Prerequisiti
 
 - Un cluster Kubernetes Hikube distribuito (vedere l'[avvio rapido](../quick-start.md))
-- Il kubeconfig del cluster scaricato dalla console (pulsante **Kubeconfig**)
+- Il kubeconfig del cluster scaricato dalla console (pulsante **Kubeconfig**, riservato agli amministratori del progetto)
 
 ## Passaggi
 

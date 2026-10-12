@@ -13,7 +13,7 @@ This guide uses native Kubernetes mechanisms for image registry authentication. 
 ## Prerequisites
 
 - A deployed Hikube Kubernetes cluster (see the [quick start](../quick-start.md))
-- The cluster kubeconfig downloaded from the console (**Kubeconfig** button) and loaded in your session (`export KUBECONFIG=~/Downloads/kubeconfig-<cluster-name>.yaml`)
+- The cluster kubeconfig downloaded from the console (**Kubeconfig** button, reserved for project administrators) and loaded in your session (`export KUBECONFIG=~/Downloads/kubeconfig-<cluster-name>.yaml`)
 - The credentials for your private registry (URL, username, password or token)
 
 ## Steps

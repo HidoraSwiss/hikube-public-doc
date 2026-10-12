@@ -9,7 +9,7 @@ L'autoscaling permet à votre cluster Hikube d'ajuster automatiquement le nombre
 ## Prérequis
 
 - Un cluster Kubernetes Hikube déployé (voir le [démarrage rapide](../quick-start.md))
-- Le kubeconfig du cluster téléchargé depuis la console (bouton **Kubeconfig**)
+- Le kubeconfig du cluster téléchargé depuis la console (bouton **Kubeconfig**, réservé aux administrateurs du projet)
 
 ## Étapes
 

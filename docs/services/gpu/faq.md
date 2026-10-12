@@ -114,7 +114,7 @@ lspci | grep -i nvidia   # le GPU est visible
 nvidia-smi               # les drivers sont installés
 ```
 
-**En Kubernetes** (avec le kubeconfig du cluster, bouton **Kubeconfig** de la page du cluster) :
+**En Kubernetes** (avec le kubeconfig du cluster, bouton **Kubeconfig** de la page du cluster, réservé aux administrateurs du projet) :
 
 ```bash
 kubectl get nodes -o custom-columns=NAME:.metadata.name,GPU:.status.allocatable.'nvidia\.com/gpu'

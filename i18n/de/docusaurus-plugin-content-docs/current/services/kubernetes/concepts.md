@@ -14,7 +14,7 @@ title: Konzepte
 | **Control Plane** | Komponenten, die den Cluster steuern (API Server, Scheduler, Controller Manager, etcd), von Hikube gehostet. |
 | **Node-Gruppe** | Gruppe homogener Worker-Nodes (gleicher Instanztyp, gleicher Speicher) mit eigenen Autoscaling-Grenzen. Die Detailseite des Clusters zeigt sie unter **Node Pools** an. |
 | **Addon** | Optionale Komponente, die von der Plattform im Cluster installiert und gewartet wird (Cert-Manager, Ingress NGINX usw.). |
-| **Kubeconfig** | Zugriffsdatei für den Cluster, die über die Detailseite des Clusters in der Konsole heruntergeladen wird. |
+| **Kubeconfig** | Zugriffsdatei für den Cluster, die über die Detailseite des Clusters in der Konsole heruntergeladen wird. Der Download ist den Projektadministratoren vorbehalten. |
 
 ## Architektur
 
@@ -158,7 +158,7 @@ Die Node-Gruppen werden im Schritt **Nodes** des Assistenten konfiguriert (Titel
 | Feld | Beschreibung | Standardwert |
 |------|--------------|--------------|
 | **Group name** | 3 bis 16 Zeichen: Kleinbuchstaben, Ziffern und Bindestriche; beginnt mit einem Buchstaben, endet mit einem Buchstaben oder einer Ziffer | `worker-pool-1`, `worker-pool-2`… |
-| **Ephemeral storage size** | Speicherplatz, der den Pods auf jedem Node zugewiesen wird, in GB (mindestens 5 GB) | 20 GB |
+| **Node disk size** | Größe der Festplatte jedes Nodes, in GB (mindestens 5 GB): Speicherplatz für die Pods, ihre Images und ihre Logs | 20 GB |
 | **Minimum nodes** | Anzahl der Nodes, die immer vorhanden sind. 0 ist zulässig | 1 |
 | **Maximum nodes** | Obergrenze des Autoscalings (zwischen 1 und 100, größer oder gleich dem Minimum; empfohlenes Maximum 50) | 3 |
 | **Instance type** | Größe der Nodes, gewählt nach Serie und dann nach Größe | keiner (Auswahl erforderlich) |
@@ -235,7 +235,7 @@ Benutzerdefinierte Node-Rollen (außer der Erreichbarkeit aus dem Internet) und 
 :::tip Best Practices für Node-Gruppen
 - Passen Sie Minimum und Maximum der Nodes an Ihren Skalierungsbedarf an.
 - Wählen Sie eine Serie, die zur Workload passt (S für allgemeine, U für ausgewogene, M für speicherintensive Workloads).
-- Sehen Sie ausreichend ephemeren Speicher für Images, Logs und Caches vor.
+- Sehen Sie eine ausreichend große Node-Festplatte für Images, Logs und Caches vor.
 - Trennen Sie die Rollen nach Gruppen: eine erreichbare Gruppe für eingehenden Traffic, interne Gruppen für Rechenlast.
 :::
 
@@ -272,13 +272,15 @@ Von der Konsole geprüfte Abhängigkeiten:
 
 ### Überschreiben der Helm-Werte
 
-Jedes Addon (außer Gateway API) akzeptiert ein Feld **Helm Configuration (YAML) — optional**. Der YAML-Wert wird direkt an das Helm-Chart des Addons übergeben und überschreibt dessen Standardwerte. Er muss ein YAML-Mapping (`key: value`) sein; die Konsole lehnt ungültiges YAML ab. Das Link-Symbol neben dem Namen des Addons öffnet die Dokumentation des Charts.
+Jedes Addon (außer Gateway API und Monitoring Agents) akzeptiert ein Feld **Helm Configuration (YAML) — optional**. Der YAML-Wert wird direkt an das Helm-Chart des Addons übergeben und überschreibt dessen Standardwerte. Er muss ein YAML-Mapping (`key: value`) sein; die Konsole lehnt ungültiges YAML ab. Das Link-Symbol neben dem Namen des Addons öffnet seine Seite in dieser Dokumentation.
+
+Eine Überschreibung wird bei der Erstellung oder über **Edit** eingegeben. Beim Bearbeiten entfernt das Leeren des Feldes eine bereits auf den Cluster angewendete Überschreibung nicht: Um zu den Standardwerten zurückzukehren, [wenden Sie sich an den Support](mailto:support@hidora.io).
 
 ---
 
 ## Zugriff auf den Cluster
 
-Sobald der Cluster bereit ist, lädt die Schaltfläche **Kubeconfig** im Abschnitt **Actions** der Detailseite die Datei `kubeconfig-<cluster-name>.yaml` herunter. Diese Datei gewährt administrativen Zugriff auf den Cluster mit `kubectl`, `helm` oder jedem anderen Kubernetes-Client. Das darin enthaltene Client-Zertifikat ist ab der Erstellung des Clusters ein Jahr lang gültig. Siehe [Zugriff und Werkzeuge](./how-to/toolbox.md).
+Sobald der Cluster bereit ist, lädt die Schaltfläche **Kubeconfig** im Abschnitt **Actions** der Detailseite die Datei `kubeconfig-<cluster-name>.yaml` herunter. Diese Schaltfläche ist den Projektadministratoren vorbehalten; für die übrigen Mitglieder ist sie deaktiviert. Diese Datei gewährt administrativen Zugriff auf den Cluster mit `kubectl`, `helm` oder jedem anderen Kubernetes-Client. Das darin enthaltene Client-Zertifikat ist ab der Erstellung des Clusters ein Jahr lang gültig. Siehe [Zugriff und Werkzeuge](./how-to/toolbox.md).
 
 Die API-Adresse des Clusters wird durch das Feld **API Endpoint (Host)** im Schritt **General** festgelegt. Es ist optional: Bleibt es leer, wird sie automatisch von der Plattform erzeugt und ohne Ihr Zutun aufgelöst. Wenn Sie Ihren eigenen Domainnamen eingeben, deckt das Zertifikat des API-Servers ihn ab, der DNS-Eintrag muss jedoch noch bei Ihrem DNS-Anbieter angelegt werden: Fragen Sie beim [Support](mailto:support@hidora.io) nach der Adresse, auf die er zeigen soll.
 
@@ -286,7 +288,8 @@ Die API-Adresse des Clusters wird durch das Feld **API Endpoint (Host)** im Schr
 
 ## Lebenszyklus und Quotas
 
-- **Status**: Ein neu erstellter Cluster erscheint in der Liste **Kubernetes Clusters** mit dem Status **Creating** und danach **Ready**, sobald er betriebsbereit ist.
+- **Status**: Ein neu erstellter Cluster erscheint in der Liste **Kubernetes Clusters** mit dem Status **Creating** und danach **Ready**, sobald er betriebsbereit ist. Der Status **Error** zeigt an, dass die letzte Änderung nicht angewendet werden konnte; der Cluster kann mit seiner vorherigen Konfiguration weiterlaufen. Der Statusfilter der Liste bietet unter anderem **Ready** und **Error** an.
+- **Erster Cluster eines Projekts**: Die Plattform bereitet zunächst einige Minuten lang die Kubernetes-Umgebung des Projekts vor. Der Assistent zeigt das Banner **Preparing the Kubernetes environment** an und startet die Erstellung automatisch neu; die Schaltfläche **Cancel** beendet das Warten. Kann die Umgebung nicht vorbereitet werden, meldet die Konsole dies und versucht es nicht erneut: Wenden Sie sich an den Support.
 - **Quotas**: Die Anzeigen **Project Quotas** des Assistenten zählen die Control Plane und jede Node-Gruppe **mit ihrer maximalen Anzahl an Nodes**. Die Erstellung wird blockiert, wenn das Projekt nicht genügend Quota hat.
-- **Änderung**: Über die Schaltfläche **Edit** können Sie Version, API-Endpoint, Node-Gruppen und Addons ändern. Der Name des Clusters kann nicht geändert werden.
+- **Änderung**: Über die Schaltfläche **Edit** können Sie Version, API-Endpoint, Node-Gruppen und Addons ändern. Der Name des Clusters kann nicht geändert werden. Die Version kann nur erhöht werden: Eine Rückkehr zu einer niedrigeren Version wird abgelehnt.
 - **Löschen**: Die Schaltfläche **Delete** löscht den Cluster nach Bestätigung seines Namens.

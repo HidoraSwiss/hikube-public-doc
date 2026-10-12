@@ -9,7 +9,7 @@ Diese Anleitung erklärt, wie Sie die Netzwerkkonfiguration Ihres Hikube-Kuberne
 ## Voraussetzungen
 
 - Ein bereitgestellter Hikube-Kubernetes-Cluster (siehe [Schnellstart](../quick-start.md))
-- Die über die Konsole heruntergeladene kubeconfig des Clusters (Schaltfläche **Kubeconfig**), in Ihre Sitzung geladen:
+- Die über die Konsole heruntergeladene kubeconfig des Clusters (Schaltfläche **Kubeconfig**, Projektadministratoren vorbehalten), in Ihre Sitzung geladen:
   ```bash
   export KUBECONFIG=~/Downloads/kubeconfig-<cluster-name>.yaml
   ```
@@ -111,15 +111,13 @@ Die Policy `default-deny-all` blockiert **den gesamten Traffic** im Namespace, e
 
 ### 4. Hubble für das Netzwerk-Debugging verwenden
 
-Hubble ist standardmäßig nicht aktiviert. Um es zu aktivieren, klappen Sie bei der Erstellung des Clusters **Cilium** im Abschnitt **Advanced Configuration** des Schritts **Addons** auf und geben Sie das folgende Override in **Helm Configuration (YAML) — optional** ein:
+Hubble ist standardmäßig nicht aktiviert. Um es zu aktivieren, klappen Sie **Cilium** im Abschnitt **Advanced Configuration** des Schritts **Addons** (bei der Erstellung) oder unter **Edit** > **Extensions & Addons** (bei einem bestehenden Cluster) auf und geben Sie das folgende Override in **Helm Configuration (YAML) — optional** ein:
 
 ```yaml title="cilium-override.yaml"
 cilium:
   hubble:
     enabled: true
 ```
-
-Bei einem bestehenden Cluster speichert die Konsole ein erstes über **Edit** eingegebenes Cilium-Override nicht: [Wenden Sie sich an den Support](mailto:support@hidora.io), um es anwenden zu lassen.
 
 Sobald Cilium neu bereitgestellt ist, verwenden Sie die in die Cilium-Pods integrierte Hubble-CLI:
 
