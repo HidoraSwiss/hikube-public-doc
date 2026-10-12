@@ -12,7 +12,13 @@ title: Dépannage
 **Solution** :
 
 1. Patientez quelques minutes et actualisez la page du cluster.
-2. Si le statut ne change pas après une quinzaine de minutes, ou passe à **Erreur** ou **Échec**, [contactez le support](mailto:support@hidora.io) en indiquant le projet et le nom du cluster.
+2. Si le statut ne change pas après une quinzaine de minutes, [contactez le support](mailto:support@hidora.io) en indiquant le projet et le nom du cluster.
+
+### Le cluster passe au statut « Erreur »
+
+**Cause** : la plateforme n'a pas pu appliquer la création du cluster ou sa dernière modification. Après une modification, le cluster peut continuer à fonctionner avec sa configuration précédente.
+
+**Solution** : [contactez le support](mailto:support@hidora.io) en indiquant le projet, le nom du cluster et la modification demandée.
 
 ### Connexion refusée ou délai dépassé
 
@@ -39,9 +45,15 @@ title: Dépannage
 
 ### Erreur lors de l'ajout d'un accès ou d'un utilisateur
 
-**Cause** : le nom de la base ou de l'utilisateur ne respecte pas les règles de nommage.
+**Cause** : le nom de la base ou de l'utilisateur ne respecte pas les règles de nommage, ou l'accès vise une base système (`mysql`, `information_schema`, `performance_schema`, `sys`).
 
-**Solution** : utilisez uniquement des minuscules, des chiffres et des tirets, en commençant par une lettre et en terminant par une lettre ou un chiffre. Les tirets bas (`_`) et les majuscules ne sont pas acceptés. Voir [Concepts MariaDB](./concepts.md#règles-de-nommage).
+**Solution** : utilisez uniquement des minuscules, des chiffres et des tirets, en commençant par une lettre et en terminant par une lettre ou un chiffre. Les tirets bas (`_`) et les majuscules ne sont pas acceptés. Donnez accès à une base applicative, jamais à une base système. Voir [Concepts MariaDB](./concepts.md#règles-de-nommage).
+
+### Une ligne `mysql` apparaît en erreur dans « Gérer les accès »
+
+**Cause** : l'utilisateur a été créé avec l'assistant de création de cluster avant la console v1.3.0, qui lui attribuait un rôle sur la base système `mysql`. Une base système ne peut plus recevoir d'accès, et la mise à jour de l'utilisateur est refusée tant que cette ligne est présente.
+
+**Solution** : retirez la ligne `mysql`, ajoutez si besoin la base applicative de l'utilisateur, puis cliquez sur **Enregistrer**. Le message « Accès mis à jour » confirme l'enregistrement.
 
 ### Espace disque plein
 
@@ -55,7 +67,7 @@ title: Dépannage
    FROM information_schema.tables
    GROUP BY table_schema;
    ```
-2. Augmentez la **Taille du disque (Go)** via **Modifier**, dans la limite du quota de stockage du projet. Voir [Modifier les ressources](./how-to/scale-resources.md).
+2. Augmentez la **Taille du disque (Go)** via **Modifier**, dans la limite du quota de stockage du projet. La taille ne peut pas être réduite ensuite. Voir [Modifier les ressources](./how-to/scale-resources.md).
 3. Supprimez les données obsolètes, puis optimisez les tables concernées (`OPTIMIZE TABLE`).
 
 ### Réplication désynchronisée

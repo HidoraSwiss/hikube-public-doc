@@ -52,11 +52,11 @@ graph TB
 |-------|-------------|
 | **Bucket** | Espace de stockage objet créé depuis la console (menu **Infrastructure** → **Buckets S3**). |
 | **Nom du bucket (console)** | Nom choisi à la création. Il identifie le bucket dans la console et ne peut pas être modifié. |
-| **Nom du bucket S3** | Nom réel du bucket côté S3, généré par la plateforme. C'est **ce nom** que vos clients S3 doivent utiliser. Il est affiché sur la page du bucket. |
+| **Nom du bucket S3** | Nom réel du bucket côté S3, généré par la plateforme sous la forme `bucket-<identifiant>`. C'est **ce nom** que vos clients S3 doivent utiliser : avec le nom de la console, ils reçoivent `AccessDenied`. Il est affiché sur la page du bucket dès que le bucket a un utilisateur. |
 | **Endpoint S3** | Adresse du service S3 (par exemple `prod.s3.hikube.cloud`), affichée sur la page du bucket. |
 | **Utilisateur S3** | Identité rattachée à un bucket, avec un droit **Lecture seule** ou **Lecture / Écriture**. Un bucket peut avoir plusieurs utilisateurs. |
 | **Access Key ID / Secret Access Key** | Paire de clés d'authentification S3 d'un utilisateur, générée à sa création. La clé secrète n'est affichée qu'une seule fois. |
-| **Verrouillage (WORM)** | Object Lock : empêche la suppression ou la modification des objets pendant 365 jours, en mode `COMPLIANCE` (*Write Once, Read Many*). |
+| **Verrouillage (WORM)** | Object Lock (*Write Once, Read Many*) : chaque objet est verrouillé 365 jours après son écriture, en mode `COMPLIANCE` ; personne ne peut le modifier ni le supprimer avant l'échéance. |
 | **Chiffrement au repos (LUKS)** | Chiffrement des données stockées sur disque. |
 
 ---
@@ -83,11 +83,22 @@ Le nom, le verrouillage et le chiffrement se choisissent à la création. La con
 | Lecture / écriture | **Lecture / Écriture** | Lister, lire, écrire et supprimer des objets du bucket |
 | Lecture seule | **Lecture seule** | Lister et lire les objets uniquement |
 
-Le droit d'un utilisateur se change à tout moment avec **Modifier l'accès**. Les clés d'un utilisateur ne peuvent pas être affichées à nouveau : pour obtenir de nouvelles clés, créez un nouvel utilisateur puis supprimez l'ancien.
+Le droit d'un utilisateur se change à tout moment avec **Modifier l'accès**, dans les deux sens : décocher **Accès en lecture seule** le repasse en **Lecture / Écriture**. Les clés d'un utilisateur ne peuvent pas être affichées à nouveau : pour obtenir de nouvelles clés, créez un nouvel utilisateur puis supprimez l'ancien.
 
 ### Portée des clés
 
 Les clés d'un utilisateur donnent accès **uniquement au bucket auquel il est rattaché**. Elles ne permettent pas de lister tous les buckets de l'endpoint : les commandes doivent toujours cibler le bucket (`s3://<nom-du-bucket-s3>/`).
+
+### Suppression
+
+La suppression d'un bucket se confirme en saisissant son nom. Ce qu'il advient des objets dépend du verrouillage :
+
+| Bucket | Effet de la suppression |
+|--------|-------------------------|
+| Sans verrouillage | Le bucket et tous ses objets sont définitivement supprimés, même s'il n'est pas vide. |
+| Verrouillé (WORM) | Le bucket est retiré de la console, mais la plateforme conserve son stockage et tous ses objets. Chaque objet reste verrouillé 365 jours après son écriture (mode `COMPLIANCE`). |
+
+La fenêtre de confirmation indique le cas qui s'applique.
 
 ---
 

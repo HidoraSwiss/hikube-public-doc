@@ -93,7 +93,7 @@ Utilisez des sous-ensembles de `172.16.0.0/12`, par exemple un `/24` par sous-r�
 | Supprimer un VPC | Supprime aussi tous ses sous-réseaux. Refusé tant qu'une VM y est reliée. |
 | Modifier un VPC ou un sous-réseau | Non proposé : créez-en un nouveau. |
 
-Statut d'un VPC dans la liste : **En cours de provisionnement** pendant sa mise en place, puis **Prêt** lorsqu'il est utilisable.
+Statut d'un VPC dans la liste : **En cours de provisionnement** pendant sa mise en place, puis **Prêt** lorsqu'il est utilisable. Un VPC dont la dernière modification n'a pas pu être appliquée passe au statut **Erreur** ; il peut continuer à fonctionner avec sa configuration précédente. Le statut s'affiche aussi sur la page **Sous-réseaux pour `<vpc>`**, et la liste se filtre par statut (**Prêt**, **Erreur**…).
 
 ---
 

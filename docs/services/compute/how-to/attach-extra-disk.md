@@ -32,11 +32,13 @@ Dans la section **Stockage**, cliquez sur **Ajouter un disque**. Un bloc **Volum
 
 **Disque existant** (onglet **Existant**) : sous **Sélectionner un volume existant**, choisissez un disque de données du projet qui n'est attaché à aucune VM. Les disques se créent aussi indépendamment dans le menu **Disques** (voir [Disques](../../storage/disks/quick-start.md)).
 
+Pour retirer un volume ajouté par erreur avant d'enregistrer, cliquez sur **Retirer le disque** (icône de corbeille) : rien n'a encore été créé.
+
 ### 3. Enregistrer
 
 Vérifiez le récapitulatif de quota en haut de la page, puis cliquez sur **Enregistrer**.
 
-La console affiche **Redémarrage requis** : la VM redémarre pour prendre en compte le nouveau disque. Attendez qu'elle revienne au statut **Actif**. Le disque apparaît dans la section **Stockage & Disques** de la page de détail.
+La console affiche **Redémarrage requis** : le nouveau disque n'est pris en compte qu'au prochain redémarrage de la VM. Cliquez sur **Redémarrer** dans la section **Actions** de la page de détail, puis attendez que la VM revienne au statut **Actif**. Le disque apparaît dans la section **Stockage & Disques** de la page de détail.
 
 :::note Disque ajouté à la création
 Vous pouvez aussi ajouter des disques directement à la création de la VM, avec **Ajouter un disque** à l'étape **Stockage** de l'assistant. Ils prennent alors le nom de la VM suffixé (`ma-vm-2`, `ma-vm-3`…).
@@ -109,7 +111,9 @@ sudo touch /mnt/data/test.txt && echo "OK"
 
 ## Détacher un disque
 
-Dans **Modifier** > **Stockage**, cliquez sur l'icône de suppression du volume, confirmez en saisissant son nom, puis cliquez sur **Enregistrer**. Le disque est détaché de la VM (qui redémarre) et reste disponible dans le menu **Disques**. Démontez-le d'abord dans l'OS et retirez sa ligne de `/etc/fstab`.
+Démontez d'abord le disque dans l'OS et retirez sa ligne de `/etc/fstab`. Puis, dans **Modifier** > **Stockage**, cliquez sur **Détacher le disque** sur le volume, confirmez avec **Détacher** dans la boîte **Détacher `<nom>` ?**, et cliquez sur **Enregistrer**.
+
+Le disque n'est pas supprimé : ses données sont conservées et il reste disponible dans le menu **Disques**, d'où vous pouvez le rattacher à une autre VM. Le détachement ne prend effet qu'au prochain redémarrage de la VM : d'ici là, le disque reste visible par le système. La console affiche **Redémarrage requis** ; cliquez sur **Redémarrer** pour l'appliquer. Le disque système ne se détache pas.
 
 ## Pour aller plus loin
 

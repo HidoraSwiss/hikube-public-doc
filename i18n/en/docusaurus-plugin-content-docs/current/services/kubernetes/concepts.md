@@ -14,7 +14,7 @@ title: Concepts
 | **Control plane** | Components that drive the cluster (API Server, Scheduler, Controller Manager, etcd), hosted by Hikube. |
 | **Node group** | Set of homogeneous worker nodes (same instance type, same storage), with its own autoscaling bounds. The cluster detail page shows them under **Node Pools**. |
 | **Addon** | Optional component installed and maintained by the platform in the cluster (Cert-Manager, Ingress NGINX, etc.). |
-| **Kubeconfig** | Cluster access file, downloaded from the cluster detail page in the console. |
+| **Kubeconfig** | Cluster access file, downloaded from the cluster detail page in the console. Downloading it is reserved for project administrators. |
 
 ## Architecture
 
@@ -158,7 +158,7 @@ Node groups are configured in the **Nodes** step of the wizard (title **Worker N
 | Field | Description | Default value |
 |-------|-------------|-------------------|
 | **Group name** | 3 to 16 characters: lowercase letters, digits and hyphens; starts with a letter, ends with a letter or a digit | `worker-pool-1`, `worker-pool-2`… |
-| **Ephemeral storage size** | Disk space allocated to pods on each node, in GB (minimum 5 GB) | 20 GB |
+| **Node disk size** | Size of each node's disk, in GB (minimum 5 GB): space allocated to pods, their images and their logs | 20 GB |
 | **Minimum nodes** | Number of nodes always present. 0 is accepted | 1 |
 | **Maximum nodes** | Autoscaling ceiling (between 1 and 100, greater than or equal to the minimum; 50 recommended maximum) | 3 |
 | **Instance type** | Node flavor, chosen by series then by size | none (required choice) |
@@ -235,7 +235,7 @@ Custom node roles (other than exposure on the internet) and overriding the CPU/m
 :::tip Node group best practices
 - Adjust the minimum and maximum number of nodes according to your scaling needs.
 - Choose a series consistent with the workload (S for general use, U for balanced, M for memory).
-- Plan enough ephemeral storage for images, logs and caches.
+- Plan a large enough node disk for images, logs and caches.
 - Separate roles by group: one exposed group for incoming traffic, internal groups for compute.
 :::
 
@@ -272,13 +272,15 @@ Dependencies checked by the console:
 
 ### Overriding Helm values
 
-Each addon (except Gateway API) accepts a **Helm Configuration (YAML) — optional** field. The YAML value is passed directly to the addon's Helm chart and overrides its default values. It must be a YAML mapping (`key: value`); the console rejects invalid YAML. The link icon next to the addon name opens the chart documentation.
+Each addon (except Gateway API and Monitoring Agents) accepts a **Helm Configuration (YAML) — optional** field. The YAML value is passed directly to the addon's Helm chart and overrides its default values. It must be a YAML mapping (`key: value`); the console rejects invalid YAML. The link icon next to the addon name opens its page in this documentation.
+
+An override can be entered at creation or from **Edit**. Clearing the field, or a line of the override, does not remove a value already applied to the cluster, whatever the addon. [Contact support](mailto:support@hidora.io) to return to the default values.
 
 ---
 
 ## Cluster access
 
-Once the cluster is ready, the **Kubeconfig** button in the **Actions** section of the detail page downloads the `kubeconfig-<cluster-name>.yaml` file. This file grants administrator access to the cluster with `kubectl`, `helm` or any Kubernetes client. The client certificate it contains is valid for one year from the creation of the cluster. See [Access and tools](./how-to/toolbox.md).
+Once the cluster is ready, the **Kubeconfig** button in the **Actions** section of the detail page downloads the `kubeconfig-<cluster-name>.yaml` file. This button is reserved for project administrators; for other members, it is disabled. This file grants administrator access to the cluster with `kubectl`, `helm` or any Kubernetes client. The client certificate it contains is valid for one year from the creation of the cluster. See [Access and tools](./how-to/toolbox.md).
 
 The cluster's API address is defined by the **API Endpoint (Host)** field of the **General** step. It is optional: if left empty, it is generated automatically by the platform and resolves with no action on your part. If you enter your own domain name, the API server certificate covers it, but the DNS record still has to be created with your DNS provider: ask [support](mailto:support@hidora.io) for the address to point it to.
 
@@ -286,7 +288,8 @@ The cluster's API address is defined by the **API Endpoint (Host)** field of the
 
 ## Lifecycle and quotas
 
-- **Status**: a newly created cluster appears in the **Kubernetes Clusters** list with the **Creating** status, then **Ready** when it is operational.
+- **Status**: a newly created cluster appears in the **Kubernetes Clusters** list with the **Creating** status, then **Ready** when it is operational. The **Error** status means that the last change could not be applied; the cluster may keep running with its previous configuration. The list's status filter offers, among others, **Ready** and **Error**.
+- **First cluster of a project**: the platform first prepares the project's Kubernetes environment, for a few minutes. The wizard shows the **Preparing the Kubernetes environment** banner and retries the creation automatically; the **Cancel** button stops the wait. If the environment cannot be prepared, the console says so and does not retry: contact support.
 - **Quotas**: the wizard's **Project Quotas** gauges count the control plane and each node group **at its maximum number of nodes**. Creation is blocked if the project does not have enough quota.
-- **Modification**: the **Edit** button lets you change the version, the API endpoint, the node groups and the addons. The cluster name cannot be changed.
+- **Modification**: the **Edit** button lets you change the version, the API endpoint, the node groups and the addons. The cluster name cannot be changed. The version can only go up: a downgrade to a lower version is refused.
 - **Deletion**: the **Delete** button deletes the cluster after you confirm its name.

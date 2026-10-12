@@ -21,8 +21,8 @@ The Vertical Pod Autoscaler is part of the **Advanced Configuration** of the **A
 2. Enter your values in **Helm Configuration (YAML) — optional**.
 3. Confirm with **Next** then **Create cluster** (creation) or **Save** (modification).
 
-:::warning
-On an existing cluster, the console does not save a first override entered from **Edit**: the **Save** button confirms the update, but the value is ignored. Define the override when creating the cluster, or [contact support](mailto:support@hidora.io). An override defined at creation remains editable from **Edit**.
+:::note
+Clearing the field, or a line of the override, from **Edit** does not remove a value already applied to the cluster. [Contact support](mailto:support@hidora.io) to return to the default values.
 :::
 
 On the cluster detail page, the **VPA** line of the **Network** section shows **VPA** when the addon is configured.

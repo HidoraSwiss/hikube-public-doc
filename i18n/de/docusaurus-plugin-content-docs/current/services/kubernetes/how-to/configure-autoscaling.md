@@ -9,7 +9,7 @@ Mit Autoscaling passt Ihr Hikube-Cluster die Anzahl der Nodes automatisch an die
 ## Voraussetzungen
 
 - Ein bereitgestellter Hikube-Kubernetes-Cluster (siehe [Schnellstart](../quick-start.md))
-- Die über die Konsole heruntergeladene kubeconfig des Clusters (Schaltfläche **Kubeconfig**)
+- Die über die Konsole heruntergeladene kubeconfig des Clusters (Schaltfläche **Kubeconfig**, Projektadministratoren vorbehalten)
 
 ## Schritte
 

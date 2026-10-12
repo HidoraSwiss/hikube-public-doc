@@ -31,7 +31,7 @@ Sie werden **getrennt** und mit ihren Daten aufbewahrt. Sie bleiben in der Liste
 
 ### Kann man die Größe einer Disk verringern?
 
-Nein. „Size reduction is not supported“: Eine Disk kann nur vergrößert werden. Um den belegten Platz zu verringern, erstellen Sie eine kleinere Disk, kopieren Sie die Daten aus der VM darauf und löschen Sie dann die alte.
+Nein. „Size reduction is not supported“: Eine Disk kann nur vergrößert werden. Um den belegten Platz zu verringern, erstellen Sie eine kleinere Disk, kopieren Sie die Daten aus der VM darauf und löschen Sie dann die alte. Über die API wird eine Verkleinerung mit dem Code `30200` abgelehnt, auch wenn sie über die Aktualisierung einer VM erfolgt.
 
 ---
 
@@ -50,9 +50,9 @@ In beiden Fällen liegt das RTO unter 5 Minuten.
 
 ---
 
-### Warum beträgt die Mindestgröße für Windows 50 GB?
+### Wie groß muss eine System-Disk mindestens sein?
 
-Eine Windows-System-Disk benötigt mindestens 50 GB. Die Konsole wendet dieses Minimum automatisch an, wenn Sie ein Windows-Image auswählen.
+Das hängt vom Image ab: 40 GB für Oracle Linux, 28 GB für Windows Server, 20 GB für die übrigen Images. Die Konsole wendet dieses Minimum automatisch an, wenn Sie das Image auswählen („This image needs a disk of at least … GB“).
 
 ---
 
@@ -64,4 +64,4 @@ Der Assistent zeigt **Estimated Cost** an: einen Tarif pro GB und Monat und die 
 
 ### Warum kann ich meine Disk nicht löschen?
 
-Eine an eine VM angebundene Disk kann nicht gelöscht werden: Die Konsole antwortet mit „The disk cannot be deleted as it is in use.“. Trennen Sie sie zuerst auf der Bearbeitungsseite der VM.
+Eine an eine VM angebundene Disk kann nicht gelöscht werden: Die Konsole antwortet mit „The disk cannot be deleted as it is in use.“. Trennen Sie sie zuerst auf der Bearbeitungsseite der VM. Eine getrennte Disk wird von der VM bis zu ihrem nächsten Neustart weiter verwendet. Starten Sie die VM neu und warten Sie dann einige Minuten, bevor Sie die Disk löschen: Ein zu schnelles Löschen kann dazu führen, dass der Speicherplatz in Ihrem Quota belegt bleibt.

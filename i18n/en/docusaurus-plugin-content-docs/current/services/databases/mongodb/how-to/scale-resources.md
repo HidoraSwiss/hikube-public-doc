@@ -16,8 +16,8 @@ This guide explains how to adjust an existing MongoDB cluster from the [Hikube c
 
 | Parameter | Can be changed after creation |
 |-----------|-------------------------------|
-| **MongoDB Version** | Yes |
-| **Disk size (GB)** | Yes |
+| **MongoDB Version** | Yes, to a higher version only |
+| **Disk size (GB)** | Yes, upwards only |
 | **External access** | Yes |
 | **Preset** | No, "The resources preset cannot be changed after creation" |
 | **Number of replicas** | No, "The mode cannot be changed after creation" |
@@ -36,17 +36,23 @@ The **Edit MongoDB cluster** page shows the **Cluster settings** card and the im
 
 ### 2. Adjust the settings
 
-- **Disk size (GB)**: enter the new capacity.
-- **MongoDB Version**: select the target version (6.0, 7.0 or 8.0).
+- **Disk size (GB)**: enter the new capacity, at least equal to the current size. A lower value displays "The disk size cannot be reduced: N GB minimum." and is not saved.
+- **MongoDB Version**: select the target version. The form only offers the current version and the higher versions.
 - **External access**: enable or disable exposure on the public Internet.
 
 :::tip
-MongoDB only supports major version upgrades from one version to the next (6.0 → 7.0 → 8.0). The form offers all versions, including a version jump or a lower version: do not skip a version and do not go back.
+MongoDB only supports major version upgrades from one version to the next (6.0 → 7.0 → 8.0). The form offers all higher versions, including a version jump: do not skip a version.
 :::
+
+When you change the version, the warning "The cluster instances will restart" is displayed: the change restarts the cluster instances as soon as you save, and an upgraded version cannot be downgraded. Plan it outside peak hours.
 
 ### 3. Save
 
 Click **Save**. The "Cluster updated" message confirms the change. If the new configuration exceeds the project quotas, the button stays disabled.
+
+:::note
+The API applies the same rules: a version lower than the current one is refused with code `150203`, a disk size smaller than the current one with code `150204`.
+:::
 
 ## Verification
 

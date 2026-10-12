@@ -15,7 +15,7 @@ Préfixez-le par `https://` dans vos clients S3.
 
 ### Pourquoi le nom S3 du bucket est-il différent du nom que j'ai choisi ?
 
-Le nom choisi dans la console identifie le bucket dans votre projet. Le **nom S3 réel** est généré par la plateforme pour garantir son unicité sur l'endpoint. Utilisez toujours le **Nom du bucket** affiché dans **Accès & Configuration** dans vos commandes et SDK.
+Le nom choisi dans la console identifie le bucket dans votre projet. Le **nom S3 réel**, de la forme `bucket-<identifiant>`, est généré par la plateforme pour garantir son unicité sur l'endpoint. Utilisez toujours le **Nom du bucket** affiché dans **Accès & Configuration** dans vos commandes et SDK : avec le nom choisi dans la console, un client S3 reçoit `AccessDenied`.
 
 ---
 
@@ -64,7 +64,7 @@ Non. Les clés d'un utilisateur sont limitées à son bucket : `aws s3 ls` sans 
 
 ### À quoi sert le verrouillage (WORM) ?
 
-L'option **Activer le verrouillage (Object Lock / WORM)** empêche la suppression ou la modification des objets pendant 365 jours. La plateforme applique cette rétention par défaut en mode `COMPLIANCE` : personne ne peut supprimer un objet ni raccourcir sa rétention avant l'échéance. Cette durée par défaut n'est pas réglable dans la console ; contactez le support pour un autre besoin. L'option sert à l'archivage réglementaire ou à la protection des sauvegardes contre une suppression accidentelle ou malveillante. Elle se choisit à la création du bucket.
+L'option **Activer le verrouillage (Object Lock / WORM)** verrouille chaque objet 365 jours après son écriture. La plateforme applique cette rétention en mode `COMPLIANCE` : personne ne peut modifier ni supprimer un objet, ni raccourcir sa rétention avant l'échéance. La rétention WORM est fixée par la plateforme : 365 jours en mode COMPLIANCE. Elle ne peut pas être modifiée, ni à la création ni ensuite. L'option sert à l'archivage réglementaire ou à la protection des sauvegardes contre une suppression accidentelle ou malveillante. Elle se choisit à la création du bucket et ne peut plus être retirée ensuite. Supprimer un bucket verrouillé le retire de la console, mais ne supprime pas ses objets : ils restent verrouillés jusqu'à l'échéance de leur rétention.
 
 ---
 

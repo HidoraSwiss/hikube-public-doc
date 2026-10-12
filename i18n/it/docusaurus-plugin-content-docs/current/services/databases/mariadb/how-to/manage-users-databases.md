@@ -23,20 +23,25 @@ La console MariaDB non ha una scheda dedicata ai database: un database si crea c
 ### 1. Creare un utente
 
 1. Nella sezione **Users**, faccia clic su **Create a user**.
-2. Inserisca lo **Username**: lettere minuscole, cifre e trattini, che inizi con una lettera (ad esempio `report-reader`).
-3. Lasci **Global Role (Optional)** su **No global role**.
-4. Sotto **Specific Access (Databases)**, faccia clic su **Add** per ogni database:
-   - **Database name**: ad esempio `analytics` (lettere minuscole, cifre e trattini; nessun trattino basso);
+2. Inserisca lo **Username**: da 3 a 16 caratteri, lettere minuscole, cifre e trattini, che inizi con una lettera e termini con una lettera o una cifra (ad esempio `report-reader`).
+3. Sotto **Specific Access (Databases)**, faccia clic su **Add** per ogni database:
+   - **Database name**: ad esempio `analytics` (lettere minuscole, cifre e trattini; nessun trattino basso; i database di sistema `mysql`, `information_schema`, `performance_schema` e `sys` sono rifiutati);
    - **Rights**: **Administrator (Admin)** o **Read-only**.
-5. Faccia clic su **Create user**.
+4. Faccia clic su **Create user**.
 
-La schermata « Generated password » mostra la password generata.
+Non esiste un ruolo globale: l'utente ha accesso solo ai database elencati. Senza alcun accesso, la console indica « No access configured: the user has no rights on any database. »; l'utente può essere creato così e ricevere i suoi accessi in seguito.
+
+La schermata « User created successfully! » mostra la password generata.
 
 :::warning
 Copi subito questa password e la conservi in un luogo sicuro: non verrà più mostrata dopo aver lasciato questa schermata.
 :::
 
-Faccia quindi clic su **Done**.
+Faccia quindi clic su **Done and return to cluster**.
+
+:::tip
+Gli utenti dichiarati nella procedura guidata di creazione del cluster ricevono il loro ruolo sul **Database** indicato al passaggio **Users**.
+:::
 
 ### 2. Creare un database
 
@@ -46,9 +51,13 @@ Conceda a un utente un accesso sul nome del nuovo database (passaggio 1 per un n
 
 1. Apra il menu **Actions** dell'utente e scelga **Manage Access**.
 2. Aggiunga accessi con **Add**, modifichi i **Rights** o rimuova una riga.
-3. Faccia clic su **Save**.
+3. Faccia clic su **Save**. Il messaggio « Access updated » conferma il salvataggio.
 
 Il nome utente non può essere modificato.
+
+:::warning Utenti creati prima della console v1.3.0
+Gli utenti dichiarati nella procedura guidata di creazione del cluster prima della console v1.3.0 hanno ricevuto un ruolo sul database di sistema `mysql`. In **Manage Access**, questa riga appare in errore e impedisce il salvataggio: la rimuova, aggiunga se necessario il database applicativo dell'utente, quindi faccia clic su **Save**.
+:::
 
 ### 4. Rinnovare la password di un utente
 
@@ -81,7 +90,7 @@ CREATE TABLE test (id INT);
 
 ## Verifica
 
-L'elenco degli utenti mostra, per ciascuno, il suo **Role** e i **Databases** accessibili con il diritto associato (ad esempio `analytics (readonly)` o `analytics (admin)`).
+La colonna **Databases** dell'elenco degli utenti mostra, per ciascuno, i database accessibili con il ruolo associato (ad esempio `analytics (Read-only)` o `analytics (Administrator)`), oppure **None**.
 
 ## Per approfondire
 

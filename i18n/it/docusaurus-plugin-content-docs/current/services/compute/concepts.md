@@ -69,7 +69,7 @@ Ogni disco creato con la VM si configura nel passaggio **Storage** della procedu
 | Parametro | Valori | Note |
 |-----------|---------|-----------|
 | **Volume Name** | Generato a partire dal nome della VM (`ma-vm`, `ma-vm-2`…) | Modificabile |
-| **Size (GB)** | Minimo 20 GB, massimo 4096 GB | Minimo 50 GB per Windows, 40 GB per Oracle Linux |
+| **Size (GB)** | Minimo 20 GB, massimo 4096 GB | Disco di sistema: minimo 40 GB per Oracle Linux, 28 GB per Windows Server; la console porta la dimensione a questo minimo quando sceglie l'immagine |
 | **Replication Type** | **Asynchronous Replication** (Recommended) o **Synchronous Replication** | Vedere sotto |
 | **Disk Encryption** | Attivata / disattivata | Cifratura LUKS dei dati a riposo |
 
@@ -105,7 +105,7 @@ stateDiagram-v2
     ArretEnCours --> Arrete
     Arrete --> DemarrageEnCours: Start
     DemarrageEnCours --> Actif
-    Actif --> RedemarrageEnCours: Restart / modifica del formato, dei dischi o delle GPU
+    Actif --> RedemarrageEnCours: Restart
     RedemarrageEnCours --> Actif
     Actif --> SuppressionEnCours: Delete
     Arrete --> SuppressionEnCours: Delete
@@ -123,12 +123,14 @@ L'opzione **Automatic Restart** (passaggio **Configuration** della procedura gui
 | Elemento | Modificabile | Effetto |
 |---------|-----------|-------|
 | Nome, immagine di sistema | No | — |
-| Tipo di istanza | Sì | Riavvio della VM |
-| Dischi (aggiunta, scollegamento) | Sì | Riavvio della VM |
-| GPU | Sì | Riavvio della VM |
+| Tipo di istanza | Sì | Applicato al successivo riavvio della VM |
+| Dischi (aggiunta, scollegamento) | Sì | Applicato al successivo riavvio della VM; un disco scollegato resta in **Disks** con i suoi dati |
+| GPU | Sì | Applicato al successivo riavvio della VM |
 | IP pubblico, firewall, porte, VPC | Sì | Applicato senza riavvio |
 | Chiavi SSH | Sì | Proposta di ricaricare lo user-data, applicato al riavvio successivo |
 | Script cloud-init, riavvio automatico | Sì | Script rieseguito dopo **Reload UserData** e riavvio |
+
+Dopo aver salvato una modifica del tipo di istanza, dei dischi o delle GPU, la console mostra **Restart required**: riavvii la VM per applicarla.
 
 ---
 

@@ -9,7 +9,7 @@ Diese Anleitung erklärt, wie Sie die Kubernetes-Version eines Hikube-Clusters �
 ## Voraussetzungen
 
 - Ein bereitgestellter Hikube-Kubernetes-Cluster (siehe [Schnellstart](../quick-start.md))
-- Die über die Konsole heruntergeladene kubeconfig des Clusters (Schaltfläche **Kubeconfig**), um das Ergebnis zu prüfen
+- Die über die Konsole heruntergeladene kubeconfig des Clusters (Schaltfläche **Kubeconfig**, Projektadministratoren vorbehalten), um das Ergebnis zu prüfen
 
 ## Schritte
 
@@ -43,6 +43,12 @@ Führen Sie Updates inkrementell durch (zum Beispiel von v1.29 auf v1.30). Über
 :::note
 Wenn die aktuelle Version des Clusters von der Plattform nicht mehr angeboten wird, weist die Konsole darauf hin („current version“) und fordert Sie auf, eine unterstützte Version auszuwählen.
 :::
+
+:::warning Kein Zurück
+Einmal angewendet, ist ein Versionsupdate endgültig. Eine Rückkehr zu einer niedrigeren Version wird abgelehnt: Die Konsole zeigt einen Fehler an (`version downgrades are not supported`, Code `70206`), und der Cluster bleibt auf seiner aktuellen Version.
+:::
+
+Kann die Plattform das Update nicht anwenden, wechselt der Cluster in der Liste in den Status **Error**. Er kann mit seiner vorherigen Konfiguration weiterlaufen, und eine Rückkehr zur laufenden Version bleibt möglich. [Wenden Sie sich an den Support](mailto:support@hidora.io) und geben Sie den Namen des Clusters und das Projekt an.
 
 ### 4. Das Rolling Update verfolgen
 

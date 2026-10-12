@@ -23,6 +23,10 @@ Ce guide explique comment relier une VM à un ou plusieurs sous-réseaux VPC, à
 
 Pas encore de VPC ? Cliquez sur **+ VPC** dans la section **Réseaux VPC (Secondaires)** : la boîte **Créer un VPC** permet de créer le VPC et ses sous-réseaux, puis le coche automatiquement. Pour ajouter un sous-réseau à un VPC coché, cliquez sur **Ajouter un sous-réseau**, saisissez un nom et une plage CIDR, puis validez.
 
+:::warning Debian et Ubuntu
+Si l'image de la VM est Debian ou Ubuntu et qu'un VPC est coché, la section affiche l'avertissement **Configuration manuelle requise sur Debian et Ubuntu** : l'adresse du VPC est réservée, mais elle n'est pas appliquée automatiquement dans le système. Configurez l'interface une fois la VM démarrée (voir [Vérifier dans l'OS](#4-vérifier-dans-los)). Le même avertissement s'affiche dans **Modifier**.
+:::
+
 ### 2. Relier une VM existante
 
 1. Ouvrez la page de détail de la VM et cliquez sur **Modifier**.
@@ -42,7 +46,7 @@ Sur la page de détail de la VM, section **Réseau et Sécurité** :
 ip -br addr
 ```
 
-**Résultat attendu :** une interface supplémentaire par sous-réseau relié. L'OS ne la configure pas automatiquement : elle apparaît d'abord sans adresse, par exemple :
+**Résultat attendu :** une interface supplémentaire par sous-réseau relié. Sur Debian et Ubuntu, l'OS ne la configure pas automatiquement : elle apparaît d'abord sans adresse, par exemple :
 
 ```
 lo               UNKNOWN        127.0.0.1/8 ::1/128
@@ -50,7 +54,9 @@ enp1s0           UP             10.x.x.x/xx ...
 enp2s0           DOWN
 ```
 
-Activez DHCP sur l'interface secondaire. Exemple avec netplan (Ubuntu) :
+L'adresse VPC est distribuée par DHCP. Les distributions à NetworkManager (AlmaLinux, Rocky…) la prennent automatiquement ; sur Debian et Ubuntu, activez DHCP sur l'interface secondaire. Le bail ne fournit pas de passerelle : la route par défaut reste sur l'interface principale.
+
+Exemple avec netplan (Debian, Ubuntu) :
 
 ```yaml title="/etc/netplan/60-vpc.yaml"
 network:

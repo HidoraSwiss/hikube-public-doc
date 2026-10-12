@@ -77,14 +77,19 @@ Il consumo di risorse e il costo stimato ne tengono conto. Si veda [Configurare 
 
 ## Utenti, database e ruoli
 
-La pagina di un cluster MongoDB comprende una sezione **Users**; non esiste una scheda dedicata ai database. I diritti si gestiscono per utente:
+La pagina di un cluster MongoDB comprende una sezione **Users**; non esiste una scheda dedicata ai database. I diritti si assegnano database per database: ogni accesso associa un **Database name** a dei **Rights**, **Administrator (Admin)** o **Read-only**. **Administrator** corrisponde ai ruoli MongoDB `readWrite` e `dbAdmin` sul database, **Read-only** al ruolo `read`. Non esiste un ruolo globale: un utente ha accesso solo ai database che gli sono assegnati.
 
-- **Global Role (Optional)**: **No global role**, **Administrator** o **Read-only (global)**;
-- **Specific Access (Databases)**: un elenco di coppie **Database name** / **Rights** (**Administrator (Admin)** o **Read-only**).
+- Alla creazione del cluster, il passaggio **Users** della procedura guidata chiede per ogni utente un **Database** applicativo e un **Role**. Il database viene creato se non esiste.
+- In seguito, **Create a user** e **Manage Access** permettono di assegnare uno o più accessi. Un utente MongoDB deve conservare almeno un accesso: altrimenti la console mostra «Please grant access to at least one database.» e il pulsante resta inattivo.
+- La colonna **Databases** dell'elenco degli utenti mostra ogni database con il ruolo, ad esempio `myapp (Administrator)`.
 
-Un utente deve avere almeno un ruolo: senza ruolo globale né accesso specifico, la console mostra «Please assign at least one role (global or specific) to the user.» e rifiuta il salvataggio.
+I database di sistema `admin`, `local` e `config` non possono ricevere accessi: la console mostra «“admin” is a system database: choose an application database.» e l'API rifiuta la richiesta.
 
-Gli utenti dichiarati nella procedura guidata di creazione del cluster ricevono il **Role** scelto sul database `admin`, visibile nella colonna **Databases** dell'elenco degli utenti: **Administrator** corrisponde ai ruoli MongoDB `readWrite` e `dbAdmin` su tale database, **Read-only** al ruolo `read`. Questi ruoli non danno accesso ad alcun altro database: conceda poi l'accesso ai suoi database applicativi tramite **Manage Access**. Tutti gli utenti vengono creati nel database `admin`, che funge da database di autenticazione (`authSource=admin`).
+Tutti gli utenti vengono creati nel database `admin`, che funge da database di autenticazione (`authSource=admin`), senza ricevere alcun ruolo su tale database.
+
+:::warning Utenti creati prima della console v1.3.0
+La procedura guidata di creazione del cluster assegnava in precedenza a ogni utente un ruolo sul database di sistema `admin`. Per questi utenti, apra **Actions** → **Manage Access**: la riga `admin` vi appare in errore. La rimuova, aggiunga se necessario il database applicativo dell'utente, quindi faccia clic su **Save**. Finché questa riga è presente, i diritti dell'utente non possono essere salvati.
+:::
 
 La password di un utente è generata dalla piattaforma e mostrata **una sola volta**. In caso di smarrimento, ne generi una nuova con **Change Password**.
 
@@ -93,8 +98,8 @@ La password di un utente è generata dalla piattaforma e mostrata **una sola vol
 | Elemento | Regola |
 |---------|-------|
 | Nome del cluster | Da 3 a 16 caratteri: minuscole, cifre e trattini; inizia con una lettera, termina con una lettera o una cifra |
-| Nome utente | Minuscole, cifre e trattini; inizia con una lettera, termina con una lettera o una cifra (da 3 a 16 caratteri nella procedura guidata di creazione del cluster) |
-| Nome del database | Da 1 a 63 caratteri: minuscole, cifre e trattini; inizia con una lettera, termina con una lettera o una cifra |
+| Nome utente | Da 3 a 16 caratteri: minuscole, cifre e trattini; inizia con una lettera, termina con una lettera o una cifra. Alcuni nomi, come `admin` o `root`, sono riservati |
+| Nome del database | Da 1 a 63 caratteri: minuscole, cifre e trattini; inizia con una lettera, termina con una lettera o una cifra. I database di sistema `admin`, `local` e `config` sono rifiutati |
 
 :::note
 I trattini bassi (`_`) e le maiuscole non sono accettati né nei nomi dei database né nei nomi utente.
@@ -121,7 +126,9 @@ Il **Preset** definisce la capacità allocata a **ogni nodo**. Fa fede l'elenco 
 ## Accesso di rete
 
 - **External access** disattivato (impostazione predefinita): il cluster non è esposto su Internet. Il campo **Host** del riquadro **Network and Connection** mostra **Not defined**.
-- **External access** attivato: la piattaforma assegna un indirizzo pubblico, mostrato nel campo **Host** per un cluster con sharding. Senza sharding, ciascun membro riceve il proprio indirizzo pubblico e il campo resta su **Not defined**: richieda l'indirizzo al [supporto](mailto:support@hidora.io). La porta è quella standard di MongoDB, `27017`. La procedura guidata fornisce una stringa di connessione nella forma `mongodb://<utente>:<password>@<host>`.
+- **External access** attivato: la porta è quella standard di MongoDB, `27017`, senza TLS.
+  - **Cluster con sharding**: la piattaforma assegna un indirizzo pubblico ai router Mongos, mostrato nel campo **Host**. La procedura guidata fornisce una stringa di connessione nella forma `mongodb://<utente>:<password>@<host>`.
+  - **Replica set**: ciascun membro riceve il proprio indirizzo pubblico. Il riquadro **Network and Connection** li elenca in **Replica set rs0 members**, ciascuno con un pulsante di copia, e propone una **External connection string** nella forma `mongodb://<user>:<password>@<membro>:27017/?directConnection=true&authSource=admin`. Si connetta così a un membro in connessione diretta, senza il parametro `replicaSet`: i membri si annunciano con nomi interni al cluster, che non si risolvono dall'esterno. Il membro raggiunto può essere un secondario, che non accetta scritture: legga con `readPreference=secondaryPreferred` e scriva sul membro primario.
 
 ---
 
@@ -137,9 +144,9 @@ La procedura guidata mostra l'**Estimated Cost** e l'impatto del cluster sulle q
 
 | Parametro | Valore |
 |-----------|--------|
-| Versioni | 6.0, 7.0, 8.0 |
+| Versioni | 6.0, 7.0, 8.0; dopo la creazione, solo aggiornamento di versione |
 | Repliche | 1, 3 o 5 |
-| Dimensione del disco | Da 1 a 4.096 GB, entro il limite della quota di storage del progetto |
+| Dimensione del disco | Da 1 a 4.096 GB, entro il limite della quota di storage del progetto; dopo la creazione, solo aumento |
 
 ---
 

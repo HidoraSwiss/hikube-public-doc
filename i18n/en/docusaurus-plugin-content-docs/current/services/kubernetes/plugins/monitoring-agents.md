@@ -25,9 +25,9 @@ The cluster detail page shows **Monitoring Agents** in the **Extensions** sectio
 Access to the project's monitoring dashboards is not offered in the console; contact support.
 :::
 
-## Override the configuration
+## Configuration
 
-Once the addon is checked, the **Helm Configuration (YAML) — optional** field appears, but the platform does not apply it for this addon: an override entered here has no effect. The destinations of metrics and logs are defined by the platform. To adapt the behavior of the agents (resources, collection filters), contact support.
+This addon has no Helm override: it can only be enabled or disabled. The destinations of metrics and logs are defined by the platform. To adapt the behavior of the agents (resources, collection filters), contact support.
 
 ## Usage in the cluster
 

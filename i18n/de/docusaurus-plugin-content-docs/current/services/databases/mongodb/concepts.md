@@ -77,14 +77,19 @@ Der Ressourcenverbrauch und die geschätzten Kosten berücksichtigen dies. Siehe
 
 ## Benutzer, Datenbanken und Rollen
 
-Die Seite eines MongoDB-Clusters enthält einen Abschnitt **Users**; eine eigene Registerkarte für Datenbanken gibt es nicht. Die Rechte werden pro Benutzer verwaltet:
+Die Seite eines MongoDB-Clusters enthält einen Abschnitt **Users**; eine eigene Registerkarte für Datenbanken gibt es nicht. Rechte werden Datenbank für Datenbank vergeben: Jeder Zugriff verbindet einen **Database name** mit **Rights**, **Administrator (Admin)** oder **Read-only**. **Administrator** entspricht den MongoDB-Rollen `readWrite` und `dbAdmin` auf der Datenbank, **Read-only** der Rolle `read`. Eine globale Rolle gibt es nicht: Ein Benutzer hat nur auf die ihm zugewiesenen Datenbanken Zugriff.
 
-- **Global Role (Optional)**: **No global role**, **Administrator** oder **Read-only (global)**;
-- **Specific Access (Databases)**: eine Liste von Paaren aus **Database name** / **Rights** (**Administrator (Admin)** oder **Read-only**).
+- Bei der Erstellung des Clusters fragt der Schritt **Users** des Assistenten für jeden Benutzer eine Anwendungsdatenbank (**Database**) und eine **Role** ab. Die Datenbank wird angelegt, falls sie noch nicht existiert.
+- Danach lassen sich mit **Create a user** und **Manage Access** ein oder mehrere Zugriffe vergeben. Ein MongoDB-Benutzer muss mindestens einen Zugriff behalten: Andernfalls zeigt die Konsole „Please grant access to at least one database.“ an und die Schaltfläche bleibt inaktiv.
+- Die Spalte **Databases** der Benutzerliste zeigt jede Datenbank mit der Rolle an, zum Beispiel `myapp (Administrator)`.
 
-Ein Benutzer muss mindestens eine Rolle haben: Ohne globale Rolle und ohne spezifischen Zugriff zeigt die Konsole „Please assign at least one role (global or specific) to the user.“ an und verweigert das Speichern.
+Die Systemdatenbanken `admin`, `local` und `config` können keinen Zugriff erhalten: Die Konsole zeigt „“admin” is a system database: choose an application database.“ an, und die API lehnt die Anfrage ab.
 
-Die im Assistenten zur Cluster-Erstellung angelegten Benutzer erhalten die gewählte **Role** auf der Datenbank `admin`, sichtbar in der Spalte **Databases** der Benutzerliste: **Administrator** entspricht den MongoDB-Rollen `readWrite` und `dbAdmin` auf dieser Datenbank, **Read-only** der Rolle `read`. Diese Rollen gewähren keinen Zugriff auf andere Datenbanken: Gewähren Sie anschließend den Zugriff auf Ihre Anwendungsdatenbanken über **Manage Access**. Alle Benutzer werden in der Datenbank `admin` angelegt, die als Authentifizierungsdatenbank dient (`authSource=admin`).
+Alle Benutzer werden in der Datenbank `admin` angelegt, die als Authentifizierungsdatenbank dient (`authSource=admin`), ohne auf dieser Datenbank eine Rolle zu erhalten.
+
+:::warning Vor der Konsole v1.3.0 erstellte Benutzer
+Der Assistent zur Cluster-Erstellung hat früher jedem Benutzer eine Rolle auf der Systemdatenbank `admin` zugewiesen. Öffnen Sie für diese Benutzer **Actions** → **Manage Access**: Die Zeile `admin` wird dort als Fehler angezeigt. Entfernen Sie sie, fügen Sie bei Bedarf die Anwendungsdatenbank des Benutzers hinzu und klicken Sie dann auf **Save**. Solange diese Zeile vorhanden ist, können die Rechte des Benutzers nicht gespeichert werden.
+:::
 
 Das Passwort eines Benutzers wird von der Plattform generiert und **nur einmal** angezeigt. Bei Verlust generieren Sie mit **Change Password** ein neues.
 
@@ -93,8 +98,8 @@ Das Passwort eines Benutzers wird von der Plattform generiert und **nur einmal**
 | Element | Regel |
 |---------|-------|
 | Cluster-Name | 3 bis 16 Zeichen: Kleinbuchstaben, Ziffern und Bindestriche; beginnt mit einem Buchstaben, endet mit einem Buchstaben oder einer Ziffer |
-| Benutzername | Kleinbuchstaben, Ziffern und Bindestriche; beginnt mit einem Buchstaben, endet mit einem Buchstaben oder einer Ziffer (3 bis 16 Zeichen im Assistenten zur Cluster-Erstellung) |
-| Datenbankname | 1 bis 63 Zeichen: Kleinbuchstaben, Ziffern und Bindestriche; beginnt mit einem Buchstaben, endet mit einem Buchstaben oder einer Ziffer |
+| Benutzername | 3 bis 16 Zeichen: Kleinbuchstaben, Ziffern und Bindestriche; beginnt mit einem Buchstaben, endet mit einem Buchstaben oder einer Ziffer. Einige Namen, etwa `admin` oder `root`, sind reserviert |
+| Datenbankname | 1 bis 63 Zeichen: Kleinbuchstaben, Ziffern und Bindestriche; beginnt mit einem Buchstaben, endet mit einem Buchstaben oder einer Ziffer. Die Systemdatenbanken `admin`, `local` und `config` werden abgelehnt |
 
 :::note
 Unterstriche (`_`) und Großbuchstaben sind weder in Datenbanknamen noch in Benutzernamen zulässig.
@@ -121,7 +126,9 @@ Das **Preset** legt die Kapazität fest, die **jedem Knoten** zugewiesen wird. M
 ## Netzwerkzugriff
 
 - **Externer Zugriff deaktiviert** (Standard): Der Cluster ist nicht im Internet erreichbar. Das Feld **Host** der Karte **Network and Connection** zeigt **Not defined** an.
-- **Externer Zugriff aktiviert**: Die Plattform weist eine öffentliche Adresse zu, die bei einem Cluster mit Sharding im Feld **Host** angezeigt wird. Ohne Sharding erhält jedes Mitglied eine eigene öffentliche Adresse, und das Feld bleibt auf **Not defined**: Fordern Sie die Adresse beim [Support](mailto:support@hidora.io) an. Der Port ist der MongoDB-Standardport `27017`. Der Assistent liefert einen Verbindungsstring der Form `mongodb://<user>:<password>@<host>`.
+- **Externer Zugriff aktiviert**: Der Port ist der MongoDB-Standardport `27017`, ohne TLS.
+  - **Cluster mit Sharding**: Die Plattform weist den Mongos-Routern eine öffentliche Adresse zu, die im Feld **Host** angezeigt wird. Der Assistent liefert einen Verbindungsstring der Form `mongodb://<user>:<password>@<host>`.
+  - **Replica Set**: Jedes Mitglied erhält eine eigene öffentliche Adresse. Die Karte **Network and Connection** listet sie unter **Replica set rs0 members** auf, jeweils mit einer Kopierschaltfläche, und bietet einen **External connection string** der Form `mongodb://<user>:<password>@<member>:27017/?directConnection=true&authSource=admin` an. Verbinden Sie sich so direkt mit einem Mitglied, ohne den Parameter `replicaSet`: Die Mitglieder melden sich unter clusterinternen Namen, die von außen nicht aufgelöst werden. Das erreichte Mitglied kann ein Secondary sein, das keine Schreibvorgänge annimmt: Lesen Sie mit `readPreference=secondaryPreferred` und schreiben Sie auf das Primary-Mitglied.
 
 ---
 
@@ -137,9 +144,9 @@ Der Assistent zeigt die **Estimated Cost** und die Auswirkung des Clusters auf d
 
 | Parameter | Wert |
 |-----------|--------|
-| Versionen | 6.0, 7.0, 8.0 |
+| Versionen | 6.0, 7.0, 8.0; nach der Erstellung nur Versions-Upgrade |
 | Replicas | 1, 3 oder 5 |
-| Disk-Größe | 1 bis 4 096 GB, im Rahmen des Speicher-Quotas des Projekts |
+| Disk-Größe | 1 bis 4 096 GB, im Rahmen des Speicher-Quotas des Projekts; nach der Erstellung nur Vergrößerung |
 
 ---
 

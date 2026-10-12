@@ -65,8 +65,9 @@ N'activez l'**Accès externe** que si vous en avez besoin : il expose la base de
 Ajoutez au moins un utilisateur :
 
 1. **Nom de l'utilisateur** : par exemple `app-user` (minuscules, chiffres et tirets).
-2. **Rôle** : **Administrateur** ou **Lecture seule**.
-3. Cliquez sur **Ajouter**.
+2. **Base de données** : la base applicative sur laquelle porte le rôle de l'utilisateur, par exemple `myapp` (minuscules, chiffres et tirets). Elle est créée si elle n'existe pas. Les bases système `mysql`, `information_schema`, `performance_schema` et `sys` sont refusées.
+3. **Rôle** : **Administrateur** pour ce guide, ou **Lecture seule**.
+4. Cliquez sur **Ajouter**.
 
 ### Vérification
 
@@ -81,8 +82,8 @@ L'étape **Résumé** confirme la création (« Création terminée ! »). Cliqu
 | Statut | Signification |
 |--------|---------------|
 | **En création** | Le cluster est en cours de provisionnement |
-| **Prêt** / **Actif** | Le cluster est opérationnel |
-| **Erreur** / **Échec** | Le provisionnement a échoué |
+| **Prêt** | Le cluster est opérationnel |
+| **Erreur** | La plateforme n'a pas pu appliquer la création ou la dernière modification du cluster |
 
 **Résultat attendu :** après quelques minutes, le statut passe à **Prêt**. La page affiche la **Version MariaDB**, les **Réplicas**, la **Taille allouée** et la **Préconfiguration**.
 
@@ -100,14 +101,9 @@ Copiez ces mots de passe immédiatement : ils ne seront plus affichés. En cas d
 
 L'adresse reste consultable dans la carte **Connexion et réseau** de la page du cluster, champ **Hôte (Host)**.
 
-### Accès à une base applicative
+### Accès à la base applicative
 
-Le rôle choisi dans l'assistant s'applique à la base système `mysql`. Pour créer une base applicative et y donner accès :
-
-1. Dans la section **Utilisateurs**, ouvrez le menu **Actions** de `app-user` et choisissez **Gérer les accès**.
-2. Sous **Accès spécifiques (Bases de données)**, cliquez sur **Ajouter**.
-3. Saisissez le **Nom de la base**, par exemple `myapp` (minuscules, chiffres et tirets), et choisissez les **Droits** **Administrateur (Admin)**.
-4. Cliquez sur **Enregistrer**. La base `myapp` est créée si elle n'existe pas.
+La base `myapp` indiquée à l'étape **Utilisateurs** a été créée, et l'utilisateur y dispose du rôle choisi : dans la section **Utilisateurs** de la page du cluster, la colonne **Bases de données** affiche `myapp (Administrateur)`. Pour lui donner accès à d'autres bases, ouvrez le menu **Actions** de l'utilisateur et choisissez **Gérer les accès** (voir [Gérer les utilisateurs et bases de données](./how-to/manage-users-databases.md)).
 
 ---
 
@@ -155,11 +151,11 @@ Mot de passe erroné, ou utilisateur sans accès sur la base indiquée. Vérifie
 ### Le bouton Suivant reste inactif
 
 - À l'étape **Configuration** : le cluster dépasse les quotas du projet.
-- À l'étape **Utilisateurs** : ajoutez au moins un utilisateur.
+- À l'étape **Utilisateurs** : ajoutez au moins un utilisateur, avec sa **Base de données**.
 
-### Le cluster reste en Erreur
+### Le cluster passe en Erreur
 
-[Contactez le support](mailto:support@hidora.io) en indiquant le nom du projet et du cluster.
+La plateforme n'a pas pu appliquer la création ou la dernière modification du cluster. [Contactez le support](mailto:support@hidora.io) en indiquant le nom du projet et du cluster.
 
 ---
 

@@ -25,9 +25,9 @@ La page de détail du cluster affiche **Monitoring Agents** dans la section **Ex
 L'accès aux tableaux de bord de supervision du projet n'est pas proposé dans la console ; contactez le support.
 :::
 
-## Surcharger la configuration
+## Configuration
 
-Une fois l'addon coché, le champ **Configuration Helm (YAML) — optionnel** apparaît, mais la plateforme ne l'applique pas pour cet addon : une surcharge saisie ici reste sans effet. Les destinations des métriques et des logs sont définies par la plateforme. Pour adapter le comportement des agents (ressources, filtres de collecte), contactez le support.
+Cet addon n'a pas de surcharge Helm : il s'active ou se désactive uniquement. Les destinations des métriques et des logs sont définies par la plateforme. Pour adapter le comportement des agents (ressources, filtres de collecte), contactez le support.
 
 ## Utilisation dans le cluster
 

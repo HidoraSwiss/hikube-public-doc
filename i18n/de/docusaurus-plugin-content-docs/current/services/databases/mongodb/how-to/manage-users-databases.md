@@ -23,29 +23,37 @@ Die MongoDB-Konsole hat keine eigene Registerkarte für Datenbanken: Die Rechte 
 ### 1. Einen Benutzer anlegen
 
 1. Klicken Sie im Abschnitt **Users** auf **Create a user**.
-2. Geben Sie den **Username** ein: Kleinbuchstaben, Ziffern und Bindestriche, beginnend mit einem Buchstaben (zum Beispiel `report-reader`).
-3. Legen Sie mindestens eine Rolle fest:
-   - **Global Role (Optional)**: Lassen Sie **No global role** stehen, um den Benutzer auf bestimmte Datenbanken zu beschränken;
-   - **Specific Access (Databases)**: Klicken Sie auf **Add**, geben Sie den **Database name** ein (zum Beispiel `analytics`) und wählen Sie als **Rights** **Administrator (Admin)** oder **Read-only**.
+2. Geben Sie den **Username** ein: 3 bis 16 Zeichen, Kleinbuchstaben, Ziffern und Bindestriche, beginnend mit einem Buchstaben und endend mit einem Buchstaben oder einer Ziffer (zum Beispiel `report-reader`).
+3. Klicken Sie unter **Specific Access (Databases)** für jede Datenbank auf **Add**:
+   - **Database name**: zum Beispiel `analytics` (Kleinbuchstaben, Ziffern und Bindestriche; die Systemdatenbanken `admin`, `local` und `config` werden abgelehnt);
+   - **Rights**: **Administrator (Admin)** oder **Read-only**.
 4. Klicken Sie auf **Create user**.
 
-Ist keine Rolle festgelegt, zeigt die Konsole „Please assign at least one role (global or specific) to the user.“ an, und die Schaltfläche bleibt inaktiv.
+Ein MongoDB-Benutzer muss mindestens einen Zugriff haben: Ohne Zugriff zeigt die Konsole „Please grant access to at least one database.“ an, und die Schaltfläche bleibt inaktiv. Eine globale Rolle gibt es nicht: Der Benutzer hat nur auf die aufgeführten Datenbanken Zugriff.
 
-Der Bildschirm „Generated password“ zeigt das generierte Passwort an.
+Der Bildschirm „User created successfully!“ zeigt das generierte Passwort an.
 
 :::warning
 Kopieren Sie dieses Passwort sofort und bewahren Sie es sicher auf: Es wird nach dem Verlassen dieses Bildschirms nicht erneut angezeigt.
 :::
 
-Klicken Sie anschließend auf **Done**.
+Klicken Sie anschließend auf **Done and return to cluster**.
+
+:::tip
+Die im Assistenten zur Cluster-Erstellung angelegten Benutzer erhalten ihre Rolle auf der im Schritt **Users** angegebenen **Database**.
+:::
 
 ### 2. Die Rechte eines Benutzers ändern
 
 1. Öffnen Sie das Menü **Actions** des Benutzers und wählen Sie **Manage Access**.
-2. Fügen Sie mit **Add** Zugriffe hinzu, ändern Sie die **Rights** oder entfernen Sie eine Zeile. Mindestens eine Rolle muss bestehen bleiben.
-3. Klicken Sie auf **Save**.
+2. Fügen Sie mit **Add** Zugriffe hinzu, ändern Sie die **Rights** oder entfernen Sie eine Zeile. Mindestens ein Zugriff muss bestehen bleiben.
+3. Klicken Sie auf **Save**. Die Meldung „Access updated“ bestätigt das Speichern.
 
 Der Benutzername kann nicht geändert werden.
+
+:::warning Vor der Konsole v1.3.0 erstellte Benutzer
+Die vor der Konsole v1.3.0 im Assistenten zur Cluster-Erstellung angelegten Benutzer haben eine Rolle auf der Systemdatenbank `admin` erhalten. In **Manage Access** wird diese Zeile als Fehler angezeigt und verhindert das Speichern: Entfernen Sie sie, fügen Sie bei Bedarf die Anwendungsdatenbank des Benutzers hinzu und klicken Sie dann auf **Save**.
+:::
 
 ### 3. Das Passwort eines Benutzers erneuern
 
@@ -64,8 +72,10 @@ Die Rotation widerruft das alte Passwort sofort. Aktualisieren Sie Ihre Anwendun
 ### 5. Die Verbindung testen
 
 ```bash
-mongosh "mongodb://<host>:27017/analytics" --username report-reader --authenticationDatabase admin
+mongosh "mongodb://<host>:27017/analytics?directConnection=true&authSource=admin" --username report-reader
 ```
+
+Bei einem Replica Set ist `<host>` die Adresse eines der in der Karte **Network and Connection** aufgeführten **Replica set rs0 members**.
 
 ```javascript
 // Muss gelingen
@@ -78,7 +88,7 @@ db.events.insertOne({ test: true })
 
 ## Überprüfung
 
-Die Benutzerliste zeigt für jeden Benutzer seine **Role** und die zugänglichen **Databases** mit dem jeweiligen Recht an (zum Beispiel `analytics (readonly)` oder `analytics (admin)`).
+Die Spalte **Databases** der Benutzerliste zeigt für jeden Benutzer die zugänglichen Datenbanken mit der jeweiligen Rolle an (zum Beispiel `analytics (Read-only)` oder `analytics (Administrator)`).
 
 ## Weiterführende Informationen
 

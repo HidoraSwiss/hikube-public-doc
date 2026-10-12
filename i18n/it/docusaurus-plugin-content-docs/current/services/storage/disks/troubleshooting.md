@@ -17,11 +17,11 @@ title: Risoluzione dei problemi
 
 ---
 
-### «Minimum size is 20 GB» o «Disk size must be at least 50 GB for Windows»
+### «Minimum size is 20 GB» o «This image needs a disk of at least … GB»
 
 **Causa**: la dimensione è inferiore al minimo.
 
-**Soluzione**: inserisca almeno 20 GB, oppure 50 GB per un disco di sistema Windows.
+**Soluzione**: inserisca almeno 20 GB; per un disco di sistema, almeno 28 GB con Windows Server e 40 GB con Oracle Linux.
 
 ---
 
@@ -58,7 +58,7 @@ title: Risoluzione dei problemi
 **Soluzione**:
 
 1. Verifichi nella pagina del disco che **Attached to** indichi la VM corretta e che lo stato sia **In Use**.
-2. Attenda la fine del riavvio della VM, quindi esegua di nuovo `lsblk` nella VM.
+2. Un disco collegato viene preso in carico solo al successivo riavvio della VM: faccia clic su **Restart** (sezione **Actions** della pagina della VM), attenda la fine del riavvio, quindi esegua di nuovo `lsblk` nella VM.
 
 ---
 

@@ -9,7 +9,7 @@ Mit Node-Gruppen unterteilen Sie die Nodes Ihres Kubernetes-Clusters nach den An
 ## Voraussetzungen
 
 - Ein bereitgestellter Hikube-Kubernetes-Cluster (siehe [Schnellstart](../quick-start.md))
-- Die über die Konsole heruntergeladene kubeconfig des Clusters (Schaltfläche **Kubeconfig**), um die Nodes mit `kubectl` zu prüfen
+- Die über die Konsole heruntergeladene kubeconfig des Clusters (Schaltfläche **Kubeconfig**, Projektadministratoren vorbehalten), um die Nodes mit `kubectl` zu prüfen
 
 ## Schritte
 
@@ -37,7 +37,7 @@ Die Bearbeitungsseite enthält die Abschnitte **General information**, **Node gr
 1. Klicken Sie im Abschnitt **Node groups** auf **Add node group**. Eine neue Karte öffnet sich.
 2. Füllen Sie die Felder aus:
    - **Group name**: zum Beispiel `compute` (3 bis 16 Zeichen: Kleinbuchstaben, Ziffern und Bindestriche);
-   - **Ephemeral storage size**: zum Beispiel 100 GB;
+   - **Node disk size**: zum Beispiel 100 GB;
    - **Minimum nodes** und **Maximum nodes**: zum Beispiel 1 und 10;
    - **Instance type**: zum Beispiel Serie **Universal (U)**, Größe **4XLarge** (`u1.4xlarge`);
    - **Exposed on the internet (Public IP)**: nur aktivieren, wenn diese Gruppe eingehenden Traffic empfangen soll (Ingress NGINX);
@@ -50,10 +50,10 @@ Wählen Sie aussagekräftige Namen für Ihre Gruppen (`compute`, `web`, `monitor
 
 ### 4. Eine bestehende Gruppe ändern
 
-Klappen Sie im Abschnitt **Node groups** die Karte der Gruppe auf, ändern Sie die gewünschten Felder (Instanztyp, ephemerer Speicher, minimale oder maximale Anzahl der Nodes, Erreichbarkeit) und klicken Sie dann auf **Save**.
+Klappen Sie im Abschnitt **Node groups** die Karte der Gruppe auf, ändern Sie die gewünschten Felder (Instanztyp, Festplattengröße der Nodes, minimale oder maximale Anzahl der Nodes, Erreichbarkeit) und klicken Sie dann auf **Save**.
 
 :::warning
-Eine Änderung des Instanztyps ersetzt alle Nodes der Gruppe: Die Plattform erstellt die neuen Nodes und entfernt die alten einzeln, ohne abzuwarten, bis jeder Ersatz-Node bereit ist. Eine Gruppe mit nur einem Node ist daher während des Austauschs (mehrere Minuten) nicht verfügbar: Sehen Sie für Workloads, die keine Unterbrechung vertragen, mindestens zwei Nodes vor. Die Quota des Projekts muss die zusätzlichen Nodes während des Austauschs aufnehmen können.
+Eine Änderung des Instanztyps oder der Festplattengröße, ob nach oben oder nach unten, ersetzt schrittweise alle Nodes der Gruppe, einen nach dem anderen: Die Plattform erstellt die neuen Nodes und entfernt die alten einzeln, ohne abzuwarten, bis jeder Ersatz-Node bereit ist. Lokal auf den Nodes gespeicherte Daten außerhalb persistenter Volumes gehen verloren. Eine Gruppe mit nur einem Node ist daher während des Austauschs (mehrere Minuten) nicht verfügbar: Sehen Sie für Workloads, die keine Unterbrechung vertragen, mindestens zwei Nodes vor. Die Quota des Projekts muss die zusätzlichen Nodes während des Austauschs aufnehmen können.
 :::
 
 :::note

@@ -152,7 +152,7 @@ L'assistant de création affiche, dès l'étape **Configuration**, le **Coût es
 
 | Paramètre | Valeur |
 |-----------|--------|
-| Taille du disque | 1 à 4 096 Go, dans la limite du quota de stockage du projet |
+| Taille du disque | 1 à 4 096 Go, dans la limite du quota de stockage du projet ; augmentation uniquement après création |
 | Réplicas | 1, 2 ou 3 |
 
 ---

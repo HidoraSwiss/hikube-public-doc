@@ -23,6 +23,10 @@ Diese Anleitung erklärt, wie Sie eine VM mit einem oder mehreren VPC-Subnetzen 
 
 Noch kein VPC? Klicken Sie im Abschnitt **VPC Networks (Secondary)** auf **+ VPC**: Im Dialog **Create VPC** erstellen Sie das VPC und seine Subnetze, das VPC wird anschließend automatisch angehakt. Um einem angehakten VPC ein Subnetz hinzuzufügen, klicken Sie auf **Add subnet**, geben einen Namen und einen CIDR-Bereich ein und bestätigen.
 
+:::warning Debian und Ubuntu
+Ist das Image der VM Debian oder Ubuntu und ein VPC angehakt, zeigt der Abschnitt die Warnung **Manual setup required on Debian and Ubuntu** an: Die VPC-Adresse ist reserviert, wird im System aber nicht automatisch angewendet. Konfigurieren Sie die Schnittstelle, sobald die VM gestartet ist (siehe [Im Betriebssystem prüfen](#4-im-betriebssystem-prüfen)). Dieselbe Warnung erscheint unter **Edit**.
+:::
+
 ### 2. Eine bestehende VM verbinden
 
 1. Öffnen Sie die Detailseite der VM und klicken Sie auf **Edit**.
@@ -42,7 +46,7 @@ Auf der Detailseite der VM, Abschnitt **Network & Security**:
 ip -br addr
 ```
 
-**Erwartetes Ergebnis:** eine zusätzliche Schnittstelle pro verbundenem Subnetz. Das Betriebssystem konfiguriert sie nicht automatisch: Sie erscheint zunächst ohne Adresse, zum Beispiel:
+**Erwartetes Ergebnis:** eine zusätzliche Schnittstelle pro verbundenem Subnetz. Unter Debian und Ubuntu konfiguriert das Betriebssystem sie nicht automatisch: Sie erscheint zunächst ohne Adresse, zum Beispiel:
 
 ```
 lo               UNKNOWN        127.0.0.1/8 ::1/128
@@ -50,7 +54,9 @@ enp1s0           UP             10.x.x.x/xx ...
 enp2s0           DOWN
 ```
 
-Aktivieren Sie DHCP auf der sekundären Schnittstelle. Beispiel mit netplan (Ubuntu):
+Die VPC-Adresse wird per DHCP vergeben. Distributionen mit NetworkManager (AlmaLinux, Rocky…) übernehmen sie automatisch; unter Debian und Ubuntu aktivieren Sie DHCP auf der sekundären Schnittstelle. Die DHCP-Lease liefert kein Gateway: Die Standardroute bleibt auf der primären Schnittstelle.
+
+Beispiel mit netplan (Debian, Ubuntu):
 
 ```yaml title="/etc/netplan/60-vpc.yaml"
 network:

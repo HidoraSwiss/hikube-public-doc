@@ -23,11 +23,11 @@ Ogni bucket Hikube può avere più **utenti S3**, ciascuno con la propria coppia
 1. Apra **Infrastructure** → **S3 Buckets**, quindi faccia clic sul bucket.
 2. Nella scheda **Users & Access**, faccia clic su **Add User**.
 3. Nella finestra **New User**:
-   - inserisca il **Username** (da 3 a 16 caratteri: lettere minuscole, cifre e trattini; deve iniziare con una lettera);
+   - inserisca il **Username** (da 3 a 16 caratteri: lettere minuscole, cifre e trattini; inizia con una lettera e termina con una lettera o una cifra; alcuni nomi sono riservati, come `admin`, `root` o `postgres`);
    - selezioni **Read-only access** se l'utente deve soltanto leggere gli oggetti.
 4. Faccia clic su **Create User**.
 
-La finestra **Generated Credentials** mostra **S3 Bucket**, **S3 Endpoint**, **Access Key ID** e **Secret Access Key**.
+La finestra **Generated Credentials** mostra **S3 Bucket** (il nome S3 effettivo, `bucket-…`), **S3 Endpoint**, **Access Key ID** e **Secret Access Key**. Se il nome S3 non è ancora noto, la finestra mostra al suo posto «The S3 name will be available in a few moments, on the bucket page.»: lo rilevi in seguito nella scheda **Access & Configuration**.
 
 :::warning
 Copi questi valori prima di cliccare su **I have saved these keys**: la chiave segreta non potrà essere recuperata in seguito.
@@ -37,9 +37,9 @@ Copi questi valori prima di cliccare su **I have saved these keys**: la chiave s
 
 1. Nella scheda **Users & Access**, apra il menu delle azioni dell'utente.
 2. Scelga **Edit access**.
-3. Selezioni o deselezioni **Read-only access**, quindi faccia clic su **Save changes**.
+3. Selezioni **Read-only access** per limitare l'utente alla lettura, oppure la deselezioni per riportarlo in lettura / scrittura, quindi faccia clic su **Save changes**.
 
-La colonna **Access** della tabella mostra quindi **Read-only** o **Read / Write**. Le chiavi dell'utente non cambiano.
+Il messaggio **Access updated** conferma la modifica e la colonna **Access** della tabella mostra **Read-only** o **Read / Write**. Le chiavi dell'utente non cambiano.
 
 ## Rinnovare le chiavi
 

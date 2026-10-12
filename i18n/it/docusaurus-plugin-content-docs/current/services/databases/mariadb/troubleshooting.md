@@ -12,7 +12,13 @@ title: Risoluzione dei problemi
 **Soluzione**:
 
 1. Attenda qualche minuto e aggiorni la pagina del cluster.
-2. Se lo stato non cambia dopo una quindicina di minuti, oppure passa a **Error** o **Failed**, [contatti il supporto](mailto:support@hidora.io) indicando il progetto e il nome del cluster.
+2. Se lo stato non cambia dopo una quindicina di minuti, [contatti il supporto](mailto:support@hidora.io) indicando il progetto e il nome del cluster.
+
+### Il cluster passa allo stato « Error »
+
+**Causa**: la piattaforma non è riuscita ad applicare la creazione del cluster o la sua ultima modifica. Dopo una modifica, il cluster può continuare a funzionare con la configurazione precedente.
+
+**Soluzione**: [contatti il supporto](mailto:support@hidora.io) indicando il progetto, il nome del cluster e la modifica richiesta.
 
 ### Connessione rifiutata o timeout
 
@@ -39,9 +45,15 @@ title: Risoluzione dei problemi
 
 ### Errore durante l'aggiunta di un accesso o di un utente
 
-**Causa**: il nome del database o dell'utente non rispetta le regole di denominazione.
+**Causa**: il nome del database o dell'utente non rispetta le regole di denominazione, oppure l'accesso riguarda un database di sistema (`mysql`, `information_schema`, `performance_schema`, `sys`).
 
-**Soluzione**: utilizzi solo lettere minuscole, cifre e trattini, iniziando con una lettera e terminando con una lettera o una cifra. I trattini bassi (`_`) e le lettere maiuscole non sono accettati. Consulti [Concetti MariaDB](./concepts.md#regole-di-denominazione).
+**Soluzione**: utilizzi solo lettere minuscole, cifre e trattini, iniziando con una lettera e terminando con una lettera o una cifra. I trattini bassi (`_`) e le lettere maiuscole non sono accettati. Conceda l'accesso a un database applicativo, mai a un database di sistema. Consulti [Concetti MariaDB](./concepts.md#regole-di-denominazione).
+
+### Una riga `mysql` appare in errore in « Manage Access »
+
+**Causa**: l'utente è stato creato con la procedura guidata di creazione del cluster prima della console v1.3.0, che gli assegnava un ruolo sul database di sistema `mysql`. Un database di sistema non può più ricevere accessi, e l'aggiornamento dell'utente è rifiutato finché questa riga è presente.
+
+**Soluzione**: rimuova la riga `mysql`, aggiunga se necessario il database applicativo dell'utente, quindi faccia clic su **Save**. Il messaggio « Access updated » conferma il salvataggio.
 
 ### Spazio su disco esaurito
 
@@ -55,7 +67,7 @@ title: Risoluzione dei problemi
    FROM information_schema.tables
    GROUP BY table_schema;
    ```
-2. Aumenti la **Disk size (GB)** tramite **Edit**, entro il limite della quota di storage del progetto. Consulti [Modificare le risorse](./how-to/scale-resources.md).
+2. Aumenti la **Disk size (GB)** tramite **Edit**, entro il limite della quota di storage del progetto. La dimensione non può essere ridotta in seguito. Consulti [Modificare le risorse](./how-to/scale-resources.md).
 3. Elimini i dati obsoleti, quindi ottimizzi le tabelle interessate (`OPTIMIZE TABLE`).
 
 ### Replica non sincronizzata

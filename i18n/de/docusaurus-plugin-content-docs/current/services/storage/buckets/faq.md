@@ -15,7 +15,7 @@ Stellen Sie ihm in Ihren S3-Clients `https://` voran.
 
 ### Warum unterscheidet sich der S3-Name des Buckets von dem Namen, den ich gewählt habe?
 
-Der in der Konsole gewählte Name identifiziert den Bucket in Ihrem Projekt. Der **tatsächliche S3-Name** wird von der Plattform generiert, um seine Eindeutigkeit auf dem Endpunkt zu gewährleisten. Verwenden Sie in Ihren Befehlen und SDKs immer den **Bucket name**, der unter **Access & Configuration** angezeigt wird.
+Der in der Konsole gewählte Name identifiziert den Bucket in Ihrem Projekt. Der **tatsächliche S3-Name** in der Form `bucket-<Kennung>` wird von der Plattform generiert, um seine Eindeutigkeit auf dem Endpunkt zu gewährleisten. Verwenden Sie in Ihren Befehlen und SDKs immer den **Bucket name**, der unter **Access & Configuration** angezeigt wird: Mit dem in der Konsole gewählten Namen erhält ein S3-Client `AccessDenied`.
 
 ---
 
@@ -64,7 +64,7 @@ Nein. Die Schlüssel eines Benutzers sind auf seinen Bucket beschränkt: `aws s3
 
 ### Wozu dient die Sperre (WORM)?
 
-Die Option **Enable Object Lock (WORM)** verhindert das Löschen oder Ändern der Objekte während 365 Tagen. Die Plattform wendet diese Aufbewahrung standardmäßig im Modus `COMPLIANCE` an: Niemand kann ein Objekt löschen oder seine Aufbewahrung vor Ablauf verkürzen. Diese Standarddauer ist in der Konsole nicht einstellbar; wenden Sie sich bei einem anderen Bedarf an den Support. Die Option dient der regulatorischen Archivierung oder dem Schutz von Backups vor versehentlichem oder böswilligem Löschen. Sie wird bei der Erstellung des Buckets gewählt.
+Die Option **Enable Object Lock (WORM)** sperrt jedes Objekt nach dem Schreiben 365 Tage lang. Die Plattform wendet diese Aufbewahrung im Modus `COMPLIANCE` an: Niemand kann ein Objekt ändern oder löschen oder seine Aufbewahrung vor Ablauf verkürzen. Die WORM-Aufbewahrung wird von der Plattform festgelegt: 365 Tage im Modus COMPLIANCE. Sie kann weder bei der Erstellung noch danach geändert werden. Die Option dient der regulatorischen Archivierung oder dem Schutz von Backups vor versehentlichem oder böswilligem Löschen. Sie wird bei der Erstellung des Buckets gewählt und lässt sich danach nicht mehr entfernen. Das Löschen eines gesperrten Buckets entfernt ihn aus der Konsole, löscht aber seine Objekte nicht: Sie bleiben bis zum Ablauf ihrer Aufbewahrung gesperrt.
 
 ---
 

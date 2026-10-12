@@ -34,7 +34,7 @@ Jedes Volume der VM kann **New** sein (die Konsole erstellt die Disk) oder **Exi
 5. Klicken Sie auf **Save**.
 
 :::warning Neustart
-Eine Änderung des Speichers startet die VM neu. Die Konsole weist darauf hin: „The instance type or storage was modified. The instance will reboot, which may take several minutes.“
+Die Disk wird erst beim nächsten Neustart der VM übernommen. Die Konsole weist darauf hin: „The instance type, storage or GPUs changed. These changes only take effect on the next restart: restart the VM to apply them.“ Klicken Sie im Abschnitt **Actions** der VM-Seite auf **Restart**.
 :::
 
 ## Eine Disk bei der Erstellung einer VM anbinden
@@ -72,10 +72,10 @@ Verwenden Sie in `/etc/fstab` die UUID statt des Gerätenamens (`/dev/vdb`): Die
 
 1. Hängen Sie die Disk in der VM aus und entfernen Sie ihre Zeile aus `/etc/fstab`.
 2. Öffnen Sie die Seite der VM → **Edit** → Abschnitt **Storage**.
-3. Klicken Sie auf das Löschsymbol des Volumes (**Remove disk**) und bestätigen Sie dann durch Eingabe des Namens der Disk.
-4. Klicken Sie auf **Save**. Die VM wird neu gestartet.
+3. Klicken Sie am Volume auf **Detach disk** und bestätigen Sie im Dialog **Detach `<name>`?** mit **Detach**. Eine Eingabe des Namens ist nicht erforderlich.
+4. Klicken Sie auf **Save** und dann auf **Restart**: Das Trennen wird erst beim nächsten Neustart der VM wirksam; bis dahin bleibt die Disk für das System sichtbar.
 
-Die Disk wird **getrennt**, nicht gelöscht: Sie bleibt unter **Infrastructure** → **Disks** mit dem Status **Ready** und kann an eine andere VM angebunden werden. Um sie endgültig zu löschen, verwenden Sie die Aktion **Delete** auf der Seite der Disk.
+Die Disk wird **getrennt**, nicht gelöscht: Ihre Daten bleiben erhalten, und sie bleibt unter **Infrastructure** → **Disks** mit dem Status **Ready** und kann an eine andere VM angebunden werden. Um sie endgültig zu löschen, verwenden Sie die Aktion **Delete** auf der Seite der Disk. Eine getrennte Disk wird von der VM bis zu ihrem nächsten Neustart weiter verwendet. Starten Sie die VM neu und warten Sie dann einige Minuten, bevor Sie die Disk löschen: Ein zu schnelles Löschen kann dazu führen, dass der Speicherplatz in Ihrem Quota belegt bleibt.
 
 :::note
 Auch das Löschen einer VM trennt ihre Disks, ohne sie zu löschen. Denken Sie daran, nicht mehr benötigte Disks zu löschen: Sie verbrauchen weiterhin das Speicher-Quota des Projekts.

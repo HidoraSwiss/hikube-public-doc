@@ -50,8 +50,8 @@ When the **Sharding (Distributed Topology)** option is enabled at creation, the 
 | Feature | Available |
 |---------|-----------|
 | Cluster creation (version 6.0, 7.0 or 8.0, preset, disk size, 1, 3 or 5 replicas, external access, sharding) | Yes |
-| Users, global role and per-database access (admin / read-only), password rotation | Yes |
-| Changing the version, disk size and external access | Yes |
+| Users and per-database access (admin / read-only), password rotation | Yes |
+| Version upgrade, disk size increase, change of external access | Yes |
 | Changing the preset, number of replicas or sharding after creation | No, [contact support](mailto:support@hidora.io) |
 | Backups and restore | No, [contact support](mailto:support@hidora.io) |
 

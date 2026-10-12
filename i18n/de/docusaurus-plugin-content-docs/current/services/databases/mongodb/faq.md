@@ -7,7 +7,7 @@ title: FAQ
 
 ### Welche Version sollte ich wählen?
 
-Der Assistent bietet **6.0**, **7.0** und **8.0** (Standard) an. Wählen Sie für ein neues Projekt die neueste Version. Bei einer Migration gehen Sie von der Version Ihrer aktuellen Umgebung aus und aktualisieren dann über **Edit** jeweils um eine Version.
+Der Assistent bietet **6.0**, **7.0** und **8.0** (Standard) an. Wählen Sie für ein neues Projekt die neueste Version. Bei einer Migration gehen Sie von der Version Ihrer aktuellen Umgebung aus und aktualisieren dann über **Edit** jeweils um eine Version. Eine Version kann nicht herabgestuft werden.
 
 ### Wie viele Replicas sollte ich wählen?
 
@@ -37,15 +37,17 @@ Maßgeblich ist die im Assistenten angezeigte Liste. Das Preset kann nach der Er
 
 ### Wo finde ich die Verbindungsadresse?
 
-In der Karte **Network and Connection** auf der Seite des Clusters, Feld **Host**, wenn der **External Access** aktiviert ist. Der Port ist `27017`. Ohne externen Zugriff zeigt das Feld **Not defined** an: Der Cluster bleibt von den VMs und Kubernetes-Clustern des Projekts über eine interne Adresse erreichbar, die die Konsole nicht anzeigt; [wenden Sie sich an den Support](mailto:support@hidora.io), um sie zu erhalten.
+In der Karte **Network and Connection** auf der Seite des Clusters, wenn der **External Access** aktiviert ist: Feld **Host** bei einem Cluster mit Sharding, Liste **Replica set rs0 members** und **External connection string** bei einem Replica Set. Der Port ist `27017`. Bei einem Replica Set verbinden Sie sich mit `directConnection=true` mit einem Mitglied, ohne den Parameter `replicaSet`. Ohne externen Zugriff zeigt das Feld **Not defined** an: Der Cluster bleibt von den VMs und Kubernetes-Clustern des Projekts über eine interne Adresse erreichbar, die die Konsole nicht anzeigt; [wenden Sie sich an den Support](mailto:support@hidora.io), um sie zu erhalten.
 
 ### Warum hat der im Assistenten erstellte Benutzer keinen Zugriff auf meine Datenbank?
 
-Die im Assistenten zur Cluster-Erstellung gewählte **Role** gilt für die Datenbank `admin`. Gewähren Sie anschließend den Zugriff auf Ihre Anwendungsdatenbanken über **Manage Access**. Siehe [Benutzer und Datenbanken verwalten](./how-to/manage-users-databases.md).
+Die im Assistenten gewählte **Role** gilt für die für diesen Benutzer angegebene **Database**, und nur für diese. Gewähren Sie den Zugriff auf Ihre weiteren Datenbanken über **Manage Access**. Siehe [Benutzer und Datenbanken verwalten](./how-to/manage-users-databases.md).
+
+Vor der Konsole v1.3.0 erstellte Benutzer haben ihre Rolle auf der Systemdatenbank `admin` erhalten. Entfernen Sie in **Manage Access** die als Fehler angezeigte Zeile `admin` und fügen Sie ihre Anwendungsdatenbank hinzu.
 
 ### Warum kann ich einen Benutzer nicht speichern?
 
-Ein MongoDB-Benutzer muss mindestens eine Rolle haben: eine **Global Role** oder einen **Specific Access** auf eine Datenbank. Prüfen Sie auch die Benennungsregeln: nur Kleinbuchstaben, Ziffern und Bindestriche, ohne Unterstrich.
+Ein MongoDB-Benutzer muss mindestens einen Zugriff auf eine Datenbank haben: Andernfalls zeigt die Konsole „Please grant access to at least one database.“ an. Die Systemdatenbanken `admin`, `local` und `config` werden abgelehnt. Prüfen Sie auch die Benennungsregeln: nur Kleinbuchstaben, Ziffern und Bindestriche, ohne Unterstrich; 3 bis 16 Zeichen für einen Benutzernamen.
 
 ### Ich habe das Passwort eines Benutzers verloren. Wie kann ich es wiederherstellen?
 

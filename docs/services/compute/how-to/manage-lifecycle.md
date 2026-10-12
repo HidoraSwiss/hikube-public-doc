@@ -52,7 +52,9 @@ Cliquez sur **Redémarrer** et confirmez dans **Redémarrer la machine virtuelle
    - **Configuration avancée** : clés SSH, script cloud-init, **Redémarrage Automatique**.
 3. Vérifiez le récapitulatif de quota en haut de page et cliquez sur **Enregistrer**.
 
-Si le type d'instance, les disques ou les GPU changent, la console affiche **Redémarrage requis** : la VM redémarre, ce qui peut prendre plusieurs minutes. Sinon, elle affiche **Instance mise à jour**.
+Si le type d'instance, les disques ou les GPU changent, la console affiche **Redémarrage requis** : ces modifications ne prennent effet qu'au prochain redémarrage de la VM. Cliquez sur **Redémarrer** pour les appliquer. Sinon, elle affiche **Instance mise à jour**.
+
+Si l'enregistrement est refusé, la console affiche **Formulaire incomplet** et nomme les champs en erreur.
 
 Le nom et l'image système ne sont pas modifiables.
 

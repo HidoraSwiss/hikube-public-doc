@@ -49,9 +49,9 @@ title: Troubleshooting
 
 ### "No S3 connection information available currently."
 
-**Cause**: the bucket is still being provisioned.
+**Cause**: the bucket is still being provisioned, or it does not have any user yet: the S3 name and the endpoint appear with its first user.
 
-**Solution**: wait until the bucket status switches to **Ready**, then reload the page. If the status remains **Creating** or switches to **Error**, [contact support](mailto:support@hidora.io) with the bucket name and its identifier.
+**Solution**: wait until the bucket status switches to **Ready**, create a user with **Add User** if needed, then reload the page. If the status remains **Provisioning** or switches to **Error**, [contact support](mailto:support@hidora.io) with the bucket name and its identifier.
 
 ---
 
@@ -65,7 +65,7 @@ title: Troubleshooting
 
 ### Objects disappeared after deleting a bucket
 
-**Cause**: deleting a bucket is not blocked when it contains objects; it deletes them along with it, with no possibility of recovery.
+**Cause**: deleting a bucket without locking also deletes all its objects, even if it is not empty, with no possibility of recovery. The confirmation window says so. A locked bucket (WORM) is the exception: its objects are kept after the deletion.
 
 **Solution**: before deleting a bucket, copy the objects you want to keep, for example to your workstation:
 
@@ -94,11 +94,11 @@ aws --endpoint-url https://<endpoint> s3 sync s3://<s3-bucket-name>/ ./bucket-ba
 
 ---
 
-### Bucket not found (`NoSuchBucket`)
+### `AccessDenied` with the name displayed when a user was created
 
-**Cause**: the name used is the name chosen in the console, not the actual S3 name.
+**Cause**: the S3 client uses the name chosen in the console (for example `demo-assets`) instead of the actual S3 name (`bucket-…`). Previous versions of the console could display that name in place of the S3 name when a bucket or a user was created. A user's keys only give access to the actual S3 bucket: any other name is refused with `AccessDenied`, never `NoSuchBucket`, even if a bucket with that name exists in the console.
 
-**Solution**: note the **Bucket name** in the **Access & Configuration** card of the bucket page and use it in your commands.
+**Solution**: note the **Bucket name** in the **Access & Configuration** card of the bucket page and use it instead in your clients' configuration. The user's keys remain valid.
 
 :::warning
 Do not confuse the bucket's name in the console with its S3 name. Only the latter works with S3 clients.

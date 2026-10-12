@@ -23,6 +23,10 @@ This guide explains how to connect a VM to one or more VPC subnets, at creation 
 
 No VPC yet? Click **+ VPC** in the **VPC Networks (Secondary)** section: the **Create VPC** dialog lets you create the VPC and its subnets, then checks it automatically. To add a subnet to a checked VPC, click **Add subnet**, enter a name and a CIDR range, then confirm.
 
+:::warning Debian and Ubuntu
+If the VM image is Debian or Ubuntu and a VPC is checked, the section shows the **Manual setup required on Debian and Ubuntu** warning: the VPC address is reserved, but it is not applied automatically in the system. Configure the interface once the VM has started (see [Check in the OS](#4-check-in-the-os)). The same warning appears in **Edit**.
+:::
+
 ### 2. Connect an existing VM
 
 1. Open the VM's detail page and click **Edit**.
@@ -42,7 +46,7 @@ On the VM's detail page, **Network & Security** section:
 ip -br addr
 ```
 
-**Expected result:** one additional interface per connected subnet. The OS does not configure it automatically: it first appears without an address, for example:
+**Expected result:** one additional interface per connected subnet. On Debian and Ubuntu, the OS does not configure it automatically: it first appears without an address, for example:
 
 ```
 lo               UNKNOWN        127.0.0.1/8 ::1/128
@@ -50,7 +54,9 @@ enp1s0           UP             10.x.x.x/xx ...
 enp2s0           DOWN
 ```
 
-Enable DHCP on the secondary interface. Example with netplan (Ubuntu):
+The VPC address is assigned by DHCP. Distributions using NetworkManager (AlmaLinux, Rocky…) pick it up automatically; on Debian and Ubuntu, enable DHCP on the secondary interface. The lease does not provide a gateway: the default route stays on the primary interface.
+
+Example with netplan (Debian, Ubuntu):
 
 ```yaml title="/etc/netplan/60-vpc.yaml"
 network:

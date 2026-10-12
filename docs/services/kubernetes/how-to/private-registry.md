@@ -13,7 +13,7 @@ Ce guide utilise les mécanismes Kubernetes natifs pour l'authentification aux r
 ## Prérequis
 
 - Un cluster Kubernetes Hikube déployé (voir le [démarrage rapide](../quick-start.md))
-- Le kubeconfig du cluster téléchargé depuis la console (bouton **Kubeconfig**) et chargé dans votre session (`export KUBECONFIG=~/Downloads/kubeconfig-<nom-du-cluster>.yaml`)
+- Le kubeconfig du cluster téléchargé depuis la console (bouton **Kubeconfig**, réservé aux administrateurs du projet) et chargé dans votre session (`export KUBECONFIG=~/Downloads/kubeconfig-<nom-du-cluster>.yaml`)
 - Les identifiants d'accès à votre registre privé (URL, nom d'utilisateur, mot de passe ou token)
 
 ## Étapes

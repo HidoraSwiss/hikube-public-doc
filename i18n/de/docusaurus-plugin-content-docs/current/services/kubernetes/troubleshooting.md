@@ -5,26 +5,40 @@ title: Fehlerbehebung
 
 # Fehlerbehebung — Kubernetes
 
-### Der Cluster bleibt im Erstellungsstatus
+### Der Cluster bleibt im Erstellungsstatus oder wechselt zu Error
 
-**Ursache**: Das Provisioning der Control Plane oder der Nodes wird nicht abgeschlossen.
+**Ursache**: Das Provisioning der Control Plane oder der Nodes wird nicht abgeschlossen, oder die Plattform konnte die letzte Änderung des Clusters nicht anwenden. Im letzteren Fall wechselt der Cluster in den Status **Error**; er kann mit seiner vorherigen Konfiguration weiterlaufen.
 
 **Lösung**:
 
-1. Prüfen Sie unter **Infrastructure** > **Kubernetes** den Status des Clusters. Ein neu erstellter Cluster wechselt innerhalb weniger Minuten von **Creating** zu **Ready**.
+1. Prüfen Sie unter **Infrastructure** > **Kubernetes** den Status des Clusters. Ein neu erstellter Cluster wechselt innerhalb weniger Minuten von **Creating** zu **Ready**. Mit dem Statusfilter der Liste lassen sich die Cluster im Status **Ready** oder **Error** anzeigen.
 2. Prüfen Sie auf der Detailseite unter **Node Pools**, ob Nodes aktiv werden.
-3. Wenn sich der Status nicht ändert, [wenden Sie sich an den Support](mailto:support@hidora.io) und geben Sie den Namen des Clusters und das Projekt an.
+3. Wenn sich der Status nicht ändert oder der Cluster im Status **Error** ist, [wenden Sie sich an den Support](mailto:support@hidora.io) und geben Sie den Namen des Clusters und das Projekt an.
+
+---
+
+### Die Erstellung des ersten Clusters wartet auf „Preparing the Kubernetes environment“
+
+**Ursache**: Der erste Cluster eines Projekts kann erst erstellt werden, wenn die Kubernetes-Umgebung des Projekts bereit ist, was einige Minuten dauert. Ein weiterer Cluster kann kurzzeitig dieselbe Wartezeit erleben, während einer Änderung des Projekts wie einer Quota-Anpassung.
+
+**Lösung**:
+
+1. Lassen Sie den Assistenten geöffnet: Er zeigt „Preparing the project's Kubernetes environment; creation will resume automatically.“ an und startet die Erstellung selbstständig neu, ohne dass Ihre Konfiguration verloren geht. Die Schaltfläche **Cancel** beendet das Warten.
+2. Zeigt die Konsole „The project's Kubernetes environment is still not ready. Your configuration is kept: try again in a few minutes.“ an, klicken Sie einige Minuten später erneut auf **Create cluster**.
+3. Zeigt die Konsole **Error during creation** mit einer Meldung an, die Sie auffordert, sich an den Support zu wenden (zum Beispiel „The project's Kubernetes environment failed to deploy. Contact support.“), versuchen Sie es nicht erneut: [Wenden Sie sich an den Support](mailto:support@hidora.io) und geben Sie das Projekt an.
+
+Wenn Sie Ihre Cluster über die API erstellen, entsprechen diese Fälle den Fehlercodes `70205` (Umgebung in Vorbereitung: Senden Sie dieselbe Anfrage einige Minuten später erneut), `70207` und `70208` (nicht erneut versuchen, an den Support wenden).
 
 ---
 
 ### Der Assistent blockiert die Erstellung (Quota)
 
-**Ursache**: Das Projekt hat nicht genügend Quota für CPU, Arbeitsspeicher oder Speicher. Die Quota wird anhand der Control Plane und der **maximalen Anzahl** an Nodes jeder Gruppe berechnet, einschließlich des ephemeren Speichers („Storage quota exceeded for this project (including maximum auto-scaling)“).
+**Ursache**: Das Projekt hat nicht genügend Quota für CPU, Arbeitsspeicher oder Speicher. Die Quota wird anhand der Control Plane und der **maximalen Anzahl** an Nodes jeder Gruppe berechnet, einschließlich der Festplatte der Nodes („Storage quota exceeded for this project (including maximum auto-scaling)“).
 
 **Lösung**:
 
 1. Sehen Sie sich die Anzeigen **Project Quotas** des Assistenten an, um die überschrittene Ressource zu ermitteln.
-2. Verringern Sie **Maximum nodes**, den Instanztyp oder die **Ephemeral storage size** der Gruppen.
+2. Verringern Sie **Maximum nodes**, den Instanztyp oder die **Node disk size** der Gruppen.
 3. Wenn der Bedarf tatsächlich besteht, beantragen Sie beim Support eine Erhöhung der Quota.
 
 ---
@@ -38,6 +52,17 @@ title: Fehlerbehebung
 1. Warten Sie, bis der Cluster den Status **Ready** hat.
 2. Klicken Sie im Abschnitt **Actions** der Detailseite erneut auf **Kubeconfig**.
 3. Wenn der Fehler weiterhin auftritt, wenden Sie sich an den Support.
+
+---
+
+### Die Schaltfläche Kubeconfig ist deaktiviert oder der Download wird abgelehnt
+
+**Ursache**: Die kubeconfig gewährt administrativen Zugriff auf den Cluster; ihr Download ist den Projektadministratoren vorbehalten. Für die übrigen Mitglieder ist die Schaltfläche **Kubeconfig** deaktiviert und mit dem Hinweis „Reserved for project administrators.“ versehen. Lehnt die Plattform die Anfrage ab, zeigt die Konsole „The kubeconfig grants administrator access to the cluster: it is reserved for project administrators.“ an.
+
+**Lösung**:
+
+1. Wenden Sie sich an einen Projektadministrator.
+2. Für einen eingeschränkten Zugriff auf den Cluster kann ein Administrator Ihnen auch ein eigenes Konto mit RBAC im Cluster einrichten (siehe [Zugriff und Werkzeuge](./how-to/toolbox.md)).
 
 ---
 
@@ -61,7 +86,7 @@ title: Fehlerbehebung
 
 ### Nodes im Zustand NotReady
 
-**Ursache**: Ein oder mehrere Nodes antworten der Control Plane nicht mehr. Das kann an unzureichenden Ressourcen, einer vollen ephemeren Disk oder einem Ausfall des kubelet liegen.
+**Ursache**: Ein oder mehrere Nodes antworten der Control Plane nicht mehr. Das kann an unzureichenden Ressourcen, einer vollen Node-Festplatte oder einem Ausfall des kubelet liegen.
 
 **Lösung**:
 
@@ -74,7 +99,7 @@ title: Fehlerbehebung
    ```bash
    kubectl get events -A --sort-by='.lastTimestamp'
    ```
-3. Bei `DiskPressure` erhöhen Sie die **Ephemeral storage size** der Gruppe (**Edit** > **Node groups**).
+3. Bei `DiskPressure` erhöhen Sie die **Node disk size** der Gruppe (**Edit** > **Node groups**).
 4. Prüfen Sie, ob der Instanztyp genügend Ressourcen für die bereitgestellten Workloads bietet.
 5. Wenn das Problem weiterhin besteht, wenden Sie sich an den Support.
 
@@ -181,6 +206,7 @@ title: Fehlerbehebung
 
 **Lösung**:
 
-1. Lesen Sie die Meldung: Sie nennt das zu korrigierende Feld (zum Beispiel GPUs, die einer bestehenden Gruppe hinzugefügt wurden, ein Maximum unter dem Minimum, ungültiges Override-YAML).
+1. Lesen Sie die Meldung: Sie nennt das zu korrigierende Feld (zum Beispiel GPUs, die einer bestehenden Gruppe hinzugefügt wurden, ein Maximum unter dem Minimum, ungültiges Override-YAML, eine Version unterhalb der aktuellen Version).
+   Eine Rückkehr zu einer niedrigeren Kubernetes-Version wird abgelehnt (`version downgrades are not supported`, Code `70206`): Wählen Sie die aktuelle oder eine höhere Version.
 2. Bei einem Konflikt warten Sie, bis der laufende Vorgang auf dem Cluster abgeschlossen ist, laden Sie die Bearbeitungsseite neu und versuchen Sie es erneut.
 3. Um GPUs hinzuzufügen, erstellen Sie eine neue Node-Gruppe, statt eine bestehende Gruppe ohne GPU zu ändern.

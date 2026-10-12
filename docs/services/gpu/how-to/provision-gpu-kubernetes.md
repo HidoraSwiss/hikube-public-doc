@@ -25,7 +25,7 @@ Puis :
 1. Cliquez sur **Ajouter un groupe de nœuds**.
 2. **Nom du groupe** : par exemple `gpu-workers`.
 3. **Type d'instance** : choisissez la série et la taille, par exemple **Universel (U)** > **2XLARGE** (8 vCPU, 32 Go).
-4. **Taille du stockage éphémère** : prévoyez assez d'espace pour les images de conteneurs CUDA, par exemple `100` Go.
+4. **Taille du disque des nœuds** : prévoyez assez d'espace pour les images de conteneurs CUDA, par exemple `100` Go.
 5. **Nombre minimum de nœuds** et **Nombre maximum de nœuds** : par exemple `1` et `3`.
 6. Section **GPU** : cliquez sur la carte du modèle voulu (par exemple **NVIDIA L40S**) ; **+** et **−** règlent le nombre de GPU **par nœud**.
 
@@ -51,7 +51,7 @@ Attendez que le cluster soit **Prêt** ou **Actif** dans la liste des clusters.
 
 ### 4. Récupérer le kubeconfig du cluster
 
-Sur la page de détail du cluster, cliquez sur **Kubeconfig**. La console télécharge `kubeconfig-<nom-du-cluster>.yaml`.
+Sur la page de détail du cluster, cliquez sur **Kubeconfig**. La console télécharge `kubeconfig-<nom-du-cluster>.yaml`. Ce bouton est réservé aux administrateurs du projet ; pour les autres membres, il est désactivé.
 
 ```bash
 export KUBECONFIG=~/Downloads/kubeconfig-<nom-du-cluster>.yaml

@@ -26,10 +26,17 @@ If the console says the project quotas are unavailable, creation stays blocked u
 | Message | Solution |
 |---------|----------|
 | **An instance with this name already exists.** | Choose another name. |
-| **Min. 20 GB required** / **Min. 50 GB required** | Increase **Size (GB)**: 20 GB minimum, 50 GB for Windows. |
-| Message mentioning a minimum size for Oracle Linux | The Oracle Linux system disk requires at least 40 GB. |
+| **Min. 20 GB required**, **Min. 28 GB required**, **Min. 40 GB required** or **This image needs a disk of at least … GB** | Increase **Size (GB)**: 20 GB minimum; for the system disk, 28 GB with Windows Server and 40 GB with Oracle Linux. |
 | **A system image is required for a new disk** | Select a card under **Operating System**. |
 | **Invalid format. Expected: `<algorithm> <base64-key> [comment]`** | Paste the complete **public** key (`.pub` file), on a single line. |
+
+---
+
+### Saving changes to a VM is refused
+
+**Cause**: a field on the **Edit** page is invalid, for example a new disk under 20 GB or an **Existing** volume with no disk selected.
+
+**Solution**: the console shows **Incomplete form** with the message of each invalid field. Fix those fields, then click **Save** again. Disks already attached to the VM are not held to the rules of a new disk (name, minimum size).
 
 ---
 
@@ -70,7 +77,7 @@ If the console says the project quotas are unavailable, creation stays blocked u
 
 1. Use the user shown in the **SSH Connection** block (or under **System Image** > **User**).
 2. Check that the public key matching your private key appears in **Advanced Configuration** > **SSH Keys**.
-3. If you just added the key via **Edit**, choose **Reload user-data** in the **SSH keys changed** dialog, or run **Reload UserData** from the **Actions** section, then **Restart**: the key is only installed at restart.
+3. If you just added the key via **Edit**, choose **Reload user-data** in the **SSH keys changed** dialog, or run **Reload UserData** from the **Actions** section, then **Restart**: the key is only installed at restart. This restart also regenerates the SSH host keys: if your client reports a changed key, remove the old entry with `ssh-keygen -R <public-ip>`.
 
 ---
 
@@ -80,7 +87,7 @@ If the console says the project quotas are unavailable, creation stays blocked u
 
 **Solution**:
 
-1. After **Save**, the console shows **Restart required**: wait for the VM to return to the **Running** state.
+1. After **Save**, the console shows **Restart required**: the disk is only added on the next restart. Click **Restart** in the **Actions** section, then wait for the VM to return to the **Running** state.
 2. Check the disk in the **Storage & Disks** section of the detail page.
 3. In the VM, list the devices: a new disk appears with no partition and no mount point.
    ```bash

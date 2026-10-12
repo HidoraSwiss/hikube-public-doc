@@ -36,7 +36,7 @@ Règles de validation de l'URL :
 
 À l'étape **Configuration** :
 
-- **Taille (Go)** : au moins 20 Go, et au moins **50 Go pour une image Windows** (la console ajuste la valeur automatiquement) ;
+- **Taille (Go)** : au moins 20 Go ; pour un disque système, au moins **40 Go avec Oracle Linux** et **28 Go avec Windows Server** (la console relève la valeur à ce minimum quand vous choisissez l'image) ;
 - **Type de réplication** : **Réplication Asynchrone** (Recommandé) ou **Réplication Synchrone** ;
 - **Chiffrement du disque** : activez-le si nécessaire.
 

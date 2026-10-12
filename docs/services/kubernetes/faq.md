@@ -76,6 +76,8 @@ export KUBECONFIG=~/Downloads/kubeconfig-<nom-du-cluster>.yaml
 kubectl get nodes
 ```
 
+Le kubeconfig donne un accès administrateur au cluster : son téléchargement est réservé aux administrateurs du projet. Pour les autres membres, le bouton **Kubeconfig** est désactivé avec la mention « Réservé aux administrateurs du projet. »
+
 Voir [Accès et outils](./how-to/toolbox.md).
 
 ---
@@ -103,4 +105,4 @@ Voir [Comment ajouter et modifier un groupe de nœuds](./how-to/manage-node-grou
 
 ### Puis-je modifier le control plane après la création ?
 
-Non. La **Taille de l'instance Control Plane** et la **Haute Disponibilité du Control Plane** ne sont pas modifiables dans la console après la création ; contactez le support. La version de Kubernetes, l'endpoint API, les groupes de nœuds et les addons restent modifiables.
+Non. La **Taille de l'instance Control Plane** et la **Haute Disponibilité du Control Plane** ne sont pas modifiables dans la console après la création ; contactez le support. La version de Kubernetes (uniquement vers une version supérieure), l'endpoint API, les groupes de nœuds et les addons restent modifiables.

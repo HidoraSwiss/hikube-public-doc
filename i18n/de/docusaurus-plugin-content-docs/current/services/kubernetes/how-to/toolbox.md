@@ -14,6 +14,8 @@ Diese Anleitung erklärt, wie Sie nach der Erstellung auf einen Hikube-Kubernete
 
 Der Browser lädt die Datei `kubeconfig-<cluster-name>.yaml` herunter. Sie gewährt administrativen Zugriff auf den Cluster.
 
+Der Download ist den Projektadministratoren vorbehalten. Für die übrigen Mitglieder ist die Schaltfläche **Kubeconfig** deaktiviert und mit dem Hinweis „Reserved for project administrators.“ versehen.
+
 :::warning
 Bewahren Sie diese Datei sicher auf (Secret-Manager, Tresor) und versionieren Sie sie niemals. Um anderen Personen Zugriff zu geben, richten Sie ihnen mit RBAC eigene Berechtigungen ein, statt diese Datei weiterzugeben.
 :::
@@ -122,4 +124,4 @@ kubectl logs <pod-name> -n <namespace> --previous
 kubectl get pods -A | grep -E "cilium|coredns|ingress-nginx|cert-manager"
 ```
 
-Wenn ein Cluster im Status **Creating** bleibt, ein Addon nicht bereitgestellt wird oder ein Node dem Cluster nie beitritt, [wenden Sie sich an den Support](mailto:support@hidora.io) und geben Sie den Namen des Clusters und das Projekt an.
+Wenn ein Cluster im Status **Creating** bleibt oder zu **Error** wechselt, ein Addon nicht bereitgestellt wird oder ein Node dem Cluster nie beitritt, [wenden Sie sich an den Support](mailto:support@hidora.io) und geben Sie den Namen des Clusters und das Projekt an.

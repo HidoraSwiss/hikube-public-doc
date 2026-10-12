@@ -44,7 +44,7 @@ graph TB
 2. Étape **Général** : saisissez le **Nom du cluster**.
 3. Étape **Configuration** : choisissez la **Version MongoDB**, la **Préconfiguration (Preset)**, la **Taille du disque (Go)** et le **Nombre de réplicas** (`3` recommandé), puis activez **Sharding (Topologie distribuée)**.
 4. Contrôlez le **Coût estimé** et l'impact sur les quotas, qui tiennent compte des composants supplémentaires.
-5. Étape **Utilisateurs** : ajoutez au moins un utilisateur avec le **Rôle** **Administrateur**.
+5. Étape **Utilisateurs** : ajoutez au moins un utilisateur, avec la **Base de données** applicative à sharder (par exemple `myapp`) et le **Rôle** **Administrateur**.
 6. Étape **Vérification** : vérifiez que la ligne **Sharding** indique **Activé**, puis cliquez sur **Déployer**.
 
 ### 2. Vérifier la topologie

@@ -16,11 +16,11 @@ Ce guide explique comment ajuster un cluster PostgreSQL existant depuis la [cons
 
 | Paramètre | Modifiable après création |
 |-----------|---------------------------|
-| **Version PostgreSQL** | Oui |
+| **Version PostgreSQL** | Oui, vers une version supérieure uniquement |
 | **Préconfiguration (Preset)** | Oui |
-| **Taille du disque (Go)** | Oui |
+| **Taille du disque (Go)** | Oui, à la hausse uniquement |
 | **Accès externe** | Oui |
-| **Nombre de réplicas** | Non, « Le mode ne peut pas être modifié après création » |
+| **Nombre de réplicas** | Non, « Le mode ne peut pas être modifié après création ». Le formulaire affiche la valeur actuelle (1, 2 ou 3) |
 
 Pour changer le nombre de réplicas d'un cluster existant, [contactez le support](mailto:support@hidora.io).
 
@@ -50,16 +50,22 @@ La page **Modifier PostgreSQL** affiche la carte **Paramètres du cluster** et l
 ### 2. Ajuster les paramètres
 
 - **Préconfiguration (Preset)** : sélectionnez un preset supérieur pour augmenter le CPU et la mémoire de chaque nœud.
-- **Taille du disque (Go)** : saisissez la nouvelle capacité.
-- **Version PostgreSQL** : sélectionnez la version cible. Le formulaire propose toutes les versions, mais seule une montée de version est possible : une version inférieure est refusée par la plateforme, le cluster reste sur sa version actuelle et la configuration demeure en échec jusqu'à ce que vous sélectionniez de nouveau une version supérieure ou égale. Une montée de version majeure (par exemple 17 → 18) se fait en place : l'instance est arrêtée pendant la migration des données.
+- **Taille du disque (Go)** : saisissez la nouvelle capacité, au moins égale à la taille actuelle. Une valeur inférieure affiche « La taille du disque ne peut pas être réduite : N Go minimum. » et n'est pas enregistrée.
+- **Version PostgreSQL** : sélectionnez la version cible. Le formulaire ne propose que la version actuelle et les versions supérieures. Une montée de version majeure (par exemple 17 → 18) se fait en place : l'instance est arrêtée pendant la migration des données.
 - **Accès externe** : activez ou désactivez l'exposition sur l'Internet public.
+
+Quand vous changez le preset ou la version, l'avertissement « Les instances du cluster vont redémarrer » s'affiche ; pour un changement de version, il rappelle qu'une version mise à niveau ne peut plus être abaissée.
 
 ### 3. Enregistrer
 
 Cliquez sur **Sauvegarder**. Le message « Cluster mis à jour » confirme la prise en compte. Si la nouvelle configuration dépasse les quotas du projet, le bouton reste inactif.
 
 :::warning
-Un changement de preset ou de version entraîne le redémarrage des instances. Sur un cluster à 1 réplica, la base est indisponible pendant le redémarrage, et pendant toute la migration lors d'une montée de version majeure ; planifiez l'opération en dehors des heures de forte charge.
+Un changement de preset ou de version entraîne le redémarrage des instances dès l'enregistrement. Sur un cluster à 1 réplica, la base est indisponible pendant le redémarrage, et pendant toute la migration lors d'une montée de version majeure ; planifiez l'opération en dehors des heures de forte charge.
+:::
+
+:::note
+L'API applique les mêmes règles : une version inférieure à la version actuelle est refusée avec le code `80203`, une taille de disque inférieure à la taille actuelle avec le code `80204`.
 :::
 
 :::tip

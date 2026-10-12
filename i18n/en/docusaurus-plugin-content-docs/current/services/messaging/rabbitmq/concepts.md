@@ -194,8 +194,10 @@ The **Small** preset is selected by default. It **cannot be changed after creati
 | Parameter | Value |
 |-----------|--------|
 | Cluster name | 3 to 16 characters: lowercase letters, digits and hyphens; starts with a letter, ends with a letter or a digit |
-| Available versions | 4.2, 4.1, 4.0, 3.13 |
+| Available versions | 4.2, 4.1, 4.0, 3.13; upgrade only after creation |
 | Replicas | 1, 3 or 5 (set at creation) |
+| Vhost name | Lowercase letters, digits and hyphens; starts with a letter, ends with a letter or a digit |
+| Username | 3 to 16 characters: lowercase letters, digits and hyphens; starts with a letter, ends with a letter or a digit. Some names, such as `admin` or `root`, are reserved |
 | Disk size | 1 to 4096 GB per node, within the project's storage quota; increase only |
 | External access | Can be enabled at creation or later |
 | AMQP port | 5672, without TLS |

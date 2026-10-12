@@ -34,7 +34,7 @@ Each VM volume can be **New** (the console creates the disk) or **Existing** (yo
 5. Click **Save**.
 
 :::warning Restart
-A storage change restarts the VM. The console indicates it: "The instance type or storage was modified. The instance will reboot, which may take several minutes."
+The disk is only taken into account on the next VM restart. The console indicates it: "The instance type, storage or GPUs changed. These changes only take effect on the next restart: restart the VM to apply them." Click **Restart** in the **Actions** section of the VM page.
 :::
 
 ## Attach a disk when creating a VM
@@ -72,10 +72,10 @@ Use the UUID rather than the device name (`/dev/vdb`) in `/etc/fstab`: the devic
 
 1. In the VM, unmount the disk and remove its line from `/etc/fstab`.
 2. Open the VM page → **Edit** → **Storage** section.
-3. Click the volume's delete icon (**Remove disk**), then confirm by entering the disk name.
-4. Click **Save**. The VM restarts.
+3. Click **Detach disk** on the volume, then confirm with **Detach** in the **Detach `<name>`?** dialog. You do not have to type the name.
+4. Click **Save**, then **Restart**: the detachment only takes effect on the next VM restart; until then, the disk remains visible to the system.
 
-The disk is **detached**, not deleted: it remains in **Infrastructure** → **Disks** with the **Ready** status, and can be attached to another VM. To delete it permanently, use the **Delete** action on the disk page.
+The disk is **detached**, not deleted: its data is kept and it remains in **Infrastructure** → **Disks** with the **Ready** status, and can be attached to another VM. To delete it permanently, use the **Delete** action on the disk page. A detached disk stays in use by the VM until its next restart. Restart the VM, then wait a few minutes before deleting the disk: deleting it too soon can leave the space occupied in your quota.
 
 :::note
 Deleting a VM also detaches its disks without deleting them. Remember to delete disks that are no longer needed: they keep consuming the project's storage quota.

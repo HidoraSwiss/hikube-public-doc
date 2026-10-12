@@ -15,8 +15,8 @@ Ce guide explique quels paramètres d'un cluster RabbitMQ peuvent être modifié
 
 | Paramètre | Modifiable après création | Remarque |
 |-----------|---------------------------|----------|
-| **Version RabbitMQ** | Oui | Versions proposées : 4.2, 4.1, 4.0, 3.13 |
-| **Taille du disque (Go)** | Oui | Capacité par nœud, dans la limite du quota de stockage du projet |
+| **Version RabbitMQ** | Oui | Version actuelle et versions supérieures parmi 4.2, 4.1, 4.0, 3.13 |
+| **Taille du disque (Go)** | Oui | Capacité par nœud, à la hausse uniquement, dans la limite du quota de stockage du projet |
 | **Accès externe** | Oui | Voir [Configurer l'accès externe](./configure-external-access.md) |
 | **Préconfiguration (Preset)** | Non | « La préconfiguration ne peut pas être modifiée après création » |
 | **Nombre de réplicas** | Non | « Le mode ne peut pas être modifié après création » |
@@ -32,12 +32,12 @@ La page **Modifier RabbitMQ** affiche la carte **Paramètres du cluster**. Les c
 
 ### 2. Ajuster les paramètres
 
-- **Version RabbitMQ** : sélectionnez la version cible.
-- **Taille du disque (Go)** : saisissez la nouvelle capacité par nœud. La taille ne peut qu'augmenter : une valeur inférieure est acceptée par le formulaire mais refusée par la plateforme, et le cluster garde sa taille actuelle.
+- **Version RabbitMQ** : sélectionnez la version cible. Le formulaire ne propose que la version actuelle et les versions supérieures.
+- **Taille du disque (Go)** : saisissez la nouvelle capacité par nœud. La taille ne peut qu'augmenter : une valeur inférieure affiche « La taille du disque ne peut pas être réduite : N Go minimum. » et n'est pas enregistrée.
 - **Accès externe** : activez ou désactivez l'interrupteur.
 
 :::warning Changement de version
-Le changement de version recrée les nœuds RabbitMQ un par un : avec un seul réplica, le cluster est indisponible pendant le redémarrage (de l'ordre d'une à deux minutes) et les clients doivent se reconnecter. L'adresse du champ **Hôte (Host)** ne change pas. Testez le changement de version sur un cluster hors production avant de l'appliquer à un cluster de production, et vérifiez la compatibilité de vos clients avec la version cible.
+Quand vous changez la version, l'avertissement « Les instances du cluster vont redémarrer » s'affiche : une version mise à niveau ne peut plus être abaissée. Le changement de version recrée les nœuds RabbitMQ un par un : avec un seul réplica, le cluster est indisponible pendant le redémarrage (de l'ordre d'une à deux minutes) et les clients doivent se reconnecter. L'adresse du champ **Hôte (Host)** ne change pas. Testez le changement de version sur un cluster hors production avant de l'appliquer à un cluster de production, et vérifiez la compatibilité de vos clients avec la version cible.
 :::
 
 ### 3. Enregistrer
@@ -45,6 +45,10 @@ Le changement de version recrée les nœuds RabbitMQ un par un : avec un seul r�
 Cliquez sur **Sauvegarder**. Le message « Cluster mis à jour » confirme que les paramètres ont été appliqués et la console revient à la page de détail.
 
 Si le quota du projet ne permet pas la nouvelle configuration, le bouton **Sauvegarder** reste inactif.
+
+:::note
+L'API applique les mêmes règles : une version inférieure à la version actuelle est refusée avec le code `140203`, une taille de disque inférieure à la taille actuelle avec le code `140204`.
+:::
 
 ## Changer de preset ou de nombre de réplicas
 

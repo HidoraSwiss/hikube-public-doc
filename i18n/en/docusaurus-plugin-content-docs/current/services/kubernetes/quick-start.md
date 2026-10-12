@@ -16,6 +16,7 @@ This guide walks you through creating your first Kubernetes cluster from the Hik
 - **A Hikube account** and access to the [Hikube console](https://console.hikube.cloud)
 - **A project** with sufficient quotas (CPU, memory, storage)
 - **`kubectl` installed on your workstation**, to work in the cluster once it is created
+- **The project administrator role**, to download the cluster kubeconfig (step 4)
 - **Basic Kubernetes knowledge** (pods, services, deployments)
 
 ---
@@ -53,7 +54,7 @@ A first group, `worker-pool-1`, is already present. Expand it and fill in:
 | Field | Value for this guide |
 |-------|----------------------|
 | **Group name** | `worker-pool-1` |
-| **Ephemeral storage size** | 20 GB |
+| **Node disk size** | 20 GB |
 | **Minimum nodes** | 1 |
 | **Maximum nodes** | 3 |
 | **Instance type** | **Standard (S)** series, size **Large** (`s1.large`, 4 vCPU, 8 GB) |
@@ -74,6 +75,10 @@ Click **Next**.
 ### Summary
 
 The **Summary** lists the cluster identity, the control plane, the node groups and the **Enabled Extensions & Addons**. Check the configuration, then click **Create cluster**.
+
+:::note First cluster of the project
+For the first cluster of a project, the platform first prepares the project's Kubernetes environment, which takes a few minutes. The wizard then shows the **Preparing the Kubernetes environment** banner ("Preparing the project's Kubernetes environment; creation will resume automatically.") and retries the creation on its own, without losing your configuration. The **Cancel** button stops the wait.
+:::
 
 ![Kubernetes wizard, Summary step](/img/console/kubernetes/wizard-review.en.png)
 
@@ -99,6 +104,8 @@ Click the cluster (or **View details** in its **Actions** menu) to open its deta
 ## Step 4: Retrieve the credentials
 
 On the cluster detail page, in the **Actions** section, click **Kubeconfig**. The browser downloads the `kubeconfig-demo-cluster.yaml` file and the console confirms: "The kubeconfig file has been downloaded."
+
+The kubeconfig is reserved for project administrators. For other members, the **Kubeconfig** button is disabled with the note "Reserved for project administrators."
 
 ![Kubernetes cluster detail page, with the Kubeconfig button in the Actions card](/img/console/kubernetes/cluster-detail.en.png)
 
@@ -229,9 +236,11 @@ To publish the application under your own domain, create a DNS record pointing t
 
 | Symptom | Check |
 |----------|--------------|
-| The **Next** button stays grayed out and a **Project Quotas** gauge is exceeded | The project does not have enough quota for the control plane and the **maximum** number of nodes of each group. Reduce the maximum number of nodes, the flavor or the ephemeral storage. |
-| The cluster stays **Creating** for more than a few tens of minutes | [Contact support](mailto:support@hidora.io), specifying the cluster name and the project. |
+| The **Next** button stays grayed out and a **Project Quotas** gauge is exceeded | The project does not have enough quota for the control plane and the **maximum** number of nodes of each group. Reduce the maximum number of nodes, the flavor or the node disk size. |
+| After **Create cluster**, the **Preparing the Kubernetes environment** banner stays displayed | First cluster of the project: wait, the console retries the creation on its own. If it shows "The project's Kubernetes environment is still not ready.", try again a few minutes later: your configuration is kept. |
+| The cluster stays **Creating** for more than a few tens of minutes, or changes to **Error** | [Contact support](mailto:support@hidora.io), specifying the cluster name and the project. |
 | **Kubeconfig** shows "Could not download the kubeconfig file." | Wait until the cluster is **Ready**, then try again. |
+| The **Kubeconfig** button is disabled ("Reserved for project administrators.") | The kubeconfig is reserved for project administrators: contact a project administrator. |
 | `kubectl get nodes` lists no `Ready` node | Check the number of active nodes in **Node Pools**, then run `kubectl describe node <node-name>`. |
 | Pods in `Pending` | `kubectl describe pod <pod-name>`; if the nodes are saturated, increase the **Maximum nodes** via **Edit**. |
 | The Ingress does not respond | Check that the **Ingress NGINX** addon is enabled and that at least one group is **Exposed on the internet (Public IP)**. |

@@ -17,11 +17,11 @@ title: Dépannage
 
 ---
 
-### « La taille minimum est de 20 Go » ou « La taille doit être d'au moins 50 Go pour Windows »
+### « La taille minimum est de 20 Go » ou « Cette image demande un disque d'au moins … Go »
 
 **Cause** : la taille est inférieure au minimum.
 
-**Solution** : saisissez au moins 20 Go, ou 50 Go pour un disque système Windows.
+**Solution** : saisissez au moins 20 Go ; pour un disque système, au moins 28 Go avec Windows Server et 40 Go avec Oracle Linux.
 
 ---
 
@@ -58,7 +58,7 @@ title: Dépannage
 **Solution** :
 
 1. Vérifiez sur la page du disque que **Attaché à** indique la bonne VM et que le statut est **En cours d'utilisation**.
-2. Attendez la fin du redémarrage de la VM, puis relancez `lsblk` dans la VM.
+2. Un disque attaché n'est pris en compte qu'au prochain redémarrage de la VM : cliquez sur **Redémarrer** (section **Actions** de la page de la VM), attendez la fin du redémarrage, puis relancez `lsblk` dans la VM.
 
 ---
 

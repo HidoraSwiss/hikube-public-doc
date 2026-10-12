@@ -15,8 +15,8 @@ Diese Anleitung erklärt, welche Parameter eines RabbitMQ-Clusters nach seiner E
 
 | Parameter | Nach der Erstellung änderbar | Hinweis |
 |-----------|---------------------------|----------|
-| **RabbitMQ Version** | Ja | Angebotene Versionen: 4.2, 4.1, 4.0, 3.13 |
-| **Disk size (GB)** | Ja | Kapazität pro Knoten, im Rahmen der Speicher-Quota des Projekts |
+| **RabbitMQ Version** | Ja | Aktuelle Version und höhere Versionen aus 4.2, 4.1, 4.0, 3.13 |
+| **Disk size (GB)** | Ja | Kapazität pro Knoten, nur Vergrößerung, im Rahmen der Speicher-Quota des Projekts |
 | **External access** | Ja | Siehe [Externen Zugriff konfigurieren](./configure-external-access.md) |
 | **Preset** | Nein | „The resources preset cannot be changed after creation“ |
 | **Number of replicas** | Nein | „The mode cannot be changed after creation“ |
@@ -32,12 +32,12 @@ Die Seite **Edit RabbitMQ cluster** zeigt die Karte **Cluster settings** an. Die
 
 ### 2. Die Parameter anpassen
 
-- **RabbitMQ Version**: Wählen Sie die Zielversion aus.
-- **Disk size (GB)**: Geben Sie die neue Kapazität pro Knoten ein. Die Größe kann nur erhöht werden: Ein kleinerer Wert wird vom Formular akzeptiert, aber von der Plattform abgelehnt, und der Cluster behält seine aktuelle Größe.
+- **RabbitMQ Version**: Wählen Sie die Zielversion aus. Das Formular bietet nur die aktuelle Version und höhere Versionen an.
+- **Disk size (GB)**: Geben Sie die neue Kapazität pro Knoten ein. Die Größe kann nur erhöht werden: Ein kleinerer Wert zeigt „The disk size cannot be reduced: N GB minimum.“ an und wird nicht gespeichert.
 - **External access**: Aktivieren oder deaktivieren Sie den Schalter.
 
 :::warning Versionswechsel
-Beim Versionswechsel werden die RabbitMQ-Knoten nacheinander neu erstellt: Mit nur einem Replica ist der Cluster während des Neustarts nicht verfügbar (etwa ein bis zwei Minuten), und die Clients müssen sich neu verbinden. Die Adresse im Feld **Host** ändert sich nicht. Testen Sie den Versionswechsel auf einem Nicht-Produktionscluster, bevor Sie ihn auf einen Produktionscluster anwenden, und prüfen Sie die Kompatibilität Ihrer Clients mit der Zielversion.
+Wenn Sie die Version ändern, erscheint die Warnung „The cluster instances will restart“: Eine aktualisierte Version kann nicht mehr herabgestuft werden. Beim Versionswechsel werden die RabbitMQ-Knoten nacheinander neu erstellt: Mit nur einem Replica ist der Cluster während des Neustarts nicht verfügbar (etwa ein bis zwei Minuten), und die Clients müssen sich neu verbinden. Die Adresse im Feld **Host** ändert sich nicht. Testen Sie den Versionswechsel auf einem Nicht-Produktionscluster, bevor Sie ihn auf einen Produktionscluster anwenden, und prüfen Sie die Kompatibilität Ihrer Clients mit der Zielversion.
 :::
 
 ### 3. Speichern
@@ -45,6 +45,10 @@ Beim Versionswechsel werden die RabbitMQ-Knoten nacheinander neu erstellt: Mit n
 Klicken Sie auf **Save**. Die Meldung „Cluster updated“ bestätigt, dass die Parameter angewendet wurden, und die Konsole kehrt zur Detailseite zurück.
 
 Lässt die Quota des Projekts die neue Konfiguration nicht zu, bleibt die Schaltfläche **Save** inaktiv.
+
+:::note
+Die API wendet dieselben Regeln an: Eine niedrigere Version als die aktuelle wird mit dem Code `140203` abgelehnt, eine kleinere Disk-Größe als die aktuelle mit dem Code `140204`.
+:::
 
 ## Preset oder Anzahl der Replicas ändern
 

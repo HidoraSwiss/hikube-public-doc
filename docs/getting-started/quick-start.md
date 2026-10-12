@@ -34,7 +34,7 @@ Si la console affiche **Aucune organisation**, votre compte n'est pas encore rat
 Un **projet** est un espace isolé qui regroupe vos ressources (VM, clusters, bases de données…) et porte ses propres quotas.
 
 1. Ouvrez le sélecteur de projet et cliquez sur **Créer un projet**. Lors de votre première connexion, l'assistant **Bienvenue sur Hikube** s'ouvre directement.
-2. Étape **Général** : saisissez le **Nom du projet**. Il doit commencer par une lettre et ne contenir que des minuscules et des chiffres, sans tiret, entre 3 et 16 caractères (exemple : `demo01`).
+2. Étape **Général** : saisissez le **Nom du projet**. Il doit commencer par une lettre et ne contenir que des minuscules et des chiffres, sans tiret, entre 3 et 16 caractères (exemple : `demo01`). Les noms `root` et `super` sont réservés.
 
    ![Assistant de création de projet, étape Général](/img/console/projects/wizard-general.fr.png)
 
@@ -43,15 +43,21 @@ Un **projet** est un espace isolé qui regroupe vos ressources (VM, clusters, ba
 
 Le tableau de bord affiche **Projet en cours de création…** pendant la préparation du projet, puis s'ouvre automatiquement.
 
+Si la création échoue, le message d'erreur affiche une **Référence** : transmettez-la au support.
+
 ---
 
 ## Étape 3 : Créer un cluster Kubernetes
 
 1. Dans le menu latéral, ouvrez **Infrastructure** → **Kubernetes**, puis cliquez sur **Créer un cluster**.
 2. Étape **Général** : choisissez un **Nom du cluster**, une **Version de Kubernetes** et la **Taille de l'instance Control Plane**. Laissez **Endpoint API (Host)** vide : la plateforme le génère pour vous.
-3. Étape **Nœuds** : configurez au moins un groupe de nœuds (type d'instance, nombre de nœuds, stockage éphémère).
+3. Étape **Nœuds** : configurez au moins un groupe de nœuds (type d'instance, nombre de nœuds, taille du disque des nœuds).
 4. Étape **Addons** : activez les extensions dont vous avez besoin (par exemple cert-manager ou ingress-nginx).
 5. Étape **Vérification** : contrôlez le récapitulatif et le coût estimé, puis lancez la création.
+
+:::note Premier cluster du projet
+Lors du premier cluster d'un projet, la plateforme prépare d'abord l'environnement Kubernetes du projet, ce qui prend quelques minutes. La console affiche alors le bandeau **Préparation de l'environnement Kubernetes** et relance la création automatiquement, sans perdre votre configuration. Le bouton **Annuler** arrête l'attente.
+:::
 
 Le détail de chaque champ est décrit dans le [démarrage rapide Kubernetes](../services/kubernetes/quick-start.md).
 
@@ -62,7 +68,8 @@ Le détail de chaque champ est décrit dans le [démarrage rapide Kubernetes](..
 La liste **Clusters Kubernetes** affiche le statut du cluster :
 
 - **En création** : le control plane et les nœuds sont en cours de provisionnement ;
-- **Prêt** / **Actif** : le cluster est opérationnel.
+- **Prêt** / **Actif** : le cluster est opérationnel ;
+- **Erreur** : la dernière modification n'a pas pu être appliquée. Contactez le support si l'état persiste.
 
 Le passage à **Prêt** prend généralement quelques minutes.
 
@@ -72,6 +79,8 @@ Le passage à **Prêt** prend généralement quelques minutes.
 
 1. Cliquez sur le cluster pour ouvrir sa page de détail.
 2. Cliquez sur **Kubeconfig**. La console télécharge un fichier `kubeconfig-<nom-du-cluster>.yaml`.
+
+Le téléchargement du kubeconfig est réservé aux administrateurs du projet. Pour les autres membres, le bouton **Kubeconfig** est désactivé avec la mention « Réservé aux administrateurs du projet. » Adressez-vous à un administrateur du projet, qui peut aussi vous créer un accès dédié dans le cluster.
 
 :::warning Fichier sensible
 Ce fichier donne un accès administrateur à votre cluster. Ne le versionnez pas et stockez-le dans un emplacement protégé (par exemple `~/.kube/`).

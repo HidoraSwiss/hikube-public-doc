@@ -16,6 +16,7 @@ Dieser Leitfaden begleitet Sie bei der Erstellung Ihres ersten Kubernetes-Cluste
 - **Ein Hikube-Konto** und Zugang zur [Hikube-Konsole](https://console.hikube.cloud)
 - **Ein Projekt** mit ausreichenden Quotas (CPU, Arbeitsspeicher, Speicher)
 - **`kubectl` auf Ihrem Rechner installiert**, um nach der Erstellung im Cluster zu arbeiten
+- **Die Rolle Projektadministrator**, um die kubeconfig des Clusters herunterzuladen (Schritt 4)
 - **Kubernetes-Grundkenntnisse** (Pods, Services, Deployments)
 
 ---
@@ -53,7 +54,7 @@ Eine erste Gruppe, `worker-pool-1`, ist bereits vorhanden. Klappen Sie sie auf u
 | Feld | Wert für diesen Leitfaden |
 |------|---------------------------|
 | **Group name** | `worker-pool-1` |
-| **Ephemeral storage size** | 20 GB |
+| **Node disk size** | 20 GB |
 | **Minimum nodes** | 1 |
 | **Maximum nodes** | 3 |
 | **Instance type** | Serie **Standard (S)**, Größe **Large** (`s1.large`, 4 vCPU, 8 GB) |
@@ -74,6 +75,10 @@ Klicken Sie auf **Next**.
 ### Summary
 
 Die **Summary** fasst die Identität des Clusters, die Control Plane, die Node-Gruppen und die **Enabled Extensions & Addons** zusammen. Prüfen Sie die Konfiguration und klicken Sie dann auf **Create cluster**.
+
+:::note Erster Cluster des Projekts
+Beim ersten Cluster eines Projekts bereitet die Plattform zunächst die Kubernetes-Umgebung des Projekts vor, was einige Minuten dauert. Der Assistent zeigt dann das Banner **Preparing the Kubernetes environment** („Preparing the project's Kubernetes environment; creation will resume automatically.“) an und startet die Erstellung selbstständig neu, ohne dass Ihre Konfiguration verloren geht. Die Schaltfläche **Cancel** beendet das Warten.
+:::
 
 ![Kubernetes-Assistent, Schritt Summary](/img/console/kubernetes/wizard-review.en.png)
 
@@ -99,6 +104,8 @@ Klicken Sie auf den Cluster (oder auf **View details** in seinem Menü **Actions
 ## Schritt 4: Die Zugangsdaten abrufen
 
 Klicken Sie auf der Detailseite des Clusters im Abschnitt **Actions** auf **Kubeconfig**. Der Browser lädt die Datei `kubeconfig-demo-cluster.yaml` herunter, und die Konsole bestätigt: „The kubeconfig file has been downloaded.“
+
+Die kubeconfig ist den Projektadministratoren vorbehalten. Für die übrigen Mitglieder ist die Schaltfläche **Kubeconfig** deaktiviert und mit dem Hinweis „Reserved for project administrators.“ versehen.
 
 ![Detailseite eines Kubernetes-Clusters mit der Schaltfläche Kubeconfig in der Karte Actions](/img/console/kubernetes/cluster-detail.en.png)
 
@@ -229,9 +236,11 @@ Um die Anwendung unter Ihrer eigenen Domain zu veröffentlichen, legen Sie einen
 
 | Symptom | Prüfung |
 |---------|---------|
-| Die Schaltfläche **Next** bleibt ausgegraut und eine Anzeige **Project Quotas** ist überschritten | Das Projekt hat nicht genügend Quota für die Control Plane und das **Maximum** an Nodes jeder Gruppe. Verringern Sie die maximale Anzahl der Nodes, die Größe oder den ephemeren Speicher. |
-| Der Cluster bleibt länger als einige Dutzend Minuten im Status **Creating** | [Wenden Sie sich an den Support](mailto:support@hidora.io) und geben Sie den Namen des Clusters und das Projekt an. |
+| Die Schaltfläche **Next** bleibt ausgegraut und eine Anzeige **Project Quotas** ist überschritten | Das Projekt hat nicht genügend Quota für die Control Plane und das **Maximum** an Nodes jeder Gruppe. Verringern Sie die maximale Anzahl der Nodes, die Größe oder die Festplattengröße der Nodes. |
+| Nach **Create cluster** bleibt das Banner **Preparing the Kubernetes environment** angezeigt | Erster Cluster des Projekts: Warten Sie, die Konsole startet die Erstellung selbstständig neu. Zeigt sie „The project's Kubernetes environment is still not ready.“ an, versuchen Sie es einige Minuten später erneut: Ihre Konfiguration bleibt erhalten. |
+| Der Cluster bleibt länger als einige Dutzend Minuten im Status **Creating** oder wechselt zu **Error** | [Wenden Sie sich an den Support](mailto:support@hidora.io) und geben Sie den Namen des Clusters und das Projekt an. |
 | **Kubeconfig** zeigt „Could not download the kubeconfig file.“ an | Warten Sie, bis der Cluster **Ready** ist, und versuchen Sie es dann erneut. |
+| Die Schaltfläche **Kubeconfig** ist deaktiviert („Reserved for project administrators.“) | Die kubeconfig ist den Projektadministratoren vorbehalten: Wenden Sie sich an einen Projektadministrator. |
 | `kubectl get nodes` listet keinen Node im Status `Ready` | Prüfen Sie unter **Node Pools** die Anzahl aktiver Nodes und dann `kubectl describe node <node-name>`. |
 | Pods im Status `Pending` | `kubectl describe pod <pod-name>`; wenn die Nodes ausgelastet sind, erhöhen Sie **Maximum nodes** über **Edit**. |
 | Der Ingress antwortet nicht | Prüfen Sie, dass das Addon **Ingress NGINX** aktiviert ist und mindestens eine Gruppe **Exposed on the internet (Public IP)** ist. |

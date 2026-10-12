@@ -16,8 +16,8 @@ Questa guida spiega come regolare un cluster MongoDB esistente dalla [console Hi
 
 | Parametro | Modificabile dopo la creazione |
 |-----------|---------------------------|
-| **MongoDB Version** | Sì |
-| **Disk size (GB)** | Sì |
+| **MongoDB Version** | Sì, solo verso una versione superiore |
+| **Disk size (GB)** | Sì, solo in aumento |
 | **External access** | Sì |
 | **Preset** | No, «The resources preset cannot be changed after creation» |
 | **Number of replicas** | No, «The mode cannot be changed after creation» |
@@ -36,17 +36,23 @@ La pagina **Edit MongoDB cluster** mostra il riquadro **Cluster settings** e l'i
 
 ### 2. Regolare i parametri
 
-- **Disk size (GB)**: inserisca la nuova capacità.
-- **MongoDB Version**: selezioni la versione di destinazione (6.0, 7.0 o 8.0).
+- **Disk size (GB)**: inserisca la nuova capacità, almeno pari alla dimensione attuale. Un valore inferiore mostra «The disk size cannot be reduced: N GB minimum.» e non viene salvato.
+- **MongoDB Version**: selezioni la versione di destinazione. Il modulo propone solo la versione attuale e le versioni superiori.
 - **External access**: attivi o disattivi l'esposizione sulla rete Internet pubblica.
 
 :::tip
-MongoDB supporta gli aggiornamenti di versione principale solo da una versione alla successiva (6.0 → 7.0 → 8.0). Il modulo propone tutte le versioni, compresi un salto di versione o una versione inferiore: non salti versioni e non torni indietro.
+MongoDB supporta gli aggiornamenti di versione principale solo da una versione alla successiva (6.0 → 7.0 → 8.0). Il modulo propone tutte le versioni superiori, compreso un salto di versione: non salti versioni.
 :::
+
+Quando cambia la versione, compare l'avviso «The cluster instances will restart»: la modifica riavvia le istanze del cluster al salvataggio, e una versione aggiornata non può più essere riportata indietro. La pianifichi al di fuori dei periodi di forte attività.
 
 ### 3. Salvare
 
 Faccia clic su **Save**. Il messaggio «Cluster updated» conferma l'applicazione delle modifiche. Se la nuova configurazione supera le quote del progetto, il pulsante resta inattivo.
+
+:::note
+L'API applica le stesse regole: una versione inferiore a quella attuale è rifiutata con il codice `150203`, una dimensione del disco inferiore a quella attuale con il codice `150204`.
+:::
 
 ## Verifica
 

@@ -62,7 +62,7 @@ If the project's storage quota is exceeded, the console displays "Storage quota 
 
 ### VHosts
 
-Enter a **VHost Name** (for example `demo`) then click **Add**. At least one vhost is required to move on to the next step.
+Enter a **VHost Name** (for example `demo`; lowercase letters, digits and hyphens, starting with a letter and ending with a letter or a digit) then click **Add**. At least one vhost is required to move on to the next step.
 
 ### Users
 
@@ -174,7 +174,7 @@ Message received: Hello Hikube!
 | Symptom | Common causes | Action |
 |----------|-------------------|--------|
 | The cluster stays **Creating** | Provisioning in progress | Wait a few minutes; if the status does not change, see [troubleshooting](./troubleshooting.md) |
-| **Error** status | Provisioning failed | [Contact support](mailto:support@hidora.io), giving the name and identifier of the cluster |
+| **Error** status | The platform could not apply the cluster's creation or its last change | [Contact support](mailto:support@hidora.io), giving the name and identifier of the cluster |
 | `ACCESS_REFUSED` on connection | Wrong password, or user without rights on the vhost | Check the vhost in **Manage Access**; regenerate the password if needed |
 | Unable to connect (timeout) | External access disabled, wrong host or port | Check **External Access** and **Host** in the **Connection** section; the AMQP port is 5672 |
 | `NOT_FOUND - no vhost` | Wrong vhost name in the client | Use exactly the name displayed in the **VHosts** section |

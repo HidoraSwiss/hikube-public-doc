@@ -11,7 +11,7 @@ Sì. **MariaDB** è un fork open source di MySQL, compatibile con il protocollo 
 
 ### Quale versione scegliere?
 
-La procedura guidata propone le versioni **10.6**, **10.11**, **11.4** e **11.8**. Scelga la più recente per un nuovo progetto, oppure la versione più vicina al suo ambiente attuale per una migrazione. La versione può essere cambiata dopo la creazione tramite **Edit**.
+La procedura guidata propone le versioni **10.6**, **10.11**, **11.4** e **11.8**. Scelga la più recente per un nuovo progetto, oppure la versione più vicina al suo ambiente attuale per una migrazione. La versione può essere aggiornata dopo la creazione tramite **Edit**; non può essere riportata indietro.
 
 ### Quali preset sono disponibili?
 
@@ -41,11 +41,13 @@ Nel riquadro **Connection and network** della pagina del cluster, campo **Host**
 
 ### Come creare un database?
 
-Conceda a un utente un accesso sul nome del database (**Manage Access** → **Specific Access (Databases)** → **Add**). Il database viene creato se non esiste. Consulti [Gestire utenti e database](./how-to/manage-users-databases.md).
+Conceda a un utente un accesso sul nome del database (**Manage Access** → **Specific Access (Databases)** → **Add**), oppure lo indichi come **Database** di un utente al passaggio **Users** della procedura guidata di creazione del cluster. Il database viene creato se non esiste. I nomi dei database di sistema (`mysql`, `information_schema`, `performance_schema`, `sys`) sono rifiutati. Consulti [Gestire utenti e database](./how-to/manage-users-databases.md).
 
 ### Perché l'utente creato nella procedura guidata non ha accesso al mio database?
 
-Il **Role** scelto nella procedura guidata di creazione del cluster si applica al database di sistema `mysql`. Conceda poi l'accesso ai suoi database applicativi tramite **Manage Access**.
+Il **Role** scelto nella procedura guidata si applica al **Database** indicato per questo utente, e solo a esso. Conceda l'accesso agli altri database tramite **Manage Access**.
+
+Gli utenti creati prima della console v1.3.0 hanno ricevuto il loro ruolo sul database di sistema `mysql`. In **Manage Access**, rimuova la riga `mysql`, mostrata in errore, e aggiunga il loro database applicativo.
 
 ### Ho smarrito la password di un utente. Come recuperarla?
 

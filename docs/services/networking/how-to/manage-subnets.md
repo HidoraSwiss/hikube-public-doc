@@ -30,7 +30,7 @@ Plages autorisées : `10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`, hors plage
 1. Ouvrez **Infrastructure** > **Réseau**.
 2. Dans le menu **Actions** du VPC, cliquez sur **Voir les sous-réseaux**.
 
-La page **Sous-réseaux pour `<vpc>`** liste chaque sous-réseau avec son **Nom** et son **Bloc CIDR**.
+La page **Sous-réseaux pour `<vpc>`** liste chaque sous-réseau avec son **Nom** et son **Bloc CIDR**. Le statut du VPC s'affiche à côté du sous-titre de la page.
 
 ### 3. Créer un sous-réseau
 

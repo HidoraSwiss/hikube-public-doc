@@ -14,7 +14,7 @@ title: Concetti
 | **Control plane** | Componenti che gestiscono il cluster (API Server, Scheduler, Controller Manager, etcd), ospitati da Hikube. |
 | **Gruppo di nodi** | Insieme di nodi worker omogenei (stesso tipo di istanza, stesso storage), con i propri limiti di auto-scaling. La pagina di dettaglio del cluster li mostra sotto **Node Pools**. |
 | **Addon** | Componente facoltativo installato e mantenuto dalla piattaforma nel cluster (Cert-Manager, Ingress NGINX, ecc.). |
-| **Kubeconfig** | File di accesso al cluster, scaricato dalla pagina di dettaglio del cluster nella console. |
+| **Kubeconfig** | File di accesso al cluster, scaricato dalla pagina di dettaglio del cluster nella console. Il suo download è riservato agli amministratori del progetto. |
 
 ## Architettura
 
@@ -158,7 +158,7 @@ I gruppi di nodi si configurano nel passaggio **Nodes** della procedura guidata 
 | Campo | Descrizione | Valore predefinito |
 |-------|-------------|-------------------|
 | **Group name** | Da 3 a 16 caratteri: lettere minuscole, cifre e trattini; inizia con una lettera, termina con una lettera o una cifra | `worker-pool-1`, `worker-pool-2`… |
-| **Ephemeral storage size** | Spazio su disco assegnato ai pod su ogni nodo, in GB (minimo 5 GB) | 20 GB |
+| **Node disk size** | Dimensione del disco di ogni nodo, in GB (minimo 5 GB): spazio assegnato ai pod, alle loro immagini e ai loro log | 20 GB |
 | **Minimum nodes** | Numero di nodi sempre presenti. 0 è accettato | 1 |
 | **Maximum nodes** | Tetto dell'auto-scaling (tra 1 e 100, maggiore o uguale al minimo; 50 al massimo consigliato) | 3 |
 | **Instance type** | Modello dei nodi, scelto per serie e poi per dimensione | nessuno (scelta obbligatoria) |
@@ -235,7 +235,7 @@ I ruoli di nodo personalizzati (diversi dall'esposizione su internet) e la sovra
 :::tip Buone pratiche per i gruppi di nodi
 - Regoli il minimo e il massimo di nodi in base alle esigenze di crescita del carico.
 - Scelga una serie coerente con il carico di lavoro (S per l'uso generale, U per l'equilibrio, M per la memoria).
-- Preveda uno storage effimero sufficiente per immagini, log e cache.
+- Preveda un disco dei nodi sufficiente per immagini, log e cache.
 - Separi i ruoli per gruppo: un gruppo esposto per il traffico in ingresso, gruppi interni per il calcolo.
 :::
 
@@ -272,13 +272,15 @@ Dipendenze verificate dalla console:
 
 ### Sovrascrittura dei valori Helm
 
-Ogni addon (tranne Gateway API) accetta un campo **Helm Configuration (YAML) — optional**. Il valore YAML viene trasmesso direttamente al chart Helm dell'addon e ne sovrascrive i valori predefiniti. Deve essere un dizionario YAML (`chiave: valore`); la console rifiuta un YAML non valido. L'icona di collegamento accanto al nome dell'addon apre la documentazione del chart.
+Ogni addon (tranne Gateway API e Monitoring Agents) accetta un campo **Helm Configuration (YAML) — optional**. Il valore YAML viene trasmesso direttamente al chart Helm dell'addon e ne sovrascrive i valori predefiniti. Deve essere un dizionario YAML (`chiave: valore`); la console rifiuta un YAML non valido. L'icona di collegamento accanto al nome dell'addon apre la sua pagina in questa documentazione.
+
+Una sovrascrittura si inserisce alla creazione o da **Edit**. Svuotare il campo, o cancellare una riga della sovrascrittura, non rimuove un valore già applicato al cluster, qualunque sia l'addon. [Contatti il supporto](mailto:support@hidora.io) per tornare ai valori predefiniti.
 
 ---
 
 ## Accesso al cluster
 
-Una volta pronto il cluster, il pulsante **Kubeconfig** della sezione **Actions** della pagina di dettaglio scarica il file `kubeconfig-<nome-del-cluster>.yaml`. Questo file conferisce un accesso amministratore al cluster con `kubectl`, `helm` o qualsiasi client Kubernetes. Il certificato client che contiene è valido un anno a partire dalla creazione del cluster. Vedere [Accesso e strumenti](./how-to/toolbox.md).
+Una volta pronto il cluster, il pulsante **Kubeconfig** della sezione **Actions** della pagina di dettaglio scarica il file `kubeconfig-<nome-del-cluster>.yaml`. Questo pulsante è riservato agli amministratori del progetto; per gli altri membri è disattivato. Questo file conferisce un accesso amministratore al cluster con `kubectl`, `helm` o qualsiasi client Kubernetes. Il certificato client che contiene è valido un anno a partire dalla creazione del cluster. Vedere [Accesso e strumenti](./how-to/toolbox.md).
 
 L'indirizzo dell'API del cluster è definito dal campo **API Endpoint (Host)** del passaggio **General**. È facoltativo: se lasciato vuoto, viene generato automaticamente dalla piattaforma e si risolve senza alcun intervento da parte sua. Se inserisce un nome di dominio proprio, il certificato del server API lo copre, ma il record DNS va creato presso il suo provider DNS: chieda al [supporto](mailto:support@hidora.io) l'indirizzo verso cui farlo puntare.
 
@@ -286,7 +288,8 @@ L'indirizzo dell'API del cluster è definito dal campo **API Endpoint (Host)** d
 
 ## Ciclo di vita e quota
 
-- **Stato**: un cluster appena creato compare nell'elenco **Kubernetes Clusters** con lo stato **Creating**, poi **Ready** quando è operativo.
+- **Stato**: un cluster appena creato compare nell'elenco **Kubernetes Clusters** con lo stato **Creating**, poi **Ready** quando è operativo. Lo stato **Error** indica che non è stato possibile applicare l'ultima modifica; il cluster può continuare a funzionare con la configurazione precedente. Il filtro di stato dell'elenco propone in particolare **Ready** ed **Error**.
+- **Primo cluster di un progetto**: la piattaforma prepara innanzitutto l'ambiente Kubernetes del progetto, per alcuni minuti. La procedura guidata mostra il banner **Preparing the Kubernetes environment** e rilancia automaticamente la creazione; il pulsante **Cancel** interrompe l'attesa. Se l'ambiente non può essere preparato, la console lo indica e non riprova: contatti il supporto.
 - **Quota**: gli indicatori **Project Quotas** della procedura guidata conteggiano il control plane e ogni gruppo di nodi **al suo numero massimo di nodi**. La creazione è bloccata se il progetto non dispone di quota sufficiente.
-- **Modifica**: il pulsante **Edit** consente di cambiare la versione, l'endpoint API, i gruppi di nodi e gli addon. Il nome del cluster non è modificabile.
+- **Modifica**: il pulsante **Edit** consente di cambiare la versione, l'endpoint API, i gruppi di nodi e gli addon. Il nome del cluster non è modificabile. La versione può solo aumentare: un ritorno a una versione inferiore viene rifiutato.
 - **Eliminazione**: il pulsante **Delete** elimina il cluster dopo la conferma del suo nome.

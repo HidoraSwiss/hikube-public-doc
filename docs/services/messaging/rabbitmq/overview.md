@@ -20,7 +20,7 @@ Vous créez et gérez vos clusters en libre-service depuis la [console Hikube](h
 - **Définir les virtual hosts (vhosts)** et les **utilisateurs** dès la création, puis les gérer depuis la page du cluster ;
 - **Attribuer des droits par vhost** à chaque utilisateur (**Administrateur** ou **Lecture seule**) ;
 - **Générer un nouveau mot de passe** pour un utilisateur ;
-- **Modifier** la version, la taille du disque et l'accès externe d'un cluster existant ;
+- **Modifier** un cluster existant : montée de version, augmentation de la taille du disque, accès externe ;
 - **Supprimer** un cluster, un vhost ou un utilisateur.
 
 ---

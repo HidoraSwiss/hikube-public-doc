@@ -12,7 +12,13 @@ title: Troubleshooting
 **Solution**:
 
 1. Wait a few minutes and refresh the cluster page.
-2. If the status does not change after about fifteen minutes, or changes to **Error** or **Failed**, [contact support](mailto:support@hidora.io), providing the project and the cluster name.
+2. If the status does not change after about fifteen minutes, [contact support](mailto:support@hidora.io), providing the project and the cluster name.
+
+### The cluster changes to "Error" status
+
+**Cause**: the platform could not apply the cluster's creation or its last change. After a change, the cluster may keep running with its previous configuration.
+
+**Solution**: [contact support](mailto:support@hidora.io), providing the project, the cluster name and the change requested.
 
 ### Unable to get past the wizard's Configuration step
 
@@ -75,4 +81,4 @@ title: Troubleshooting
 
 **Cause**: the data volume has reached the **Allocated Size**.
 
-**Solution**: increase the **Disk size (GB)** via **Edit**, within the project's storage quota. If needed, delete obsolete data and run `VACUUM` to reclaim space.
+**Solution**: increase the **Disk size (GB)** via **Edit**, within the project's storage quota. The size cannot be reduced afterwards. If needed, delete obsolete data and run `VACUUM` to reclaim space.

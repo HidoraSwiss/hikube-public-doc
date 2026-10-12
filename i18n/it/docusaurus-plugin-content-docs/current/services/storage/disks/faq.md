@@ -31,7 +31,7 @@ Vengono **scollegati** e conservati, insieme ai loro dati. Restano nell'elenco *
 
 ### È possibile ridurre la dimensione di un disco?
 
-No. «Size reduction is not supported»: un disco può soltanto essere ingrandito. Per ridurre lo spazio utilizzato, crei un disco più piccolo, vi copi i dati dalla VM, quindi elimini quello precedente.
+No. «Size reduction is not supported»: un disco può soltanto essere ingrandito. Per ridurre lo spazio utilizzato, crei un disco più piccolo, vi copi i dati dalla VM, quindi elimini quello precedente. Tramite l'API, una riduzione viene rifiutata con il codice `30200`, anche quando passa per l'aggiornamento di una VM.
 
 ---
 
@@ -50,9 +50,9 @@ In entrambi i casi, il RTO è inferiore a 5 minuti.
 
 ---
 
-### Perché la dimensione minima è di 50 GB per Windows?
+### Qual è la dimensione minima di un disco di sistema?
 
-Un disco di sistema Windows richiede almeno 50 GB. La console applica automaticamente questo minimo quando seleziona un'immagine Windows.
+Dipende dall'immagine: 40 GB per Oracle Linux, 28 GB per Windows Server, 20 GB per le altre immagini. La console applica automaticamente questo minimo quando seleziona l'immagine («This image needs a disk of at least … GB»).
 
 ---
 
@@ -64,4 +64,4 @@ La procedura guidata mostra un **Estimated Cost**: una tariffa per GB al mese e 
 
 ### Perché non riesco a eliminare il mio disco?
 
-Un disco collegato a una VM non può essere eliminato: la console risponde «The disk cannot be deleted as it is in use.». Lo scolleghi prima dalla pagina di modifica della VM.
+Un disco collegato a una VM non può essere eliminato: la console risponde «The disk cannot be deleted as it is in use.». Lo scolleghi prima dalla pagina di modifica della VM. Un disco scollegato resta in uso dalla VM fino al suo successivo riavvio. Riavvii la VM, quindi attenda qualche minuto prima di eliminare il disco: un'eliminazione troppo rapida può lasciare lo spazio occupato nella sua quota.

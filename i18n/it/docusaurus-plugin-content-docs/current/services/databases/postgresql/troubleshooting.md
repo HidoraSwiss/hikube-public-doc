@@ -12,7 +12,13 @@ title: Risoluzione dei problemi
 **Soluzione**:
 
 1. Attenda qualche minuto e aggiorni la pagina del cluster.
-2. Se lo stato non cambia dopo una quindicina di minuti, oppure passa a **Error** o **Failed**, [contatti il supporto](mailto:support@hidora.io) indicando il progetto e il nome del cluster.
+2. Se lo stato non cambia dopo una quindicina di minuti, [contatti il supporto](mailto:support@hidora.io) indicando il progetto e il nome del cluster.
+
+### Il cluster passa allo stato «Error»
+
+**Causa**: la piattaforma non è riuscita ad applicare la creazione del cluster o la sua ultima modifica. Dopo una modifica, il cluster può continuare a funzionare con la configurazione precedente.
+
+**Soluzione**: [contatti il supporto](mailto:support@hidora.io) indicando il progetto, il nome del cluster e la modifica richiesta.
 
 ### Impossibile superare il passaggio Configuration della procedura guidata
 
@@ -75,4 +81,4 @@ title: Risoluzione dei problemi
 
 **Causa**: il volume dei dati ha raggiunto l'**Allocated Size**.
 
-**Soluzione**: aumenti la **Disk size (GB)** tramite **Edit**, entro il limite della quota di storage del progetto. Se necessario, elimini i dati obsoleti ed esegua `VACUUM` per recuperare spazio.
+**Soluzione**: aumenti la **Disk size (GB)** tramite **Edit**, entro il limite della quota di storage del progetto. La dimensione non può essere ridotta in seguito. Se necessario, elimini i dati obsoleti ed esegua `VACUUM` per recuperare spazio.

@@ -11,7 +11,7 @@ Find here the definitions of the terms and concepts used in the Hikube documenta
 
 | **Term** | **Definition** | **Documentation** |
 |-----------|---------------|-------------------|
-| **External access** | Option of databases and RabbitMQ that assigns a public IP to the cluster; the address is shown in the **Host** field of the detail page. | [PostgreSQL - Concepts](../services/databases/postgresql/concepts.md) |
+| **External access** | Option of databases and RabbitMQ that assigns a public IP to the cluster; the address is shown in the **Host** field of the detail page (for a MongoDB replica set, the address of each member). | [PostgreSQL - Concepts](../services/databases/postgresql/concepts.md) |
 | **Add-on / Extension** | Component that can be enabled on a Kubernetes cluster from the **Addons** step of the wizard (cert-manager, Ingress NGINX, monitoring, etc.). | [Kubernetes - Concepts](../services/kubernetes/concepts.md) |
 | **AMQP** | Advanced Message Queuing Protocol. Standard messaging protocol used notably by RabbitMQ for communication between applications. | [RabbitMQ - Overview](../services/messaging/rabbitmq/overview.md) |
 | **ClickHouse Keeper** | Distributed consensus service built into ClickHouse, used to coordinate the cluster nodes (alternative to ZooKeeper). | [ClickHouse - Overview](../services/databases/clickhouse/overview.md) |
@@ -24,7 +24,7 @@ Find here the definitions of the terms and concepts used in the Hikube documenta
 | **Node group** | Set of worker nodes in a Kubernetes cluster sharing an instance type, autoscaling bounds (minimum/maximum) and, where applicable, a GPU. | [Manage node groups](../services/kubernetes/how-to/manage-node-groups.md) |
 | **Ingress / IngressClass** | Kubernetes resource that manages external HTTP/HTTPS access to the cluster's services. IngressClass defines the controller used. | [Ingress NGINX](../services/kubernetes/plugins/ingress-nginx.md) |
 | **JetStream** | Streaming and persistence system built into NATS, enabling durable message storage, replay and guaranteed delivery. | [NATS - Overview](../services/messaging/nats/overview.md) |
-| **Kubeconfig** | Access file for a Kubernetes cluster (server URL, certificates). Your cluster's kubeconfig is downloaded from its detail page in the console (**Kubeconfig** button). | [Kubernetes - Quick start](../services/kubernetes/quick-start.md) |
+| **Kubeconfig** | Access file for a Kubernetes cluster (server URL, certificates). Your cluster's kubeconfig is downloaded from its detail page in the console (**Kubeconfig** button, reserved for project administrators). | [Kubernetes - Quick start](../services/kubernetes/quick-start.md) |
 | **Organization** | Entity that represents your company in Hikube. It groups your users and your projects; it is created by Hidora. | [Key concepts](../getting-started/concepts.md) |
 | **Preset** | Predefined resource profile (`nano` to `2xlarge`) offered in the database wizards to size CPU and memory. | [PostgreSQL - Concepts](../services/databases/postgresql/concepts.md) |
 | **Project** | Isolated space within an organization that groups resources and carries quotas (CPU, memory, storage). Formerly called **tenant**. | [Key concepts](../getting-started/concepts.md) |

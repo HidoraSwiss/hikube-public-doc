@@ -9,7 +9,7 @@ Diese Anleitung erklärt, wie Sie eine Anwendung auf einem Hikube-Kubernetes-Clu
 ## Voraussetzungen
 
 - Ein bereitgestellter Hikube-Kubernetes-Cluster (siehe [Schnellstart](../quick-start.md))
-- Die über die Konsole heruntergeladene kubeconfig des Clusters (Schaltfläche **Kubeconfig**)
+- Die über die Konsole heruntergeladene kubeconfig des Clusters (Schaltfläche **Kubeconfig**, Projektadministratoren vorbehalten)
 - Ein Domainname, dessen DNS-Zone Sie verwalten
 
 ## Schritte

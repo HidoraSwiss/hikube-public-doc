@@ -12,7 +12,19 @@ title: Troubleshooting
 **Solution**:
 
 1. Wait a few minutes and refresh the cluster page.
-2. If the status has not changed after about fifteen minutes, or changes to **Error** or **Failed**, [contact support](mailto:support@hidora.io), stating the project and the cluster name.
+2. If the status has not changed after about fifteen minutes, [contact support](mailto:support@hidora.io), stating the project and the cluster name.
+
+### The cluster changes to "Error" status
+
+**Cause**: the platform could not apply the cluster's creation or its last change. After a change, the cluster may keep running with its previous configuration.
+
+**Solution**: [contact support](mailto:support@hidora.io), stating the project, the cluster name and the change requested.
+
+### "An error occurred while updating the cluster." when saving
+
+**Cause**: the change requests a version lower than the current one (for example `7` on a cluster running `8`), or a **Volume Size (GB)** smaller than the current size. These changes are refused, and the error message includes the reason returned by the API. On the API side, these refusals carry the codes `120203` (version) and `120204` (volume).
+
+**Solution**: keep the current version or a higher one, and a volume size at least equal to the current size.
 
 ### The host shows "Waiting for allocation..."
 

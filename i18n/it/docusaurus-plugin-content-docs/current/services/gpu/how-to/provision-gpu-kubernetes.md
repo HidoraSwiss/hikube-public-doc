@@ -25,7 +25,7 @@ Quindi:
 1. Faccia clic su **Add node group**.
 2. **Group name**: ad esempio `gpu-workers`.
 3. **Instance type**: scelga la serie e la dimensione, ad esempio **Universal (U)** > **2XLARGE** (8 vCPU, 32 GB).
-4. **Ephemeral storage size**: preveda spazio sufficiente per le immagini di container CUDA, ad esempio `100` GB.
+4. **Node disk size**: preveda spazio sufficiente per le immagini di container CUDA, ad esempio `100` GB.
 5. **Minimum nodes** e **Maximum nodes**: ad esempio `1` e `3`.
 6. Sezione **GPU**: faccia clic sulla scheda del modello desiderato (ad esempio **NVIDIA L40S**); **+** e **−** regolano il numero di GPU **per nodo**.
 
@@ -51,7 +51,7 @@ Attenda che il cluster sia **Ready** o **Running** nell'elenco dei cluster.
 
 ### 4. Recuperare il kubeconfig del cluster
 
-Nella pagina di dettaglio del cluster, faccia clic su **Kubeconfig**. La console scarica `kubeconfig-<nome-del-cluster>.yaml`.
+Nella pagina di dettaglio del cluster, faccia clic su **Kubeconfig**. La console scarica `kubeconfig-<nome-del-cluster>.yaml`. Questo pulsante è riservato agli amministratori del progetto; per gli altri membri è disattivato.
 
 ```bash
 export KUBECONFIG=~/Downloads/kubeconfig-<nome-del-cluster>.yaml

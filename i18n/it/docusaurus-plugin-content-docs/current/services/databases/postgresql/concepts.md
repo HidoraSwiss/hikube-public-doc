@@ -152,7 +152,7 @@ La procedura guidata di creazione mostra, già dal passaggio **Configuration**, 
 
 | Parametro | Valore |
 |-----------|--------|
-| Dimensione del disco | Da 1 a 4.096 GB, entro il limite della quota di storage del progetto |
+| Dimensione del disco | Da 1 a 4.096 GB, entro il limite della quota di storage del progetto; dopo la creazione, solo aumento |
 | Repliche | 1, 2 o 3 |
 
 ---

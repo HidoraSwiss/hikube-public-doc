@@ -44,13 +44,13 @@ L'assistant comporte trois étapes.
 
 1. Saisissez le **Nom du bucket** (un nom est proposé par défaut). Règles : minuscules, chiffres et tirets ; commence par une lettre et se termine par une lettre ou un chiffre ; 16 caractères maximum. Exemple : `demo-assets`.
 2. Laissez décochées pour ce guide les options :
-   - **Activer le verrouillage (Object Lock / WORM)** : empêche la suppression ou la modification des objets pendant 365 jours (rétention fixée par la plateforme) ;
+   - **Activer le verrouillage (Object Lock / WORM)** : chaque objet est verrouillé 365 jours après son écriture, en mode COMPLIANCE ; personne ne peut le modifier ni le supprimer avant l'échéance. La durée n'est pas modifiable, le verrouillage ne peut plus être retiré après la création, et supprimer le bucket ne supprime pas ses objets ;
    - **Activer le chiffrement au repos (LUKS)** : chiffre les données stockées ; ne peut pas être modifié après la création.
 3. Cliquez sur **Suivant**.
 
 ### Utilisateurs
 
-1. Saisissez le **Nom de l'utilisateur** (par exemple `app-user`).
+1. Saisissez le **Nom de l'utilisateur** (par exemple `app-user`) : 3 à 16 caractères, mêmes règles que pour le nom du bucket.
 2. Laissez **Lecture seule** sur **Non** pour obtenir un accès en lecture et écriture.
 3. Cliquez sur **Ajouter**, puis sur **Suivant**.
 
@@ -58,7 +58,7 @@ Au moins un utilisateur est nécessaire pour continuer.
 
 ### Vérification
 
-Le **Récapitulatif** affiche le nom, le projet, le nombre d'utilisateurs à créer, l'état du verrouillage et du chiffrement, ainsi que le **Coût estimé** par Go. Cliquez sur **Créer le bucket**.
+Le **Récapitulatif** affiche le nom, le projet, le nombre d'utilisateurs à créer, l'état du verrouillage (**Activé (365 jours, COMPLIANCE)** s'il est coché) et du chiffrement, ainsi que le **Coût estimé** par Go. Cliquez sur **Créer le bucket**.
 
 Pendant la création, le bouton affiche **Création...** puis **Provisionnement du bucket…** : la console attend que le bucket soit prêt avant de créer les utilisateurs.
 
@@ -70,7 +70,7 @@ L'écran de fin affiche **Bucket créé avec succès**. Après avoir récupéré
 
 Sur cette page :
 
-- le badge de statut indique **Prêt** lorsque le bucket est opérationnel (**En création** pendant le provisionnement) ;
+- le badge de statut indique **Prêt** lorsque le bucket est opérationnel (**En création** pendant le provisionnement, **Erreur** si la plateforme n'a pas pu le créer : voir le [dépannage](./troubleshooting.md)) ;
 - les badges **WORM** et **LUKS** rappellent l'état du verrouillage et du chiffrement ;
 - la carte **Accès & Configuration** affiche le **Nom du bucket** S3 et le **Point de terminaison (Endpoint)** ;
 - la carte **Utilisateurs et Accès** liste les utilisateurs et leur droit (**Lecture seule** ou **Lecture / Écriture**).
@@ -103,7 +103,9 @@ Copiez ces valeurs avant de cliquer sur **Terminer** et conservez la clé secrè
 :::
 
 :::note Nom du bucket S3
-Le **Nom du bucket S3** est généré par la plateforme et diffère du nom saisi dans l'assistant. Utilisez toujours le nom S3 dans vos clients. Il reste consultable sur la page du bucket.
+Le **Nom du bucket S3** est généré par la plateforme, sous la forme `bucket-` suivi d'un identifiant unique (par exemple `bucket-1df67984-321d-492d-bb06-2f4527bb0f5b`). Il diffère du nom saisi dans l'assistant : un client S3 configuré avec ce dernier reçoit `AccessDenied`. Utilisez toujours le nom S3 dans vos clients. Il reste consultable sur la page du bucket.
+
+S'il n'est pas encore connu, l'écran affiche à sa place « Le nom S3 sera disponible dans quelques instants, dans la fiche du bucket. » : relevez-le alors dans la carte **Accès & Configuration** de la page du bucket. Le point de terminaison, lui aussi, n'apparaît que lorsqu'il est connu.
 :::
 
 Exportez les valeurs dans votre terminal :
@@ -160,7 +162,7 @@ La carte **Accès & Configuration** de la page du bucket propose ces commandes, 
 | Symptôme | Cause probable | Action |
 |----------|----------------|--------|
 | `AccessDenied` sur `aws s3 ls` sans bucket | Listage de l'endpoint entier | Ciblez `s3://$BUCKET_NAME/` |
-| `NoSuchBucket` | Nom saisi dans l'assistant utilisé au lieu du nom S3 | Utilisez le **Nom du bucket** affiché dans **Accès & Configuration** |
+| `AccessDenied` alors que la commande cible le bucket | Nom saisi dans l'assistant utilisé au lieu du nom S3 | Utilisez le **Nom du bucket** (`bucket-…`) affiché dans **Accès & Configuration** |
 | `AccessDenied` à l'écriture | Utilisateur en **Lecture seule** | Changez son droit avec **Modifier l'accès** |
 | `SignatureDoesNotMatch` / `InvalidAccessKeyId` | Clés incorrectes ou incomplètes | Recopiez les clés ; si la clé secrète est perdue, créez un nouvel utilisateur |
 | Erreur de connexion | Endpoint sans `https://` | Préfixez l'endpoint par `https://` |
@@ -179,7 +181,7 @@ Voir aussi le [dépannage complet](./troubleshooting.md).
 3. Saisissez le nom exact du bucket dans **Nom de la ressource à confirmer**, puis cliquez sur **Supprimer définitivement**.
 
 :::warning Suppression irréversible
-La suppression d'un bucket est définitive et emporte tous ses objets : la console ne vérifie pas que le bucket est vide. Copiez les données à conserver avant de le supprimer.
+La suppression d'un bucket est définitive et emporte tous ses objets, même s'il n'est pas vide. Copiez les données à conserver avant de le supprimer. Un bucket verrouillé (WORM) fait exception : il est retiré de la console, mais ses objets sont conservés et restent verrouillés 365 jours après leur écriture.
 :::
 
 <NavigationFooter

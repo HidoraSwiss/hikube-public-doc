@@ -10,7 +10,7 @@ import NavigationFooter from '@site/src/components/NavigationFooter';
 Hikube propone un servizio di **Kubernetes gestito** progettato per offrire un'infrastruttura ad alta disponibilità, sicura e performante.
 Il piano di controllo è interamente gestito dalla piattaforma, mentre i **nodi worker** vengono distribuiti nel suo progetto sotto forma di macchine virtuali.
 
-I cluster si creano, si modificano e si eliminano dalla [console Hikube](https://console.hikube.cloud), menu **Infrastructure** > **Kubernetes**. Una volta pronto il cluster, se ne scarica il kubeconfig dalla console e si lavora nel cluster con i propri strumenti abituali (`kubectl`, `helm`, client SDK, ecc.).
+I cluster si creano, si modificano e si eliminano dalla [console Hikube](https://console.hikube.cloud), menu **Infrastructure** > **Kubernetes**. Una volta pronto il cluster, un amministratore del progetto ne scarica il kubeconfig dalla console e si lavora nel cluster con i propri strumenti abituali (`kubectl`, `helm`, client SDK, ecc.).
 
 ---
 
@@ -38,7 +38,7 @@ La procedura guidata **Create cluster** raggruppa la configurazione in quattro p
 | Passaggio | Che cosa si definisce |
 |-------|------------------------|
 | **General** | Nome del cluster, versione di Kubernetes, endpoint API (facoltativo), dimensione e numero di istanze del control plane |
-| **Nodes** | Uno o più gruppi di nodi: nome, tipo di istanza, storage effimero, numero minimo e massimo di nodi, esposizione su internet, GPU |
+| **Nodes** | Uno o più gruppi di nodi: nome, tipo di istanza, dimensione del disco dei nodi, numero minimo e massimo di nodi, esposizione su internet, GPU |
 | **Addons** | Attivazione degli addon del cluster e sovrascrittura facoltativa dei relativi valori Helm |
 | **Summary** | Riepilogo prima della distribuzione |
 

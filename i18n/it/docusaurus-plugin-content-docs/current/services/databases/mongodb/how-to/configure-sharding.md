@@ -44,7 +44,7 @@ graph TB
 2. Passaggio **General**: inserisca il **Cluster Name**.
 3. Passaggio **Configuration**: scelga la **MongoDB Version**, il **Preset**, la **Disk size (GB)** e il **Number of replicas** (`3` consigliato), quindi attivi **Sharding (Distributed Topology)**.
 4. Controlli l'**Estimated Cost** e l'impatto sulle quote, che tengono conto dei componenti aggiuntivi.
-5. Passaggio **Users**: aggiunga almeno un utente con il **Role** **Administrator**.
+5. Passaggio **Users**: aggiunga almeno un utente, con il **Database** applicativo da distribuire in sharding (ad esempio `myapp`) e il **Role** **Administrator**.
 6. Passaggio **Summary**: verifichi che la riga **Sharding** indichi **Enabled**, quindi faccia clic su **Create cluster**.
 
 ### 2. Verificare la topologia

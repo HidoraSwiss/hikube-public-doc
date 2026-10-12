@@ -32,11 +32,13 @@ Klicken Sie im Abschnitt **Storage** auf **Add a disk**. Ein Block **Storage Vol
 
 **Bestehende Disk** (Registerkarte **Existing**): Wählen Sie unter **Select an existing volume** eine Daten-Disk des Projekts, die an keine VM angebunden ist. Disks lassen sich auch unabhängig im Menü **Disks** erstellen (siehe [Disks](../../storage/disks/quick-start.md)).
 
+Um ein versehentlich hinzugefügtes Volume vor dem Speichern zu entfernen, klicken Sie auf **Remove disk** (Papierkorbsymbol): Es wurde noch nichts erstellt.
+
 ### 3. Speichern
 
 Prüfen Sie die Quota-Übersicht oben auf der Seite und klicken Sie dann auf **Save**.
 
-Die Konsole zeigt **Restart required** an: Die VM wird neu gestartet, um die neue Disk zu übernehmen. Warten Sie, bis sie wieder den Status **Running** hat. Die Disk erscheint im Abschnitt **Storage & Disks** der Detailseite.
+Die Konsole zeigt **Restart required** an: Die neue Disk wird erst beim nächsten Neustart der VM übernommen. Klicken Sie im Abschnitt **Actions** der Detailseite auf **Restart** und warten Sie, bis die VM wieder den Status **Running** hat. Die Disk erscheint im Abschnitt **Storage & Disks** der Detailseite.
 
 :::note Bei der Erstellung hinzugefügte Disk
 Sie können Disks auch direkt bei der Erstellung der VM hinzufügen, mit **Add a disk** im Schritt **Storage** des Assistenten. Sie erhalten dann den Namen der VM mit einem Suffix (`ma-vm-2`, `ma-vm-3`…).
@@ -109,7 +111,9 @@ sudo touch /mnt/data/test.txt && echo "OK"
 
 ## Eine Disk trennen
 
-Klicken Sie unter **Edit** > **Storage** auf das Löschsymbol des Volumes, bestätigen Sie durch Eingabe seines Namens und klicken Sie dann auf **Save**. Die Disk wird von der VM getrennt (die neu gestartet wird) und bleibt im Menü **Disks** verfügbar. Hängen Sie sie vorher im Betriebssystem aus und entfernen Sie ihre Zeile aus `/etc/fstab`.
+Hängen Sie die Disk zuerst im Betriebssystem aus und entfernen Sie ihre Zeile aus `/etc/fstab`. Klicken Sie dann unter **Edit** > **Storage** am Volume auf **Detach disk**, bestätigen Sie im Dialog **Detach `<name>`?** mit **Detach** und klicken Sie auf **Save**.
+
+Die Disk wird nicht gelöscht: Ihre Daten bleiben erhalten, und sie bleibt im Menü **Disks** verfügbar, von wo aus Sie sie an eine andere VM anbinden können. Das Trennen wird erst beim nächsten Neustart der VM wirksam: Bis dahin bleibt die Disk für das System sichtbar. Die Konsole zeigt **Restart required** an; klicken Sie auf **Restart**, um es anzuwenden. Die System-Disk lässt sich nicht trennen.
 
 ## Weiterführende Informationen
 

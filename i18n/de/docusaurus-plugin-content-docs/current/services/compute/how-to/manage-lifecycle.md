@@ -52,7 +52,9 @@ Klicken Sie auf **Restart** und bestätigen Sie im Dialog **Restart virtual mach
    - **Advanced Configuration**: SSH-Schlüssel, cloud-init-Skript, **Automatic Restart**.
 3. Prüfen Sie die Quota-Übersicht oben auf der Seite und klicken Sie auf **Save**.
 
-Wenn sich der Instanztyp, die Disks oder die GPUs ändern, zeigt die Konsole **Restart required** an: Die VM wird neu gestartet, was mehrere Minuten dauern kann. Andernfalls zeigt sie **Instance updated** an.
+Wenn sich der Instanztyp, die Disks oder die GPUs ändern, zeigt die Konsole **Restart required** an: Diese Änderungen werden erst beim nächsten Neustart der VM wirksam. Klicken Sie auf **Restart**, um sie anzuwenden. Andernfalls zeigt sie **Instance updated** an.
+
+Wird das Speichern abgelehnt, zeigt die Konsole **Incomplete form** an und nennt die fehlerhaften Felder.
 
 Der Name und das System-Image sind nicht änderbar.
 

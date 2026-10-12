@@ -5,26 +5,40 @@ title: Dépannage
 
 # Dépannage — Kubernetes
 
-### Le cluster reste en création
+### Le cluster reste en création ou passe à Erreur
 
-**Cause** : le provisionnement du control plane ou des nœuds n'aboutit pas.
+**Cause** : le provisionnement du control plane ou des nœuds n'aboutit pas, ou la plateforme n'a pas pu appliquer la dernière modification du cluster. Dans ce dernier cas, le cluster passe au statut **Erreur** ; il peut continuer de fonctionner avec sa configuration précédente.
 
 **Solution** :
 
-1. Dans **Infrastructure** > **Kubernetes**, vérifiez le statut du cluster. Un cluster nouvellement créé passe de **En création** à **Prêt** en quelques minutes.
+1. Dans **Infrastructure** > **Kubernetes**, vérifiez le statut du cluster. Un cluster nouvellement créé passe de **En création** à **Prêt** en quelques minutes. Le filtre de statut de la liste permet d'afficher les clusters **Prêt** ou **Erreur**.
 2. Sur la page de détail, vérifiez dans **Pools de Nœuds** que des nœuds deviennent actifs.
-3. Si le statut ne change pas, [contactez le support](mailto:support@hidora.io) en indiquant le nom du cluster et le projet.
+3. Si le statut ne change pas, ou si le cluster est en **Erreur**, [contactez le support](mailto:support@hidora.io) en indiquant le nom du cluster et le projet.
+
+---
+
+### La création du premier cluster attend « Préparation de l'environnement Kubernetes »
+
+**Cause** : le premier cluster d'un projet ne peut être créé qu'une fois l'environnement Kubernetes du projet prêt, ce qui prend quelques minutes. Un cluster suivant peut rencontrer la même attente brièvement, pendant une modification du projet comme un changement de quota.
+
+**Solution** :
+
+1. Laissez l'assistant ouvert : il affiche « Préparation de l'environnement Kubernetes du projet, la création reprendra automatiquement. » et relance la création seul, sans perdre votre configuration. Le bouton **Annuler** arrête l'attente.
+2. Si la console affiche « L'environnement Kubernetes du projet n'est toujours pas prêt. Votre configuration est conservée : réessayez dans quelques minutes. », cliquez de nouveau sur **Déployer** quelques minutes plus tard.
+3. Si la console affiche **Erreur de création** avec un message qui vous demande de contacter le support (par exemple « Le déploiement de l'environnement Kubernetes du projet a échoué. Contactez le support. »), ne réessayez pas : [contactez le support](mailto:support@hidora.io) en indiquant le projet.
+
+Si vous créez vos clusters par l'API, ces cas correspondent aux codes d'erreur `70205` (environnement en préparation : renvoyez la même requête quelques minutes plus tard), `70207` et `70208` (ne réessayez pas, contactez le support).
 
 ---
 
 ### L'assistant bloque la création (quota)
 
-**Cause** : le projet n'a pas assez de quota CPU, mémoire ou stockage. Le quota est calculé sur le control plane et sur le **nombre maximum** de nœuds de chaque groupe, stockage éphémère compris (« Quota de stockage dépassé pour ce projet (en tenant compte de l'auto-scaling maximum) »).
+**Cause** : le projet n'a pas assez de quota CPU, mémoire ou stockage. Le quota est calculé sur le control plane et sur le **nombre maximum** de nœuds de chaque groupe, disque des nœuds compris (« Quota de stockage dépassé pour ce projet (en tenant compte de l'auto-scaling maximum) »).
 
 **Solution** :
 
 1. Consultez les jauges **Quotas du projet** de l'assistant pour identifier la ressource dépassée.
-2. Réduisez le **Nombre maximum de nœuds**, le type d'instance ou la **Taille du stockage éphémère** des groupes.
+2. Réduisez le **Nombre maximum de nœuds**, le type d'instance ou la **Taille du disque des nœuds** des groupes.
 3. Si le besoin est réel, demandez une augmentation de quota au support.
 
 ---
@@ -38,6 +52,17 @@ title: Dépannage
 1. Attendez que le cluster ait le statut **Prêt**.
 2. Cliquez de nouveau sur **Kubeconfig** dans la section **Actions** de la page de détail.
 3. Si l'erreur persiste, contactez le support.
+
+---
+
+### Le bouton Kubeconfig est désactivé ou le téléchargement est refusé
+
+**Cause** : le kubeconfig donne un accès administrateur au cluster ; son téléchargement est réservé aux administrateurs du projet. Pour les autres membres, le bouton **Kubeconfig** est désactivé avec la mention « Réservé aux administrateurs du projet. » Si la demande est refusée par la plateforme, la console affiche « Le kubeconfig donne un accès administrateur au cluster : il est réservé aux administrateurs du projet. »
+
+**Solution** :
+
+1. Adressez-vous à un administrateur du projet.
+2. Pour un accès limité au cluster, un administrateur peut aussi vous créer un compte dédié avec RBAC dans le cluster (voir [Accès et outils](./how-to/toolbox.md)).
 
 ---
 
@@ -61,7 +86,7 @@ title: Dépannage
 
 ### Nœuds en état NotReady
 
-**Cause** : un ou plusieurs nœuds ne répondent plus au control plane. Cela peut être lié à des ressources insuffisantes, à un disque éphémère saturé ou à une défaillance du kubelet.
+**Cause** : un ou plusieurs nœuds ne répondent plus au control plane. Cela peut être lié à des ressources insuffisantes, à un disque de nœud saturé ou à une défaillance du kubelet.
 
 **Solution** :
 
@@ -74,7 +99,7 @@ title: Dépannage
    ```bash
    kubectl get events -A --sort-by='.lastTimestamp'
    ```
-3. En cas de `DiskPressure`, augmentez la **Taille du stockage éphémère** du groupe (**Modifier** > **Groupes de nœuds**).
+3. En cas de `DiskPressure`, augmentez la **Taille du disque des nœuds** du groupe (**Modifier** > **Groupes de nœuds**).
 4. Vérifiez que le type d'instance fournit suffisamment de ressources pour les workloads déployés.
 5. Si le problème persiste, contactez le support.
 
@@ -181,6 +206,7 @@ title: Dépannage
 
 **Solution** :
 
-1. Lisez le message : il indique le champ à corriger (par exemple, GPU ajoutés à un groupe existant, maximum inférieur au minimum, YAML de surcharge invalide).
+1. Lisez le message : il indique le champ à corriger (par exemple, GPU ajoutés à un groupe existant, maximum inférieur au minimum, YAML de surcharge invalide, version inférieure à la version actuelle).
+   Un retour à une version inférieure de Kubernetes est refusé (`version downgrades are not supported`, code `70206`) : choisissez la version actuelle ou une version supérieure.
 2. En cas de conflit, attendez la fin de l'opération en cours sur le cluster, rechargez la page de modification et réessayez.
 3. Pour ajouter des GPU, créez un nouveau groupe de nœuds plutôt que de modifier un groupe existant sans GPU.

@@ -67,8 +67,8 @@ Der Schritt **Source** des Assistenten bietet zwei Möglichkeiten:
   - ein **Cloud-Image** aus dem Katalog (Betriebssystem, dann **Version**);
   - oder **Custom Image**: eine **Image URL (ISO/QCOW2)**. Die URL muss HTTPS verwenden; private oder lokale IP-Adressen werden abgelehnt.
 
-:::note Windows
-Eine Windows-System-Disk muss mindestens **50 GB** groß sein. Ihre geschätzten Kosten enthalten die Windows-Lizenz.
+:::note Mindestgröße je nach Image
+Eine System-Disk muss für Oracle Linux mindestens **40 GB** und für Windows Server mindestens **28 GB** groß sein; für die übrigen Images genügen 20 GB. Die Konsole hebt die Größe bei der Wahl des Images auf dieses Minimum an. Die geschätzten Kosten einer Windows-Disk enthalten die Windows-Lizenz.
 :::
 
 ---
@@ -96,7 +96,7 @@ Quelle, Replikation und Verschlüsselung werden bei der Erstellung gewählt. Dan
 
 ## Größe und Quota
 
-- Mindestgröße: **20 GB** (50 GB für eine Windows-System-Disk).
+- Mindestgröße: **20 GB**; für eine System-Disk 40 GB mit Oracle Linux und 28 GB mit Windows Server.
 - Die Größe ist durch das **Speicher-Quota** des Projekts begrenzt; der Assistent zeigt die Anzeige **Estimated project usage** an.
 - Eine Disk kann **vergrößert**, niemals verkleinert werden (siehe [Die Größe einer Disk ändern](./how-to/resize.md)).
 

@@ -10,7 +10,7 @@ import NavigationFooter from '@site/src/components/NavigationFooter';
 Hikube offers a **managed Kubernetes** service designed to provide a highly available, secure and high-performance infrastructure.
 The control plane is fully managed by the platform, while the **worker nodes** are deployed in your project as virtual machines.
 
-Clusters are created, modified and deleted from the [Hikube console](https://console.hikube.cloud), menu **Infrastructure** > **Kubernetes**. Once the cluster is ready, you download its kubeconfig from the console and work in the cluster with your usual tools (`kubectl`, `helm`, SDK client, etc.).
+Clusters are created, modified and deleted from the [Hikube console](https://console.hikube.cloud), menu **Infrastructure** > **Kubernetes**. Once the cluster is ready, a project administrator downloads its kubeconfig from the console, and you work in the cluster with your usual tools (`kubectl`, `helm`, SDK client, etc.).
 
 ---
 
@@ -38,7 +38,7 @@ The **Create cluster** wizard groups the configuration into four steps:
 | Step | What you define |
 |-------|------------------------|
 | **General** | Cluster name, Kubernetes version, API endpoint (optional), size and number of control plane instances |
-| **Nodes** | One or more node groups: name, instance type, ephemeral storage, minimum and maximum number of nodes, exposure on the internet, GPU |
+| **Nodes** | One or more node groups: name, instance type, node disk size, minimum and maximum number of nodes, exposure on the internet, GPU |
 | **Addons** | Enabling the cluster addons and optionally overriding their Helm values |
 | **Summary** | Summary before deployment |
 

@@ -36,7 +36,7 @@ Regole di convalida dell'URL:
 
 Al passaggio **Configuration**:
 
-- **Size (GB)**: almeno 20 GB, e almeno **50 GB per un'immagine Windows** (la console adatta il valore automaticamente);
+- **Size (GB)**: almeno 20 GB; per un disco di sistema, almeno **40 GB con Oracle Linux** e **28 GB con Windows Server** (la console porta il valore a questo minimo quando sceglie l'immagine);
 - **Replication Type**: **Asynchronous Replication** (Recommended) o **Synchronous Replication**;
 - **Disk Encryption**: la attivi se necessario.
 

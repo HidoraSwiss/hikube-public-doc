@@ -141,7 +141,7 @@ Der Assistent zeigt die **Estimated Cost** und die Auswirkung des Clusters auf d
 | Parameter | Wert |
 |-----------|--------|
 | Replicas | 1 bis 8 |
-| Volume-Größe | 1 bis 4 096 GB pro Knoten, im Rahmen des Quotas des Projekts |
+| Volume-Größe | 1 bis 4 096 GB pro Knoten, im Rahmen des Quotas des Projekts; nach der Erstellung nur Vergrößerung |
 | Redis-Datenbanken | Standardmäßig logische Datenbank `0` |
 
 ---

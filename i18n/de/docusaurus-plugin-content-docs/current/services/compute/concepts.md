@@ -69,7 +69,7 @@ Jede mit der VM erstellte Disk wird im Schritt **Storage** des Assistenten konfi
 | Parameter | Werte | Hinweise |
 |-----------|---------|-----------|
 | **Volume Name** | Aus dem Namen der VM generiert (`ma-vm`, `ma-vm-2`…) | Änderbar |
-| **Size (GB)** | Mindestens 20 GB, höchstens 4096 GB | Mindestens 50 GB für Windows, 40 GB für Oracle Linux |
+| **Size (GB)** | Mindestens 20 GB, höchstens 4096 GB | Systemdisk: mindestens 40 GB für Oracle Linux, 28 GB für Windows Server; die Konsole hebt die Größe bei der Wahl des Images auf dieses Minimum an |
 | **Replication Type** | **Asynchronous Replication** (Recommended) oder **Synchronous Replication** | Siehe unten |
 | **Disk Encryption** | Aktiviert / deaktiviert | LUKS-Verschlüsselung der Daten im Ruhezustand |
 
@@ -105,7 +105,7 @@ stateDiagram-v2
     ArretEnCours --> Arrete
     Arrete --> DemarrageEnCours: Start
     DemarrageEnCours --> Actif
-    Actif --> RedemarrageEnCours: Restart / Änderung von Instanztyp, Disks oder GPUs
+    Actif --> RedemarrageEnCours: Restart
     RedemarrageEnCours --> Actif
     Actif --> SuppressionEnCours: Delete
     Arrete --> SuppressionEnCours: Delete
@@ -123,12 +123,14 @@ Die Option **Automatic Restart** (Schritt **Configuration** des Assistenten oder
 | Element | Änderbar | Wirkung |
 |---------|-----------|-------|
 | Name, System-Image | Nein | — |
-| Instanztyp | Ja | Neustart der VM |
-| Disks (Hinzufügen, Trennen) | Ja | Neustart der VM |
-| GPU | Ja | Neustart der VM |
+| Instanztyp | Ja | Beim nächsten Neustart der VM angewendet |
+| Disks (Hinzufügen, Trennen) | Ja | Beim nächsten Neustart der VM angewendet; eine getrennte Disk bleibt mit ihren Daten unter **Disks** |
+| GPU | Ja | Beim nächsten Neustart der VM angewendet |
 | Öffentliche IP, Firewall, Ports, VPC | Ja | Ohne Neustart angewendet |
 | SSH-Schlüssel | Ja | Angebot, die User Data neu zu laden; beim nächsten Neustart angewendet |
 | cloud-init-Skript, automatischer Neustart | Ja | Skript wird nach **Reload UserData** und Neustart erneut ausgeführt |
+
+Nach dem Speichern einer Änderung von Instanztyp, Disks oder GPUs zeigt die Konsole **Restart required** an: Starten Sie die VM neu, um sie anzuwenden.
 
 ---
 

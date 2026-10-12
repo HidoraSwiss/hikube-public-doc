@@ -16,11 +16,11 @@ This guide explains how to adjust an existing PostgreSQL cluster from the [Hikub
 
 | Parameter | Can be changed after creation |
 |-----------|---------------------------|
-| **PostgreSQL Version** | Yes |
+| **PostgreSQL Version** | Yes, to a higher version only |
 | **Preset** | Yes |
-| **Disk size (GB)** | Yes |
+| **Disk size (GB)** | Yes, upwards only |
 | **External access** | Yes |
-| **Number of replicas** | No, "The mode cannot be changed after creation" |
+| **Number of replicas** | No, "The mode cannot be changed after creation". The form shows the current value (1, 2 or 3) |
 
 To change the number of replicas of an existing cluster, [contact support](mailto:support@hidora.io).
 
@@ -50,16 +50,22 @@ The **Edit PostgreSQL cluster** page displays the **Cluster settings** card and 
 ### 2. Adjust the parameters
 
 - **Preset**: select a higher preset to increase the CPU and memory of each node.
-- **Disk size (GB)**: enter the new capacity.
-- **PostgreSQL Version**: select the target version. The form offers all versions, but only an upgrade is possible: a lower version is rejected by the platform, the cluster stays on its current version and the configuration remains in a failed state until you select a higher or equal version again. A major version upgrade (for example 17 → 18) is done in place: the instance is stopped during the data migration.
+- **Disk size (GB)**: enter the new capacity, at least equal to the current size. A lower value displays "The disk size cannot be reduced: N GB minimum." and is not saved.
+- **PostgreSQL Version**: select the target version. The form only offers the current version and the higher versions. A major version upgrade (for example 17 → 18) is done in place: the instance is stopped during the data migration.
 - **External access**: enable or disable exposure on the public Internet.
+
+When you change the preset or the version, the warning "The cluster instances will restart" is displayed; for a version change, it reminds you that an upgraded version cannot be downgraded.
 
 ### 3. Save
 
 Click **Save**. The "Cluster updated" message confirms the change. If the new configuration exceeds the project quotas, the button stays disabled.
 
 :::warning
-Changing the preset or the version restarts the instances. On a 1-replica cluster, the database is unavailable during the restart, and throughout the migration during a major version upgrade; schedule the operation outside peak hours.
+Changing the preset or the version restarts the instances as soon as you save. On a 1-replica cluster, the database is unavailable during the restart, and throughout the migration during a major version upgrade; schedule the operation outside peak hours.
+:::
+
+:::note
+The API applies the same rules: a version lower than the current one is refused with code `80203`, a disk size smaller than the current one with code `80204`.
 :::
 
 :::tip

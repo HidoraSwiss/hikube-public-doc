@@ -11,7 +11,7 @@ Oui. **MariaDB** est un fork open source de MySQL, compatible avec le protocole 
 
 ### Quelle version choisir ?
 
-L'assistant propose les versions **10.6**, **10.11**, **11.4** et **11.8**. Choisissez la plus récente pour un nouveau projet, ou la version la plus proche de votre environnement actuel pour une migration. La version peut être changée après la création depuis **Modifier**.
+L'assistant propose les versions **10.6**, **10.11**, **11.4** et **11.8**. Choisissez la plus récente pour un nouveau projet, ou la version la plus proche de votre environnement actuel pour une migration. La version peut être montée après la création depuis **Modifier** ; elle ne peut pas être abaissée.
 
 ### Quelles préconfigurations sont disponibles ?
 
@@ -41,11 +41,13 @@ Dans la carte **Connexion et réseau** de la page du cluster, champ **Hôte (Hos
 
 ### Comment créer une base de données ?
 
-Accordez à un utilisateur un accès sur le nom de la base (**Gérer les accès** → **Accès spécifiques (Bases de données)** → **Ajouter**). La base est créée si elle n'existe pas. Voir [Gérer les utilisateurs et bases de données](./how-to/manage-users-databases.md).
+Accordez à un utilisateur un accès sur le nom de la base (**Gérer les accès** → **Accès spécifiques (Bases de données)** → **Ajouter**), ou indiquez-la comme **Base de données** d'un utilisateur à l'étape **Utilisateurs** de l'assistant de création du cluster. La base est créée si elle n'existe pas. Les noms de bases système (`mysql`, `information_schema`, `performance_schema`, `sys`) sont refusés. Voir [Gérer les utilisateurs et bases de données](./how-to/manage-users-databases.md).
 
 ### Pourquoi l'utilisateur créé dans l'assistant n'a-t-il pas accès à ma base ?
 
-Le **Rôle** choisi dans l'assistant de création du cluster s'applique à la base système `mysql`. Accordez ensuite l'accès à vos bases applicatives via **Gérer les accès**.
+Le **Rôle** choisi dans l'assistant s'applique à la **Base de données** indiquée pour cet utilisateur, et à elle seule. Accordez l'accès à vos autres bases via **Gérer les accès**.
+
+Les utilisateurs créés avant la console v1.3.0 ont reçu leur rôle sur la base système `mysql`. Dans **Gérer les accès**, retirez la ligne `mysql`, affichée en erreur, et ajoutez leur base applicative.
 
 ### J'ai perdu le mot de passe d'un utilisateur. Comment le récupérer ?
 

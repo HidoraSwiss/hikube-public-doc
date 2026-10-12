@@ -5,26 +5,40 @@ title: Troubleshooting
 
 # Troubleshooting — Kubernetes
 
-### The cluster stays in creation
+### The cluster stays in creation or changes to Error
 
-**Cause**: provisioning of the control plane or the nodes does not complete.
+**Cause**: provisioning of the control plane or the nodes does not complete, or the platform could not apply the last change to the cluster. In the latter case, the cluster changes to the **Error** status; it may keep running with its previous configuration.
 
 **Solution**:
 
-1. In **Infrastructure** > **Kubernetes**, check the cluster status. A newly created cluster goes from **Creating** to **Ready** in a few minutes.
+1. In **Infrastructure** > **Kubernetes**, check the cluster status. A newly created cluster goes from **Creating** to **Ready** in a few minutes. The list's status filter can show **Ready** or **Error** clusters.
 2. On the detail page, check in **Node Pools** that nodes are becoming active.
-3. If the status does not change, [contact support](mailto:support@hidora.io), specifying the cluster name and the project.
+3. If the status does not change, or if the cluster is in **Error**, [contact support](mailto:support@hidora.io), specifying the cluster name and the project.
+
+---
+
+### Creating the first cluster waits on "Preparing the Kubernetes environment"
+
+**Cause**: the first cluster of a project can only be created once the project's Kubernetes environment is ready, which takes a few minutes. A later cluster may briefly hit the same wait, during a change to the project such as a quota change.
+
+**Solution**:
+
+1. Keep the wizard open: it shows "Preparing the project's Kubernetes environment; creation will resume automatically." and retries the creation on its own, without losing your configuration. The **Cancel** button stops the wait.
+2. If the console shows "The project's Kubernetes environment is still not ready. Your configuration is kept: try again in a few minutes.", click **Create cluster** again a few minutes later.
+3. If the console shows **Error during creation** with a message asking you to contact support (for example "The project's Kubernetes environment failed to deploy. Contact support."), do not try again: [contact support](mailto:support@hidora.io), specifying the project.
+
+If you create your clusters through the API, these cases match the error codes `70205` (environment being prepared: send the same request again a few minutes later), `70207` and `70208` (do not retry, contact support).
 
 ---
 
 ### The wizard blocks creation (quota)
 
-**Cause**: the project does not have enough CPU, memory or storage quota. The quota is calculated on the control plane and on the **maximum number** of nodes of each group, including ephemeral storage ("Storage quota exceeded for this project (including maximum auto-scaling)").
+**Cause**: the project does not have enough CPU, memory or storage quota. The quota is calculated on the control plane and on the **maximum number** of nodes of each group, including the node disk ("Storage quota exceeded for this project (including maximum auto-scaling)").
 
 **Solution**:
 
 1. Check the wizard's **Project Quotas** gauges to identify the exceeded resource.
-2. Reduce the **Maximum nodes**, the instance type or the **Ephemeral storage size** of the groups.
+2. Reduce the **Maximum nodes**, the instance type or the **Node disk size** of the groups.
 3. If the need is real, ask support for a quota increase.
 
 ---
@@ -38,6 +52,17 @@ title: Troubleshooting
 1. Wait until the cluster has the **Ready** status.
 2. Click **Kubeconfig** again in the **Actions** section of the detail page.
 3. If the error persists, contact support.
+
+---
+
+### The Kubeconfig button is disabled or the download is refused
+
+**Cause**: the kubeconfig grants administrator access to the cluster; downloading it is reserved for project administrators. For other members, the **Kubeconfig** button is disabled with the note "Reserved for project administrators." If the platform refuses the request, the console shows "The kubeconfig grants administrator access to the cluster: it is reserved for project administrators."
+
+**Solution**:
+
+1. Contact a project administrator.
+2. For limited access to the cluster, an administrator can also create a dedicated account for you with RBAC in the cluster (see [Access and tools](./how-to/toolbox.md)).
 
 ---
 
@@ -61,7 +86,7 @@ title: Troubleshooting
 
 ### Nodes in NotReady state
 
-**Cause**: one or more nodes no longer respond to the control plane. This may be due to insufficient resources, a full ephemeral disk or a kubelet failure.
+**Cause**: one or more nodes no longer respond to the control plane. This may be due to insufficient resources, a full node disk or a kubelet failure.
 
 **Solution**:
 
@@ -74,7 +99,7 @@ title: Troubleshooting
    ```bash
    kubectl get events -A --sort-by='.lastTimestamp'
    ```
-3. In case of `DiskPressure`, increase the group's **Ephemeral storage size** (**Edit** > **Node groups**).
+3. In case of `DiskPressure`, increase the group's **Node disk size** (**Edit** > **Node groups**).
 4. Check that the instance type provides enough resources for the deployed workloads.
 5. If the problem persists, contact support.
 
@@ -181,6 +206,7 @@ title: Troubleshooting
 
 **Solution**:
 
-1. Read the message: it indicates the field to correct (for example, GPUs added to an existing group, maximum lower than minimum, invalid override YAML).
+1. Read the message: it indicates the field to correct (for example, GPUs added to an existing group, maximum lower than minimum, invalid override YAML, version lower than the current one).
+   A downgrade to a lower Kubernetes version is refused (`version downgrades are not supported`, code `70206`): choose the current version or a higher one.
 2. In case of conflict, wait for the current operation on the cluster to finish, reload the edit page and try again.
 3. To add GPUs, create a new node group rather than modifying an existing group without GPUs.

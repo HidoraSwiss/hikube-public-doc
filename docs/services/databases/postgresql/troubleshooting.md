@@ -12,7 +12,13 @@ title: Dépannage
 **Solution** :
 
 1. Patientez quelques minutes et actualisez la page du cluster.
-2. Si le statut ne change pas après une quinzaine de minutes, ou passe à **Erreur** ou **Échec**, [contactez le support](mailto:support@hidora.io) en indiquant le projet et le nom du cluster.
+2. Si le statut ne change pas après une quinzaine de minutes, [contactez le support](mailto:support@hidora.io) en indiquant le projet et le nom du cluster.
+
+### Le cluster passe au statut « Erreur »
+
+**Cause** : la plateforme n'a pas pu appliquer la création du cluster ou sa dernière modification. Après une modification, le cluster peut continuer à fonctionner avec sa configuration précédente.
+
+**Solution** : [contactez le support](mailto:support@hidora.io) en indiquant le projet, le nom du cluster et la modification demandée.
 
 ### Impossible de passer l'étape Configuration de l'assistant
 
@@ -75,4 +81,4 @@ title: Dépannage
 
 **Cause** : le volume de données a atteint la **Taille allouée**.
 
-**Solution** : augmentez la **Taille du disque (Go)** via **Modifier**, dans la limite du quota de stockage du projet. Supprimez au besoin les données obsolètes et lancez `VACUUM` pour récupérer l'espace.
+**Solution** : augmentez la **Taille du disque (Go)** via **Modifier**, dans la limite du quota de stockage du projet. La taille ne peut pas être réduite ensuite. Supprimez au besoin les données obsolètes et lancez `VACUUM` pour récupérer l'espace.

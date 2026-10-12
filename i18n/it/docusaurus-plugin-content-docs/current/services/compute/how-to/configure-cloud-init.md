@@ -94,8 +94,8 @@ Il nuovo script viene salvato senza riavviare la VM, ma non viene rieseguito aut
 
 ### 4. Rieseguire lo script
 
-1. Su una VM in stato **Running**, faccia clic su **Reload UserData**, dalla sezione **Actions** della pagina di dettaglio oppure dal menu **Actions** dell'elenco. La console mostra **UserData reload has been initiated.**
-2. Il ricaricamento non riavvia la VM: lo script viene rieseguito all'avvio successivo. Faccia clic su **Restart** per applicarlo subito.
+1. Su una VM in stato **Running**, faccia clic su **Reload UserData**, dalla sezione **Actions** della pagina di dettaglio oppure dal menu **Actions** dell'elenco. La console mostra **UserData reloaded: restart the VM to apply it.**
+2. Il ricaricamento non riavvia la VM: lo script viene rieseguito all'avvio successivo. La sezione **Actions** della pagina di dettaglio mostra l'avviso **Restart the VM to apply the UserData**, con un pulsante **Restart**: faccia clic per applicare subito lo script.
 
 Al riavvio, cloud-init tratta la VM come una nuova istanza: riesegue l'intero script (`runcmd`, `write_files`, `packages`…) e rigenera le chiavi host SSH. Il suo client SSH segnala allora un cambiamento della chiave host; rimuova la vecchia voce con `ssh-keygen -R <ip-pubblico>`.
 

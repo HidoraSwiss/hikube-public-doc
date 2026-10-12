@@ -52,11 +52,11 @@ graph TB
 |-------|-------------|
 | **Bucket** | In der Konsole erstellter Objektspeicherbereich (Menü **Infrastructure** → **S3 Buckets**). |
 | **Name des Buckets (Konsole)** | Bei der Erstellung gewählter Name. Er identifiziert den Bucket in der Konsole und kann nicht geändert werden. |
-| **S3 Bucket Name** | Tatsächlicher Name des Buckets auf S3-Seite, von der Plattform generiert. **Diesen Namen** müssen Ihre S3-Clients verwenden. Er wird auf der Seite des Buckets angezeigt. |
+| **S3 Bucket Name** | Tatsächlicher Name des Buckets auf S3-Seite, von der Plattform in der Form `bucket-<Kennung>` generiert. **Diesen Namen** müssen Ihre S3-Clients verwenden: Mit dem Namen aus der Konsole erhalten sie `AccessDenied`. Er wird auf der Seite des Buckets angezeigt, sobald der Bucket einen Benutzer hat. |
 | **S3 Endpoint** | Adresse des S3-Dienstes (zum Beispiel `prod.s3.hikube.cloud`), auf der Seite des Buckets angezeigt. |
 | **S3-Benutzer** | Einem Bucket zugeordnete Identität, mit dem Recht **Read-only** oder **Read / Write**. Ein Bucket kann mehrere Benutzer haben. |
 | **Access Key ID / Secret Access Key** | S3-Authentifizierungsschlüsselpaar eines Benutzers, bei seiner Erstellung generiert. Der geheime Schlüssel wird nur ein einziges Mal angezeigt. |
-| **Locking (WORM)** | Object Lock: verhindert das Löschen oder Ändern der Objekte während 365 Tagen, im Modus `COMPLIANCE` (*Write Once, Read Many*). |
+| **Locking (WORM)** | Object Lock (*Write Once, Read Many*): Jedes Objekt wird nach dem Schreiben 365 Tage lang im Modus `COMPLIANCE` gesperrt; niemand kann es vor Ablauf ändern oder löschen. |
 | **Encryption at rest (LUKS)** | Verschlüsselung der auf der Disk gespeicherten Daten. |
 
 ---
@@ -83,11 +83,22 @@ Name, Sperre und Verschlüsselung werden bei der Erstellung gewählt. Die Konsol
 | Lesen / Schreiben | **Read / Write** | Objekte des Buckets auflisten, lesen, schreiben und löschen |
 | Nur-Lesen | **Read-only** | Nur Objekte auflisten und lesen |
 
-Das Recht eines Benutzers lässt sich jederzeit mit **Edit access** ändern. Die Schlüssel eines Benutzers können nicht erneut angezeigt werden: Um neue Schlüssel zu erhalten, erstellen Sie einen neuen Benutzer und löschen dann den alten.
+Das Recht eines Benutzers lässt sich jederzeit mit **Edit access** ändern, in beide Richtungen: Wird der Haken bei **Read-only access** entfernt, erhält der Benutzer wieder **Read / Write**. Die Schlüssel eines Benutzers können nicht erneut angezeigt werden: Um neue Schlüssel zu erhalten, erstellen Sie einen neuen Benutzer und löschen dann den alten.
 
 ### Reichweite der Schlüssel
 
 Die Schlüssel eines Benutzers gewähren Zugriff **nur auf den Bucket, dem er zugeordnet ist**. Sie erlauben nicht, alle Buckets des Endpunkts aufzulisten: Die Befehle müssen immer auf den Bucket zielen (`s3://<s3-bucket-name>/`).
+
+### Löschen
+
+Das Löschen eines Buckets wird durch Eingabe seines Namens bestätigt. Was mit den Objekten geschieht, hängt von der Sperre ab:
+
+| Bucket | Wirkung des Löschens |
+|--------|----------------------|
+| Ohne Sperre | Der Bucket und alle seine Objekte werden endgültig gelöscht, auch wenn er nicht leer ist. |
+| Gesperrt (WORM) | Der Bucket wird aus der Konsole entfernt, die Plattform behält jedoch seinen Speicher und alle seine Objekte. Jedes Objekt bleibt nach dem Schreiben 365 Tage lang gesperrt (Modus `COMPLIANCE`). |
+
+Das Bestätigungsfenster gibt an, welcher Fall zutrifft.
 
 ---
 

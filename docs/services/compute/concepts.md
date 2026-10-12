@@ -69,7 +69,7 @@ Chaque disque créé avec la VM se configure dans l'étape **Stockage** de l'ass
 | Paramètre | Valeurs | Remarques |
 |-----------|---------|-----------|
 | **Nom du volume** | Généré à partir du nom de la VM (`ma-vm`, `ma-vm-2`…) | Modifiable |
-| **Taille (Go)** | 20 Go minimum, 4096 Go maximum | 50 Go minimum pour Windows, 40 Go pour Oracle Linux |
+| **Taille (Go)** | 20 Go minimum, 4096 Go maximum | Disque système : 40 Go minimum pour Oracle Linux, 28 Go pour Windows Server ; la console relève la taille à ce minimum quand vous choisissez l'image |
 | **Type de réplication** | **Réplication Asynchrone** (Recommandé) ou **Réplication Synchrone** | Voir ci-dessous |
 | **Chiffrement du disque** | Activé / désactivé | Chiffrement LUKS des données au repos |
 
@@ -105,7 +105,7 @@ stateDiagram-v2
     ArretEnCours --> Arrete
     Arrete --> DemarrageEnCours: Démarrer
     DemarrageEnCours --> Actif
-    Actif --> RedemarrageEnCours: Redémarrer / modification du gabarit, des disques ou des GPU
+    Actif --> RedemarrageEnCours: Redémarrer
     RedemarrageEnCours --> Actif
     Actif --> SuppressionEnCours: Supprimer
     Arrete --> SuppressionEnCours: Supprimer
@@ -123,12 +123,14 @@ L'option **Redémarrage Automatique** (étape **Configuration** de l'assistant, 
 | Élément | Modifiable | Effet |
 |---------|-----------|-------|
 | Nom, image système | Non | — |
-| Type d'instance | Oui | Redémarrage de la VM |
-| Disques (ajout, détachement) | Oui | Redémarrage de la VM |
-| GPU | Oui | Redémarrage de la VM |
+| Type d'instance | Oui | Appliqué au prochain redémarrage de la VM |
+| Disques (ajout, détachement) | Oui | Appliqué au prochain redémarrage de la VM ; un disque détaché reste dans **Disques** avec ses données |
+| GPU | Oui | Appliqué au prochain redémarrage de la VM |
 | IP publique, pare-feu, ports, VPC | Oui | Appliqué sans redémarrage |
 | Clés SSH | Oui | Proposition de recharger le user-data, appliqué au redémarrage suivant |
 | Script cloud-init, redémarrage automatique | Oui | Script rejoué après **Recharger UserData** et redémarrage |
+
+Après l'enregistrement d'un changement de type d'instance, de disques ou de GPU, la console affiche **Redémarrage requis** : redémarrez la VM pour l'appliquer.
 
 ---
 

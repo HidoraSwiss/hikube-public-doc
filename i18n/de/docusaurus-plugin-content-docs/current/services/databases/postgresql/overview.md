@@ -55,7 +55,7 @@ graph TD
 | Erstellung eines Clusters (Version 15 bis 18, Preset, Disk-Größe, 1 bis 3 Replicas, externer Zugriff) | Ja |
 | Datenbanken und PostgreSQL-Erweiterungen | Ja |
 | Benutzer, Rechte pro Datenbank (Admin / nur Lesen), Passwortrotation | Ja |
-| Änderung der Version, des Presets, der Disk-Größe und des externen Zugriffs | Ja |
+| Versions-Upgrade, Änderung des Presets, Vergrößerung der Disk, Änderung des externen Zugriffs | Ja |
 | Änderung der Anzahl der Replicas nach der Erstellung | Nein, [wenden Sie sich an den Support](mailto:support@hidora.io) |
 | Backups und Wiederherstellung | Nein, [wenden Sie sich an den Support](mailto:support@hidora.io) |
 

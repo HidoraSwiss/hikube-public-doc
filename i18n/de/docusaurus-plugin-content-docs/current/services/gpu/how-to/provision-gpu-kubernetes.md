@@ -25,7 +25,7 @@ Dann:
 1. Klicken Sie auf **Add node group**.
 2. **Group name**: zum Beispiel `gpu-workers`.
 3. **Instance type**: Wählen Sie Serie und Größe, zum Beispiel **Universal (U)** > **2XLarge** (8 vCPU, 32 GB).
-4. **Ephemeral storage size**: Sehen Sie genügend Platz für die CUDA-Container-Images vor, zum Beispiel `100` GB.
+4. **Node disk size**: Sehen Sie genügend Platz für die CUDA-Container-Images vor, zum Beispiel `100` GB.
 5. **Minimum nodes** und **Maximum nodes**: zum Beispiel `1` und `3`.
 6. Abschnitt **GPU**: Klicken Sie auf die Karte des gewünschten Modells (zum Beispiel **NVIDIA L40S**); **+** und **−** stellen die Anzahl der GPUs **pro Node** ein.
 
@@ -51,7 +51,7 @@ Warten Sie, bis der Cluster in der Liste der Cluster **Ready** oder **Running** 
 
 ### 4. Das Kubeconfig des Clusters abrufen
 
-Klicken Sie auf der Detailseite des Clusters auf **Kubeconfig**. Die Konsole lädt `kubeconfig-<cluster-name>.yaml` herunter.
+Klicken Sie auf der Detailseite des Clusters auf **Kubeconfig**. Die Konsole lädt `kubeconfig-<cluster-name>.yaml` herunter. Diese Schaltfläche ist den Projektadministratoren vorbehalten; für die übrigen Mitglieder ist sie deaktiviert.
 
 ```bash
 export KUBECONFIG=~/Downloads/kubeconfig-<cluster-name>.yaml

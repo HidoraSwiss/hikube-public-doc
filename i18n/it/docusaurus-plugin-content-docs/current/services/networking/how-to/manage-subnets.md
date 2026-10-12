@@ -30,7 +30,7 @@ Intervalli consentiti: `10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`, esclusi 
 1. Apra **Infrastructure** > **Networking**.
 2. Nel menu **Actions** del VPC, faccia clic su **View Subnets**.
 
-La pagina **Subnets for `<vpc>`** elenca ogni sottorete con il suo **Subnet Name** e il suo **CIDR Block**.
+La pagina **Subnets for `<vpc>`** elenca ogni sottorete con il suo **Subnet Name** e il suo **CIDR Block**. Lo stato del VPC compare accanto al sottotitolo della pagina.
 
 ### 3. Creare una sottorete
 

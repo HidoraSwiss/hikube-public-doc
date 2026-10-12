@@ -35,13 +35,21 @@ title: Fehlerbehebung
 
 **Ursache**: Die Plattform hat die Bereitstellung des Netzwerks noch nicht abgeschlossen.
 
-**Lösung**: Die Liste wird automatisch aktualisiert; warten Sie einen Moment. Wechselt der Zustand nach einigen Minuten nicht zu **Ready**, wenden Sie sich unter Angabe des VPC-Namens an den [Support](mailto:support@hidora.io).
+**Lösung**: Die Liste wird automatisch aktualisiert; warten Sie einen Moment. Wechselt der Zustand nach einigen Minuten nicht zu **Ready**, wenden Sie sich unter Angabe des VPC-Namens an den [Support](mailto:support@hidora.io). Wechselt der Zustand zu **Error**, siehe unten.
+
+---
+
+### Das VPC hat den Status Error
+
+**Ursache**: Die Plattform konnte die letzte Änderung des VPC nicht anwenden. Das VPC kann mit seiner vorherigen Konfiguration weiterlaufen.
+
+**Lösung**: Beim Überfahren des Badges **Error** zeigt die Konsole „The platform could not apply the last change. Contact support if this persists.“ an. Wenden Sie sich unter Angabe des VPC-Namens an den [Support](mailto:support@hidora.io).
 
 ---
 
 ### Die sekundäre Schnittstelle hat in der VM keine Adresse
 
-**Ursache**: Die Plattform fügt der VM die Schnittstelle hinzu, aber das Betriebssystem konfiguriert sie nicht automatisch (das ist unter Ubuntu 24.04 der Fall); oder die VM hat die Änderung noch nicht übernommen.
+**Ursache**: Die Plattform fügt der VM die Schnittstelle hinzu, aber das Betriebssystem konfiguriert sie nicht automatisch (das ist unter Debian und Ubuntu der Fall, worauf die Konsole mit der Warnung **Manual setup required on Debian and Ubuntu** hinweist); oder die VM hat die Änderung noch nicht übernommen.
 
 **Lösung**:
 

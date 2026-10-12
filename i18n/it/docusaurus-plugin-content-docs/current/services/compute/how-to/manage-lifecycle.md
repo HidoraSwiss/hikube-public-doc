@@ -52,7 +52,9 @@ Faccia clic su **Restart** e confermi in **Restart virtual machine?**. Le applic
    - **Advanced Configuration**: chiavi SSH, script cloud-init, **Automatic Restart**.
 3. Verifichi il riepilogo delle quote in cima alla pagina e faccia clic su **Save**.
 
-Se cambiano il tipo di istanza, i dischi o le GPU, la console mostra **Restart required**: la VM si riavvia, il che può richiedere diversi minuti. Altrimenti, mostra **Instance updated**.
+Se cambiano il tipo di istanza, i dischi o le GPU, la console mostra **Restart required**: queste modifiche hanno effetto solo al successivo riavvio della VM. Faccia clic su **Restart** per applicarle. Altrimenti, mostra **Instance updated**.
+
+Se il salvataggio viene rifiutato, la console mostra **Incomplete form** e indica i campi in errore.
 
 Il nome e l'immagine di sistema non sono modificabili.
 

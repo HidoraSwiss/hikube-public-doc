@@ -90,15 +90,16 @@ La bascule manuelle du primary (switchover) n'est pas proposée dans la console 
 
 ## Utilisateurs, bases et rôles
 
-La page d'un cluster MariaDB comporte une section **Utilisateurs** ; il n'y a pas d'onglet dédié aux bases de données. Les droits se gèrent par utilisateur :
+La page d'un cluster MariaDB comporte une section **Utilisateurs** ; il n'y a pas d'onglet dédié aux bases de données. Les droits se donnent base par base : chaque accès associe un **Nom de la base** à des **Droits**, **Administrateur (Admin)** ou **Lecture seule (Read-only)**. **Administrateur** donne tous les privilèges sur la base (`ALL`, avec droit de délégation), **Lecture seule** le droit `SELECT`. Accorder un accès sur une base qui n'existe pas encore la crée. Il n'existe pas de rôle global : un utilisateur n'a accès qu'aux bases qui lui sont attribuées.
 
-- **Rôle Global (Optionnel)** : **Aucun rôle global**, **Administrateur** ou **Lecture seule (globale)**. Un rôle global est actuellement refusé à l'enregistrement (message `invalid database_name`) : laissez **Aucun rôle global** et passez par les accès spécifiques ;
-- **Accès spécifiques (Bases de données)** : une liste de couples **Nom de la base** / **Droits** (**Administrateur (Admin)** ou **Lecture seule (Read-only)**). Accorder un accès sur une base qui n'existe pas encore la crée.
+- À la création du cluster, l'étape **Utilisateurs** de l'assistant demande pour chaque utilisateur une **Base de données** applicative et un **Rôle**.
+- Ensuite, **Créer un utilisateur** et **Gérer les accès** permettent d'attribuer un ou plusieurs accès. Un utilisateur enregistré sans accès n'a de droits sur aucune base.
+- La colonne **Bases de données** de la liste des utilisateurs affiche chaque base avec le rôle, par exemple `myapp (Administrateur)`.
 
-Les utilisateurs déclarés dans l'assistant de création du cluster reçoivent le **Rôle** choisi sur la base système `mysql`, visible dans la colonne **Bases de données** de la liste des utilisateurs : **Administrateur** y donne tous les privilèges (`ALL`, avec droit de délégation), **Lecture seule** le droit `SELECT`. Accordez-leur ensuite l'accès à vos bases applicatives via **Gérer les accès**.
+Les bases système `mysql`, `information_schema`, `performance_schema` et `sys` ne peuvent pas recevoir d'accès : la console affiche « « mysql » est une base système : choisissez une base applicative. » et l'API refuse la requête. Elles ne peuvent pas non plus être créées ni supprimées.
 
-:::warning
-La base `mysql` contient les comptes et les droits du serveur. Un accès **Administrateur** sur cette base permet de modifier les droits de tous les utilisateurs, et un accès **Lecture seule** permet de lire les empreintes de mots de passe. Réservez ces accès à un compte d'administration et retirez-les des comptes applicatifs via **Gérer les accès**.
+:::warning Utilisateurs créés avant la console v1.3.0
+L'assistant de création de cluster attribuait auparavant à chaque utilisateur un rôle sur la base système `mysql`, qui contient les comptes et les droits du serveur : un accès **Administrateur** sur cette base permet de modifier les droits de tous les utilisateurs, un accès **Lecture seule** de lire les empreintes de mots de passe. Pour ces utilisateurs, ouvrez **Actions** → **Gérer les accès** : la ligne `mysql` y apparaît en erreur. Retirez-la, ajoutez si besoin la base applicative de l'utilisateur, puis cliquez sur **Enregistrer**.
 :::
 
 Le mot de passe d'un utilisateur est généré par la plateforme et affiché **une seule fois**. En cas de perte, générez-en un nouveau avec **Changer le mot de passe**.
@@ -108,8 +109,8 @@ Le mot de passe d'un utilisateur est généré par la plateforme et affiché **u
 | Élément | Règle |
 |---------|-------|
 | Nom du cluster | 3 à 16 caractères : minuscules, chiffres et tirets ; commence par une lettre, se termine par une lettre ou un chiffre |
-| Nom d'utilisateur | Minuscules, chiffres et tirets ; commence par une lettre, se termine par une lettre ou un chiffre (3 à 16 caractères dans l'assistant de création du cluster) |
-| Nom de base de données | 1 à 63 caractères : minuscules, chiffres et tirets ; commence par une lettre, se termine par une lettre ou un chiffre |
+| Nom d'utilisateur | 3 à 16 caractères : minuscules, chiffres et tirets ; commence par une lettre, se termine par une lettre ou un chiffre. Certains noms, comme `admin` ou `root`, sont réservés |
+| Nom de base de données | 1 à 63 caractères : minuscules, chiffres et tirets ; commence par une lettre, se termine par une lettre ou un chiffre. Les bases système `mysql`, `information_schema`, `performance_schema` et `sys` sont refusées |
 
 :::note
 Les tirets bas (`_`) ne sont pas acceptés dans les noms de base ni dans les noms d'utilisateur.
@@ -154,9 +155,9 @@ L'assistant affiche le **Coût estimé** et l'impact du cluster sur les quotas d
 
 | Paramètre | Valeur |
 |-----------|--------|
-| Versions | 10.6, 10.11, 11.4, 11.8 |
+| Versions | 10.6, 10.11, 11.4, 11.8 ; montée de version uniquement après création |
 | Réplicas | 1, 3 ou 5 |
-| Taille du disque | 1 à 4 096 Go, dans la limite du quota de stockage du projet |
+| Taille du disque | 1 à 4 096 Go, dans la limite du quota de stockage du projet ; augmentation uniquement après création |
 
 ---
 

@@ -15,7 +15,7 @@ Nei suoi client S3, lo anteponga con `https://`.
 
 ### Perché il nome S3 del bucket è diverso dal nome che ho scelto?
 
-Il nome scelto nella console identifica il bucket nel suo progetto. Il **nome S3 effettivo** è generato dalla piattaforma per garantirne l'unicità sull'endpoint. Utilizzi sempre il **Bucket name** visualizzato in **Access & Configuration** nei suoi comandi e SDK.
+Il nome scelto nella console identifica il bucket nel suo progetto. Il **nome S3 effettivo**, nella forma `bucket-<identificativo>`, è generato dalla piattaforma per garantirne l'unicità sull'endpoint. Utilizzi sempre il **Bucket name** visualizzato in **Access & Configuration** nei suoi comandi e SDK: con il nome scelto nella console, un client S3 riceve `AccessDenied`.
 
 ---
 
@@ -64,7 +64,7 @@ No. Le chiavi di un utente sono limitate al suo bucket: `aws s3 ls` senza nome d
 
 ### A cosa serve il blocco (WORM)?
 
-L'opzione **Enable Object Lock (WORM)** impedisce l'eliminazione o la modifica degli oggetti per 365 giorni. La piattaforma applica questa conservazione per impostazione predefinita in modalità `COMPLIANCE`: nessuno può eliminare un oggetto né ridurne la conservazione prima della scadenza. Questa durata predefinita non è configurabile nella console; per esigenze diverse, contatti il supporto. L'opzione serve per l'archiviazione normativa o per proteggere i backup da un'eliminazione accidentale o malevola. Si sceglie alla creazione del bucket.
+L'opzione **Enable Object Lock (WORM)** blocca ogni oggetto per 365 giorni dopo la sua scrittura. La piattaforma applica questa conservazione in modalità `COMPLIANCE`: nessuno può modificare o eliminare un oggetto, né ridurne la conservazione prima della scadenza. La conservazione WORM è fissata dalla piattaforma: 365 giorni in modalità COMPLIANCE. Non può essere modificata, né alla creazione né in seguito. L'opzione serve per l'archiviazione normativa o per proteggere i backup da un'eliminazione accidentale o malevola. Si sceglie alla creazione del bucket e non può più essere rimossa in seguito. Eliminare un bucket bloccato lo rimuove dalla console, ma non ne elimina gli oggetti: restano bloccati fino alla scadenza della loro conservazione.
 
 ---
 

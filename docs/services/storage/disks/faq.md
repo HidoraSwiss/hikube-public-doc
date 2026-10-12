@@ -31,7 +31,7 @@ Ils sont **détachés** et conservés, avec leurs données. Ils restent dans la 
 
 ### Peut-on réduire la taille d'un disque ?
 
-Non. « La réduction de taille n'est pas supportée » : un disque ne peut qu'être agrandi. Pour réduire l'espace utilisé, créez un disque plus petit, copiez-y les données depuis la VM, puis supprimez l'ancien.
+Non. « La réduction de taille n'est pas supportée » : un disque ne peut qu'être agrandi. Pour réduire l'espace utilisé, créez un disque plus petit, copiez-y les données depuis la VM, puis supprimez l'ancien. Via l'API, une réduction est refusée avec le code `30200`, y compris lorsqu'elle passe par la mise à jour d'une VM.
 
 ---
 
@@ -50,9 +50,9 @@ Dans les deux cas, le RTO est inférieur à 5 minutes.
 
 ---
 
-### Pourquoi la taille minimale est-elle de 50 Go pour Windows ?
+### Quelle est la taille minimale d'un disque système ?
 
-Un disque système Windows nécessite au moins 50 Go. La console applique automatiquement ce minimum lorsque vous sélectionnez une image Windows.
+Elle dépend de l'image : 40 Go pour Oracle Linux, 28 Go pour Windows Server, 20 Go pour les autres images. La console applique automatiquement ce minimum lorsque vous sélectionnez l'image (« Cette image demande un disque d'au moins … Go »).
 
 ---
 
@@ -64,4 +64,4 @@ L'assistant affiche un **Coût estimé** : un tarif par Go et par mois, et le co
 
 ### Pourquoi ne puis-je pas supprimer mon disque ?
 
-Un disque attaché à une VM ne peut pas être supprimé : la console répond « Le disque ne peut pas être supprimé car il est en cours d'utilisation. ». Détachez-le d'abord depuis la page de modification de la VM.
+Un disque attaché à une VM ne peut pas être supprimé : la console répond « Le disque ne peut pas être supprimé car il est en cours d'utilisation. ». Détachez-le d'abord depuis la page de modification de la VM. Un disque détaché reste utilisé par la VM jusqu'à son prochain redémarrage. Redémarrez la VM, puis attendez quelques minutes avant de supprimer le disque : une suppression trop rapide peut laisser l'espace occupé dans votre quota.

@@ -26,10 +26,17 @@ Wenn die Konsole meldet, dass die Quotas des Projekts nicht verfügbar sind, ble
 | Meldung | Lösung |
 |---------|----------|
 | **An instance with this name already exists.** | Wählen Sie einen anderen Namen. |
-| **Min. 20 GB required** / **Min. 50 GB required** | Erhöhen Sie **Size (GB)**: mindestens 20 GB, 50 GB für Windows. |
-| Meldung mit einer Mindestgröße für Oracle Linux | Die System-Disk für Oracle Linux benötigt mindestens 40 GB. |
+| **Min. 20 GB required**, **Min. 28 GB required**, **Min. 40 GB required** oder **This image needs a disk of at least … GB** | Erhöhen Sie **Size (GB)**: mindestens 20 GB; für die System-Disk 28 GB mit Windows Server und 40 GB mit Oracle Linux. |
 | **A system image is required for a new disk** | Wählen Sie eine Karte unter **Operating System**. |
 | **Invalid format. Expected: `<algorithm> <base64-key> [comment]`** | Fügen Sie den vollständigen **öffentlichen** Schlüssel (Datei `.pub`) in einer einzigen Zeile ein. |
+
+---
+
+### Das Speichern der Änderungen einer VM wird abgelehnt
+
+**Ursache**: Ein Feld der Seite **Edit** ist ungültig, zum Beispiel eine neue Disk unter 20 GB oder ein **Existing**-Volume ohne ausgewählte Disk.
+
+**Lösung**: Die Konsole zeigt **Incomplete form** mit der Meldung jedes fehlerhaften Felds an. Korrigieren Sie diese Felder und klicken Sie dann erneut auf **Save**. Bereits an die VM angebundene Disks unterliegen nicht den Regeln einer neuen Disk (Name, Mindestgröße).
 
 ---
 
@@ -70,7 +77,7 @@ Wenn die Konsole meldet, dass die Quotas des Projekts nicht verfügbar sind, ble
 
 1. Verwenden Sie den Benutzer, der im Block **SSH Connection** (oder unter **System Image** > **User**) angegeben ist.
 2. Prüfen Sie, dass der öffentliche Schlüssel, der zu Ihrem privaten Schlüssel gehört, unter **Advanced Configuration** > **SSH Keys** aufgeführt ist.
-3. Wenn Sie den Schlüssel gerade über **Edit** hinzugefügt haben, wählen Sie im Dialog **SSH keys changed** die Option **Reload user-data** oder starten Sie **Reload UserData** im Abschnitt **Actions** und anschließend **Restart**: Der Schlüssel wird erst beim Neustart installiert.
+3. Wenn Sie den Schlüssel gerade über **Edit** hinzugefügt haben, wählen Sie im Dialog **SSH keys changed** die Option **Reload user-data** oder starten Sie **Reload UserData** im Abschnitt **Actions** und anschließend **Restart**: Der Schlüssel wird erst beim Neustart installiert. Dieser Neustart erzeugt auch die SSH-Hostschlüssel neu: Meldet Ihr Client einen geänderten Schlüssel, entfernen Sie den alten Eintrag mit `ssh-keygen -R <public-ip>`.
 
 ---
 
@@ -80,7 +87,7 @@ Wenn die Konsole meldet, dass die Quotas des Projekts nicht verfügbar sind, ble
 
 **Lösung**:
 
-1. Nach **Save** zeigt die Konsole **Restart required** an: Warten Sie, bis die VM wieder den Status **Running** hat.
+1. Nach **Save** zeigt die Konsole **Restart required** an: Die Disk wird erst beim nächsten Neustart hinzugefügt. Klicken Sie im Abschnitt **Actions** auf **Restart** und warten Sie, bis die VM wieder den Status **Running** hat.
 2. Prüfen Sie die Disk im Abschnitt **Storage & Disks** der Detailseite.
 3. Listen Sie in der VM die Geräte auf: Eine neue Disk erscheint ohne Partition und ohne Einhängepunkt.
    ```bash

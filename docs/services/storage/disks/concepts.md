@@ -66,8 +66,8 @@ L'étape **Source** de l'assistant propose deux choix :
   - une **image cloud** du catalogue (OS puis **Version**) ;
   - ou **Image perso** : une **URL de l'image (ISO/QCOW2)**. L'URL doit utiliser HTTPS ; les adresses IP privées ou locales sont refusées.
 
-:::note Windows
-Un disque système Windows doit faire au moins **50 Go**. Son coût estimé inclut la licence Windows.
+:::note Taille minimale selon l'image
+Un disque système doit faire au moins **40 Go** pour Oracle Linux et **28 Go** pour Windows Server ; 20 Go suffisent pour les autres images. La console relève la taille à ce minimum quand vous choisissez l'image. Le coût estimé d'un disque Windows inclut la licence Windows.
 :::
 
 ---
@@ -95,7 +95,7 @@ La source, la réplication et le chiffrement se choisissent à la création. Seu
 
 ## Taille et quota
 
-- Taille minimale : **20 Go** (50 Go pour un disque système Windows).
+- Taille minimale : **20 Go** ; pour un disque système, 40 Go avec Oracle Linux et 28 Go avec Windows Server.
 - La taille est limitée par le **quota de stockage** du projet ; l'assistant affiche la jauge **Usage projet estimé**.
 - Un disque peut être **agrandi**, jamais réduit (voir [Redimensionner un disque](./how-to/resize.md)).
 

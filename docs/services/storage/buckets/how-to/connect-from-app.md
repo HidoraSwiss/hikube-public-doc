@@ -22,7 +22,7 @@ Ce guide explique comment utiliser les identifiants d'un utilisateur S3 Hikube d
 | Access Key ID / Secret Access Key | Affichées à la création de l'utilisateur |
 
 :::note
-Le nom du bucket S3 est généré par la plateforme et diffère du nom choisi dans la console. Utilisez toujours le nom S3 dans votre application.
+Le nom du bucket S3 est généré par la plateforme (`bucket-…`) et diffère du nom choisi dans la console. Utilisez toujours le nom S3 dans votre application : avec le nom de la console, les requêtes sont refusées (`AccessDenied`).
 :::
 
 ### 2. Exposer les identifiants en variables d'environnement

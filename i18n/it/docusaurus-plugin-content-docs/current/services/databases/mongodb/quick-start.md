@@ -66,8 +66,9 @@ Attivi l'**External access** solo se ne ha bisogno: espone il database sulla ret
 Aggiunga almeno un utente:
 
 1. **Username**: ad esempio `app-user` (minuscole, cifre e trattini).
-2. **Role**: **Administrator** o **Read-only**.
-3. Faccia clic su **Add**.
+2. **Database**: il database applicativo su cui si applica il ruolo dell'utente, ad esempio `myapp` (minuscole, cifre e trattini). Viene creato se non esiste. I database di sistema `admin`, `local` e `config` sono rifiutati.
+3. **Role**: **Administrator** per questa guida, oppure **Read-only**.
+4. Faccia clic su **Add**.
 
 ### Summary
 
@@ -82,10 +83,10 @@ Il passaggio **Finish** conferma la creazione («Creation complete!»). Faccia c
 | Stato | Significato |
 |--------|---------------|
 | **Creating** | Il cluster è in fase di provisioning |
-| **Ready** / **Running** | Il cluster è operativo |
-| **Error** / **Failed** | Il provisioning non è riuscito |
+| **Ready** | Il cluster è operativo |
+| **Error** | La piattaforma non è riuscita ad applicare la creazione o l'ultima modifica del cluster |
 
-**Risultato atteso:** dopo alcuni minuti, lo stato passa a **Ready**. La pagina mostra la **MongoDB Version**, le **Replicas**, la **Allocated Size** e il **Preset**, nonché il riquadro **Network and Connection** (**Host**, **External Access**, **Sharding**).
+**Risultato atteso:** dopo alcuni minuti, lo stato passa a **Ready**. La pagina mostra la **MongoDB Version**, le **Replicas**, la **Allocated Size** e il **Preset**, nonché il riquadro **Network and Connection** (**Host**, **External Access**, **Sharding**). Per un replica set con accesso esterno, il campo **Host** è sostituito da **Replica set rs0 members**: un indirizzo per membro, ciascuno con un pulsante di copia.
 
 ---
 
@@ -93,28 +94,27 @@ Il passaggio **Finish** conferma la creazione («Creation complete!»). Faccia c
 
 ### Credenziali
 
-Il passaggio **Finish** della procedura guidata mostra, in **User Credentials**, la **Password** di ogni utente e, quando l'accesso esterno è attivato, una **Internal Connection String** nella forma `mongodb://app-user:<password>@<host>`.
+Il passaggio **Finish** della procedura guidata mostra, in **User Credentials**, la **Password** di ogni utente e, quando l'accesso esterno è attivato, una **Internal Connection String**: `mongodb://app-user:<password>@<host>` per un cluster con sharding, `mongodb://app-user:<password>@<membro>:27017/?directConnection=true&authSource=admin` per un replica set.
 
 :::warning
 Copi subito queste password: non verranno più mostrate. In caso di smarrimento, ne generi una nuova dalla sezione **Users** (**Actions** → **Change Password**).
 :::
 
-### Accesso a un database applicativo
+### Accesso al database applicativo
 
-Il ruolo scelto nella procedura guidata si applica al database `admin`. Per dare accesso a un database applicativo:
-
-1. Nella sezione **Users**, apra il menu **Actions** di `app-user` e scelga **Manage Access**.
-2. In **Specific Access (Databases)**, faccia clic su **Add**.
-3. Inserisca il **Database name**, ad esempio `myapp` (minuscole, cifre e trattini), e scelga i **Rights** **Administrator (Admin)**.
-4. Faccia clic su **Save**.
+L'utente dispone del ruolo scelto sul database indicato al passaggio **Users**: nella sezione **Users** della pagina del cluster, la colonna **Databases** mostra `myapp (Administrator)`. Per dargli accesso ad altri database, apra il menu **Actions** dell'utente e scelga **Manage Access** (si veda [Gestire utenti e database](./how-to/manage-users-databases.md)).
 
 ---
 
 ## Passo 5: Connessione e test
 
+Su un replica set, si connetta direttamente a un membro: copi uno degli indirizzi elencati in **Replica set rs0 members**, oppure la **External connection string** del riquadro **Network and Connection**.
+
 ```bash
-mongosh "mongodb://<host>:27017/myapp" --username app-user --authenticationDatabase admin
+mongosh "mongodb://<membro>:27017/myapp?directConnection=true&authSource=admin" --username app-user
 ```
+
+Su un cluster con sharding, utilizzi l'indirizzo del campo **Host**: `mongosh "mongodb://<host>:27017/myapp?authSource=admin" --username app-user`.
 
 La connessione non è cifrata (nessun TLS): non aggiunga `--tls`.
 
@@ -133,6 +133,10 @@ db.test.find()
 [ { _id: ObjectId('...'), message: 'Bonjour Hikube' } ]
 ```
 
+:::note
+Il membro raggiunto può essere un secondario, che non accetta scritture: `insertOne` risponde allora `not primary`. Lo verifichi con `db.hello().isWritablePrimary`, quindi si riconnetta a un altro membro dell'elenco per scrivere. Un secondario serve le letture con `readPreference=secondaryPreferred`.
+:::
+
 ---
 
 ## Passo 6: Risoluzione rapida dei problemi
@@ -141,19 +145,19 @@ db.test.find()
 
 L'**External access** è disattivato, oppure l'indirizzo pubblico non è ancora stato assegnato. Se necessario, lo attivi tramite **Edit**, quindi attenda qualche istante.
 
-Su un cluster senza sharding, il campo resta attualmente su **Not defined** anche con l'accesso esterno attivato: ciascun membro riceve il proprio indirizzo pubblico, che la console non mostra. [Contatti il supporto](mailto:support@hidora.io) per ottenerlo. Si connetta quindi a questo indirizzo senza il parametro `replicaSet`: i membri si annunciano con nomi interni, che non si risolvono dall'esterno.
+Su un replica set con accesso esterno, ciascun membro riceve il proprio indirizzo pubblico: il riquadro **Network and Connection** li elenca in **Replica set rs0 members** non appena sono assegnati. Si connetta a uno di essi con `directConnection=true`, senza il parametro `replicaSet`: i membri si annunciano con nomi interni al cluster, che non si risolvono dall'esterno.
 
 ### `Authentication failed`
 
-Verifichi il nome utente, la password e il database di autenticazione (`--authenticationDatabase admin`). Se la password è stata smarrita, esegua una rotazione dalla sezione **Users**.
+Verifichi il nome utente, la password e il database di autenticazione (`authSource=admin` o `--authenticationDatabase admin`). Se la password è stata smarrita, esegua una rotazione dalla sezione **Users**.
 
 ### `not authorized on myapp`
 
 L'utente non ha accesso al database `myapp`. Lo aggiunga tramite **Manage Access**.
 
-### Il cluster resta in Error
+### Il cluster passa in Error
 
-[Contatti il supporto](mailto:support@hidora.io) indicando il nome del progetto e del cluster.
+La piattaforma non è riuscita ad applicare la creazione o l'ultima modifica del cluster. [Contatti il supporto](mailto:support@hidora.io) indicando il nome del progetto e del cluster.
 
 ---
 

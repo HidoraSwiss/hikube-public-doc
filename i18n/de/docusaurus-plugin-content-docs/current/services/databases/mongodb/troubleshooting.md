@@ -12,7 +12,13 @@ title: Fehlerbehebung
 **Lösung**:
 
 1. Warten Sie einige Minuten und aktualisieren Sie die Seite des Clusters.
-2. Ändert sich der Status nach etwa fünfzehn Minuten nicht oder wechselt er auf **Error** oder **Failed**, [wenden Sie sich an den Support](mailto:support@hidora.io) und geben Sie das Projekt und den Namen des Clusters an.
+2. Ändert sich der Status nach etwa fünfzehn Minuten nicht, [wenden Sie sich an den Support](mailto:support@hidora.io) und geben Sie das Projekt und den Namen des Clusters an.
+
+### Der Cluster wechselt in den Status „Error“
+
+**Ursache**: Die Plattform konnte die Erstellung des Clusters oder seine letzte Änderung nicht anwenden. Nach einer Änderung kann der Cluster mit seiner vorherigen Konfiguration weiterlaufen.
+
+**Lösung**: [Wenden Sie sich an den Support](mailto:support@hidora.io) und geben Sie das Projekt, den Namen des Clusters und die angeforderte Änderung an.
 
 ### Der Schritt Configuration des Assistenten lässt sich nicht abschließen
 
@@ -26,12 +32,21 @@ title: Fehlerbehebung
 
 **Lösung**:
 
-1. Prüfen Sie in der Karte **Network and Connection**, ob der **External Access** **Enabled** ist und das Feld **Host** eine Adresse enthält.
-2. Testen Sie die Konnektivität:
+1. Prüfen Sie in der Karte **Network and Connection**, ob der **External Access** **Enabled** ist und das Feld **Host** eine Adresse enthält oder, bei einem Replica Set, ob die **Replica set rs0 members** aufgeführt sind.
+2. Testen Sie die Konnektivität (bei einem Replica Set mit der Adresse eines Mitglieds):
    ```bash
-   mongosh "mongodb://<host>:27017" --eval 'db.runCommand({ ping: 1 })'
+   mongosh "mongodb://<host>:27017/?directConnection=true" --eval 'db.runCommand({ ping: 1 })'
    ```
 3. Prüfen Sie, ob keine ausgehende Firewall Ihres Netzwerks den Port `27017` blockiert.
+
+### `ENOTFOUND`, oder Schreibvorgang mit `not primary` abgelehnt
+
+**Ursache**: Bei einem Replica Set hat der Client den Parameter `replicaSet` erhalten und versucht, die Mitglieder unter ihren clusterinternen Namen zu erreichen, die von außen nicht aufgelöst werden; oder er ist direkt mit einem Secondary verbunden, das keine Schreibvorgänge annimmt.
+
+**Lösung**:
+
+1. Entfernen Sie `replicaSet` aus dem Verbindungsstring und fügen Sie `directConnection=true` hinzu, wie im **External connection string** der Karte **Network and Connection**.
+2. Verbinden Sie sich zum Schreiben mit dem Primary-Mitglied: `db.hello().isWritablePrimary` gibt an, ob das erreichte Mitglied es ist. Andernfalls versuchen Sie ein anderes Mitglied der Liste.
 
 ### `Authentication failed`
 
@@ -50,12 +65,18 @@ title: Fehlerbehebung
 
 ### Fehler beim Hinzufügen eines Zugriffs oder eines Benutzers
 
-**Ursache**: Es ist keine Rolle definiert, oder ein Name entspricht nicht den Benennungsregeln.
+**Ursache**: Es ist kein Zugriff auf eine Datenbank definiert, ein Zugriff zielt auf eine Systemdatenbank (`admin`, `local`, `config`), oder ein Name entspricht nicht den Benennungsregeln.
 
-**Lösung**: Weisen Sie mindestens eine globale Rolle oder einen spezifischen Zugriff zu und verwenden Sie nur Kleinbuchstaben, Ziffern und Bindestriche, beginnend mit einem Buchstaben. Siehe [MongoDB-Konzepte](./concepts.md#benennungsregeln).
+**Lösung**: Weisen Sie mindestens einen Zugriff auf eine Anwendungsdatenbank zu und verwenden Sie nur Kleinbuchstaben, Ziffern und Bindestriche, beginnend mit einem Buchstaben und endend mit einem Buchstaben oder einer Ziffer. Siehe [MongoDB-Konzepte](./concepts.md#benennungsregeln).
+
+### Eine Zeile `admin` wird in „Manage Access“ als Fehler angezeigt
+
+**Ursache**: Der Benutzer wurde vor der Konsole v1.3.0 mit dem Assistenten zur Cluster-Erstellung angelegt, der ihm eine Rolle auf der Systemdatenbank `admin` zuwies. Eine Systemdatenbank kann keinen Zugriff mehr erhalten, und die Aktualisierung des Benutzers wird abgelehnt, solange diese Zeile vorhanden ist.
+
+**Lösung**: Entfernen Sie die Zeile `admin`, fügen Sie bei Bedarf die Anwendungsdatenbank des Benutzers hinzu und klicken Sie dann auf **Save**. Die Meldung „Access updated“ bestätigt das Speichern.
 
 ### Disk voll
 
 **Ursache**: Das Datenvolumen hat die **Allocated Size** erreicht.
 
-**Lösung**: Erhöhen Sie die **Disk size (GB)** über **Edit**, im Rahmen des Speicher-Quotas des Projekts. Siehe [Ressourcen ändern](./how-to/scale-resources.md). Löschen Sie bei Bedarf veraltete Daten oder legen Sie TTL-Indizes auf die Ereignis-Collections.
+**Lösung**: Erhöhen Sie die **Disk size (GB)** über **Edit**, im Rahmen des Speicher-Quotas des Projekts. Die Größe kann danach nicht mehr verringert werden. Siehe [Ressourcen ändern](./how-to/scale-resources.md). Löschen Sie bei Bedarf veraltete Daten oder legen Sie TTL-Indizes auf die Ereignis-Collections.

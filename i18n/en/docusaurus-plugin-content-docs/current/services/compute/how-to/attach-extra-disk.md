@@ -32,11 +32,13 @@ In the **Storage** section, click **Add a disk**. A **Storage Volume #1** block 
 
 **Existing disk** (**Existing** tab): under **Select an existing volume**, choose a data disk of the project that is not attached to any VM. Disks can also be created independently in the **Disks** menu (see [Disks](../../storage/disks/quick-start.md)).
 
+To remove a volume added by mistake before saving, click **Remove disk** (bin icon): nothing has been created yet.
+
 ### 3. Save
 
 Check the quota summary at the top of the page, then click **Save**.
 
-The console shows **Restart required**: the VM restarts to take the new disk into account. Wait for it to return to **Running** status. The disk appears in the **Storage & Disks** section of the detail page.
+The console shows **Restart required**: the new disk is only taken into account on the next VM restart. Click **Restart** in the **Actions** section of the detail page, then wait for the VM to return to **Running** status. The disk appears in the **Storage & Disks** section of the detail page.
 
 :::note Disk added at creation
 You can also add disks directly when creating the VM, with **Add a disk** at the **Storage** step of the wizard. They are then named after the VM with a suffix (`ma-vm-2`, `ma-vm-3`…).
@@ -109,7 +111,9 @@ sudo touch /mnt/data/test.txt && echo "OK"
 
 ## Detach a disk
 
-In **Edit** > **Storage**, click the volume's delete icon, confirm by typing its name, then click **Save**. The disk is detached from the VM (which restarts) and remains available in the **Disks** menu. Unmount it in the OS first and remove its line from `/etc/fstab`.
+Unmount the disk in the OS first and remove its line from `/etc/fstab`. Then, in **Edit** > **Storage**, click **Detach disk** on the volume, confirm with **Detach** in the **Detach `<name>`?** dialog, and click **Save**.
+
+The disk is not deleted: its data is kept and it stays available in the **Disks** menu, where you can attach it to another VM. The detachment only takes effect on the next VM restart: until then, the disk remains visible to the system. The console shows **Restart required**; click **Restart** to apply it. The system disk cannot be detached.
 
 ## Further reading
 

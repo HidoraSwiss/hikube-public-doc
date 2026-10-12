@@ -11,7 +11,7 @@ Qui trova le definizioni dei termini e dei concetti utilizzati nella documentazi
 
 | **Termine** | **Definizione** | **Documentazione** |
 |-----------|---------------|-------------------|
-| **Accesso esterno** | Opzione dei database e di RabbitMQ che assegna un IP pubblico al cluster; l'indirizzo viene visualizzato nel campo **Host** della pagina di dettaglio. | [PostgreSQL - Concetti](../services/databases/postgresql/concepts.md) |
+| **Accesso esterno** | Opzione dei database e di RabbitMQ che assegna un IP pubblico al cluster; l'indirizzo viene visualizzato nel campo **Host** della pagina di dettaglio (per un replica set MongoDB, l'indirizzo di ogni membro). | [PostgreSQL - Concetti](../services/databases/postgresql/concepts.md) |
 | **Add-on / Estensione** | Componente attivabile su un cluster Kubernetes dal passaggio **Addons** della procedura guidata (cert-manager, Ingress NGINX, monitoring, ecc.). | [Kubernetes - Concetti](../services/kubernetes/concepts.md) |
 | **AMQP** | Advanced Message Queuing Protocol. Protocollo di messaggistica standard utilizzato in particolare da RabbitMQ per la comunicazione tra applicazioni. | [RabbitMQ - Panoramica](../services/messaging/rabbitmq/overview.md) |
 | **ClickHouse Keeper** | Servizio di consenso distribuito integrato in ClickHouse, utilizzato per il coordinamento dei nodi del cluster (alternativa a ZooKeeper). | [ClickHouse - Panoramica](../services/databases/clickhouse/overview.md) |
@@ -24,7 +24,7 @@ Qui trova le definizioni dei termini e dei concetti utilizzati nella documentazi
 | **Gruppo di nodi** | Insieme di nodi worker di un cluster Kubernetes che condividono un tipo di istanza, limiti di auto-scaling (minimo/massimo) e, se previsto, una GPU. | [Gestire i gruppi di nodi](../services/kubernetes/how-to/manage-node-groups.md) |
 | **Ingress / IngressClass** | Risorsa Kubernetes che gestisce l'accesso HTTP/HTTPS esterno verso i servizi del cluster. IngressClass definisce il controller utilizzato. | [Ingress NGINX](../services/kubernetes/plugins/ingress-nginx.md) |
 | **JetStream** | Sistema di streaming e persistenza integrato in NATS, che consente l'archiviazione durevole dei messaggi, il replay e la consegna garantita. | [NATS - Panoramica](../services/messaging/nats/overview.md) |
-| **Kubeconfig** | File di accesso a un cluster Kubernetes (URL del server, certificati). Quello del suo cluster si scarica dalla relativa pagina di dettaglio nella console (pulsante **Kubeconfig**). | [Kubernetes - Avvio rapido](../services/kubernetes/quick-start.md) |
+| **Kubeconfig** | File di accesso a un cluster Kubernetes (URL del server, certificati). Quello del suo cluster si scarica dalla relativa pagina di dettaglio nella console (pulsante **Kubeconfig**, riservato agli amministratori del progetto). | [Kubernetes - Avvio rapido](../services/kubernetes/quick-start.md) |
 | **Organizzazione** | Entità che rappresenta la sua azienda in Hikube. Raggruppa i suoi utenti e i suoi progetti; viene creata da Hidora. | [Concetti chiave](../getting-started/concepts.md) |
 | **Preset** | Profilo di risorse predefinito (da `nano` a `2xlarge`) proposto nelle procedure guidate dei database per dimensionare CPU e memoria. | [PostgreSQL - Concetti](../services/databases/postgresql/concepts.md) |
 | **Progetto** | Spazio isolato all'interno di un'organizzazione, che raggruppa risorse e dispone di quota (CPU, memoria, storage). In precedenza chiamato **tenant**. | [Concetti chiave](../getting-started/concepts.md) |

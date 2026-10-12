@@ -7,12 +7,18 @@ title: Risoluzione dei problemi
 
 ### Il cluster resta in « Creating » o passa in « Error »
 
-**Causa**: il provisioning è in corso, oppure non è riuscito (ad esempio per mancanza di risorse disponibili).
+**Causa**: il provisioning è in corso, oppure la piattaforma non è riuscita ad applicare la creazione del cluster o la sua ultima modifica (ad esempio per mancanza di risorse disponibili). In questo secondo caso, lo stato passa a **Error**; dopo una modifica, il cluster può continuare a funzionare con la configurazione precedente.
 
 **Soluzione**:
 
 1. Attenda qualche minuto: la pagina di dettaglio e l'elenco si aggiornano automaticamente.
-2. Se lo stato resta in **Creating** per un tempo anomalo o passa a **Error** / **Failed**, [contatti il supporto](mailto:support@hidora.io) indicando il nome del progetto, il nome del cluster e il suo identificativo (mostrato sotto il nome del cluster, con un pulsante di copia).
+2. Se lo stato resta in **Creating** per un tempo anomalo o passa a **Error**, [contatti il supporto](mailto:support@hidora.io) indicando il nome del progetto, il nome del cluster e il suo identificativo (mostrato sotto il nome del cluster, con un pulsante di copia).
+
+### Un vhost o un utente viene rifiutato
+
+**Causa**: il nome non rispetta le regole di denominazione. I nomi di vhost e di utente accettano solo lettere minuscole, cifre e trattini, e devono iniziare con una lettera e terminare con una lettera o una cifra: `my_vhost`, `App.User` o `/prod` sono rifiutati.
+
+**Soluzione**: scelga un nome conforme, ad esempio `prod` o `app-user`. Consulti [Concetti](./concepts.md#limiti).
 
 ### « Storage quota exceeded for this project » nella procedura guidata
 

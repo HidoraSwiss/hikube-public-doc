@@ -16,11 +16,11 @@ Questa guida spiega come adattare un cluster PostgreSQL esistente dalla [console
 
 | Parametro | Modificabile dopo la creazione |
 |-----------|--------------------------------|
-| **PostgreSQL Version** | Sì |
+| **PostgreSQL Version** | Sì, solo verso una versione superiore |
 | **Preset** | Sì |
-| **Disk size (GB)** | Sì |
+| **Disk size (GB)** | Sì, solo in aumento |
 | **External access** | Sì |
-| **Number of replicas** | No, « The mode cannot be changed after creation » |
+| **Number of replicas** | No, « The mode cannot be changed after creation ». Il modulo mostra il valore attuale (1, 2 o 3) |
 
 Per cambiare il numero di repliche di un cluster esistente, [contatti il supporto](mailto:support@hidora.io).
 
@@ -50,16 +50,22 @@ La pagina **Edit PostgreSQL cluster** mostra il riquadro **Cluster settings** e 
 ### 2. Adattare i parametri
 
 - **Preset**: selezioni un preset superiore per aumentare la CPU e la memoria di ogni nodo.
-- **Disk size (GB)**: inserisca la nuova capacità.
-- **PostgreSQL Version**: selezioni la versione di destinazione. Il modulo propone tutte le versioni, ma è possibile solo un aggiornamento di versione: una versione inferiore viene rifiutata dalla piattaforma, il cluster resta sulla versione attuale e la configurazione rimane in errore finché non seleziona di nuovo una versione superiore o uguale. Un aggiornamento di versione maggiore (ad esempio 17 → 18) avviene sul posto: l'istanza viene arrestata durante la migrazione dei dati.
+- **Disk size (GB)**: inserisca la nuova capacità, almeno pari alla dimensione attuale. Un valore inferiore mostra « The disk size cannot be reduced: N GB minimum. » e non viene salvato.
+- **PostgreSQL Version**: selezioni la versione di destinazione. Il modulo propone solo la versione attuale e le versioni superiori. Un aggiornamento di versione maggiore (ad esempio 17 → 18) avviene sul posto: l'istanza viene arrestata durante la migrazione dei dati.
 - **External access**: attivi o disattivi l'esposizione sull'Internet pubblico.
+
+Quando cambia il preset o la versione, compare l'avviso « The cluster instances will restart »; per un cambio di versione, ricorda che una versione aggiornata non può più essere riportata indietro.
 
 ### 3. Salvare
 
 Faccia clic su **Save**. Il messaggio « Cluster updated » conferma che la modifica è stata presa in carico. Se la nuova configurazione supera la quota del progetto, il pulsante resta inattivo.
 
 :::warning
-Un cambio di preset o di versione comporta il riavvio delle istanze. Su un cluster con 1 replica, il database non è disponibile durante il riavvio e, in caso di aggiornamento di versione maggiore, per tutta la durata della migrazione; pianifichi l'operazione al di fuori delle ore di carico elevato.
+Un cambio di preset o di versione comporta il riavvio delle istanze al salvataggio. Su un cluster con 1 replica, il database non è disponibile durante il riavvio e, in caso di aggiornamento di versione maggiore, per tutta la durata della migrazione; pianifichi l'operazione al di fuori delle ore di carico elevato.
+:::
+
+:::note
+L'API applica le stesse regole: una versione inferiore a quella attuale è rifiutata con il codice `80203`, una dimensione del disco inferiore a quella attuale con il codice `80204`.
 :::
 
 :::tip

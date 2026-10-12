@@ -9,7 +9,7 @@ I gruppi di nodi consentono di suddividere i nodi del cluster Kubernetes in base
 ## Prerequisiti
 
 - Un cluster Kubernetes Hikube distribuito (vedere l'[avvio rapido](../quick-start.md))
-- Il kubeconfig del cluster scaricato dalla console (pulsante **Kubeconfig**), per verificare i nodi con `kubectl`
+- Il kubeconfig del cluster scaricato dalla console (pulsante **Kubeconfig**, riservato agli amministratori del progetto), per verificare i nodi con `kubectl`
 
 ## Passaggi
 
@@ -37,7 +37,7 @@ La pagina di modifica presenta le sezioni **General information**, **Node groups
 1. Nella sezione **Node groups**, faccia clic su **Add node group**. Si apre una nuova scheda.
 2. Compili i campi:
    - **Group name**: ad esempio `compute` (da 3 a 16 caratteri: lettere minuscole, cifre e trattini);
-   - **Ephemeral storage size**: ad esempio 100 GB;
+   - **Node disk size**: ad esempio 100 GB;
    - **Minimum nodes** e **Maximum nodes**: ad esempio 1 e 10;
    - **Instance type**: ad esempio serie **Universal (U)**, dimensione **4XLarge** (`u1.4xlarge`);
    - **Exposed on the internet (Public IP)**: da attivare solo se questo gruppo deve ricevere il traffico in ingresso (Ingress NGINX);
@@ -50,10 +50,10 @@ Scelga un nome descrittivo per i gruppi (`compute`, `web`, `monitoring`, `gpu`) 
 
 ### 4. Modificare un gruppo esistente
 
-Nella sezione **Node groups**, espanda la scheda del gruppo, modifichi i campi desiderati (tipo di istanza, storage effimero, numero minimo o massimo di nodi, esposizione), quindi faccia clic su **Save**.
+Nella sezione **Node groups**, espanda la scheda del gruppo, modifichi i campi desiderati (tipo di istanza, dimensione del disco dei nodi, numero minimo o massimo di nodi, esposizione), quindi faccia clic su **Save**.
 
 :::warning
-La modifica del tipo di istanza sostituisce tutti i nodi del gruppo: la piattaforma crea i nuovi nodi e rimuove i vecchi uno alla volta, senza attendere che ciascun sostituto sia pronto. Un gruppo con un solo nodo è quindi indisponibile durante la sostituzione (alcuni minuti): preveda almeno due nodi per i carichi di lavoro che non tollerano interruzioni. La quota del progetto deve poter accogliere i nodi aggiuntivi durante la sostituzione.
+La modifica del tipo di istanza o della dimensione del disco, sia in aumento sia in diminuzione, sostituisce progressivamente tutti i nodi del gruppo, uno alla volta: la piattaforma crea i nuovi nodi e rimuove i vecchi uno alla volta, senza attendere che ciascun sostituto sia pronto. I dati memorizzati localmente sui nodi, al di fuori dei volumi persistenti, vanno persi. Un gruppo con un solo nodo è quindi indisponibile durante la sostituzione (alcuni minuti): preveda almeno due nodi per i carichi di lavoro che non tollerano interruzioni. La quota del progetto deve poter accogliere i nodi aggiuntivi durante la sostituzione.
 :::
 
 :::note

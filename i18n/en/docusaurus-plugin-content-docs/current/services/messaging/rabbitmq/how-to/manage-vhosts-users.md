@@ -14,7 +14,7 @@ This guide explains how to add and delete virtual hosts (vhosts), create RabbitM
 ## Add a vhost
 
 1. On the cluster page, in the **VHosts** section, click **Add a VHost**.
-2. In the **Create a VHost** window, enter the **VHost Name** (letters, digits, `_`, `.` and `-`, for example `production`).
+2. In the **Create a VHost** window, enter the **VHost Name** (lowercase letters, digits and hyphens, starting with a letter and ending with a letter or a digit, for example `production`).
 3. Click **Create**. The message "VHost created" confirms the operation and the vhost appears in the list.
 
 ## Delete a vhost
@@ -30,7 +30,7 @@ Deleting a vhost deletes its exchanges, queues and messages. The default vhost `
 ## Create a user
 
 1. In the **Users** section, click **Create a user**.
-2. Enter the **Username** (letters, digits, `_`, `.` and `-`).
+2. Enter the **Username**: 3 to 16 characters, lowercase letters, digits and hyphens, starting with a letter and ending with a letter or a digit (for example `orders-consumer`). Some names, such as `admin` or `root`, are reserved.
 3. In **Specific Access (VHosts)**, click **Add** for each vhost the user must access, then choose:
    - the **VHost name** from the list;
    - the **Rights**: **Administrator (Admin)** or **Read-only**.

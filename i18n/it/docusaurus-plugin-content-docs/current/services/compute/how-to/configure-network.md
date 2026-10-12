@@ -45,11 +45,11 @@ Il **Summary** mostra **Public IP**, **Firewall** e **Open Ports** prima della d
 2. In **Network & Security**, regoli **Public IPv4 Address**, **Enable Firewall** e le **Allowed Ports**.
 3. Faccia clic su **Save**.
 
-Queste modifiche si applicano in pochi secondi, senza riavviare la VM, a differenza di un cambio di formato, di dischi o di GPU.
+Queste modifiche si applicano in pochi secondi, senza riavviare la VM. Un cambio di formato, di dischi o di GPU, invece, ha effetto solo al successivo riavvio.
 
 ### 4. Collegare la VM a una rete privata (facoltativo)
 
-In **VPC Networks (Secondary)**, selezioni un VPC e poi una o più delle sue **Subnets**. Ogni sottorete aggiunge un'interfaccia privata alla VM, che il sistema operativo non configura automaticamente (vedere [Collegare una VM a un VPC](../../networking/how-to/attach-vm-to-vpc.md#4-verificare-nel-sistema-operativo)). Il pulsante **+ VPC** crea un VPC senza lasciare la schermata, e **Add subnet** crea una sottorete nel VPC selezionato. Il dettaglio è in [Rete: avvio rapido](../../networking/quick-start.md).
+In **VPC Networks (Secondary)**, selezioni un VPC e poi una o più delle sue **Subnets**. Ogni sottorete aggiunge un'interfaccia privata alla VM, il cui indirizzo è distribuito tramite DHCP: AlmaLinux o Rocky lo ottengono automaticamente, Debian e Ubuntu richiedono di attivare DHCP sull'interfaccia (vedere [Collegare una VM a un VPC](../../networking/how-to/attach-vm-to-vpc.md#4-verificare-nel-sistema-operativo)). Su un'immagine Debian o Ubuntu, la console lo ricorda con l'avviso **Manual setup required on Debian and Ubuntu**. Il pulsante **+ VPC** crea un VPC senza lasciare la schermata, e **Add subnet** crea una sottorete nel VPC selezionato. Il dettaglio è in [Rete: avvio rapido](../../networking/quick-start.md).
 
 ## Verifica
 

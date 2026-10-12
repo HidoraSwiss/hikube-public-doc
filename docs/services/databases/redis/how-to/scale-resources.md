@@ -16,9 +16,9 @@ Ce guide explique comment ajuster un cluster Redis existant depuis la [console H
 
 | Paramètre | Modifiable après création |
 |-----------|---------------------------|
-| **Version Redis** | Oui |
+| **Version Redis** | Oui, vers une version supérieure uniquement |
 | **Préconfiguration** | Oui |
-| **Taille du volume (Go)** | Oui |
+| **Taille du volume (Go)** | Oui, à la hausse uniquement |
 | **Accès externe** | Oui |
 | **Authentification requise** | Oui |
 | **Nombre de réplicas** | Non, « Le mode ne peut pas être modifié après création » |
@@ -37,14 +37,16 @@ La page **Modifier le cluster** affiche la carte **Paramètres du cluster** et l
 ### 2. Ajuster les paramètres
 
 - **Préconfiguration** : choisissez un preset supérieur si la mémoire est saturée. La mémoire du preset borne le volume de données que Redis peut garder en mémoire.
-- **Taille du volume (Go)** : « La taille de stockage allouée à chaque nœud du cluster ».
-- **Version Redis** : `8 (Latest)` ou `7`.
+- **Taille du volume (Go)** : « La taille de stockage allouée à chaque nœud du cluster ». Saisissez une taille au moins égale à la taille actuelle.
+- **Version Redis** : `8 (Latest)` ou `7`. Le formulaire propose les deux versions, mais seule la version actuelle ou une version supérieure est acceptée : sur un cluster en `8`, ne choisissez pas `7`.
 - **Accès externe** : « Autoriser l'accès au cluster depuis l'extérieur du réseau privé ».
 - **Authentification requise** : « Activer la protection par mot de passe ».
 
 ### 3. Enregistrer
 
 Cliquez sur **Enregistrer les modifications**. Le message « Modifications enregistrées » confirme la prise en compte.
+
+Une version inférieure ou une taille de volume réduite est refusée : la console affiche « Une erreur est survenue lors de la mise à jour du cluster. », suivi de la raison renvoyée par l'API (codes `120203` pour la version, `120204` pour le volume).
 
 :::warning
 Désactiver l'authentification sur un cluster exposé au réseau public rend vos données accessibles à quiconque connaît l'adresse. Conservez l'authentification activée.

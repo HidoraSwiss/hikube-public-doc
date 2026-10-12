@@ -26,10 +26,17 @@ Si la console indique que les quotas du projet sont indisponibles, la création 
 | Message | Solution |
 |---------|----------|
 | **Une instance avec ce nom existe déjà.** | Choisissez un autre nom. |
-| **Min. 20 Go requis** / **Min. 50 Go requis** | Augmentez **Taille (Go)** : 20 Go minimum, 50 Go pour Windows. |
-| Message mentionnant une taille minimale pour Oracle Linux | Le disque système Oracle Linux demande au moins 40 Go. |
+| **Min. 20 Go requis**, **Min. 28 Go requis**, **Min. 40 Go requis** ou **Cette image demande un disque d'au moins … Go** | Augmentez **Taille (Go)** : 20 Go minimum ; pour le disque système, 28 Go avec Windows Server et 40 Go avec Oracle Linux. |
 | **L'image système est requise pour un nouveau disque** | Sélectionnez une carte sous **Système d'exploitation**. |
 | **Format invalide. Attendu : `<algorithme> <clé-base64> [commentaire]`** | Collez la clé **publique** complète (fichier `.pub`), sur une seule ligne. |
+
+---
+
+### L'enregistrement des modifications d'une VM est refusé
+
+**Cause** : un champ de la page **Modifier** est invalide, par exemple un nouveau disque de moins de 20 Go ou un volume **Existant** sans disque sélectionné.
+
+**Solution** : la console affiche **Formulaire incomplet** avec le message de chaque champ en erreur. Corrigez ces champs, puis cliquez à nouveau sur **Enregistrer**. Les disques déjà attachés à la VM ne sont pas soumis aux règles d'un disque neuf (nom, taille minimale).
 
 ---
 
@@ -70,7 +77,7 @@ Si la console indique que les quotas du projet sont indisponibles, la création 
 
 1. Utilisez l'utilisateur indiqué dans le bloc **Connexion SSH** (ou sous **Image Système** > **Utilisateur**).
 2. Vérifiez que la clé publique correspondant à votre clé privée figure dans **Configuration avancée** > **Clés SSH**.
-3. Si vous venez d'ajouter la clé via **Modifier**, choisissez **Reload user-data** dans la boîte de dialogue **Clés SSH modifiées**, ou lancez **Recharger UserData** depuis la section **Actions**, puis **Redémarrer** : la clé n'est installée qu'au redémarrage.
+3. Si vous venez d'ajouter la clé via **Modifier**, choisissez **Reload user-data** dans la boîte de dialogue **Clés SSH modifiées**, ou lancez **Recharger UserData** depuis la section **Actions**, puis **Redémarrer** : la clé n'est installée qu'au redémarrage. Ce redémarrage régénère aussi les clés d'hôte SSH : si votre client signale un changement de clé, supprimez l'ancienne entrée avec `ssh-keygen -R <ip-publique>`.
 
 ---
 
@@ -80,7 +87,7 @@ Si la console indique que les quotas du projet sont indisponibles, la création 
 
 **Solution** :
 
-1. Après **Enregistrer**, la console affiche **Redémarrage requis** : attendez que la VM revienne à l'état **Actif**.
+1. Après **Enregistrer**, la console affiche **Redémarrage requis** : le disque n'est ajouté qu'au prochain redémarrage. Cliquez sur **Redémarrer** dans la section **Actions**, puis attendez que la VM revienne à l'état **Actif**.
 2. Vérifiez le disque dans la section **Stockage & Disques** de la page de détail.
 3. Dans la VM, listez les périphériques : un nouveau disque apparaît sans partition ni point de montage.
    ```bash

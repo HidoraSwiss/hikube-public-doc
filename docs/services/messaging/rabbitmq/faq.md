@@ -47,7 +47,7 @@ Les clients AMQP se connectent sur le port **5672**, sur l'adresse affichée dan
 
 ### Peut-on changer le nombre de réplicas ou le preset après la création ?
 
-Non. Le **Nombre de réplicas** (et donc le mode standalone ou cluster) et la **Préconfiguration (Preset)** sont fixés à la création. La version, la taille du disque et l'accès externe restent modifiables. Voir [Modifier la configuration d'un cluster](./how-to/scale-resources.md).
+Non. Le **Nombre de réplicas** (et donc le mode standalone ou cluster) et la **Préconfiguration (Preset)** sont fixés à la création. La version (vers une version supérieure), la taille du disque (à la hausse) et l'accès externe restent modifiables. Voir [Modifier la configuration d'un cluster](./how-to/scale-resources.md).
 
 ### J'ai perdu le mot de passe d'un utilisateur. Comment le récupérer ?
 

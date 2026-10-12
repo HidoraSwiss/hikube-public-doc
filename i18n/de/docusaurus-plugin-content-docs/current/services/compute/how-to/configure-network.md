@@ -45,11 +45,11 @@ Die **Summary** zeigt vor der Bereitstellung **Public IP**, **Firewall** und **O
 2. Passen Sie unter **Network & Security** die Optionen **Public IPv4 Address**, **Enable Firewall** und die **Allowed Ports** an.
 3. Klicken Sie auf **Save**.
 
-Diese Änderungen werden innerhalb weniger Sekunden angewendet, ohne die VM neu zu starten, im Gegensatz zu einer Änderung des Instanztyps, der Disks oder der GPUs.
+Diese Änderungen werden innerhalb weniger Sekunden angewendet, ohne die VM neu zu starten. Eine Änderung des Instanztyps, der Disks oder der GPUs wird dagegen erst beim nächsten Neustart wirksam.
 
 ### 4. Die VM mit einem privaten Netzwerk verbinden (optional)
 
-Haken Sie unter **VPC Networks (Secondary)** ein VPC und dann eines oder mehrere seiner **Subnets** an. Jedes Subnetz fügt der VM eine private Schnittstelle hinzu, die das Betriebssystem nicht automatisch konfiguriert (siehe [Eine VM mit einem VPC verbinden](../../networking/how-to/attach-vm-to-vpc.md#4-im-betriebssystem-prüfen)). Die Schaltfläche **+ VPC** erstellt ein VPC, ohne den Bildschirm zu verlassen, und **Add subnet** erstellt ein Subnetz im angehakten VPC. Die Einzelheiten finden Sie im [Netzwerk-Schnellstart](../../networking/quick-start.md).
+Haken Sie unter **VPC Networks (Secondary)** ein VPC und dann eines oder mehrere seiner **Subnets** an. Jedes Subnetz fügt der VM eine private Schnittstelle hinzu, deren Adresse per DHCP vergeben wird: AlmaLinux oder Rocky übernehmen sie automatisch, unter Debian und Ubuntu muss DHCP auf der Schnittstelle aktiviert werden (siehe [Eine VM mit einem VPC verbinden](../../networking/how-to/attach-vm-to-vpc.md#4-im-betriebssystem-prüfen)). Bei einem Debian- oder Ubuntu-Image erinnert die Konsole mit der Warnung **Manual setup required on Debian and Ubuntu** daran. Die Schaltfläche **+ VPC** erstellt ein VPC, ohne den Bildschirm zu verlassen, und **Add subnet** erstellt ein Subnetz im angehakten VPC. Die Einzelheiten finden Sie im [Netzwerk-Schnellstart](../../networking/quick-start.md).
 
 ## Überprüfung
 

@@ -96,8 +96,8 @@ The cluster status is shown next to its name, on the cluster page as well as in 
 | Status | Meaning |
 |--------|---------------|
 | **Creating** | The cluster is being provisioned |
-| **Ready** / **Active** | The cluster is operational |
-| **Error** / **Failed** | Provisioning failed |
+| **Ready** | The cluster is operational |
+| **Error** | The platform could not apply the cluster's creation or its last change |
 
 **Expected result:** after a few minutes, the status changes to **Ready**. The cluster page shows the **PostgreSQL Version**, the **Replicas**, the **Allocated Size** and the **External Access** (**Enabled**).
 
@@ -164,9 +164,9 @@ SELECT * FROM test;
 
 Check the username, the target database and the password. If the password has been lost, perform a rotation from the **Users** tab. See [Manage users and databases](./how-to/manage-users-databases.md).
 
-### The cluster stays in Error
+### The cluster changes to Error
 
-[Contact support](mailto:support@hidora.io), providing the project and cluster names.
+The platform could not apply the cluster's creation or its last change. [Contact support](mailto:support@hidora.io), providing the project and cluster names.
 
 ---
 

@@ -16,8 +16,8 @@ Ce guide explique comment ajuster un cluster MariaDB existant depuis la [console
 
 | Paramètre | Modifiable après création |
 |-----------|---------------------------|
-| **Version MariaDB** | Oui |
-| **Taille du disque (Go)** | Oui |
+| **Version MariaDB** | Oui, vers une version supérieure uniquement |
+| **Taille du disque (Go)** | Oui, à la hausse uniquement |
 | **Accès externe** | Oui |
 | **Préconfiguration (Preset)** | Non, « La préconfiguration ne peut pas être modifiée après création » |
 | **Nombre de réplicas** | Non, « Le mode ne peut pas être modifié après création » |
@@ -35,13 +35,19 @@ La page **Modifier MariaDB** affiche la carte **Paramètres du cluster** et l'im
 
 ### 2. Ajuster les paramètres
 
-- **Taille du disque (Go)** : saisissez la nouvelle capacité.
-- **Version MariaDB** : sélectionnez la version cible (10.6, 10.11, 11.4 ou 11.8). Le formulaire propose aussi les versions inférieures à la version actuelle : ne revenez pas à une version antérieure, MariaDB ne prend pas en charge la rétrogradation.
+- **Taille du disque (Go)** : saisissez la nouvelle capacité, au moins égale à la taille actuelle. Une valeur inférieure affiche « La taille du disque ne peut pas être réduite : N Go minimum. » et n'est pas enregistrée.
+- **Version MariaDB** : sélectionnez la version cible. Le formulaire ne propose que la version actuelle et les versions supérieures : MariaDB ne prend pas en charge la rétrogradation.
 - **Accès externe** : activez ou désactivez l'exposition sur l'Internet public.
+
+Quand vous changez la version, l'avertissement « Les instances du cluster vont redémarrer » s'affiche : le changement redémarre les instances du cluster dès l'enregistrement, et une version mise à niveau ne peut plus être abaissée. Planifiez-le en dehors des périodes de forte activité.
 
 ### 3. Enregistrer
 
 Cliquez sur **Sauvegarder**. Le message « Cluster mis à jour » confirme la prise en compte. Si la nouvelle configuration dépasse les quotas du projet, le bouton reste inactif.
+
+:::note
+L'API applique les mêmes règles : une version inférieure à la version actuelle est refusée avec le code `110203`, une taille de disque inférieure à la taille actuelle avec le code `110204`.
+:::
 
 :::tip
 Augmentez la taille du disque avant qu'il ne soit plein. Pour mesurer l'espace utilisé par base :

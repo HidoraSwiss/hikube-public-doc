@@ -35,13 +35,21 @@ title: Troubleshooting
 
 **Cause**: the platform has not finished provisioning the network.
 
-**Solution**: the list updates automatically; wait a few moments. If the state does not change to **Ready** after a few minutes, contact [support](mailto:support@hidora.io), giving the name of the VPC.
+**Solution**: the list updates automatically; wait a few moments. If the state does not change to **Ready** after a few minutes, contact [support](mailto:support@hidora.io), giving the name of the VPC. If the state changes to **Error**, see below.
+
+---
+
+### The VPC is in Error status
+
+**Cause**: the platform could not apply the last change to the VPC. The VPC can keep working with its previous configuration.
+
+**Solution**: when you hover over the **Error** badge, the console shows "The platform could not apply the last change. Contact support if this persists." Contact [support](mailto:support@hidora.io), giving the name of the VPC.
 
 ---
 
 ### The secondary interface has no address in the VM
 
-**Cause**: the platform adds the interface to the VM, but the OS does not configure it automatically (this is the case on Ubuntu 24.04); or the VM has not yet taken the change into account.
+**Cause**: the platform adds the interface to the VM, but the OS does not configure it automatically (this is the case on Debian and Ubuntu, which the console flags with the **Manual setup required on Debian and Ubuntu** warning); or the VM has not yet taken the change into account.
 
 **Solution**:
 

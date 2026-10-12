@@ -36,7 +36,7 @@ URL validation rules:
 
 At the **Configuration** step:
 
-- **Size (GB)**: at least 20 GB, and at least **50 GB for a Windows image** (the console adjusts the value automatically);
+- **Size (GB)**: at least 20 GB; for a system disk, at least **40 GB with Oracle Linux** and **28 GB with Windows Server** (the console raises the value to that minimum when you pick the image);
 - **Replication Type**: **Asynchronous Replication** (Recommended) or **Synchronous Replication**;
 - **Disk Encryption**: enable it if needed.
 
