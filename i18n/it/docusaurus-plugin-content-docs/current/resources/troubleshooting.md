@@ -52,9 +52,11 @@ Per un cluster Kubernetes, la quota è calcolata sul **numero massimo** di nodi 
 
 La console non riesce a leggere le quota del progetto e blocca la creazione per sicurezza. Ricarichi la pagina; se il messaggio persiste, contatti il supporto.
 
-### Risorsa bloccata in «Creating»
+### Risorsa bloccata in «Creating» o nello stato «Error»
 
-**Sintomo:** una risorsa resta nello stato **Creating** ben oltre il tempo abituale (alcuni minuti).
+**Sintomo:** una risorsa resta nello stato **Creating** ben oltre il tempo abituale (alcuni minuti), oppure passa allo stato **Error**.
+
+Un progetto, un VPC o un'applicazione gestita (cluster Kubernetes, database…) passa allo stato **Error** quando la piattaforma non è riuscita ad applicarne l'ultima modifica. La risorsa può continuare a funzionare con la configurazione precedente. Un progetto in errore riporta un badge **Error** nel selettore di progetto.
 
 **Soluzioni:**
 - ricarichi la pagina di dettaglio;
@@ -64,11 +66,23 @@ La console non riesce a leggere le quota del progetto e blocca la creazione per 
 
 ## 3. Kubernetes
 
+### La creazione del primo cluster attende «Preparing the Kubernetes environment»
+
+**Sintomo:** dopo **Create cluster**, la procedura guidata mostra «Preparing the project's Kubernetes environment; creation will resume automatically.»
+
+**Soluzione:** per il primo cluster di un progetto, la piattaforma prepara innanzitutto l'ambiente Kubernetes del progetto, operazione che richiede alcuni minuti. Attenda: la console rilancia da sola la creazione, senza perdere la configurazione inserita (il pulsante **Cancel** interrompe l'attesa). Se un messaggio le chiede di contattare il supporto, non riprovi e lo contatti.
+
 ### Il download del kubeconfig non riesce
 
-**Sintomo:** il pulsante **Kubeconfig** mostra **Download failed**.
+**Sintomo:** dopo un clic su **Kubeconfig**, la console mostra **Error**: «Could not download the kubeconfig file.»
 
 **Soluzione:** probabilmente il cluster non è ancora pronto. Attenda che passi allo stato **Ready**, quindi riprovi.
+
+### Il pulsante Kubeconfig è disattivato
+
+**Sintomo:** il pulsante **Kubeconfig** è disattivato, con la dicitura «Reserved for project administrators.», oppure la console mostra «The kubeconfig grants administrator access to the cluster: it is reserved for project administrators.»
+
+**Soluzione:** il kubeconfig conferisce un accesso amministratore al cluster; il suo download è riservato agli amministratori del progetto. Si rivolga a un amministratore del progetto.
 
 ### `kubectl` non riesce a raggiungere il cluster
 
@@ -113,7 +127,8 @@ Vedere: [Kubernetes - Risoluzione dei problemi](../services/kubernetes/troublesh
 **Soluzioni:**
 - verifichi che la VM sia nello stato **Running** in **VM Instances**;
 - verifichi che sia assegnato un IP pubblico e che la porta 22 sia autorizzata nella configurazione di rete della VM;
-- verifichi di utilizzare la chiave privata corrispondente alla chiave pubblica fornita alla creazione.
+- verifichi di utilizzare la chiave privata corrispondente alla chiave pubblica fornita alla creazione;
+- si connetta con l'utente indicato nel blocco **SSH Connection** della pagina di dettaglio della VM (ad esempio `debian` per Debian, `opc` per Oracle Linux). Se la console indica che l'utente predefinito non è disponibile, utilizzi l'account configurato nella sua immagine.
 
 Vedere: [Macchine virtuali - Risoluzione dei problemi](../services/compute/troubleshooting.md)
 
@@ -125,12 +140,16 @@ Vedere: [Macchine virtuali - Risoluzione dei problemi](../services/compute/troub
 
 **Soluzioni:**
 - verifichi che l'**External access** sia attivato sul cluster (**Edit**);
-- utilizzi l'indirizzo visualizzato nel campo **Host** della pagina di dettaglio. Finché non è assegnato, la connessione esterna non è possibile;
+- utilizzi l'indirizzo visualizzato nel campo **Host** della pagina di dettaglio. Finché non è assegnato, la connessione esterna non è possibile. Per un replica set MongoDB, la pagina di dettaglio elenca l'indirizzo di ogni membro: si connetta a un membro con `directConnection=true`;
 - verifichi l'utente e la password visualizzati nella console.
 
 ### Password rifiutata
 
 Verifichi di utilizzare la password dell'utente interessato, visualizzata nella pagina di dettaglio del cluster. Per Redis e RabbitMQ, se ha effettuato una rotazione della password, aggiorni le sue applicazioni.
+
+### La modifica di un cluster viene rifiutata
+
+La versione di un database non può essere abbassata e la dimensione del suo disco non può essere ridotta. Per PostgreSQL, MariaDB, MongoDB e RabbitMQ, la console propone solo la versione attuale e le versioni superiori, e mostra ad esempio «The disk size cannot be reduced: 20 GB minimum.» Un cambio di versione o di preset riavvia le istanze del cluster: lo pianifichi al di fuori dei periodi di forte attività.
 
 Vedere: [PostgreSQL](../services/databases/postgresql/troubleshooting.md), [MariaDB](../services/databases/mariadb/troubleshooting.md), [MongoDB](../services/databases/mongodb/troubleshooting.md), [Redis](../services/databases/redis/troubleshooting.md), [RabbitMQ](../services/messaging/rabbitmq/troubleshooting.md)
 
@@ -140,11 +159,19 @@ Vedere: [PostgreSQL](../services/databases/postgresql/troubleshooting.md), [Mari
 
 ### Eliminare un bucket senza perdere dati
 
-L'eliminazione di un bucket è definitiva e comporta la perdita di tutti i suoi oggetti: la console non verifica che sia vuoto. Copi prima i dati da conservare con il suo client S3 (ad esempio `aws s3 sync`). Se l'eliminazione non riesce, riprovi, quindi contatti il supporto.
+L'eliminazione di un bucket senza WORM è definitiva e comporta la perdita di tutti i suoi oggetti, anche se non è vuoto. Copi prima i dati da conservare con il suo client S3 (ad esempio `aws s3 sync`). Se l'eliminazione non riesce, riprovi, quindi contatti il supporto.
+
+Un bucket bloccato (WORM) viene rimosso dalla console, ma i suoi oggetti non vengono eliminati: ogni oggetto resta bloccato 365 giorni dopo la sua scrittura (modalità COMPLIANCE).
 
 ### Accesso S3 negato (`AccessDenied`)
 
 Verifichi che la chiave di accesso utilizzata appartenga a un utente del bucket, con i diritti adeguati (sola lettura o lettura/scrittura).
+
+Verifichi anche il nome del bucket configurato nel suo client S3: utilizzi il nome S3 reale (`bucket-…`), visualizzato nel campo **Bucket name** della pagina del bucket, e non il nome inserito alla creazione.
+
+### Impossibile ridurre la dimensione di un disco
+
+La dimensione di un disco può essere aumentata, mai ridotta, anche dalla modifica di una VM. Per disporre di un disco più piccolo, crei un nuovo disco e vi copi i suoi dati.
 
 Vedere: [Bucket - Risoluzione dei problemi](../services/storage/buckets/troubleshooting.md), [Dischi - Risoluzione dei problemi](../services/storage/disks/troubleshooting.md)
 

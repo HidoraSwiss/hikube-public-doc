@@ -39,7 +39,7 @@ graph TB
 
 ### Organisation
 
-L'**organisation** représente votre entreprise. Elle est créée par Hidora lors de l'ouverture de votre compte et regroupe vos utilisateurs et vos projets. Si vous avez accès à plusieurs organisations, vous en changez depuis le menu de profil (**Changer d'organisation**).
+L'**organisation** représente votre entreprise. Elle est créée par Hidora lors de l'ouverture de votre compte et regroupe vos utilisateurs et vos projets. Si vous avez accès à plusieurs organisations, vous en changez depuis le menu de profil (**Changer d'organisation**). L'**ID de l'Organisation** est affiché dans **Mon Compte**, avec un bouton de copie.
 
 ### Projet
 
@@ -50,6 +50,8 @@ Un **projet** est un espace isolé au sein de l'organisation. Chaque ressource (
 - **un suivi des coûts** : le tableau de bord du projet estime le coût mensuel de ses ressources.
 
 Un usage courant consiste à créer un projet par environnement (production, staging, développement) ou par équipe.
+
+Les paramètres du projet affichent son **ID du projet**, avec un bouton de copie : indiquez-le au support pour toute demande concernant ce projet. Si la plateforme n'a pas pu appliquer la dernière modification d'un projet, celui-ci porte un badge **Erreur** dans le sélecteur de projet.
 
 :::note Ancienne terminologie
 Dans les versions précédentes de la documentation, un projet était appelé **tenant**.

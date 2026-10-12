@@ -38,7 +38,7 @@ Zeigt die Konsole **No organization** an, ist Ihr Konto noch keiner Organisation
 Ein **Projekt** ist ein isolierter Bereich, der Ihre Ressourcen (VMs, Cluster, Datenbanken …) bündelt und eigene Quotas hat.
 
 1. Öffnen Sie die Projektauswahl und klicken Sie auf **Create a project**. Bei Ihrer ersten Anmeldung öffnet sich direkt der Assistent **Welcome to Hikube**.
-2. Schritt **General**: Geben Sie den **Project Name** ein. Er muss mit einem Buchstaben beginnen und darf nur Kleinbuchstaben und Ziffern enthalten, ohne Bindestrich, mit 3 bis 16 Zeichen (Beispiel: `demo01`).
+2. Schritt **General**: Geben Sie den **Project Name** ein. Er muss mit einem Buchstaben beginnen und darf nur Kleinbuchstaben und Ziffern enthalten, ohne Bindestrich, mit 3 bis 16 Zeichen (Beispiel: `demo01`). Die Namen `root` und `super` sind reserviert.
 
    ![Assistent zum Erstellen eines Projekts, Schritt General](/img/console/projects/wizard-general.en.png)
 
@@ -47,15 +47,21 @@ Ein **Projekt** ist ein isolierter Bereich, der Ihre Ressourcen (VMs, Cluster, D
 
 Das Dashboard zeigt **Setting up your project…** an, während das Projekt vorbereitet wird, und öffnet sich dann automatisch.
 
+Schlägt die Erstellung fehl, zeigt die Fehlermeldung eine **Reference** an: Geben Sie diese an den Support weiter.
+
 ---
 
 ## Schritt 3: Einen Kubernetes-Cluster erstellen
 
 1. Öffnen Sie im Seitenmenü **Infrastructure** → **Kubernetes** und klicken Sie dann auf **Create cluster**.
 2. Schritt **General**: Wählen Sie einen **Cluster name**, eine **Kubernetes Version** und die **Control Plane Instance Size**. Lassen Sie **API Endpoint (Host)** leer: Die Plattform erzeugt ihn für Sie.
-3. Schritt **Nodes**: Konfigurieren Sie mindestens eine Node-Gruppe (Instanztyp, Anzahl der Nodes, ephemerer Speicher).
+3. Schritt **Nodes**: Konfigurieren Sie mindestens eine Node-Gruppe (Instanztyp, Anzahl der Nodes, Festplattengröße der Nodes).
 4. Schritt **Addons**: Aktivieren Sie die Erweiterungen, die Sie benötigen (zum Beispiel cert-manager oder ingress-nginx).
 5. Schritt **Summary**: Prüfen Sie die Zusammenfassung und die geschätzten Kosten und starten Sie dann die Erstellung.
+
+:::note Erster Cluster des Projekts
+Beim ersten Cluster eines Projekts bereitet die Plattform zunächst die Kubernetes-Umgebung des Projekts vor, was einige Minuten dauert. Die Konsole zeigt dann das Banner **Preparing the Kubernetes environment** an und startet die Erstellung automatisch neu, ohne dass Ihre Konfiguration verloren geht. Die Schaltfläche **Cancel** beendet das Warten.
+:::
 
 Die einzelnen Felder sind im [Kubernetes-Schnellstart](../services/kubernetes/quick-start.md) beschrieben.
 
@@ -66,7 +72,8 @@ Die einzelnen Felder sind im [Kubernetes-Schnellstart](../services/kubernetes/qu
 Die Liste **Kubernetes Clusters** zeigt den Status des Clusters an:
 
 - **Creating**: Control Plane und Nodes werden bereitgestellt;
-- **Ready** / **Running**: Der Cluster ist betriebsbereit.
+- **Ready** / **Running**: Der Cluster ist betriebsbereit;
+- **Error**: Die letzte Änderung konnte nicht angewendet werden. Wenden Sie sich an den Support, wenn der Zustand anhält.
 
 Der Wechsel zu **Ready** dauert in der Regel einige Minuten.
 
@@ -76,6 +83,8 @@ Der Wechsel zu **Ready** dauert in der Regel einige Minuten.
 
 1. Klicken Sie auf den Cluster, um seine Detailseite zu öffnen.
 2. Klicken Sie auf **Kubeconfig**. Die Konsole lädt eine Datei `kubeconfig-<cluster-name>.yaml` herunter.
+
+Der Download der kubeconfig ist den Projektadministratoren vorbehalten. Für die übrigen Mitglieder ist die Schaltfläche **Kubeconfig** deaktiviert und mit dem Hinweis „Reserved for project administrators.“ versehen. Wenden Sie sich an einen Projektadministrator, der Ihnen auch einen eigenen Zugang im Cluster einrichten kann.
 
 :::warning Sensible Datei
 Diese Datei gewährt administrativen Zugriff auf Ihren Cluster. Versionieren Sie sie nicht und speichern Sie sie an einem geschützten Ort (zum Beispiel `~/.kube/`).

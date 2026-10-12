@@ -29,6 +29,8 @@ Voir : [Concepts clés](../getting-started/concepts.md)
 
 Ouvrez **Infrastructure** → **Kubernetes**, cliquez sur votre cluster, puis sur **Kubeconfig**. La console télécharge le fichier `kubeconfig-<nom-du-cluster>.yaml`.
 
+Ce fichier donne un accès administrateur au cluster : son téléchargement est réservé aux administrateurs du projet. Pour les autres membres, le bouton **Kubeconfig** est désactivé avec la mention « Réservé aux administrateurs du projet. »
+
 ```bash
 export KUBECONFIG=~/.kube/kubeconfig-<nom-du-cluster>.yaml
 kubectl get nodes
@@ -56,7 +58,7 @@ Voir : [PostgreSQL](../services/databases/postgresql/quick-start.md), [MariaDB](
 
 ## 6. Comment exposer une base de données sur Internet ?
 
-Activez l'option **Accès externe** à la création du cluster ou dans **Modifier**. Une IP publique est alors attribuée et affichée dans le champ **Hôte** de la page de détail.
+Activez l'option **Accès externe** à la création du cluster ou dans **Modifier**. Une IP publique est alors attribuée et affichée dans le champ **Hôte** de la page de détail. Pour un replica set MongoDB, la page de détail liste l'adresse de chaque membre.
 
 :::warning
 N'exposez une base de données que si c'est nécessaire, et utilisez des mots de passe robustes.
@@ -86,7 +88,7 @@ Voir : [Concepts clés - Quotas](../getting-started/concepts.md#quotas)
 ## 9. Comment scaler mes ressources ?
 
 - **Cluster Kubernetes** : modifiez les bornes minimum et maximum des groupes de nœuds dans **Modifier**. Les nœuds s'adaptent automatiquement à la charge entre ces bornes. Voir [Gérer les groupes de nœuds](../services/kubernetes/how-to/manage-node-groups.md).
-- **Bases de données** : selon le service, le preset et le stockage se modifient dans **Modifier**. Voir le guide « scaling » de chaque service.
+- **Bases de données** : selon le service, le preset et le stockage se modifient dans **Modifier**. La taille du disque ne peut pas être réduite et la version ne peut pas être abaissée ; un changement de version ou de preset redémarre les instances. Voir le guide « scaling » de chaque service.
 
 ---
 

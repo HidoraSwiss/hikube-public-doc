@@ -29,6 +29,8 @@ See: [Key concepts](../getting-started/concepts.md)
 
 Open **Infrastructure** → **Kubernetes**, click your cluster, then **Kubeconfig**. The console downloads the `kubeconfig-<cluster-name>.yaml` file.
 
+This file grants administrator access to the cluster: downloading it is reserved for project administrators. For other members, the **Kubeconfig** button is disabled with the note "Reserved for project administrators."
+
 ```bash
 export KUBECONFIG=~/.kube/kubeconfig-<cluster-name>.yaml
 kubectl get nodes
@@ -56,7 +58,7 @@ See: [PostgreSQL](../services/databases/postgresql/quick-start.md), [MariaDB](..
 
 ## 6. How do I expose a database to the Internet?
 
-Enable the **External access** option when creating the cluster or in **Edit**. A public IP is then assigned and shown in the **Host** field of the detail page.
+Enable the **External access** option when creating the cluster or in **Edit**. A public IP is then assigned and shown in the **Host** field of the detail page. For a MongoDB replica set, the detail page lists the address of each member.
 
 :::warning
 Only expose a database if necessary, and use strong passwords.
@@ -86,7 +88,7 @@ See: [Key concepts - Quotas](../getting-started/concepts.md#quotas)
 ## 9. How do I scale my resources?
 
 - **Kubernetes cluster**: change the minimum and maximum bounds of the node groups in **Edit**. Nodes adjust automatically to the load between these bounds. See [Manage node groups](../services/kubernetes/how-to/manage-node-groups.md).
-- **Databases**: depending on the service, the preset and the storage can be changed in **Edit**. See the "scaling" guide of each service.
+- **Databases**: depending on the service, the preset and the storage can be changed in **Edit**. The disk size cannot be reduced and the version cannot be downgraded; changing the version or the preset restarts the instances. See the "scaling" guide of each service.
 
 ---
 

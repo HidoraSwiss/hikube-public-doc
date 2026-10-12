@@ -29,6 +29,8 @@ Siehe: [Schlüsselkonzepte](../getting-started/concepts.md)
 
 Öffnen Sie **Infrastructure** → **Kubernetes**, klicken Sie auf Ihren Cluster und dann auf **Kubeconfig**. Die Konsole lädt die Datei `kubeconfig-<cluster-name>.yaml` herunter.
 
+Diese Datei gewährt administrativen Zugriff auf den Cluster: Ihr Download ist den Projektadministratoren vorbehalten. Für die übrigen Mitglieder ist die Schaltfläche **Kubeconfig** deaktiviert und mit dem Hinweis „Reserved for project administrators.“ versehen.
+
 ```bash
 export KUBECONFIG=~/.kube/kubeconfig-<cluster-name>.yaml
 kubectl get nodes
@@ -56,7 +58,7 @@ Siehe: [PostgreSQL](../services/databases/postgresql/quick-start.md), [MariaDB](
 
 ## 6. Wie mache ich eine Datenbank im Internet erreichbar?
 
-Aktivieren Sie die Option **External access** bei der Erstellung des Clusters oder über **Edit**. Daraufhin wird eine öffentliche IP zugewiesen und im Feld **Host** der Detailseite angezeigt.
+Aktivieren Sie die Option **External access** bei der Erstellung des Clusters oder über **Edit**. Daraufhin wird eine öffentliche IP zugewiesen und im Feld **Host** der Detailseite angezeigt. Bei einem MongoDB-Replica-Set listet die Detailseite die Adresse jedes Mitglieds auf.
 
 :::warning
 Machen Sie eine Datenbank nur erreichbar, wenn es nötig ist, und verwenden Sie starke Passwörter.
@@ -86,7 +88,7 @@ Siehe: [Schlüsselkonzepte - Quotas](../getting-started/concepts.md#quotas)
 ## 9. Wie skaliere ich meine Ressourcen?
 
 - **Kubernetes-Cluster**: Ändern Sie die Minimal- und Maximalwerte der Node-Gruppen über **Edit**. Die Nodes passen sich innerhalb dieser Grenzen automatisch an die Last an. Siehe [Node-Gruppen verwalten](../services/kubernetes/how-to/manage-node-groups.md).
-- **Datenbanken**: Je nach Service werden Preset und Speicher über **Edit** geändert. Siehe die Anleitung zur Skalierung des jeweiligen Services.
+- **Datenbanken**: Je nach Service werden Preset und Speicher über **Edit** geändert. Die Festplattengröße kann nicht verringert und die Version nicht herabgestuft werden; ein Wechsel der Version oder des Presets startet die Instanzen neu. Siehe die Anleitung zur Skalierung des jeweiligen Services.
 
 ---
 

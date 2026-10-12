@@ -29,6 +29,8 @@ Vedere: [Concetti chiave](../getting-started/concepts.md)
 
 Apra **Infrastructure** → **Kubernetes**, faccia clic sul cluster, quindi su **Kubeconfig**. La console scarica il file `kubeconfig-<nome-del-cluster>.yaml`.
 
+Questo file conferisce un accesso amministratore al cluster: il suo download è riservato agli amministratori del progetto. Per gli altri membri, il pulsante **Kubeconfig** è disattivato con la dicitura «Reserved for project administrators.»
+
 ```bash
 export KUBECONFIG=~/.kube/kubeconfig-<nome-del-cluster>.yaml
 kubectl get nodes
@@ -56,7 +58,7 @@ Vedere: [PostgreSQL](../services/databases/postgresql/quick-start.md), [MariaDB]
 
 ## 6. Come si espone un database su Internet?
 
-Attivi l'opzione **External access** alla creazione del cluster oppure in **Edit**. Viene quindi assegnato un IP pubblico, visualizzato nel campo **Host** della pagina di dettaglio.
+Attivi l'opzione **External access** alla creazione del cluster oppure in **Edit**. Viene quindi assegnato un IP pubblico, visualizzato nel campo **Host** della pagina di dettaglio. Per un replica set MongoDB, la pagina di dettaglio elenca l'indirizzo di ogni membro.
 
 :::warning
 Esponga un database solo se necessario e utilizzi password robuste.
@@ -86,7 +88,7 @@ Vedere: [Concetti chiave - Quota](../getting-started/concepts.md#quota)
 ## 9. Come si scalano le risorse?
 
 - **Cluster Kubernetes**: modifichi i limiti minimo e massimo dei gruppi di nodi in **Edit**. I nodi si adattano automaticamente al carico entro questi limiti. Vedere [Gestire i gruppi di nodi](../services/kubernetes/how-to/manage-node-groups.md).
-- **Database**: a seconda del servizio, il preset e lo storage si modificano in **Edit**. Vedere la guida «scaling» di ciascun servizio.
+- **Database**: a seconda del servizio, il preset e lo storage si modificano in **Edit**. La dimensione del disco non può essere ridotta e la versione non può essere abbassata; un cambio di versione o di preset riavvia le istanze. Vedere la guida «scaling» di ciascun servizio.
 
 ---
 

@@ -52,9 +52,11 @@ Bei einem Kubernetes-Cluster wird die Quota anhand der **maximalen Anzahl** an N
 
 Die Konsole kann die Quotas des Projekts nicht lesen und blockiert die Erstellung aus Sicherheitsgründen. Laden Sie die Seite neu; wenn die Meldung bestehen bleibt, wenden Sie sich an den Support.
 
-### Ressource hängt in „Creating“ fest
+### Ressource hängt in „Creating“ fest oder hat den Status „Error“
 
-**Symptom:** Eine Ressource bleibt weit über die übliche Dauer (einige Minuten) hinaus im Status **Creating**.
+**Symptom:** Eine Ressource bleibt weit über die übliche Dauer (einige Minuten) hinaus im Status **Creating** oder wechselt in den Status **Error**.
+
+Ein Projekt, ein VPC oder eine verwaltete Anwendung (Kubernetes-Cluster, Datenbank …) wechselt in den Status **Error**, wenn die Plattform ihre letzte Änderung nicht anwenden konnte. Die Ressource kann mit ihrer vorherigen Konfiguration weiterlaufen. Ein Projekt im Fehlerzustand trägt in der Projektauswahl ein Badge **Error**.
 
 **Lösungen:**
 - Laden Sie die Detailseite neu;
@@ -64,11 +66,23 @@ Die Konsole kann die Quotas des Projekts nicht lesen und blockiert die Erstellun
 
 ## 3. Kubernetes
 
+### Die Erstellung des ersten Clusters wartet auf „Preparing the Kubernetes environment“
+
+**Symptom:** Nach **Create cluster** zeigt der Assistent „Preparing the project's Kubernetes environment; creation will resume automatically.“ an.
+
+**Lösung:** Beim ersten Cluster eines Projekts bereitet die Plattform zunächst die Kubernetes-Umgebung des Projekts vor, was einige Minuten dauert. Warten Sie: Die Konsole startet die Erstellung selbstständig neu, ohne dass Ihre Konfiguration verloren geht (die Schaltfläche **Cancel** beendet das Warten). Werden Sie in einer Meldung aufgefordert, sich an den Support zu wenden, versuchen Sie es nicht erneut und kontaktieren Sie den Support.
+
 ### Der Download der kubeconfig schlägt fehl
 
-**Symptom:** Die Schaltfläche **Kubeconfig** zeigt **Download failed** an.
+**Symptom:** Nach einem Klick auf **Kubeconfig** zeigt die Konsole **Error** an: „Could not download the kubeconfig file.“
 
 **Lösung:** Der Cluster ist vermutlich noch nicht bereit. Warten Sie, bis er den Status **Ready** erreicht, und versuchen Sie es dann erneut.
+
+### Die Schaltfläche Kubeconfig ist deaktiviert
+
+**Symptom:** Die Schaltfläche **Kubeconfig** ist ausgegraut und mit dem Hinweis „Reserved for project administrators.“ versehen, oder die Konsole zeigt „The kubeconfig grants administrator access to the cluster: it is reserved for project administrators.“ an.
+
+**Lösung:** Die kubeconfig gewährt administrativen Zugriff auf den Cluster; ihr Download ist den Projektadministratoren vorbehalten. Wenden Sie sich an einen Projektadministrator.
 
 ### `kubectl` erreicht den Cluster nicht
 
@@ -113,7 +127,8 @@ Siehe: [Kubernetes - Fehlerbehebung](../services/kubernetes/troubleshooting.md)
 **Lösungen:**
 - Prüfen Sie, dass die VM in **VM Instances** den Status **Running** hat;
 - prüfen Sie, dass eine öffentliche IP zugewiesen ist und Port 22 in der Netzwerkkonfiguration der VM erlaubt ist;
-- prüfen Sie, dass Sie den privaten Schlüssel verwenden, der zum bei der Erstellung angegebenen öffentlichen Schlüssel passt.
+- prüfen Sie, dass Sie den privaten Schlüssel verwenden, der zum bei der Erstellung angegebenen öffentlichen Schlüssel passt;
+- melden Sie sich mit dem Benutzer an, der im Block **SSH Connection** der Detailseite der VM angegeben ist (zum Beispiel `debian` für Debian, `opc` für Oracle Linux). Zeigt die Konsole an, dass der Standardbenutzer nicht verfügbar ist, verwenden Sie das in Ihrem Image eingerichtete Konto.
 
 Siehe: [Virtuelle Maschinen - Fehlerbehebung](../services/compute/troubleshooting.md)
 
@@ -125,12 +140,16 @@ Siehe: [Virtuelle Maschinen - Fehlerbehebung](../services/compute/troubleshootin
 
 **Lösungen:**
 - Prüfen Sie, dass **External access** auf dem Cluster aktiviert ist (**Edit**);
-- verwenden Sie die Adresse, die im Feld **Host** der Detailseite angezeigt wird. Solange sie nicht zugewiesen ist, ist keine externe Verbindung möglich;
+- verwenden Sie die Adresse, die im Feld **Host** der Detailseite angezeigt wird. Solange sie nicht zugewiesen ist, ist keine externe Verbindung möglich. Bei einem MongoDB-Replica-Set listet die Detailseite die Adresse jedes Mitglieds auf: Verbinden Sie sich mit `directConnection=true` mit einem Mitglied;
 - prüfen Sie Benutzer und Passwort, die in der Konsole angezeigt werden.
 
 ### Passwort abgelehnt
 
 Prüfen Sie, dass Sie das Passwort des betreffenden Benutzers verwenden, das auf der Detailseite des Clusters angezeigt wird. Wenn Sie bei Redis und RabbitMQ das Passwort rotiert haben, aktualisieren Sie Ihre Anwendungen.
+
+### Die Änderung eines Clusters wird abgelehnt
+
+Die Version einer Datenbank kann nicht herabgestuft und die Größe ihrer Festplatte nicht verringert werden. Bei PostgreSQL, MariaDB, MongoDB und RabbitMQ bietet die Konsole nur die aktuelle und höhere Versionen an und zeigt zum Beispiel „The disk size cannot be reduced: 20 GB minimum.“ an. Ein Wechsel der Version oder des Presets startet die Instanzen des Clusters neu: Planen Sie ihn außerhalb von Spitzenzeiten.
 
 Siehe: [PostgreSQL](../services/databases/postgresql/troubleshooting.md), [MariaDB](../services/databases/mariadb/troubleshooting.md), [MongoDB](../services/databases/mongodb/troubleshooting.md), [Redis](../services/databases/redis/troubleshooting.md), [RabbitMQ](../services/messaging/rabbitmq/troubleshooting.md)
 
@@ -140,11 +159,19 @@ Siehe: [PostgreSQL](../services/databases/postgresql/troubleshooting.md), [Maria
 
 ### Einen Bucket löschen, ohne Daten zu verlieren
 
-Das Löschen eines Buckets ist endgültig und entfernt alle seine Objekte: Die Konsole prüft nicht, ob er leer ist. Kopieren Sie zuerst die zu behaltenden Daten mit Ihrem S3-Client (zum Beispiel `aws s3 sync`). Schlägt das Löschen fehl, versuchen Sie es erneut und wenden Sie sich dann an den Support.
+Das Löschen eines Buckets ohne WORM ist endgültig und entfernt alle seine Objekte, auch wenn er nicht leer ist. Kopieren Sie zuerst die zu behaltenden Daten mit Ihrem S3-Client (zum Beispiel `aws s3 sync`). Schlägt das Löschen fehl, versuchen Sie es erneut und wenden Sie sich dann an den Support.
+
+Ein gesperrter Bucket (WORM) wird aus der Konsole entfernt, seine Objekte werden jedoch nicht gelöscht: Jedes Objekt bleibt 365 Tage nach dem Schreiben gesperrt (COMPLIANCE-Modus).
 
 ### S3-Zugriff verweigert (`AccessDenied`)
 
 Prüfen Sie, dass der verwendete Zugriffsschlüssel zu einem Benutzer des Buckets gehört und die passenden Rechte hat (nur Lesen oder Lesen/Schreiben).
+
+Prüfen Sie auch den in Ihrem S3-Client konfigurierten Bucket-Namen: Verwenden Sie den tatsächlichen S3-Namen (`bucket-…`), der im Feld **Bucket name** der Bucket-Seite angezeigt wird, und nicht den bei der Erstellung eingegebenen Namen.
+
+### Die Größe einer Disk lässt sich nicht verringern
+
+Die Größe einer Disk kann erhöht, aber nie verringert werden, auch nicht über die Bearbeitung einer VM. Für eine kleinere Disk erstellen Sie eine neue Disk und kopieren Ihre Daten dorthin.
 
 Siehe: [Buckets - Fehlerbehebung](../services/storage/buckets/troubleshooting.md), [Disks - Fehlerbehebung](../services/storage/disks/troubleshooting.md)
 
