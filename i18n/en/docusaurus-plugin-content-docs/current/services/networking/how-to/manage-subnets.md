@@ -30,7 +30,7 @@ Allowed ranges: `10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`, excluding the r
 1. Open **Infrastructure** > **Networking**.
 2. In the VPC's **Actions** menu, click **View Subnets**.
 
-The **Subnets for `<vpc>`** page lists each subnet with its **Subnet Name** and its **CIDR Block**.
+The **Subnets for `<vpc>`** page lists each subnet with its **Subnet Name** and its **CIDR Block**. The VPC status is shown next to the page subtitle.
 
 ### 3. Create a subnet
 

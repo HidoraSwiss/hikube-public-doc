@@ -126,7 +126,7 @@ flowchart TD
 - **Applications web et métier** : série **U**.
 - **Bases de données, caches, analytique** : série **M**.
 
-Le gabarit se change après coup depuis **Modifier** ; la VM redémarre pour appliquer le changement.
+Le gabarit se change après coup depuis **Modifier** ; le changement prend effet au prochain redémarrage de la VM, que vous lancez avec **Redémarrer**.
 :::
 
 ---
@@ -160,7 +160,7 @@ L'import d'une image personnalisée (ISO ou QCOW2 depuis une URL HTTPS) se fait 
 - **IP publique** : option **Adresse IPv4 Publique**, activée par défaut. La VM est alors accessible depuis Internet.
 - **Pare-feu** : option **Activer le Pare-feu**, activée par défaut. Seuls les ports cochés (22 par défaut ; 80, 443 ou tout port personnalisé en option) sont ouverts en entrée. Sans pare-feu, tous les ports de l'IP publique sont ouverts.
 - **Réseaux privés** : la VM peut être reliée à un ou plusieurs [VPC](../networking/overview.md) pour communiquer en privé avec d'autres VM du projet.
-- **SSH** : la page de détail affiche la commande `ssh <utilisateur>@<ip>` prête à copier. L'accès se fait avec les clés SSH publiques saisies dans l'assistant.
+- **SSH** : la page de détail affiche la commande `ssh <utilisateur>@<ip>` prête à copier, avec l'utilisateur par défaut de l'image. Pour une image personnalisée, cet utilisateur n'est pas connu : la console l'indique au lieu de proposer une commande. L'accès se fait avec les clés SSH publiques saisies dans l'assistant.
 - **Windows** : un mot de passe administrateur est généré à la création et affiché une seule fois. L'accès se fait en RDP.
 
 :::note Console série et VNC

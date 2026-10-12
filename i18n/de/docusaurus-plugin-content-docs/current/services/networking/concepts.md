@@ -93,7 +93,7 @@ Verwenden Sie Teilbereiche von `172.16.0.0/12`, zum Beispiel ein `/24` pro Subne
 | Ein VPC löschen | Löscht auch alle seine Subnetze. Abgelehnt, solange eine VM damit verbunden ist. |
 | Ein VPC oder ein Subnetz ändern | Nicht angeboten: Erstellen Sie ein neues. |
 
-Status eines VPC in der Liste: **Provisioning** während der Einrichtung, dann **Ready**, sobald es nutzbar ist.
+Status eines VPC in der Liste: **Provisioning** während der Einrichtung, dann **Ready**, sobald es nutzbar ist. Ein VPC, dessen letzte Änderung nicht angewendet werden konnte, wechselt in den Status **Error**; es kann mit seiner vorherigen Konfiguration weiterlaufen. Der Status erscheint auch auf der Seite **Subnets for `<vpc>`**, und die Liste lässt sich nach Status filtern (**Ready**, **Error**…).
 
 ---
 

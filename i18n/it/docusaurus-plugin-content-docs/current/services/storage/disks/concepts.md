@@ -67,8 +67,8 @@ Il passaggio **Source** della procedura guidata propone due scelte:
   - un'**immagine cloud** del catalogo (OS e poi **Version**);
   - oppure **Custom Image**: un **Image URL (ISO/QCOW2)**. L'URL deve utilizzare HTTPS; gli indirizzi IP privati o locali vengono rifiutati.
 
-:::note Windows
-Un disco di sistema Windows deve avere almeno **50 GB**. Il suo costo stimato include la licenza Windows.
+:::note Dimensione minima secondo l'immagine
+Un disco di sistema deve avere almeno **40 GB** per Oracle Linux e **28 GB** per Windows Server; per le altre immagini bastano 20 GB. La console porta la dimensione a questo minimo quando sceglie l'immagine. Il costo stimato di un disco Windows include la licenza Windows.
 :::
 
 ---
@@ -96,7 +96,7 @@ L'origine, la replica e la cifratura si scelgono alla creazione. In seguito è p
 
 ## Dimensione e quota
 
-- Dimensione minima: **20 GB** (50 GB per un disco di sistema Windows).
+- Dimensione minima: **20 GB**; per un disco di sistema, 40 GB con Oracle Linux e 28 GB con Windows Server.
 - La dimensione è limitata dalla **quota di storage** del progetto; la procedura guidata mostra l'indicatore **Estimated project usage**.
 - Un disco può essere **ingrandito**, mai ridotto (vedere [Ridimensionare un disco](./how-to/resize.md)).
 

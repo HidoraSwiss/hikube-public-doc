@@ -93,7 +93,7 @@ Utilizzi sottoinsiemi di `172.16.0.0/12`, ad esempio un `/24` per sottorete (`17
 | Eliminare un VPC | Elimina anche tutte le sue sottoreti. Rifiutato finché una VM vi è collegata. |
 | Modificare un VPC o una sottorete | Non disponibile: ne crei uno nuovo. |
 
-Stato di un VPC nell'elenco: **Provisioning** durante la sua predisposizione, poi **Ready** quando è utilizzabile.
+Stato di un VPC nell'elenco: **Provisioning** durante la sua predisposizione, poi **Ready** quando è utilizzabile. Un VPC la cui ultima modifica non è stata applicata passa allo stato **Error**; può continuare a funzionare con la configurazione precedente. Lo stato compare anche nella pagina **Subnets for `<vpc>`** e l'elenco si filtra per stato (**Ready**, **Error**…).
 
 ---
 

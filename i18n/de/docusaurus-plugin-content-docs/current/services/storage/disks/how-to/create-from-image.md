@@ -36,7 +36,7 @@ Validierungsregeln für die URL:
 
 Im Schritt **Configuration**:
 
-- **Size (GB)**: mindestens 20 GB und mindestens **50 GB für ein Windows-Image** (die Konsole passt den Wert automatisch an);
+- **Size (GB)**: mindestens 20 GB; für eine System-Disk mindestens **40 GB mit Oracle Linux** und **28 GB mit Windows Server** (die Konsole hebt den Wert bei der Wahl des Images auf dieses Minimum an);
 - **Replication Type**: **Asynchronous Replication** (Recommended) oder **Synchronous Replication**;
 - **Disk Encryption**: Aktivieren Sie diese Option bei Bedarf.
 

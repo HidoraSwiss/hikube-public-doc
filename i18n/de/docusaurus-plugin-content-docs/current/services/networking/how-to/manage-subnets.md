@@ -30,7 +30,7 @@ Erlaubte Bereiche: `10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`, ausgenommen 
 1. Öffnen Sie **Infrastructure** > **Networking**.
 2. Klicken Sie im Menü **Actions** des VPC auf **View Subnets**.
 
-Die Seite **Subnets for `<vpc>`** listet jedes Subnetz mit seinem **Subnet Name** und seinem **CIDR Block** auf.
+Die Seite **Subnets for `<vpc>`** listet jedes Subnetz mit seinem **Subnet Name** und seinem **CIDR Block** auf. Der Status des VPC wird neben dem Untertitel der Seite angezeigt.
 
 ### 3. Ein Subnetz erstellen
 

@@ -72,7 +72,7 @@ Cliquez sur le disque (ou menu d'actions → **Aperçu**) pour ouvrir sa page de
 4. Cliquez sur **Enregistrer**.
 
 :::warning Redémarrage de la VM
-La modification du stockage redémarre la VM (« Le type d'instance ou le stockage a été modifié. L'instance va redémarrer »). Planifiez l'opération en conséquence.
+Le disque n'apparaît dans la VM qu'après son prochain redémarrage. Après l'enregistrement, la console affiche **Redémarrage requis** : cliquez sur **Redémarrer** dans la section **Actions** de la page de la VM. Planifiez l'opération en conséquence.
 :::
 
 Une fois l'opération terminée, le disque passe au statut **En cours d'utilisation** et sa page affiche le nom de la VM dans **Attaché à**.
@@ -130,7 +130,7 @@ Voir aussi le [dépannage complet](./troubleshooting.md).
    sudo umount /mnt/data
    sudo sed -i '\|/mnt/data|d' /etc/fstab
    ```
-2. Détachez le disque : page de la VM → **Modifier** → section **Stockage**, cliquez sur l'icône de suppression du volume, confirmez en saisissant son nom, puis cliquez sur **Enregistrer**. Le disque revient au statut **Prêt**.
+2. Détachez le disque : page de la VM → **Modifier** → section **Stockage**, cliquez sur **Détacher le disque** sur le volume, confirmez avec **Détacher**, puis cliquez sur **Enregistrer**. Le disque revient au statut **Prêt** ; dans la VM, le détachement ne prend effet qu'au prochain redémarrage : cliquez sur **Redémarrer**.
 3. Supprimez le disque : page du disque → **Supprimer** (ou menu d'actions → **Supprimer** dans la liste), saisissez son nom exact dans **Nom de la ressource à confirmer**, puis cliquez sur **Supprimer définitivement**.
 
 :::warning

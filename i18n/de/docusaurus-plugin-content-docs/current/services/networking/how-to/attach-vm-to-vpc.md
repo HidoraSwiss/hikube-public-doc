@@ -23,6 +23,10 @@ Diese Anleitung erklärt, wie Sie eine VM mit einem oder mehreren VPC-Subnetzen 
 
 Noch kein VPC? Klicken Sie im Abschnitt **VPC Networks (Secondary)** auf **+ VPC**: Im Dialog **Create VPC** erstellen Sie das VPC und seine Subnetze, das VPC wird anschließend automatisch angehakt. Um einem angehakten VPC ein Subnetz hinzuzufügen, klicken Sie auf **Add subnet**, geben einen Namen und einen CIDR-Bereich ein und bestätigen.
 
+:::warning Debian und Ubuntu
+Ist das Image der VM Debian oder Ubuntu und ein VPC angehakt, zeigt der Abschnitt die Warnung **Manual setup required on Debian and Ubuntu** an: Die VPC-Adresse ist reserviert, wird im System aber nicht automatisch angewendet. Konfigurieren Sie die Schnittstelle, sobald die VM gestartet ist (siehe [Im Betriebssystem prüfen](#4-im-betriebssystem-prüfen)). Dieselbe Warnung erscheint unter **Edit**.
+:::
+
 ### 2. Eine bestehende VM verbinden
 
 1. Öffnen Sie die Detailseite der VM und klicken Sie auf **Edit**.

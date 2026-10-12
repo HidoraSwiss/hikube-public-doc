@@ -8,7 +8,7 @@ La console Hikube propose des images **Windows Server** prêtes à l'emploi. Ce 
 
 ## Prérequis
 
-- Un compte Hikube et un projet avec au moins 4 vCPU, 16 Go de mémoire et 50 Go de stockage disponibles
+- Un compte Hikube et un projet avec au moins 4 vCPU, 16 Go de mémoire et 28 Go de stockage disponibles
 - Un client RDP (Connexion Bureau à distance sous Windows, Windows App sous macOS, `xfreerdp` ou Remmina sous Linux)
 - Un gestionnaire de mots de passe pour conserver le mot de passe administrateur
 
@@ -31,7 +31,7 @@ La licence Windows est facturée en fonction du nombre de vCPU. Elle est incluse
 À l'étape **Stockage** :
 
 1. Sous **Système d'exploitation**, sélectionnez la carte **windows-server** et la version **2022** ou **2025**.
-2. Portez **Taille (Go)** à au moins `50` : c'est le minimum pour Windows (message **Min. 50 Go requis** en dessous).
+2. Vérifiez **Taille (Go)** : en choisissant Windows Server, la console la relève à `28`, le minimum de cette image (message **Min. 28 Go requis** en dessous). Prévoyez davantage pour laisser de la place aux mises à jour Windows et à vos applications.
 3. Choisissez le **Type de réplication** et, si besoin, activez **Chiffrement du disque**.
 4. Cliquez sur **Suivant**.
 
@@ -49,7 +49,7 @@ Le champ **Script Cloud-Init (User Data)** n'est pas proposé pour Windows.
 
 À l'étape **Vérification**, cliquez sur **Déployer**. La boîte **Identifiants de l'instance Windows** s'ouvre et affiche :
 
-- **Nom d'utilisateur par défaut** ;
+- **Nom d'utilisateur par défaut** (`Hikube`) ;
 - **Mot de passe Administrateur**.
 
 Copiez les deux valeurs avec les boutons de copie et enregistrez-les dans votre gestionnaire de mots de passe, puis cliquez sur **J'ai copié le mot de passe et je continue**.

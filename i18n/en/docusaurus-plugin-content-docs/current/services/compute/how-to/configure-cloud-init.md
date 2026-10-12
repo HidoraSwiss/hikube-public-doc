@@ -94,8 +94,8 @@ The new script is saved, without restarting the VM, but it is not replayed autom
 
 ### 4. Replay the script
 
-1. On a VM with **Running** status, click **Reload UserData**, from the **Actions** section of the detail page or from the **Actions** menu of the list. The console shows **The UserData reload has been initiated.**
-2. The reload does not restart the VM: the script is replayed at the next boot. Click **Restart** to apply it right away.
+1. On a VM with **Running** status, click **Reload UserData**, from the **Actions** section of the detail page or from the **Actions** menu of the list. The console shows **UserData reloaded: restart the VM to apply it.**
+2. The reload does not restart the VM: the script is replayed at the next boot. The **Actions** section of the detail page shows the **Restart the VM to apply the UserData** notice, with a **Restart** button: click it to apply the script right away.
 
 At restart, cloud-init treats the VM as a new instance: it runs the whole script again (`runcmd`, `write_files`, `packages`…) and regenerates the SSH host keys. Your SSH client then reports a host key change; remove the old entry with `ssh-keygen -R <public-ip>`.
 

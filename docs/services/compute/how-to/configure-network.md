@@ -45,11 +45,11 @@ Le **Récapitulatif** affiche **IP Publique**, **Pare-feu** et **Ports Ouverts**
 2. Dans **Réseau & Sécurité**, ajustez **Adresse IPv4 Publique**, **Activer le Pare-feu** et les **Ports Autorisés**.
 3. Cliquez sur **Enregistrer**.
 
-Ces changements s'appliquent en quelques secondes, sans redémarrer la VM, contrairement à un changement de gabarit, de disques ou de GPU.
+Ces changements s'appliquent en quelques secondes, sans redémarrer la VM. Un changement de gabarit, de disques ou de GPU, lui, ne prend effet qu'au prochain redémarrage.
 
 ### 4. Relier la VM à un réseau privé (optionnel)
 
-Sous **Réseaux VPC (Secondaires)**, cochez un VPC puis un ou plusieurs de ses **Sous-réseaux**. Chaque sous-réseau ajoute une interface privée à la VM, que l'OS ne configure pas automatiquement (voir [Relier une VM à un VPC](../../networking/how-to/attach-vm-to-vpc.md#4-vérifier-dans-los)). Le bouton **+ VPC** crée un VPC sans quitter l'écran, et **Ajouter un sous-réseau** crée un sous-réseau dans le VPC coché. Le détail est dans [Réseau : démarrage rapide](../../networking/quick-start.md).
+Sous **Réseaux VPC (Secondaires)**, cochez un VPC puis un ou plusieurs de ses **Sous-réseaux**. Chaque sous-réseau ajoute une interface privée à la VM, que l'OS ne configure pas automatiquement (voir [Relier une VM à un VPC](../../networking/how-to/attach-vm-to-vpc.md#4-vérifier-dans-los)). Sur une image Debian ou Ubuntu, la console le rappelle par l'avertissement **Configuration manuelle requise sur Debian et Ubuntu**. Le bouton **+ VPC** crée un VPC sans quitter l'écran, et **Ajouter un sous-réseau** crée un sous-réseau dans le VPC coché. Le détail est dans [Réseau : démarrage rapide](../../networking/quick-start.md).
 
 ## Vérification
 

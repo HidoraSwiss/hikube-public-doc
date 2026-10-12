@@ -23,6 +23,10 @@ Questa guida spiega come collegare una VM a una o più sottoreti VPC, alla creaz
 
 Non ha ancora un VPC? Faccia clic su **+ VPC** nella sezione **VPC Networks (Secondary)**: la finestra **Create VPC** consente di creare il VPC e le sue sottoreti, quindi lo seleziona automaticamente. Per aggiungere una sottorete a un VPC selezionato, faccia clic su **Add subnet**, inserisca un nome e un intervallo CIDR, quindi confermi.
 
+:::warning Debian e Ubuntu
+Se l'immagine della VM è Debian o Ubuntu e un VPC è selezionato, la sezione mostra l'avviso **Manual setup required on Debian and Ubuntu**: l'indirizzo del VPC è riservato, ma non viene applicato automaticamente nel sistema. Configuri l'interfaccia una volta avviata la VM (vedere [Verificare nel sistema operativo](#4-verificare-nel-sistema-operativo)). Lo stesso avviso compare in **Edit**.
+:::
+
 ### 2. Collegare una VM esistente
 
 1. Apra la pagina di dettaglio della VM e faccia clic su **Edit**.

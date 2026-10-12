@@ -25,7 +25,7 @@ AlmaLinux, CentOS Stream, CloudLinux, Debian, openSUSE, Oracle Linux, Rocky Linu
 
 ### Kann ich mein eigenes Image verwenden?
 
-Ja, in zwei Schritten: Erstellen Sie zuerst im Menü **Disks** eine Disk aus der URL Ihres Images (ISO oder QCOW2, über HTTPS). Wählen Sie dann im VM-Erstellungsassistenten **Existing** für die **System Disk (Boot)** und wählen Sie diese Disk aus. Die Karte **Custom Image** ist im VM-Assistenten ausgegraut (**Reserved**): Sie ist nur bei der Erstellung einer Disk verwendbar. Siehe [System-Disk aus einem Image erstellen](../storage/disks/how-to/create-from-image.md).
+Ja, in zwei Schritten: Erstellen Sie zuerst im Menü **Disks** eine Disk aus der URL Ihres Images (ISO oder QCOW2, über HTTPS). Wählen Sie dann im VM-Erstellungsassistenten **Existing** für die **System Disk (Boot)** und wählen Sie diese Disk aus. Im VM-Assistenten weist die Karte **Custom Image** darauf hin: „Create a disk first, then use it here.“ Siehe [System-Disk aus einem Image erstellen](../storage/disks/how-to/create-from-image.md).
 
 ---
 
@@ -37,13 +37,13 @@ Ja, in zwei Schritten: Erstellen Sie zuerst im Menü **Disks** eine Disk aus der
 | `u1` | **Universal (U)** | 1:4 | Webserver, Anwendungen |
 | `m1` | **Memory (M)** | 1:8 | Datenbanken, Caches |
 
-Zum Beispiel bietet `u1.xlarge` 4 vCPU und 16 GB RAM. Der Instanztyp kann später über **Edit** geändert werden; die VM wird neu gestartet.
+Zum Beispiel bietet `u1.xlarge` 4 vCPU und 16 GB RAM. Der Instanztyp kann später über **Edit** geändert werden; die Änderung wird beim nächsten Neustart der VM wirksam.
 
 ---
 
 ### Wie füge ich eine zusätzliche Disk hinzu?
 
-Bei der Erstellung klicken Sie im Schritt **Storage** auf **Add a disk**. Bei einer bestehenden VM öffnen Sie die Detailseite, klicken auf **Edit**, dann im Abschnitt **Storage** auf **Add a disk** und anschließend auf **Save**. Die VM wird neu gestartet. Die vollständige Anleitung, einschließlich der Formatierung im Betriebssystem, finden Sie [hier](./how-to/attach-extra-disk.md).
+Bei der Erstellung klicken Sie im Schritt **Storage** auf **Add a disk**. Bei einer bestehenden VM öffnen Sie die Detailseite, klicken auf **Edit**, dann im Abschnitt **Storage** auf **Add a disk** und anschließend auf **Save**. Die Disk erscheint erst nach dem nächsten Neustart in der VM: Klicken Sie auf **Restart**. Die vollständige Anleitung, einschließlich der Formatierung im Betriebssystem, finden Sie [hier](./how-to/attach-extra-disk.md).
 
 ---
 
@@ -67,8 +67,9 @@ Standardbenutzer je nach Image:
 | CentOS Stream, CloudLinux | `cloud-user` |
 | Oracle Linux | `opc` |
 | openSUSE | `opensuse` |
+| Windows Server | `Hikube` (RDP-Verbindung) |
 
-Der tatsächliche Benutzer wird immer auf der Detailseite unter **System Image** angezeigt.
+Der tatsächliche Benutzer wird auf der Detailseite unter **System Image** angezeigt. Bei einer VM mit benutzerdefiniertem Image ist er nicht bekannt: Die Seite zeigt „not available“ an, und der Block **SSH Connection** verweist auf das in Ihrem Image eingerichtete Konto.
 
 ---
 

@@ -72,7 +72,7 @@ Click the disk (or actions menu → **Preview**) to open its detail page:
 4. Click **Save**.
 
 :::warning VM restart
-Changing the storage restarts the VM ("The instance type or storage was modified. The instance will reboot"). Plan the operation accordingly.
+The disk only appears in the VM after its next restart. After you save, the console shows **Restart required**: click **Restart** in the **Actions** section of the VM page. Plan the operation accordingly.
 :::
 
 Once the operation is complete, the disk switches to the **In Use** status and its page shows the VM name in **Attached to**.
@@ -130,7 +130,7 @@ See also the [full troubleshooting guide](./troubleshooting.md).
    sudo umount /mnt/data
    sudo sed -i '\|/mnt/data|d' /etc/fstab
    ```
-2. Detach the disk: VM page → **Edit** → **Storage** section, click the volume's delete icon, confirm by entering its name, then click **Save**. The disk returns to the **Ready** status.
+2. Detach the disk: VM page → **Edit** → **Storage** section, click **Detach disk** on the volume, confirm with **Detach**, then click **Save**. The disk returns to the **Ready** status; inside the VM, the detachment only takes effect on the next restart: click **Restart**.
 3. Delete the disk: disk page → **Delete** (or actions menu → **Delete** in the list), enter its exact name in **Resource name to confirm**, then click **Permanently delete**.
 
 :::warning

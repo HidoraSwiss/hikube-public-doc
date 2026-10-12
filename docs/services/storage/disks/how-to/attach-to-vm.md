@@ -34,7 +34,7 @@ Chaque volume de la VM peut être **Nouveau** (la console crée le disque) ou **
 5. Cliquez sur **Enregistrer**.
 
 :::warning Redémarrage
-Une modification du stockage redémarre la VM. La console l'indique : « Le type d'instance ou le stockage a été modifié. L'instance va redémarrer, ce qui peut prendre plusieurs minutes. »
+Le disque n'est pris en compte qu'au prochain redémarrage de la VM. La console l'indique : « Le type d'instance, le stockage ou les GPU ont changé. Ces modifications ne prennent effet qu'au prochain redémarrage : redémarrez la VM pour les appliquer. » Cliquez sur **Redémarrer** dans la section **Actions** de la page de la VM.
 :::
 
 ## Attacher un disque à la création d'une VM
@@ -72,10 +72,10 @@ Utilisez l'UUID plutôt que le nom de périphérique (`/dev/vdb`) dans `/etc/fst
 
 1. Dans la VM, démontez le disque et retirez sa ligne de `/etc/fstab`.
 2. Ouvrez la page de la VM → **Modifier** → section **Stockage**.
-3. Cliquez sur l'icône de suppression du volume (**Supprimer le disque**), puis confirmez en saisissant le nom du disque.
-4. Cliquez sur **Enregistrer**. La VM redémarre.
+3. Cliquez sur **Détacher le disque** sur le volume, puis confirmez avec **Détacher** dans la boîte **Détacher `<nom>` ?**. Aucune saisie du nom n'est demandée.
+4. Cliquez sur **Enregistrer**, puis sur **Redémarrer** : le détachement ne prend effet qu'au prochain redémarrage de la VM ; d'ici là, le disque reste visible par le système.
 
-Le disque est **détaché**, pas supprimé : il reste dans **Infrastructure** → **Disques** avec le statut **Prêt**, et peut être attaché à une autre VM. Pour le supprimer définitivement, utilisez l'action **Supprimer** de la page du disque.
+Le disque est **détaché**, pas supprimé : ses données sont conservées et il reste dans **Infrastructure** → **Disques** avec le statut **Prêt**, et peut être attaché à une autre VM. Pour le supprimer définitivement, utilisez l'action **Supprimer** de la page du disque.
 
 :::note
 La suppression d'une VM détache aussi ses disques sans les supprimer. Pensez à supprimer les disques devenus inutiles : ils continuent de consommer le quota de stockage du projet.

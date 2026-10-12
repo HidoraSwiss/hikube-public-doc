@@ -126,7 +126,7 @@ Im Schritt **Configuration** des Assistenten bietet die Konsole drei Serien an. 
 - **Web- und Geschäftsanwendungen**: Serie **U**.
 - **Datenbanken, Caches, Analytik**: Serie **M**.
 
-Der Instanztyp lässt sich nachträglich über **Edit** ändern; die VM wird neu gestartet, um die Änderung anzuwenden.
+Der Instanztyp lässt sich nachträglich über **Edit** ändern; die Änderung wird beim nächsten Neustart der VM wirksam, den Sie mit **Restart** auslösen.
 :::
 
 ---
@@ -160,7 +160,7 @@ Ein eigenes Image (ISO oder QCOW2 von einer HTTPS-URL) importieren Sie, indem Si
 - **Öffentliche IP**: Option **Public IPv4 Address**, standardmäßig aktiviert. Die VM ist dann aus dem Internet erreichbar.
 - **Firewall**: Option **Enable Firewall**, standardmäßig aktiviert. Eingehend sind nur die angehakten Ports geöffnet (standardmäßig 22; optional 80, 443 oder ein beliebiger eigener Port). Ohne Firewall sind alle Ports der öffentlichen IP geöffnet.
 - **Private Netzwerke**: Die VM kann mit einem oder mehreren [VPCs](../networking/overview.md) verbunden werden, um privat mit anderen VMs des Projekts zu kommunizieren.
-- **SSH**: Die Detailseite zeigt den kopierfertigen Befehl `ssh <user>@<ip>` an. Der Zugriff erfolgt mit den im Assistenten eingegebenen öffentlichen SSH-Schlüsseln.
+- **SSH**: Die Detailseite zeigt den kopierfertigen Befehl `ssh <user>@<ip>` mit dem Standardbenutzer des Images an. Bei einem benutzerdefinierten Image ist dieser Benutzer nicht bekannt: Die Konsole weist darauf hin, statt einen Befehl anzuzeigen. Der Zugriff erfolgt mit den im Assistenten eingegebenen öffentlichen SSH-Schlüsseln.
 - **Windows**: Bei der Erstellung wird ein Administratorpasswort generiert und nur ein einziges Mal angezeigt. Der Zugriff erfolgt per RDP.
 
 :::note Serielle Konsole und VNC

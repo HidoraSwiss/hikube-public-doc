@@ -94,8 +94,8 @@ Das neue Skript wird ohne Neustart der VM gespeichert, aber nicht automatisch er
 
 ### 4. Das Skript erneut ausführen
 
-1. Klicken Sie bei einer VM im Status **Running** auf **Reload UserData**, im Abschnitt **Actions** der Detailseite oder im Menü **Actions** der Liste. Die Konsole zeigt **The UserData reload has been initiated.** an.
-2. Das Neuladen startet die VM nicht neu: Das Skript wird beim nächsten Start erneut ausgeführt. Klicken Sie auf **Restart**, um es sofort anzuwenden.
+1. Klicken Sie bei einer VM im Status **Running** auf **Reload UserData**, im Abschnitt **Actions** der Detailseite oder im Menü **Actions** der Liste. Die Konsole zeigt **UserData reloaded: restart the VM to apply it.** an.
+2. Das Neuladen startet die VM nicht neu: Das Skript wird beim nächsten Start erneut ausgeführt. Der Abschnitt **Actions** der Detailseite zeigt den Hinweis **Restart the VM to apply the UserData** mit einer Schaltfläche **Restart** an: Klicken Sie darauf, um das Skript sofort anzuwenden.
 
 Beim Neustart behandelt cloud-init die VM als neue Instanz: Es führt das gesamte Skript erneut aus (`runcmd`, `write_files`, `packages`…) und generiert die SSH-Hostschlüssel neu. Ihr SSH-Client meldet dann eine Änderung des Hostschlüssels; entfernen Sie den alten Eintrag mit `ssh-keygen -R <public-ip>`.
 

@@ -32,11 +32,13 @@ Nella sezione **Storage**, faccia clic su **Add a disk**. Compare un blocco **St
 
 **Disco esistente** (scheda **Existing**): in **Select an existing volume**, scelga un disco dati del progetto che non sia collegato ad alcuna VM. I dischi si creano anche in modo indipendente nel menu **Disks** (vedere [Dischi](../../storage/disks/quick-start.md)).
 
+Per rimuovere un volume aggiunto per errore prima di salvare, faccia clic su **Remove disk** (icona del cestino): non è ancora stato creato nulla.
+
 ### 3. Salvare
 
 Verifichi il riepilogo delle quote in cima alla pagina, quindi faccia clic su **Save**.
 
-La console mostra **Restart required**: la VM si riavvia per prendere in carico il nuovo disco. Attenda che torni allo stato **Running**. Il disco compare nella sezione **Storage & Disks** della pagina di dettaglio.
+La console mostra **Restart required**: il nuovo disco viene preso in carico solo al successivo riavvio della VM. Faccia clic su **Restart** nella sezione **Actions** della pagina di dettaglio, poi attenda che la VM torni allo stato **Running**. Il disco compare nella sezione **Storage & Disks** della pagina di dettaglio.
 
 :::note Disco aggiunto alla creazione
 Può anche aggiungere dischi direttamente alla creazione della VM, con **Add a disk** al passaggio **Storage** della procedura guidata. Prendono allora il nome della VM con un suffisso (`ma-vm-2`, `ma-vm-3`…).
@@ -109,7 +111,9 @@ sudo touch /mnt/data/test.txt && echo "OK"
 
 ## Scollegare un disco
 
-In **Edit** > **Storage**, faccia clic sull'icona di eliminazione del volume, confermi inserendone il nome, quindi faccia clic su **Save**. Il disco viene scollegato dalla VM (che si riavvia) e resta disponibile nel menu **Disks**. Prima lo smonti nel sistema operativo e rimuova la sua riga da `/etc/fstab`.
+Prima smonti il disco nel sistema operativo e rimuova la sua riga da `/etc/fstab`. Poi, in **Edit** > **Storage**, faccia clic su **Detach disk** sul volume, confermi con **Detach** nella finestra **Detach `<name>`?** e faccia clic su **Save**.
+
+Il disco non viene eliminato: i suoi dati sono conservati e resta disponibile nel menu **Disks**, da cui può collegarlo a un'altra VM. Lo scollegamento ha effetto solo al successivo riavvio della VM: fino ad allora il disco resta visibile al sistema. La console mostra **Restart required**; faccia clic su **Restart** per applicarlo. Il disco di sistema non si può scollegare.
 
 ## Per approfondire
 

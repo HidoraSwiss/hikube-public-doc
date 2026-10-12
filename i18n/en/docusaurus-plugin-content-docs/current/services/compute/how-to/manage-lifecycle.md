@@ -52,7 +52,9 @@ Click **Restart** and confirm in **Restart virtual machine?**. Applications are 
    - **Advanced Configuration**: SSH keys, cloud-init script, **Automatic Restart**.
 3. Check the quota summary at the top of the page and click **Save**.
 
-If the instance type, the disks or the GPUs change, the console shows **Restart required**: the VM restarts, which may take several minutes. Otherwise, it shows **Instance updated**.
+If the instance type, the disks or the GPUs change, the console shows **Restart required**: these changes only take effect on the next VM restart. Click **Restart** to apply them. Otherwise, it shows **Instance updated**.
+
+If saving is refused, the console shows **Incomplete form** and names the invalid fields.
 
 The name and the system image cannot be changed.
 

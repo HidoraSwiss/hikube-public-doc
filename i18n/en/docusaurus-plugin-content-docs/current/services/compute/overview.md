@@ -126,7 +126,7 @@ At the **Configuration** step of the wizard, the console offers three series. Ch
 - **Web and business applications**: **U** series.
 - **Databases, caches, analytics**: **M** series.
 
-The instance type can be changed afterwards from **Edit**; the VM restarts to apply the change.
+The instance type can be changed afterwards from **Edit**; the change takes effect on the next VM restart, which you trigger with **Restart**.
 :::
 
 ---
@@ -160,7 +160,7 @@ Importing a custom image (ISO or QCOW2 from an HTTPS URL) is done by creating a 
 - **Public IP**: **Public IPv4 Address** option, enabled by default. The VM is then reachable from the Internet.
 - **Firewall**: **Enable Firewall** option, enabled by default. Only the checked ports (22 by default; 80, 443 or any custom port optionally) are open for inbound traffic. Without the firewall, all ports of the public IP are open.
 - **Private networks**: the VM can be connected to one or more [VPCs](../networking/overview.md) to communicate privately with other VMs in the project.
-- **SSH**: the detail page shows the ready-to-copy `ssh <user>@<ip>` command. Access uses the public SSH keys entered in the wizard.
+- **SSH**: the detail page shows the ready-to-copy `ssh <user>@<ip>` command, with the image's default user. For a custom image, that user is not known: the console says so instead of showing a command. Access uses the public SSH keys entered in the wizard.
 - **Windows**: an administrator password is generated at creation and shown only once. Access is over RDP.
 
 :::note Serial console and VNC

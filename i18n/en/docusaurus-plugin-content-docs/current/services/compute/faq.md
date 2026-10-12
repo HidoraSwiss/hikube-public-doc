@@ -25,7 +25,7 @@ AlmaLinux, CentOS Stream, CloudLinux, Debian, openSUSE, Oracle Linux, Rocky Linu
 
 ### Can I use my own image?
 
-Yes, in two steps: first create a disk from your image URL (ISO or QCOW2, over HTTPS) in the **Disks** menu, then, in the VM creation wizard, choose **Existing** for the **System Disk (Boot)** and select that disk. The **Custom Image** card is greyed out (**Reserved**) in the VM wizard: it can only be used when creating a disk. See [Create a system disk from an image](../storage/disks/how-to/create-from-image.md).
+Yes, in two steps: first create a disk from your image URL (ISO or QCOW2, over HTTPS) in the **Disks** menu, then, in the VM creation wizard, choose **Existing** for the **System Disk (Boot)** and select that disk. In the VM wizard, the **Custom Image** card says so: "Create a disk first, then use it here." See [Create a system disk from an image](../storage/disks/how-to/create-from-image.md).
 
 ---
 
@@ -37,13 +37,13 @@ Yes, in two steps: first create a disk from your image URL (ISO or QCOW2, over H
 | `u1` | **Universal (U)** | 1:4 | Web servers, applications |
 | `m1` | **Memory (M)** | 1:8 | Databases, caches |
 
-For example, `u1.xlarge` offers 4 vCPU and 16 GB of RAM. The instance type can be changed later from **Edit**; the VM restarts.
+For example, `u1.xlarge` offers 4 vCPU and 16 GB of RAM. The instance type can be changed later from **Edit**; the change takes effect on the next VM restart.
 
 ---
 
 ### How do I add an extra disk?
 
-At creation, click **Add a disk** at the **Storage** step. On an existing VM, open the detail page, click **Edit**, then **Add a disk** in the **Storage** section, and **Save**. The VM restarts. The complete guide, including formatting in the OS, is [here](./how-to/attach-extra-disk.md).
+At creation, click **Add a disk** at the **Storage** step. On an existing VM, open the detail page, click **Edit**, then **Add a disk** in the **Storage** section, and **Save**. The disk only appears in the VM after its next restart: click **Restart**. The complete guide, including formatting in the OS, is [here](./how-to/attach-extra-disk.md).
 
 ---
 
@@ -67,8 +67,9 @@ Default users by image:
 | CentOS Stream, CloudLinux | `cloud-user` |
 | Oracle Linux | `opc` |
 | openSUSE | `opensuse` |
+| Windows Server | `Hikube` (RDP connection) |
 
-The actual user is always shown on the detail page, under **System Image**.
+The actual user is shown on the detail page, under **System Image**. For a VM booted from a custom image, it is not known: the page shows "not available" and the **SSH Connection** block asks you to use the account configured in your image.
 
 ---
 

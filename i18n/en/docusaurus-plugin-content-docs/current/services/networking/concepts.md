@@ -93,7 +93,7 @@ Use subsets of `172.16.0.0/12`, for example one `/24` per subnet (`172.16.0.0/24
 | Delete a VPC | Also deletes all its subnets. Refused as long as a VM is connected to it. |
 | Modify a VPC or a subnet | Not offered: create a new one. |
 
-Status of a VPC in the list: **Provisioning** while it is being set up, then **Ready** when it is usable.
+Status of a VPC in the list: **Provisioning** while it is being set up, then **Ready** when it is usable. A VPC whose last change could not be applied moves to **Error**; it can keep working with its previous configuration. The status is also shown on the **Subnets for `<vpc>`** page, and the list can be filtered by status (**Ready**, **Error**…).
 
 ---
 

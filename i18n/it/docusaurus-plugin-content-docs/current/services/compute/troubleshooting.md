@@ -26,10 +26,17 @@ Se la console indica che le quote del progetto non sono disponibili, la creazion
 | Messaggio | Soluzione |
 |---------|----------|
 | **An instance with this name already exists.** | Scelga un altro nome. |
-| **Min. 20 GB required** / **Min. 50 GB required** | Aumenti **Size (GB)**: minimo 20 GB, 50 GB per Windows. |
-| Messaggio che indica una dimensione minima per Oracle Linux | Il disco di sistema Oracle Linux richiede almeno 40 GB. |
+| **Min. 20 GB required**, **Min. 28 GB required**, **Min. 40 GB required** o **This image needs a disk of at least … GB** | Aumenti **Size (GB)**: minimo 20 GB; per il disco di sistema, 28 GB con Windows Server e 40 GB con Oracle Linux. |
 | **A system image is required for a new disk** | Selezioni una scheda in **Operating System**. |
 | **Invalid format. Expected: `<algorithm> <base64-key> [comment]`** | Incolli la chiave **pubblica** completa (file `.pub`), su una sola riga. |
+
+---
+
+### Il salvataggio delle modifiche di una VM viene rifiutato
+
+**Causa**: un campo della pagina **Edit** non è valido, ad esempio un nuovo disco sotto i 20 GB o un volume **Existing** senza disco selezionato.
+
+**Soluzione**: la console mostra **Incomplete form** con il messaggio di ogni campo in errore. Corregga questi campi, poi faccia di nuovo clic su **Save**. I dischi già collegati alla VM non sono soggetti alle regole di un disco nuovo (nome, dimensione minima).
 
 ---
 
@@ -70,7 +77,7 @@ Se la console indica che le quote del progetto non sono disponibili, la creazion
 
 1. Utilizzi l'utente indicato nel blocco **SSH Connection** (oppure in **System Image** > **User**).
 2. Verifichi che la chiave pubblica corrispondente alla sua chiave privata compaia in **Advanced Configuration** > **SSH Keys**.
-3. Se ha appena aggiunto la chiave tramite **Edit**, scelga **Reload user-data** nella finestra di dialogo **SSH keys changed**, oppure avvii **Reload UserData** dalla sezione **Actions**, poi **Restart**: la chiave viene installata solo al riavvio.
+3. Se ha appena aggiunto la chiave tramite **Edit**, scelga **Reload user-data** nella finestra di dialogo **SSH keys changed**, oppure avvii **Reload UserData** dalla sezione **Actions**, poi **Restart**: la chiave viene installata solo al riavvio. Questo riavvio rigenera anche le chiavi host SSH: se il suo client segnala una chiave cambiata, rimuova la vecchia voce con `ssh-keygen -R <ip-pubblico>`.
 
 ---
 
@@ -80,7 +87,7 @@ Se la console indica che le quote del progetto non sono disponibili, la creazion
 
 **Soluzione**:
 
-1. Dopo **Save**, la console mostra **Restart required**: attenda che la VM torni allo stato **Running**.
+1. Dopo **Save**, la console mostra **Restart required**: il disco viene aggiunto solo al successivo riavvio. Faccia clic su **Restart** nella sezione **Actions**, poi attenda che la VM torni allo stato **Running**.
 2. Verifichi il disco nella sezione **Storage & Disks** della pagina di dettaglio.
 3. Nella VM, elenchi i dispositivi: un nuovo disco compare senza partizione né punto di montaggio.
    ```bash

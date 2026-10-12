@@ -94,8 +94,8 @@ Le nouveau script est enregistré, sans redémarrage de la VM, mais il n'est pas
 
 ### 4. Rejouer le script
 
-1. Sur une VM au statut **Actif**, cliquez sur **Recharger UserData**, depuis la section **Actions** de la page de détail ou depuis le menu **Actions** de la liste. La console affiche **Le rechargement du UserData a été initié.**
-2. Le rechargement ne redémarre pas la VM : le script est rejoué au démarrage suivant. Cliquez sur **Redémarrer** pour l'appliquer tout de suite.
+1. Sur une VM au statut **Actif**, cliquez sur **Recharger UserData**, depuis la section **Actions** de la page de détail ou depuis le menu **Actions** de la liste. La console affiche **UserData rechargé : redémarrez la VM pour l'appliquer.**
+2. Le rechargement ne redémarre pas la VM : le script est rejoué au démarrage suivant. La section **Actions** de la page de détail affiche l'encart **Redémarrez la VM pour appliquer le UserData**, avec un bouton **Redémarrer** : cliquez dessus pour appliquer le script tout de suite.
 
 Au redémarrage, cloud-init traite la VM comme une nouvelle instance : il réexécute tout le script (`runcmd`, `write_files`, `packages`…) et régénère les clés d'hôte SSH. Votre client SSH signale alors un changement de clé d'hôte ; supprimez l'ancienne entrée avec `ssh-keygen -R <ip-publique>`.
 

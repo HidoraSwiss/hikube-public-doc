@@ -31,7 +31,7 @@ They are **detached** and kept, with their data. They remain in the **Storage Di
 
 ### Can the size of a disk be reduced?
 
-No. "Size reduction is not supported": a disk can only be expanded. To reduce the space used, create a smaller disk, copy the data to it from the VM, then delete the old one.
+No. "Size reduction is not supported": a disk can only be expanded. To reduce the space used, create a smaller disk, copy the data to it from the VM, then delete the old one. Through the API, a reduction is refused with code `30200`, including when it comes through a VM update.
 
 ---
 
@@ -50,9 +50,9 @@ In both cases, the RTO is under 5 minutes.
 
 ---
 
-### Why is the minimum size 50 GB for Windows?
+### What is the minimum size of a system disk?
 
-A Windows system disk requires at least 50 GB. The console automatically applies this minimum when you select a Windows image.
+It depends on the image: 40 GB for Oracle Linux, 28 GB for Windows Server, 20 GB for the other images. The console applies this minimum automatically when you select the image ("This image needs a disk of at least … GB").
 
 ---
 

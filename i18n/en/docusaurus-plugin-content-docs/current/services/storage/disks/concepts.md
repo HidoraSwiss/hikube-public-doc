@@ -67,8 +67,8 @@ The **Source** step of the wizard offers two choices:
   - a **cloud image** from the catalog (OS, then **Version**);
   - or **Custom Image**: an **Image URL (ISO/QCOW2)**. The URL must use HTTPS; private or local IP addresses are rejected.
 
-:::note Windows
-A Windows system disk must be at least **50 GB**. Its estimated cost includes the Windows license.
+:::note Minimum size by image
+A system disk must be at least **40 GB** for Oracle Linux and **28 GB** for Windows Server; 20 GB is enough for the other images. The console raises the size to that minimum when you pick the image. The estimated cost of a Windows disk includes the Windows license.
 :::
 
 ---
@@ -96,7 +96,7 @@ The source, replication and encryption are chosen at creation. Only the **size**
 
 ## Size and quota
 
-- Minimum size: **20 GB** (50 GB for a Windows system disk).
+- Minimum size: **20 GB**; for a system disk, 40 GB with Oracle Linux and 28 GB with Windows Server.
 - The size is limited by the project's **storage quota**; the wizard displays the **Estimated project usage** gauge.
 - A disk can be **expanded**, never shrunk (see [Resize a disk](./how-to/resize.md)).
 

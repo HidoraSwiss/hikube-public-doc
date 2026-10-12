@@ -45,11 +45,11 @@ The **Summary** shows **Public IP**, **Firewall** and **Open Ports** before depl
 2. In **Network & Security**, adjust **Public IPv4 Address**, **Enable Firewall** and the **Allowed Ports**.
 3. Click **Save**.
 
-These changes apply within a few seconds, without restarting the VM, unlike a change of instance type, disks or GPUs.
+These changes apply within a few seconds, without restarting the VM. A change of instance type, disks or GPUs, by contrast, only takes effect on the next restart.
 
 ### 4. Connect the VM to a private network (optional)
 
-Under **VPC Networks (Secondary)**, check a VPC, then one or more of its **Subnets**. Each subnet adds a private interface to the VM, which the OS does not configure automatically (see [Connect a VM to a VPC](../../networking/how-to/attach-vm-to-vpc.md#4-check-in-the-os)). The **+ VPC** button creates a VPC without leaving the screen, and **Add subnet** creates a subnet in the checked VPC. Details are in [Networking: quick start](../../networking/quick-start.md).
+Under **VPC Networks (Secondary)**, check a VPC, then one or more of its **Subnets**. Each subnet adds a private interface to the VM, which the OS does not configure automatically (see [Connect a VM to a VPC](../../networking/how-to/attach-vm-to-vpc.md#4-check-in-the-os)). On a Debian or Ubuntu image, the console reminds you with the **Manual setup required on Debian and Ubuntu** warning. The **+ VPC** button creates a VPC without leaving the screen, and **Add subnet** creates a subnet in the checked VPC. Details are in [Networking: quick start](../../networking/quick-start.md).
 
 ## Verification
 

@@ -72,7 +72,7 @@ Faccia clic sul disco (oppure menu delle azioni → **Preview**) per aprirne la 
 4. Faccia clic su **Save**.
 
 :::warning Riavvio della VM
-La modifica dello storage riavvia la VM («The instance type or storage was modified. The instance will reboot»). Pianifichi l'operazione di conseguenza.
+Il disco compare nella VM solo dopo il suo successivo riavvio. Dopo il salvataggio, la console mostra **Restart required**: faccia clic su **Restart** nella sezione **Actions** della pagina della VM. Pianifichi l'operazione di conseguenza.
 :::
 
 Una volta terminata l'operazione, il disco passa allo stato **In Use** e la sua pagina mostra il nome della VM in **Attached to**.
@@ -130,7 +130,7 @@ Vedere anche la [risoluzione dei problemi completa](./troubleshooting.md).
    sudo umount /mnt/data
    sudo sed -i '\|/mnt/data|d' /etc/fstab
    ```
-2. Scolleghi il disco: pagina della VM → **Edit** → sezione **Storage**, faccia clic sull'icona di eliminazione del volume, confermi inserendo il suo nome, quindi faccia clic su **Save**. Il disco torna allo stato **Ready**.
+2. Scolleghi il disco: pagina della VM → **Edit** → sezione **Storage**, faccia clic su **Detach disk** sul volume, confermi con **Detach**, quindi faccia clic su **Save**. Il disco torna allo stato **Ready**; nella VM lo scollegamento ha effetto solo al successivo riavvio: faccia clic su **Restart**.
 3. Elimini il disco: pagina del disco → **Delete** (oppure menu delle azioni → **Delete** nell'elenco), inserisca il suo nome esatto in **Resource name to confirm**, quindi faccia clic su **Permanently delete**.
 
 :::warning

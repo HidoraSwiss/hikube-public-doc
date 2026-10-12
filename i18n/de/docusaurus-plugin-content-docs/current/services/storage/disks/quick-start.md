@@ -72,7 +72,7 @@ Klicken Sie auf die Disk (oder Aktionsmenü → **Preview**), um ihre Detailseit
 4. Klicken Sie auf **Save**.
 
 :::warning Neustart der VM
-Die Änderung des Speichers startet die VM neu („The instance type or storage was modified. The instance will reboot“). Planen Sie den Vorgang entsprechend.
+Die Disk erscheint erst nach dem nächsten Neustart in der VM. Nach dem Speichern zeigt die Konsole **Restart required** an: Klicken Sie im Abschnitt **Actions** der VM-Seite auf **Restart**. Planen Sie den Vorgang entsprechend.
 :::
 
 Nach Abschluss des Vorgangs wechselt die Disk in den Status **In Use** und ihre Seite zeigt den Namen der VM unter **Attached to** an.
@@ -130,7 +130,7 @@ Siehe auch die [vollständige Fehlerbehebung](./troubleshooting.md).
    sudo umount /mnt/data
    sudo sed -i '\|/mnt/data|d' /etc/fstab
    ```
-2. Trennen Sie die Disk: Seite der VM → **Edit** → Abschnitt **Storage**, klicken Sie auf das Löschsymbol des Volumes, bestätigen Sie durch Eingabe seines Namens und klicken Sie dann auf **Save**. Die Disk kehrt in den Status **Ready** zurück.
+2. Trennen Sie die Disk: Seite der VM → **Edit** → Abschnitt **Storage**, klicken Sie am Volume auf **Detach disk**, bestätigen Sie mit **Detach** und klicken Sie dann auf **Save**. Die Disk kehrt in den Status **Ready** zurück; in der VM wird das Trennen erst beim nächsten Neustart wirksam: Klicken Sie auf **Restart**.
 3. Löschen Sie die Disk: Seite der Disk → **Delete** (oder Aktionsmenü → **Delete** in der Liste), geben Sie ihren genauen Namen in **Resource name to confirm** ein und klicken Sie dann auf **Permanently delete**.
 
 :::warning

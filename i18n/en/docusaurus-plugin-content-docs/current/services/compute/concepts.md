@@ -69,7 +69,7 @@ Each disk created with the VM is configured in the **Storage** step of the wizar
 | Parameter | Values | Notes |
 |-----------|---------|-----------|
 | **Volume Name** | Generated from the VM name (`ma-vm`, `ma-vm-2`…) | Editable |
-| **Size (GB)** | 20 GB minimum, 4096 GB maximum | 50 GB minimum for Windows, 40 GB for Oracle Linux |
+| **Size (GB)** | 20 GB minimum, 4096 GB maximum | System disk: 40 GB minimum for Oracle Linux, 28 GB for Windows Server; the console raises the size to that minimum when you pick the image |
 | **Replication Type** | **Asynchronous Replication** (Recommended) or **Synchronous Replication** | See below |
 | **Disk Encryption** | Enabled / disabled | LUKS encryption of data at rest |
 
@@ -112,7 +112,7 @@ stateDiagram-v2
     ArretEnCours --> Arrete
     Arrete --> DemarrageEnCours: Start
     DemarrageEnCours --> Actif
-    Actif --> RedemarrageEnCours: Restart / change of instance type, disks or GPUs
+    Actif --> RedemarrageEnCours: Restart
     RedemarrageEnCours --> Actif
     Actif --> SuppressionEnCours: Delete
     Arrete --> SuppressionEnCours: Delete
@@ -130,12 +130,14 @@ The **Automatic Restart** option (**Configuration** step of the wizard, or **Adv
 | Item | Editable | Effect |
 |---------|-----------|-------|
 | Name, system image | No | — |
-| Instance type | Yes | VM restart |
-| Disks (add, detach) | Yes | VM restart |
-| GPU | Yes | VM restart |
+| Instance type | Yes | Applied on the next VM restart |
+| Disks (add, detach) | Yes | Applied on the next VM restart; a detached disk stays in **Disks** with its data |
+| GPU | Yes | Applied on the next VM restart |
 | Public IP, firewall, ports, VPC | Yes | Applied without restart |
 | SSH keys | Yes | Offer to reload the user-data, applied at the next restart |
 | cloud-init script, automatic restart | Yes | Script replayed after **Reload UserData** and a restart |
+
+After you save a change of instance type, disks or GPUs, the console shows **Restart required**: restart the VM to apply it.
 
 ---
 

@@ -8,7 +8,7 @@ Die Hikube-Konsole bietet sofort einsatzbereite **Windows Server**-Images. Diese
 
 ## Voraussetzungen
 
-- Ein Hikube-Konto und ein Projekt mit mindestens 4 vCPU, 16 GB Arbeitsspeicher und 50 GB verfügbarem Speicher
+- Ein Hikube-Konto und ein Projekt mit mindestens 4 vCPU, 16 GB Arbeitsspeicher und 28 GB verfügbarem Speicher
 - Ein RDP-Client (Remotedesktopverbindung unter Windows, Windows App unter macOS, `xfreerdp` oder Remmina unter Linux)
 - Ein Passwortmanager, um das Administratorpasswort aufzubewahren
 
@@ -31,7 +31,7 @@ Die Windows-Lizenz wird nach der Anzahl der vCPU abgerechnet. Sie ist in den ges
 Im Schritt **Storage**:
 
 1. Wählen Sie unter **Operating System** die Karte **windows-server** und die Version **2022** oder **2025**.
-2. Setzen Sie **Size (GB)** auf mindestens `50`: Das ist das Minimum für Windows (Meldung **Min. 50 GB required** darunter).
+2. Prüfen Sie **Size (GB)**: Bei der Wahl von Windows Server hebt die Konsole den Wert auf `28` an, das Minimum dieses Images (Meldung **Min. 28 GB required** darunter). Planen Sie mehr ein, damit Platz für Windows-Updates und Ihre Anwendungen bleibt.
 3. Wählen Sie den **Replication Type** und aktivieren Sie bei Bedarf **Disk Encryption**.
 4. Klicken Sie auf **Next**.
 
@@ -49,7 +49,7 @@ Das Feld **Cloud-Init script (User Data)** wird für Windows nicht angeboten.
 
 Klicken Sie im Schritt **Summary** auf **Create instance**. Der Dialog **Windows Instance Credentials** öffnet sich und zeigt an:
 
-- **Default Username**;
+- **Default Username** (`Hikube`);
 - **Administrator Password**.
 
 Kopieren Sie beide Werte mit den Kopierschaltflächen, speichern Sie sie in Ihrem Passwortmanager und klicken Sie dann auf **I copied the password and continue**.

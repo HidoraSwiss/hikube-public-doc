@@ -34,7 +34,7 @@ Ogni volume della VM può essere **New** (la console crea il disco) o **Existing
 5. Faccia clic su **Save**.
 
 :::warning Riavvio
-Una modifica dello storage riavvia la VM. La console lo indica: «The instance type or storage was modified. The instance will reboot, which may take several minutes.»
+Il disco viene preso in carico solo al successivo riavvio della VM. La console lo indica: «The instance type, storage or GPUs changed. These changes only take effect on the next restart: restart the VM to apply them.» Faccia clic su **Restart** nella sezione **Actions** della pagina della VM.
 :::
 
 ## Collegare un disco alla creazione di una VM
@@ -72,10 +72,10 @@ Utilizzi l'UUID anziché il nome del dispositivo (`/dev/vdb`) in `/etc/fstab`: l
 
 1. Nella VM, smonti il disco e rimuova la relativa riga da `/etc/fstab`.
 2. Apra la pagina della VM → **Edit** → sezione **Storage**.
-3. Faccia clic sull'icona di eliminazione del volume (**Remove disk**), quindi confermi inserendo il nome del disco.
-4. Faccia clic su **Save**. La VM si riavvia.
+3. Faccia clic su **Detach disk** sul volume, quindi confermi con **Detach** nella finestra **Detach `<name>`?**. Non è richiesto di inserire il nome.
+4. Faccia clic su **Save**, poi su **Restart**: lo scollegamento ha effetto solo al successivo riavvio della VM; fino ad allora il disco resta visibile al sistema.
 
-Il disco viene **scollegato**, non eliminato: resta in **Infrastructure** → **Disks** con lo stato **Ready** e può essere collegato a un'altra VM. Per eliminarlo definitivamente, utilizzi l'azione **Delete** della pagina del disco.
+Il disco viene **scollegato**, non eliminato: i suoi dati sono conservati e resta in **Infrastructure** → **Disks** con lo stato **Ready** e può essere collegato a un'altra VM. Per eliminarlo definitivamente, utilizzi l'azione **Delete** della pagina del disco.
 
 :::note
 L'eliminazione di una VM scollega anche i suoi dischi senza eliminarli. Si ricordi di eliminare i dischi non più necessari: continuano a consumare la quota di storage del progetto.
