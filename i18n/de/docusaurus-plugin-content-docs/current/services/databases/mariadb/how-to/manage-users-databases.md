@@ -23,20 +23,25 @@ Die MariaDB-Konsole hat keine eigene Registerkarte für Datenbanken: Eine Datenb
 ### 1. Einen Benutzer anlegen
 
 1. Klicken Sie im Abschnitt **Users** auf **Create a user**.
-2. Geben Sie den **Username** ein: Kleinbuchstaben, Ziffern und Bindestriche, beginnend mit einem Buchstaben (zum Beispiel `report-reader`).
-3. Belassen Sie **Global Role (Optional)** auf **No global role**.
-4. Klicken Sie unter **Specific Access (Databases)** für jede Datenbank auf **Add**:
-   - **Database name**: zum Beispiel `analytics` (Kleinbuchstaben, Ziffern und Bindestriche; kein Unterstrich);
+2. Geben Sie den **Username** ein: 3 bis 16 Zeichen, Kleinbuchstaben, Ziffern und Bindestriche, beginnend mit einem Buchstaben und endend mit einem Buchstaben oder einer Ziffer (zum Beispiel `report-reader`).
+3. Klicken Sie unter **Specific Access (Databases)** für jede Datenbank auf **Add**:
+   - **Database name**: zum Beispiel `analytics` (Kleinbuchstaben, Ziffern und Bindestriche; kein Unterstrich; die Systemdatenbanken `mysql`, `information_schema`, `performance_schema` und `sys` werden abgelehnt);
    - **Rights**: **Administrator (Admin)** oder **Read-only**.
-5. Klicken Sie auf **Create user**.
+4. Klicken Sie auf **Create user**.
 
-Der Bildschirm „Generated password“ zeigt das generierte Passwort an.
+Eine globale Rolle gibt es nicht: Der Benutzer hat nur auf die aufgeführten Datenbanken Zugriff. Ohne Zugriff zeigt die Konsole „No access configured: the user has no rights on any database.“ an; der Benutzer kann so angelegt werden und seine Zugriffe später erhalten.
+
+Der Bildschirm „User created successfully!“ zeigt das generierte Passwort an.
 
 :::warning
 Kopieren Sie dieses Passwort sofort und bewahren Sie es sicher auf: Es wird nach dem Verlassen dieses Bildschirms nicht mehr angezeigt.
 :::
 
-Klicken Sie anschließend auf **Done**.
+Klicken Sie anschließend auf **Done and return to cluster**.
+
+:::tip
+Die im Assistenten zur Cluster-Erstellung angelegten Benutzer erhalten ihre Rolle auf der im Schritt **Users** angegebenen **Database**.
+:::
 
 ### 2. Eine Datenbank erstellen
 
@@ -46,9 +51,13 @@ Gewähren Sie einem Benutzer Zugriff auf den Namen der neuen Datenbank (Schritt 
 
 1. Öffnen Sie das Menü **Actions** des Benutzers und wählen Sie **Manage Access**.
 2. Fügen Sie mit **Add** Zugriffe hinzu, ändern Sie die **Rights** oder entfernen Sie eine Zeile.
-3. Klicken Sie auf **Save**.
+3. Klicken Sie auf **Save**. Die Meldung „Access updated“ bestätigt das Speichern.
 
 Der Benutzername kann nicht geändert werden.
+
+:::warning Vor der Konsole v1.3.0 erstellte Benutzer
+Die vor der Konsole v1.3.0 im Assistenten zur Cluster-Erstellung angelegten Benutzer haben eine Rolle auf der Systemdatenbank `mysql` erhalten. In **Manage Access** wird diese Zeile als Fehler angezeigt und verhindert das Speichern: Entfernen Sie sie, fügen Sie bei Bedarf die Anwendungsdatenbank des Benutzers hinzu und klicken Sie dann auf **Save**.
+:::
 
 ### 4. Das Passwort eines Benutzers erneuern
 
@@ -81,7 +90,7 @@ CREATE TABLE test (id INT);
 
 ## Überprüfung
 
-Die Benutzerliste zeigt für jeden Benutzer seine **Role** und die zugänglichen **Databases** mit dem zugehörigen Recht an (zum Beispiel `analytics (readonly)` oder `analytics (admin)`).
+Die Spalte **Databases** der Benutzerliste zeigt für jeden Benutzer die zugänglichen Datenbanken mit der zugehörigen Rolle an (zum Beispiel `analytics (Read-only)` oder `analytics (Administrator)`), oder **None**.
 
 ## Weiterführende Informationen
 

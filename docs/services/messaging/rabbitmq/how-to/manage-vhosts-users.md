@@ -14,7 +14,7 @@ Ce guide explique comment ajouter et supprimer des virtual hosts (vhosts), crée
 ## Ajouter un vhost
 
 1. Sur la page du cluster, dans la section **VHosts**, cliquez sur **Ajouter un VHost**.
-2. Dans la fenêtre **Créer un VHost**, saisissez le **Nom du VHost** (lettres, chiffres, `_`, `.` et `-`, par exemple `production`).
+2. Dans la fenêtre **Créer un VHost**, saisissez le **Nom du VHost** (minuscules, chiffres et tirets, en commençant par une lettre et en terminant par une lettre ou un chiffre, par exemple `production`).
 3. Cliquez sur **Créer**. Le message « VHost créé » confirme l'opération et le vhost apparaît dans la liste.
 
 ## Supprimer un vhost
@@ -30,7 +30,7 @@ La suppression d'un vhost supprime ses exchanges, queues et messages. Le vhost p
 ## Créer un utilisateur
 
 1. Dans la section **Utilisateurs**, cliquez sur **Créer un utilisateur**.
-2. Saisissez le **Nom d'utilisateur** (lettres, chiffres, `_`, `.` et `-`).
+2. Saisissez le **Nom d'utilisateur** : 3 à 16 caractères, minuscules, chiffres et tirets, en commençant par une lettre et en terminant par une lettre ou un chiffre (par exemple `orders-consumer`). Certains noms, comme `admin` ou `root`, sont réservés.
 3. Dans **Accès spécifiques (VHosts)**, cliquez sur **Ajouter** pour chaque vhost auquel l'utilisateur doit accéder, puis choisissez :
    - le **Nom du VHost** dans la liste ;
    - les **Droits** : **Administrateur (Admin)** ou **Lecture seule (Read-only)**.

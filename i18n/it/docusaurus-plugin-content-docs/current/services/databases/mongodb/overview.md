@@ -50,8 +50,8 @@ Quando l'opzione **Sharding (Distributed Topology)** è attivata alla creazione,
 | Funzione | Disponibile |
 |----------|------------|
 | Creazione di un cluster (versione 6.0, 7.0 o 8.0, preset, dimensione del disco, 1, 3 o 5 repliche, accesso esterno, sharding) | Sì |
-| Utenti, ruolo globale e accesso per database (admin / sola lettura), rotazione della password | Sì |
-| Modifica della versione, della dimensione del disco e dell'accesso esterno | Sì |
+| Utenti e accesso per database (admin / sola lettura), rotazione della password | Sì |
+| Aggiornamento di versione, aumento della dimensione del disco, modifica dell'accesso esterno | Sì |
 | Modifica del preset, del numero di repliche o dello sharding dopo la creazione | No, [contatti il supporto](mailto:support@hidora.io) |
 | Backup e ripristino | No, [contatti il supporto](mailto:support@hidora.io) |
 

@@ -14,7 +14,7 @@ Diese Anleitung erklärt, wie Sie in der [Hikube-Konsole](https://console.hikube
 ## Einen VHost hinzufügen
 
 1. Klicken Sie auf der Seite des Clusters im Abschnitt **VHosts** auf **Add a VHost**.
-2. Geben Sie im Fenster **Create a VHost** den **VHost Name** ein (Buchstaben, Ziffern, `_`, `.` und `-`, zum Beispiel `production`).
+2. Geben Sie im Fenster **Create a VHost** den **VHost Name** ein (Kleinbuchstaben, Ziffern und Bindestriche, beginnend mit einem Buchstaben und endend mit einem Buchstaben oder einer Ziffer, zum Beispiel `production`).
 3. Klicken Sie auf **Create**. Die Meldung „VHost created“ bestätigt den Vorgang und der VHost erscheint in der Liste.
 
 ## Einen VHost löschen
@@ -30,7 +30,7 @@ Das Löschen eines VHosts entfernt seine Exchanges, Queues und Nachrichten. Der 
 ## Einen Benutzer erstellen
 
 1. Klicken Sie im Abschnitt **Users** auf **Create a user**.
-2. Geben Sie den **Username** ein (Buchstaben, Ziffern, `_`, `.` und `-`).
+2. Geben Sie den **Username** ein: 3 bis 16 Zeichen, Kleinbuchstaben, Ziffern und Bindestriche, beginnend mit einem Buchstaben und endend mit einem Buchstaben oder einer Ziffer (zum Beispiel `orders-consumer`). Einige Namen, etwa `admin` oder `root`, sind reserviert.
 3. Klicken Sie unter **Specific Access (VHosts)** für jeden VHost, auf den der Benutzer zugreifen soll, auf **Add** und wählen Sie dann:
    - den **VHost name** aus der Liste;
    - die **Rights**: **Administrator (Admin)** oder **Read-only**.

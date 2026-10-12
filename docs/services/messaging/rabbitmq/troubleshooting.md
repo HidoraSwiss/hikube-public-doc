@@ -7,12 +7,18 @@ title: Dépannage
 
 ### Le cluster reste « En création » ou passe en « Erreur »
 
-**Cause** : le provisionnement est en cours, ou il a échoué (par exemple par manque de ressources disponibles).
+**Cause** : le provisionnement est en cours, ou la plateforme n'a pas pu appliquer la création du cluster ou sa dernière modification (par exemple par manque de ressources disponibles). Dans ce second cas, le statut passe à **Erreur** ; après une modification, le cluster peut continuer à fonctionner avec sa configuration précédente.
 
 **Solution** :
 
 1. Patientez quelques minutes : la page de détail et la liste se mettent à jour automatiquement.
-2. Si le statut reste **En création** anormalement longtemps ou passe à **Erreur** / **Échec**, [contactez le support](mailto:support@hidora.io) en indiquant le nom du projet, le nom du cluster et son identifiant (affiché sous le nom du cluster, avec un bouton de copie).
+2. Si le statut reste **En création** anormalement longtemps ou passe à **Erreur**, [contactez le support](mailto:support@hidora.io) en indiquant le nom du projet, le nom du cluster et son identifiant (affiché sous le nom du cluster, avec un bouton de copie).
+
+### Un vhost ou un utilisateur est refusé
+
+**Cause** : son nom ne respecte pas les règles de nommage. Les noms de vhost et d'utilisateur n'acceptent que des minuscules, des chiffres et des tirets, et doivent commencer par une lettre et se terminer par une lettre ou un chiffre : `my_vhost`, `App.User` ou `/prod` sont refusés.
+
+**Solution** : choisissez un nom conforme, par exemple `prod` ou `app-user`. Voir [Concepts](./concepts.md#limites).
 
 ### « Quota de stockage dépassé pour ce projet » dans l'assistant
 

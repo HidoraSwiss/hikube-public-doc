@@ -56,7 +56,7 @@ graph TD
 |----------|------------|
 | Création d'un cluster (version 7 ou 8, préconfiguration, 1 à 8 réplicas, taille du volume, réseau public, authentification) | Oui |
 | Rotation du mot de passe | Oui |
-| Modification de la version, de la préconfiguration, de la taille du volume, de l'accès externe et de l'authentification | Oui |
+| Montée de version, changement de préconfiguration, augmentation de la taille du volume, modification de l'accès externe et de l'authentification | Oui |
 | Modification du nombre de réplicas après création | Non, [contactez le support](mailto:support@hidora.io) |
 
 ---

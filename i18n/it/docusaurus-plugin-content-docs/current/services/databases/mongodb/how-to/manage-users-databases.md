@@ -23,29 +23,37 @@ La console MongoDB non ha una scheda dedicata ai database: i diritti si definisc
 ### 1. Creare un utente
 
 1. Nella sezione **Users**, faccia clic su **Create a user**.
-2. Inserisca lo **Username**: minuscole, cifre e trattini, iniziando con una lettera (ad esempio `report-reader`).
-3. Definisca almeno un ruolo:
-   - **Global Role (Optional)**: lasci **No global role** per limitare l'utente a determinati database;
-   - **Specific Access (Databases)**: faccia clic su **Add**, inserisca il **Database name** (ad esempio `analytics`) e scelga i **Rights** **Administrator (Admin)** o **Read-only**.
+2. Inserisca lo **Username**: da 3 a 16 caratteri, minuscole, cifre e trattini, iniziando con una lettera e terminando con una lettera o una cifra (ad esempio `report-reader`).
+3. In **Specific Access (Databases)**, faccia clic su **Add** per ogni database:
+   - **Database name**: ad esempio `analytics` (minuscole, cifre e trattini; i database di sistema `admin`, `local` e `config` sono rifiutati);
+   - **Rights**: **Administrator (Admin)** o **Read-only**.
 4. Faccia clic su **Create user**.
 
-Se non è definito alcun ruolo, la console mostra «Please assign at least one role (global or specific) to the user.» e il pulsante resta inattivo.
+Un utente MongoDB deve avere almeno un accesso: senza accesso, la console mostra «Please grant access to at least one database.» e il pulsante resta inattivo. Non esiste un ruolo globale: l'utente ha accesso solo ai database elencati.
 
-La schermata «Generated password» mostra la password generata.
+La schermata «User created successfully!» mostra la password generata.
 
 :::warning
 Copi subito questa password e la conservi in un luogo sicuro: non verrà più mostrata dopo aver lasciato questa schermata.
 :::
 
-Faccia quindi clic su **Done**.
+Faccia quindi clic su **Done and return to cluster**.
+
+:::tip
+Gli utenti dichiarati nella procedura guidata di creazione del cluster ricevono il loro ruolo sul **Database** indicato al passaggio **Users**.
+:::
 
 ### 2. Modificare i diritti di un utente
 
 1. Apra il menu **Actions** dell'utente e scelga **Manage Access**.
-2. Aggiunga accessi con **Add**, modifichi i **Rights** o rimuova una riga. Deve restare almeno un ruolo.
-3. Faccia clic su **Save**.
+2. Aggiunga accessi con **Add**, modifichi i **Rights** o rimuova una riga. Deve restare almeno un accesso.
+3. Faccia clic su **Save**. Il messaggio «Access updated» conferma il salvataggio.
 
 Il nome utente non può essere modificato.
+
+:::warning Utenti creati prima della console v1.3.0
+Gli utenti dichiarati nella procedura guidata di creazione del cluster prima della console v1.3.0 hanno ricevuto un ruolo sul database di sistema `admin`. In **Manage Access**, questa riga appare in errore e impedisce il salvataggio: la rimuova, aggiunga se necessario il database applicativo dell'utente, quindi faccia clic su **Save**.
+:::
 
 ### 3. Rinnovare la password di un utente
 
@@ -64,8 +72,10 @@ Apra il menu **Actions** dell'utente, scelga **Delete user**, inserisca il suo n
 ### 5. Testare la connessione
 
 ```bash
-mongosh "mongodb://<host>:27017/analytics" --username report-reader --authenticationDatabase admin
+mongosh "mongodb://<host>:27017/analytics?directConnection=true&authSource=admin" --username report-reader
 ```
+
+Su un replica set, `<host>` è l'indirizzo di uno dei **Replica set rs0 members** elencati nel riquadro **Network and Connection**.
 
 ```javascript
 // Deve riuscire
@@ -78,7 +88,7 @@ db.events.insertOne({ test: true })
 
 ## Verifica
 
-L'elenco degli utenti mostra, per ciascuno, il suo **Role** e i **Databases** accessibili con il relativo diritto (ad esempio `analytics (readonly)` o `analytics (admin)`).
+La colonna **Databases** dell'elenco degli utenti mostra, per ciascuno, i database accessibili con il relativo ruolo (ad esempio `analytics (Read-only)` o `analytics (Administrator)`).
 
 ## Per approfondire
 

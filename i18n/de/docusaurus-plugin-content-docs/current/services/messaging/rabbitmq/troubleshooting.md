@@ -7,12 +7,18 @@ title: Fehlerbehebung
 
 ### Der Cluster bleibt im Status „Creating“ oder wechselt zu „Error“
 
-**Ursache**: Die Bereitstellung läuft noch oder ist fehlgeschlagen (zum Beispiel mangels verfügbarer Ressourcen).
+**Ursache**: Die Bereitstellung läuft noch, oder die Plattform konnte die Erstellung des Clusters oder seine letzte Änderung nicht anwenden (zum Beispiel mangels verfügbarer Ressourcen). Im zweiten Fall wechselt der Status zu **Error**; nach einer Änderung kann der Cluster mit seiner vorherigen Konfiguration weiterlaufen.
 
 **Lösung**:
 
 1. Warten Sie einige Minuten: Detailseite und Liste werden automatisch aktualisiert.
-2. Bleibt der Status ungewöhnlich lange **Creating** oder wechselt er zu **Error** / **Failed**, [wenden Sie sich an den Support](mailto:support@hidora.io) und geben Sie den Namen des Projekts, den Namen des Clusters und seine Kennung an (unter dem Namen des Clusters angezeigt, mit einer Kopierschaltfläche).
+2. Bleibt der Status ungewöhnlich lange **Creating** oder wechselt er zu **Error**, [wenden Sie sich an den Support](mailto:support@hidora.io) und geben Sie den Namen des Projekts, den Namen des Clusters und seine Kennung an (unter dem Namen des Clusters angezeigt, mit einer Kopierschaltfläche).
+
+### Ein VHost oder ein Benutzer wird abgelehnt
+
+**Ursache**: Der Name entspricht nicht den Benennungsregeln. Namen von VHosts und Benutzern akzeptieren nur Kleinbuchstaben, Ziffern und Bindestriche und müssen mit einem Buchstaben beginnen und mit einem Buchstaben oder einer Ziffer enden: `my_vhost`, `App.User` oder `/prod` werden abgelehnt.
+
+**Lösung**: Wählen Sie einen konformen Namen, zum Beispiel `prod` oder `app-user`. Siehe [Konzepte](./concepts.md#limits).
 
 ### „Storage quota exceeded for this project“ im Assistenten
 

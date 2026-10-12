@@ -56,7 +56,7 @@ graph TD
 |----------|------------|
 | Erstellung eines Clusters (Version 7 oder 8, Preset, 1 bis 8 Replicas, Volume-Größe, öffentliches Netzwerk, Authentifizierung) | Ja |
 | Passwortrotation | Ja |
-| Änderung der Version, des Presets, der Volume-Größe, des externen Zugriffs und der Authentifizierung | Ja |
+| Versions-Upgrade, Änderung des Presets, Vergrößerung des Volumes, Änderung des externen Zugriffs und der Authentifizierung | Ja |
 | Änderung der Anzahl der Replicas nach der Erstellung | Nein, [wenden Sie sich an den Support](mailto:support@hidora.io) |
 
 ---

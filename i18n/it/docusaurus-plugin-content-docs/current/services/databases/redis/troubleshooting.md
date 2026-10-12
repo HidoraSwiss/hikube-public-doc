@@ -12,7 +12,19 @@ title: Risoluzione dei problemi
 **Soluzione**:
 
 1. Attenda qualche minuto e aggiorni la pagina del cluster.
-2. Se lo stato non cambia dopo una quindicina di minuti, oppure passa a **Error** o **Failed**, [contatti il supporto](mailto:support@hidora.io) indicando il progetto e il nome del cluster.
+2. Se lo stato non cambia dopo una quindicina di minuti, [contatti il supporto](mailto:support@hidora.io) indicando il progetto e il nome del cluster.
+
+### Il cluster passa allo stato «Error»
+
+**Causa**: la piattaforma non è riuscita ad applicare la creazione del cluster o la sua ultima modifica. Dopo una modifica, il cluster può continuare a funzionare con la configurazione precedente.
+
+**Soluzione**: [contatti il supporto](mailto:support@hidora.io) indicando il progetto, il nome del cluster e la modifica richiesta.
+
+### «An error occurred while updating the cluster» al salvataggio
+
+**Causa**: la modifica richiede una versione inferiore a quella attuale (ad esempio `7` su un cluster in `8`), oppure una **Volume Size (GB)** inferiore a quella attuale. Queste modifiche sono rifiutate, e il messaggio di errore riporta il motivo restituito dall'API. Lato API, questi rifiuti hanno i codici `120203` (versione) e `120204` (volume).
+
+**Soluzione**: mantenga la versione attuale o una versione superiore, e una dimensione del volume almeno pari a quella attuale.
 
 ### L'host mostra «Waiting for allocation...»
 

@@ -16,8 +16,8 @@ Diese Anleitung erklärt, wie Sie einen bestehenden MariaDB-Cluster in der [Hiku
 
 | Parameter | Nach der Erstellung änderbar |
 |-----------|---------------------------|
-| **MariaDB Version** | Ja |
-| **Disk size (GB)** | Ja |
+| **MariaDB Version** | Ja, nur auf eine höhere Version |
+| **Disk size (GB)** | Ja, nur Vergrößerung |
 | **External access** | Ja |
 | **Preset** | Nein, „The resources preset cannot be changed after creation“ |
 | **Number of replicas** | Nein, „The mode cannot be changed after creation“ |
@@ -35,13 +35,19 @@ Die Seite **Edit MariaDB cluster** zeigt die Karte **Cluster settings** und die 
 
 ### 2. Die Parameter anpassen
 
-- **Disk size (GB)**: Geben Sie die neue Kapazität ein.
-- **MariaDB Version**: Wählen Sie die Zielversion aus (10.6, 10.11, 11.4 oder 11.8). Das Formular bietet auch Versionen an, die älter als die aktuelle Version sind: Kehren Sie nicht zu einer früheren Version zurück, MariaDB unterstützt kein Downgrade.
+- **Disk size (GB)**: Geben Sie die neue Kapazität ein, mindestens die aktuelle Größe. Ein kleinerer Wert zeigt „The disk size cannot be reduced: N GB minimum.“ an und wird nicht gespeichert.
+- **MariaDB Version**: Wählen Sie die Zielversion aus. Das Formular bietet nur die aktuelle Version und höhere Versionen an: MariaDB unterstützt kein Downgrade.
 - **External access**: Aktivieren oder deaktivieren Sie die Verfügbarkeit im öffentlichen Internet.
+
+Wenn Sie die Version ändern, erscheint die Warnung „The cluster instances will restart“: Die Änderung startet die Instanzen des Clusters beim Speichern neu, und eine aktualisierte Version kann nicht mehr herabgestuft werden. Planen Sie sie außerhalb von Spitzenlastzeiten.
 
 ### 3. Speichern
 
 Klicken Sie auf **Save**. Die Meldung „Cluster updated“ bestätigt die Übernahme. Überschreitet die neue Konfiguration die Quotas des Projekts, bleibt die Schaltfläche inaktiv.
+
+:::note
+Die API wendet dieselben Regeln an: Eine niedrigere Version als die aktuelle wird mit dem Code `110203` abgelehnt, eine kleinere Disk-Größe als die aktuelle mit dem Code `110204`.
+:::
 
 :::tip
 Vergrößern Sie die Disk, bevor sie voll ist. So messen Sie den belegten Speicherplatz pro Datenbank:

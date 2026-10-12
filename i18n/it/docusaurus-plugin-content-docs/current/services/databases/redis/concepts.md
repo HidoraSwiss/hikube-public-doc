@@ -141,7 +141,7 @@ La procedura guidata mostra l'**Estimated Cost** e l'impatto del cluster sulle q
 | Parametro | Valore |
 |-----------|--------|
 | Repliche | Da 1 a 8 |
-| Dimensione del volume | Da 1 a 4.096 GB per nodo, entro il limite della quota del progetto |
+| Dimensione del volume | Da 1 a 4.096 GB per nodo, entro il limite della quota del progetto; dopo la creazione, solo aumento |
 | Database Redis | Database logico `0` per impostazione predefinita |
 
 ---

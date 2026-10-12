@@ -23,29 +23,37 @@ The MongoDB console has no dedicated databases tab: permissions are defined per 
 ### 1. Create a user
 
 1. In the **Users** section, click **Create a user**.
-2. Enter the **Username**: lowercase letters, digits and hyphens, starting with a letter (for example `report-reader`).
-3. Define at least one role:
-   - **Global Role (Optional)**: leave **No global role** to restrict the user to specific databases;
-   - **Specific Access (Databases)**: click **Add**, enter the **Database name** (for example `analytics`) and choose the **Rights** **Administrator (Admin)** or **Read-only**.
+2. Enter the **Username**: 3 to 16 characters, lowercase letters, digits and hyphens, starting with a letter and ending with a letter or a digit (for example `report-reader`).
+3. Under **Specific Access (Databases)**, click **Add** for each database:
+   - **Database name**: for example `analytics` (lowercase letters, digits and hyphens; the system databases `admin`, `local` and `config` are refused);
+   - **Rights**: **Administrator (Admin)** or **Read-only**.
 4. Click **Create user**.
 
-If no role is defined, the console displays "Please assign at least one role (global or specific) to the user." and the button stays disabled.
+A MongoDB user must have at least one access: without access, the console displays "Please grant access to at least one database." and the button stays disabled. There is no global role: the user only has access to the databases listed.
 
-The "Generated password" screen displays the generated password.
+The "User created successfully!" screen displays the generated password.
 
 :::warning
 Copy this password immediately and keep it safe: it will not be shown again after you leave this screen.
 :::
 
-Then click **Done**.
+Then click **Done and return to cluster**.
+
+:::tip
+Users declared in the cluster creation wizard receive their role on the **Database** entered in the **Users** step.
+:::
 
 ### 2. Change a user's permissions
 
 1. Open the user's **Actions** menu and choose **Manage Access**.
-2. Add access with **Add**, change the **Rights** or remove a line. At least one role must remain.
-3. Click **Save**.
+2. Add access with **Add**, change the **Rights** or remove a line. At least one access must remain.
+3. Click **Save**. The "Access updated" message confirms the change.
 
 The username cannot be changed.
+
+:::warning Users created before console v1.3.0
+Users declared in the cluster creation wizard before console v1.3.0 received a role on the `admin` system database. In **Manage Access**, this line is shown in error and prevents saving: remove it, add the user's application database if needed, then click **Save**.
+:::
 
 ### 3. Renew a user's password
 
@@ -64,8 +72,10 @@ Open the user's **Actions** menu, choose **Delete user**, enter their exact name
 ### 5. Test the connection
 
 ```bash
-mongosh "mongodb://<host>:27017/analytics" --username report-reader --authenticationDatabase admin
+mongosh "mongodb://<host>:27017/analytics?directConnection=true&authSource=admin" --username report-reader
 ```
+
+On a replica set, `<host>` is the address of one of the **Replica set rs0 members** listed in the **Network and Connection** card.
 
 ```javascript
 // Must succeed
@@ -78,7 +88,7 @@ db.events.insertOne({ test: true })
 
 ## Verification
 
-The user list shows, for each user, their **Role** and the accessible **Databases** with the associated right (for example `analytics (readonly)` or `analytics (admin)`).
+The **Databases** column of the user list shows, for each user, the accessible databases with the associated role (for example `analytics (Read-only)` or `analytics (Administrator)`).
 
 ## Further reading
 

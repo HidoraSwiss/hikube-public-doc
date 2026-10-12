@@ -16,8 +16,8 @@ This guide explains how to adjust an existing MariaDB cluster from the [Hikube c
 
 | Parameter | Can be changed after creation |
 |-----------|---------------------------|
-| **MariaDB Version** | Yes |
-| **Disk size (GB)** | Yes |
+| **MariaDB Version** | Yes, to a higher version only |
+| **Disk size (GB)** | Yes, upwards only |
 | **External access** | Yes |
 | **Preset** | No, "The resources preset cannot be changed after creation" |
 | **Number of replicas** | No, "The mode cannot be changed after creation" |
@@ -35,13 +35,19 @@ The **Edit MariaDB cluster** page displays the **Cluster settings** card and the
 
 ### 2. Adjust the parameters
 
-- **Disk size (GB)**: enter the new capacity.
-- **MariaDB Version**: select the target version (10.6, 10.11, 11.4 or 11.8). The form also offers versions lower than the current one: do not go back to an earlier version, MariaDB does not support downgrades.
+- **Disk size (GB)**: enter the new capacity, at least equal to the current size. A lower value displays "The disk size cannot be reduced: N GB minimum." and is not saved.
+- **MariaDB Version**: select the target version. The form only offers the current version and the higher versions: MariaDB does not support downgrades.
 - **External access**: enable or disable exposure on the public Internet.
+
+When you change the version, the warning "The cluster instances will restart" is displayed: the change restarts the cluster instances as soon as you save, and an upgraded version cannot be downgraded. Plan it outside peak hours.
 
 ### 3. Save
 
 Click **Save**. The "Cluster updated" message confirms the change. If the new configuration exceeds the project quotas, the button stays disabled.
+
+:::note
+The API applies the same rules: a version lower than the current one is refused with code `110203`, a disk size smaller than the current one with code `110204`.
+:::
 
 :::tip
 Increase the disk size before it is full. To measure the space used per database:

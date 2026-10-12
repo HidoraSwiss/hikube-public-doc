@@ -65,8 +65,9 @@ Aktivieren Sie den **External access** nur, wenn Sie ihn benötigen: Er macht di
 Fügen Sie mindestens einen Benutzer hinzu:
 
 1. **Username**: zum Beispiel `app-user` (Kleinbuchstaben, Ziffern und Bindestriche).
-2. **Role**: **Administrator** oder **Read-only**.
-3. Klicken Sie auf **Add**.
+2. **Database**: die Anwendungsdatenbank, auf die sich die Rolle des Benutzers bezieht, zum Beispiel `myapp` (Kleinbuchstaben, Ziffern und Bindestriche). Sie wird erstellt, falls sie nicht existiert. Die Systemdatenbanken `mysql`, `information_schema`, `performance_schema` und `sys` werden abgelehnt.
+3. **Role**: **Administrator** für diese Anleitung, oder **Read-only**.
+4. Klicken Sie auf **Add**.
 
 ### Summary
 
@@ -81,8 +82,8 @@ Der Schritt **Finish** bestätigt die Erstellung („Creation complete!“). Kli
 | Status | Bedeutung |
 |--------|---------------|
 | **Creating** / **Provisioning** | Der Cluster wird bereitgestellt |
-| **Ready** / **Running** | Der Cluster ist betriebsbereit |
-| **Error** / **Failed** | Die Bereitstellung ist fehlgeschlagen |
+| **Ready** | Der Cluster ist betriebsbereit |
+| **Error** | Die Plattform konnte die Erstellung oder die letzte Änderung des Clusters nicht anwenden |
 
 **Erwartetes Ergebnis:** Nach einigen Minuten wechselt der Status zu **Ready**. Die Seite zeigt die **MariaDB Version**, die **Replicas**, die **Allocated Size** und das **Preset** an.
 
@@ -100,14 +101,9 @@ Kopieren Sie diese Passwörter sofort: Sie werden nicht mehr angezeigt. Bei Verl
 
 Die Adresse bleibt in der Karte **Connection and network** auf der Seite des Clusters einsehbar, Feld **Host**.
 
-### Zugriff auf eine Anwendungsdatenbank
+### Zugriff auf die Anwendungsdatenbank
 
-Die im Assistenten gewählte Rolle gilt für die Systemdatenbank `mysql`. So erstellen Sie eine Anwendungsdatenbank und gewähren Zugriff darauf:
-
-1. Öffnen Sie im Abschnitt **Users** das Menü **Actions** von `app-user` und wählen Sie **Manage Access**.
-2. Klicken Sie unter **Specific Access (Databases)** auf **Add**.
-3. Geben Sie den **Database name** ein, zum Beispiel `myapp` (Kleinbuchstaben, Ziffern und Bindestriche), und wählen Sie unter **Rights** **Administrator (Admin)**.
-4. Klicken Sie auf **Save**. Die Datenbank `myapp` wird erstellt, falls sie nicht existiert.
+Die im Schritt **Users** angegebene Datenbank `myapp` wurde erstellt, und der Benutzer verfügt dort über die gewählte Rolle: Im Abschnitt **Users** der Cluster-Seite zeigt die Spalte **Databases** `myapp (Administrator)` an. Um ihm Zugriff auf weitere Datenbanken zu geben, öffnen Sie das Menü **Actions** des Benutzers und wählen Sie **Manage Access** (siehe [Benutzer und Datenbanken verwalten](./how-to/manage-users-databases.md)).
 
 ---
 
@@ -155,11 +151,11 @@ Falsches Passwort, oder der Benutzer hat keinen Zugriff auf die angegebene Daten
 ### Die Schaltfläche Next bleibt inaktiv
 
 - Im Schritt **Configuration**: Der Cluster überschreitet die Quotas des Projekts.
-- Im Schritt **Users**: Fügen Sie mindestens einen Benutzer hinzu.
+- Im Schritt **Users**: Fügen Sie mindestens einen Benutzer mit seiner **Database** hinzu.
 
-### Der Cluster bleibt im Status Error
+### Der Cluster wechselt in den Status Error
 
-[Wenden Sie sich an den Support](mailto:support@hidora.io) und geben Sie dabei den Namen des Projekts und des Clusters an.
+Die Plattform konnte die Erstellung oder die letzte Änderung des Clusters nicht anwenden. [Wenden Sie sich an den Support](mailto:support@hidora.io) und geben Sie dabei den Namen des Projekts und des Clusters an.
 
 ---
 

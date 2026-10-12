@@ -7,7 +7,7 @@ title: FAQ
 
 ### Quale versione scegliere?
 
-La procedura guidata propone **6.0**, **7.0** e **8.0** (predefinita). Per un nuovo progetto scelga la più recente. Per una migrazione, parta dalla versione del suo ambiente attuale, quindi aggiorni una versione alla volta da **Edit**.
+La procedura guidata propone **6.0**, **7.0** e **8.0** (predefinita). Per un nuovo progetto scelga la più recente. Per una migrazione, parta dalla versione del suo ambiente attuale, quindi aggiorni una versione alla volta da **Edit**. Una versione non può essere riportata indietro.
 
 ### Quante repliche scegliere?
 
@@ -37,15 +37,17 @@ Fa fede l'elenco mostrato dalla procedura guidata. Il preset non può essere mod
 
 ### Dove si trova l'indirizzo di connessione?
 
-Nel riquadro **Network and Connection** della pagina del cluster, campo **Host**, quando l'**External Access** è attivato. La porta è `27017`. Senza accesso esterno, il campo mostra **Not defined**: il cluster resta raggiungibile dalle VM e dai cluster Kubernetes del progetto tramite un indirizzo interno, che la console non mostra; [contatti il supporto](mailto:support@hidora.io) per ottenerlo.
+Nel riquadro **Network and Connection** della pagina del cluster, quando l'**External Access** è attivato: campo **Host** per un cluster con sharding, elenco **Replica set rs0 members** e **External connection string** per un replica set. La porta è `27017`. Su un replica set, si connetta a un membro con `directConnection=true`, senza il parametro `replicaSet`. Senza accesso esterno, il campo mostra **Not defined**: il cluster resta raggiungibile dalle VM e dai cluster Kubernetes del progetto tramite un indirizzo interno, che la console non mostra; [contatti il supporto](mailto:support@hidora.io) per ottenerlo.
 
 ### Perché l'utente creato nella procedura guidata non ha accesso al mio database?
 
-Il **Role** scelto nella procedura guidata di creazione del cluster si applica al database `admin`. Conceda poi l'accesso ai suoi database applicativi tramite **Manage Access**. Si veda [Gestire utenti e database](./how-to/manage-users-databases.md).
+Il **Role** scelto nella procedura guidata si applica al **Database** indicato per questo utente, e solo a esso. Conceda l'accesso agli altri database tramite **Manage Access**. Si veda [Gestire utenti e database](./how-to/manage-users-databases.md).
+
+Gli utenti creati prima della console v1.3.0 hanno ricevuto il loro ruolo sul database di sistema `admin`. In **Manage Access**, rimuova la riga `admin`, mostrata in errore, e aggiunga il loro database applicativo.
 
 ### Perché non riesco a salvare un utente?
 
-Un utente MongoDB deve avere almeno un ruolo: un **Global Role** o uno **Specific Access** su un database. Verifichi anche le regole di denominazione: solo minuscole, cifre e trattini, senza trattino basso.
+Un utente MongoDB deve avere almeno un accesso a un database: altrimenti la console mostra «Please grant access to at least one database.». I database di sistema `admin`, `local` e `config` sono rifiutati. Verifichi anche le regole di denominazione: solo minuscole, cifre e trattini, senza trattino basso; da 3 a 16 caratteri per un nome utente.
 
 ### Ho smarrito la password di un utente. Come recuperarla?
 

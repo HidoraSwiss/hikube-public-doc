@@ -7,12 +7,18 @@ title: Troubleshooting
 
 ### The cluster stays "Creating" or switches to "Error"
 
-**Cause**: provisioning is in progress, or it has failed (for example due to a lack of available resources).
+**Cause**: provisioning is in progress, or the platform could not apply the cluster's creation or its last change (for example due to a lack of available resources). In the second case, the status switches to **Error**; after a change, the cluster may keep running with its previous configuration.
 
 **Solution**:
 
 1. Wait a few minutes: the detail page and the list refresh automatically.
-2. If the status stays **Creating** for an abnormally long time or switches to **Error** / **Failed**, [contact support](mailto:support@hidora.io), giving the project name, the cluster name and its identifier (displayed under the cluster name, with a copy button).
+2. If the status stays **Creating** for an abnormally long time or switches to **Error**, [contact support](mailto:support@hidora.io), giving the project name, the cluster name and its identifier (displayed under the cluster name, with a copy button).
+
+### A vhost or a user is refused
+
+**Cause**: its name does not follow the naming rules. Vhost names and usernames only accept lowercase letters, digits and hyphens, and must start with a letter and end with a letter or a digit: `my_vhost`, `App.User` or `/prod` are refused.
+
+**Solution**: choose a compliant name, for example `prod` or `app-user`. See [Concepts](./concepts.md#limits).
 
 ### "Storage quota exceeded for this project" in the wizard
 

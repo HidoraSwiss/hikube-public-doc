@@ -47,7 +47,7 @@ AMQP-Clients verbinden sich über den Port **5672** mit der Adresse, die im Feld
 
 ### Kann ich die Anzahl der Replicas oder das Preset nach der Erstellung ändern?
 
-Nein. Die **Number of replicas** (und damit der Standalone- oder Cluster-Modus) und das **Preset** werden bei der Erstellung festgelegt. Version, Disk-Größe und externer Zugriff bleiben änderbar. Siehe [Die Konfiguration eines Clusters ändern](./how-to/scale-resources.md).
+Nein. Die **Number of replicas** (und damit der Standalone- oder Cluster-Modus) und das **Preset** werden bei der Erstellung festgelegt. Version (auf eine höhere Version), Disk-Größe (nur Vergrößerung) und externer Zugriff bleiben änderbar. Siehe [Die Konfiguration eines Clusters ändern](./how-to/scale-resources.md).
 
 ### Ich habe das Passwort eines Benutzers verloren. Wie kann ich es wiederherstellen?
 

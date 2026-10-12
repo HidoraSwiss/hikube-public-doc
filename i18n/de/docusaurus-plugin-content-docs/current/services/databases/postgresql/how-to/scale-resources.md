@@ -16,11 +16,11 @@ Diese Anleitung erklärt, wie Sie einen bestehenden PostgreSQL-Cluster in der [H
 
 | Parameter | Nach der Erstellung änderbar |
 |-----------|---------------------------|
-| **PostgreSQL Version** | Ja |
+| **PostgreSQL Version** | Ja, nur auf eine höhere Version |
 | **Preset** | Ja |
-| **Disk size (GB)** | Ja |
+| **Disk size (GB)** | Ja, nur Vergrößerung |
 | **External access** | Ja |
-| **Number of replicas** | Nein, „The mode cannot be changed after creation“ |
+| **Number of replicas** | Nein, „The mode cannot be changed after creation“. Das Formular zeigt den aktuellen Wert an (1, 2 oder 3) |
 
 Um die Anzahl der Replicas eines bestehenden Clusters zu ändern, [wenden Sie sich an den Support](mailto:support@hidora.io).
 
@@ -50,16 +50,22 @@ Die Seite **Edit PostgreSQL cluster** zeigt die Karte **Cluster settings** und d
 ### 2. Die Parameter anpassen
 
 - **Preset**: Wählen Sie ein größeres Preset, um CPU und Arbeitsspeicher jedes Knotens zu erhöhen.
-- **Disk size (GB)**: Geben Sie die neue Kapazität ein.
-- **PostgreSQL Version**: Wählen Sie die Zielversion aus. Das Formular bietet alle Versionen an, es ist jedoch nur ein Versions-Upgrade möglich: Eine niedrigere Version wird von der Plattform abgelehnt, der Cluster bleibt auf seiner aktuellen Version, und die Konfiguration bleibt fehlerhaft, bis Sie wieder eine höhere oder gleiche Version auswählen. Ein Major-Upgrade (zum Beispiel 17 → 18) erfolgt in-place: Die Instanz wird während der Datenmigration angehalten.
+- **Disk size (GB)**: Geben Sie die neue Kapazität ein, mindestens die aktuelle Größe. Ein kleinerer Wert zeigt „The disk size cannot be reduced: N GB minimum.“ an und wird nicht gespeichert.
+- **PostgreSQL Version**: Wählen Sie die Zielversion aus. Das Formular bietet nur die aktuelle Version und höhere Versionen an. Ein Major-Upgrade (zum Beispiel 17 → 18) erfolgt in-place: Die Instanz wird während der Datenmigration angehalten.
 - **External access**: Aktivieren oder deaktivieren Sie die Verfügbarkeit im öffentlichen Internet.
+
+Wenn Sie das Preset oder die Version ändern, erscheint die Warnung „The cluster instances will restart“; bei einer Versionsänderung weist sie darauf hin, dass eine aktualisierte Version nicht mehr herabgestuft werden kann.
 
 ### 3. Speichern
 
 Klicken Sie auf **Save**. Die Meldung „Cluster updated“ bestätigt die Übernahme. Überschreitet die neue Konfiguration die Quotas des Projekts, bleibt die Schaltfläche inaktiv.
 
 :::warning
-Eine Änderung des Presets oder der Version führt zum Neustart der Instanzen. Bei einem Cluster mit 1 Replica ist die Datenbank während des Neustarts nicht verfügbar, bei einem Major-Upgrade während der gesamten Migration; planen Sie den Vorgang außerhalb der Spitzenlastzeiten.
+Eine Änderung des Presets oder der Version führt beim Speichern zum Neustart der Instanzen. Bei einem Cluster mit 1 Replica ist die Datenbank während des Neustarts nicht verfügbar, bei einem Major-Upgrade während der gesamten Migration; planen Sie den Vorgang außerhalb der Spitzenlastzeiten.
+:::
+
+:::note
+Die API wendet dieselben Regeln an: Eine niedrigere Version als die aktuelle wird mit dem Code `80203` abgelehnt, eine kleinere Disk-Größe als die aktuelle mit dem Code `80204`.
 :::
 
 :::tip

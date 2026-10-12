@@ -11,7 +11,7 @@ Yes. **MariaDB** is an open source fork of MySQL, compatible with the MySQL prot
 
 ### Which version should I choose?
 
-The wizard offers versions **10.6**, **10.11**, **11.4** and **11.8**. Choose the most recent one for a new project, or the version closest to your current environment for a migration. The version can be changed after creation from **Edit**.
+The wizard offers versions **10.6**, **10.11**, **11.4** and **11.8**. Choose the most recent one for a new project, or the version closest to your current environment for a migration. The version can be upgraded after creation from **Edit**; it cannot be downgraded.
 
 ### Which presets are available?
 
@@ -41,11 +41,13 @@ In the **Connection and network** card of the cluster page, **Host** field, when
 
 ### How do I create a database?
 
-Grant a user access to the database name (**Manage Access** → **Specific Access (Databases)** → **Add**). The database is created if it does not exist. See [Manage users and databases](./how-to/manage-users-databases.md).
+Grant a user access to the database name (**Manage Access** → **Specific Access (Databases)** → **Add**), or enter it as a user's **Database** in the **Users** step of the cluster creation wizard. The database is created if it does not exist. System database names (`mysql`, `information_schema`, `performance_schema`, `sys`) are refused. See [Manage users and databases](./how-to/manage-users-databases.md).
 
 ### Why does the user created in the wizard not have access to my database?
 
-The **Role** chosen in the cluster creation wizard applies to the `mysql` system database. Then grant access to your application databases via **Manage Access**.
+The **Role** chosen in the wizard applies to the **Database** entered for that user, and to it alone. Grant access to your other databases via **Manage Access**.
+
+Users created before console v1.3.0 received their role on the `mysql` system database. In **Manage Access**, remove the `mysql` line, shown in error, and add their application database.
 
 ### I lost a user's password. How do I recover it?
 

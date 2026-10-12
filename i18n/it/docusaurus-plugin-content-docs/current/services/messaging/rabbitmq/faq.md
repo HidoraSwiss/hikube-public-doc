@@ -47,7 +47,7 @@ I client AMQP si connettono sulla porta **5672**, all'indirizzo mostrato nel cam
 
 ### È possibile cambiare il numero di repliche o il preset dopo la creazione?
 
-No. Il **Number of replicas** (e quindi la modalità standalone o cluster) e il **Preset** sono fissati alla creazione. La versione, la dimensione del disco e l'accesso esterno restano modificabili. Consulti [Modificare la configurazione di un cluster](./how-to/scale-resources.md).
+No. Il **Number of replicas** (e quindi la modalità standalone o cluster) e il **Preset** sono fissati alla creazione. La versione (verso una versione superiore), la dimensione del disco (in aumento) e l'accesso esterno restano modificabili. Consulti [Modificare la configurazione di un cluster](./how-to/scale-resources.md).
 
 ### Ho perso la password di un utente. Come posso recuperarla?
 

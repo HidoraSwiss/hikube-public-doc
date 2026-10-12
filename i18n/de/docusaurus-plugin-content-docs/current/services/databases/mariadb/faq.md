@@ -11,7 +11,7 @@ Ja. **MariaDB** ist ein Open-Source-Fork von MySQL, der mit dem MySQL-Protokoll 
 
 ### Welche Version sollte ich wählen?
 
-Der Assistent bietet die Versionen **10.6**, **10.11**, **11.4** und **11.8** an. Wählen Sie für ein neues Projekt die neueste Version oder für eine Migration die Version, die Ihrer aktuellen Umgebung am nächsten kommt. Die Version kann nach der Erstellung über **Edit** geändert werden.
+Der Assistent bietet die Versionen **10.6**, **10.11**, **11.4** und **11.8** an. Wählen Sie für ein neues Projekt die neueste Version oder für eine Migration die Version, die Ihrer aktuellen Umgebung am nächsten kommt. Die Version kann nach der Erstellung über **Edit** aktualisiert werden; ein Downgrade ist nicht möglich.
 
 ### Welche Presets sind verfügbar?
 
@@ -41,11 +41,13 @@ In der Karte **Connection and network** auf der Seite des Clusters, Feld **Host*
 
 ### Wie erstelle ich eine Datenbank?
 
-Gewähren Sie einem Benutzer Zugriff auf den Namen der Datenbank (**Manage Access** → **Specific Access (Databases)** → **Add**). Die Datenbank wird erstellt, falls sie nicht existiert. Siehe [Benutzer und Datenbanken verwalten](./how-to/manage-users-databases.md).
+Gewähren Sie einem Benutzer Zugriff auf den Namen der Datenbank (**Manage Access** → **Specific Access (Databases)** → **Add**), oder geben Sie sie im Schritt **Users** des Erstellungsassistenten des Clusters als **Database** eines Benutzers an. Die Datenbank wird erstellt, falls sie nicht existiert. Namen von Systemdatenbanken (`mysql`, `information_schema`, `performance_schema`, `sys`) werden abgelehnt. Siehe [Benutzer und Datenbanken verwalten](./how-to/manage-users-databases.md).
 
 ### Warum hat der im Assistenten angelegte Benutzer keinen Zugriff auf meine Datenbank?
 
-Die im Erstellungsassistenten des Clusters gewählte **Role** gilt für die Systemdatenbank `mysql`. Gewähren Sie anschließend über **Manage Access** den Zugriff auf Ihre Anwendungsdatenbanken.
+Die im Assistenten gewählte **Role** gilt für die für diesen Benutzer angegebene **Database**, und nur für diese. Gewähren Sie den Zugriff auf Ihre weiteren Datenbanken über **Manage Access**.
+
+Vor der Konsole v1.3.0 angelegte Benutzer haben ihre Rolle auf der Systemdatenbank `mysql` erhalten. Entfernen Sie in **Manage Access** die als Fehler angezeigte Zeile `mysql` und fügen Sie ihre Anwendungsdatenbank hinzu.
 
 ### Ich habe das Passwort eines Benutzers verloren. Wie kann ich es wiederherstellen?
 

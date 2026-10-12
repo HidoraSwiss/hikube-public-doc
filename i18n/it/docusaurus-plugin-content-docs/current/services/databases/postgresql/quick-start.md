@@ -96,8 +96,8 @@ Lo stato del cluster è mostrato accanto al suo nome, sia nella pagina del clust
 | Stato | Significato |
 |-------|-------------|
 | **Creating** | Il cluster è in fase di provisioning |
-| **Ready** / **Running** | Il cluster è operativo |
-| **Error** / **Failed** | Il provisioning non è riuscito |
+| **Ready** | Il cluster è operativo |
+| **Error** | La piattaforma non è riuscita ad applicare la creazione o l'ultima modifica del cluster |
 
 **Risultato atteso:** dopo alcuni minuti, lo stato passa a **Ready**. La pagina del cluster mostra la **PostgreSQL Version**, le **Replicas**, l'**Allocated Size** e l'**External Access** (**Enabled**).
 
@@ -164,9 +164,9 @@ L'**External Access** è disattivato, oppure l'indirizzo IP pubblico non è anco
 
 Verifichi il nome utente, il database di destinazione e la password. Se la password è stata smarrita, effettui una rotazione dalla scheda **Users**. Consulti [Gestire utenti e database](./how-to/manage-users-databases.md).
 
-### Il cluster resta in stato Error
+### Il cluster passa in stato Error
 
-[Contatti il supporto](mailto:support@hidora.io) indicando il nome del progetto e del cluster.
+La piattaforma non è riuscita ad applicare la creazione o l'ultima modifica del cluster. [Contatti il supporto](mailto:support@hidora.io) indicando il nome del progetto e del cluster.
 
 ---
 

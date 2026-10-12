@@ -96,8 +96,8 @@ Der Status des Clusters wird neben seinem Namen angezeigt, sowohl auf der Seite 
 | Status | Bedeutung |
 |--------|---------------|
 | **Creating** / **Provisioning** | Der Cluster wird bereitgestellt |
-| **Ready** / **Running** | Der Cluster ist betriebsbereit |
-| **Error** / **Failed** | Die Bereitstellung ist fehlgeschlagen |
+| **Ready** | Der Cluster ist betriebsbereit |
+| **Error** | Die Plattform konnte die Erstellung oder die letzte Änderung des Clusters nicht anwenden |
 
 **Erwartetes Ergebnis:** Nach einigen Minuten wechselt der Status zu **Ready**. Die Seite des Clusters zeigt die **PostgreSQL Version**, die **Replicas**, die **Allocated Size** und den **External Access** (**Enabled**) an.
 
@@ -164,9 +164,9 @@ Der **External Access** ist deaktiviert, oder die öffentliche IP-Adresse ist no
 
 Prüfen Sie den Benutzernamen, die Zieldatenbank und das Passwort. Wenn das Passwort verloren gegangen ist, führen Sie in der Registerkarte **Users** eine Rotation durch. Siehe [Benutzer und Datenbanken verwalten](./how-to/manage-users-databases.md).
 
-### Der Cluster bleibt im Status Error
+### Der Cluster wechselt in den Status Error
 
-[Wenden Sie sich an den Support](mailto:support@hidora.io) und geben Sie dabei den Namen des Projekts und des Clusters an.
+Die Plattform konnte die Erstellung oder die letzte Änderung des Clusters nicht anwenden. [Wenden Sie sich an den Support](mailto:support@hidora.io) und geben Sie dabei den Namen des Projekts und des Clusters an.
 
 ---
 

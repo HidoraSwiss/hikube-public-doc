@@ -56,7 +56,7 @@ graph TD
 |----------|------------|
 | Creazione di un cluster (versione 7 o 8, preset, da 1 a 8 repliche, dimensione del volume, rete pubblica, autenticazione) | Sì |
 | Rotazione della password | Sì |
-| Modifica della versione, del preset, della dimensione del volume, dell'accesso esterno e dell'autenticazione | Sì |
+| Aggiornamento di versione, cambio di preset, aumento della dimensione del volume, modifica dell'accesso esterno e dell'autenticazione | Sì |
 | Modifica del numero di repliche dopo la creazione | No, [contatti il supporto](mailto:support@hidora.io) |
 
 ---

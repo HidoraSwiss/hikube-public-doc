@@ -65,8 +65,9 @@ Only enable **External access** if you need it: it exposes the database on the p
 Add at least one user:
 
 1. **Username**: for example `app-user` (lowercase letters, digits and hyphens).
-2. **Role**: **Administrator** or **Read-only**.
-3. Click **Add**.
+2. **Database**: the application database the user's role applies to, for example `myapp` (lowercase letters, digits and hyphens). It is created if it does not exist. The system databases `mysql`, `information_schema`, `performance_schema` and `sys` are refused.
+3. **Role**: **Administrator** for this guide, or **Read-only**.
+4. Click **Add**.
 
 ### Summary
 
@@ -81,8 +82,8 @@ The **Finish** step confirms the creation ("Creation complete!"). Click **Finish
 | Status | Meaning |
 |--------|---------------|
 | **Creating** | The cluster is being provisioned |
-| **Ready** / **Active** | The cluster is operational |
-| **Error** / **Failed** | Provisioning failed |
+| **Ready** | The cluster is operational |
+| **Error** | The platform could not apply the cluster's creation or its last change |
 
 **Expected result:** after a few minutes, the status changes to **Ready**. The page shows the **MariaDB Version**, the **Replicas**, the **Allocated Size** and the **Preset**.
 
@@ -100,14 +101,9 @@ Copy these passwords immediately: they will not be displayed again. If one is lo
 
 The address remains available in the **Connection and network** card of the cluster page, **Host** field.
 
-### Access to an application database
+### Access to the application database
 
-The role chosen in the wizard applies to the `mysql` system database. To create an application database and grant access to it:
-
-1. In the **Users** section, open the **Actions** menu of `app-user` and choose **Manage Access**.
-2. Under **Specific Access (Databases)**, click **Add**.
-3. Enter the **Database name**, for example `myapp` (lowercase letters, digits and hyphens), and choose the **Rights** **Administrator (Admin)**.
-4. Click **Save**. The `myapp` database is created if it does not exist.
+The `myapp` database entered in the **Users** step has been created, and the user has the chosen role on it: in the **Users** section of the cluster page, the **Databases** column shows `myapp (Administrator)`. To grant access to other databases, open the user's **Actions** menu and choose **Manage Access** (see [Manage users and databases](./how-to/manage-users-databases.md)).
 
 ---
 
@@ -155,11 +151,11 @@ Wrong password, or user without access to the specified database. Check the **Da
 ### The Next button stays disabled
 
 - At the **Configuration** step: the cluster exceeds the project quotas.
-- At the **Users** step: add at least one user.
+- At the **Users** step: add at least one user, with its **Database**.
 
-### The cluster stays in Error
+### The cluster changes to Error
 
-[Contact support](mailto:support@hidora.io), providing the project and cluster names.
+The platform could not apply the cluster's creation or its last change. [Contact support](mailto:support@hidora.io), providing the project and cluster names.
 
 ---
 

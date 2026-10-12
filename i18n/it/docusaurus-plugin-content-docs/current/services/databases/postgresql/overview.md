@@ -55,7 +55,7 @@ graph TD
 | Creazione di un cluster (versione da 15 a 18, preset, dimensione del disco, da 1 a 3 repliche, accesso esterno) | Sì |
 | Database ed estensioni PostgreSQL | Sì |
 | Utenti, diritti per database (admin / sola lettura), rotazione della password | Sì |
-| Modifica della versione, del preset, della dimensione del disco e dell'accesso esterno | Sì |
+| Aggiornamento di versione, cambio di preset, aumento della dimensione del disco, modifica dell'accesso esterno | Sì |
 | Modifica del numero di repliche dopo la creazione | No, [contatti il supporto](mailto:support@hidora.io) |
 | Backup e ripristino | No, [contatti il supporto](mailto:support@hidora.io) |
 

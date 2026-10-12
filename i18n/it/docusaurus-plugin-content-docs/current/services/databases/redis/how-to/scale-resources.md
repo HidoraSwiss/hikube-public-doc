@@ -16,9 +16,9 @@ Questa guida spiega come regolare un cluster Redis esistente dalla [console Hiku
 
 | Parametro | Modificabile dopo la creazione |
 |-----------|---------------------------|
-| **Redis Version** | Sì |
+| **Redis Version** | Sì, solo verso una versione superiore |
 | **Preset** | Sì |
-| **Volume Size (GB)** | Sì |
+| **Volume Size (GB)** | Sì, solo in aumento |
 | **External access** | Sì |
 | **Authentication required** | Sì |
 | **Number of replicas** | No, «The mode cannot be changed after creation» |
@@ -37,14 +37,16 @@ La pagina **Edit cluster** mostra il riquadro **Cluster settings** e l'impatto s
 ### 2. Regolare i parametri
 
 - **Preset**: scelga un preset superiore se la memoria è satura. La memoria del preset limita il volume di dati che Redis può mantenere in memoria.
-- **Volume Size (GB)**: «Storage capacity allocated to each node in the cluster.»
-- **Redis Version**: `8 (Latest)` o `7`.
+- **Volume Size (GB)**: «Storage capacity allocated to each node in the cluster.» Inserisca una dimensione almeno pari a quella attuale.
+- **Redis Version**: `8 (Latest)` o `7`. Il modulo propone entrambe le versioni, ma è accettata solo la versione attuale o una versione superiore: su un cluster in `8`, non scelga `7`.
 - **External access**: «Allow access to the cluster from outside the private network.»
 - **Authentication required**: «Enable password protection.»
 
 ### 3. Salvare
 
 Faccia clic su **Save changes**. Il messaggio «Changes saved» conferma l'applicazione delle modifiche.
+
+Una versione inferiore o una dimensione del volume ridotta è rifiutata: la console mostra «An error occurred while updating the cluster.», seguito dal motivo restituito dall'API (codici `120203` per la versione, `120204` per il volume).
 
 :::warning
 Disattivare l'autenticazione su un cluster esposto sulla rete pubblica rende i suoi dati accessibili a chiunque conosca l'indirizzo. Mantenga l'autenticazione attivata.

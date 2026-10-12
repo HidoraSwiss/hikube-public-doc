@@ -194,8 +194,10 @@ Das Preset **Small** ist standardmäßig ausgewählt. Es **kann nach der Erstell
 | Parameter | Wert |
 |-----------|--------|
 | Name des Clusters | 3 bis 16 Zeichen: Kleinbuchstaben, Ziffern und Bindestriche; beginnt mit einem Buchstaben, endet mit einem Buchstaben oder einer Ziffer |
-| Angebotene Versionen | 4.2, 4.1, 4.0, 3.13 |
+| Angebotene Versionen | 4.2, 4.1, 4.0, 3.13; nach der Erstellung nur Versions-Upgrade |
 | Replicas | 1, 3 oder 5 (bei der Erstellung festgelegt) |
+| Name des VHosts | Kleinbuchstaben, Ziffern und Bindestriche; beginnt mit einem Buchstaben, endet mit einem Buchstaben oder einer Ziffer |
+| Benutzername | 3 bis 16 Zeichen: Kleinbuchstaben, Ziffern und Bindestriche; beginnt mit einem Buchstaben, endet mit einem Buchstaben oder einer Ziffer. Einige Namen, etwa `admin` oder `root`, sind reserviert |
 | Disk-Größe | 1 bis 4096 GB pro Knoten, im Rahmen der Speicher-Quota des Projekts; nur Vergrößerung möglich |
 | Externer Zugriff | Bei der Erstellung oder später aktivierbar |
 | AMQP-Port | 5672, ohne TLS |

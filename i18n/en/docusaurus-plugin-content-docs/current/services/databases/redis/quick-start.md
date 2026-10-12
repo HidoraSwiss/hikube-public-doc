@@ -74,8 +74,8 @@ The **Done** step shows "Cluster successfully created". Click **Finish** to retu
 | Status | Meaning |
 |--------|---------|
 | **Creating** | The cluster is being provisioned |
-| **Ready** / **Running** | The cluster is operational |
-| **Error** / **Failed** | Provisioning failed |
+| **Ready** | The cluster is operational |
+| **Error** | The platform could not apply the cluster's creation or its last change |
 
 **Expected result:** after a few minutes, the **Connection** section of the cluster page shows the **Status** **Ready** and the cluster's **Host**.
 
@@ -136,9 +136,9 @@ The password is missing or wrong. Check the `REDISCLI_AUTH` variable, or generat
 
 The configuration exceeds the project quotas. Reduce the preset, the volume size or the number of replicas.
 
-### The cluster stays in Error
+### The cluster changes to Error
 
-[Contact support](mailto:support@hidora.io), stating the project name and the cluster name.
+The platform could not apply the cluster's creation or its last change. [Contact support](mailto:support@hidora.io), stating the project name and the cluster name.
 
 ---
 

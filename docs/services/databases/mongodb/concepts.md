@@ -77,14 +77,19 @@ La consommation de ressources et le coût estimé en tiennent compte. Voir [Conf
 
 ## Utilisateurs, bases et rôles
 
-La page d'un cluster MongoDB comporte une section **Utilisateurs** ; il n'y a pas d'onglet dédié aux bases de données. Les droits se gèrent par utilisateur :
+La page d'un cluster MongoDB comporte une section **Utilisateurs** ; il n'y a pas d'onglet dédié aux bases de données. Les droits se donnent base par base : chaque accès associe un **Nom de la base** à des **Droits**, **Administrateur (Admin)** ou **Lecture seule (Read-only)**. **Administrateur** correspond aux rôles MongoDB `readWrite` et `dbAdmin` sur la base, **Lecture seule** au rôle `read`. Il n'existe pas de rôle global : un utilisateur n'a accès qu'aux bases qui lui sont attribuées.
 
-- **Rôle Global (Optionnel)** : **Aucun rôle global**, **Administrateur** ou **Lecture seule (globale)** ;
-- **Accès spécifiques (Bases de données)** : une liste de couples **Nom de la base** / **Droits** (**Administrateur (Admin)** ou **Lecture seule (Read-only)**).
+- À la création du cluster, l'étape **Utilisateurs** de l'assistant demande pour chaque utilisateur une **Base de données** applicative et un **Rôle**. La base est créée si elle n'existe pas.
+- Ensuite, **Créer un utilisateur** et **Gérer les accès** permettent d'attribuer un ou plusieurs accès. Un utilisateur MongoDB doit garder au moins un accès : sinon, la console affiche « Veuillez attribuer au moins un accès à une base de données. » et le bouton reste inactif.
+- La colonne **Bases de données** de la liste des utilisateurs affiche chaque base avec le rôle, par exemple `myapp (Administrateur)`.
 
-Un utilisateur doit avoir au moins un rôle : sans rôle global ni accès spécifique, la console affiche « Veuillez attribuer au moins un rôle (global ou spécifique) à l'utilisateur. » et refuse l'enregistrement.
+Les bases système `admin`, `local` et `config` ne peuvent pas recevoir d'accès : la console affiche « « admin » est une base système : choisissez une base applicative. » et l'API refuse la requête.
 
-Les utilisateurs déclarés dans l'assistant de création du cluster reçoivent le **Rôle** choisi sur la base `admin`, visible dans la colonne **Bases de données** de la liste des utilisateurs : **Administrateur** correspond aux rôles MongoDB `readWrite` et `dbAdmin` sur cette base, **Lecture seule** au rôle `read`. Ces rôles ne donnent accès à aucune autre base : accordez ensuite l'accès à vos bases applicatives via **Gérer les accès**. Tous les utilisateurs sont créés dans la base `admin`, qui sert de base d'authentification (`authSource=admin`).
+Tous les utilisateurs sont créés dans la base `admin`, qui sert de base d'authentification (`authSource=admin`), sans recevoir de rôle sur cette base.
+
+:::warning Utilisateurs créés avant la console v1.3.0
+L'assistant de création de cluster attribuait auparavant à chaque utilisateur un rôle sur la base système `admin`. Pour ces utilisateurs, ouvrez **Actions** → **Gérer les accès** : la ligne `admin` y apparaît en erreur. Retirez-la, ajoutez si besoin la base applicative de l'utilisateur, puis cliquez sur **Enregistrer**. Tant que cette ligne est présente, les droits de l'utilisateur ne peuvent pas être enregistrés.
+:::
 
 Le mot de passe d'un utilisateur est généré par la plateforme et affiché **une seule fois**. En cas de perte, générez-en un nouveau avec **Changer le mot de passe**.
 
@@ -93,8 +98,8 @@ Le mot de passe d'un utilisateur est généré par la plateforme et affiché **u
 | Élément | Règle |
 |---------|-------|
 | Nom du cluster | 3 à 16 caractères : minuscules, chiffres et tirets ; commence par une lettre, se termine par une lettre ou un chiffre |
-| Nom d'utilisateur | Minuscules, chiffres et tirets ; commence par une lettre, se termine par une lettre ou un chiffre (3 à 16 caractères dans l'assistant de création du cluster) |
-| Nom de base de données | 1 à 63 caractères : minuscules, chiffres et tirets ; commence par une lettre, se termine par une lettre ou un chiffre |
+| Nom d'utilisateur | 3 à 16 caractères : minuscules, chiffres et tirets ; commence par une lettre, se termine par une lettre ou un chiffre. Certains noms, comme `admin` ou `root`, sont réservés |
+| Nom de base de données | 1 à 63 caractères : minuscules, chiffres et tirets ; commence par une lettre, se termine par une lettre ou un chiffre. Les bases système `admin`, `local` et `config` sont refusées |
 
 :::note
 Les tirets bas (`_`) et les majuscules ne sont pas acceptés dans les noms de base ni dans les noms d'utilisateur.
@@ -121,7 +126,9 @@ La **Préconfiguration (Preset)** définit la capacité allouée à **chaque nœ
 ## Accès réseau
 
 - **Accès externe désactivé** (par défaut) : le cluster n'est pas exposé sur Internet. Le champ **Hôte (Host)** de la carte **Connexion et réseau** affiche **Non défini**.
-- **Accès externe activé** : la plateforme attribue une adresse publique, affichée dans le champ **Hôte (Host)** pour un cluster shardé. Sans sharding, chaque membre reçoit sa propre adresse publique et le champ reste sur **Non défini** : demandez l'adresse au [support](mailto:support@hidora.io). Le port est le port MongoDB standard, `27017`. L'assistant fournit une chaîne de connexion de la forme `mongodb://<utilisateur>:<password>@<hôte>`.
+- **Accès externe activé** : le port est le port MongoDB standard, `27017`, sans TLS.
+  - **Cluster shardé** : la plateforme attribue une adresse publique aux routeurs Mongos, affichée dans le champ **Hôte (Host)**. L'assistant fournit une chaîne de connexion de la forme `mongodb://<utilisateur>:<password>@<hôte>`.
+  - **Replica set** : chaque membre reçoit sa propre adresse publique. La carte **Connexion et réseau** les liste sous **Membres du replica set rs0**, chacune avec un bouton de copie, et propose une **Chaîne de connexion externe** de la forme `mongodb://<user>:<password>@<membre>:27017/?directConnection=true&authSource=admin`. Connectez-vous ainsi à un membre en connexion directe, sans paramètre `replicaSet` : les membres s'annoncent sous des noms internes au cluster, qui ne se résolvent pas depuis l'extérieur. Le membre joint peut être un secondaire, qui n'accepte pas les écritures : lisez avec `readPreference=secondaryPreferred`, et écrivez sur le membre primaire.
 
 ---
 
@@ -137,9 +144,9 @@ L'assistant affiche le **Coût estimé** et l'impact du cluster sur les quotas d
 
 | Paramètre | Valeur |
 |-----------|--------|
-| Versions | 6.0, 7.0, 8.0 |
+| Versions | 6.0, 7.0, 8.0 ; montée de version uniquement après création |
 | Réplicas | 1, 3 ou 5 |
-| Taille du disque | 1 à 4 096 Go, dans la limite du quota de stockage du projet |
+| Taille du disque | 1 à 4 096 Go, dans la limite du quota de stockage du projet ; augmentation uniquement après création |
 
 ---
 

@@ -62,7 +62,7 @@ Si le quota de stockage du projet est dépassé, la console affiche « Quota de 
 
 ### VHosts
 
-Saisissez un **Nom du VHost** (par exemple `demo`) puis cliquez sur **Ajouter**. Au moins un vhost est nécessaire pour passer à l'étape suivante.
+Saisissez un **Nom du VHost** (par exemple `demo` ; minuscules, chiffres et tirets, en commençant par une lettre et en terminant par une lettre ou un chiffre) puis cliquez sur **Ajouter**. Au moins un vhost est nécessaire pour passer à l'étape suivante.
 
 ### Utilisateurs
 
@@ -174,7 +174,7 @@ Message reçu : Hello Hikube!
 | Symptôme | Causes fréquentes | Action |
 |----------|-------------------|--------|
 | Le cluster reste **En création** | Provisionnement en cours | Patientez quelques minutes ; si le statut ne change pas, consultez le [dépannage](./troubleshooting.md) |
-| Statut **Erreur** | Échec du provisionnement | [Contactez le support](mailto:support@hidora.io) en indiquant le nom et l'identifiant du cluster |
+| Statut **Erreur** | La plateforme n'a pas pu appliquer la création ou la dernière modification du cluster | [Contactez le support](mailto:support@hidora.io) en indiquant le nom et l'identifiant du cluster |
 | `ACCESS_REFUSED` à la connexion | Mot de passe erroné, ou utilisateur sans droit sur le vhost | Vérifiez le vhost dans **Gérer les accès** ; régénérez le mot de passe si nécessaire |
 | Connexion impossible (timeout) | Accès externe désactivé, mauvais hôte ou port | Vérifiez **Accès externe** et **Hôte (Host)** dans la section **Connexion** ; le port AMQP est 5672 |
 | `NOT_FOUND - no vhost` | Nom de vhost incorrect dans le client | Utilisez exactement le nom affiché dans la section **VHosts** |

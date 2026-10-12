@@ -7,7 +7,7 @@ title: FAQ
 
 ### Which version should I choose?
 
-The wizard offers **6.0**, **7.0** and **8.0** (default). Choose the most recent one for a new project. For a migration, start from the version of your current environment, then upgrade one version at a time from **Edit**.
+The wizard offers **6.0**, **7.0** and **8.0** (default). Choose the most recent one for a new project. For a migration, start from the version of your current environment, then upgrade one version at a time from **Edit**. A version cannot be downgraded.
 
 ### How many replicas should I choose?
 
@@ -37,15 +37,17 @@ The list displayed by the wizard is authoritative. The preset cannot be changed 
 
 ### Where can I find the connection address?
 
-In the **Network and Connection** card of the cluster page, **Host** field, when **External Access** is enabled. The port is `27017`. Without external access, the field shows **Not defined**: the cluster remains reachable from the project's VMs and Kubernetes clusters through an internal address, which the console does not display; [contact support](mailto:support@hidora.io) to obtain it.
+In the **Network and Connection** card of the cluster page, when **External Access** is enabled: **Host** field for a sharded cluster, **Replica set rs0 members** list and **External connection string** for a replica set. The port is `27017`. On a replica set, connect to one member with `directConnection=true`, without the `replicaSet` parameter. Without external access, the field shows **Not defined**: the cluster remains reachable from the project's VMs and Kubernetes clusters through an internal address, which the console does not display; [contact support](mailto:support@hidora.io) to obtain it.
 
 ### Why doesn't the user created in the wizard have access to my database?
 
-The **Role** chosen in the cluster creation wizard applies to the `admin` database. Then grant access to your application databases via **Manage Access**. See [Manage users and databases](./how-to/manage-users-databases.md).
+The **Role** chosen in the wizard applies to the **Database** entered for that user, and to it alone. Grant access to your other databases via **Manage Access**. See [Manage users and databases](./how-to/manage-users-databases.md).
+
+Users created before console v1.3.0 received their role on the `admin` system database. In **Manage Access**, remove the `admin` line, shown in error, and add their application database.
 
 ### Why can't I save a user?
 
-A MongoDB user must have at least one role: a **Global Role** or **Specific Access** on a database. Also check the naming rules: lowercase letters, digits and hyphens only, no underscores.
+A MongoDB user must have access to at least one database: otherwise, the console displays "Please grant access to at least one database.". The system databases `admin`, `local` and `config` are refused. Also check the naming rules: lowercase letters, digits and hyphens only, no underscores; 3 to 16 characters for a username.
 
 ### I lost a user's password. How can I recover it?
 

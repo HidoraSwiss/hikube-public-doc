@@ -141,7 +141,7 @@ The wizard displays the **Estimated cost** and the cluster's impact on the proje
 | Parameter | Value |
 |-----------|-------|
 | Replicas | 1 to 8 |
-| Volume size | 1 to 4,096 GB per node, within the project quota |
+| Volume size | 1 to 4,096 GB per node, within the project quota; increase only after creation |
 | Redis databases | Logical database `0` by default |
 
 ---

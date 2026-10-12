@@ -16,8 +16,8 @@ Ce guide explique comment ajuster un cluster MongoDB existant depuis la [console
 
 | Paramètre | Modifiable après création |
 |-----------|---------------------------|
-| **Version MongoDB** | Oui |
-| **Taille du disque (Go)** | Oui |
+| **Version MongoDB** | Oui, vers une version supérieure uniquement |
+| **Taille du disque (Go)** | Oui, à la hausse uniquement |
 | **Accès externe** | Oui |
 | **Préconfiguration (Preset)** | Non, « La préconfiguration ne peut pas être modifiée après création » |
 | **Nombre de réplicas** | Non, « Le mode ne peut pas être modifié après création » |
@@ -36,17 +36,23 @@ La page **Modifier MongoDB** affiche la carte **Paramètres du cluster** et l'im
 
 ### 2. Ajuster les paramètres
 
-- **Taille du disque (Go)** : saisissez la nouvelle capacité.
-- **Version MongoDB** : sélectionnez la version cible (6.0, 7.0 ou 8.0).
+- **Taille du disque (Go)** : saisissez la nouvelle capacité, au moins égale à la taille actuelle. Une valeur inférieure affiche « La taille du disque ne peut pas être réduite : N Go minimum. » et n'est pas enregistrée.
+- **Version MongoDB** : sélectionnez la version cible. Le formulaire ne propose que la version actuelle et les versions supérieures.
 - **Accès externe** : activez ou désactivez l'exposition sur l'Internet public.
 
 :::tip
-MongoDB ne prend en charge les montées de version majeure que d'une version à la suivante (6.0 → 7.0 → 8.0). Le formulaire propose toutes les versions, y compris un saut de version ou une version inférieure : ne sautez pas de version et ne revenez pas en arrière.
+MongoDB ne prend en charge les montées de version majeure que d'une version à la suivante (6.0 → 7.0 → 8.0). Le formulaire propose toutes les versions supérieures, y compris un saut de version : ne sautez pas de version.
 :::
+
+Quand vous changez la version, l'avertissement « Les instances du cluster vont redémarrer » s'affiche : le changement redémarre les instances du cluster dès l'enregistrement, et une version mise à niveau ne peut plus être abaissée. Planifiez-le en dehors des périodes de forte activité.
 
 ### 3. Enregistrer
 
 Cliquez sur **Sauvegarder**. Le message « Cluster mis à jour » confirme la prise en compte. Si la nouvelle configuration dépasse les quotas du projet, le bouton reste inactif.
+
+:::note
+L'API applique les mêmes règles : une version inférieure à la version actuelle est refusée avec le code `150203`, une taille de disque inférieure à la taille actuelle avec le code `150204`.
+:::
 
 ## Vérification
 

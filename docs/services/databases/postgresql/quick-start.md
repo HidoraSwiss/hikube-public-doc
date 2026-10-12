@@ -96,8 +96,8 @@ Le statut du cluster est affiché à côté de son nom, dans la page du cluster 
 | Statut | Signification |
 |--------|---------------|
 | **En création** | Le cluster est en cours de provisionnement |
-| **Prêt** / **Actif** | Le cluster est opérationnel |
-| **Erreur** / **Échec** | Le provisionnement a échoué |
+| **Prêt** | Le cluster est opérationnel |
+| **Erreur** | La plateforme n'a pas pu appliquer la création ou la dernière modification du cluster |
 
 **Résultat attendu :** après quelques minutes, le statut passe à **Prêt**. La page du cluster affiche la **Version PostgreSQL**, les **Réplicas**, la **Taille allouée** et l'**Accès externe** (**Activé**).
 
@@ -164,9 +164,9 @@ L'**Accès externe** est désactivé, ou l'adresse IP publique n'est pas encore 
 
 Vérifiez le nom d'utilisateur, la base cible et le mot de passe. Si le mot de passe a été perdu, effectuez une rotation depuis l'onglet **Utilisateurs**. Voir [Gérer les utilisateurs et bases de données](./how-to/manage-users-databases.md).
 
-### Le cluster reste en Erreur
+### Le cluster passe en Erreur
 
-[Contactez le support](mailto:support@hidora.io) en indiquant le nom du projet et du cluster.
+La plateforme n'a pas pu appliquer la création ou la dernière modification du cluster. [Contactez le support](mailto:support@hidora.io) en indiquant le nom du projet et du cluster.
 
 ---
 

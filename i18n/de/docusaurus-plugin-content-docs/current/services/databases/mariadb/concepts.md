@@ -90,15 +90,16 @@ Ein manueller Wechsel des Primary (Switchover) wird in der Konsole nicht angebot
 
 ## Benutzer, Datenbanken und Rollen
 
-Die Seite eines MariaDB-Clusters enthält einen Abschnitt **Users**; eine eigene Registerkarte für Datenbanken gibt es nicht. Die Rechte werden pro Benutzer verwaltet:
+Die Seite eines MariaDB-Clusters enthält einen Abschnitt **Users**; eine eigene Registerkarte für Datenbanken gibt es nicht. Rechte werden Datenbank für Datenbank vergeben: Jeder Zugriff verbindet einen **Database name** mit **Rights**, **Administrator (Admin)** oder **Read-only**. **Administrator** gewährt alle Privilegien auf der Datenbank (`ALL`, mit Recht zur Weitergabe), **Read-only** das Recht `SELECT`. Wird ein Zugriff auf eine noch nicht existierende Datenbank gewährt, wird diese erstellt. Eine globale Rolle gibt es nicht: Ein Benutzer hat nur auf die ihm zugewiesenen Datenbanken Zugriff.
 
-- **Global Role (Optional)**: **No global role**, **Administrator** oder **Read-only (global)**. Eine globale Rolle wird derzeit beim Speichern abgelehnt (Meldung `invalid database_name`): Belassen Sie **No global role** und verwenden Sie die spezifischen Zugriffe;
-- **Specific Access (Databases)**: eine Liste von Paaren aus **Database name** / **Rights** (**Administrator (Admin)** oder **Read-only**). Wird ein Zugriff auf eine noch nicht existierende Datenbank gewährt, wird diese erstellt.
+- Bei der Erstellung des Clusters fragt der Schritt **Users** des Assistenten für jeden Benutzer eine Anwendungsdatenbank (**Database**) und eine **Role** ab.
+- Danach lassen sich mit **Create a user** und **Manage Access** ein oder mehrere Zugriffe vergeben. Ein ohne Zugriff gespeicherter Benutzer hat auf keine Datenbank Rechte.
+- Die Spalte **Databases** der Benutzerliste zeigt jede Datenbank mit der Rolle an, zum Beispiel `myapp (Administrator)`.
 
-Benutzer, die im Erstellungsassistenten des Clusters angelegt werden, erhalten die gewählte **Role** auf der Systemdatenbank `mysql`, sichtbar in der Spalte **Databases** der Benutzerliste: **Administrator** gewährt dort alle Privilegien (`ALL`, mit Recht zur Weitergabe), **Read-only** das Recht `SELECT`. Gewähren Sie ihnen anschließend über **Manage Access** den Zugriff auf Ihre Anwendungsdatenbanken.
+Die Systemdatenbanken `mysql`, `information_schema`, `performance_schema` und `sys` können keinen Zugriff erhalten: Die Konsole zeigt „“mysql” is a system database: choose an application database.“ an, und die API lehnt die Anfrage ab. Sie können auch weder erstellt noch gelöscht werden.
 
-:::warning
-Die Datenbank `mysql` enthält die Konten und Rechte des Servers. Ein Zugriff **Administrator** auf diese Datenbank ermöglicht es, die Rechte aller Benutzer zu ändern, und ein Zugriff **Read-only** ermöglicht es, die Passwort-Hashes zu lesen. Beschränken Sie diese Zugriffe auf ein Administrationskonto und entziehen Sie sie den Anwendungskonten über **Manage Access**.
+:::warning Vor der Konsole v1.3.0 erstellte Benutzer
+Der Assistent zur Cluster-Erstellung hat früher jedem Benutzer eine Rolle auf der Systemdatenbank `mysql` zugewiesen, die die Konten und Rechte des Servers enthält: Ein Zugriff **Administrator** auf diese Datenbank ermöglicht es, die Rechte aller Benutzer zu ändern, ein Zugriff **Read-only**, die Passwort-Hashes zu lesen. Öffnen Sie für diese Benutzer **Actions** → **Manage Access**: Die Zeile `mysql` wird dort als Fehler angezeigt. Entfernen Sie sie, fügen Sie bei Bedarf die Anwendungsdatenbank des Benutzers hinzu und klicken Sie dann auf **Save**.
 :::
 
 Das Passwort eines Benutzers wird von der Plattform generiert und **nur ein einziges Mal** angezeigt. Bei Verlust generieren Sie mit **Change Password** ein neues.
@@ -108,8 +109,8 @@ Das Passwort eines Benutzers wird von der Plattform generiert und **nur ein einz
 | Element | Regel |
 |---------|-------|
 | Clustername | 3 bis 16 Zeichen: Kleinbuchstaben, Ziffern und Bindestriche; beginnt mit einem Buchstaben, endet mit einem Buchstaben oder einer Ziffer |
-| Benutzername | Kleinbuchstaben, Ziffern und Bindestriche; beginnt mit einem Buchstaben, endet mit einem Buchstaben oder einer Ziffer (3 bis 16 Zeichen im Erstellungsassistenten des Clusters) |
-| Datenbankname | 1 bis 63 Zeichen: Kleinbuchstaben, Ziffern und Bindestriche; beginnt mit einem Buchstaben, endet mit einem Buchstaben oder einer Ziffer |
+| Benutzername | 3 bis 16 Zeichen: Kleinbuchstaben, Ziffern und Bindestriche; beginnt mit einem Buchstaben, endet mit einem Buchstaben oder einer Ziffer. Einige Namen, etwa `admin` oder `root`, sind reserviert |
+| Datenbankname | 1 bis 63 Zeichen: Kleinbuchstaben, Ziffern und Bindestriche; beginnt mit einem Buchstaben, endet mit einem Buchstaben oder einer Ziffer. Die Systemdatenbanken `mysql`, `information_schema`, `performance_schema` und `sys` werden abgelehnt |
 
 :::note
 Unterstriche (`_`) werden weder in Datenbanknamen noch in Benutzernamen akzeptiert.
@@ -154,9 +155,9 @@ Der Assistent zeigt die **Estimated cost** und die Auswirkung des Clusters auf d
 
 | Parameter | Wert |
 |-----------|--------|
-| Versionen | 10.6, 10.11, 11.4, 11.8 |
+| Versionen | 10.6, 10.11, 11.4, 11.8; nach der Erstellung nur Versions-Upgrade |
 | Replicas | 1, 3 oder 5 |
-| Disk-Größe | 1 bis 4 096 GB, im Rahmen des Speicher-Quotas des Projekts |
+| Disk-Größe | 1 bis 4 096 GB, im Rahmen des Speicher-Quotas des Projekts; nach der Erstellung nur Vergrößerung |
 
 ---
 

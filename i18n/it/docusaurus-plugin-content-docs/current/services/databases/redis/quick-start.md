@@ -74,8 +74,8 @@ Il passaggio **Done** mostra «Cluster successfully created». Faccia clic su **
 | Stato | Significato |
 |--------|---------------|
 | **Creating** | Il cluster è in fase di provisioning |
-| **Ready** / **Running** | Il cluster è operativo |
-| **Error** / **Failed** | Il provisioning non è riuscito |
+| **Ready** | Il cluster è operativo |
+| **Error** | La piattaforma non è riuscita ad applicare la creazione o l'ultima modifica del cluster |
 
 **Risultato atteso:** dopo alcuni minuti, la sezione **Connection** della pagina del cluster mostra lo **Status** **Ready** e l'**Host** del cluster.
 
@@ -136,9 +136,9 @@ La password è assente o errata. Verifichi la variabile `REDISCLI_AUTH`, oppure 
 
 La configurazione supera le quote del progetto. Riduca il preset, la dimensione del volume o il numero di repliche.
 
-### Il cluster resta in Error
+### Il cluster passa in Error
 
-[Contatti il supporto](mailto:support@hidora.io) indicando il nome del progetto e del cluster.
+La piattaforma non è riuscita ad applicare la creazione o l'ultima modifica del cluster. [Contatti il supporto](mailto:support@hidora.io) indicando il nome del progetto e del cluster.
 
 ---
 

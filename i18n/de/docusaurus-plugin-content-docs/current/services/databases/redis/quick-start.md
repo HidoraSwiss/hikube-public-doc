@@ -74,8 +74,8 @@ Der Schritt **Done** zeigt „Cluster successfully created“ an. Klicken Sie au
 | Status | Bedeutung |
 |--------|---------------|
 | **Creating** | Der Cluster wird bereitgestellt |
-| **Ready** / **Running** | Der Cluster ist betriebsbereit |
-| **Error** / **Failed** | Die Bereitstellung ist fehlgeschlagen |
+| **Ready** | Der Cluster ist betriebsbereit |
+| **Error** | Die Plattform konnte die Erstellung oder die letzte Änderung des Clusters nicht anwenden |
 
 **Erwartetes Ergebnis:** Nach einigen Minuten zeigt der Abschnitt **Connection** der Cluster-Seite den **Status** **Ready** und den **Host** des Clusters an.
 
@@ -136,9 +136,9 @@ Das Passwort fehlt oder ist falsch. Prüfen Sie die Variable `REDISCLI_AUTH` ode
 
 Die Konfiguration überschreitet die Quotas des Projekts. Verringern Sie das Preset, die Volume-Größe oder die Anzahl der Replicas.
 
-### Der Cluster bleibt im Status Error
+### Der Cluster wechselt in den Status Error
 
-[Wenden Sie sich an den Support](mailto:support@hidora.io) und geben Sie den Namen des Projekts und des Clusters an.
+Die Plattform konnte die Erstellung oder die letzte Änderung des Clusters nicht anwenden. [Wenden Sie sich an den Support](mailto:support@hidora.io) und geben Sie den Namen des Projekts und des Clusters an.
 
 ---
 

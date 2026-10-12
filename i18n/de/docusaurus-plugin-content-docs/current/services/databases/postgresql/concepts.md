@@ -152,7 +152,7 @@ Der Erstellungsassistent zeigt ab dem Schritt **Configuration** die **Estimated 
 
 | Parameter | Wert |
 |-----------|--------|
-| Disk-Größe | 1 bis 4 096 GB, im Rahmen des Speicher-Quotas des Projekts |
+| Disk-Größe | 1 bis 4 096 GB, im Rahmen des Speicher-Quotas des Projekts; nach der Erstellung nur Vergrößerung |
 | Replicas | 1, 2 oder 3 |
 
 ---

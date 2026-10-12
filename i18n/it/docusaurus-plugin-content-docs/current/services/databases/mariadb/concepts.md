@@ -90,15 +90,16 @@ Il passaggio manuale del primary (switchover) non è proposto nella console; con
 
 ## Utenti, database e ruoli
 
-La pagina di un cluster MariaDB comprende una sezione **Users**; non esiste una scheda dedicata ai database. I diritti si gestiscono per utente:
+La pagina di un cluster MariaDB comprende una sezione **Users**; non esiste una scheda dedicata ai database. I diritti si assegnano database per database: ogni accesso associa un **Database name** a dei **Rights**, **Administrator (Admin)** o **Read-only**. **Administrator** concede tutti i privilegi sul database (`ALL`, con diritto di delega), **Read-only** il diritto `SELECT`. Concedere un accesso su un database che non esiste ancora lo crea. Non esiste un ruolo globale: un utente ha accesso solo ai database che gli sono assegnati.
 
-- **Global Role (Optional)**: **No global role**, **Administrator** o **Read-only (global)**. Un ruolo globale viene attualmente rifiutato al salvataggio (messaggio `invalid database_name`): lasci **No global role** e utilizzi gli accessi specifici;
-- **Specific Access (Databases)**: un elenco di coppie **Database name** / **Rights** (**Administrator (Admin)** o **Read-only**). Concedere un accesso su un database che non esiste ancora lo crea.
+- Alla creazione del cluster, il passaggio **Users** della procedura guidata chiede per ogni utente un **Database** applicativo e un **Role**.
+- In seguito, **Create a user** e **Manage Access** permettono di assegnare uno o più accessi. Un utente salvato senza accessi non ha diritti su alcun database.
+- La colonna **Databases** dell'elenco degli utenti mostra ogni database con il ruolo, ad esempio `myapp (Administrator)`.
 
-Gli utenti dichiarati nella procedura guidata di creazione del cluster ricevono il **Role** scelto sul database di sistema `mysql`, visibile nella colonna **Databases** dell'elenco degli utenti: **Administrator** concede tutti i privilegi (`ALL`, con diritto di delega), **Read-only** il diritto `SELECT`. Conceda poi a questi utenti l'accesso ai suoi database applicativi tramite **Manage Access**.
+I database di sistema `mysql`, `information_schema`, `performance_schema` e `sys` non possono ricevere accessi: la console mostra «“mysql” is a system database: choose an application database.» e l'API rifiuta la richiesta. Non possono nemmeno essere creati né eliminati.
 
-:::warning
-Il database `mysql` contiene gli account e i diritti del server. Un accesso **Administrator** su questo database consente di modificare i diritti di tutti gli utenti, e un accesso **Read-only** consente di leggere gli hash delle password. Riservi questi accessi a un account di amministrazione e li rimuova dagli account applicativi tramite **Manage Access**.
+:::warning Utenti creati prima della console v1.3.0
+La procedura guidata di creazione del cluster assegnava in precedenza a ogni utente un ruolo sul database di sistema `mysql`, che contiene gli account e i diritti del server: un accesso **Administrator** su questo database consente di modificare i diritti di tutti gli utenti, un accesso **Read-only** di leggere gli hash delle password. Per questi utenti, apra **Actions** → **Manage Access**: la riga `mysql` vi appare in errore. La rimuova, aggiunga se necessario il database applicativo dell'utente, quindi faccia clic su **Save**.
 :::
 
 La password di un utente è generata dalla piattaforma e mostrata **una sola volta**. In caso di smarrimento, ne generi una nuova con **Change Password**.
@@ -108,8 +109,8 @@ La password di un utente è generata dalla piattaforma e mostrata **una sola vol
 | Elemento | Regola |
 |----------|--------|
 | Nome del cluster | Da 3 a 16 caratteri: lettere minuscole, cifre e trattini; inizia con una lettera, termina con una lettera o una cifra |
-| Nome utente | Lettere minuscole, cifre e trattini; inizia con una lettera, termina con una lettera o una cifra (da 3 a 16 caratteri nella procedura guidata di creazione del cluster) |
-| Nome del database | Da 1 a 63 caratteri: lettere minuscole, cifre e trattini; inizia con una lettera, termina con una lettera o una cifra |
+| Nome utente | Da 3 a 16 caratteri: lettere minuscole, cifre e trattini; inizia con una lettera, termina con una lettera o una cifra. Alcuni nomi, come `admin` o `root`, sono riservati |
+| Nome del database | Da 1 a 63 caratteri: lettere minuscole, cifre e trattini; inizia con una lettera, termina con una lettera o una cifra. I database di sistema `mysql`, `information_schema`, `performance_schema` e `sys` sono rifiutati |
 
 :::note
 I trattini bassi (`_`) non sono accettati né nei nomi dei database né nei nomi utente.
@@ -154,9 +155,9 @@ La procedura guidata mostra l'**Estimated cost** e l'impatto del cluster sulla q
 
 | Parametro | Valore |
 |-----------|--------|
-| Versioni | 10.6, 10.11, 11.4, 11.8 |
+| Versioni | 10.6, 10.11, 11.4, 11.8; dopo la creazione, solo aggiornamento di versione |
 | Repliche | 1, 3 o 5 |
-| Dimensione del disco | Da 1 a 4.096 GB, entro il limite della quota di storage del progetto |
+| Dimensione del disco | Da 1 a 4.096 GB, entro il limite della quota di storage del progetto; dopo la creazione, solo aumento |
 
 ---
 

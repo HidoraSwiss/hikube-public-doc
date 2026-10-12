@@ -12,7 +12,13 @@ title: Fehlerbehebung
 **Lösung**:
 
 1. Warten Sie einige Minuten und aktualisieren Sie die Seite des Clusters.
-2. Wenn sich der Status nach etwa fünfzehn Minuten nicht ändert oder zu **Error** oder **Failed** wechselt, [wenden Sie sich an den Support](mailto:support@hidora.io) und geben Sie dabei das Projekt und den Namen des Clusters an.
+2. Wenn sich der Status nach etwa fünfzehn Minuten nicht ändert, [wenden Sie sich an den Support](mailto:support@hidora.io) und geben Sie dabei das Projekt und den Namen des Clusters an.
+
+### Der Cluster wechselt in den Status „Error“
+
+**Ursache**: Die Plattform konnte die Erstellung des Clusters oder seine letzte Änderung nicht anwenden. Nach einer Änderung kann der Cluster mit seiner vorherigen Konfiguration weiterlaufen.
+
+**Lösung**: [Wenden Sie sich an den Support](mailto:support@hidora.io) und geben Sie das Projekt, den Namen des Clusters und die angeforderte Änderung an.
 
 ### Der Schritt Configuration des Assistenten lässt sich nicht abschließen
 
@@ -75,4 +81,4 @@ title: Fehlerbehebung
 
 **Ursache**: Das Datenvolumen hat die **Allocated Size** erreicht.
 
-**Lösung**: Erhöhen Sie die **Disk size (GB)** über **Edit**, im Rahmen des Speicher-Quotas des Projekts. Löschen Sie bei Bedarf veraltete Daten und führen Sie `VACUUM` aus, um Speicherplatz freizugeben.
+**Lösung**: Erhöhen Sie die **Disk size (GB)** über **Edit**, im Rahmen des Speicher-Quotas des Projekts. Die Größe kann danach nicht mehr verringert werden. Löschen Sie bei Bedarf veraltete Daten und führen Sie `VACUUM` aus, um Speicherplatz freizugeben.

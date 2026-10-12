@@ -15,8 +15,8 @@ This guide explains which parameters of a RabbitMQ cluster can be changed after 
 
 | Parameter | Editable after creation | Note |
 |-----------|---------------------------|----------|
-| **RabbitMQ Version** | Yes | Available versions: 4.2, 4.1, 4.0, 3.13 |
-| **Disk size (GB)** | Yes | Capacity per node, within the project's storage quota |
+| **RabbitMQ Version** | Yes | Current version and higher versions among 4.2, 4.1, 4.0, 3.13 |
+| **Disk size (GB)** | Yes | Capacity per node, upwards only, within the project's storage quota |
 | **External access** | Yes | See [Configure external access](./configure-external-access.md) |
 | **Preset** | No | "The resources preset cannot be changed after creation" |
 | **Number of replicas** | No | "The mode cannot be changed after creation" |
@@ -32,12 +32,12 @@ The **Edit RabbitMQ cluster** page displays the **Cluster settings** card. The *
 
 ### 2. Adjust the parameters
 
-- **RabbitMQ Version**: select the target version.
-- **Disk size (GB)**: enter the new capacity per node. The size can only increase: a lower value is accepted by the form but refused by the platform, and the cluster keeps its current size.
+- **RabbitMQ Version**: select the target version. The form only offers the current version and the higher versions.
+- **Disk size (GB)**: enter the new capacity per node. The size can only increase: a lower value displays "The disk size cannot be reduced: N GB minimum." and is not saved.
 - **External access**: turn the switch on or off.
 
 :::warning Version change
-Changing the version recreates the RabbitMQ nodes one by one: with a single replica, the cluster is unavailable during the restart (about one to two minutes) and clients must reconnect. The address in the **Host** field does not change. Test the version change on a non-production cluster before applying it to a production cluster, and check that your clients are compatible with the target version.
+When you change the version, the warning "The cluster instances will restart" is displayed: an upgraded version cannot be downgraded. Changing the version recreates the RabbitMQ nodes one by one: with a single replica, the cluster is unavailable during the restart (about one to two minutes) and clients must reconnect. The address in the **Host** field does not change. Test the version change on a non-production cluster before applying it to a production cluster, and check that your clients are compatible with the target version.
 :::
 
 ### 3. Save
@@ -45,6 +45,10 @@ Changing the version recreates the RabbitMQ nodes one by one: with a single repl
 Click **Save**. The message "Cluster updated" confirms that the parameters have been applied and the console returns to the detail page.
 
 If the project quota does not allow the new configuration, the **Save** button stays disabled.
+
+:::note
+The API applies the same rules: a version lower than the current one is refused with code `140203`, a disk size smaller than the current one with code `140204`.
+:::
 
 ## Change the preset or the number of replicas
 

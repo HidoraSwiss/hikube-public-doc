@@ -16,9 +16,9 @@ Diese Anleitung erklärt, wie Sie einen bestehenden Redis-Cluster über die [Hik
 
 | Parameter | Nach der Erstellung änderbar |
 |-----------|---------------------------|
-| **Redis Version** | Ja |
+| **Redis Version** | Ja, nur auf eine höhere Version |
 | **Preset** | Ja |
-| **Volume Size (GB)** | Ja |
+| **Volume Size (GB)** | Ja, nur Vergrößerung |
 | **External access** | Ja |
 | **Authentication required** | Ja |
 | **Number of replicas** | Nein, „The mode cannot be changed after creation“ |
@@ -37,14 +37,16 @@ Die Seite **Edit cluster** zeigt die Karte **Cluster settings** und die Auswirku
 ### 2. Die Parameter anpassen
 
 - **Preset**: Wählen Sie ein größeres Preset, wenn der Arbeitsspeicher erschöpft ist. Der Arbeitsspeicher des Presets begrenzt das Datenvolumen, das Redis im Arbeitsspeicher halten kann.
-- **Volume Size (GB)**: „Storage capacity allocated to each node in the cluster.“
-- **Redis Version**: `8 (Latest)` oder `7`.
+- **Volume Size (GB)**: „Storage capacity allocated to each node in the cluster.“ Geben Sie mindestens die aktuelle Größe ein.
+- **Redis Version**: `8 (Latest)` oder `7`. Das Formular bietet beide Versionen an, akzeptiert wird jedoch nur die aktuelle oder eine höhere Version: Wählen Sie auf einem Cluster mit `8` nicht `7`.
 - **External access**: „Allow access to the cluster from outside the private network.“
 - **Authentication required**: „Enable password protection.“
 
 ### 3. Speichern
 
 Klicken Sie auf **Save changes**. Die Meldung „Changes saved“ bestätigt die Übernahme.
+
+Eine niedrigere Version oder eine verkleinerte Volume-Größe wird abgelehnt: Die Konsole zeigt „An error occurred while updating the cluster.“ an, gefolgt von dem von der API zurückgegebenen Grund (Codes `120203` für die Version, `120204` für das Volume).
 
 :::warning
 Wenn Sie die Authentifizierung auf einem Cluster deaktivieren, der im öffentlichen Netzwerk erreichbar ist, werden Ihre Daten für jeden zugänglich, der die Adresse kennt. Lassen Sie die Authentifizierung aktiviert.

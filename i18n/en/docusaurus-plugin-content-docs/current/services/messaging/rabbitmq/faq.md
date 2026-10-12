@@ -47,7 +47,7 @@ AMQP clients connect on port **5672**, at the address displayed in the **Host** 
 
 ### Can the number of replicas or the preset be changed after creation?
 
-No. The **Number of replicas** (and therefore the standalone or cluster mode) and the **Preset** are set at creation. The version, the disk size and external access remain editable. See [Change a cluster's configuration](./how-to/scale-resources.md).
+No. The **Number of replicas** (and therefore the standalone or cluster mode) and the **Preset** are set at creation. The version (to a higher version), the disk size (upwards) and external access remain editable. See [Change a cluster's configuration](./how-to/scale-resources.md).
 
 ### I have lost a user's password. How do I recover it?
 

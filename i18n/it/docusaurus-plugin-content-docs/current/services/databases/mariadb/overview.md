@@ -58,8 +58,8 @@ graph TD
 | Funzione | Disponibile |
 |----------|-------------|
 | Creazione di un cluster (versione 10.6, 10.11, 11.4 o 11.8, preset, dimensione del disco, 1, 3 o 5 repliche, accesso esterno) | Sì |
-| Utenti, ruolo globale e accesso per database (admin / sola lettura), rotazione della password | Sì |
-| Modifica della versione, della dimensione del disco e dell'accesso esterno | Sì |
+| Utenti e accesso per database (admin / sola lettura), rotazione della password | Sì |
+| Aggiornamento di versione, aumento della dimensione del disco, modifica dell'accesso esterno | Sì |
 | Modifica del preset o del numero di repliche dopo la creazione | No, [contatti il supporto](mailto:support@hidora.io) |
 | Backup e ripristino | No, [contatti il supporto](mailto:support@hidora.io) |
 

@@ -12,7 +12,13 @@ title: Fehlerbehebung
 **Lösung**:
 
 1. Warten Sie einige Minuten und aktualisieren Sie die Seite des Clusters.
-2. Wenn sich der Status nach etwa fünfzehn Minuten nicht ändert oder zu **Error** oder **Failed** wechselt, [wenden Sie sich an den Support](mailto:support@hidora.io) und geben Sie dabei das Projekt und den Namen des Clusters an.
+2. Wenn sich der Status nach etwa fünfzehn Minuten nicht ändert, [wenden Sie sich an den Support](mailto:support@hidora.io) und geben Sie dabei das Projekt und den Namen des Clusters an.
+
+### Der Cluster wechselt in den Status „Error“
+
+**Ursache**: Die Plattform konnte die Erstellung des Clusters oder seine letzte Änderung nicht anwenden. Nach einer Änderung kann der Cluster mit seiner vorherigen Konfiguration weiterlaufen.
+
+**Lösung**: [Wenden Sie sich an den Support](mailto:support@hidora.io) und geben Sie das Projekt, den Namen des Clusters und die angeforderte Änderung an.
 
 ### Verbindung abgelehnt oder Zeitüberschreitung
 
@@ -39,9 +45,15 @@ title: Fehlerbehebung
 
 ### Fehler beim Hinzufügen eines Zugriffs oder eines Benutzers
 
-**Ursache**: Der Name der Datenbank oder des Benutzers entspricht nicht den Benennungsregeln.
+**Ursache**: Der Name der Datenbank oder des Benutzers entspricht nicht den Benennungsregeln, oder der Zugriff zielt auf eine Systemdatenbank (`mysql`, `information_schema`, `performance_schema`, `sys`).
 
-**Lösung**: Verwenden Sie nur Kleinbuchstaben, Ziffern und Bindestriche, beginnend mit einem Buchstaben und endend mit einem Buchstaben oder einer Ziffer. Unterstriche (`_`) und Großbuchstaben werden nicht akzeptiert. Siehe [MariaDB-Konzepte](./concepts.md#benennungsregeln).
+**Lösung**: Verwenden Sie nur Kleinbuchstaben, Ziffern und Bindestriche, beginnend mit einem Buchstaben und endend mit einem Buchstaben oder einer Ziffer. Unterstriche (`_`) und Großbuchstaben werden nicht akzeptiert. Gewähren Sie Zugriff auf eine Anwendungsdatenbank, nie auf eine Systemdatenbank. Siehe [MariaDB-Konzepte](./concepts.md#benennungsregeln).
+
+### Eine Zeile `mysql` wird in „Manage Access“ als Fehler angezeigt
+
+**Ursache**: Der Benutzer wurde vor der Konsole v1.3.0 mit dem Assistenten zur Cluster-Erstellung angelegt, der ihm eine Rolle auf der Systemdatenbank `mysql` zuwies. Eine Systemdatenbank kann keinen Zugriff mehr erhalten, und die Aktualisierung des Benutzers wird abgelehnt, solange diese Zeile vorhanden ist.
+
+**Lösung**: Entfernen Sie die Zeile `mysql`, fügen Sie bei Bedarf die Anwendungsdatenbank des Benutzers hinzu und klicken Sie dann auf **Save**. Die Meldung „Access updated“ bestätigt das Speichern.
 
 ### Disk-Speicherplatz voll
 
@@ -55,7 +67,7 @@ title: Fehlerbehebung
    FROM information_schema.tables
    GROUP BY table_schema;
    ```
-2. Erhöhen Sie die **Disk size (GB)** über **Edit**, im Rahmen des Speicher-Quotas des Projekts. Siehe [Ressourcen ändern](./how-to/scale-resources.md).
+2. Erhöhen Sie die **Disk size (GB)** über **Edit**, im Rahmen des Speicher-Quotas des Projekts. Die Größe kann danach nicht mehr verringert werden. Siehe [Ressourcen ändern](./how-to/scale-resources.md).
 3. Löschen Sie veraltete Daten und optimieren Sie anschließend die betroffenen Tabellen (`OPTIMIZE TABLE`).
 
 ### Replikation nicht synchron

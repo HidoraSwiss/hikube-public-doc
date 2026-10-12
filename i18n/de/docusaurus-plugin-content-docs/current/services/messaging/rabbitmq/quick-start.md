@@ -62,7 +62,7 @@ Wenn die Speicher-Quota des Projekts überschritten ist, zeigt die Konsole „St
 
 ### VHosts
 
-Geben Sie einen **VHost Name** ein (zum Beispiel `demo`) und klicken Sie auf **Add**. Mindestens ein VHost ist erforderlich, um zum nächsten Schritt zu gelangen.
+Geben Sie einen **VHost Name** ein (zum Beispiel `demo`; Kleinbuchstaben, Ziffern und Bindestriche, beginnend mit einem Buchstaben und endend mit einem Buchstaben oder einer Ziffer) und klicken Sie auf **Add**. Mindestens ein VHost ist erforderlich, um zum nächsten Schritt zu gelangen.
 
 ### Users
 
@@ -174,7 +174,7 @@ Nachricht empfangen: Hello Hikube!
 | Symptom | Häufige Ursachen | Maßnahme |
 |----------|-------------------|--------|
 | Der Cluster bleibt im Status **Creating** | Bereitstellung läuft | Warten Sie einige Minuten; ändert sich der Status nicht, lesen Sie die [Fehlerbehebung](./troubleshooting.md) |
-| Status **Error** | Bereitstellung fehlgeschlagen | [Wenden Sie sich an den Support](mailto:support@hidora.io) und geben Sie den Namen und die Kennung des Clusters an |
+| Status **Error** | Die Plattform konnte die Erstellung oder die letzte Änderung des Clusters nicht anwenden | [Wenden Sie sich an den Support](mailto:support@hidora.io) und geben Sie den Namen und die Kennung des Clusters an |
 | `ACCESS_REFUSED` beim Verbinden | Falsches Passwort oder Benutzer ohne Rechte auf dem VHost | Prüfen Sie den VHost unter **Manage Access**; generieren Sie bei Bedarf das Passwort neu |
 | Verbindung nicht möglich (Timeout) | Externer Zugriff deaktiviert, falscher Host oder Port | Prüfen Sie **External Access** und **Host** im Abschnitt **Connection**; der AMQP-Port ist 5672 |
 | `NOT_FOUND - no vhost` | Falscher VHost-Name im Client | Verwenden Sie exakt den im Abschnitt **VHosts** angezeigten Namen |

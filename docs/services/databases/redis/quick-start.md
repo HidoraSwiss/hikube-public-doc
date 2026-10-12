@@ -74,8 +74,8 @@ L'étape **Résumé** affiche « Cluster créé avec succès ». Cliquez sur **T
 | Statut | Signification |
 |--------|---------------|
 | **En création** | Le cluster est en cours de provisionnement |
-| **Prêt** / **Actif** | Le cluster est opérationnel |
-| **Erreur** / **Échec** | Le provisionnement a échoué |
+| **Prêt** | Le cluster est opérationnel |
+| **Erreur** | La plateforme n'a pas pu appliquer la création ou la dernière modification du cluster |
 
 **Résultat attendu :** après quelques minutes, la section **Connexion** de la page du cluster affiche le **Statut** **Prêt** et l'**Hôte** du cluster.
 
@@ -136,9 +136,9 @@ Le mot de passe est absent ou erroné. Vérifiez la variable `REDISCLI_AUTH`, ou
 
 La configuration dépasse les quotas du projet. Réduisez la préconfiguration, la taille du volume ou le nombre de réplicas.
 
-### Le cluster reste en Erreur
+### Le cluster passe en Erreur
 
-[Contactez le support](mailto:support@hidora.io) en indiquant le nom du projet et du cluster.
+La plateforme n'a pas pu appliquer la création ou la dernière modification du cluster. [Contactez le support](mailto:support@hidora.io) en indiquant le nom du projet et du cluster.
 
 ---
 

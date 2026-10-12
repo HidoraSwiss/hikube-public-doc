@@ -194,8 +194,10 @@ Il preset **Small** è selezionato per impostazione predefinita. **Non può esse
 | Parametro | Valore |
 |-----------|--------|
 | Nome del cluster | Da 3 a 16 caratteri: lettere minuscole, cifre e trattini; inizia con una lettera e termina con una lettera o una cifra |
-| Versioni disponibili | 4.2, 4.1, 4.0, 3.13 |
+| Versioni disponibili | 4.2, 4.1, 4.0, 3.13; dopo la creazione, solo aggiornamento di versione |
 | Repliche | 1, 3 o 5 (fissate alla creazione) |
+| Nome del vhost | Lettere minuscole, cifre e trattini; inizia con una lettera, termina con una lettera o una cifra |
+| Nome utente | Da 3 a 16 caratteri: lettere minuscole, cifre e trattini; inizia con una lettera, termina con una lettera o una cifra. Alcuni nomi, come `admin` o `root`, sono riservati |
 | Dimensione del disco | Da 1 a 4096 GB per nodo, entro il limite della quota di storage del progetto; solo aumento |
 | Accesso esterno | Attivabile alla creazione o in seguito |
 | Porta AMQP | 5672, senza TLS |

@@ -23,20 +23,25 @@ The MariaDB console has no tab dedicated to databases: a database is created by 
 ### 1. Create a user
 
 1. In the **Users** section, click **Create a user**.
-2. Enter the **Username**: lowercase letters, digits and hyphens, starting with a letter (for example `report-reader`).
-3. Leave **Global Role (Optional)** set to **No global role**.
-4. Under **Specific Access (Databases)**, click **Add** for each database:
-   - **Database name**: for example `analytics` (lowercase letters, digits and hyphens; no underscore);
+2. Enter the **Username**: 3 to 16 characters, lowercase letters, digits and hyphens, starting with a letter and ending with a letter or a digit (for example `report-reader`).
+3. Under **Specific Access (Databases)**, click **Add** for each database:
+   - **Database name**: for example `analytics` (lowercase letters, digits and hyphens; no underscore; the system databases `mysql`, `information_schema`, `performance_schema` and `sys` are refused);
    - **Rights**: **Administrator (Admin)** or **Read-only**.
-5. Click **Create user**.
+4. Click **Create user**.
 
-The "Generated password" screen displays the generated password.
+There is no global role: the user only has access to the databases listed. Without any access, the console shows "No access configured: the user has no rights on any database."; the user can be created this way and receive access later.
+
+The "User created successfully!" screen displays the generated password.
 
 :::warning
 Copy this password immediately and keep it in a safe place: it will not be displayed again after you leave this screen.
 :::
 
-Then click **Done**.
+Then click **Done and return to cluster**.
+
+:::tip
+Users declared in the cluster creation wizard receive their role on the **Database** entered in the **Users** step.
+:::
 
 ### 2. Create a database
 
@@ -46,9 +51,13 @@ Grant a user access to the name of the new database (step 1 for a new user, step
 
 1. Open the user's **Actions** menu and choose **Manage Access**.
 2. Add access with **Add**, change the **Rights** or remove a row.
-3. Click **Save**.
+3. Click **Save**. The "Access updated" message confirms the change.
 
 The username cannot be changed.
+
+:::warning Users created before console v1.3.0
+Users declared in the cluster creation wizard before console v1.3.0 received a role on the `mysql` system database. In **Manage Access**, this line is shown in error and prevents saving: remove it, add the user's application database if needed, then click **Save**.
+:::
 
 ### 4. Renew a user's password
 
@@ -81,7 +90,7 @@ CREATE TABLE test (id INT);
 
 ## Verification
 
-The user list shows, for each user, its **Role** and the accessible **Databases** with the associated right (for example `analytics (readonly)` or `analytics (admin)`).
+The **Databases** column of the user list shows, for each user, the accessible databases with the associated role (for example `analytics (Read-only)` or `analytics (Administrator)`), or **None**.
 
 ## Going further
 

@@ -141,7 +141,7 @@ L'assistant affiche le **Coût estimé** et l'impact du cluster sur les quotas d
 | Paramètre | Valeur |
 |-----------|--------|
 | Réplicas | 1 à 8 |
-| Taille du volume | 1 à 4 096 Go par nœud, dans la limite du quota du projet |
+| Taille du volume | 1 à 4 096 Go par nœud, dans la limite du quota du projet ; augmentation uniquement après création |
 | Bases Redis | Base logique `0` par défaut |
 
 ---

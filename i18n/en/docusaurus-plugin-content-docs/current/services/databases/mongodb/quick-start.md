@@ -66,8 +66,9 @@ Only enable **External access** if you need it: it exposes the database on the p
 Add at least one user:
 
 1. **Username**: for example `app-user` (lowercase letters, digits and hyphens).
-2. **Role**: **Administrator** or **Read-only**.
-3. Click **Add**.
+2. **Database**: the application database the user's role applies to, for example `myapp` (lowercase letters, digits and hyphens). It is created if it does not exist. The system databases `admin`, `local` and `config` are refused.
+3. **Role**: **Administrator** for this guide, or **Read-only**.
+4. Click **Add**.
 
 ### Summary
 
@@ -82,10 +83,10 @@ The **Finish** step confirms the creation ("Creation complete!"). Click **Finish
 | Status | Meaning |
 |--------|---------|
 | **Creating** | The cluster is being provisioned |
-| **Ready** / **Running** | The cluster is operational |
-| **Error** / **Failed** | Provisioning failed |
+| **Ready** | The cluster is operational |
+| **Error** | The platform could not apply the cluster's creation or its last change |
 
-**Expected result:** after a few minutes, the status changes to **Ready**. The page shows the **MongoDB Version**, the **Replicas**, the **Allocated Size** and the **Preset**, as well as the **Network and Connection** card (**Host**, **External Access**, **Sharding**).
+**Expected result:** after a few minutes, the status changes to **Ready**. The page shows the **MongoDB Version**, the **Replicas**, the **Allocated Size** and the **Preset**, as well as the **Network and Connection** card (**Host**, **External Access**, **Sharding**). For a replica set with external access, the **Host** field is replaced by **Replica set rs0 members**: one address per member, each with a copy button.
 
 ---
 
@@ -93,28 +94,27 @@ The **Finish** step confirms the creation ("Creation complete!"). Click **Finish
 
 ### Credentials
 
-The wizard's **Finish** step displays, under **User Credentials**, each user's **Password** and, when external access is enabled, an **Internal Connection String** of the form `mongodb://app-user:<password>@<host>`.
+The wizard's **Finish** step displays, under **User Credentials**, each user's **Password** and, when external access is enabled, an **Internal Connection String**: `mongodb://app-user:<password>@<host>` for a sharded cluster, `mongodb://app-user:<password>@<member>:27017/?directConnection=true&authSource=admin` for a replica set.
 
 :::warning
 Copy these passwords immediately: they will not be shown again. If they are lost, generate a new one from the **Users** section (**Actions** → **Change Password**).
 :::
 
-### Access to an application database
+### Access to the application database
 
-The role chosen in the wizard applies to the `admin` database. To grant access to an application database:
-
-1. In the **Users** section, open the **Actions** menu of `app-user` and choose **Manage Access**.
-2. Under **Specific Access (Databases)**, click **Add**.
-3. Enter the **Database name**, for example `myapp` (lowercase letters, digits and hyphens), and choose the **Rights** **Administrator (Admin)**.
-4. Click **Save**.
+The user has the chosen role on the database entered in the **Users** step: in the **Users** section of the cluster page, the **Databases** column shows `myapp (Administrator)`. To grant access to other databases, open the user's **Actions** menu and choose **Manage Access** (see [Manage users and databases](./how-to/manage-users-databases.md)).
 
 ---
 
 ## Step 5: Connection and tests
 
+On a replica set, connect directly to one member: copy one of the addresses listed under **Replica set rs0 members**, or the **External connection string** of the **Network and Connection** card.
+
 ```bash
-mongosh "mongodb://<host>:27017/myapp" --username app-user --authenticationDatabase admin
+mongosh "mongodb://<member>:27017/myapp?directConnection=true&authSource=admin" --username app-user
 ```
+
+On a sharded cluster, use the address of the **Host** field: `mongosh "mongodb://<host>:27017/myapp?authSource=admin" --username app-user`.
 
 The connection is not encrypted (no TLS): do not add `--tls`.
 
@@ -133,6 +133,10 @@ db.test.find()
 [ { _id: ObjectId('...'), message: 'Hello Hikube' } ]
 ```
 
+:::note
+The member you reach may be a secondary, which does not accept writes: `insertOne` then answers `not primary`. Check with `db.hello().isWritablePrimary`, then reconnect to another member of the list to write. A secondary serves reads with `readPreference=secondaryPreferred`.
+:::
+
 ---
 
 ## Step 6: Quick troubleshooting
@@ -141,19 +145,19 @@ db.test.find()
 
 **External Access** is disabled, or the public address has not been assigned yet. Enable it via **Edit** if needed, then wait a few moments.
 
-On a cluster without sharding, the field currently remains on **Not defined** even with external access enabled: each member receives its own public address, which the console does not display. [Contact support](mailto:support@hidora.io) to obtain it. Then connect to this address without the `replicaSet` parameter: the members advertise themselves under internal names, which do not resolve from outside.
+On a replica set with external access, each member receives its own public address: the **Network and Connection** card lists them under **Replica set rs0 members** as soon as they are assigned. Connect to one of them with `directConnection=true`, without the `replicaSet` parameter: the members advertise themselves under in-cluster names, which do not resolve from outside.
 
 ### `Authentication failed`
 
-Check the username, the password and the authentication database (`--authenticationDatabase admin`). If the password has been lost, rotate it from the **Users** section.
+Check the username, the password and the authentication database (`authSource=admin` or `--authenticationDatabase admin`). If the password has been lost, rotate it from the **Users** section.
 
 ### `not authorized on myapp`
 
 The user has no access to the `myapp` database. Add it via **Manage Access**.
 
-### The cluster stays in Error
+### The cluster changes to Error
 
-[Contact support](mailto:support@hidora.io), stating the project name and the cluster name.
+The platform could not apply the cluster's creation or its last change. [Contact support](mailto:support@hidora.io), stating the project name and the cluster name.
 
 ---
 

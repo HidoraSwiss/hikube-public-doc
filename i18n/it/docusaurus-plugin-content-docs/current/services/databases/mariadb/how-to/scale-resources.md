@@ -16,8 +16,8 @@ Questa guida spiega come adattare un cluster MariaDB esistente dalla [console Hi
 
 | Parametro | Modificabile dopo la creazione |
 |-----------|--------------------------------|
-| **MariaDB Version** | Sì |
-| **Disk size (GB)** | Sì |
+| **MariaDB Version** | Sì, solo verso una versione superiore |
+| **Disk size (GB)** | Sì, solo in aumento |
 | **External access** | Sì |
 | **Preset** | No, « The resources preset cannot be changed after creation » |
 | **Number of replicas** | No, « The mode cannot be changed after creation » |
@@ -35,13 +35,19 @@ La pagina **Edit MariaDB cluster** mostra il riquadro **Cluster settings** e l'i
 
 ### 2. Adattare i parametri
 
-- **Disk size (GB)**: inserisca la nuova capacità.
-- **MariaDB Version**: selezioni la versione di destinazione (10.6, 10.11, 11.4 o 11.8). Il modulo propone anche le versioni inferiori alla versione attuale: non torni a una versione precedente, MariaDB non supporta il downgrade.
+- **Disk size (GB)**: inserisca la nuova capacità, almeno pari alla dimensione attuale. Un valore inferiore mostra « The disk size cannot be reduced: N GB minimum. » e non viene salvato.
+- **MariaDB Version**: selezioni la versione di destinazione. Il modulo propone solo la versione attuale e le versioni superiori: MariaDB non supporta il downgrade.
 - **External access**: attivi o disattivi l'esposizione sull'Internet pubblico.
+
+Quando cambia la versione, compare l'avviso « The cluster instances will restart »: la modifica riavvia le istanze del cluster al salvataggio, e una versione aggiornata non può più essere riportata indietro. La pianifichi al di fuori dei periodi di forte attività.
 
 ### 3. Salvare
 
 Faccia clic su **Save**. Il messaggio « Cluster updated » conferma che la modifica è stata presa in carico. Se la nuova configurazione supera la quota del progetto, il pulsante resta inattivo.
+
+:::note
+L'API applica le stesse regole: una versione inferiore a quella attuale è rifiutata con il codice `110203`, una dimensione del disco inferiore a quella attuale con il codice `110204`.
+:::
 
 :::tip
 Aumenti la dimensione del disco prima che sia pieno. Per misurare lo spazio utilizzato per database:

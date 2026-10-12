@@ -65,8 +65,9 @@ Attivi l'**External access** solo se ne ha bisogno: espone il database sull'Inte
 Aggiunga almeno un utente:
 
 1. **Username**: ad esempio `app-user` (lettere minuscole, cifre e trattini).
-2. **Role**: **Administrator** o **Read-only**.
-3. Faccia clic su **Add**.
+2. **Database**: il database applicativo su cui si applica il ruolo dell'utente, ad esempio `myapp` (lettere minuscole, cifre e trattini). Viene creato se non esiste. I database di sistema `mysql`, `information_schema`, `performance_schema` e `sys` sono rifiutati.
+3. **Role**: **Administrator** per questa guida, oppure **Read-only**.
+4. Faccia clic su **Add**.
 
 ### Summary
 
@@ -81,8 +82,8 @@ Il passaggio **Finish** conferma la creazione (« Creation complete! »). Faccia
 | Stato | Significato |
 |-------|-------------|
 | **Creating** | Il cluster è in fase di provisioning |
-| **Ready** / **Running** | Il cluster è operativo |
-| **Error** / **Failed** | Il provisioning non è riuscito |
+| **Ready** | Il cluster è operativo |
+| **Error** | La piattaforma non è riuscita ad applicare la creazione o l'ultima modifica del cluster |
 
 **Risultato atteso:** dopo alcuni minuti, lo stato passa a **Ready**. La pagina mostra la **MariaDB Version**, le **Replicas**, l'**Allocated Size** e il **Preset**.
 
@@ -100,14 +101,9 @@ Copi subito queste password: non verranno più mostrate. In caso di smarrimento,
 
 L'indirizzo resta consultabile nel riquadro **Connection and network** della pagina del cluster, campo **Host**.
 
-### Accesso a un database applicativo
+### Accesso al database applicativo
 
-Il ruolo scelto nella procedura guidata si applica al database di sistema `mysql`. Per creare un database applicativo e concedervi l'accesso:
-
-1. Nella sezione **Users**, apra il menu **Actions** di `app-user` e scelga **Manage Access**.
-2. Sotto **Specific Access (Databases)**, faccia clic su **Add**.
-3. Inserisca il **Database name**, ad esempio `myapp` (lettere minuscole, cifre e trattini), e scelga i **Rights** **Administrator (Admin)**.
-4. Faccia clic su **Save**. Il database `myapp` viene creato se non esiste.
+Il database `myapp` indicato al passaggio **Users** è stato creato, e l'utente vi dispone del ruolo scelto: nella sezione **Users** della pagina del cluster, la colonna **Databases** mostra `myapp (Administrator)`. Per dargli accesso ad altri database, apra il menu **Actions** dell'utente e scelga **Manage Access** (consulti [Gestire utenti e database](./how-to/manage-users-databases.md)).
 
 ---
 
@@ -155,11 +151,11 @@ Password errata, oppure utente senza accesso al database indicato. Verifichi la 
 ### Il pulsante Next resta inattivo
 
 - Nel passaggio **Configuration**: il cluster supera la quota del progetto.
-- Nel passaggio **Users**: aggiunga almeno un utente.
+- Nel passaggio **Users**: aggiunga almeno un utente, con il suo **Database**.
 
-### Il cluster resta in stato Error
+### Il cluster passa in stato Error
 
-[Contatti il supporto](mailto:support@hidora.io) indicando il nome del progetto e del cluster.
+La piattaforma non è riuscita ad applicare la creazione o l'ultima modifica del cluster. [Contatti il supporto](mailto:support@hidora.io) indicando il nome del progetto e del cluster.
 
 ---
 

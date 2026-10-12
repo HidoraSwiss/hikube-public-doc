@@ -152,7 +152,7 @@ From the **Configuration** step onwards, the creation wizard displays the **Esti
 
 | Parameter | Value |
 |-----------|--------|
-| Disk size | 1 to 4,096 GB, within the project's storage quota |
+| Disk size | 1 to 4,096 GB, within the project's storage quota; increase only after creation |
 | Replicas | 1, 2 or 3 |
 
 ---

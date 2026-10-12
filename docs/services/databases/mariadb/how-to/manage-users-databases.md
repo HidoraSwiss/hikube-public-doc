@@ -23,20 +23,25 @@ La console MariaDB n'a pas d'onglet dédié aux bases de données : une base se 
 ### 1. Créer un utilisateur
 
 1. Dans la section **Utilisateurs**, cliquez sur **Créer un utilisateur**.
-2. Saisissez le **Nom d'utilisateur** : minuscules, chiffres et tirets, commençant par une lettre (par exemple `report-reader`).
-3. Laissez **Rôle Global (Optionnel)** sur **Aucun rôle global**.
-4. Sous **Accès spécifiques (Bases de données)**, cliquez sur **Ajouter** pour chaque base :
-   - **Nom de la base** : par exemple `analytics` (minuscules, chiffres et tirets ; pas de tiret bas) ;
+2. Saisissez le **Nom d'utilisateur** : 3 à 16 caractères, minuscules, chiffres et tirets, commençant par une lettre et se terminant par une lettre ou un chiffre (par exemple `report-reader`).
+3. Sous **Accès spécifiques (Bases de données)**, cliquez sur **Ajouter** pour chaque base :
+   - **Nom de la base** : par exemple `analytics` (minuscules, chiffres et tirets ; pas de tiret bas ; les bases système `mysql`, `information_schema`, `performance_schema` et `sys` sont refusées) ;
    - **Droits** : **Administrateur (Admin)** ou **Lecture seule (Read-only)**.
-5. Cliquez sur **Créer l'utilisateur**.
+4. Cliquez sur **Créer l'utilisateur**.
 
-L'écran « Mot de passe généré » affiche le mot de passe généré.
+Il n'existe pas de rôle global : l'utilisateur n'a accès qu'aux bases listées. Sans aucun accès, la console indique « Aucun accès configuré : l'utilisateur n'a de droits sur aucune base. » ; l'utilisateur peut être créé ainsi et recevoir ses accès plus tard.
+
+L'écran « Utilisateur créé avec succès ! » affiche le mot de passe généré.
 
 :::warning
 Copiez ce mot de passe immédiatement et conservez-le en lieu sûr : il ne sera plus affiché après avoir quitté cet écran.
 :::
 
-Cliquez ensuite sur **Terminer**.
+Cliquez ensuite sur **Terminer et retourner au cluster**.
+
+:::tip
+Les utilisateurs déclarés dans l'assistant de création du cluster reçoivent leur rôle sur la **Base de données** indiquée à l'étape **Utilisateurs**.
+:::
 
 ### 2. Créer une base de données
 
@@ -46,9 +51,13 @@ Accordez à un utilisateur un accès sur le nom de la nouvelle base (étape 1 po
 
 1. Ouvrez le menu **Actions** de l'utilisateur et choisissez **Gérer les accès**.
 2. Ajoutez des accès avec **Ajouter**, modifiez les **Droits** ou retirez une ligne.
-3. Cliquez sur **Enregistrer**.
+3. Cliquez sur **Enregistrer**. Le message « Accès mis à jour » confirme l'enregistrement.
 
 Le nom d'utilisateur ne peut pas être modifié.
+
+:::warning Utilisateurs créés avant la console v1.3.0
+Les utilisateurs déclarés dans l'assistant de création de cluster avant la console v1.3.0 ont reçu un rôle sur la base système `mysql`. Dans **Gérer les accès**, cette ligne apparaît en erreur et empêche l'enregistrement : retirez-la, ajoutez si besoin la base applicative de l'utilisateur, puis cliquez sur **Enregistrer**.
+:::
 
 ### 4. Renouveler le mot de passe d'un utilisateur
 
@@ -81,7 +90,7 @@ CREATE TABLE test (id INT);
 
 ## Vérification
 
-La liste des utilisateurs affiche, pour chacun, son **Rôle** et les **Bases de données** accessibles avec le droit associé (par exemple `analytics (readonly)` ou `analytics (admin)`).
+La colonne **Bases de données** de la liste des utilisateurs affiche, pour chacun, les bases accessibles avec le rôle associé (par exemple `analytics (Lecture seule)` ou `analytics (Administrateur)`), ou **Aucun**.
 
 ## Pour aller plus loin
 
