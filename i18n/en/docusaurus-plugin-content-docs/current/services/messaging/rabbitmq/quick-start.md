@@ -51,7 +51,7 @@ Enter the **Cluster Name** (a name is suggested by default). It must be 3 to 16 
 | Field | Recommended value for this guide | Note |
 |-------|--------------------------------|----------|
 | **RabbitMQ Version** | 4.2 | Available versions: 4.2, 4.1, 4.0, 3.13 |
-| **Preset** | Small | Cannot be changed after creation |
+| **Preset** | `s1.small — 1 CPU / 2Gi` | No preset is preselected; cannot be changed after creation |
 | **Disk size (GB)** | 10 | Capacity per node |
 | **Number of replicas** | 3 (Max High Availability) | 1 (Standalone), 3 or 5; cannot be changed after creation |
 | **External access** | Enabled | Exposes the cluster on the Internet; needed for the test from your workstation |

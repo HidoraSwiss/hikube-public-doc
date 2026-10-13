@@ -9,7 +9,7 @@ Questa guida spiega come creare un cluster Redis ad alta disponibilità dalla [c
 
 ## Prerequisiti
 
-- Un **progetto** Hikube con quote sufficienti: il consumo di CPU, memoria e storage è moltiplicato per il numero di repliche
+- Un **progetto** Hikube con quote sufficienti: il consumo di CPU, memoria e storage è moltiplicato per il numero di repliche, e i tre Sentinel contano in più in CPU e memoria, alla taglia del preset
 - Conoscenza delle basi di Redis (si veda l'[avvio rapido](../quick-start.md))
 
 :::warning
@@ -29,7 +29,7 @@ Nel passaggio **Configuration**:
 | Campo | Valore consigliato in produzione |
 |-------|----------------------------------|
 | **Number of replicas** | `3` (oppure `5` per tollerare due guasti) |
-| **Preset** | `medium` o superiore, in base alla dimensione del dataset |
+| **Preset** | Una taglia la cui memoria supera il dataset; la serie `m1` offre più memoria per vCPU |
 | **Volume size (GB)** | Superiore al volume di dati previsto |
 | **Enable authentication** | Attivato |
 | **Public network** | Disattivato, salvo necessità di accesso da Internet |

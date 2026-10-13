@@ -32,11 +32,11 @@ Per cambiare il numero di repliche, [contatti il supporto](mailto:support@hidora
 1. Apra **DB & Messaging** → **Redis**.
 2. Apra il cluster, quindi faccia clic su **Edit** (oppure utilizzi **Actions** → **Edit** nell'elenco).
 
-La pagina **Edit cluster** mostra il riquadro **Cluster settings** e l'impatto sulle quote del progetto.
+La pagina **Edit cluster** mostra il riquadro **Cluster settings** e l'impatto sulle quote del progetto, che conta anche i tre Sentinel alla taglia del preset.
 
 ### 2. Regolare i parametri
 
-- **Preset**: scelga un preset superiore se la memoria è satura. La memoria del preset limita il volume di dati che Redis può mantenere in memoria.
+- **Preset**: scelga un preset superiore se la memoria è satura. La memoria del preset limita il volume di dati che Redis può mantenere in memoria. Un cluster creato con un vecchio preset (`small`, `medium`…) lo conserva finché non ne sceglie un altro.
 - **Volume Size (GB)**: «Storage capacity allocated to each node in the cluster.» Inserisca una dimensione almeno pari a quella attuale.
 - **Redis Version**: `8 (Latest)` o `7`. Il modulo propone entrambe le versioni, ma è accettata solo la versione attuale o una versione superiore: su un cluster in `8`, non scelga `7`.
 - **External access**: «Allow access to the cluster from outside the private network.»

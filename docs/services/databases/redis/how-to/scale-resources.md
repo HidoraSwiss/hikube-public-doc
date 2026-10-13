@@ -32,11 +32,11 @@ Pour changer le nombre de réplicas, [contactez le support](mailto:support@hidor
 1. Ouvrez **DB & Messaging** → **Redis**.
 2. Ouvrez le cluster, puis cliquez sur **Modifier** (ou utilisez **Actions** → **Modifier** dans la liste).
 
-La page **Modifier le cluster** affiche la carte **Paramètres du cluster** et l'impact sur les quotas du projet.
+La page **Modifier le cluster** affiche la carte **Paramètres du cluster** et l'impact sur les quotas du projet, qui compte aussi les trois sentinelles à la taille de la préconfiguration.
 
 ### 2. Ajuster les paramètres
 
-- **Préconfiguration** : choisissez un preset supérieur si la mémoire est saturée. La mémoire du preset borne le volume de données que Redis peut garder en mémoire.
+- **Préconfiguration** : choisissez un preset supérieur si la mémoire est saturée. La mémoire du preset borne le volume de données que Redis peut garder en mémoire. Un cluster créé avec un ancien preset (`small`, `medium`…) le conserve tant que vous n'en choisissez pas un autre.
 - **Taille du volume (Go)** : « La taille de stockage allouée à chaque nœud du cluster ». Saisissez une taille au moins égale à la taille actuelle.
 - **Version Redis** : `8 (Latest)` ou `7`. Le formulaire propose les deux versions, mais seule la version actuelle ou une version supérieure est acceptée : sur un cluster en `8`, ne choisissez pas `7`.
 - **Accès externe** : « Autoriser l'accès au cluster depuis l'extérieur du réseau privé ».

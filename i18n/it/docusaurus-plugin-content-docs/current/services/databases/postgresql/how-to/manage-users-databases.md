@@ -19,14 +19,14 @@ Tutte le operazioni si eseguono dalla pagina del cluster: **DB & Messaging** →
 ### 1. Creare un database
 
 1. Nella scheda **Databases**, faccia clic su **Create**.
-2. Inserisca il **Database name** (lettere minuscole, cifre e trattini bassi, al massimo 63 caratteri), ad esempio `analytics`.
+2. Inserisca il **Database name**, ad esempio `analytics`: da 1 a 54 caratteri, lettere minuscole, cifre, trattini bassi e trattini, iniziando con una lettera o un trattino basso, ma non con `pg_`. I nomi dei database di sistema `postgres`, `template0` e `template1` vengono rifiutati.
 3. In **PostgreSQL Extensions**, selezioni le estensioni da attivare alla creazione.
 4. Faccia clic su **Create**.
 
 Il database compare nell'elenco, con le sue estensioni. Figura anche nel riquadro **Connection and Databases**, sotto **Initial Databases**.
 
 :::tip
-Può anche dichiarare dei database già alla creazione del cluster, nel passaggio **Databases** della procedura guidata. Il database **`postgres`** viene sempre creato automaticamente.
+Può anche dichiarare dei database già alla creazione del cluster, nel passaggio **Databases** della procedura guidata. Il database di sistema **`postgres`** viene sempre creato automaticamente; è riservato alla piattaforma e non può ricevere alcun diritto.
 :::
 
 ### 2. Gestire le estensioni di un database
@@ -35,6 +35,8 @@ Può anche dichiarare dei database già alla creazione del cluster, nel passaggi
 2. Scelga **Manage extensions**.
 3. Selezioni o deselezioni le estensioni, quindi faccia clic su **Save**.
 
+Su un database di sistema, **Manage extensions** e **Delete database** sono disattivati: « System database: it can be neither changed nor deleted. »
+
 L'elenco proposto corrisponde alle estensioni disponibili sulla piattaforma, in particolare `pg_stat_statements`, `pgcrypto`, `uuid-ossp`, `pg_trgm`, `hstore`, `citext`, `postgres_fdw`, `pgaudit` e `vector` (pgvector).
 
 ### 3. Creare un utente
@@ -42,7 +44,7 @@ L'elenco proposto corrisponde alle estensioni disponibili sulla piattaforma, in 
 1. Nella scheda **Users**, faccia clic su **Create a user**.
 2. Inserisca lo **Username**: da 3 a 16 caratteri, lettere minuscole, cifre e trattini bassi, che inizi con una lettera o un trattino basso (ad esempio `report_reader`).
 3. In **Databases**, faccia clic su **Add access** per ogni database a cui l'utente deve accedere:
-   - **Database name**: selezioni il database;
+   - **Database name**: selezioni il database (i database di sistema non vengono proposti);
    - **Rights**: **Administrator (Admin)** (lettura e scrittura) o **Read-only**.
 4. Faccia clic su **Create user**.
 
@@ -60,6 +62,8 @@ Faccia quindi clic su **Done and return to cluster**.
 2. Scelga **Manage Access**.
 3. Aggiunga accessi con **Add**, modifichi i **Rights** o rimuova una riga.
 4. Faccia clic su **Save**.
+
+Un diritto su un database di sistema (`postgres`, `template0` o `template1`), attribuito prima che questi database venissero rifiutati, viene mostrato bloccato, con un avviso: può rimuovere la riga, ma non modificarne i **Rights**.
 
 Il nome utente non può essere modificato.
 

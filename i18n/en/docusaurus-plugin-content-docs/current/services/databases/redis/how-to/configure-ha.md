@@ -9,7 +9,7 @@ This guide explains how to create a highly available Redis cluster from the [Hik
 
 ## Prerequisites
 
-- A Hikube **project** with sufficient quotas: CPU, memory and storage consumption is multiplied by the number of replicas
+- A Hikube **project** with sufficient quotas: CPU, memory and storage consumption is multiplied by the number of replicas, and the three sentinels also count in CPU and memory, at the size of the preset
 - Knowledge of Redis basics (see the [quick start](../quick-start.md))
 
 :::warning
@@ -29,7 +29,7 @@ At the **Configuration** step:
 | Field | Recommended value in production |
 |-------|---------------------------------|
 | **Number of replicas** | `3` (or `5` to tolerate two failures) |
-| **Preset** | `medium` or higher, depending on the dataset size |
+| **Preset** | A size whose memory exceeds the dataset; the `m1` series offers the most memory per vCPU |
 | **Volume size (GB)** | Greater than the expected data volume |
 | **Enable authentication** | Enabled |
 | **Public network** | Disabled, unless you need access from the Internet |

@@ -51,7 +51,7 @@ Geben Sie den **Cluster Name** ein (standardmäßig wird ein Name vorgeschlagen)
 | Feld | Empfohlener Wert für diese Anleitung | Hinweis |
 |-------|--------------------------------|----------|
 | **RabbitMQ Version** | 4.2 | Angebotene Versionen: 4.2, 4.1, 4.0, 3.13 |
-| **Preset** | Small | Nach der Erstellung nicht änderbar |
+| **Preset** | `s1.small — 1 CPU / 2Gi` | Kein Preset ist vorausgewählt; nach der Erstellung nicht änderbar |
 | **Disk size (GB)** | 10 | Kapazität pro Knoten |
 | **Number of replicas** | 3 (Max High Availability) | 1 (Standalone), 3 oder 5; nach der Erstellung nicht änderbar |
 | **External access** | Aktiviert | Macht den Cluster im Internet erreichbar; erforderlich für den Test von Ihrem Rechner aus |

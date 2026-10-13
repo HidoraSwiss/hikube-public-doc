@@ -49,7 +49,7 @@ Saisissez le **Nom du cluster**, par exemple `demo-mongo` (3 à 16 caractères :
 | Champ | Valeur conseillée pour ce guide | Remarque |
 |-------|----------------------------------|----------|
 | **Version MongoDB** | `8.0` | Versions proposées : 6.0, 7.0, 8.0 |
-| **Préconfiguration (Preset)** | `Small (1 CPU, 512Mi)` | Non modifiable après création |
+| **Préconfiguration (Preset)** | `s1.small — 1 CPU / 2Gi` | Aucun preset n'est présélectionné ; non modifiable après création |
 | **Taille du disque (Go)** | `10` | Capacité de stockage par nœud |
 | **Nombre de réplicas** | `3 (Haute disponibilité max)` | `1` pour un simple test ; non modifiable après création |
 | **Accès externe** | Activé | Nécessaire pour vous connecter depuis votre poste |

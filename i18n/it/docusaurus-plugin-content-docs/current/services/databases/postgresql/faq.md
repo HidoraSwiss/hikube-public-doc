@@ -7,17 +7,27 @@ title: FAQ
 
 ### Quali preset di istanza sono disponibili?
 
-L'**Instance preset** stabilisce la CPU e la memoria di ogni nodo del cluster. Fa fede l'elenco mostrato dalla procedura guidata; a titolo indicativo:
+L'**Instance preset** stabilisce la CPU e la memoria di ogni nodo del cluster. I preset riprendono le taglie delle [macchine virtuali](../../compute/overview.md) delle serie `u1`, `s1` e `m1`: un preset ha le stesse risorse della VM con lo stesso nome. Fa fede l'elenco mostrato dalla procedura guidata:
 
 | **Preset** | **CPU** | **Memoria** |
 |------------|---------|-------------|
-| `nano`     | 250m    | 128Mi       |
-| `micro`    | 500m    | 256Mi       |
-| `small`    | 1       | 512Mi       |
-| `medium`   | 1       | 1Gi         |
-| `large`    | 2       | 2Gi         |
-| `xlarge`   | 4       | 4Gi         |
-| `2xlarge`  | 8       | 8Gi         |
+| `u1.medium` | 1 | 4Gi |
+| `u1.large` | 2 | 8Gi |
+| `u1.xlarge` | 4 | 16Gi |
+| `u1.2xlarge` | 8 | 32Gi |
+| `u1.4xlarge` | 16 | 64Gi |
+| `u1.8xlarge` | 32 | 128Gi |
+| `s1.small` | 1 | 2Gi |
+| `s1.medium` | 2 | 4Gi |
+| `s1.large` | 4 | 8Gi |
+| `s1.xlarge` | 8 | 16Gi |
+| `s1.2xlarge` | 16 | 32Gi |
+| `s1.4xlarge` | 32 | 64Gi |
+| `m1.large` | 2 | 16Gi |
+| `m1.xlarge` | 4 | 32Gi |
+| `m1.2xlarge` | 8 | 64Gi |
+| `m1.4xlarge` | 16 | 128Gi |
+| `m1.8xlarge` | 32 | 256Gi |
 
 Il preset può essere cambiato dopo la creazione tramite **Edit**. La definizione di valori CPU/memoria liberi non è proposta nella console; contatti il supporto.
 
@@ -43,7 +53,15 @@ Le password vengono mostrate una sola volta e non possono essere rilette. Ne gen
 
 ### Perché il mio nome utente viene rifiutato?
 
-I nomi utente PostgreSQL contano da 3 a 16 caratteri, in lettere minuscole, cifre e trattini bassi (`_`), e iniziano con una lettera o un trattino basso. Il trattino (`-`) non è accettato. I nomi `postgres`, `admin`, `root`, `owner`, `superuser`, `streaming_replica`, `cnpg_pooler_pgbouncer` e tutti quelli che iniziano con `pg_` sono riservati.
+I nomi utente PostgreSQL contano da 3 a 16 caratteri, in lettere minuscole, cifre e trattini bassi (`_`), e iniziano con una lettera o un trattino basso. Il trattino (`-`) non è accettato. I nomi `postgres`, `admin`, `root`, `owner`, `superuser`, `streaming_replica` e tutti quelli che iniziano con `pg_` sono riservati.
+
+### Perché il nome del mio database viene rifiutato?
+
+Un nome di database conta da 1 a 54 caratteri: lettere minuscole, cifre, trattini bassi (`_`) e trattini (`-`). Inizia con una lettera o un trattino basso, ma non con `pg_`. I database di sistema `postgres`, `template0` e `template1` non possono essere creati.
+
+### Perché un diritto sul database `postgres` è bloccato?
+
+`postgres`, `template0` e `template1` sono database di sistema, riservati alla piattaforma: su di essi non può più essere attribuito né modificato alcun diritto. La procedura guidata di creazione del cluster preselezionava in passato il database `postgres` per gli utenti; i diritti attribuiti in questo modo vengono conservati. In **Manage Access**, una riga di questo tipo viene mostrata bloccata, con un avviso: la rimuova, quindi dia all'utente accesso a un database applicativo.
 
 ### Come aggiungere estensioni PostgreSQL?
 

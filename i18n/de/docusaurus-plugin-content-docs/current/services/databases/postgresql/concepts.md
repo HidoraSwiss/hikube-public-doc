@@ -93,7 +93,7 @@ Synchrone Replikation (Quorum) wird in der Konsole nicht angeboten; wenden Sie s
 
 Jeder Cluster verfügt über:
 
-- eine automatisch erstellte Datenbank **`postgres`**;
+- eine automatisch erstellte Systemdatenbank **`postgres`**, die der Plattform vorbehalten ist (siehe unten);
 - die **Datenbanken**, die Sie bei der Erstellung oder später hinzufügen (Registerkarte **Databases**), mit ihren **Erweiterungen**;
 - die **Benutzer**, die Sie anlegen (Registerkarte **Users**). Jeder Benutzer erhält pro Datenbank eines der beiden folgenden Rechte:
   - **Administrator (Admin)**: Lesen und Schreiben;
@@ -101,33 +101,57 @@ Jeder Cluster verfügt über:
 
 Das Passwort eines Benutzers wird von der Plattform generiert und **nur ein einziges Mal** angezeigt, bei der Erstellung oder nach einer Rotation. Danach ist es nicht mehr einsehbar: Wenn Sie es verlieren, generieren Sie mit **Change Password** ein neues.
 
+### Systemdatenbanken
+
+`postgres`, `template0` und `template1` sind Systemdatenbanken, die der Plattform vorbehalten sind:
+
+- Die Benutzer-Assistenten bieten sie nicht an, und auf ihnen kann kein Recht vergeben werden;
+- ihre Erstellung wird abgelehnt: „“postgres” is a system database: choose an application database.“;
+- in der Datenbankliste sind **Manage extensions** und **Delete database** bei einer Systemdatenbank deaktiviert: „System database: it can be neither changed nor deleted.“
+
+Ein Benutzer, der bereits ein Recht auf einer Systemdatenbank besitzt, behält es unverändert. In **Manage Access** wird dieses Recht gesperrt und mit einem Warnhinweis angezeigt: Sie können die Zeile entfernen, aber nicht ändern. Vergeben Sie die Rechte Ihrer Benutzer auf Anwendungsdatenbanken.
+
 ### Benennungsregeln
 
 | Element | Regel |
 |---------|-------|
 | Clustername | 3 bis 16 Zeichen: Kleinbuchstaben, Ziffern und Bindestriche; beginnt mit einem Buchstaben, endet mit einem Buchstaben oder einer Ziffer |
 | Benutzername | 3 bis 16 Zeichen: Kleinbuchstaben, Ziffern und Unterstriche (`_`); beginnt mit einem Kleinbuchstaben oder einem Unterstrich. Kein Bindestrich (`-`). |
-| Datenbankname | 1 bis 63 Zeichen: Kleinbuchstaben, Ziffern und Unterstriche |
+| Datenbankname | 1 bis 54 Zeichen: Kleinbuchstaben, Ziffern, Unterstriche (`_`) und Bindestriche (`-`); beginnt mit einem Buchstaben oder einem Unterstrich, aber nicht mit `pg_` |
 
-Die Benutzernamen `postgres`, `admin`, `root`, `owner`, `superuser`, `streaming_replica`, `cnpg_pooler_pgbouncer` sowie alle Namen, die mit `pg_` beginnen, sind reserviert.
+Die Benutzernamen `postgres`, `admin`, `root`, `owner`, `superuser`, `streaming_replica` sowie alle Namen, die mit `pg_` beginnen, sind reserviert.
 
 ---
 
 ## Instanz-Presets
 
-Das **Instance preset** legt die Kapazität fest, die **jedem Knoten** des Clusters zugewiesen wird. Maßgeblich ist die im Assistenten angezeigte Liste; zur Orientierung:
+Das **Instance preset** legt die Kapazität fest, die **jedem Knoten** des Clusters zugewiesen wird. Die Presets entsprechen den Größen der [virtuellen Maschinen](../../compute/overview.md) der Serien `u1`, `s1` und `m1`: Ein Preset hat dieselben Ressourcen wie die gleichnamige VM. Maßgeblich ist die im Assistenten angezeigte Liste:
 
 | Preset | CPU | Arbeitsspeicher |
 |--------|-----|---------|
-| `nano` | 250m | 128Mi |
-| `micro` | 500m | 256Mi |
-| `small` | 1 | 512Mi |
-| `medium` | 1 | 1Gi |
-| `large` | 2 | 2Gi |
-| `xlarge` | 4 | 4Gi |
-| `2xlarge` | 8 | 8Gi |
+| `u1.medium` | 1 | 4Gi |
+| `u1.large` | 2 | 8Gi |
+| `u1.xlarge` | 4 | 16Gi |
+| `u1.2xlarge` | 8 | 32Gi |
+| `u1.4xlarge` | 16 | 64Gi |
+| `u1.8xlarge` | 32 | 128Gi |
+| `s1.small` | 1 | 2Gi |
+| `s1.medium` | 2 | 4Gi |
+| `s1.large` | 4 | 8Gi |
+| `s1.xlarge` | 8 | 16Gi |
+| `s1.2xlarge` | 16 | 32Gi |
+| `s1.4xlarge` | 32 | 64Gi |
+| `m1.large` | 2 | 16Gi |
+| `m1.xlarge` | 4 | 32Gi |
+| `m1.2xlarge` | 8 | 64Gi |
+| `m1.4xlarge` | 16 | 128Gi |
+| `m1.8xlarge` | 32 | 256Gi |
 
-Das Standard-Preset des Assistenten ist `small`. Die Festlegung freier CPU-/Arbeitsspeicher-Ressourcen (außerhalb der Presets) wird in der Konsole nicht angeboten; wenden Sie sich an den Support.
+Der Assistent wählt kein Preset vor: Wählen Sie eines aus, um fortzufahren. Jede Option zeigt ihre Ressourcen an, zum Beispiel „u1.medium — 1 CPU / 4Gi“. Kann die Liste nicht geladen werden, zeigt der Assistent „The preset list could not be loaded. Try again later or contact support.“ an.
+
+Ein Cluster, der mit einem früheren Preset (`nano`, `micro`, `small`, `medium`, `large`, `xlarge` oder `2xlarge`) erstellt wurde, behält es und läuft wie bisher: Das Formular **Edit** zeigt es unverändert an und speichert es ohne Änderung. Dieses Preset hat keinen Katalogpreis: Die Konsole zeigt „Price unavailable“ an, und das Dashboard des Projekts nimmt es von den Gesamtkosten aus, bis Sie ein Preset aus der Liste wählen. Wurden die Ressourcen eines Clusters abweichend von seinem Preset festgelegt, weist das Formular mit dem Vermerk „(override)“ darauf hin.
+
+Die Festlegung freier CPU-/Arbeitsspeicher-Ressourcen (außerhalb der Presets) wird in der Konsole nicht angeboten; wenden Sie sich an den Support.
 
 ---
 

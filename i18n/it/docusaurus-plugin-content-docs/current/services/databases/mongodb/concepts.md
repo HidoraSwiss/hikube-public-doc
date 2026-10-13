@@ -109,17 +109,31 @@ I trattini bassi (`_`) e le maiuscole non sono accettati né nei nomi dei databa
 
 ## Preset
 
-Il **Preset** definisce la capacità allocata a **ogni nodo**. Fa fede l'elenco mostrato dalla procedura guidata; a titolo indicativo:
+Il **Preset** definisce la capacità allocata a **ogni nodo**. I preset riprendono le taglie delle [macchine virtuali](../../compute/overview.md) delle serie `u1`, `s1` e `m1`: un preset ha le stesse risorse della VM con lo stesso nome. Fa fede l'elenco mostrato dalla procedura guidata:
 
 | Preset | CPU | Memoria |
 |--------|-----|---------|
-| `nano` | 250m | 128Mi |
-| `micro` | 500m | 256Mi |
-| `small` | 1 | 512Mi |
-| `medium` | 1 | 1Gi |
-| `large` | 2 | 2Gi |
-| `xlarge` | 4 | 4Gi |
-| `2xlarge` | 8 | 8Gi |
+| `u1.medium` | 1 | 4Gi |
+| `u1.large` | 2 | 8Gi |
+| `u1.xlarge` | 4 | 16Gi |
+| `u1.2xlarge` | 8 | 32Gi |
+| `u1.4xlarge` | 16 | 64Gi |
+| `u1.8xlarge` | 32 | 128Gi |
+| `s1.small` | 1 | 2Gi |
+| `s1.medium` | 2 | 4Gi |
+| `s1.large` | 4 | 8Gi |
+| `s1.xlarge` | 8 | 16Gi |
+| `s1.2xlarge` | 16 | 32Gi |
+| `s1.4xlarge` | 32 | 64Gi |
+| `m1.large` | 2 | 16Gi |
+| `m1.xlarge` | 4 | 32Gi |
+| `m1.2xlarge` | 8 | 64Gi |
+| `m1.4xlarge` | 16 | 128Gi |
+| `m1.8xlarge` | 32 | 256Gi |
+
+La procedura guidata non preseleziona alcun preset: ne scelga uno per proseguire. Ogni opzione indica le sue risorse, ad esempio « u1.medium — 1 CPU / 4Gi ». Se l'elenco non può essere caricato, la procedura guidata mostra « The preset list could not be loaded. Try again later or contact support. »
+
+Un cluster creato con un vecchio preset (`nano`, `micro`, `small`, `medium`, `large`, `xlarge` o `2xlarge`) lo conserva e funziona come prima: il modulo **Edit** lo mostra così com'è e lo salva senza modifiche. Questo preset non ha un prezzo di listino: la console mostra « Price unavailable » e la dashboard del progetto lo esclude dal costo totale, finché il cluster non passa a un preset dell'elenco. Poiché il preset non può essere modificato dopo la creazione, [contatti il supporto](mailto:support@hidora.io) per questa modifica. Se le risorse di un cluster sono state fissate al di fuori del suo preset, il modulo lo indica con la menzione « (override) ».
 
 ---
 

@@ -51,7 +51,7 @@ Inserisca il **Cluster Name** (viene proposto un nome predefinito). Deve contene
 | Campo | Valore consigliato per questa guida | Nota |
 |-------|-------------------------------------|------|
 | **RabbitMQ Version** | 4.2 | Versioni disponibili: 4.2, 4.1, 4.0, 3.13 |
-| **Preset** | Small | Non modificabile dopo la creazione |
+| **Preset** | `s1.small — 1 CPU / 2Gi` | Nessun preset è preselezionato; non modificabile dopo la creazione |
 | **Disk size (GB)** | 10 | Capacità per nodo |
 | **Number of replicas** | 3 (Max High Availability) | 1 (Standalone), 3 o 5; non modificabile dopo la creazione |
 | **External access** | Attivato | Espone il cluster su Internet; necessario per il test dal suo computer |

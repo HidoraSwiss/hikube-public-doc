@@ -11,6 +11,7 @@ Redis on Hikube is deployed with a **Redis Sentinel** architecture for high avai
 
 - **Redis Sentinel** monitors the Redis instances and performs an **automatic switchover** (failover) if the master fails.
 - A **quorum** of sentinels decides on the failover. Three sentinels are always deployed, whatever the number of Redis replicas: switchover works from **2 replicas**.
+- Sentinels count against the project quotas (CPU and memory, at the size of the cluster's preset), but they are not billed.
 - The address in the **Host** field follows the master: after a switchover, it automatically points to the new master, with no change of address.
 
 :::tip
@@ -19,17 +20,27 @@ In production, choose at least 3 replicas at creation: this number cannot be cha
 
 ### Which presets are available?
 
-The **Preset** sets the CPU and memory of each node. The list displayed by the wizard is authoritative; for reference:
+The **Preset** sets the CPU and memory of each node. Presets are the [virtual machine](../../compute/overview.md) sizes of the `u1`, `s1` and `m1` series: a preset has the same resources as the VM of the same name. The list displayed by the wizard is authoritative:
 
 | **Preset** | **CPU** | **Memory** |
 |------------|---------|------------|
-| `nano`     | 250m    | 128Mi      |
-| `micro`    | 500m    | 256Mi      |
-| `small`    | 1       | 512Mi      |
-| `medium`   | 1       | 1Gi        |
-| `large`    | 2       | 2Gi        |
-| `xlarge`   | 4       | 4Gi        |
-| `2xlarge`  | 8       | 8Gi        |
+| `u1.medium` | 1 | 4Gi |
+| `u1.large` | 2 | 8Gi |
+| `u1.xlarge` | 4 | 16Gi |
+| `u1.2xlarge` | 8 | 32Gi |
+| `u1.4xlarge` | 16 | 64Gi |
+| `u1.8xlarge` | 32 | 128Gi |
+| `s1.small` | 1 | 2Gi |
+| `s1.medium` | 2 | 4Gi |
+| `s1.large` | 4 | 8Gi |
+| `s1.xlarge` | 8 | 16Gi |
+| `s1.2xlarge` | 16 | 32Gi |
+| `s1.4xlarge` | 32 | 64Gi |
+| `m1.large` | 2 | 16Gi |
+| `m1.xlarge` | 4 | 32Gi |
+| `m1.2xlarge` | 8 | 64Gi |
+| `m1.4xlarge` | 16 | 128Gi |
+| `m1.8xlarge` | 32 | 256Gi |
 
 It can be changed after creation from **Edit**.
 

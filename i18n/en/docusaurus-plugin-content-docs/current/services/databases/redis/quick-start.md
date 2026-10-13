@@ -49,13 +49,13 @@ Enter the **Cluster Name**, for example `demo-cache` (3 to 16 characters: lowerc
 | Field | Recommended value for this guide | Note |
 |-------|----------------------------------|------|
 | **Version** | `8 (Latest)` | Offered versions: 8 and 7 |
-| **Preset** | `Small (1 CPU, 512Mi)` | Capacity allocated to each node |
+| **Preset** | `s1.small — 1 CPU / 2Gi` | No preset is preselected; capacity allocated to each node |
 | **Volume size (GB)** | `10` | Storage allocated to each node |
 | **Number of replicas** | `3` | 1 to 8; 2 minimum for automatic failover |
 | **Public network** | Enabled | Required to connect from your workstation |
 | **Enable authentication** | Enabled | On by default; keep it |
 
-The banner at the top of the wizard shows the **Estimated cost** and the impact on the project quotas. Click **Next**.
+The banner at the top of the wizard shows the **Estimated cost** and the impact on the project quotas. This impact also counts the cluster's three sentinels, at the size of the preset; they are not billed. Click **Next**.
 
 :::warning
 The **Number of replicas** cannot be changed after creation.
@@ -134,7 +134,7 @@ The password is missing or wrong. Check the `REDISCLI_AUTH` variable, or generat
 
 ### The Next button stays disabled
 
-The configuration exceeds the project quotas. Reduce the preset, the volume size or the number of replicas.
+The configuration exceeds the project quotas, sentinels included. Reduce the preset, the volume size or the number of replicas.
 
 ### The cluster changes to Error
 

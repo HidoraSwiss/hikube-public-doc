@@ -51,7 +51,7 @@ Saisissez le **Nom du cluster** (un nom est proposé par défaut). Il doit compo
 | Champ | Valeur conseillée pour ce guide | Remarque |
 |-------|--------------------------------|----------|
 | **Version RabbitMQ** | 4.2 | Versions proposées : 4.2, 4.1, 4.0, 3.13 |
-| **Préconfiguration (Preset)** | Small | Non modifiable après création |
+| **Préconfiguration (Preset)** | `s1.small — 1 CPU / 2Gi` | Aucun preset n'est présélectionné ; non modifiable après création |
 | **Taille du disque (Go)** | 10 | Capacité par nœud |
 | **Nombre de réplicas** | 3 (Haute disponibilité max) | 1 (Standalone), 3 ou 5 ; non modifiable après création |
 | **Accès externe** | Activé | Expose le cluster sur Internet ; nécessaire pour le test depuis votre poste |

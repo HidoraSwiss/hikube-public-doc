@@ -32,11 +32,11 @@ To change the number of replicas, [contact support](mailto:support@hidora.io).
 1. Open **DB & Messaging** → **Redis**.
 2. Open the cluster, then click **Edit** (or use **Actions** → **Edit** in the list).
 
-The **Edit cluster** page shows the **Cluster settings** card and the impact on the project quotas.
+The **Edit cluster** page shows the **Cluster settings** card and the impact on the project quotas, which also counts the three sentinels at the size of the preset.
 
 ### 2. Adjust the settings
 
-- **Preset**: choose a larger preset if memory is saturated. The preset's memory caps the volume of data Redis can keep in memory.
+- **Preset**: choose a larger preset if memory is saturated. The preset's memory caps the volume of data Redis can keep in memory. A cluster created with a former preset (`small`, `medium`…) keeps it as long as you do not choose another one.
 - **Volume Size (GB)**: "Storage capacity allocated to each node in the cluster". Enter a size at least equal to the current size.
 - **Redis Version**: `8 (Latest)` or `7`. The form offers both versions, but only the current version or a higher one is accepted: on a cluster running `8`, do not choose `7`.
 - **External access**: "Allow access to the cluster from outside the private network".

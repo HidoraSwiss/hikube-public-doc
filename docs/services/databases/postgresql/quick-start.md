@@ -50,7 +50,7 @@ Saisissez le **Nom du cluster** (un nom aléatoire est proposé par défaut), pa
 | Champ | Valeur conseillée pour ce guide | Remarque |
 |-------|----------------------------------|----------|
 | **Version PostgreSQL** | `18` | Versions proposées : 15, 16, 17, 18 |
-| **Preset d'instance** | `Small (1 CPU, 512Mi)` | Capacité allouée à chaque nœud |
+| **Preset d'instance** | `s1.small — 1 CPU / 2Gi` | Aucun preset n'est présélectionné ; capacité allouée à chaque nœud |
 | **Taille du disque (Go)** | `10` | Capacité de stockage par nœud |
 | **Nombre de réplicas** | `1 (Standalone)` | `2` ou `3` pour la haute disponibilité |
 | **Accès externe** | Activé | Nécessaire pour vous connecter depuis votre poste |
@@ -70,14 +70,16 @@ N'activez l'**Accès externe** que si vous en avez besoin : il expose la base de
 
 ### Bases
 
-Saisissez un **Nom de la base de données**, par exemple `myapp`, puis cliquez sur **Ajouter**. Si vous n'ajoutez aucune base, seule la base par défaut **`postgres`** est créée.
+Saisissez un **Nom de la base de données**, par exemple `myapp` (1 à 54 caractères : minuscules, chiffres, tirets bas et tirets ; commence par une lettre ou un tiret bas, mais pas par `pg_`), puis cliquez sur **Ajouter**.
+
+Ajoutez au moins une base applicative : la base **`postgres`**, toujours créée, est une base système réservée à la plateforme, et vos utilisateurs ne peuvent pas y recevoir de droit.
 
 ### Utilisateurs
 
 Ajoutez au moins un utilisateur :
 
 1. **Nom de l'utilisateur** : par exemple `app_user` (minuscules, chiffres et tirets bas uniquement, pas de tiret).
-2. **Nom de la base** : sélectionnez `myapp`.
+2. **Nom de la base** : sélectionnez `myapp`. La liste ne propose que les bases ajoutées à l'étape **Bases**. Sans base applicative, elle affiche « Aucune base applicative » et l'utilisateur est créé sans droit.
 3. **Droits** : **Administrateur (Admin)** ou **Lecture seule (Read-only)**.
 4. Cliquez sur **Ajouter**.
 
@@ -109,6 +111,8 @@ Les mots de passe sont affichés **une seule fois**, à l'étape **Résumé** de
 
 - **Mot de passe** de chaque utilisateur créé ;
 - **Chaîne de connexion interne** : l'adresse du cluster, lorsque l'accès externe est activé.
+
+Si la plateforme refuse un utilisateur, l'étape affiche « Utilisateur non créé » et la raison, à la place de son mot de passe.
 
 ![Assistant PostgreSQL, étape Résumé : identifiants des utilisateurs (mot de passe masqué)](/img/console/postgresql/wizard-credentials.fr.png)
 

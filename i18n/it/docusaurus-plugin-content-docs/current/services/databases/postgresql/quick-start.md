@@ -50,7 +50,7 @@ Inserisca il **Cluster Name** (per impostazione predefinita viene proposto un no
 | Campo | Valore consigliato per questa guida | Nota |
 |-------|-------------------------------------|------|
 | **PostgreSQL Version** | `18` | Versioni proposte: 15, 16, 17, 18 |
-| **Instance preset** | `Small (1 CPU, 512Mi)` | Capacità assegnata a ogni nodo |
+| **Instance preset** | `s1.small — 1 CPU / 2Gi` | Nessun preset è preselezionato; capacità assegnata a ogni nodo |
 | **Disk size (GB)** | `10` | Capacità di storage per nodo |
 | **Number of replicas** | `1 (Standalone)` | `2` o `3` per l'alta disponibilità |
 | **External access** | Attivato | Necessario per connettersi dal suo computer |
@@ -70,14 +70,16 @@ Attivi l'**External access** solo se ne ha bisogno: espone il database sull'Inte
 
 ### Databases
 
-Inserisca un **Database name**, ad esempio `myapp`, quindi faccia clic su **Add**. Se non aggiunge alcun database, viene creato solo il database predefinito **`postgres`**.
+Inserisca un **Database name**, ad esempio `myapp` (da 1 a 54 caratteri: lettere minuscole, cifre, trattini bassi e trattini; inizia con una lettera o un trattino basso, ma non con `pg_`), quindi faccia clic su **Add**.
+
+Aggiunga almeno un database applicativo: il database **`postgres`**, sempre creato, è un database di sistema riservato alla piattaforma, e i suoi utenti non possono ricevere alcun diritto su di esso.
 
 ### Users
 
 Aggiunga almeno un utente:
 
 1. **Username**: ad esempio `app_user` (solo lettere minuscole, cifre e trattini bassi, nessun trattino).
-2. **Database name**: selezioni `myapp`.
+2. **Database name**: selezioni `myapp`. L'elenco propone solo i database aggiunti nel passaggio **Databases**. Senza database applicativo, mostra « No application database » e l'utente viene creato senza alcun diritto.
 3. **Rights**: **Administrator (Admin)** o **Read-only**.
 4. Faccia clic su **Add**.
 
@@ -109,6 +111,8 @@ Le password vengono mostrate **una sola volta**, nel passaggio **Finish** della 
 
 - **Password** di ogni utente creato;
 - **Internal Connection String**: l'indirizzo del cluster, quando l'accesso esterno è attivato.
+
+Se la piattaforma rifiuta un utente, il passaggio mostra « User not created » e il motivo, al posto della sua password.
 
 ![Procedura guidata PostgreSQL, passo Finish: credenziali degli utenti (password oscurata)](/img/console/postgresql/wizard-credentials.en.png)
 

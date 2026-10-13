@@ -50,7 +50,7 @@ Geben Sie den **Cluster Name** ein (standardmäßig wird ein zufälliger Name vo
 | Feld | Empfohlener Wert für diese Anleitung | Hinweis |
 |-------|----------------------------------|----------|
 | **PostgreSQL Version** | `18` | Angebotene Versionen: 15, 16, 17, 18 |
-| **Instance preset** | `Small (1 CPU, 512Mi)` | Kapazität, die jedem Knoten zugewiesen wird |
+| **Instance preset** | `s1.small — 1 CPU / 2Gi` | Kein Preset ist vorausgewählt; Kapazität, die jedem Knoten zugewiesen wird |
 | **Disk size (GB)** | `10` | Speicherkapazität pro Knoten |
 | **Number of replicas** | `1 (Standalone)` | `2` oder `3` für Hochverfügbarkeit |
 | **External access** | Aktiviert | Erforderlich, um sich von Ihrem Rechner aus zu verbinden |
@@ -70,14 +70,16 @@ Aktivieren Sie den **External access** nur, wenn Sie ihn benötigen: Er macht di
 
 ### Databases
 
-Geben Sie einen **Database name** ein, zum Beispiel `myapp`, und klicken Sie dann auf **Add**. Wenn Sie keine Datenbank hinzufügen, wird nur die Standarddatenbank **`postgres`** erstellt.
+Geben Sie einen **Database name** ein, zum Beispiel `myapp` (1 bis 54 Zeichen: Kleinbuchstaben, Ziffern, Unterstriche und Bindestriche; beginnt mit einem Buchstaben oder einem Unterstrich, aber nicht mit `pg_`), und klicken Sie dann auf **Add**.
+
+Fügen Sie mindestens eine Anwendungsdatenbank hinzu: Die immer erstellte Datenbank **`postgres`** ist eine Systemdatenbank, die der Plattform vorbehalten ist, und Ihre Benutzer können auf ihr kein Recht erhalten.
 
 ### Users
 
 Fügen Sie mindestens einen Benutzer hinzu:
 
 1. **Username**: zum Beispiel `app_user` (nur Kleinbuchstaben, Ziffern und Unterstriche, kein Bindestrich).
-2. **Database name**: Wählen Sie `myapp` aus.
+2. **Database name**: Wählen Sie `myapp` aus. Die Liste bietet nur die im Schritt **Databases** hinzugefügten Datenbanken an. Ohne Anwendungsdatenbank zeigt sie „No application database“ an, und der Benutzer wird ohne Recht erstellt.
 3. **Rights**: **Administrator (Admin)** oder **Read-only**.
 4. Klicken Sie auf **Add**.
 
@@ -109,6 +111,8 @@ Die Passwörter werden **nur ein einziges Mal** angezeigt, im Schritt **Finish**
 
 - **Password** jedes erstellten Benutzers;
 - **Internal Connection String**: die Adresse des Clusters, wenn der externe Zugriff aktiviert ist.
+
+Lehnt die Plattform einen Benutzer ab, zeigt der Schritt anstelle seines Passworts „User not created“ und den Grund an.
 
 ![PostgreSQL-Assistent, Schritt Finish: Benutzer-Zugangsdaten (Passwort verdeckt)](/img/console/postgresql/wizard-credentials.en.png)
 

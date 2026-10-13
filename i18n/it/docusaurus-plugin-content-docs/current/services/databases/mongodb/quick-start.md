@@ -49,7 +49,7 @@ Inserisca il **Cluster Name**, ad esempio `demo-mongo` (da 3 a 16 caratteri: min
 | Campo | Valore consigliato per questa guida | Nota |
 |-------|----------------------------------|----------|
 | **MongoDB Version** | `8.0` | Versioni proposte: 6.0, 7.0, 8.0 |
-| **Preset** | `Small (1 CPU, 512Mi)` | Non modificabile dopo la creazione |
+| **Preset** | `s1.small — 1 CPU / 2Gi` | Nessun preset è preselezionato; non modificabile dopo la creazione |
 | **Disk size (GB)** | `10` | Capacità di storage per nodo |
 | **Number of replicas** | `3 (Max High Availability)` | `1` per un semplice test; non modificabile dopo la creazione |
 | **External access** | Attivato | Necessario per connettersi dal suo computer |
