@@ -11,6 +11,7 @@ Redis sur Hikube est déployé en architecture **Redis Sentinel** pour la haute 
 
 - **Redis Sentinel** surveille les instances Redis et effectue un **basculement automatique** (failover) en cas de panne du master.
 - Un **quorum** de sentinelles décide du failover. Trois sentinelles sont toujours déployées, quel que soit le nombre de réplicas Redis : le basculement fonctionne dès **2 réplicas**.
+- Les sentinelles comptent dans les quotas du projet (CPU et mémoire, à la taille de la préconfiguration du cluster).
 - L'adresse du champ **Hôte** suit le master : après un basculement, elle pointe automatiquement vers le nouveau master, sans changement d'adresse.
 
 :::tip
@@ -19,17 +20,27 @@ En production, choisissez au moins 3 réplicas à la création : ce nombre ne pe
 
 ### Quelles préconfigurations sont disponibles ?
 
-La **Préconfiguration** fixe le CPU et la mémoire de chaque nœud. La liste affichée par l'assistant fait foi ; à titre indicatif :
+La **Préconfiguration** fixe le CPU et la mémoire de chaque nœud. Les presets reprennent les tailles des [machines virtuelles](../../compute/overview.md), séries `u1`, `s1` et `m1` : un preset a les mêmes ressources que la VM du même nom. La liste affichée par l'assistant fait foi :
 
 | **Preset** | **CPU** | **Mémoire** |
 |------------|---------|-------------|
-| `nano`     | 250m    | 128Mi       |
-| `micro`    | 500m    | 256Mi       |
-| `small`    | 1       | 512Mi       |
-| `medium`   | 1       | 1Gi         |
-| `large`    | 2       | 2Gi         |
-| `xlarge`   | 4       | 4Gi         |
-| `2xlarge`  | 8       | 8Gi         |
+| `u1.medium` | 1 | 4Gi |
+| `u1.large` | 2 | 8Gi |
+| `u1.xlarge` | 4 | 16Gi |
+| `u1.2xlarge` | 8 | 32Gi |
+| `u1.4xlarge` | 16 | 64Gi |
+| `u1.8xlarge` | 32 | 128Gi |
+| `s1.small` | 1 | 2Gi |
+| `s1.medium` | 2 | 4Gi |
+| `s1.large` | 4 | 8Gi |
+| `s1.xlarge` | 8 | 16Gi |
+| `s1.2xlarge` | 16 | 32Gi |
+| `s1.4xlarge` | 32 | 64Gi |
+| `m1.large` | 2 | 16Gi |
+| `m1.xlarge` | 4 | 32Gi |
+| `m1.2xlarge` | 8 | 64Gi |
+| `m1.4xlarge` | 16 | 128Gi |
+| `m1.8xlarge` | 32 | 256Gi |
 
 Elle peut être changée après la création depuis **Modifier**.
 

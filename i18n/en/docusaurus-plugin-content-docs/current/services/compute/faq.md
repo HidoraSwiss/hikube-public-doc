@@ -96,6 +96,12 @@ They are detached, not deleted. They remain in the **Disks** menu, can be reatta
 
 ---
 
+### How do I change the system disk of a VM?
+
+Not from **Edit**: the system disk of an existing VM has no action ("The system disk of an existing VM cannot be replaced: the VM boots from it."). Delete the VM; its disks are detached and kept. Then recreate it with the wizard: at the **Storage** step, choose **Existing** on the **System Disk (Boot)** and select the disk you want (an unattached system disk), then reattach the data disks the same way. See [Attach a disk to a VM](../storage/disks/how-to/attach-to-vm.md).
+
+---
+
 ### Can I access the VM's serial console or VNC?
 
 This option is not offered in the console; contact [support](mailto:support@hidora.io). Access is over SSH (Linux) or RDP (Windows).

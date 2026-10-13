@@ -49,13 +49,13 @@ Saisissez le **Nom du cluster**, par exemple `demo-cache` (3 à 16 caractères :
 | Champ | Valeur conseillée pour ce guide | Remarque |
 |-------|----------------------------------|----------|
 | **Version** | `8 (Latest)` | Versions proposées : 8 et 7 |
-| **Préconfiguration** | `Small (1 CPU, 512Mi)` | Capacité allouée à chaque nœud |
+| **Préconfiguration** | `s1.small — 1 CPU / 2Gi` | Aucune préconfiguration n'est présélectionnée ; capacité allouée à chaque nœud |
 | **Taille du volume (Go)** | `10` | Stockage alloué à chaque nœud |
 | **Nombre de réplicas** | `3` | 1 à 8 ; 2 minimum pour le failover automatique |
 | **Réseau public** | Activé | Nécessaire pour vous connecter depuis votre poste |
 | **Activer l'authentification** | Activé | Active par défaut ; à conserver |
 
-Le bandeau en haut de l'assistant affiche le **Coût estimé** et l'impact sur les quotas du projet. Cliquez sur **Suivant**.
+Le bandeau en haut de l'assistant affiche le **Coût estimé** et l'impact sur les quotas du projet. Cet impact compte aussi les trois sentinelles du cluster, à la taille de la préconfiguration. Cliquez sur **Suivant**.
 
 :::warning
 Le **Nombre de réplicas** ne peut plus être modifié après la création.
@@ -134,7 +134,7 @@ Le mot de passe est absent ou erroné. Vérifiez la variable `REDISCLI_AUTH`, ou
 
 ### Le bouton Suivant reste inactif
 
-La configuration dépasse les quotas du projet. Réduisez la préconfiguration, la taille du volume ou le nombre de réplicas.
+La configuration dépasse les quotas du projet, sentinelles comprises. Réduisez la préconfiguration, la taille du volume ou le nombre de réplicas.
 
 ### Le cluster passe en Erreur
 

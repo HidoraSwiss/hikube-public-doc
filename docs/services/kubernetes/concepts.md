@@ -120,22 +120,19 @@ Le control plane se dimensionne à l'étape **Général** de l'assistant de cré
 
 ### Taille de l'instance Control Plane
 
-Preset de ressources appliqué à l'ensemble des composants du control plane (API Server, Controller Manager, Scheduler). La liste est fournie par la plateforme et chaque option affiche son CPU et sa mémoire. Le preset **Small** est sélectionné par défaut.
+Taille appliquée à chacun des quatre composants du control plane : API server, Controller manager, Scheduler et Konnectivity. La liste est fournie par la plateforme et chaque option affiche son CPU et sa mémoire, par exemple « s1.small — 1 CPU / 2Gi ».
 
-| Preset | Usage conseillé (aide de la console) |
-|--------|--------------------------------------|
-| **Small** | Faibles charges, développement ou tests. Optimisation des coûts. |
-| **Medium** | Usage standard avec une charge modérée. Bon équilibre performance/coût. |
-| **Large** | Usages intensifs ou trafic élevé. Performance maximale. |
+| Taille | vCPU | RAM (par composant) |
+|--------|------|---------------------|
+| `s1.small` | 1 | 2 Go |
+| `s1.medium` | 2 | 4 Go |
 
-La plateforme propose également des presets plus petits (`nano`, `micro`) et plus grands (`xlarge`, `2xlarge`).
+Aucune taille n'est présélectionnée : le champ affiche « Sélectionnez une taille » tant que vous n'en avez pas choisi une. Si la liste ne peut pas être chargée, la console l'indique : « La liste des presets n'a pas pu être chargée. Réessayez plus tard ou contactez le support. »
 
-:::warning
-Avec **Small** (512 Mio par composant), l'API Server peut manquer de mémoire et redémarrer en boucle, en particulier pendant l'installation des addons. Choisissez au moins **Medium** : la taille du control plane n'est plus modifiable dans la console après la création.
-:::
+Un cluster créé avec une ancienne taille (par exemple `small`) la conserve : elle reste affichée telle quelle et le cluster reste modifiable.
 
 :::note
-Le dimensionnement composant par composant (ressources dédiées à l'API Server, au Scheduler, etc.) n'est pas proposé dans la console ; contactez le support.
+Le dimensionnement composant par composant (ressources dédiées à l'API Server, au Scheduler, etc.) n'est pas proposé dans la console ; contactez le support. La page de modification d'un cluster affiche, en lecture seule, la taille de chacun des quatre composants (**Composants du control plane**). La mention « (forcé) » après une taille indique des ressources fixées hors de cette taille.
 :::
 
 ### Haute Disponibilité du Control Plane
@@ -143,7 +140,7 @@ Le dimensionnement composant par composant (ressources dédiées à l'API Server
 Nombre d'instances du control plane : **1**, **3 (HA)** ou **5 (HA)**. La valeur par défaut est 3.
 Un nombre impair d'instances garantit le quorum d'`etcd` ; utilisez au moins 3 instances en production.
 
-Sous le champ, la console affiche l'empreinte comptée au quota du projet, par exemple « → 3 × Small = … CPU · … Gio comptés au quota ».
+Sous le champ, la console affiche l'empreinte comptée au quota du projet, par exemple « → 3 répliques × 4 composants = 12 CPU · 24 Gio comptés au quota » pour la taille `s1.small` : le quota compte les quatre composants de chaque instance du control plane.
 
 :::warning
 La taille et le nombre d'instances du control plane ne sont pas modifiables après la création du cluster dans la console. Pour les changer, contactez le support.

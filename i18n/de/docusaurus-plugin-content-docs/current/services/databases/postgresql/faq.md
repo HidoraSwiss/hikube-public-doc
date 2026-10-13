@@ -7,17 +7,27 @@ title: FAQ
 
 ### Welche Instanz-Presets sind verfügbar?
 
-Das **Instance preset** legt CPU und Arbeitsspeicher jedes Knotens des Clusters fest. Maßgeblich ist die im Assistenten angezeigte Liste; zur Orientierung:
+Das **Instance preset** legt CPU und Arbeitsspeicher jedes Knotens des Clusters fest. Die Presets entsprechen den Größen der [virtuellen Maschinen](../../compute/overview.md) der Serien `u1`, `s1` und `m1`: Ein Preset hat dieselben Ressourcen wie die gleichnamige VM. Maßgeblich ist die im Assistenten angezeigte Liste:
 
 | **Preset** | **CPU** | **Arbeitsspeicher** |
 |------------|---------|-------------|
-| `nano`     | 250m    | 128Mi       |
-| `micro`    | 500m    | 256Mi       |
-| `small`    | 1       | 512Mi       |
-| `medium`   | 1       | 1Gi         |
-| `large`    | 2       | 2Gi         |
-| `xlarge`   | 4       | 4Gi         |
-| `2xlarge`  | 8       | 8Gi         |
+| `u1.medium` | 1 | 4Gi |
+| `u1.large` | 2 | 8Gi |
+| `u1.xlarge` | 4 | 16Gi |
+| `u1.2xlarge` | 8 | 32Gi |
+| `u1.4xlarge` | 16 | 64Gi |
+| `u1.8xlarge` | 32 | 128Gi |
+| `s1.small` | 1 | 2Gi |
+| `s1.medium` | 2 | 4Gi |
+| `s1.large` | 4 | 8Gi |
+| `s1.xlarge` | 8 | 16Gi |
+| `s1.2xlarge` | 16 | 32Gi |
+| `s1.4xlarge` | 32 | 64Gi |
+| `m1.large` | 2 | 16Gi |
+| `m1.xlarge` | 4 | 32Gi |
+| `m1.2xlarge` | 8 | 64Gi |
+| `m1.4xlarge` | 16 | 128Gi |
+| `m1.8xlarge` | 32 | 256Gi |
 
 Das Preset kann nach der Erstellung über **Edit** geändert werden. Die Festlegung freier CPU-/Arbeitsspeicherwerte wird in der Konsole nicht angeboten; wenden Sie sich an den Support.
 
@@ -43,7 +53,15 @@ Passwörter werden nur einmal angezeigt und können nicht erneut gelesen werden.
 
 ### Warum wird mein Benutzername abgelehnt?
 
-PostgreSQL-Benutzernamen sind 3 bis 16 Zeichen lang, bestehen aus Kleinbuchstaben, Ziffern und Unterstrichen (`_`) und beginnen mit einem Buchstaben oder einem Unterstrich. Der Bindestrich (`-`) wird nicht akzeptiert. Die Namen `postgres`, `admin`, `root`, `owner`, `superuser`, `streaming_replica`, `cnpg_pooler_pgbouncer` und alle Namen, die mit `pg_` beginnen, sind reserviert.
+PostgreSQL-Benutzernamen sind 3 bis 16 Zeichen lang, bestehen aus Kleinbuchstaben, Ziffern und Unterstrichen (`_`) und beginnen mit einem Buchstaben oder einem Unterstrich. Der Bindestrich (`-`) wird nicht akzeptiert. Die Namen `postgres`, `admin`, `root`, `owner`, `superuser`, `streaming_replica` und alle Namen, die mit `pg_` beginnen, sind reserviert.
+
+### Warum wird mein Datenbankname abgelehnt?
+
+Ein Datenbankname ist 1 bis 54 Zeichen lang: Kleinbuchstaben, Ziffern, Unterstriche (`_`) und Bindestriche (`-`). Er beginnt mit einem Buchstaben oder einem Unterstrich, aber nicht mit `pg_`. Die Systemdatenbanken `postgres`, `template0` und `template1` können nicht erstellt werden.
+
+### Warum ist ein Recht auf der Datenbank `postgres` gesperrt?
+
+`postgres`, `template0` und `template1` sind Systemdatenbanken, die der Plattform vorbehalten sind: Auf ihnen kann kein Recht mehr vergeben oder geändert werden. Der Assistent zur Clustererstellung hat früher die Datenbank `postgres` für die Benutzer vorausgewählt; die so vergebenen Rechte bleiben erhalten. In **Manage Access** wird eine solche Zeile gesperrt und mit einem Warnhinweis angezeigt: Entfernen Sie sie und geben Sie dem Benutzer dann Zugriff auf eine Anwendungsdatenbank.
 
 ### Wie füge ich PostgreSQL-Erweiterungen hinzu?
 

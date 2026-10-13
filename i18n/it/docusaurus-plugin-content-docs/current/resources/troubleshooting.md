@@ -171,7 +171,15 @@ Verifichi anche il nome del bucket configurato nel suo client S3: utilizzi il no
 
 ### Impossibile ridurre la dimensione di un disco
 
-La dimensione di un disco può essere aumentata, mai ridotta, anche dalla modifica di una VM. Per disporre di un disco più piccolo, crei un nuovo disco e vi copi i suoi dati.
+La dimensione di un disco può essere aumentata dal menu **Disks** (vedere [Ridimensionare un disco](../services/storage/disks/how-to/resize.md)), mai ridotta. La pagina di modifica di una VM non cambia la dimensione dei suoi dischi: quelli che la VM possiede già vi sono in sola lettura. Per disporre di un disco più piccolo, crei un nuovo disco e vi copi i suoi dati.
+
+### Un disco non può essere eliminato
+
+**Sintomo:** la console rifiuta l'eliminazione di un disco.
+
+**Soluzioni:**
+- il disco è ancora collegato a una VM: lo scolleghi dalla pagina **Edit** della VM (**Detach disk**), oppure elimini la VM. Il disco di sistema di una VM non si scollega: può essere eliminato solo dopo l'eliminazione della VM;
+- il disco è stato scollegato, ma la sua VM lo usa ancora: la console mostra «This disk was detached, but its VM still uses it until its next restart. Restart the VM, then try again.» Riavvii la VM, poi ripeta l'eliminazione.
 
 Vedere: [Bucket - Risoluzione dei problemi](../services/storage/buckets/troubleshooting.md), [Dischi - Risoluzione dei problemi](../services/storage/disks/troubleshooting.md)
 

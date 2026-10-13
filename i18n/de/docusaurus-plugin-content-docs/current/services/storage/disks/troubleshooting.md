@@ -75,12 +75,17 @@ title: Fehlerbehebung
 
 ### Das Löschen der Disk schlägt fehl
 
-**Ursache**: Die Disk ist an eine VM angebunden („The disk cannot be deleted as it is in use.“), oder der Dienst ist vorübergehend nicht verfügbar.
+**Ursache**: Eine VM verwendet die Disk noch, oder der Dienst ist vorübergehend nicht verfügbar. Die Konsole zeigt eine dieser Meldungen an:
+
+- „The disk cannot be deleted as it is in use.“ (Seite der Disk) oder eine gleichwertige Meldung in der Liste der Disks: Die Disk ist an eine VM angebunden;
+- „This disk was detached, but its VM still uses it until its next restart. Restart the VM, then try again.“: Die Disk wurde getrennt, aber die VM wurde noch nicht neu gestartet und verwendet sie weiterhin;
+- „The disk deletion service is temporarily unavailable.“.
 
 **Lösung**:
 
-1. Trennen Sie die Disk auf der Bearbeitungsseite der VM (Abschnitt **Storage**) und versuchen Sie es dann erneut.
-2. Lautet die Meldung „The disk deletion service is temporarily unavailable.“, versuchen Sie es einige Minuten später erneut.
+1. Angebundene Disk: Trennen Sie sie auf der Bearbeitungsseite der VM (Abschnitt **Storage**), klicken Sie auf **Save** und fahren Sie mit Schritt 2 fort.
+2. Getrennte Disk: Klicken Sie auf der Seite der VM auf **Restart**, warten Sie, bis sie wieder den Status **Running** hat, dann einige Minuten, und versuchen Sie es erneut.
+3. Dienst nicht verfügbar: Versuchen Sie es einige Minuten später erneut.
 
 ---
 

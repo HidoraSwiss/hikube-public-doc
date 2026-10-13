@@ -122,9 +122,9 @@ Die Option **Automatic Restart** (Schritt **Configuration** des Assistenten oder
 
 | Element | Änderbar | Wirkung |
 |---------|-----------|-------|
-| Name, System-Image | Nein | — |
+| Name, System-Image, System-Disk | Nein | Um die System-Disk zu wechseln, löschen Sie die VM und erstellen Sie sie aus der gewünschten Disk neu (Option **Existing**) |
 | Instanztyp | Ja | Beim nächsten Neustart der VM angewendet |
-| Disks (Hinzufügen, Trennen) | Ja | Beim nächsten Neustart der VM angewendet; eine getrennte Disk bleibt mit ihren Daten unter **Disks** |
+| Daten-Disks (Hinzufügen, Trennen) | Ja | Beim nächsten Neustart der VM angewendet; eine getrennte Disk bleibt mit ihren Daten unter **Disks** |
 | GPU | Ja | Beim nächsten Neustart der VM angewendet |
 | Öffentliche IP, Firewall, Ports, VPC | Ja | Ohne Neustart angewendet |
 | SSH-Schlüssel | Ja | Angebot, die User Data neu zu laden; beim nächsten Neustart angewendet |

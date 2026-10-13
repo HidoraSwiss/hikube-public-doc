@@ -23,15 +23,27 @@ Quando il volume di dati o il throughput di scrittura supera ciò che un singolo
 
 ### Quali preset sono disponibili?
 
+Il **Preset** stabilisce la CPU e la memoria di ogni nodo. I preset riprendono le taglie delle [macchine virtuali](../../compute/overview.md) delle serie `u1`, `s1` e `m1`: un preset ha le stesse risorse della VM con lo stesso nome.
+
 | **Preset** | **CPU** | **Memoria** |
 |------------|---------|-------------|
-| `nano`     | 250m    | 128Mi       |
-| `micro`    | 500m    | 256Mi       |
-| `small`    | 1       | 512Mi       |
-| `medium`   | 1       | 1Gi         |
-| `large`    | 2       | 2Gi         |
-| `xlarge`   | 4       | 4Gi         |
-| `2xlarge`  | 8       | 8Gi         |
+| `u1.medium` | 1 | 4Gi |
+| `u1.large` | 2 | 8Gi |
+| `u1.xlarge` | 4 | 16Gi |
+| `u1.2xlarge` | 8 | 32Gi |
+| `u1.4xlarge` | 16 | 64Gi |
+| `u1.8xlarge` | 32 | 128Gi |
+| `s1.small` | 1 | 2Gi |
+| `s1.medium` | 2 | 4Gi |
+| `s1.large` | 4 | 8Gi |
+| `s1.xlarge` | 8 | 16Gi |
+| `s1.2xlarge` | 16 | 32Gi |
+| `s1.4xlarge` | 32 | 64Gi |
+| `m1.large` | 2 | 16Gi |
+| `m1.xlarge` | 4 | 32Gi |
+| `m1.2xlarge` | 8 | 64Gi |
+| `m1.4xlarge` | 16 | 128Gi |
+| `m1.8xlarge` | 32 | 256Gi |
 
 Fa fede l'elenco mostrato dalla procedura guidata. Il preset non può essere modificato dopo la creazione.
 

@@ -171,7 +171,15 @@ Prüfen Sie auch den in Ihrem S3-Client konfigurierten Bucket-Namen: Verwenden S
 
 ### Die Größe einer Disk lässt sich nicht verringern
 
-Die Größe einer Disk kann erhöht, aber nie verringert werden, auch nicht über die Bearbeitung einer VM. Für eine kleinere Disk erstellen Sie eine neue Disk und kopieren Ihre Daten dorthin.
+Die Größe einer Disk kann über das Menü **Disks** erhöht (siehe [Die Größe einer Disk ändern](../services/storage/disks/how-to/resize.md)), aber nie verringert werden. Die Bearbeitungsseite einer VM ändert die Größe ihrer Disks nicht: Die Disks, die die VM bereits hat, sind dort schreibgeschützt. Für eine kleinere Disk erstellen Sie eine neue Disk und kopieren Ihre Daten dorthin.
+
+### Eine Disk lässt sich nicht löschen
+
+**Symptom:** Die Konsole verweigert das Löschen einer Disk.
+
+**Lösungen:**
+- Die Disk ist noch an eine VM angehängt: Trennen Sie sie auf der Seite **Edit** der VM (**Detach disk**) oder löschen Sie die VM. Die System-Disk einer VM lässt sich nicht trennen: Sie kann erst nach dem Löschen der VM gelöscht werden;
+- Die Disk wurde getrennt, wird aber von ihrer VM noch verwendet: Die Konsole zeigt „This disk was detached, but its VM still uses it until its next restart. Restart the VM, then try again.“ Starten Sie die VM neu und löschen Sie die Disk dann erneut.
 
 Siehe: [Buckets - Fehlerbehebung](../services/storage/buckets/troubleshooting.md), [Disks - Fehlerbehebung](../services/storage/disks/troubleshooting.md)
 

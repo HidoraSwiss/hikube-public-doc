@@ -28,15 +28,27 @@ Per cambiare il numero di repliche di un cluster esistente, [contatti il support
 
 | Preset | CPU | Memoria |
 |--------|-----|---------|
-| `nano` | 250m | 128Mi |
-| `micro` | 500m | 256Mi |
-| `small` | 1 | 512Mi |
-| `medium` | 1 | 1Gi |
-| `large` | 2 | 2Gi |
-| `xlarge` | 4 | 4Gi |
-| `2xlarge` | 8 | 8Gi |
+| `u1.medium` | 1 | 4Gi |
+| `u1.large` | 2 | 8Gi |
+| `u1.xlarge` | 4 | 16Gi |
+| `u1.2xlarge` | 8 | 32Gi |
+| `u1.4xlarge` | 16 | 64Gi |
+| `u1.8xlarge` | 32 | 128Gi |
+| `s1.small` | 1 | 2Gi |
+| `s1.medium` | 2 | 4Gi |
+| `s1.large` | 4 | 8Gi |
+| `s1.xlarge` | 8 | 16Gi |
+| `s1.2xlarge` | 16 | 32Gi |
+| `s1.4xlarge` | 32 | 64Gi |
+| `m1.large` | 2 | 16Gi |
+| `m1.xlarge` | 4 | 32Gi |
+| `m1.2xlarge` | 8 | 64Gi |
+| `m1.4xlarge` | 16 | 128Gi |
+| `m1.8xlarge` | 32 | 256Gi |
 
-Fa fede l'elenco mostrato nel modulo. Le risorse si applicano a ogni nodo del cluster.
+I preset riprendono le taglie delle [macchine virtuali](../../../compute/overview.md) delle serie `u1`, `s1` e `m1`. Fa fede l'elenco mostrato nel modulo. Le risorse si applicano a ogni nodo del cluster.
+
+Un cluster creato con un vecchio preset (`small`, `medium`…) lo conserva: il modulo lo mostra così com'è e lo salva senza modifiche finché non ne sceglie un altro. Se le risorse del cluster sono state fissate al di fuori del suo preset, il modulo lo indica con la menzione « (override) ».
 
 ## Passaggi
 

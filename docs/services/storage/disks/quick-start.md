@@ -130,11 +130,11 @@ Voir aussi le [dépannage complet](./troubleshooting.md).
    sudo umount /mnt/data
    sudo sed -i '\|/mnt/data|d' /etc/fstab
    ```
-2. Détachez le disque : page de la VM → **Modifier** → section **Stockage**, cliquez sur **Détacher le disque** sur le volume, confirmez avec **Détacher**, puis cliquez sur **Enregistrer**. Le disque revient au statut **Prêt** ; dans la VM, le détachement ne prend effet qu'au prochain redémarrage : cliquez sur **Redémarrer**, puis attendez quelques minutes avant l'étape suivante. Un disque détaché reste utilisé par la VM jusqu'à son prochain redémarrage, et une suppression trop rapide peut laisser l'espace occupé dans votre quota.
+2. Détachez le disque : page de la VM → **Modifier** → section **Stockage**, cliquez sur **Détacher le disque** sur le volume, confirmez avec **Détacher**, puis cliquez sur **Enregistrer**. Le disque revient au statut **Prêt** ; dans la VM, le détachement ne prend effet qu'au prochain redémarrage : cliquez sur **Redémarrer**, puis attendez quelques minutes avant l'étape suivante. Un disque détaché reste utilisé par la VM jusqu'à son prochain redémarrage, et une suppression trop rapide peut laisser l'espace occupé dans votre quota. Tant que la VM n'a pas redémarré, la console refuse la suppression : « Ce disque a été détaché, mais sa VM l'utilise encore jusqu'à son prochain redémarrage. Redémarrez la VM, puis réessayez. »
 3. Supprimez le disque : page du disque → **Supprimer** (ou menu d'actions → **Supprimer** dans la liste), saisissez son nom exact dans **Nom de la ressource à confirmer**, puis cliquez sur **Supprimer définitivement**.
 
 :::warning
-La suppression d'un disque est irréversible : toutes ses données sont perdues. Un disque attaché à une VM ne peut pas être supprimé ; détachez-le d'abord.
+La suppression d'un disque est irréversible : toutes ses données sont perdues. Un disque attaché à une VM ne peut pas être supprimé ; détachez-le d'abord, puis redémarrez la VM.
 :::
 
 <NavigationFooter

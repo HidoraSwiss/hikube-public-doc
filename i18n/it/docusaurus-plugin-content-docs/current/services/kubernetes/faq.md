@@ -105,4 +105,4 @@ Vedere [Come aggiungere e modificare un gruppo di nodi](./how-to/manage-node-gro
 
 ### È possibile modificare il control plane dopo la creazione?
 
-No. La **Control Plane Instance Size** e la **Control Plane High Availability** non sono modificabili nella console dopo la creazione; contatti il supporto. La versione di Kubernetes (solo verso una versione superiore), l'endpoint API, i gruppi di nodi e gli addon restano modificabili.
+No. La **Control Plane Instance Size** e la **Control Plane High Availability** non sono modificabili nella console dopo la creazione; contatti il supporto. La pagina di modifica mostra, in sola lettura, la dimensione di ciascuno dei quattro componenti del control plane. La versione di Kubernetes (solo verso una versione superiore), l'endpoint API, i gruppi di nodi e gli addon restano modificabili.

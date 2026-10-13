@@ -64,4 +64,9 @@ L'assistant affiche un **Coût estimé** : un tarif par Go et par mois, et le co
 
 ### Pourquoi ne puis-je pas supprimer mon disque ?
 
-Un disque attaché à une VM ne peut pas être supprimé : la console répond « Le disque ne peut pas être supprimé car il est en cours d'utilisation. ». Détachez-le d'abord depuis la page de modification de la VM. Un disque détaché reste utilisé par la VM jusqu'à son prochain redémarrage. Redémarrez la VM, puis attendez quelques minutes avant de supprimer le disque : une suppression trop rapide peut laisser l'espace occupé dans votre quota.
+La console refuse la suppression d'un disque qu'une VM utilise encore :
+
+- disque attaché à une VM : « Le disque ne peut pas être supprimé car il est en cours d'utilisation. » depuis la page du disque, ou un message équivalent depuis la liste **Disques de Stockage**. Détachez-le d'abord depuis la page de modification de la VM ;
+- disque détaché que la VM utilise encore : « Ce disque a été détaché, mais sa VM l'utilise encore jusqu'à son prochain redémarrage. Redémarrez la VM, puis réessayez. » Un disque détaché reste utilisé par la VM jusqu'à son prochain redémarrage.
+
+Redémarrez la VM, puis attendez quelques minutes avant de supprimer le disque : une suppression trop rapide peut laisser l'espace occupé dans votre quota. Via l'API, ces refus portent les codes `30007` (disque attaché) et `30201` (disque détaché, encore utilisé jusqu'au redémarrage de la VM).

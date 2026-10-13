@@ -49,7 +49,7 @@ Saisissez le **Nom du cluster**, par exemple `demo-mariadb` (3 à 16 caractères
 | Champ | Valeur conseillée pour ce guide | Remarque |
 |-------|----------------------------------|----------|
 | **Version MariaDB** | `11.8` | Versions proposées : 10.6, 10.11, 11.4, 11.8 |
-| **Préconfiguration (Preset)** | `Small (1 CPU, 512Mi)` | Non modifiable après création |
+| **Préconfiguration (Preset)** | `s1.small — 1 CPU / 2Gi` | Aucun preset n'est présélectionné ; non modifiable après création |
 | **Taille du disque (Go)** | `10` | Capacité de stockage par nœud |
 | **Nombre de réplicas** | `1 (Standalone)` | `3` ou `5` pour la haute disponibilité ; non modifiable après création |
 | **Accès externe** | Activé | Nécessaire pour vous connecter depuis votre poste |

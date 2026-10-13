@@ -7,17 +7,27 @@ title: FAQ
 
 ### Which instance presets are available?
 
-The **Instance preset** sets the CPU and memory of each node of the cluster. The list displayed by the wizard is authoritative; for reference:
+The **Instance preset** sets the CPU and memory of each node of the cluster. Presets are the [virtual machine](../../compute/overview.md) sizes of the `u1`, `s1` and `m1` series: a preset has the same resources as the VM of the same name. The list displayed by the wizard is authoritative:
 
 | **Preset** | **CPU** | **Memory** |
 |------------|---------|-------------|
-| `nano`     | 250m    | 128Mi       |
-| `micro`    | 500m    | 256Mi       |
-| `small`    | 1       | 512Mi       |
-| `medium`   | 1       | 1Gi         |
-| `large`    | 2       | 2Gi         |
-| `xlarge`   | 4       | 4Gi         |
-| `2xlarge`  | 8       | 8Gi         |
+| `u1.medium` | 1 | 4Gi |
+| `u1.large` | 2 | 8Gi |
+| `u1.xlarge` | 4 | 16Gi |
+| `u1.2xlarge` | 8 | 32Gi |
+| `u1.4xlarge` | 16 | 64Gi |
+| `u1.8xlarge` | 32 | 128Gi |
+| `s1.small` | 1 | 2Gi |
+| `s1.medium` | 2 | 4Gi |
+| `s1.large` | 4 | 8Gi |
+| `s1.xlarge` | 8 | 16Gi |
+| `s1.2xlarge` | 16 | 32Gi |
+| `s1.4xlarge` | 32 | 64Gi |
+| `m1.large` | 2 | 16Gi |
+| `m1.xlarge` | 4 | 32Gi |
+| `m1.2xlarge` | 8 | 64Gi |
+| `m1.4xlarge` | 16 | 128Gi |
+| `m1.8xlarge` | 32 | 256Gi |
 
 The preset can be changed after creation from **Edit**. Defining custom CPU/memory values is not offered in the console; contact support.
 
@@ -43,7 +53,15 @@ Passwords are displayed only once and cannot be read again. Generate a new one: 
 
 ### Why is my username rejected?
 
-PostgreSQL usernames are 3 to 16 characters long, made of lowercase letters, digits and underscores (`_`), and start with a letter or an underscore. The hyphen (`-`) is not accepted. The names `postgres`, `admin`, `root`, `owner`, `superuser`, `streaming_replica`, `cnpg_pooler_pgbouncer` and all those starting with `pg_` are reserved.
+PostgreSQL usernames are 3 to 16 characters long, made of lowercase letters, digits and underscores (`_`), and start with a letter or an underscore. The hyphen (`-`) is not accepted. The names `postgres`, `admin`, `root`, `owner`, `superuser`, `streaming_replica` and all those starting with `pg_` are reserved.
+
+### Why is my database name rejected?
+
+A database name is 1 to 54 characters long: lowercase letters, digits, underscores (`_`) and hyphens (`-`). It starts with a letter or an underscore, but not with `pg_`. The system databases `postgres`, `template0` and `template1` cannot be created.
+
+### Why is a right on the `postgres` database locked?
+
+`postgres`, `template0` and `template1` are system databases, reserved for the platform: no right can be granted or changed on them anymore. The cluster creation wizard used to preselect the `postgres` database for users; the rights granted this way are kept. In **Manage Access**, such a row is shown locked, with a warning: remove it, then give the user access to an application database.
 
 ### How do I add PostgreSQL extensions?
 

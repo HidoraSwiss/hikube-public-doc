@@ -75,12 +75,17 @@ title: Risoluzione dei problemi
 
 ### L'eliminazione del disco non riesce
 
-**Causa**: il disco è collegato a una VM («The disk cannot be deleted as it is in use.»), oppure il servizio è momentaneamente non disponibile.
+**Causa**: una VM usa ancora il disco, oppure il servizio è momentaneamente non disponibile. La console mostra uno di questi messaggi:
+
+- «The disk cannot be deleted as it is in use.» (pagina del disco) o un messaggio equivalente nell'elenco dei dischi: il disco è collegato a una VM;
+- «This disk was detached, but its VM still uses it until its next restart. Restart the VM, then try again.»: il disco è stato scollegato, ma la VM non è ancora stata riavviata e lo usa ancora;
+- «The disk deletion service is temporarily unavailable.».
 
 **Soluzione**:
 
-1. Scolleghi il disco dalla pagina di modifica della VM (sezione **Storage**), quindi riprovi.
-2. Se il messaggio indica «The disk deletion service is temporarily unavailable.», riprovi qualche minuto più tardi.
+1. Disco collegato: lo scolleghi dalla pagina di modifica della VM (sezione **Storage**), faccia clic su **Save**, quindi passi al punto 2.
+2. Disco scollegato: faccia clic su **Restart** nella pagina della VM, attenda che torni allo stato **Running**, poi qualche minuto, e riprovi.
+3. Servizio non disponibile: riprovi qualche minuto più tardi.
 
 ---
 

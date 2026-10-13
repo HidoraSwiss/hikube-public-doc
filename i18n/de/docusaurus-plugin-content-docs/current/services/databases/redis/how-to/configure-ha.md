@@ -9,7 +9,7 @@ Diese Anleitung erklärt, wie Sie über die [Hikube-Konsole](https://console.hik
 
 ## Voraussetzungen
 
-- Ein Hikube-**Projekt** mit ausreichenden Quotas: Der Verbrauch an CPU, Arbeitsspeicher und Speicher vervielfacht sich mit der Anzahl der Replicas
+- Ein Hikube-**Projekt** mit ausreichenden Quotas: Der Verbrauch an CPU, Arbeitsspeicher und Speicher vervielfacht sich mit der Anzahl der Replicas, und die drei Sentinels zählen zusätzlich mit CPU und Arbeitsspeicher in der Größe des Presets
 - Grundkenntnisse in Redis (siehe [Schnellstart](../quick-start.md))
 
 :::warning
@@ -29,7 +29,7 @@ Im Schritt **Configuration**:
 | Feld | Empfohlener Wert für die Produktion |
 |-------|----------------------------------|
 | **Number of replicas** | `3` (oder `5` für eine Toleranz gegenüber zwei Ausfällen) |
-| **Preset** | `medium` oder größer, je nach Größe des Datenbestands |
+| **Preset** | Eine Größe, deren Arbeitsspeicher den Datenbestand übersteigt; die Serie `m1` bietet den meisten Arbeitsspeicher pro vCPU |
 | **Volume size (GB)** | Größer als das erwartete Datenvolumen |
 | **Enable authentication** | Aktiviert |
 | **Public network** | Deaktiviert, sofern kein Zugriff aus dem Internet benötigt wird |

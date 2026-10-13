@@ -19,14 +19,14 @@ Toutes les opérations se font depuis la page du cluster : **DB & Messaging** �
 ### 1. Créer une base de données
 
 1. Dans l'onglet **Bases de données**, cliquez sur **Créer**.
-2. Saisissez le **Nom de la base de données** (minuscules, chiffres et tirets bas, 63 caractères au maximum), par exemple `analytics`.
+2. Saisissez le **Nom de la base de données**, par exemple `analytics` : 1 à 54 caractères, minuscules, chiffres, tirets bas et tirets, en commençant par une lettre ou un tiret bas, mais pas par `pg_`. Les noms des bases système `postgres`, `template0` et `template1` sont refusés.
 3. Dans **Extensions PostgreSQL**, cochez les extensions à activer à la création.
 4. Cliquez sur **Créer**.
 
 La base apparaît dans la liste, avec ses extensions. Elle figure aussi dans la carte **Connexion et Bases de données**, sous **Bases de données initiales**.
 
 :::tip
-Vous pouvez aussi déclarer des bases dès la création du cluster, à l'étape **Bases** de l'assistant. La base **`postgres`** est toujours créée automatiquement.
+Vous pouvez aussi déclarer des bases dès la création du cluster, à l'étape **Bases** de l'assistant. La base système **`postgres`** est toujours créée automatiquement ; elle est réservée à la plateforme et ne peut recevoir aucun droit.
 :::
 
 ### 2. Gérer les extensions d'une base
@@ -35,6 +35,8 @@ Vous pouvez aussi déclarer des bases dès la création du cluster, à l'étape 
 2. Choisissez **Gérer les extensions**.
 3. Cochez ou décochez les extensions, puis cliquez sur **Enregistrer**.
 
+Sur une base système, **Gérer les extensions** et **Supprimer la base de données** sont désactivés : « Base système : elle ne peut être ni modifiée ni supprimée. »
+
 La liste proposée correspond aux extensions disponibles sur la plateforme, notamment `pg_stat_statements`, `pgcrypto`, `uuid-ossp`, `pg_trgm`, `hstore`, `citext`, `postgres_fdw`, `pgaudit` et `vector` (pgvector).
 
 ### 3. Créer un utilisateur
@@ -42,7 +44,7 @@ La liste proposée correspond aux extensions disponibles sur la plateforme, nota
 1. Dans l'onglet **Utilisateurs**, cliquez sur **Créer un utilisateur**.
 2. Saisissez le **Nom d'utilisateur** : 3 à 16 caractères, minuscules, chiffres et tirets bas, commençant par une lettre ou un tiret bas (par exemple `report_reader`).
 3. Dans **Bases de données**, cliquez sur **Ajouter un accès** pour chaque base à laquelle l'utilisateur doit accéder :
-   - **Nom de la base** : sélectionnez la base ;
+   - **Nom de la base** : sélectionnez la base (les bases système ne sont pas proposées) ;
    - **Droits** : **Administrateur (Admin)** (lecture et écriture) ou **Lecture seule (Read-only)**.
 4. Cliquez sur **Créer l'utilisateur**.
 
@@ -60,6 +62,8 @@ Cliquez ensuite sur **Terminer et retourner au cluster**.
 2. Choisissez **Gérer les accès**.
 3. Ajoutez des accès avec **Ajouter**, modifiez les **Droits** ou retirez une ligne.
 4. Cliquez sur **Enregistrer**.
+
+Un droit sur une base système (`postgres`, `template0` ou `template1`), attribué avant que ces bases soient refusées, s'affiche verrouillé, avec un avertissement : vous pouvez retirer la ligne, mais pas modifier ses **Droits**.
 
 Le nom d'utilisateur ne peut pas être modifié.
 

@@ -28,15 +28,27 @@ Um die Anzahl der Replicas eines bestehenden Clusters zu ändern, [wenden Sie si
 
 | Preset | CPU | Arbeitsspeicher |
 |--------|-----|---------|
-| `nano` | 250m | 128Mi |
-| `micro` | 500m | 256Mi |
-| `small` | 1 | 512Mi |
-| `medium` | 1 | 1Gi |
-| `large` | 2 | 2Gi |
-| `xlarge` | 4 | 4Gi |
-| `2xlarge` | 8 | 8Gi |
+| `u1.medium` | 1 | 4Gi |
+| `u1.large` | 2 | 8Gi |
+| `u1.xlarge` | 4 | 16Gi |
+| `u1.2xlarge` | 8 | 32Gi |
+| `u1.4xlarge` | 16 | 64Gi |
+| `u1.8xlarge` | 32 | 128Gi |
+| `s1.small` | 1 | 2Gi |
+| `s1.medium` | 2 | 4Gi |
+| `s1.large` | 4 | 8Gi |
+| `s1.xlarge` | 8 | 16Gi |
+| `s1.2xlarge` | 16 | 32Gi |
+| `s1.4xlarge` | 32 | 64Gi |
+| `m1.large` | 2 | 16Gi |
+| `m1.xlarge` | 4 | 32Gi |
+| `m1.2xlarge` | 8 | 64Gi |
+| `m1.4xlarge` | 16 | 128Gi |
+| `m1.8xlarge` | 32 | 256Gi |
 
-Maßgeblich ist die im Formular angezeigte Liste. Die Ressourcen gelten für jeden Knoten des Clusters.
+Die Presets entsprechen den Größen der [virtuellen Maschinen](../../../compute/overview.md) der Serien `u1`, `s1` und `m1`. Maßgeblich ist die im Formular angezeigte Liste. Die Ressourcen gelten für jeden Knoten des Clusters.
+
+Ein Cluster, der mit einem früheren Preset (`small`, `medium`…) erstellt wurde, behält es: Das Formular zeigt es unverändert an und speichert es ohne Änderung, solange Sie kein anderes wählen. Wurden die Ressourcen des Clusters abweichend von seinem Preset festgelegt, weist das Formular mit dem Vermerk „(override)“ darauf hin.
 
 ## Schritte
 

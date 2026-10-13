@@ -18,7 +18,9 @@ Il collegamento si configura **lato VM**, nella sezione **Storage**:
 - alla creazione di una VM (passaggio **Storage** della procedura guidata);
 - oppure su una VM esistente (pagina della VM → **Edit** → sezione **Storage**).
 
-Ogni volume della VM può essere **New** (la console crea il disco) o **Existing** (sceglie un disco già creato). Il primo volume è il **System Disk (Boot)**; i successivi sono volumi dati.
+Ogni volume aggiunto può essere **New** (la console crea il disco) o **Existing** (sceglie un disco già creato). Il primo volume è il **System Disk (Boot)**; i successivi sono volumi dati.
+
+Su una VM esistente, i dischi che possiede già sono mostrati in sola lettura, senza la scelta **New** / **Existing**: il **System Disk (Boot)** non ha alcuna azione («The system disk of an existing VM cannot be replaced: the VM boots from it.») e un disco dati propone solo **Detach disk**.
 
 | Volume | Dischi proposti in modalità **Existing** |
 |--------|----------------------------------------|
@@ -40,6 +42,8 @@ Il disco viene preso in carico solo al successivo riavvio della VM. La console l
 ## Collegare un disco alla creazione di una VM
 
 Al passaggio **Storage** della procedura guidata di creazione della VM, faccia clic su **Add a disk**, selezioni **Existing** e poi il disco in **Select an existing volume**. Per avviare la VM su un disco di sistema creato in anticipo, selezioni **Existing** sul **System Disk (Boot)**.
+
+Il disco di sistema di una VM esistente non si sostituisce: per avviarla su un altro disco di sistema, elimini la VM (i suoi dischi sono conservati), quindi la ricrei in questo modo.
 
 ## Rendere il disco utilizzabile nella VM (Linux)
 
@@ -75,7 +79,7 @@ Utilizzi l'UUID anziché il nome del dispositivo (`/dev/vdb`) in `/etc/fstab`: l
 3. Faccia clic su **Detach disk** sul volume, quindi confermi con **Detach** nella finestra **Detach `<name>`?**. Non è richiesto di inserire il nome.
 4. Faccia clic su **Save**, poi su **Restart**: lo scollegamento ha effetto solo al successivo riavvio della VM; fino ad allora il disco resta visibile al sistema.
 
-Il disco viene **scollegato**, non eliminato: i suoi dati sono conservati e resta in **Infrastructure** → **Disks** con lo stato **Ready** e può essere collegato a un'altra VM. Per eliminarlo definitivamente, utilizzi l'azione **Delete** della pagina del disco. Un disco scollegato resta in uso dalla VM fino al suo successivo riavvio. Riavvii la VM, quindi attenda qualche minuto prima di eliminare il disco: un'eliminazione troppo rapida può lasciare lo spazio occupato nella sua quota.
+Il disco viene **scollegato**, non eliminato: i suoi dati sono conservati e resta in **Infrastructure** → **Disks** con lo stato **Ready** e può essere collegato a un'altra VM. Per eliminarlo definitivamente, utilizzi l'azione **Delete** della pagina del disco. Un disco scollegato resta in uso dalla VM fino al suo successivo riavvio. Riavvii la VM, quindi attenda qualche minuto prima di eliminare il disco: un'eliminazione troppo rapida può lasciare lo spazio occupato nella sua quota. Finché la VM non è stata riavviata, la console rifiuta l'eliminazione: «This disk was detached, but its VM still uses it until its next restart. Restart the VM, then try again.»
 
 :::note
 L'eliminazione di una VM scollega anche i suoi dischi senza eliminarli. Si ricordi di eliminare i dischi non più necessari: continuano a consumare la quota di storage del progetto.

@@ -51,7 +51,7 @@ Die einzelnen Felder sind in den [Konzepten](./concepts.md) und im [Schnellstart
 ### Control Plane
 
 - Von Hikube verwaltet, ohne dass Sie Wartung übernehmen müssen
-- Dimensioniert über ein Preset (**Control Plane Instance Size**) und eine Anzahl von Instanzen (**Control Plane High Availability**: 1, 3 oder 5)
+- Dimensioniert über eine Größe (**Control Plane Instance Size**: `s1.small` oder `s1.medium`, angewendet auf ihre vier Komponenten) und eine Anzahl von Instanzen (**Control Plane High Availability**: 1, 3 oder 5)
 - Zugriff über die Standard-Kubernetes-API (`kubectl`, SDK-Client usw.) mit der aus der Konsole heruntergeladenen kubeconfig
 
 ### Node-Gruppen

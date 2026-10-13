@@ -47,7 +47,7 @@ Click **Restart** and confirm in **Restart virtual machine?**. Applications are 
 1. On the detail page, click **Edit** (or **Edit** in the **Actions** menu of the list, available only for a **Running** VM).
 2. Change the sections you need:
    - **Resources (CPU / RAM)**: series and size, GPU;
-   - **Storage**: adding or detaching disks;
+   - **Storage**: adding disks, detaching data disks;
    - **Network & Security**: public IP, firewall, ports, VPC;
    - **Advanced Configuration**: SSH keys, cloud-init script, **Automatic Restart**.
 3. Check the quota summary at the top of the page and click **Save**.
@@ -57,6 +57,16 @@ If the instance type, the disks or the GPUs change, the console shows **Restart 
 If saving is refused, the console shows **Incomplete form** and names the invalid fields.
 
 The name and the system image cannot be changed.
+
+In the **Storage** section, the disks the VM already has are shown read-only (**Volume Name**, **Size (GB)**):
+
+- the **System Disk (Boot)** has no action; the console explains why: "The system disk of an existing VM cannot be replaced: the VM boots from it.";
+- a data disk only offers **Detach disk**;
+- the **New** / **Existing** choice only appears on disks added with **Add a disk**.
+
+To expand a disk, use its page in the **Disks** menu (see [Resize a disk](../../storage/disks/how-to/resize.md)).
+
+To boot the VM from another system disk, delete the VM: its disks are detached and kept in the **Disks** menu. Then recreate it with the wizard, choosing **Existing** on the **System Disk (Boot)** and then the disk you want; reattach its data disks the same way. Through the API, an update that replaces, removes or moves the system disk of a VM is refused (code `20208`).
 
 ### 5. Delete a VM
 

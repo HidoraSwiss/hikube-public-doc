@@ -18,7 +18,9 @@ L'attachement se configure **côté VM**, dans la section **Stockage** :
 - à la création d'une VM (étape **Stockage** de l'assistant) ;
 - ou sur une VM existante (page de la VM → **Modifier** → section **Stockage**).
 
-Chaque volume de la VM peut être **Nouveau** (la console crée le disque) ou **Existant** (vous choisissez un disque déjà créé). Le premier volume est le **Disque Système (Boot)** ; les suivants sont des volumes de données.
+Chaque volume ajouté peut être **Nouveau** (la console crée le disque) ou **Existant** (vous choisissez un disque déjà créé). Le premier volume est le **Disque Système (Boot)** ; les suivants sont des volumes de données.
+
+Sur une VM existante, les disques qu'elle possède déjà s'affichent en lecture seule, sans choix **Nouveau** / **Existant** : le **Disque Système (Boot)** n'a aucune action (« Le disque système d'une VM existante ne se remplace pas : la VM démarre dessus. ») et un disque de données ne propose que **Détacher le disque**.
 
 | Volume | Disques proposés en mode **Existant** |
 |--------|----------------------------------------|
@@ -40,6 +42,8 @@ Le disque n'est pris en compte qu'au prochain redémarrage de la VM. La console 
 ## Attacher un disque à la création d'une VM
 
 À l'étape **Stockage** de l'assistant de création de VM, cliquez sur **Ajouter un disque**, sélectionnez **Existant** puis le disque dans **Sélectionner un volume existant**. Pour démarrer la VM sur un disque système créé à l'avance, sélectionnez **Existant** sur le **Disque Système (Boot)**.
+
+Le disque système d'une VM existante ne se remplace pas : pour la faire démarrer sur un autre disque système, supprimez la VM (ses disques sont conservés), puis recréez-la de cette façon.
 
 ## Rendre le disque utilisable dans la VM (Linux)
 
@@ -75,7 +79,7 @@ Utilisez l'UUID plutôt que le nom de périphérique (`/dev/vdb`) dans `/etc/fst
 3. Cliquez sur **Détacher le disque** sur le volume, puis confirmez avec **Détacher** dans la boîte **Détacher `<nom>` ?**. Aucune saisie du nom n'est demandée.
 4. Cliquez sur **Enregistrer**, puis sur **Redémarrer** : le détachement ne prend effet qu'au prochain redémarrage de la VM ; d'ici là, le disque reste visible par le système.
 
-Le disque est **détaché**, pas supprimé : ses données sont conservées et il reste dans **Infrastructure** → **Disques** avec le statut **Prêt**, et peut être attaché à une autre VM. Pour le supprimer définitivement, utilisez l'action **Supprimer** de la page du disque. Un disque détaché reste utilisé par la VM jusqu'à son prochain redémarrage. Redémarrez la VM, puis attendez quelques minutes avant de supprimer le disque : une suppression trop rapide peut laisser l'espace occupé dans votre quota.
+Le disque est **détaché**, pas supprimé : ses données sont conservées et il reste dans **Infrastructure** → **Disques** avec le statut **Prêt**, et peut être attaché à une autre VM. Pour le supprimer définitivement, utilisez l'action **Supprimer** de la page du disque. Un disque détaché reste utilisé par la VM jusqu'à son prochain redémarrage. Redémarrez la VM, puis attendez quelques minutes avant de supprimer le disque : une suppression trop rapide peut laisser l'espace occupé dans votre quota. Tant que la VM n'a pas redémarré, la console refuse la suppression : « Ce disque a été détaché, mais sa VM l'utilise encore jusqu'à son prochain redémarrage. Redémarrez la VM, puis réessayez. »
 
 :::note
 La suppression d'une VM détache aussi ses disques sans les supprimer. Pensez à supprimer les disques devenus inutiles : ils continuent de consommer le quota de stockage du projet.

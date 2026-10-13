@@ -174,18 +174,33 @@ Un utilisateur ne peut avoir qu'un seul droit par vhost. Les droits se modifient
 
 ## Préconfigurations de ressources
 
-La **Préconfiguration (Preset)** fixe les ressources CPU et mémoire de chaque nœud. La console affiche les valeurs de chaque preset dans la liste déroulante.
+La **Préconfiguration (Preset)** fixe les ressources CPU et mémoire de chaque nœud. Les presets reprennent les tailles des [machines virtuelles](../../compute/overview.md), séries `u1`, `s1` et `m1` : un preset a les mêmes ressources que la VM du même nom. La liste affichée par l'assistant fait foi :
 
 | Preset | CPU | Mémoire |
 |--------|-----|---------|
-| **Micro** | 0,5 | 256 Mi |
-| **Small** | 1 | 512 Mi |
-| **Medium** | 1 | 1 Gi |
-| **Large** | 2 | 2 Gi |
-| **Extra Large** | 4 | 4 Gi |
-| **2x Extra Large** | 8 | 8 Gi |
+| `u1.medium` | 1 | 4Gi |
+| `u1.large` | 2 | 8Gi |
+| `u1.xlarge` | 4 | 16Gi |
+| `u1.2xlarge` | 8 | 32Gi |
+| `u1.4xlarge` | 16 | 64Gi |
+| `u1.8xlarge` | 32 | 128Gi |
+| `s1.small` | 1 | 2Gi |
+| `s1.medium` | 2 | 4Gi |
+| `s1.large` | 4 | 8Gi |
+| `s1.xlarge` | 8 | 16Gi |
+| `s1.2xlarge` | 16 | 32Gi |
+| `s1.4xlarge` | 32 | 64Gi |
+| `m1.large` | 2 | 16Gi |
+| `m1.xlarge` | 4 | 32Gi |
+| `m1.2xlarge` | 8 | 64Gi |
+| `m1.4xlarge` | 16 | 128Gi |
+| `m1.8xlarge` | 32 | 256Gi |
 
-La préconfiguration **Small** est sélectionnée par défaut. Elle **ne peut pas être modifiée après création**.
+La préconfiguration **ne peut pas être modifiée après création**.
+
+L'assistant ne présélectionne aucun preset : choisissez-en un pour continuer. Chaque option indique ses ressources, par exemple « u1.medium — 1 CPU / 4Gi ». Si la liste ne peut pas être chargée, l'assistant affiche « La liste des presets n'a pas pu être chargée. Réessayez plus tard ou contactez le support. »
+
+Un cluster créé avec un ancien preset (`nano`, `micro`, `small`, `medium`, `large`, `xlarge` ou `2xlarge`) le conserve et fonctionne comme avant : le formulaire **Modifier** l'affiche tel quel et l'enregistre sans changement. Le preset ne pouvant pas être modifié après la création, [contactez le support](mailto:support@hidora.io) pour ce changement. Si les ressources d'un cluster ont été fixées hors de son preset, le formulaire l'indique par la mention « (forcé) ».
 
 ---
 

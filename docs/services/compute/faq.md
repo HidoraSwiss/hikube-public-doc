@@ -96,6 +96,12 @@ Ils sont détachés, pas supprimés. Ils restent dans le menu **Disques**, peuve
 
 ---
 
+### Comment changer le disque système d'une VM ?
+
+Pas depuis **Modifier** : le disque système d'une VM existante n'a aucune action (« Le disque système d'une VM existante ne se remplace pas : la VM démarre dessus. »). Supprimez la VM ; ses disques sont détachés et conservés. Recréez-la ensuite avec l'assistant : à l'étape **Stockage**, choisissez **Existant** sur le **Disque Système (Boot)** et sélectionnez le disque voulu (un disque système non attaché), puis rattachez les disques de données de la même façon. Voir [Attacher un disque à une VM](../storage/disks/how-to/attach-to-vm.md).
+
+---
+
 ### Puis-je accéder à la console série ou VNC de la VM ?
 
 Cette option n'est pas proposée dans la console ; contactez le [support](mailto:support@hidora.io). L'accès se fait en SSH (Linux) ou en RDP (Windows).

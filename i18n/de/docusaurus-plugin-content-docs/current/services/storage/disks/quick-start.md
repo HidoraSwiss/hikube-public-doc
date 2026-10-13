@@ -130,11 +130,11 @@ Siehe auch die [vollständige Fehlerbehebung](./troubleshooting.md).
    sudo umount /mnt/data
    sudo sed -i '\|/mnt/data|d' /etc/fstab
    ```
-2. Trennen Sie die Disk: Seite der VM → **Edit** → Abschnitt **Storage**, klicken Sie am Volume auf **Detach disk**, bestätigen Sie mit **Detach** und klicken Sie dann auf **Save**. Die Disk kehrt in den Status **Ready** zurück; in der VM wird das Trennen erst beim nächsten Neustart wirksam: Klicken Sie auf **Restart** und warten Sie dann einige Minuten vor dem nächsten Schritt. Eine getrennte Disk wird von der VM bis zu ihrem nächsten Neustart weiter verwendet, und ein zu schnelles Löschen kann dazu führen, dass der Speicherplatz in Ihrem Quota belegt bleibt.
+2. Trennen Sie die Disk: Seite der VM → **Edit** → Abschnitt **Storage**, klicken Sie am Volume auf **Detach disk**, bestätigen Sie mit **Detach** und klicken Sie dann auf **Save**. Die Disk kehrt in den Status **Ready** zurück; in der VM wird das Trennen erst beim nächsten Neustart wirksam: Klicken Sie auf **Restart** und warten Sie dann einige Minuten vor dem nächsten Schritt. Eine getrennte Disk wird von der VM bis zu ihrem nächsten Neustart weiter verwendet, und ein zu schnelles Löschen kann dazu führen, dass der Speicherplatz in Ihrem Quota belegt bleibt. Solange die VM nicht neu gestartet wurde, lehnt die Konsole das Löschen ab: „This disk was detached, but its VM still uses it until its next restart. Restart the VM, then try again.“
 3. Löschen Sie die Disk: Seite der Disk → **Delete** (oder Aktionsmenü → **Delete** in der Liste), geben Sie ihren genauen Namen in **Resource name to confirm** ein und klicken Sie dann auf **Permanently delete**.
 
 :::warning
-Das Löschen einer Disk ist unwiderruflich: Alle ihre Daten gehen verloren. Eine an eine VM angebundene Disk kann nicht gelöscht werden; trennen Sie sie zuerst.
+Das Löschen einer Disk ist unwiderruflich: Alle ihre Daten gehen verloren. Eine an eine VM angebundene Disk kann nicht gelöscht werden; trennen Sie sie zuerst und starten Sie dann die VM neu.
 :::
 
 <NavigationFooter

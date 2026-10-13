@@ -49,7 +49,7 @@ Geben Sie den **Cluster Name** ein, zum Beispiel `demo-mariadb` (3 bis 16 Zeiche
 | Feld | Empfohlener Wert für diese Anleitung | Hinweis |
 |-------|----------------------------------|----------|
 | **MariaDB Version** | `11.8` | Angebotene Versionen: 10.6, 10.11, 11.4, 11.8 |
-| **Preset** | `Small (1 CPU, 512Mi)` | Nach der Erstellung nicht änderbar |
+| **Preset** | `s1.small — 1 CPU / 2Gi` | Kein Preset ist vorausgewählt; nach der Erstellung nicht änderbar |
 | **Disk size (GB)** | `10` | Speicherkapazität pro Knoten |
 | **Number of replicas** | `1 (Standalone)` | `3` oder `5` für Hochverfügbarkeit; nach der Erstellung nicht änderbar |
 | **External access** | Aktiviert | Erforderlich, um sich von Ihrem Rechner aus zu verbinden |

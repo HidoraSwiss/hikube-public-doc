@@ -64,4 +64,9 @@ La procedura guidata mostra un **Estimated Cost**: una tariffa per GB al mese e 
 
 ### Perché non riesco a eliminare il mio disco?
 
-Un disco collegato a una VM non può essere eliminato: la console risponde «The disk cannot be deleted as it is in use.». Lo scolleghi prima dalla pagina di modifica della VM. Un disco scollegato resta in uso dalla VM fino al suo successivo riavvio. Riavvii la VM, quindi attenda qualche minuto prima di eliminare il disco: un'eliminazione troppo rapida può lasciare lo spazio occupato nella sua quota.
+La console rifiuta l'eliminazione di un disco che una VM usa ancora:
+
+- disco collegato a una VM: «The disk cannot be deleted as it is in use.» dalla pagina del disco, oppure un messaggio equivalente dall'elenco **Storage Disks**. Lo scolleghi prima dalla pagina di modifica della VM;
+- disco scollegato che la VM usa ancora: «This disk was detached, but its VM still uses it until its next restart. Restart the VM, then try again.» Un disco scollegato resta in uso dalla VM fino al suo successivo riavvio.
+
+Riavvii la VM, quindi attenda qualche minuto prima di eliminare il disco: un'eliminazione troppo rapida può lasciare lo spazio occupato nella sua quota. Tramite l'API, questi rifiuti riportano i codici `30007` (disco collegato) e `30201` (disco scollegato, ancora in uso fino al riavvio della VM).

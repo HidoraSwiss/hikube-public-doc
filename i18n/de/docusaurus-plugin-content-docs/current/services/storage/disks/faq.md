@@ -64,4 +64,9 @@ Der Assistent zeigt **Estimated Cost** an: einen Tarif pro GB und Monat und die 
 
 ### Warum kann ich meine Disk nicht löschen?
 
-Eine an eine VM angebundene Disk kann nicht gelöscht werden: Die Konsole antwortet mit „The disk cannot be deleted as it is in use.“. Trennen Sie sie zuerst auf der Bearbeitungsseite der VM. Eine getrennte Disk wird von der VM bis zu ihrem nächsten Neustart weiter verwendet. Starten Sie die VM neu und warten Sie dann einige Minuten, bevor Sie die Disk löschen: Ein zu schnelles Löschen kann dazu führen, dass der Speicherplatz in Ihrem Quota belegt bleibt.
+Die Konsole lehnt das Löschen einer Disk ab, die eine VM noch verwendet:
+
+- An eine VM angebundene Disk: „The disk cannot be deleted as it is in use.“ auf der Seite der Disk oder eine gleichwertige Meldung in der Liste **Storage Disks**. Trennen Sie sie zuerst auf der Bearbeitungsseite der VM;
+- Getrennte Disk, die die VM noch verwendet: „This disk was detached, but its VM still uses it until its next restart. Restart the VM, then try again.“ Eine getrennte Disk wird von der VM bis zu ihrem nächsten Neustart weiter verwendet.
+
+Starten Sie die VM neu und warten Sie dann einige Minuten, bevor Sie die Disk löschen: Ein zu schnelles Löschen kann dazu führen, dass der Speicherplatz in Ihrem Quota belegt bleibt. Über die API tragen diese Ablehnungen die Codes `30007` (Disk angebunden) und `30201` (Disk getrennt, bis zum Neustart der VM noch in Verwendung).

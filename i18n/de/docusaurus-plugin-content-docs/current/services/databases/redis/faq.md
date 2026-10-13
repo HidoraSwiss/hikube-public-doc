@@ -11,6 +11,7 @@ Redis auf Hikube wird für die Hochverfügbarkeit in einer **Redis-Sentinel**-Ar
 
 - **Redis Sentinel** überwacht die Redis-Instanzen und führt bei einem Ausfall des Masters ein **automatisches Failover** durch.
 - Ein **Quorum** aus Sentinels entscheidet über das Failover. Es werden immer drei Sentinels bereitgestellt, unabhängig von der Anzahl der Redis-Replicas: Das Failover funktioniert ab **2 Replicas**.
+- Die Sentinels zählen zu den Quotas des Projekts (CPU und Arbeitsspeicher, in der Größe des Presets des Clusters).
 - Die Adresse im Feld **Host** folgt dem Master: Nach einem Failover zeigt sie automatisch auf den neuen Master, ohne dass sich die Adresse ändert.
 
 :::tip
@@ -19,17 +20,27 @@ Wählen Sie für die Produktion bei der Erstellung mindestens 3 Replicas: Diese 
 
 ### Welche Presets sind verfügbar?
 
-Das **Preset** legt CPU und Arbeitsspeicher jedes Knotens fest. Maßgeblich ist die im Assistenten angezeigte Liste; zur Orientierung:
+Das **Preset** legt CPU und Arbeitsspeicher jedes Knotens fest. Die Presets entsprechen den Größen der [virtuellen Maschinen](../../compute/overview.md) der Serien `u1`, `s1` und `m1`: Ein Preset hat dieselben Ressourcen wie die gleichnamige VM. Maßgeblich ist die im Assistenten angezeigte Liste:
 
 | **Preset** | **CPU** | **Arbeitsspeicher** |
 |------------|---------|-------------|
-| `nano`     | 250m    | 128Mi       |
-| `micro`    | 500m    | 256Mi       |
-| `small`    | 1       | 512Mi       |
-| `medium`   | 1       | 1Gi         |
-| `large`    | 2       | 2Gi         |
-| `xlarge`   | 4       | 4Gi         |
-| `2xlarge`  | 8       | 8Gi         |
+| `u1.medium` | 1 | 4Gi |
+| `u1.large` | 2 | 8Gi |
+| `u1.xlarge` | 4 | 16Gi |
+| `u1.2xlarge` | 8 | 32Gi |
+| `u1.4xlarge` | 16 | 64Gi |
+| `u1.8xlarge` | 32 | 128Gi |
+| `s1.small` | 1 | 2Gi |
+| `s1.medium` | 2 | 4Gi |
+| `s1.large` | 4 | 8Gi |
+| `s1.xlarge` | 8 | 16Gi |
+| `s1.2xlarge` | 16 | 32Gi |
+| `s1.4xlarge` | 32 | 64Gi |
+| `m1.large` | 2 | 16Gi |
+| `m1.xlarge` | 4 | 32Gi |
+| `m1.2xlarge` | 8 | 64Gi |
+| `m1.4xlarge` | 16 | 128Gi |
+| `m1.8xlarge` | 32 | 256Gi |
 
 Es kann nach der Erstellung über **Edit** geändert werden.
 

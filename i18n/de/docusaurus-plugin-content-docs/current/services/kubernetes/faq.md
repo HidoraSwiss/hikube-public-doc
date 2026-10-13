@@ -105,4 +105,4 @@ Siehe [Eine Node-Gruppe hinzufügen und ändern](./how-to/manage-node-groups.md)
 
 ### Kann ich die Control Plane nach der Erstellung ändern?
 
-Nein. **Control Plane Instance Size** und **Control Plane High Availability** lassen sich nach der Erstellung in der Konsole nicht ändern; wenden Sie sich an den Support. Kubernetes-Version (nur auf eine höhere Version), API-Endpoint, Node-Gruppen und Addons bleiben änderbar.
+Nein. **Control Plane Instance Size** und **Control Plane High Availability** lassen sich nach der Erstellung in der Konsole nicht ändern; wenden Sie sich an den Support. Die Bearbeitungsseite zeigt schreibgeschützt die Größe jeder der vier Komponenten der Control Plane an. Kubernetes-Version (nur auf eine höhere Version), API-Endpoint, Node-Gruppen und Addons bleiben änderbar.

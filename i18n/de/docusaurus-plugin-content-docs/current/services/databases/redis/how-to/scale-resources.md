@@ -32,11 +32,11 @@ Um die Anzahl der Replicas zu ändern, [wenden Sie sich an den Support](mailto:s
 1. Öffnen Sie **DB & Messaging** → **Redis**.
 2. Öffnen Sie den Cluster und klicken Sie dann auf **Edit** (oder verwenden Sie **Actions** → **Edit** in der Liste).
 
-Die Seite **Edit cluster** zeigt die Karte **Cluster settings** und die Auswirkung auf die Quotas des Projekts an.
+Die Seite **Edit cluster** zeigt die Karte **Cluster settings** und die Auswirkung auf die Quotas des Projekts an, die auch die drei Sentinels in der Größe des Presets zählt.
 
 ### 2. Die Parameter anpassen
 
-- **Preset**: Wählen Sie ein größeres Preset, wenn der Arbeitsspeicher erschöpft ist. Der Arbeitsspeicher des Presets begrenzt das Datenvolumen, das Redis im Arbeitsspeicher halten kann.
+- **Preset**: Wählen Sie ein größeres Preset, wenn der Arbeitsspeicher erschöpft ist. Der Arbeitsspeicher des Presets begrenzt das Datenvolumen, das Redis im Arbeitsspeicher halten kann. Ein Cluster, der mit einem früheren Preset (`small`, `medium`…) erstellt wurde, behält es, solange Sie kein anderes wählen.
 - **Volume Size (GB)**: „Storage capacity allocated to each node in the cluster.“ Geben Sie mindestens die aktuelle Größe ein.
 - **Redis Version**: `8 (Latest)` oder `7`. Das Formular bietet beide Versionen an, akzeptiert wird jedoch nur die aktuelle oder eine höhere Version: Wählen Sie auf einem Cluster mit `8` nicht `7`.
 - **External access**: „Allow access to the cluster from outside the private network.“

@@ -49,13 +49,13 @@ Inserisca il **Cluster Name**, ad esempio `demo-cache` (da 3 a 16 caratteri: min
 | Campo | Valore consigliato per questa guida | Nota |
 |-------|----------------------------------|----------|
 | **Version** | `8 (Latest)` | Versioni proposte: 8 e 7 |
-| **Preset** | `Small (1 CPU, 512Mi)` | Capacità allocata a ogni nodo |
+| **Preset** | `s1.small — 1 CPU / 2Gi` | Nessun preset è preselezionato; capacità allocata a ogni nodo |
 | **Volume size (GB)** | `10` | Storage allocato a ogni nodo |
 | **Number of replicas** | `3` | Da 1 a 8; minimo 2 per il failover automatico |
 | **Public network** | Attivato | Necessario per connettersi dal suo computer |
 | **Enable authentication** | Attivato | Attiva per impostazione predefinita; da mantenere |
 
-Il banner nella parte superiore della procedura guidata mostra l'**Estimated Cost** e l'impatto sulle quote del progetto. Faccia clic su **Next**.
+Il banner nella parte superiore della procedura guidata mostra l'**Estimated Cost** e l'impatto sulle quote del progetto. Questo impatto conta anche i tre Sentinel del cluster, alla taglia del preset. Faccia clic su **Next**.
 
 :::warning
 Il **Number of replicas** non può più essere modificato dopo la creazione.
@@ -134,7 +134,7 @@ La password è assente o errata. Verifichi la variabile `REDISCLI_AUTH`, oppure 
 
 ### Il pulsante Next resta inattivo
 
-La configurazione supera le quote del progetto. Riduca il preset, la dimensione del volume o il numero di repliche.
+La configurazione supera le quote del progetto, Sentinel compresi. Riduca il preset, la dimensione del volume o il numero di repliche.
 
 ### Il cluster passa in Error
 

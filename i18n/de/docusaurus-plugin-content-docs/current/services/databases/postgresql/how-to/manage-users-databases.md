@@ -19,14 +19,14 @@ Alle Vorgänge erfolgen auf der Seite des Clusters: **DB & Messaging** → **Pos
 ### 1. Eine Datenbank erstellen
 
 1. Klicken Sie in der Registerkarte **Databases** auf **Create**.
-2. Geben Sie den **Database name** ein (Kleinbuchstaben, Ziffern und Unterstriche, höchstens 63 Zeichen), zum Beispiel `analytics`.
+2. Geben Sie den **Database name** ein, zum Beispiel `analytics`: 1 bis 54 Zeichen, Kleinbuchstaben, Ziffern, Unterstriche und Bindestriche, beginnend mit einem Buchstaben oder einem Unterstrich, aber nicht mit `pg_`. Die Namen der Systemdatenbanken `postgres`, `template0` und `template1` werden abgelehnt.
 3. Wählen Sie unter **PostgreSQL Extensions** die Erweiterungen aus, die bei der Erstellung aktiviert werden sollen.
 4. Klicken Sie auf **Create**.
 
 Die Datenbank erscheint mit ihren Erweiterungen in der Liste. Sie wird auch in der Karte **Connection and Databases** unter **Initial Databases** aufgeführt.
 
 :::tip
-Sie können Datenbanken auch bereits bei der Erstellung des Clusters im Schritt **Databases** des Assistenten anlegen. Die Datenbank **`postgres`** wird immer automatisch erstellt.
+Sie können Datenbanken auch bereits bei der Erstellung des Clusters im Schritt **Databases** des Assistenten anlegen. Die Systemdatenbank **`postgres`** wird immer automatisch erstellt; sie ist der Plattform vorbehalten, und auf ihr kann kein Recht vergeben werden.
 :::
 
 ### 2. Die Erweiterungen einer Datenbank verwalten
@@ -35,6 +35,8 @@ Sie können Datenbanken auch bereits bei der Erstellung des Clusters im Schritt 
 2. Wählen Sie **Manage extensions**.
 3. Aktivieren oder deaktivieren Sie die Erweiterungen und klicken Sie dann auf **Save**.
 
+Bei einer Systemdatenbank sind **Manage extensions** und **Delete database** deaktiviert: „System database: it can be neither changed nor deleted.“
+
 Die angebotene Liste entspricht den auf der Plattform verfügbaren Erweiterungen, unter anderem `pg_stat_statements`, `pgcrypto`, `uuid-ossp`, `pg_trgm`, `hstore`, `citext`, `postgres_fdw`, `pgaudit` und `vector` (pgvector).
 
 ### 3. Einen Benutzer anlegen
@@ -42,7 +44,7 @@ Die angebotene Liste entspricht den auf der Plattform verfügbaren Erweiterungen
 1. Klicken Sie in der Registerkarte **Users** auf **Create a user**.
 2. Geben Sie den **Username** ein: 3 bis 16 Zeichen, Kleinbuchstaben, Ziffern und Unterstriche, beginnend mit einem Buchstaben oder einem Unterstrich (zum Beispiel `report_reader`).
 3. Klicken Sie unter **Databases** für jede Datenbank, auf die der Benutzer zugreifen soll, auf **Add access**:
-   - **Database name**: Wählen Sie die Datenbank aus;
+   - **Database name**: Wählen Sie die Datenbank aus (Systemdatenbanken werden nicht angeboten);
    - **Rights**: **Administrator (Admin)** (Lesen und Schreiben) oder **Read-only**.
 4. Klicken Sie auf **Create user**.
 
@@ -60,6 +62,8 @@ Klicken Sie anschließend auf **Done and return to cluster**.
 2. Wählen Sie **Manage Access**.
 3. Fügen Sie mit **Add** Zugriffe hinzu, ändern Sie die **Rights** oder entfernen Sie eine Zeile.
 4. Klicken Sie auf **Save**.
+
+Ein Recht auf einer Systemdatenbank (`postgres`, `template0` oder `template1`), das vergeben wurde, bevor diese Datenbanken abgelehnt wurden, wird gesperrt und mit einem Warnhinweis angezeigt: Sie können die Zeile entfernen, aber ihre **Rights** nicht ändern.
 
 Der Benutzername kann nicht geändert werden.
 

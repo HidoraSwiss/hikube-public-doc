@@ -105,4 +105,4 @@ Voir [Comment ajouter et modifier un groupe de nœuds](./how-to/manage-node-grou
 
 ### Puis-je modifier le control plane après la création ?
 
-Non. La **Taille de l'instance Control Plane** et la **Haute Disponibilité du Control Plane** ne sont pas modifiables dans la console après la création ; contactez le support. La version de Kubernetes (uniquement vers une version supérieure), l'endpoint API, les groupes de nœuds et les addons restent modifiables.
+Non. La **Taille de l'instance Control Plane** et la **Haute Disponibilité du Control Plane** ne sont pas modifiables dans la console après la création ; contactez le support. La page de modification affiche, en lecture seule, la taille de chacun des quatre composants du control plane. La version de Kubernetes (uniquement vers une version supérieure), l'endpoint API, les groupes de nœuds et les addons restent modifiables.

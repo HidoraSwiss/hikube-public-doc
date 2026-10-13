@@ -49,13 +49,13 @@ Geben Sie den **Cluster Name** ein, zum Beispiel `demo-cache` (3 bis 16 Zeichen:
 | Feld | Empfohlener Wert für diese Anleitung | Hinweis |
 |-------|----------------------------------|----------|
 | **Version** | `8 (Latest)` | Angebotene Versionen: 8 und 7 |
-| **Preset** | `Small (1 CPU, 512Mi)` | Jedem Knoten zugewiesene Kapazität |
+| **Preset** | `s1.small — 1 CPU / 2Gi` | Kein Preset ist vorausgewählt; jedem Knoten zugewiesene Kapazität |
 | **Volume size (GB)** | `10` | Jedem Knoten zugewiesener Speicher |
 | **Number of replicas** | `3` | 1 bis 8; mindestens 2 für das automatische Failover |
 | **Public network** | Aktiviert | Erforderlich, um sich von Ihrem Rechner aus zu verbinden |
 | **Enable authentication** | Aktiviert | Standardmäßig aktiv; beibehalten |
 
-Das Banner oben im Assistenten zeigt die **Estimated Cost** und die Auswirkung auf die Quotas des Projekts an. Klicken Sie auf **Next**.
+Das Banner oben im Assistenten zeigt die **Estimated Cost** und die Auswirkung auf die Quotas des Projekts an. Diese Auswirkung zählt auch die drei Sentinels des Clusters in der Größe des Presets. Klicken Sie auf **Next**.
 
 :::warning
 Die **Number of replicas** kann nach der Erstellung nicht mehr geändert werden.
@@ -134,7 +134,7 @@ Das Passwort fehlt oder ist falsch. Prüfen Sie die Variable `REDISCLI_AUTH` ode
 
 ### Die Schaltfläche Next bleibt inaktiv
 
-Die Konfiguration überschreitet die Quotas des Projekts. Verringern Sie das Preset, die Volume-Größe oder die Anzahl der Replicas.
+Die Konfiguration überschreitet die Quotas des Projekts, Sentinels eingeschlossen. Verringern Sie das Preset, die Volume-Größe oder die Anzahl der Replicas.
 
 ### Der Cluster wechselt in den Status Error
 

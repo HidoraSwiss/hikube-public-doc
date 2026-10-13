@@ -9,7 +9,7 @@ Ce guide explique comment créer un cluster Redis hautement disponible depuis la
 
 ## Prérequis
 
-- Un **projet** Hikube disposant de quotas suffisants : la consommation CPU, mémoire et stockage est multipliée par le nombre de réplicas
+- Un **projet** Hikube disposant de quotas suffisants : la consommation CPU, mémoire et stockage est multipliée par le nombre de réplicas, et les trois sentinelles comptent en plus en CPU et en mémoire, à la taille de la préconfiguration
 - Connaissance des bases de Redis (voir le [démarrage rapide](../quick-start.md))
 
 :::warning
@@ -29,7 +29,7 @@ Ouvrez **DB & Messaging** → **Redis**, puis cliquez sur **Créer un cluster**.
 | Champ | Valeur recommandée en production |
 |-------|----------------------------------|
 | **Nombre de réplicas** | `3` (ou `5` pour une tolérance à deux pannes) |
-| **Préconfiguration** | `medium` ou supérieur, selon la taille du jeu de données |
+| **Préconfiguration** | Une taille dont la mémoire dépasse le jeu de données ; la série `m1` offre le plus de mémoire par vCPU |
 | **Taille du volume (Go)** | Supérieure au volume de données attendu |
 | **Activer l'authentification** | Activé |
 | **Réseau public** | Désactivé, sauf besoin d'accès depuis Internet |

@@ -174,18 +174,33 @@ Ein Benutzer kann pro VHost nur ein Recht haben. Die Rechte lassen sich jederzei
 
 ## Ressourcen-Presets
 
-Das **Preset** legt die CPU- und Arbeitsspeicherressourcen jedes Knotens fest. Die Konsole zeigt die Werte jedes Presets in der Auswahlliste an.
+Das **Preset** legt die CPU- und Arbeitsspeicherressourcen jedes Knotens fest. Die Presets entsprechen den Größen der [virtuellen Maschinen](../../compute/overview.md) der Serien `u1`, `s1` und `m1`: Ein Preset hat dieselben Ressourcen wie die gleichnamige VM. Maßgeblich ist die im Assistenten angezeigte Liste:
 
 | Preset | CPU | Arbeitsspeicher |
 |--------|-----|---------|
-| **Micro** | 0,5 | 256 Mi |
-| **Small** | 1 | 512 Mi |
-| **Medium** | 1 | 1 Gi |
-| **Large** | 2 | 2 Gi |
-| **X-Large** | 4 | 4 Gi |
-| **2X-Large** | 8 | 8 Gi |
+| `u1.medium` | 1 | 4Gi |
+| `u1.large` | 2 | 8Gi |
+| `u1.xlarge` | 4 | 16Gi |
+| `u1.2xlarge` | 8 | 32Gi |
+| `u1.4xlarge` | 16 | 64Gi |
+| `u1.8xlarge` | 32 | 128Gi |
+| `s1.small` | 1 | 2Gi |
+| `s1.medium` | 2 | 4Gi |
+| `s1.large` | 4 | 8Gi |
+| `s1.xlarge` | 8 | 16Gi |
+| `s1.2xlarge` | 16 | 32Gi |
+| `s1.4xlarge` | 32 | 64Gi |
+| `m1.large` | 2 | 16Gi |
+| `m1.xlarge` | 4 | 32Gi |
+| `m1.2xlarge` | 8 | 64Gi |
+| `m1.4xlarge` | 16 | 128Gi |
+| `m1.8xlarge` | 32 | 256Gi |
 
-Das Preset **Small** ist standardmäßig ausgewählt. Es **kann nach der Erstellung nicht mehr geändert werden**.
+Das Preset **kann nach der Erstellung nicht mehr geändert werden**.
+
+Der Assistent wählt kein Preset vor: Wählen Sie eines aus, um fortzufahren. Jede Option zeigt ihre Ressourcen an, zum Beispiel „u1.medium — 1 CPU / 4Gi“. Kann die Liste nicht geladen werden, zeigt der Assistent „The preset list could not be loaded. Try again later or contact support.“ an.
+
+Ein Cluster, der mit einem früheren Preset (`nano`, `micro`, `small`, `medium`, `large`, `xlarge` oder `2xlarge`) erstellt wurde, behält es und läuft wie bisher: Das Formular **Edit** zeigt es unverändert an und speichert es ohne Änderung. Da das Preset nach der Erstellung nicht geändert werden kann, [wenden Sie sich für diese Änderung an den Support](mailto:support@hidora.io). Wurden die Ressourcen eines Clusters abweichend von seinem Preset festgelegt, weist das Formular mit dem Vermerk „(override)“ darauf hin.
 
 ---
 

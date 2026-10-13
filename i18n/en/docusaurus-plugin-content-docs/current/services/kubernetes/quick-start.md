@@ -40,7 +40,7 @@ The wizard has four steps: **General**, **Nodes**, **Addons** and **Summary**. T
 | **Cluster name** | `demo-cluster` (3 to 16 characters: lowercase letters, digits and hyphens) |
 | **Kubernetes Version** | The preselected version (the most recent one offered) |
 | **API Endpoint (Host)** | Leave empty: the address is generated automatically by the platform, with no DNS configuration on your part |
-| **Control Plane Instance Size** | **Medium** (the **Small** preset offered by default may run out of memory) |
+| **Control Plane Instance Size** | **s1.small — 1 CPU / 2Gi** (no size is preselected: choose one) |
 | **Control Plane High Availability** | **3 (HA)** |
 
 ![Kubernetes cluster creation wizard, General step](/img/console/kubernetes/wizard-general.en.png)

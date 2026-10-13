@@ -47,7 +47,7 @@ Cliquez sur **Redémarrer** et confirmez dans **Redémarrer la machine virtuelle
 1. Sur la page de détail, cliquez sur **Modifier** (ou **Éditer** dans le menu **Actions** de la liste, disponible seulement pour une VM **Actif**).
 2. Modifiez les sections voulues :
    - **Ressources (CPU / RAM)** : série et taille, GPU ;
-   - **Stockage** : ajout ou détachement de disques ;
+   - **Stockage** : ajout de disques, détachement de disques de données ;
    - **Réseau & Sécurité** : IP publique, pare-feu, ports, VPC ;
    - **Configuration avancée** : clés SSH, script cloud-init, **Redémarrage Automatique**.
 3. Vérifiez le récapitulatif de quota en haut de page et cliquez sur **Enregistrer**.
@@ -57,6 +57,16 @@ Si le type d'instance, les disques ou les GPU changent, la console affiche **Red
 Si l'enregistrement est refusé, la console affiche **Formulaire incomplet** et nomme les champs en erreur.
 
 Le nom et l'image système ne sont pas modifiables.
+
+Dans la section **Stockage**, les disques que la VM possède déjà s'affichent en lecture seule (**Nom du volume**, **Taille (Go)**) :
+
+- le **Disque Système (Boot)** n'a aucune action ; la console l'explique : « Le disque système d'une VM existante ne se remplace pas : la VM démarre dessus. » ;
+- un disque de données ne propose que **Détacher le disque** ;
+- le choix **Nouveau** / **Existant** n'apparaît que sur les disques ajoutés avec **Ajouter un disque**.
+
+Pour agrandir un disque, passez par sa page dans le menu **Disques** (voir [Redimensionner un disque](../../storage/disks/how-to/resize.md)).
+
+Pour faire démarrer la VM sur un autre disque système, supprimez la VM : ses disques sont détachés et conservés dans le menu **Disques**. Recréez-la ensuite avec l'assistant, en choisissant **Existant** sur le **Disque Système (Boot)** puis le disque voulu ; rattachez de la même façon ses disques de données. Via l'API, une modification qui remplace, retire ou déplace le disque système d'une VM est refusée (code `20208`).
 
 ### 5. Supprimer une VM
 

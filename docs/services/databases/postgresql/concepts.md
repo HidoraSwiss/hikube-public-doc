@@ -93,7 +93,7 @@ La réplication synchrone (quorum) n'est pas proposée dans la console ; contact
 
 Chaque cluster dispose :
 
-- d'une base **`postgres`** créée automatiquement ;
+- d'une base système **`postgres`**, créée automatiquement et réservée à la plateforme (voir ci-dessous) ;
 - des **bases de données** que vous ajoutez, à la création ou ensuite (onglet **Bases de données**), avec leurs **extensions** ;
 - des **utilisateurs** que vous créez (onglet **Utilisateurs**). Chaque utilisateur reçoit, base par base, l'un des deux droits suivants :
   - **Administrateur (Admin)** : lecture et écriture ;
@@ -101,33 +101,57 @@ Chaque cluster dispose :
 
 Le mot de passe d'un utilisateur est généré par la plateforme et affiché **une seule fois**, à la création ou après une rotation. Il n'est plus consultable ensuite : en cas de perte, générez-en un nouveau avec **Changer le mot de passe**.
 
+### Bases système
+
+`postgres`, `template0` et `template1` sont des bases système, réservées à la plateforme :
+
+- les assistants d'utilisateur ne les proposent pas, et aucun droit ne peut y être attribué ;
+- leur création est refusée : « « postgres » est une base système : choisissez une base applicative. » ;
+- dans la liste des bases, **Gérer les extensions** et **Supprimer la base de données** sont désactivés sur une base système : « Base système : elle ne peut être ni modifiée ni supprimée. »
+
+Un utilisateur qui détient déjà un droit sur une base système le conserve tel quel. Dans **Gérer les accès**, ce droit s'affiche verrouillé, avec un avertissement : vous pouvez retirer la ligne, mais pas la modifier. Donnez à vos utilisateurs leurs droits sur des bases applicatives.
+
 ### Règles de nommage
 
 | Élément | Règle |
 |---------|-------|
 | Nom du cluster | 3 à 16 caractères : minuscules, chiffres et tirets ; commence par une lettre, se termine par une lettre ou un chiffre |
 | Nom d'utilisateur | 3 à 16 caractères : minuscules, chiffres et tirets bas (`_`) ; commence par une lettre minuscule ou un tiret bas. Pas de tiret (`-`). |
-| Nom de base de données | 1 à 63 caractères : minuscules, chiffres et tirets bas |
+| Nom de base de données | 1 à 54 caractères : minuscules, chiffres, tirets bas (`_`) et tirets (`-`) ; commence par une lettre ou un tiret bas, mais pas par `pg_` |
 
-Les noms d'utilisateur `postgres`, `admin`, `root`, `owner`, `superuser`, `streaming_replica`, `cnpg_pooler_pgbouncer` ainsi que ceux commençant par `pg_` sont réservés.
+Les noms d'utilisateur `postgres`, `admin`, `root`, `owner`, `superuser`, `streaming_replica` ainsi que ceux commençant par `pg_` sont réservés.
 
 ---
 
 ## Presets d'instance
 
-Le **Preset d'instance** définit la capacité allouée à **chaque nœud** du cluster. La liste affichée par l'assistant fait foi ; à titre indicatif :
+Le **Preset d'instance** définit la capacité allouée à **chaque nœud** du cluster. Les presets reprennent les tailles des [machines virtuelles](../../compute/overview.md), séries `u1`, `s1` et `m1` : un preset a les mêmes ressources que la VM du même nom. La liste affichée par l'assistant fait foi :
 
 | Preset | CPU | Mémoire |
 |--------|-----|---------|
-| `nano` | 250m | 128Mi |
-| `micro` | 500m | 256Mi |
-| `small` | 1 | 512Mi |
-| `medium` | 1 | 1Gi |
-| `large` | 2 | 2Gi |
-| `xlarge` | 4 | 4Gi |
-| `2xlarge` | 8 | 8Gi |
+| `u1.medium` | 1 | 4Gi |
+| `u1.large` | 2 | 8Gi |
+| `u1.xlarge` | 4 | 16Gi |
+| `u1.2xlarge` | 8 | 32Gi |
+| `u1.4xlarge` | 16 | 64Gi |
+| `u1.8xlarge` | 32 | 128Gi |
+| `s1.small` | 1 | 2Gi |
+| `s1.medium` | 2 | 4Gi |
+| `s1.large` | 4 | 8Gi |
+| `s1.xlarge` | 8 | 16Gi |
+| `s1.2xlarge` | 16 | 32Gi |
+| `s1.4xlarge` | 32 | 64Gi |
+| `m1.large` | 2 | 16Gi |
+| `m1.xlarge` | 4 | 32Gi |
+| `m1.2xlarge` | 8 | 64Gi |
+| `m1.4xlarge` | 16 | 128Gi |
+| `m1.8xlarge` | 32 | 256Gi |
 
-Le preset par défaut de l'assistant est `small`. La définition de ressources CPU/mémoire libres (hors preset) n'est pas proposée dans la console ; contactez le support.
+L'assistant ne présélectionne aucun preset : choisissez-en un pour continuer. Chaque option indique ses ressources, par exemple « u1.medium — 1 CPU / 4Gi ». Si la liste ne peut pas être chargée, l'assistant affiche « La liste des presets n'a pas pu être chargée. Réessayez plus tard ou contactez le support. »
+
+Un cluster créé avec un ancien preset (`nano`, `micro`, `small`, `medium`, `large`, `xlarge` ou `2xlarge`) le conserve et fonctionne comme avant : le formulaire **Modifier** l'affiche tel quel et l'enregistre sans changement. Si les ressources d'un cluster ont été fixées hors de son preset, le formulaire l'indique par la mention « (forcé) ».
+
+La définition de ressources CPU/mémoire libres (hors preset) n'est pas proposée dans la console ; contactez le support.
 
 ---
 

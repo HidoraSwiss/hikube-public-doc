@@ -50,7 +50,7 @@ Enter the **Cluster Name** (a random name is suggested by default), for example 
 | Field | Recommended value for this guide | Note |
 |-------|----------------------------------|----------|
 | **PostgreSQL Version** | `18` | Offered versions: 15, 16, 17, 18 |
-| **Instance preset** | `Small (1 CPU, 512Mi)` | Capacity allocated to each node |
+| **Instance preset** | `s1.small — 1 CPU / 2Gi` | No preset is preselected; capacity allocated to each node |
 | **Disk size (GB)** | `10` | Storage capacity per node |
 | **Number of replicas** | `1 (Standalone)` | `2` or `3` for high availability |
 | **External access** | Enabled | Required to connect from your workstation |
@@ -70,14 +70,16 @@ Only enable **External access** if you need it: it exposes the database on the p
 
 ### Databases
 
-Enter a **Database name**, for example `myapp`, then click **Add**. If you do not add any database, only the default **`postgres`** database is created.
+Enter a **Database name**, for example `myapp` (1 to 54 characters: lowercase letters, digits, underscores and hyphens; starts with a letter or an underscore, but not with `pg_`), then click **Add**.
+
+Add at least one application database: the **`postgres`** database, always created, is a system database reserved for the platform, and your users cannot receive any right on it.
 
 ### Users
 
 Add at least one user:
 
 1. **Username**: for example `app_user` (lowercase letters, digits and underscores only, no hyphen).
-2. **Database name**: select `myapp`.
+2. **Database name**: select `myapp`. The list offers only the databases added at the **Databases** step. Without an application database, it shows “No application database” and the user is created without any right.
 3. **Rights**: **Administrator (Admin)** or **Read-only**.
 4. Click **Add**.
 
@@ -109,6 +111,8 @@ Passwords are displayed **only once**, at the wizard's **Finish** step, in the *
 
 - **Password** of each user created;
 - **Internal Connection String**: the cluster address, when external access is enabled.
+
+If the platform refuses a user, the step shows “User not created” and the reason, instead of its password.
 
 ![PostgreSQL wizard, Finish step: user credentials (password masked)](/img/console/postgresql/wizard-credentials.en.png)
 
