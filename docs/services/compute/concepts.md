@@ -122,9 +122,9 @@ L'option **Redémarrage Automatique** (étape **Configuration** de l'assistant, 
 
 | Élément | Modifiable | Effet |
 |---------|-----------|-------|
-| Nom, image système | Non | — |
+| Nom, image système, disque système | Non | Pour changer de disque système, supprimez la VM puis recréez-la depuis le disque voulu (option **Existant**) |
 | Type d'instance | Oui | Appliqué au prochain redémarrage de la VM |
-| Disques (ajout, détachement) | Oui | Appliqué au prochain redémarrage de la VM ; un disque détaché reste dans **Disques** avec ses données |
+| Disques de données (ajout, détachement) | Oui | Appliqué au prochain redémarrage de la VM ; un disque détaché reste dans **Disques** avec ses données |
 | GPU | Oui | Appliqué au prochain redémarrage de la VM |
 | IP publique, pare-feu, ports, VPC | Oui | Appliqué sans redémarrage |
 | Clés SSH | Oui | Proposition de recharger le user-data, appliqué au redémarrage suivant |

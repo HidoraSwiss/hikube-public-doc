@@ -36,7 +36,18 @@ If the console says the project quotas are unavailable, creation stays blocked u
 
 **Cause**: a field on the **Edit** page is invalid, for example a new disk under 20 GB or an **Existing** volume with no disk selected.
 
-**Solution**: the console shows **Incomplete form** with the message of each invalid field. Fix those fields, then click **Save** again. Disks already attached to the VM are not held to the rules of a new disk (name, minimum size).
+**Solution**: the console shows **Incomplete form** with the message of each invalid field. Fix those fields, then click **Save** again. Disks already attached to the VM are shown read-only and are not held to the rules of a new disk (name, minimum size).
+
+---
+
+### The system disk cannot be replaced, and New / Existing does not appear on an attached disk
+
+**Cause**: on the **Edit** page, the disks the VM already has are read-only. The **System Disk (Boot)** has no action ("The system disk of an existing VM cannot be replaced: the VM boots from it.") and a data disk only offers **Detach disk**. The **New** / **Existing** choice only exists on disks added with **Add a disk**.
+
+**Solution**:
+
+1. To replace a data disk, detach it, add a disk with **Add a disk** (**New** or **Existing**), click **Save**, then **Restart**.
+2. To change the system disk, delete the VM (its disks are kept), then recreate it choosing **Existing** on the **System Disk (Boot)** (see the [FAQ](./faq.md)).
 
 ---
 

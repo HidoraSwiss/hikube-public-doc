@@ -18,7 +18,9 @@ Die Anbindung wird **auf VM-Seite** im Abschnitt **Storage** konfiguriert:
 - bei der Erstellung einer VM (Schritt **Storage** des Assistenten);
 - oder bei einer bestehenden VM (Seite der VM → **Edit** → Abschnitt **Storage**).
 
-Jedes Volume der VM kann **New** sein (die Konsole erstellt die Disk) oder **Existing** (Sie wählen eine bereits erstellte Disk). Das erste Volume ist die **System Disk (Boot)**; die folgenden sind Daten-Volumes.
+Jedes hinzugefügte Volume kann **New** sein (die Konsole erstellt die Disk) oder **Existing** (Sie wählen eine bereits erstellte Disk). Das erste Volume ist die **System Disk (Boot)**; die folgenden sind Daten-Volumes.
+
+Bei einer bestehenden VM werden die Disks, die sie bereits besitzt, schreibgeschützt und ohne Auswahl **New** / **Existing** angezeigt: Die **System Disk (Boot)** hat keine Aktion („The system disk of an existing VM cannot be replaced: the VM boots from it.“), und eine Daten-Disk bietet nur **Detach disk** an.
 
 | Volume | Im Modus **Existing** angebotene Disks |
 |--------|----------------------------------------|
@@ -40,6 +42,8 @@ Die Disk wird erst beim nächsten Neustart der VM übernommen. Die Konsole weist
 ## Eine Disk bei der Erstellung einer VM anbinden
 
 Klicken Sie im Schritt **Storage** des VM-Erstellungsassistenten auf **Add a disk**, wählen Sie **Existing** und dann die Disk unter **Select an existing volume**. Um die VM von einer im Voraus erstellten System-Disk zu starten, wählen Sie **Existing** bei der **System Disk (Boot)**.
+
+Die System-Disk einer bestehenden VM lässt sich nicht ersetzen: Um sie von einer anderen System-Disk zu starten, löschen Sie die VM (ihre Disks bleiben erhalten) und erstellen Sie sie dann auf diese Weise neu.
 
 ## Die Disk in der VM nutzbar machen (Linux)
 
@@ -75,7 +79,7 @@ Verwenden Sie in `/etc/fstab` die UUID statt des Gerätenamens (`/dev/vdb`): Die
 3. Klicken Sie am Volume auf **Detach disk** und bestätigen Sie im Dialog **Detach `<name>`?** mit **Detach**. Eine Eingabe des Namens ist nicht erforderlich.
 4. Klicken Sie auf **Save** und dann auf **Restart**: Das Trennen wird erst beim nächsten Neustart der VM wirksam; bis dahin bleibt die Disk für das System sichtbar.
 
-Die Disk wird **getrennt**, nicht gelöscht: Ihre Daten bleiben erhalten, und sie bleibt unter **Infrastructure** → **Disks** mit dem Status **Ready** und kann an eine andere VM angebunden werden. Um sie endgültig zu löschen, verwenden Sie die Aktion **Delete** auf der Seite der Disk. Eine getrennte Disk wird von der VM bis zu ihrem nächsten Neustart weiter verwendet. Starten Sie die VM neu und warten Sie dann einige Minuten, bevor Sie die Disk löschen: Ein zu schnelles Löschen kann dazu führen, dass der Speicherplatz in Ihrem Quota belegt bleibt.
+Die Disk wird **getrennt**, nicht gelöscht: Ihre Daten bleiben erhalten, und sie bleibt unter **Infrastructure** → **Disks** mit dem Status **Ready** und kann an eine andere VM angebunden werden. Um sie endgültig zu löschen, verwenden Sie die Aktion **Delete** auf der Seite der Disk. Eine getrennte Disk wird von der VM bis zu ihrem nächsten Neustart weiter verwendet. Starten Sie die VM neu und warten Sie dann einige Minuten, bevor Sie die Disk löschen: Ein zu schnelles Löschen kann dazu führen, dass der Speicherplatz in Ihrem Quota belegt bleibt. Solange die VM nicht neu gestartet wurde, lehnt die Konsole das Löschen ab: „This disk was detached, but its VM still uses it until its next restart. Restart the VM, then try again.“
 
 :::note
 Auch das Löschen einer VM trennt ihre Disks, ohne sie zu löschen. Denken Sie daran, nicht mehr benötigte Disks zu löschen: Sie verbrauchen weiterhin das Speicher-Quota des Projekts.

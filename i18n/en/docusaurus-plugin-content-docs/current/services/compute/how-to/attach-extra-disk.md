@@ -34,6 +34,8 @@ In the **Storage** section, click **Add a disk**. A **Storage Volume #1** block 
 
 To remove a volume added by mistake before saving, click **Remove disk** (bin icon): nothing has been created yet.
 
+The disks the VM already has are shown read-only: the **New** / **Existing** choice only exists on added volumes.
+
 ### 3. Save
 
 Check the quota summary at the top of the page, then click **Save**.
@@ -113,7 +115,9 @@ sudo touch /mnt/data/test.txt && echo "OK"
 
 Unmount the disk in the OS first and remove its line from `/etc/fstab`. Then, in **Edit** > **Storage**, click **Detach disk** on the volume, confirm with **Detach** in the **Detach `<name>`?** dialog, and click **Save**.
 
-The disk is not deleted: its data is kept and it stays available in the **Disks** menu, where you can attach it to another VM. The detachment only takes effect on the next VM restart: until then, the disk remains visible to the system. The console shows **Restart required**; click **Restart** to apply it. The system disk cannot be detached.
+The disk is not deleted: its data is kept and it stays available in the **Disks** menu, where you can attach it to another VM. The detachment only takes effect on the next VM restart: until then, the disk remains visible to the system. The console shows **Restart required**; click **Restart** to apply it. The system disk cannot be detached: it has no action in **Edit**.
+
+To delete the detached disk afterwards, restart the VM first: as long as the VM still uses it, the console refuses the deletion ("This disk was detached, but its VM still uses it until its next restart. Restart the VM, then try again.").
 
 ## Further reading
 

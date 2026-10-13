@@ -47,7 +47,7 @@ Klicken Sie auf **Restart** und bestätigen Sie im Dialog **Restart virtual mach
 1. Klicken Sie auf der Detailseite auf **Edit** (oder auf **Edit** im Menü **Actions** der Liste, nur für eine VM im Status **Running** verfügbar).
 2. Ändern Sie die gewünschten Abschnitte:
    - **Resources (CPU / RAM)**: Serie und Größe, GPU;
-   - **Storage**: Hinzufügen oder Trennen von Disks;
+   - **Storage**: Hinzufügen von Disks, Trennen von Daten-Disks;
    - **Network & Security**: öffentliche IP, Firewall, Ports, VPC;
    - **Advanced Configuration**: SSH-Schlüssel, cloud-init-Skript, **Automatic Restart**.
 3. Prüfen Sie die Quota-Übersicht oben auf der Seite und klicken Sie auf **Save**.
@@ -57,6 +57,16 @@ Wenn sich der Instanztyp, die Disks oder die GPUs ändern, zeigt die Konsole **R
 Wird das Speichern abgelehnt, zeigt die Konsole **Incomplete form** an und nennt die fehlerhaften Felder.
 
 Der Name und das System-Image sind nicht änderbar.
+
+Im Abschnitt **Storage** werden die Disks, die die VM bereits besitzt, schreibgeschützt angezeigt (**Volume Name**, **Size (GB)**):
+
+- Die **System Disk (Boot)** hat keine Aktion; die Konsole erklärt dies: „The system disk of an existing VM cannot be replaced: the VM boots from it.“;
+- Eine Daten-Disk bietet nur **Detach disk** an;
+- Die Auswahl **New** / **Existing** erscheint nur bei Disks, die mit **Add a disk** hinzugefügt wurden.
+
+Um eine Disk zu vergrößern, verwenden Sie ihre Seite im Menü **Disks** (siehe [Die Größe einer Disk ändern](../../storage/disks/how-to/resize.md)).
+
+Um die VM von einer anderen System-Disk zu starten, löschen Sie die VM: Ihre Disks werden getrennt und bleiben im Menü **Disks** erhalten. Erstellen Sie sie anschließend mit dem Assistenten neu, wählen Sie bei der **System Disk (Boot)** **Existing** und dann die gewünschte Disk; binden Sie ihre Daten-Disks auf dieselbe Weise wieder an. Über die API wird eine Änderung, die die System-Disk einer VM ersetzt, entfernt oder verschiebt, abgelehnt (Code `20208`).
 
 ### 5. Eine VM löschen
 

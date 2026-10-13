@@ -75,12 +75,17 @@ title: Dépannage
 
 ### La suppression du disque échoue
 
-**Cause** : le disque est attaché à une VM (« Le disque ne peut pas être supprimé car il est en cours d'utilisation. »), ou le service est momentanément indisponible.
+**Cause** : une VM utilise encore le disque, ou le service est momentanément indisponible. La console affiche l'un de ces messages :
+
+- « Le disque ne peut pas être supprimé car il est en cours d'utilisation. » (page du disque) ou un message équivalent dans la liste des disques : le disque est attaché à une VM ;
+- « Ce disque a été détaché, mais sa VM l'utilise encore jusqu'à son prochain redémarrage. Redémarrez la VM, puis réessayez. » : le disque a été détaché, mais la VM n'a pas encore redémarré et l'utilise toujours ;
+- « Le service de suppression de disque est temporairement indisponible. ».
 
 **Solution** :
 
-1. Détachez le disque depuis la page de modification de la VM (section **Stockage**), puis réessayez.
-2. Si le message indique « Le service de suppression de disque est temporairement indisponible. », réessayez quelques minutes plus tard.
+1. Disque attaché : détachez-le depuis la page de modification de la VM (section **Stockage**), cliquez sur **Enregistrer**, puis passez à l'étape 2.
+2. Disque détaché : cliquez sur **Redémarrer** sur la page de la VM, attendez qu'elle revienne au statut **Actif**, puis quelques minutes, et réessayez.
+3. Service indisponible : réessayez quelques minutes plus tard.
 
 ---
 

@@ -129,9 +129,9 @@ The **Automatic Restart** option (**Configuration** step of the wizard, or **Adv
 
 | Item | Editable | Effect |
 |---------|-----------|-------|
-| Name, system image | No | — |
+| Name, system image, system disk | No | To change the system disk, delete the VM and recreate it from the disk you want (**Existing** option) |
 | Instance type | Yes | Applied on the next VM restart |
-| Disks (add, detach) | Yes | Applied on the next VM restart; a detached disk stays in **Disks** with its data |
+| Data disks (add, detach) | Yes | Applied on the next VM restart; a detached disk stays in **Disks** with its data |
 | GPU | Yes | Applied on the next VM restart |
 | Public IP, firewall, ports, VPC | Yes | Applied without restart |
 | SSH keys | Yes | Offer to reload the user-data, applied at the next restart |

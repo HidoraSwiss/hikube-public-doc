@@ -36,7 +36,18 @@ Se la console indica che le quote del progetto non sono disponibili, la creazion
 
 **Causa**: un campo della pagina **Edit** non è valido, ad esempio un nuovo disco sotto i 20 GB o un volume **Existing** senza disco selezionato.
 
-**Soluzione**: la console mostra **Incomplete form** con il messaggio di ogni campo in errore. Corregga questi campi, poi faccia di nuovo clic su **Save**. I dischi già collegati alla VM non sono soggetti alle regole di un disco nuovo (nome, dimensione minima).
+**Soluzione**: la console mostra **Incomplete form** con il messaggio di ogni campo in errore. Corregga questi campi, poi faccia di nuovo clic su **Save**. I dischi già collegati alla VM sono mostrati in sola lettura e non sono soggetti alle regole di un disco nuovo (nome, dimensione minima).
+
+---
+
+### Il disco di sistema non si sostituisce, e New / Existing non compare su un disco collegato
+
+**Causa**: nella pagina **Edit**, i dischi che la VM possiede già sono in sola lettura. Il **System Disk (Boot)** non ha alcuna azione («The system disk of an existing VM cannot be replaced: the VM boots from it.») e un disco dati propone solo **Detach disk**. La scelta **New** / **Existing** esiste solo sui dischi aggiunti con **Add a disk**.
+
+**Soluzione**:
+
+1. Per sostituire un disco dati, lo scolleghi, aggiunga un disco con **Add a disk** (**New** o **Existing**), faccia clic su **Save**, poi su **Restart**.
+2. Per cambiare disco di sistema, elimini la VM (i suoi dischi sono conservati), quindi la ricrei scegliendo **Existing** sul **System Disk (Boot)** (vedere le [FAQ](./faq.md)).
 
 ---
 

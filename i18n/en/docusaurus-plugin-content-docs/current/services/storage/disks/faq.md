@@ -64,4 +64,9 @@ The wizard displays an **Estimated Cost**: a rate per GB per month, and the mont
 
 ### Why can't I delete my disk?
 
-A disk attached to a VM cannot be deleted: the console replies "The disk cannot be deleted as it is in use.". Detach it first from the VM edit page. A detached disk stays in use by the VM until its next restart. Restart the VM, then wait a few minutes before deleting the disk: deleting it too soon can leave the space occupied in your quota.
+The console refuses to delete a disk that a VM still uses:
+
+- disk attached to a VM: "The disk cannot be deleted as it is in use." from the disk page, or an equivalent message from the **Storage Disks** list. Detach it first from the VM edit page;
+- detached disk that the VM still uses: "This disk was detached, but its VM still uses it until its next restart. Restart the VM, then try again." A detached disk stays in use by the VM until its next restart.
+
+Restart the VM, then wait a few minutes before deleting the disk: deleting it too soon can leave the space occupied in your quota. Through the API, these refusals carry codes `30007` (disk attached) and `30201` (disk detached, still in use until the VM restarts).

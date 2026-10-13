@@ -96,6 +96,12 @@ Sie werden getrennt, nicht gelöscht. Sie bleiben im Menü **Disks**, können an
 
 ---
 
+### Wie wechsle ich die System-Disk einer VM?
+
+Nicht über **Edit**: Die System-Disk einer bestehenden VM hat keine Aktion („The system disk of an existing VM cannot be replaced: the VM boots from it.“). Löschen Sie die VM; ihre Disks werden getrennt und bleiben erhalten. Erstellen Sie sie anschließend mit dem Assistenten neu: Wählen Sie im Schritt **Storage** bei der **System Disk (Boot)** **Existing** und die gewünschte Disk (eine nicht angebundene System-Disk), und binden Sie die Daten-Disks auf dieselbe Weise wieder an. Siehe [Eine Disk an eine VM anbinden](../storage/disks/how-to/attach-to-vm.md).
+
+---
+
 ### Kann ich auf die serielle Konsole oder VNC der VM zugreifen?
 
 Diese Option wird in der Konsole nicht angeboten; wenden Sie sich an den [Support](mailto:support@hidora.io). Der Zugriff erfolgt per SSH (Linux) oder RDP (Windows).

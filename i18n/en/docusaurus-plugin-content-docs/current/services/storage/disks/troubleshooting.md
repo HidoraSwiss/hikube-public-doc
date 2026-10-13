@@ -75,12 +75,17 @@ title: Troubleshooting
 
 ### Disk deletion fails
 
-**Cause**: the disk is attached to a VM ("The disk cannot be deleted as it is in use."), or the service is temporarily unavailable.
+**Cause**: a VM still uses the disk, or the service is temporarily unavailable. The console shows one of these messages:
+
+- "The disk cannot be deleted as it is in use." (disk page) or an equivalent message in the disk list: the disk is attached to a VM;
+- "This disk was detached, but its VM still uses it until its next restart. Restart the VM, then try again.": the disk was detached, but the VM has not restarted yet and still uses it;
+- "The disk deletion service is temporarily unavailable.".
 
 **Solution**:
 
-1. Detach the disk from the VM edit page (**Storage** section), then try again.
-2. If the message reads "The disk deletion service is temporarily unavailable.", try again a few minutes later.
+1. Attached disk: detach it from the VM edit page (**Storage** section), click **Save**, then go to step 2.
+2. Detached disk: click **Restart** on the VM page, wait until it is back to the **Running** status, then a few minutes, and try again.
+3. Service unavailable: try again a few minutes later.
 
 ---
 

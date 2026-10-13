@@ -130,11 +130,11 @@ Vedere anche la [risoluzione dei problemi completa](./troubleshooting.md).
    sudo umount /mnt/data
    sudo sed -i '\|/mnt/data|d' /etc/fstab
    ```
-2. Scolleghi il disco: pagina della VM → **Edit** → sezione **Storage**, faccia clic su **Detach disk** sul volume, confermi con **Detach**, quindi faccia clic su **Save**. Il disco torna allo stato **Ready**; nella VM lo scollegamento ha effetto solo al successivo riavvio: faccia clic su **Restart**, quindi attenda qualche minuto prima del passaggio successivo. Un disco scollegato resta in uso dalla VM fino al suo successivo riavvio, e un'eliminazione troppo rapida può lasciare lo spazio occupato nella sua quota.
+2. Scolleghi il disco: pagina della VM → **Edit** → sezione **Storage**, faccia clic su **Detach disk** sul volume, confermi con **Detach**, quindi faccia clic su **Save**. Il disco torna allo stato **Ready**; nella VM lo scollegamento ha effetto solo al successivo riavvio: faccia clic su **Restart**, quindi attenda qualche minuto prima del passaggio successivo. Un disco scollegato resta in uso dalla VM fino al suo successivo riavvio, e un'eliminazione troppo rapida può lasciare lo spazio occupato nella sua quota. Finché la VM non è stata riavviata, la console rifiuta l'eliminazione: «This disk was detached, but its VM still uses it until its next restart. Restart the VM, then try again.»
 3. Elimini il disco: pagina del disco → **Delete** (oppure menu delle azioni → **Delete** nell'elenco), inserisca il suo nome esatto in **Resource name to confirm**, quindi faccia clic su **Permanently delete**.
 
 :::warning
-L'eliminazione di un disco è irreversibile: tutti i suoi dati vanno persi. Un disco collegato a una VM non può essere eliminato; lo scolleghi prima.
+L'eliminazione di un disco è irreversibile: tutti i suoi dati vanno persi. Un disco collegato a una VM non può essere eliminato; lo scolleghi prima, quindi riavvii la VM.
 :::
 
 <NavigationFooter

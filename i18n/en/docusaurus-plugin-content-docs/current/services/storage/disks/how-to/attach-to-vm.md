@@ -18,7 +18,9 @@ Attachment is configured **on the VM side**, in the **Storage** section:
 - when creating a VM (**Storage** step of the wizard);
 - or on an existing VM (VM page → **Edit** → **Storage** section).
 
-Each VM volume can be **New** (the console creates the disk) or **Existing** (you choose a disk that has already been created). The first volume is the **System Disk (Boot)**; the following ones are data volumes.
+Each added volume can be **New** (the console creates the disk) or **Existing** (you choose a disk that has already been created). The first volume is the **System Disk (Boot)**; the following ones are data volumes.
+
+On an existing VM, the disks it already has are shown read-only, without the **New** / **Existing** choice: the **System Disk (Boot)** has no action ("The system disk of an existing VM cannot be replaced: the VM boots from it.") and a data disk only offers **Detach disk**.
 
 | Volume | Disks offered in **Existing** mode |
 |--------|------------------------------------|
@@ -40,6 +42,8 @@ The disk is only taken into account on the next VM restart. The console indicate
 ## Attach a disk when creating a VM
 
 At the **Storage** step of the VM creation wizard, click **Add a disk**, select **Existing**, then the disk in **Select an existing volume**. To boot the VM from a system disk created in advance, select **Existing** on the **System Disk (Boot)**.
+
+The system disk of an existing VM cannot be replaced: to boot it from another system disk, delete the VM (its disks are kept), then recreate it this way.
 
 ## Make the disk usable in the VM (Linux)
 
@@ -75,7 +79,7 @@ Use the UUID rather than the device name (`/dev/vdb`) in `/etc/fstab`: the devic
 3. Click **Detach disk** on the volume, then confirm with **Detach** in the **Detach `<name>`?** dialog. You do not have to type the name.
 4. Click **Save**, then **Restart**: the detachment only takes effect on the next VM restart; until then, the disk remains visible to the system.
 
-The disk is **detached**, not deleted: its data is kept and it remains in **Infrastructure** → **Disks** with the **Ready** status, and can be attached to another VM. To delete it permanently, use the **Delete** action on the disk page. A detached disk stays in use by the VM until its next restart. Restart the VM, then wait a few minutes before deleting the disk: deleting it too soon can leave the space occupied in your quota.
+The disk is **detached**, not deleted: its data is kept and it remains in **Infrastructure** → **Disks** with the **Ready** status, and can be attached to another VM. To delete it permanently, use the **Delete** action on the disk page. A detached disk stays in use by the VM until its next restart. Restart the VM, then wait a few minutes before deleting the disk: deleting it too soon can leave the space occupied in your quota. Until the VM has restarted, the console refuses the deletion: "This disk was detached, but its VM still uses it until its next restart. Restart the VM, then try again."
 
 :::note
 Deleting a VM also detaches its disks without deleting them. Remember to delete disks that are no longer needed: they keep consuming the project's storage quota.

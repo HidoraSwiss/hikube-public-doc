@@ -36,7 +36,18 @@ Si la console indique que les quotas du projet sont indisponibles, la création 
 
 **Cause** : un champ de la page **Modifier** est invalide, par exemple un nouveau disque de moins de 20 Go ou un volume **Existant** sans disque sélectionné.
 
-**Solution** : la console affiche **Formulaire incomplet** avec le message de chaque champ en erreur. Corrigez ces champs, puis cliquez à nouveau sur **Enregistrer**. Les disques déjà attachés à la VM ne sont pas soumis aux règles d'un disque neuf (nom, taille minimale).
+**Solution** : la console affiche **Formulaire incomplet** avec le message de chaque champ en erreur. Corrigez ces champs, puis cliquez à nouveau sur **Enregistrer**. Les disques déjà attachés à la VM s'affichent en lecture seule et ne sont pas soumis aux règles d'un disque neuf (nom, taille minimale).
+
+---
+
+### Le disque système ne se remplace pas, et Nouveau / Existant n'apparaît pas sur un disque attaché
+
+**Cause** : dans la page **Modifier**, les disques que la VM possède déjà sont en lecture seule. Le **Disque Système (Boot)** n'a aucune action (« Le disque système d'une VM existante ne se remplace pas : la VM démarre dessus. ») et un disque de données ne propose que **Détacher le disque**. Le choix **Nouveau** / **Existant** n'existe que sur les disques ajoutés avec **Ajouter un disque**.
+
+**Solution** :
+
+1. Pour remplacer un disque de données, détachez-le, ajoutez un disque avec **Ajouter un disque** (**Nouveau** ou **Existant**), cliquez sur **Enregistrer**, puis sur **Redémarrer**.
+2. Pour changer de disque système, supprimez la VM (ses disques sont conservés), puis recréez-la en choisissant **Existant** sur le **Disque Système (Boot)** (voir la [FAQ](./faq.md)).
 
 ---
 

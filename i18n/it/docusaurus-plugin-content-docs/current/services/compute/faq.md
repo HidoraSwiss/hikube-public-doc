@@ -96,6 +96,12 @@ Vengono scollegati, non eliminati. Restano nel menu **Disks**, possono essere ri
 
 ---
 
+### Come cambio il disco di sistema di una VM?
+
+Non da **Edit**: il disco di sistema di una VM esistente non ha alcuna azione («The system disk of an existing VM cannot be replaced: the VM boots from it.»). Elimini la VM; i suoi dischi vengono scollegati e conservati. La ricrei poi con la procedura guidata: al passaggio **Storage**, scelga **Existing** sul **System Disk (Boot)** e selezioni il disco desiderato (un disco di sistema non collegato), quindi ricolleghi allo stesso modo i dischi dati. Vedere [Collegare un disco a una VM](../storage/disks/how-to/attach-to-vm.md).
+
+---
+
 ### Posso accedere alla console seriale o VNC della VM?
 
 Questa opzione non è disponibile nella console; contatti il [supporto](mailto:support@hidora.io). L'accesso avviene in SSH (Linux) o in RDP (Windows).

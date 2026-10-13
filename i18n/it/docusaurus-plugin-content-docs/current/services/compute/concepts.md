@@ -122,9 +122,9 @@ L'opzione **Automatic Restart** (passaggio **Configuration** della procedura gui
 
 | Elemento | Modificabile | Effetto |
 |---------|-----------|-------|
-| Nome, immagine di sistema | No | — |
+| Nome, immagine di sistema, disco di sistema | No | Per cambiare disco di sistema, elimini la VM e la ricrei a partire dal disco desiderato (opzione **Existing**) |
 | Tipo di istanza | Sì | Applicato al successivo riavvio della VM |
-| Dischi (aggiunta, scollegamento) | Sì | Applicato al successivo riavvio della VM; un disco scollegato resta in **Disks** con i suoi dati |
+| Dischi dati (aggiunta, scollegamento) | Sì | Applicato al successivo riavvio della VM; un disco scollegato resta in **Disks** con i suoi dati |
 | GPU | Sì | Applicato al successivo riavvio della VM |
 | IP pubblico, firewall, porte, VPC | Sì | Applicato senza riavvio |
 | Chiavi SSH | Sì | Proposta di ricaricare lo user-data, applicato al riavvio successivo |

@@ -36,7 +36,18 @@ Wenn die Konsole meldet, dass die Quotas des Projekts nicht verfügbar sind, ble
 
 **Ursache**: Ein Feld der Seite **Edit** ist ungültig, zum Beispiel eine neue Disk unter 20 GB oder ein **Existing**-Volume ohne ausgewählte Disk.
 
-**Lösung**: Die Konsole zeigt **Incomplete form** mit der Meldung jedes fehlerhaften Felds an. Korrigieren Sie diese Felder und klicken Sie dann erneut auf **Save**. Bereits an die VM angebundene Disks unterliegen nicht den Regeln einer neuen Disk (Name, Mindestgröße).
+**Lösung**: Die Konsole zeigt **Incomplete form** mit der Meldung jedes fehlerhaften Felds an. Korrigieren Sie diese Felder und klicken Sie dann erneut auf **Save**. Bereits an die VM angebundene Disks werden schreibgeschützt angezeigt und unterliegen nicht den Regeln einer neuen Disk (Name, Mindestgröße).
+
+---
+
+### Die System-Disk lässt sich nicht ersetzen, und New / Existing erscheint bei einer angebundenen Disk nicht
+
+**Ursache**: Auf der Seite **Edit** sind die Disks, die die VM bereits besitzt, schreibgeschützt. Die **System Disk (Boot)** hat keine Aktion („The system disk of an existing VM cannot be replaced: the VM boots from it.“), und eine Daten-Disk bietet nur **Detach disk** an. Die Auswahl **New** / **Existing** gibt es nur bei Disks, die mit **Add a disk** hinzugefügt wurden.
+
+**Lösung**:
+
+1. Um eine Daten-Disk zu ersetzen, trennen Sie sie, fügen Sie mit **Add a disk** eine Disk hinzu (**New** oder **Existing**), klicken Sie auf **Save** und dann auf **Restart**.
+2. Um die System-Disk zu wechseln, löschen Sie die VM (ihre Disks bleiben erhalten) und erstellen Sie sie dann neu, indem Sie bei der **System Disk (Boot)** **Existing** wählen (siehe [FAQ](./faq.md)).
 
 ---
 

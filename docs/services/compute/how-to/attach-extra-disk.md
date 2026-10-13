@@ -34,6 +34,8 @@ Dans la section **Stockage**, cliquez sur **Ajouter un disque**. Un bloc **Volum
 
 Pour retirer un volume ajouté par erreur avant d'enregistrer, cliquez sur **Retirer le disque** (icône de corbeille) : rien n'a encore été créé.
 
+Les disques que la VM possède déjà s'affichent en lecture seule : le choix **Nouveau** / **Existant** n'existe que sur les volumes ajoutés.
+
 ### 3. Enregistrer
 
 Vérifiez le récapitulatif de quota en haut de la page, puis cliquez sur **Enregistrer**.
@@ -113,7 +115,9 @@ sudo touch /mnt/data/test.txt && echo "OK"
 
 Démontez d'abord le disque dans l'OS et retirez sa ligne de `/etc/fstab`. Puis, dans **Modifier** > **Stockage**, cliquez sur **Détacher le disque** sur le volume, confirmez avec **Détacher** dans la boîte **Détacher `<nom>` ?**, et cliquez sur **Enregistrer**.
 
-Le disque n'est pas supprimé : ses données sont conservées et il reste disponible dans le menu **Disques**, d'où vous pouvez le rattacher à une autre VM. Le détachement ne prend effet qu'au prochain redémarrage de la VM : d'ici là, le disque reste visible par le système. La console affiche **Redémarrage requis** ; cliquez sur **Redémarrer** pour l'appliquer. Le disque système ne se détache pas.
+Le disque n'est pas supprimé : ses données sont conservées et il reste disponible dans le menu **Disques**, d'où vous pouvez le rattacher à une autre VM. Le détachement ne prend effet qu'au prochain redémarrage de la VM : d'ici là, le disque reste visible par le système. La console affiche **Redémarrage requis** ; cliquez sur **Redémarrer** pour l'appliquer. Le disque système ne se détache pas : il n'a aucune action dans **Modifier**.
+
+Pour supprimer ensuite le disque détaché, redémarrez d'abord la VM : tant qu'elle l'utilise encore, la console refuse la suppression (« Ce disque a été détaché, mais sa VM l'utilise encore jusqu'à son prochain redémarrage. Redémarrez la VM, puis réessayez. »).
 
 ## Pour aller plus loin
 

@@ -34,6 +34,8 @@ Klicken Sie im Abschnitt **Storage** auf **Add a disk**. Ein Block **Storage Vol
 
 Um ein versehentlich hinzugefügtes Volume vor dem Speichern zu entfernen, klicken Sie auf **Remove disk** (Papierkorbsymbol): Es wurde noch nichts erstellt.
 
+Die Disks, die die VM bereits besitzt, werden schreibgeschützt angezeigt: Die Auswahl **New** / **Existing** gibt es nur bei hinzugefügten Volumes.
+
 ### 3. Speichern
 
 Prüfen Sie die Quota-Übersicht oben auf der Seite und klicken Sie dann auf **Save**.
@@ -113,7 +115,9 @@ sudo touch /mnt/data/test.txt && echo "OK"
 
 Hängen Sie die Disk zuerst im Betriebssystem aus und entfernen Sie ihre Zeile aus `/etc/fstab`. Klicken Sie dann unter **Edit** > **Storage** am Volume auf **Detach disk**, bestätigen Sie im Dialog **Detach `<name>`?** mit **Detach** und klicken Sie auf **Save**.
 
-Die Disk wird nicht gelöscht: Ihre Daten bleiben erhalten, und sie bleibt im Menü **Disks** verfügbar, von wo aus Sie sie an eine andere VM anbinden können. Das Trennen wird erst beim nächsten Neustart der VM wirksam: Bis dahin bleibt die Disk für das System sichtbar. Die Konsole zeigt **Restart required** an; klicken Sie auf **Restart**, um es anzuwenden. Die System-Disk lässt sich nicht trennen.
+Die Disk wird nicht gelöscht: Ihre Daten bleiben erhalten, und sie bleibt im Menü **Disks** verfügbar, von wo aus Sie sie an eine andere VM anbinden können. Das Trennen wird erst beim nächsten Neustart der VM wirksam: Bis dahin bleibt die Disk für das System sichtbar. Die Konsole zeigt **Restart required** an; klicken Sie auf **Restart**, um es anzuwenden. Die System-Disk lässt sich nicht trennen: Sie hat unter **Edit** keine Aktion.
+
+Um die getrennte Disk anschließend zu löschen, starten Sie zuerst die VM neu: Solange die VM sie noch verwendet, lehnt die Konsole das Löschen ab („This disk was detached, but its VM still uses it until its next restart. Restart the VM, then try again.“).
 
 ## Weiterführende Informationen
 

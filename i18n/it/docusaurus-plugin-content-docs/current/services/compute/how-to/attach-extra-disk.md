@@ -34,6 +34,8 @@ Nella sezione **Storage**, faccia clic su **Add a disk**. Compare un blocco **St
 
 Per rimuovere un volume aggiunto per errore prima di salvare, faccia clic su **Remove disk** (icona del cestino): non è ancora stato creato nulla.
 
+I dischi che la VM possiede già sono mostrati in sola lettura: la scelta **New** / **Existing** esiste solo sui volumi aggiunti.
+
 ### 3. Salvare
 
 Verifichi il riepilogo delle quote in cima alla pagina, quindi faccia clic su **Save**.
@@ -113,7 +115,9 @@ sudo touch /mnt/data/test.txt && echo "OK"
 
 Prima smonti il disco nel sistema operativo e rimuova la sua riga da `/etc/fstab`. Poi, in **Edit** > **Storage**, faccia clic su **Detach disk** sul volume, confermi con **Detach** nella finestra **Detach `<name>`?** e faccia clic su **Save**.
 
-Il disco non viene eliminato: i suoi dati sono conservati e resta disponibile nel menu **Disks**, da cui può collegarlo a un'altra VM. Lo scollegamento ha effetto solo al successivo riavvio della VM: fino ad allora il disco resta visibile al sistema. La console mostra **Restart required**; faccia clic su **Restart** per applicarlo. Il disco di sistema non si può scollegare.
+Il disco non viene eliminato: i suoi dati sono conservati e resta disponibile nel menu **Disks**, da cui può collegarlo a un'altra VM. Lo scollegamento ha effetto solo al successivo riavvio della VM: fino ad allora il disco resta visibile al sistema. La console mostra **Restart required**; faccia clic su **Restart** per applicarlo. Il disco di sistema non si può scollegare: non ha alcuna azione in **Edit**.
+
+Per eliminare poi il disco scollegato, riavvii prima la VM: finché la VM lo usa ancora, la console rifiuta l'eliminazione («This disk was detached, but its VM still uses it until its next restart. Restart the VM, then try again.»).
 
 ## Per approfondire
 
