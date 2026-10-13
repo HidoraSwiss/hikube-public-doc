@@ -171,7 +171,15 @@ Vérifiez aussi le nom du bucket configuré dans votre client S3 : utilisez le n
 
 ### Impossible de réduire la taille d'un disque
 
-La taille d'un disque peut être augmentée, jamais réduite, y compris depuis la modification d'une VM. Pour disposer d'un disque plus petit, créez un nouveau disque et copiez-y vos données.
+La taille d'un disque peut être augmentée depuis le menu **Disques** (voir [Redimensionner un disque](../services/storage/disks/how-to/resize.md)), jamais réduite. La page de modification d'une VM ne change pas la taille de ses disques : ceux que la VM possède déjà y sont en lecture seule. Pour disposer d'un disque plus petit, créez un nouveau disque et copiez-y vos données.
+
+### Un disque ne peut pas être supprimé
+
+**Symptôme :** la console refuse la suppression d'un disque.
+
+**Solutions :**
+- le disque est encore attaché à une VM : détachez-le depuis la page **Modifier** de la VM (**Détacher le disque**), ou supprimez la VM. Le disque système d'une VM ne se détache pas : il ne peut être supprimé qu'après la suppression de la VM ;
+- le disque a été détaché, mais sa VM l'utilise encore : la console affiche « Ce disque a été détaché, mais sa VM l'utilise encore jusqu'à son prochain redémarrage. Redémarrez la VM, puis réessayez. » Redémarrez la VM, puis relancez la suppression.
 
 Voir : [Buckets - Dépannage](../services/storage/buckets/troubleshooting.md), [Disques - Dépannage](../services/storage/disks/troubleshooting.md)
 

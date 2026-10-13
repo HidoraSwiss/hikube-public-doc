@@ -120,22 +120,19 @@ The control plane is sized in the **General** step of the creation wizard, with 
 
 ### Control Plane Instance Size
 
-Resource preset applied to all control plane components (API Server, Controller Manager, Scheduler). The list is provided by the platform and each option shows its CPU and memory. The **Small** preset is selected by default.
+Size applied to each of the four control plane components: API server, Controller manager, Scheduler and Konnectivity. The list is provided by the platform and each option shows its CPU and memory, for example "u1.small — 1 CPU / 2Gi".
 
-| Preset | Recommended use (console help) |
-|--------|--------------------------------------|
-| **Small** | Light workloads, development or testing. Minimum cost. |
-| **Medium** | Standard use with moderate load. Good performance/cost balance. |
-| **Large** | Intensive use or high traffic. Maximum performance. |
+| Size | vCPU | RAM (per component) |
+|------|------|---------------------|
+| `u1.small` | 1 | 2 GB |
+| `u1.2xmedium` | 2 | 4 GB |
 
-The platform also offers smaller (`nano`, `micro`) and larger (`xlarge`, `2xlarge`) presets.
+No size is preselected: the field shows "Select a size" until you choose one. If the list cannot be loaded, the console says so: "The preset list could not be loaded. Try again later or contact support."
 
-:::warning
-With **Small** (512 MiB per component), the API Server can run out of memory and restart in a loop, especially during addon installation. Choose at least **Medium**: the control plane size can no longer be changed in the console after creation.
-:::
+A cluster created with a former size (for example `small`) keeps it: it is still shown as is, and the cluster can still be edited.
 
 :::note
-Component-by-component sizing (resources dedicated to the API Server, the Scheduler, etc.) is not offered in the console; contact support.
+Component-by-component sizing (resources dedicated to the API Server, the Scheduler, etc.) is not offered in the console; contact support. The cluster edit page shows, read only, the size of each of the four components (**Control plane components**). The mention "(override)" after a size means resources set outside that size.
 :::
 
 ### Control Plane High Availability
@@ -143,7 +140,7 @@ Component-by-component sizing (resources dedicated to the API Server, the Schedu
 Number of control plane instances: **1**, **3 (HA)** or **5 (HA)**. The default value is 3.
 An odd number of instances guarantees the `etcd` quorum; use at least 3 instances in production.
 
-Below the field, the console shows the footprint counted against the project quota, for example "→ 3 × Small = … CPU · … GiB counted against the quota".
+Below the field, the console shows the footprint counted against the project quota, for example "→ 3 replicas × 4 components = 12 CPU · 24 GiB counted against the quota" for the `u1.small` size: the quota counts the four components of each control plane instance.
 
 :::warning
 The size and number of control plane instances cannot be changed in the console after the cluster is created. To change them, contact support.

@@ -71,7 +71,10 @@ N'exposez une base de données que si c'est nécessaire, et utilisez des mots de
 Les assistants de création proposent des gabarits prédéfinis :
 
 - **VM et nœuds Kubernetes** : types d'instance des séries `s1`, `u1` et `m1` (de 1 à 64 vCPU). Voir [Concepts Kubernetes](../services/kubernetes/concepts.md) et [Concepts machines virtuelles](../services/compute/concepts.md).
-- **Bases de données** : presets de `nano` à `2xlarge`. Voir la page Concepts de chaque service.
+- **Bases de données managées et RabbitMQ** (PostgreSQL, MariaDB, MongoDB, Redis, RabbitMQ) : les tailles des VM, séries `u1`, `s1` et `m1`, de `s1.small` (1 vCPU, 2 Go) à `m1.8xlarge` (32 vCPU, 256 Go). Une taille a les mêmes ressources qu'une VM du même nom : `u1.medium` vaut 1 vCPU et 4 Go. Voir la page Concepts de chaque service.
+- **Control plane Kubernetes** : `u1.small` (1 vCPU, 2 Go) ou `u1.2xmedium` (2 vCPU, 4 Go), appliquée à chacun de ses quatre composants. Voir [Concepts Kubernetes](../services/kubernetes/concepts.md#taille-de-linstance-control-plane).
+
+À la création, aucune taille n'est présélectionnée : choisissez-en une. Une ressource créée avec une ancienne taille (`small`, `medium`…) la conserve et reste modifiable. Pour une base de données dans ce cas, la console affiche « Prix indisponible », et le tableau de bord du projet indique les bases exclues du coût total (« Hors 1 base de données sans prix »).
 
 Chaque assistant affiche l'impact sur le quota du projet et le coût estimé avant la création.
 

@@ -71,7 +71,10 @@ Esponga un database solo se necessario e utilizzi password robuste.
 Le procedure guidate di creazione propongono modelli predefiniti:
 
 - **VM e nodi Kubernetes**: tipi di istanza delle serie `s1`, `u1` e `m1` (da 1 a 64 vCPU). Vedere [Concetti Kubernetes](../services/kubernetes/concepts.md) e [Concetti macchine virtuali](../services/compute/concepts.md).
-- **Database**: preset da `nano` a `2xlarge`. Vedere la pagina Concetti di ciascun servizio.
+- **Database gestiti e RabbitMQ** (PostgreSQL, MariaDB, MongoDB, Redis, RabbitMQ): le dimensioni delle VM, serie `u1`, `s1` e `m1`, da `s1.small` (1 vCPU, 2 GB) a `m1.8xlarge` (32 vCPU, 256 GB). Una dimensione ha le stesse risorse della VM con lo stesso nome: `u1.medium` corrisponde a 1 vCPU e 4 GB. Vedere la pagina Concetti di ciascun servizio.
+- **Control plane Kubernetes**: `u1.small` (1 vCPU, 2 GB) o `u1.2xmedium` (2 vCPU, 4 GB), applicata a ciascuno dei suoi quattro componenti. Vedere [Concetti Kubernetes](../services/kubernetes/concepts.md#control-plane-instance-size).
+
+Alla creazione nessuna dimensione è preselezionata: ne scelga una. Una risorsa creata con una dimensione precedente (`small`, `medium`…) la conserva e resta modificabile. Per un database in questo caso, la console mostra «Price unavailable», e la dashboard del progetto indica i database esclusi dal costo totale («Excludes 1 database without a price»).
 
 Ogni procedura guidata mostra l'impatto sulla quota del progetto e il costo stimato prima della creazione.
 

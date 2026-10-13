@@ -105,4 +105,4 @@ See [How to add and modify a node group](./how-to/manage-node-groups.md).
 
 ### Can I modify the control plane after creation?
 
-No. The **Control Plane Instance Size** and **Control Plane High Availability** cannot be changed in the console after creation; contact support. The Kubernetes version (only to a higher version), the API endpoint, the node groups and the addons remain editable.
+No. The **Control Plane Instance Size** and **Control Plane High Availability** cannot be changed in the console after creation; contact support. The edit page shows, read only, the size of each of the four control plane components. The Kubernetes version (only to a higher version), the API endpoint, the node groups and the addons remain editable.

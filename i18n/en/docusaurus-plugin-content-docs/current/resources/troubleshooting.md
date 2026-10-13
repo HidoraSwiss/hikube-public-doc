@@ -171,7 +171,15 @@ Also check the bucket name configured in your S3 client: use the real S3 name (`
 
 ### Cannot reduce the size of a disk
 
-A disk's size can be increased, never reduced, including when editing a VM. To get a smaller disk, create a new disk and copy your data to it.
+A disk's size can be increased from the **Disks** menu (see [Resize a disk](../services/storage/disks/how-to/resize.md)), never reduced. The VM edit page does not change the size of its disks: the disks the VM already has are read only there. To get a smaller disk, create a new disk and copy your data to it.
+
+### A disk cannot be deleted
+
+**Symptom:** the console refuses to delete a disk.
+
+**Solutions:**
+- the disk is still attached to a VM: detach it from the VM's **Edit** page (**Detach disk**), or delete the VM. A VM's system disk cannot be detached: it can only be deleted once the VM is deleted;
+- the disk was detached, but its VM still uses it: the console shows "This disk was detached, but its VM still uses it until its next restart. Restart the VM, then try again." Restart the VM, then delete the disk again.
 
 See: [Buckets - Troubleshooting](../services/storage/buckets/troubleshooting.md), [Disks - Troubleshooting](../services/storage/disks/troubleshooting.md)
 

@@ -120,22 +120,19 @@ Die Control Plane wird im Schritt **General** des Erstellungsassistenten mit zwe
 
 ### Control Plane Instance Size
 
-Ressourcen-Preset, das auf alle Komponenten der Control Plane angewendet wird (API Server, Controller Manager, Scheduler). Die Liste wird von der Plattform bereitgestellt, und jede Option zeigt ihre CPU und ihren Arbeitsspeicher an. Das Preset **Small** ist standardmäßig ausgewählt.
+Größe, die auf jede der vier Komponenten der Control Plane angewendet wird: API server, Controller manager, Scheduler und Konnectivity. Die Liste wird von der Plattform bereitgestellt, und jede Option zeigt ihre CPU und ihren Arbeitsspeicher an, zum Beispiel „u1.small — 1 CPU / 2Gi“.
 
-| Preset | Empfohlene Nutzung (Hilfetext der Konsole) |
-|--------|--------------------------------------------|
-| **Small** | Geringe Last, Entwicklung oder Tests. Kostenoptimiert. |
-| **Medium** | Standardnutzung mit moderater Last. Gutes Verhältnis von Leistung zu Kosten. |
-| **Large** | Intensive Nutzung oder hoher Traffic. Maximale Leistung. |
+| Größe | vCPU | RAM (pro Komponente) |
+|-------|------|----------------------|
+| `u1.small` | 1 | 2 GB |
+| `u1.2xmedium` | 2 | 4 GB |
 
-Die Plattform bietet außerdem kleinere (`nano`, `micro`) und größere (`xlarge`, `2xlarge`) Presets an.
+Es ist keine Größe vorausgewählt: Das Feld zeigt „Select a size“, bis Sie eine Größe wählen. Kann die Liste nicht geladen werden, weist die Konsole darauf hin: „The preset list could not be loaded. Try again later or contact support.“
 
-:::warning
-Mit **Small** (512 MiB pro Komponente) kann dem API Server der Speicher ausgehen, sodass er in einer Schleife neu startet, insbesondere während der Installation der Addons. Wählen Sie mindestens **Medium**: Die Größe der Control Plane lässt sich nach der Erstellung in der Konsole nicht mehr ändern.
-:::
+Ein Cluster, der mit einer früheren Größe erstellt wurde (zum Beispiel `small`), behält diese: Sie wird unverändert angezeigt, und der Cluster bleibt bearbeitbar.
 
 :::note
-Eine Dimensionierung pro Komponente (dedizierte Ressourcen für API Server, Scheduler usw.) wird in der Konsole nicht angeboten; wenden Sie sich an den Support.
+Eine Dimensionierung pro Komponente (dedizierte Ressourcen für API Server, Scheduler usw.) wird in der Konsole nicht angeboten; wenden Sie sich an den Support. Die Bearbeitungsseite eines Clusters zeigt schreibgeschützt die Größe jeder der vier Komponenten an (**Control plane components**). Der Zusatz „(override)“ nach einer Größe bedeutet, dass die Ressourcen außerhalb dieser Größe festgelegt wurden.
 :::
 
 ### Control Plane High Availability
@@ -143,7 +140,7 @@ Eine Dimensionierung pro Komponente (dedizierte Ressourcen für API Server, Sche
 Anzahl der Instanzen der Control Plane: **1**, **3 (HA)** oder **5 (HA)**. Der Standardwert ist 3.
 Eine ungerade Anzahl an Instanzen garantiert das Quorum von `etcd`; verwenden Sie in der Produktion mindestens 3 Instanzen.
 
-Unter dem Feld zeigt die Konsole den auf die Projekt-Quota angerechneten Verbrauch an, zum Beispiel „→ 3 × Small = … CPU · … GiB counted against the quota“.
+Unter dem Feld zeigt die Konsole den auf die Projekt-Quota angerechneten Verbrauch an, zum Beispiel „→ 3 replicas × 4 components = 12 CPU · 24 GiB counted against the quota“ für die Größe `u1.small`: Die Quota zählt die vier Komponenten jeder Instanz der Control Plane.
 
 :::warning
 Größe und Anzahl der Instanzen der Control Plane lassen sich nach der Erstellung des Clusters in der Konsole nicht ändern. Um sie zu ändern, wenden Sie sich an den Support.

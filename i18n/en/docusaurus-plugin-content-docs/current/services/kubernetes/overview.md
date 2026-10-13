@@ -51,7 +51,7 @@ Each field is described in detail in the [concepts](./concepts.md) and the [quic
 ### Control Plane
 
 - Managed by Hikube, with no maintenance required on your side
-- Sized by a preset (**Control Plane Instance Size**) and a number of instances (**Control Plane High Availability**: 1, 3 or 5)
+- Sized by an instance size (**Control Plane Instance Size**: `u1.small` or `u1.2xmedium`, applied to its four components) and a number of instances (**Control Plane High Availability**: 1, 3 or 5)
 - Access through the standard Kubernetes API (`kubectl`, SDK client, etc.) with the kubeconfig downloaded from the console
 
 ### Node groups

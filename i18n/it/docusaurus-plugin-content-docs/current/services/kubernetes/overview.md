@@ -51,7 +51,7 @@ Il dettaglio di ogni campo è descritto nei [concetti](./concepts.md) e nell'[av
 ### Control Plane
 
 - Gestito da Hikube, senza alcuna manutenzione da parte sua
-- Dimensionato tramite un preset (**Control Plane Instance Size**) e un numero di istanze (**Control Plane High Availability**: 1, 3 o 5)
+- Dimensionato tramite una dimensione (**Control Plane Instance Size**: `u1.small` o `u1.2xmedium`, applicata ai suoi quattro componenti) e un numero di istanze (**Control Plane High Availability**: 1, 3 o 5)
 - Accesso tramite l'API standard Kubernetes (`kubectl`, client SDK, ecc.) con il kubeconfig scaricato dalla console
 
 ### Gruppi di nodi
