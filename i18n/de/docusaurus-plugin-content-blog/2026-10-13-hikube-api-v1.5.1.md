@@ -4,7 +4,7 @@ authors: [hikube]
 tags: [release]
 ---
 
-Verwaltete Datenbanken, RabbitMQ und die Kubernetes-Control-Plane werden jetzt mit den Größen der virtuellen Maschinen dimensioniert, und verwaltete Anwendungen werden mit 10 CHF pro vCPU und pro GiB abgerechnet. Diese Version schützt außerdem die Systemfestplatte laufender VMs und vereinheitlicht die Regeln für PostgreSQL-Datenbanken.
+Verwaltete Datenbanken, RabbitMQ und die Kubernetes-Control-Plane werden jetzt mit den Größen der virtuellen Maschinen dimensioniert. Diese Version schützt außerdem die Systemfestplatte laufender VMs und vereinheitlicht die Regeln für PostgreSQL-Datenbanken.
 
 <!-- truncate -->
 
@@ -12,7 +12,7 @@ Verwaltete Datenbanken, RabbitMQ und die Kubernetes-Control-Plane werden jetzt m
 
 - **Verwaltete Datenbanken und RabbitMQ** — Das Feld `preset` nimmt die Größen der virtuellen Maschinen aus den Serien `u1`, `s1` und `m1` an. Eine Größe hat dieselben Ressourcen wie eine gleichnamige VM: `u1.medium` entspricht 1 vCPU und 4 GiB. Die 17 angebotenen Größen reichen von `s1.small` (1 vCPU / 2 GiB) bis `m1.8xlarge` (32 vCPU / 256 GiB). Die Operation `presets` jedes Dienstes listet sie mit ihren Ressourcen auf.
 
-- **Kubernetes** — Die Control Plane wird in `u1.small` (1 vCPU / 2 GiB) oder `u1.2xmedium` (2 vCPU / 4 GiB) dimensioniert. Die Größe gilt für ihre vier Komponenten, und die Antwort nennt die Größe jeder einzelnen.
+- **Kubernetes** — Die Control Plane wird in `s1.small` (1 vCPU / 2 GiB) oder `s1.medium` (2 vCPU / 4 GiB) dimensioniert. Die Größe gilt für ihre vier Komponenten, und die Antwort nennt die Größe jeder einzelnen.
 
 - **Ressourcen** — Die Antwort einer Datenbank, von RabbitMQ oder eines Kubernetes-Clusters nennt die tatsächlichen Ressourcen ihrer Größe (`resources`: CPU und Speicher).
 
@@ -27,13 +27,11 @@ Verwaltete Datenbanken, RabbitMQ und die Kubernetes-Control-Plane werden jetzt m
 
 Diese Änderungen betreffen ein bestehendes Verhalten. Prüfen Sie sie, wenn Sie die API aus eigenen Werkzeugen aufrufen.
 
-- **Größen der Datenbanken und von RabbitMQ** — Die bisherigen Namen (`small`, `medium`, `large`…) werden vorerst weiter akzeptiert, mit unveränderten Ressourcen. Jede Anfrage, die einen davon verwendet, erhält einen `Warning`-Header mit der entsprechenden Größe, die zu verwenden ist. Ein Name der Serien `u1`, `s1` oder `m1` bezeichnet immer die VM-Größe: `u1.small` wird zum Beispiel für eine Datenbank abgelehnt.
+- **Größen der Datenbanken und von RabbitMQ** — Die bisherigen Namen (`small`, `medium`, `large`…) werden vorerst weiter akzeptiert, mit unveränderten Ressourcen. Jede Anfrage, die einen davon verwendet, erhält einen `Warning`-Header mit der entsprechenden Größe, die zu verwenden ist. Jede Größe gibt es nur in einer Serie: 1 vCPU / 2 GiB heißt `s1.small`.
 
 - **Kubernetes** — Eine Control Plane kleiner als `small` wird bei der Erstellung und bei einer Größenänderung abgelehnt (Code `70111`): `nano`, `micro` und ihre Entsprechungen. Ein bestehender Cluster dieser Größe bleibt bearbeitbar, solange sich seine Größe nicht ändert.
 
-- **Preise** — Eine verwaltete Anwendung kostet 10 CHF pro Monat pro vCPU und pro GiB Speicher: `s1.small` kostet 30 CHF, `u1.medium` 50 CHF. Die Kubernetes-Control-Plane bleibt bei der Pauschale von 32 CHF pro Monat, unabhängig von ihrer Größe. Eine Datenbank mit einem bisherigen Größennamen hat keinen Katalogpreis, bis sie auf eine Größe der Liste umgestellt ist.
-
-- **Quoten** — Die Quote zählt jetzt die drei Sentinels eines Redis-Clusters, in der Größe des Clusters, sowie die vier Komponenten der Kubernetes-Control-Plane. Die Sentinels werden nicht abgerechnet.
+- **Quoten** — Die Quote zählt jetzt die drei Sentinels eines Redis-Clusters, in der Größe des Clusters, sowie die vier Komponenten der Kubernetes-Control-Plane.
 
 - **PostgreSQL** — Die Systemdatenbanken `postgres`, `template0` und `template1` können keine Rolle mehr erhalten und weder erstellt, geändert noch gelöscht werden (Code `80105`). Ein Benutzer, der bereits eine Rolle auf einer von ihnen hat, behält sie, solange sich diese Rolle nicht ändert.
 

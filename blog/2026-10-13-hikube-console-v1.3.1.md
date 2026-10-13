@@ -4,13 +4,13 @@ authors: [hikube]
 tags: [release]
 ---
 
-La console accompagne l'API v1.5.1 : les formulaires proposent les tailles servies par la plateforme, avec leurs nouveaux prix. Les disques d'une VM existante ne se remplacent plus depuis la page de modification, et les écrans PostgreSQL suivent les nouvelles règles des bases.
+La console accompagne l'API v1.5.1 : les formulaires proposent les tailles servies par la plateforme. Les disques d'une VM existante ne se remplacent plus depuis la page de modification, et les écrans PostgreSQL suivent les nouvelles règles des bases.
 
 <!-- truncate -->
 
 ## Ajouté
 
-- **Bases de données et Kubernetes** — Les listes de tailles viennent de la plateforme, avec leurs ressources, par exemple « u1.medium — 1 CPU / 4Gi ». Pour le control plane Kubernetes, la console propose `u1.small` et `u1.2xmedium`. Si la liste ne peut pas être chargée, un message le dit au lieu d'afficher une liste périmée.
+- **Bases de données et Kubernetes** — Les listes de tailles viennent de la plateforme, avec leurs ressources, par exemple « u1.medium — 1 CPU / 4Gi ». Pour le control plane Kubernetes, la console propose `s1.small` et `s1.medium`. Si la liste ne peut pas être chargée, un message le dit au lieu d'afficher une liste périmée.
 
 - **Kubernetes** — La page de modification d'un cluster affiche, en lecture seule, la taille de chacun des quatre composants du control plane.
 
@@ -22,9 +22,7 @@ Ces changements modifient un comportement existant de la console.
 
 - **Bases de données et Kubernetes** — À la création, aucune taille n'est présélectionnée : vous devez en choisir une. En modification, la taille actuelle reste affichée et renvoyée telle quelle, même si elle ne figure plus dans la liste.
 
-- **Prix** — Les coûts estimés suivent les nouveaux prix : une application managée coûte 10 CHF par mois par vCPU et par Gio, et le control plane Kubernetes reste au forfait de 32 CHF. Une base qui garde une ancienne taille affiche « Prix indisponible », et le tableau de bord du projet indique combien de bases sont exclues du total.
-
-- **Redis** — L'aperçu du quota compte les trois sentinelles du cluster, à la taille choisie. Elles ne sont pas facturées.
+- **Redis** — L'aperçu du quota compte les trois sentinelles du cluster, à la taille choisie.
 
 - **Instances VM** — Dans la page de modification d'une VM, les disques qu'elle possède déjà s'affichent en lecture seule. Le disque système n'a plus aucune action, avec l'explication « Le disque système d'une VM existante ne se remplace pas : la VM démarre dessus. » Un disque de données ne propose plus que **Détacher le disque**. Le choix **Nouveau** / **Existant** reste disponible pour les disques ajoutés dans le formulaire.
 

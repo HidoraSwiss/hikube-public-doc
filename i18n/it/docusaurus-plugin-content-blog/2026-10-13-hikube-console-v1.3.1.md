@@ -4,13 +4,13 @@ authors: [hikube]
 tags: [release]
 ---
 
-La console accompagna l'API v1.5.1: i moduli propongono le taglie servite dalla piattaforma, con i loro nuovi prezzi. I dischi di una VM esistente non si sostituiscono più dalla pagina di modifica, e le schermate PostgreSQL seguono le nuove regole dei database.
+La console accompagna l'API v1.5.1: i moduli propongono le taglie servite dalla piattaforma. I dischi di una VM esistente non si sostituiscono più dalla pagina di modifica, e le schermate PostgreSQL seguono le nuove regole dei database.
 
 <!-- truncate -->
 
 ## Aggiunto
 
-- **Database e Kubernetes** — Gli elenchi di taglie provengono dalla piattaforma, con le loro risorse, ad esempio «u1.medium — 1 CPU / 4Gi». Per il control plane Kubernetes, la console propone `u1.small` e `u1.2xmedium`. Se l'elenco non può essere caricato, un messaggio lo indica invece di mostrare un elenco superato.
+- **Database e Kubernetes** — Gli elenchi di taglie provengono dalla piattaforma, con le loro risorse, ad esempio «u1.medium — 1 CPU / 4Gi». Per il control plane Kubernetes, la console propone `s1.small` e `s1.medium`. Se l'elenco non può essere caricato, un messaggio lo indica invece di mostrare un elenco superato.
 
 - **Kubernetes** — La pagina di modifica di un cluster mostra, in sola lettura, la taglia di ciascuno dei quattro componenti del control plane.
 
@@ -22,9 +22,7 @@ Queste modifiche cambiano un comportamento esistente della console.
 
 - **Database e Kubernetes** — Alla creazione, nessuna taglia è preselezionata: dovete sceglierne una. In modifica, la taglia attuale resta visualizzata e viene rinviata così com'è, anche se non figura più nell'elenco.
 
-- **Prezzi** — I costi stimati seguono i nuovi prezzi: un'applicazione gestita costa 10 CHF al mese per vCPU e per GiB, e il control plane Kubernetes resta al forfait di 32 CHF. Un database che mantiene una vecchia taglia mostra «Price unavailable», e il cruscotto del progetto indica quanti database sono esclusi dal totale.
-
-- **Redis** — L'anteprima della quota conta le tre sentinelle del cluster, alla taglia scelta. Non sono fatturate.
+- **Redis** — L'anteprima della quota conta le tre sentinelle del cluster, alla taglia scelta.
 
 - **Istanze VM** — Nella pagina di modifica di una VM, i dischi che possiede già sono mostrati in sola lettura. Il disco di sistema non ha più alcuna azione, con la spiegazione «The system disk of an existing VM cannot be replaced: the VM boots from it.» Un disco dati propone solo **Detach disk**. La scelta **New** / **Existing** resta disponibile per i dischi aggiunti nel modulo.
 

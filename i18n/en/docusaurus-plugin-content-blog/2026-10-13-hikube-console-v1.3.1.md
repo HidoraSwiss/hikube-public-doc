@@ -4,13 +4,13 @@ authors: [hikube]
 tags: [release]
 ---
 
-The console follows API v1.5.1: the forms offer the sizes the platform serves, with their new prices. The disks of an existing VM can no longer be replaced from the edit page, and the PostgreSQL screens follow the new database rules.
+The console follows API v1.5.1: the forms offer the sizes the platform serves. The disks of an existing VM can no longer be replaced from the edit page, and the PostgreSQL screens follow the new database rules.
 
 <!-- truncate -->
 
 ## Added
 
-- **Databases and Kubernetes** — The size lists come from the platform, with their resources, for example "u1.medium — 1 CPU / 4Gi". For the Kubernetes control plane, the console offers `u1.small` and `u1.2xmedium`. If the list cannot be loaded, a message says so instead of showing an outdated list.
+- **Databases and Kubernetes** — The size lists come from the platform, with their resources, for example "u1.medium — 1 CPU / 4Gi". For the Kubernetes control plane, the console offers `s1.small` and `s1.medium`. If the list cannot be loaded, a message says so instead of showing an outdated list.
 
 - **Kubernetes** — A cluster's edit page shows, read-only, the size of each of the four control plane components.
 
@@ -22,9 +22,7 @@ These changes alter an existing behavior of the console.
 
 - **Databases and Kubernetes** — At creation, no size is preselected: you must choose one. When editing, the current size stays displayed and is sent back unchanged, even if it is no longer in the list.
 
-- **Prices** — Estimated costs follow the new prices: a managed application costs 10 CHF per month per vCPU and per GiB, and the Kubernetes control plane stays at the flat fee of 32 CHF. A database that keeps a former size shows "Price unavailable", and the project dashboard says how many databases are excluded from the total.
-
-- **Redis** — The quota preview counts the cluster's three sentinels, at the chosen size. They are not billed.
+- **Redis** — The quota preview counts the cluster's three sentinels, at the chosen size.
 
 - **VM instances** — On a VM's edit page, the disks it already has are shown read-only. The system disk no longer has any action, with the explanation "The system disk of an existing VM cannot be replaced: the VM boots from it." A data disk only offers **Detach disk**. The **New** / **Existing** choice remains available for disks added in the form.
 

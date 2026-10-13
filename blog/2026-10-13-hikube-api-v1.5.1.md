@@ -4,7 +4,7 @@ authors: [hikube]
 tags: [release]
 ---
 
-Les bases de données managées, RabbitMQ et le control plane Kubernetes se dimensionnent désormais avec les tailles des machines virtuelles, et les applications managées sont facturées 10 CHF par vCPU et par Gio. Cette version protège aussi le disque système des VM en service et aligne les règles des bases PostgreSQL.
+Les bases de données managées, RabbitMQ et le control plane Kubernetes se dimensionnent désormais avec les tailles des machines virtuelles. Cette version protège aussi le disque système des VM en service et aligne les règles des bases PostgreSQL.
 
 <!-- truncate -->
 
@@ -12,7 +12,7 @@ Les bases de données managées, RabbitMQ et le control plane Kubernetes se dime
 
 - **Bases de données managées et RabbitMQ** — Le champ `preset` prend les tailles des machines virtuelles, des séries `u1`, `s1` et `m1`. Une taille a les mêmes ressources qu'une VM du même nom : `u1.medium` vaut 1 vCPU et 4 Gio. Les 17 tailles proposées vont de `s1.small` (1 vCPU / 2 Gio) à `m1.8xlarge` (32 vCPU / 256 Gio). L'opération `presets` de chaque service les liste avec leurs ressources.
 
-- **Kubernetes** — Le control plane se dimensionne en `u1.small` (1 vCPU / 2 Gio) ou en `u1.2xmedium` (2 vCPU / 4 Gio). La taille s'applique à ses quatre composants, et la réponse détaille la taille de chacun.
+- **Kubernetes** — Le control plane se dimensionne en `s1.small` (1 vCPU / 2 Gio) ou en `s1.medium` (2 vCPU / 4 Gio). La taille s'applique à ses quatre composants, et la réponse détaille la taille de chacun.
 
 - **Ressources** — La réponse d'une base de données, de RabbitMQ ou d'un cluster Kubernetes indique les ressources réelles de sa taille (`resources` : CPU et mémoire).
 
@@ -27,13 +27,11 @@ Les bases de données managées, RabbitMQ et le control plane Kubernetes se dime
 
 Ces changements modifient un comportement existant. Vérifiez-les si vous appelez l'API depuis vos propres outils.
 
-- **Tailles des bases de données et de RabbitMQ** — Les anciens noms (`small`, `medium`, `large`…) restent acceptés pour le moment, avec ressources inchangées. Chaque requête qui en utilise un reçoit un en-tête `Warning` qui indique la taille équivalente à utiliser. Un nom des séries `u1`, `s1` ou `m1` désigne toujours la taille de VM : `u1.small`, par exemple, est refusé pour une base de données.
+- **Tailles des bases de données et de RabbitMQ** — Les anciens noms (`small`, `medium`, `large`…) restent acceptés pour le moment, avec ressources inchangées. Chaque requête qui en utilise un reçoit un en-tête `Warning` qui indique la taille équivalente à utiliser. Chaque taille n'existe que dans une série : 1 vCPU / 2 Gio s'appelle `s1.small`.
 
 - **Kubernetes** — Un control plane plus petit que `small` est refusé à la création et lors d'un changement de taille (code `70111`) : `nano`, `micro` et leurs équivalents. Un cluster existant de cette taille reste modifiable tant que sa taille ne change pas.
 
-- **Prix** — Une application managée coûte 10 CHF par mois par vCPU et par Gio de mémoire : `s1.small` coûte 30 CHF, `u1.medium` 50 CHF. Le control plane Kubernetes reste au forfait de 32 CHF par mois, quelle que soit sa taille. Une base de données qui garde un ancien nom de taille n'a pas de prix catalogue tant qu'elle n'est pas passée à une taille de la liste.
-
-- **Quotas** — Le quota compte désormais les trois sentinelles d'un cluster Redis, à la taille du cluster, ainsi que les quatre composants du control plane Kubernetes. Les sentinelles ne sont pas facturées.
+- **Quotas** — Le quota compte désormais les trois sentinelles d'un cluster Redis, à la taille du cluster, ainsi que les quatre composants du control plane Kubernetes.
 
 - **PostgreSQL** — Les bases système `postgres`, `template0` et `template1` ne peuvent plus recevoir de rôle, ni être créées, modifiées ou supprimées (code `80105`). Un utilisateur qui détient déjà un rôle sur l'une d'elles le garde tant que ce rôle ne change pas.
 

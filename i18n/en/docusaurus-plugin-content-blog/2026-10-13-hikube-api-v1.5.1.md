@@ -4,7 +4,7 @@ authors: [hikube]
 tags: [release]
 ---
 
-Managed databases, RabbitMQ and the Kubernetes control plane are now sized with the virtual machine sizes, and managed applications are billed 10 CHF per vCPU and per GiB. This version also protects the system disk of running VMs and aligns the PostgreSQL database rules.
+Managed databases, RabbitMQ and the Kubernetes control plane are now sized with the virtual machine sizes. This version also protects the system disk of running VMs and aligns the PostgreSQL database rules.
 
 <!-- truncate -->
 
@@ -12,7 +12,7 @@ Managed databases, RabbitMQ and the Kubernetes control plane are now sized with 
 
 - **Managed databases and RabbitMQ** — The `preset` field takes the virtual machine sizes, from the `u1`, `s1` and `m1` series. A size has the same resources as a VM of the same name: `u1.medium` is 1 vCPU and 4 GiB. The 17 sizes offered range from `s1.small` (1 vCPU / 2 GiB) to `m1.8xlarge` (32 vCPU / 256 GiB). The `presets` operation of each service lists them with their resources.
 
-- **Kubernetes** — The control plane is sized `u1.small` (1 vCPU / 2 GiB) or `u1.2xmedium` (2 vCPU / 4 GiB). The size applies to its four components, and the response details the size of each.
+- **Kubernetes** — The control plane is sized `s1.small` (1 vCPU / 2 GiB) or `s1.medium` (2 vCPU / 4 GiB). The size applies to its four components, and the response details the size of each.
 
 - **Resources** — The response of a database, of RabbitMQ or of a Kubernetes cluster gives the actual resources of its size (`resources`: CPU and memory).
 
@@ -27,13 +27,11 @@ Managed databases, RabbitMQ and the Kubernetes control plane are now sized with 
 
 These changes alter an existing behavior. Check them if you call the API from your own tools.
 
-- **Database and RabbitMQ sizes** — The former names (`small`, `medium`, `large`…) are still accepted for now, with unchanged resources. Each request that uses one gets a `Warning` header naming the equivalent size to use. A name from the `u1`, `s1` or `m1` series always means the VM size: `u1.small`, for example, is refused for a database.
+- **Database and RabbitMQ sizes** — The former names (`small`, `medium`, `large`…) are still accepted for now, with unchanged resources. Each request that uses one gets a `Warning` header naming the equivalent size to use. Each size exists in one series only: 1 vCPU / 2 GiB is called `s1.small`.
 
 - **Kubernetes** — A control plane smaller than `small` is refused at creation and on a size change (code `70111`): `nano`, `micro` and their equivalents. An existing cluster of that size stays editable as long as its size does not change.
 
-- **Prices** — A managed application costs 10 CHF per month per vCPU and per GiB of memory: `s1.small` costs 30 CHF, `u1.medium` 50 CHF. The Kubernetes control plane stays at the flat fee of 32 CHF per month, whatever its size. A database that keeps a former size name has no catalogue price until it moves to a size from the list.
-
-- **Quotas** — The quota now counts the three sentinels of a Redis cluster, at the cluster's size, as well as the four components of the Kubernetes control plane. The sentinels are not billed.
+- **Quotas** — The quota now counts the three sentinels of a Redis cluster, at the cluster's size, as well as the four components of the Kubernetes control plane.
 
 - **PostgreSQL** — The system databases `postgres`, `template0` and `template1` can no longer receive a role, nor be created, modified or deleted (code `80105`). A user who already holds a role on one of them keeps it as long as that role does not change.
 

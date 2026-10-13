@@ -4,13 +4,13 @@ authors: [hikube]
 tags: [release]
 ---
 
-Die Konsole begleitet die API v1.5.1: Die Formulare bieten die Größen an, die die Plattform bereitstellt, mit ihren neuen Preisen. Die Festplatten einer bestehenden VM lassen sich nicht mehr über die Bearbeitungsseite ersetzen, und die PostgreSQL-Bildschirme folgen den neuen Datenbankregeln.
+Die Konsole begleitet die API v1.5.1: Die Formulare bieten die Größen an, die die Plattform bereitstellt. Die Festplatten einer bestehenden VM lassen sich nicht mehr über die Bearbeitungsseite ersetzen, und die PostgreSQL-Bildschirme folgen den neuen Datenbankregeln.
 
 <!-- truncate -->
 
 ## Hinzugefügt
 
-- **Datenbanken und Kubernetes** — Die Größenlisten kommen von der Plattform, mit ihren Ressourcen, zum Beispiel „u1.medium — 1 CPU / 4Gi“. Für die Kubernetes-Control-Plane bietet die Konsole `u1.small` und `u1.2xmedium` an. Kann die Liste nicht geladen werden, sagt eine Meldung dies, statt eine veraltete Liste anzuzeigen.
+- **Datenbanken und Kubernetes** — Die Größenlisten kommen von der Plattform, mit ihren Ressourcen, zum Beispiel „u1.medium — 1 CPU / 4Gi“. Für die Kubernetes-Control-Plane bietet die Konsole `s1.small` und `s1.medium` an. Kann die Liste nicht geladen werden, sagt eine Meldung dies, statt eine veraltete Liste anzuzeigen.
 
 - **Kubernetes** — Die Bearbeitungsseite eines Clusters zeigt schreibgeschützt die Größe jeder der vier Komponenten der Control Plane.
 
@@ -22,9 +22,7 @@ Diese Änderungen betreffen ein bestehendes Verhalten der Konsole.
 
 - **Datenbanken und Kubernetes** — Bei der Erstellung ist keine Größe vorausgewählt: Sie müssen eine wählen. Beim Bearbeiten bleibt die aktuelle Größe angezeigt und wird unverändert zurückgesendet, auch wenn sie nicht mehr in der Liste steht.
 
-- **Preise** — Die geschätzten Kosten folgen den neuen Preisen: Eine verwaltete Anwendung kostet 10 CHF pro Monat pro vCPU und pro GiB, und die Kubernetes-Control-Plane bleibt bei der Pauschale von 32 CHF. Eine Datenbank mit einer bisherigen Größe zeigt „Price unavailable“, und das Projekt-Dashboard gibt an, wie viele Datenbanken nicht in der Summe enthalten sind.
-
-- **Redis** — Die Quotenvorschau zählt die drei Sentinels des Clusters in der gewählten Größe. Sie werden nicht abgerechnet.
+- **Redis** — Die Quotenvorschau zählt die drei Sentinels des Clusters in der gewählten Größe.
 
 - **VM-Instanzen** — Auf der Bearbeitungsseite einer VM werden ihre bestehenden Festplatten schreibgeschützt angezeigt. Die Systemfestplatte hat keine Aktion mehr, mit der Erklärung „The system disk of an existing VM cannot be replaced: the VM boots from it.“ Eine Datenfestplatte bietet nur noch **Detach disk** an. Die Wahl **New** / **Existing** bleibt für im Formular hinzugefügte Festplatten verfügbar.
 
