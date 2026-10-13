@@ -11,7 +11,7 @@ Redis auf Hikube wird für die Hochverfügbarkeit in einer **Redis-Sentinel**-Ar
 
 - **Redis Sentinel** überwacht die Redis-Instanzen und führt bei einem Ausfall des Masters ein **automatisches Failover** durch.
 - Ein **Quorum** aus Sentinels entscheidet über das Failover. Es werden immer drei Sentinels bereitgestellt, unabhängig von der Anzahl der Redis-Replicas: Das Failover funktioniert ab **2 Replicas**.
-- Die Sentinels zählen zu den Quotas des Projekts (CPU und Arbeitsspeicher, in der Größe des Presets des Clusters), werden aber nicht berechnet.
+- Die Sentinels zählen zu den Quotas des Projekts (CPU und Arbeitsspeicher, in der Größe des Presets des Clusters).
 - Die Adresse im Feld **Host** folgt dem Master: Nach einem Failover zeigt sie automatisch auf den neuen Master, ohne dass sich die Adresse ändert.
 
 :::tip

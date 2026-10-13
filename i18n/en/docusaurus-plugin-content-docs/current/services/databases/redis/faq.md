@@ -11,7 +11,7 @@ Redis on Hikube is deployed with a **Redis Sentinel** architecture for high avai
 
 - **Redis Sentinel** monitors the Redis instances and performs an **automatic switchover** (failover) if the master fails.
 - A **quorum** of sentinels decides on the failover. Three sentinels are always deployed, whatever the number of Redis replicas: switchover works from **2 replicas**.
-- Sentinels count against the project quotas (CPU and memory, at the size of the cluster's preset), but they are not billed.
+- Sentinels count against the project quotas (CPU and memory, at the size of the cluster's preset).
 - The address in the **Host** field follows the master: after a switchover, it automatically points to the new master, with no change of address.
 
 :::tip

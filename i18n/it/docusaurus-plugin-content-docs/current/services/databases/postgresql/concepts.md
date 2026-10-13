@@ -149,7 +149,7 @@ L'**Instance preset** definisce la capacità assegnata a **ogni nodo** del clust
 
 La procedura guidata non preseleziona alcun preset: ne scelga uno per proseguire. Ogni opzione indica le sue risorse, ad esempio « u1.medium — 1 CPU / 4Gi ». Se l'elenco non può essere caricato, la procedura guidata mostra « The preset list could not be loaded. Try again later or contact support. »
 
-Un cluster creato con un vecchio preset (`nano`, `micro`, `small`, `medium`, `large`, `xlarge` o `2xlarge`) lo conserva e funziona come prima: il modulo **Edit** lo mostra così com'è e lo salva senza modifiche. Questo preset non ha un prezzo di listino: la console mostra « Price unavailable » e la dashboard del progetto lo esclude dal costo totale, finché non sceglie un preset dell'elenco. Se le risorse di un cluster sono state fissate al di fuori del suo preset, il modulo lo indica con la menzione « (override) ».
+Un cluster creato con un vecchio preset (`nano`, `micro`, `small`, `medium`, `large`, `xlarge` o `2xlarge`) lo conserva e funziona come prima: il modulo **Edit** lo mostra così com'è e lo salva senza modifiche. Se le risorse di un cluster sono state fissate al di fuori del suo preset, il modulo lo indica con la menzione « (override) ».
 
 La definizione di risorse CPU/memoria libere (al di fuori dei preset) non è proposta nella console; contatti il supporto.
 

@@ -120,12 +120,12 @@ Le control plane se dimensionne à l'étape **Général** de l'assistant de cré
 
 ### Taille de l'instance Control Plane
 
-Taille appliquée à chacun des quatre composants du control plane : API server, Controller manager, Scheduler et Konnectivity. La liste est fournie par la plateforme et chaque option affiche son CPU et sa mémoire, par exemple « u1.small — 1 CPU / 2Gi ».
+Taille appliquée à chacun des quatre composants du control plane : API server, Controller manager, Scheduler et Konnectivity. La liste est fournie par la plateforme et chaque option affiche son CPU et sa mémoire, par exemple « s1.small — 1 CPU / 2Gi ».
 
 | Taille | vCPU | RAM (par composant) |
 |--------|------|---------------------|
-| `u1.small` | 1 | 2 Go |
-| `u1.2xmedium` | 2 | 4 Go |
+| `s1.small` | 1 | 2 Go |
+| `s1.medium` | 2 | 4 Go |
 
 Aucune taille n'est présélectionnée : le champ affiche « Sélectionnez une taille » tant que vous n'en avez pas choisi une. Si la liste ne peut pas être chargée, la console l'indique : « La liste des presets n'a pas pu être chargée. Réessayez plus tard ou contactez le support. »
 
@@ -140,7 +140,7 @@ Le dimensionnement composant par composant (ressources dédiées à l'API Server
 Nombre d'instances du control plane : **1**, **3 (HA)** ou **5 (HA)**. La valeur par défaut est 3.
 Un nombre impair d'instances garantit le quorum d'`etcd` ; utilisez au moins 3 instances en production.
 
-Sous le champ, la console affiche l'empreinte comptée au quota du projet, par exemple « → 3 répliques × 4 composants = 12 CPU · 24 Gio comptés au quota » pour la taille `u1.small` : le quota compte les quatre composants de chaque instance du control plane.
+Sous le champ, la console affiche l'empreinte comptée au quota du projet, par exemple « → 3 répliques × 4 composants = 12 CPU · 24 Gio comptés au quota » pour la taille `s1.small` : le quota compte les quatre composants de chaque instance du control plane.
 
 :::warning
 La taille et le nombre d'instances du control plane ne sont pas modifiables après la création du cluster dans la console. Pour les changer, contactez le support.

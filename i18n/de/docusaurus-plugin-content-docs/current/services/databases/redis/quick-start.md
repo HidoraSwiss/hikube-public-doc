@@ -55,7 +55,7 @@ Geben Sie den **Cluster Name** ein, zum Beispiel `demo-cache` (3 bis 16 Zeichen:
 | **Public network** | Aktiviert | Erforderlich, um sich von Ihrem Rechner aus zu verbinden |
 | **Enable authentication** | Aktiviert | Standardmäßig aktiv; beibehalten |
 
-Das Banner oben im Assistenten zeigt die **Estimated Cost** und die Auswirkung auf die Quotas des Projekts an. Diese Auswirkung zählt auch die drei Sentinels des Clusters in der Größe des Presets; sie werden nicht berechnet. Klicken Sie auf **Next**.
+Das Banner oben im Assistenten zeigt die **Estimated Cost** und die Auswirkung auf die Quotas des Projekts an. Diese Auswirkung zählt auch die drei Sentinels des Clusters in der Größe des Presets. Klicken Sie auf **Next**.
 
 :::warning
 Die **Number of replicas** kann nach der Erstellung nicht mehr geändert werden.

@@ -142,7 +142,7 @@ La **Préconfiguration** définit la capacité allouée à **chaque nœud** du c
 
 L'assistant ne présélectionne aucun preset : choisissez-en un pour continuer. Chaque option indique ses ressources, par exemple « u1.medium — 1 CPU / 4Gi ». Si la liste ne peut pas être chargée, l'assistant affiche « La liste des presets n'a pas pu être chargée. Réessayez plus tard ou contactez le support. »
 
-Un cluster créé avec un ancien preset (`nano`, `micro`, `small`, `medium`, `large`, `xlarge` ou `2xlarge`) le conserve et fonctionne comme avant : le formulaire **Modifier** l'affiche tel quel et l'enregistre sans changement. Ce preset n'a pas de prix catalogue : la console affiche « Prix indisponible » et le tableau de bord du projet l'exclut du coût total, jusqu'à ce que vous choisissiez un preset de la liste. Si les ressources d'un cluster ont été fixées hors de son preset, le formulaire l'indique par la mention « (forcé) ».
+Un cluster créé avec un ancien preset (`nano`, `micro`, `small`, `medium`, `large`, `xlarge` ou `2xlarge`) le conserve et fonctionne comme avant : le formulaire **Modifier** l'affiche tel quel et l'enregistre sans changement. Si les ressources d'un cluster ont été fixées hors de son preset, le formulaire l'indique par la mention « (forcé) ».
 
 La mémoire du preset borne la taille du jeu de données que Redis peut conserver en mémoire. La définition de ressources CPU/mémoire libres n'est pas proposée dans la console ; contactez le support.
 
@@ -152,7 +152,7 @@ La mémoire du preset borne la taille du jeu de données que Redis peut conserve
 
 L'assistant affiche le **Coût estimé** et l'impact du cluster sur les quotas du projet. Si le cluster dépasse les quotas disponibles, le bouton **Suivant** reste inactif.
 
-En plus des réplicas, le quota compte les trois sentinelles du cluster, chacune avec le CPU et la mémoire de la préconfiguration choisie, sans stockage : un cluster de 3 réplicas réserve donc 6 fois le CPU et la mémoire de sa préconfiguration. Les sentinelles ne sont pas facturées : le coût estimé ne compte que les réplicas.
+En plus des réplicas, le quota compte les trois sentinelles du cluster, chacune avec le CPU et la mémoire de la préconfiguration choisie, sans stockage : un cluster de 3 réplicas réserve donc 6 fois le CPU et la mémoire de sa préconfiguration.
 
 | Paramètre | Valeur |
 |-----------|--------|

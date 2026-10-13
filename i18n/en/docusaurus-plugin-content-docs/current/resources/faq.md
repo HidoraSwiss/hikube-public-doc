@@ -72,9 +72,9 @@ The creation wizards offer predefined sizes:
 
 - **VMs and Kubernetes nodes**: instance types from the `s1`, `u1` and `m1` series (from 1 to 64 vCPU). See [Kubernetes concepts](../services/kubernetes/concepts.md) and [Virtual machine concepts](../services/compute/concepts.md).
 - **Managed databases and RabbitMQ** (PostgreSQL, MariaDB, MongoDB, Redis, RabbitMQ): the VM sizes, from the `u1`, `s1` and `m1` series, from `s1.small` (1 vCPU, 2 GB) to `m1.8xlarge` (32 vCPU, 256 GB). A size has the same resources as the VM of the same name: `u1.medium` is 1 vCPU and 4 GB. See the Concepts page of each service.
-- **Kubernetes control plane**: `u1.small` (1 vCPU, 2 GB) or `u1.2xmedium` (2 vCPU, 4 GB), applied to each of its four components. See [Kubernetes concepts](../services/kubernetes/concepts.md#control-plane-instance-size).
+- **Kubernetes control plane**: `s1.small` (1 vCPU, 2 GB) or `s1.medium` (2 vCPU, 4 GB), applied to each of its four components. See [Kubernetes concepts](../services/kubernetes/concepts.md#control-plane-instance-size).
 
-At creation, no size is preselected: choose one. A resource created with a former size (`small`, `medium`…) keeps it and can still be edited. For a database in that case, the console shows "Price unavailable", and the project dashboard states which databases are left out of the total cost ("Excludes 1 database without a price").
+At creation, no size is preselected: choose one. A resource created with a former size (`small`, `medium`…) keeps it and can still be edited.
 
 Each wizard shows the impact on the project quota and the estimated cost before creation.
 

@@ -133,7 +133,7 @@ The **Preset** defines the capacity allocated to **each node**. Presets are the 
 
 The wizard does not preselect any preset: choose one to continue. Each option shows its resources, for example “u1.medium — 1 CPU / 4Gi”. If the list cannot be loaded, the wizard displays “The preset list could not be loaded. Try again later or contact support.”
 
-A cluster created with a former preset (`nano`, `micro`, `small`, `medium`, `large`, `xlarge` or `2xlarge`) keeps it and runs as before: the **Edit** form shows it as is and saves it unchanged. This preset has no catalog price: the console displays “Price unavailable” and the project dashboard leaves it out of the total cost, until the cluster moves to a preset from the list. Since the preset cannot be changed after creation, [contact support](mailto:support@hidora.io) for this change. If a cluster's resources were set outside its preset, the form says so with the mention “(override)”.
+A cluster created with a former preset (`nano`, `micro`, `small`, `medium`, `large`, `xlarge` or `2xlarge`) keeps it and runs as before: the **Edit** form shows it as is and saves it unchanged. Since the preset cannot be changed after creation, [contact support](mailto:support@hidora.io) for this change. If a cluster's resources were set outside its preset, the form says so with the mention “(override)”.
 
 ---
 

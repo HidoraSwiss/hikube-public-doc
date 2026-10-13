@@ -55,7 +55,7 @@ Inserisca il **Cluster Name**, ad esempio `demo-cache` (da 3 a 16 caratteri: min
 | **Public network** | Attivato | Necessario per connettersi dal suo computer |
 | **Enable authentication** | Attivato | Attiva per impostazione predefinita; da mantenere |
 
-Il banner nella parte superiore della procedura guidata mostra l'**Estimated Cost** e l'impatto sulle quote del progetto. Questo impatto conta anche i tre Sentinel del cluster, alla taglia del preset; non sono fatturati. Faccia clic su **Next**.
+Il banner nella parte superiore della procedura guidata mostra l'**Estimated Cost** e l'impatto sulle quote del progetto. Questo impatto conta anche i tre Sentinel del cluster, alla taglia del preset. Faccia clic su **Next**.
 
 :::warning
 Il **Number of replicas** non può più essere modificato dopo la creazione.

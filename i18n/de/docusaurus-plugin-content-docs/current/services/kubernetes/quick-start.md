@@ -40,7 +40,7 @@ Der Assistent umfasst vier Schritte: **General**, **Nodes**, **Addons** und **Su
 | **Cluster name** | `demo-cluster` (3 bis 16 Zeichen: Kleinbuchstaben, Ziffern und Bindestriche) |
 | **Kubernetes Version** | Die vorausgewählte Version (die neueste angebotene) |
 | **API Endpoint (Host)** | Leer lassen: Die Adresse wird automatisch von der Plattform erzeugt, ohne dass Sie DNS konfigurieren müssen |
-| **Control Plane Instance Size** | **u1.small — 1 CPU / 2Gi** (es ist keine Größe vorausgewählt: Wählen Sie eine aus) |
+| **Control Plane Instance Size** | **s1.small — 1 CPU / 2Gi** (es ist keine Größe vorausgewählt: Wählen Sie eine aus) |
 | **Control Plane High Availability** | **3 (HA)** |
 
 ![Assistent zum Erstellen eines Kubernetes-Clusters, Schritt General](/img/console/kubernetes/wizard-general.en.png)

@@ -142,7 +142,7 @@ Das **Preset** legt die Kapazität fest, die **jedem Knoten** des Clusters zugew
 
 Der Assistent wählt kein Preset vor: Wählen Sie eines aus, um fortzufahren. Jede Option zeigt ihre Ressourcen an, zum Beispiel „u1.medium — 1 CPU / 4Gi“. Kann die Liste nicht geladen werden, zeigt der Assistent „The preset list could not be loaded. Try again later or contact support.“ an.
 
-Ein Cluster, der mit einem früheren Preset (`nano`, `micro`, `small`, `medium`, `large`, `xlarge` oder `2xlarge`) erstellt wurde, behält es und läuft wie bisher: Das Formular **Edit** zeigt es unverändert an und speichert es ohne Änderung. Dieses Preset hat keinen Katalogpreis: Die Konsole zeigt „Price unavailable“ an, und das Dashboard des Projekts nimmt es von den Gesamtkosten aus, bis Sie ein Preset aus der Liste wählen. Wurden die Ressourcen eines Clusters abweichend von seinem Preset festgelegt, weist das Formular mit dem Vermerk „(override)“ darauf hin.
+Ein Cluster, der mit einem früheren Preset (`nano`, `micro`, `small`, `medium`, `large`, `xlarge` oder `2xlarge`) erstellt wurde, behält es und läuft wie bisher: Das Formular **Edit** zeigt es unverändert an und speichert es ohne Änderung. Wurden die Ressourcen eines Clusters abweichend von seinem Preset festgelegt, weist das Formular mit dem Vermerk „(override)“ darauf hin.
 
 Der Arbeitsspeicher des Presets begrenzt die Größe des Datenbestands, den Redis im Arbeitsspeicher halten kann. Frei definierbare CPU-/Arbeitsspeicher-Ressourcen werden in der Konsole nicht angeboten; wenden Sie sich an den Support.
 
@@ -152,7 +152,7 @@ Der Arbeitsspeicher des Presets begrenzt die Größe des Datenbestands, den Redi
 
 Der Assistent zeigt die **Estimated Cost** und die Auswirkung des Clusters auf die Quotas des Projekts an. Überschreitet der Cluster die verfügbaren Quotas, bleibt die Schaltfläche **Next** inaktiv.
 
-Neben den Replicas zählen die Quotas auch die drei Sentinels des Clusters, jeweils mit CPU und Arbeitsspeicher des gewählten Presets, ohne Speicher: Ein Cluster mit 3 Replicas reserviert also das Sechsfache an CPU und Arbeitsspeicher seines Presets. Die Sentinels werden nicht berechnet: Die geschätzten Kosten zählen nur die Replicas.
+Neben den Replicas zählen die Quotas auch die drei Sentinels des Clusters, jeweils mit CPU und Arbeitsspeicher des gewählten Presets, ohne Speicher: Ein Cluster mit 3 Replicas reserviert also das Sechsfache an CPU und Arbeitsspeicher seines Presets.
 
 | Parameter | Wert |
 |-----------|--------|

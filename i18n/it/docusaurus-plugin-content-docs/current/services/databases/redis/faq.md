@@ -11,7 +11,7 @@ Redis su Hikube è distribuito in architettura **Redis Sentinel** per l'alta dis
 
 - **Redis Sentinel** monitora le istanze Redis ed esegue una **commutazione automatica** (failover) in caso di guasto del master.
 - Un **quorum** di Sentinel decide il failover. Vengono sempre distribuiti tre Sentinel, qualunque sia il numero di repliche Redis: la commutazione funziona a partire da **2 repliche**.
-- I Sentinel contano nelle quote del progetto (CPU e memoria, alla taglia del preset del cluster), ma non sono fatturati.
+- I Sentinel contano nelle quote del progetto (CPU e memoria, alla taglia del preset del cluster).
 - L'indirizzo del campo **Host** segue il master: dopo una commutazione, punta automaticamente al nuovo master, senza cambio di indirizzo.
 
 :::tip

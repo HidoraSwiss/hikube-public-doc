@@ -55,7 +55,7 @@ Saisissez le **Nom du cluster**, par exemple `demo-cache` (3 à 16 caractères :
 | **Réseau public** | Activé | Nécessaire pour vous connecter depuis votre poste |
 | **Activer l'authentification** | Activé | Active par défaut ; à conserver |
 
-Le bandeau en haut de l'assistant affiche le **Coût estimé** et l'impact sur les quotas du projet. Cet impact compte aussi les trois sentinelles du cluster, à la taille de la préconfiguration ; elles ne sont pas facturées. Cliquez sur **Suivant**.
+Le bandeau en haut de l'assistant affiche le **Coût estimé** et l'impact sur les quotas du projet. Cet impact compte aussi les trois sentinelles du cluster, à la taille de la préconfiguration. Cliquez sur **Suivant**.
 
 :::warning
 Le **Nombre de réplicas** ne peut plus être modifié après la création.

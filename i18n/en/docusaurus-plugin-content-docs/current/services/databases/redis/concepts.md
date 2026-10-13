@@ -142,7 +142,7 @@ The **Preset** defines the capacity allocated to **each node** of the cluster. P
 
 The wizard does not preselect any preset: choose one to continue. Each option shows its resources, for example “u1.medium — 1 CPU / 4Gi”. If the list cannot be loaded, the wizard displays “The preset list could not be loaded. Try again later or contact support.”
 
-A cluster created with a former preset (`nano`, `micro`, `small`, `medium`, `large`, `xlarge` or `2xlarge`) keeps it and runs as before: the **Edit** form shows it as is and saves it unchanged. This preset has no catalog price: the console displays “Price unavailable” and the project dashboard leaves it out of the total cost, until you choose a preset from the list. If a cluster's resources were set outside its preset, the form says so with the mention “(override)”.
+A cluster created with a former preset (`nano`, `micro`, `small`, `medium`, `large`, `xlarge` or `2xlarge`) keeps it and runs as before: the **Edit** form shows it as is and saves it unchanged. If a cluster's resources were set outside its preset, the form says so with the mention “(override)”.
 
 The preset's memory caps the size of the dataset Redis can keep in memory. Custom CPU/memory resources are not offered in the console; contact support.
 
@@ -152,7 +152,7 @@ The preset's memory caps the size of the dataset Redis can keep in memory. Custo
 
 The wizard displays the **Estimated cost** and the cluster's impact on the project quotas. If the cluster exceeds the available quotas, the **Next** button stays disabled.
 
-Besides the replicas, the quota counts the cluster's three sentinels, each with the CPU and memory of the chosen preset, without storage: a 3-replica cluster therefore reserves 6 times the CPU and memory of its preset. Sentinels are not billed: the estimated cost only counts the replicas.
+Besides the replicas, the quota counts the cluster's three sentinels, each with the CPU and memory of the chosen preset, without storage: a 3-replica cluster therefore reserves 6 times the CPU and memory of its preset.
 
 | Parameter | Value |
 |-----------|-------|

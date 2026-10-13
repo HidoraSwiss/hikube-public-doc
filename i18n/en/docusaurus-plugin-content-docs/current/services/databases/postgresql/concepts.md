@@ -149,7 +149,7 @@ The **Instance preset** defines the capacity allocated to **each node** of the c
 
 The wizard does not preselect any preset: choose one to continue. Each option shows its resources, for example “u1.medium — 1 CPU / 4Gi”. If the list cannot be loaded, the wizard displays “The preset list could not be loaded. Try again later or contact support.”
 
-A cluster created with a former preset (`nano`, `micro`, `small`, `medium`, `large`, `xlarge` or `2xlarge`) keeps it and runs as before: the **Edit** form shows it as is and saves it unchanged. This preset has no catalog price: the console displays “Price unavailable” and the project dashboard leaves it out of the total cost, until you choose a preset from the list. If a cluster's resources were set outside its preset, the form says so with the mention “(override)”.
+A cluster created with a former preset (`nano`, `micro`, `small`, `medium`, `large`, `xlarge` or `2xlarge`) keeps it and runs as before: the **Edit** form shows it as is and saves it unchanged. If a cluster's resources were set outside its preset, the form says so with the mention “(override)”.
 
 Defining custom CPU/memory resources (outside presets) is not offered in the console; contact support.
 

@@ -55,7 +55,7 @@ Enter the **Cluster Name**, for example `demo-cache` (3 to 16 characters: lowerc
 | **Public network** | Enabled | Required to connect from your workstation |
 | **Enable authentication** | Enabled | On by default; keep it |
 
-The banner at the top of the wizard shows the **Estimated cost** and the impact on the project quotas. This impact also counts the cluster's three sentinels, at the size of the preset; they are not billed. Click **Next**.
+The banner at the top of the wizard shows the **Estimated cost** and the impact on the project quotas. This impact also counts the cluster's three sentinels, at the size of the preset. Click **Next**.
 
 :::warning
 The **Number of replicas** cannot be changed after creation.

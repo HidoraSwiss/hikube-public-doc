@@ -72,9 +72,9 @@ Die Erstellungsassistenten bieten vordefinierte Größen an:
 
 - **VMs und Kubernetes-Nodes**: Instanztypen der Serien `s1`, `u1` und `m1` (von 1 bis 64 vCPU). Siehe [Kubernetes-Konzepte](../services/kubernetes/concepts.md) und [Konzepte virtueller Maschinen](../services/compute/concepts.md).
 - **Verwaltete Datenbanken und RabbitMQ** (PostgreSQL, MariaDB, MongoDB, Redis, RabbitMQ): die Größen der VMs, Serien `u1`, `s1` und `m1`, von `s1.small` (1 vCPU, 2 GB) bis `m1.8xlarge` (32 vCPU, 256 GB). Eine Größe hat dieselben Ressourcen wie die gleichnamige VM: `u1.medium` entspricht 1 vCPU und 4 GB. Siehe die Konzeptseite des jeweiligen Services.
-- **Kubernetes Control Plane**: `u1.small` (1 vCPU, 2 GB) oder `u1.2xmedium` (2 vCPU, 4 GB), angewendet auf jede ihrer vier Komponenten. Siehe [Kubernetes-Konzepte](../services/kubernetes/concepts.md#control-plane-instance-size).
+- **Kubernetes Control Plane**: `s1.small` (1 vCPU, 2 GB) oder `s1.medium` (2 vCPU, 4 GB), angewendet auf jede ihrer vier Komponenten. Siehe [Kubernetes-Konzepte](../services/kubernetes/concepts.md#control-plane-instance-size).
 
-Bei der Erstellung ist keine Größe vorausgewählt: Wählen Sie eine aus. Eine Ressource, die mit einer früheren Größe (`small`, `medium`…) erstellt wurde, behält diese und bleibt bearbeitbar. Für eine solche Datenbank zeigt die Konsole „Price unavailable“ an, und das Dashboard des Projekts gibt an, welche Datenbanken nicht in den Gesamtkosten enthalten sind („Excludes 1 database without a price“).
+Bei der Erstellung ist keine Größe vorausgewählt: Wählen Sie eine aus. Eine Ressource, die mit einer früheren Größe (`small`, `medium`…) erstellt wurde, behält diese und bleibt bearbeitbar.
 
 Jeder Assistent zeigt vor der Erstellung die Auswirkung auf die Quota des Projekts und die geschätzten Kosten an.
 

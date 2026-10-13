@@ -120,12 +120,12 @@ Die Control Plane wird im Schritt **General** des Erstellungsassistenten mit zwe
 
 ### Control Plane Instance Size
 
-Größe, die auf jede der vier Komponenten der Control Plane angewendet wird: API server, Controller manager, Scheduler und Konnectivity. Die Liste wird von der Plattform bereitgestellt, und jede Option zeigt ihre CPU und ihren Arbeitsspeicher an, zum Beispiel „u1.small — 1 CPU / 2Gi“.
+Größe, die auf jede der vier Komponenten der Control Plane angewendet wird: API server, Controller manager, Scheduler und Konnectivity. Die Liste wird von der Plattform bereitgestellt, und jede Option zeigt ihre CPU und ihren Arbeitsspeicher an, zum Beispiel „s1.small — 1 CPU / 2Gi“.
 
 | Größe | vCPU | RAM (pro Komponente) |
 |-------|------|----------------------|
-| `u1.small` | 1 | 2 GB |
-| `u1.2xmedium` | 2 | 4 GB |
+| `s1.small` | 1 | 2 GB |
+| `s1.medium` | 2 | 4 GB |
 
 Es ist keine Größe vorausgewählt: Das Feld zeigt „Select a size“, bis Sie eine Größe wählen. Kann die Liste nicht geladen werden, weist die Konsole darauf hin: „The preset list could not be loaded. Try again later or contact support.“
 
@@ -140,7 +140,7 @@ Eine Dimensionierung pro Komponente (dedizierte Ressourcen für API Server, Sche
 Anzahl der Instanzen der Control Plane: **1**, **3 (HA)** oder **5 (HA)**. Der Standardwert ist 3.
 Eine ungerade Anzahl an Instanzen garantiert das Quorum von `etcd`; verwenden Sie in der Produktion mindestens 3 Instanzen.
 
-Unter dem Feld zeigt die Konsole den auf die Projekt-Quota angerechneten Verbrauch an, zum Beispiel „→ 3 replicas × 4 components = 12 CPU · 24 GiB counted against the quota“ für die Größe `u1.small`: Die Quota zählt die vier Komponenten jeder Instanz der Control Plane.
+Unter dem Feld zeigt die Konsole den auf die Projekt-Quota angerechneten Verbrauch an, zum Beispiel „→ 3 replicas × 4 components = 12 CPU · 24 GiB counted against the quota“ für die Größe `s1.small`: Die Quota zählt die vier Komponenten jeder Instanz der Control Plane.
 
 :::warning
 Größe und Anzahl der Instanzen der Control Plane lassen sich nach der Erstellung des Clusters in der Konsole nicht ändern. Um sie zu ändern, wenden Sie sich an den Support.

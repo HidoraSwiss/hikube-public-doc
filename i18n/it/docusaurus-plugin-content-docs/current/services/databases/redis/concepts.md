@@ -142,7 +142,7 @@ Il **Preset** definisce la capacità allocata a **ogni nodo** del cluster. I pre
 
 La procedura guidata non preseleziona alcun preset: ne scelga uno per proseguire. Ogni opzione indica le sue risorse, ad esempio « u1.medium — 1 CPU / 4Gi ». Se l'elenco non può essere caricato, la procedura guidata mostra « The preset list could not be loaded. Try again later or contact support. »
 
-Un cluster creato con un vecchio preset (`nano`, `micro`, `small`, `medium`, `large`, `xlarge` o `2xlarge`) lo conserva e funziona come prima: il modulo **Edit** lo mostra così com'è e lo salva senza modifiche. Questo preset non ha un prezzo di listino: la console mostra « Price unavailable » e la dashboard del progetto lo esclude dal costo totale, finché non sceglie un preset dell'elenco. Se le risorse di un cluster sono state fissate al di fuori del suo preset, il modulo lo indica con la menzione « (override) ».
+Un cluster creato con un vecchio preset (`nano`, `micro`, `small`, `medium`, `large`, `xlarge` o `2xlarge`) lo conserva e funziona come prima: il modulo **Edit** lo mostra così com'è e lo salva senza modifiche. Se le risorse di un cluster sono state fissate al di fuori del suo preset, il modulo lo indica con la menzione « (override) ».
 
 La memoria del preset limita la dimensione del dataset che Redis può mantenere in memoria. La definizione di risorse CPU/memoria personalizzate non è disponibile nella console; contatti il supporto.
 
@@ -152,7 +152,7 @@ La memoria del preset limita la dimensione del dataset che Redis può mantenere 
 
 La procedura guidata mostra l'**Estimated Cost** e l'impatto del cluster sulle quote del progetto. Se il cluster supera le quote disponibili, il pulsante **Next** resta inattivo.
 
-Oltre alle repliche, la quota conta i tre Sentinel del cluster, ciascuno con la CPU e la memoria del preset scelto, senza storage: un cluster con 3 repliche riserva quindi 6 volte la CPU e la memoria del suo preset. I Sentinel non sono fatturati: il costo stimato conta solo le repliche.
+Oltre alle repliche, la quota conta i tre Sentinel del cluster, ciascuno con la CPU e la memoria del preset scelto, senza storage: un cluster con 3 repliche riserva quindi 6 volte la CPU e la memoria del suo preset.
 
 | Parametro | Valore |
 |-----------|--------|

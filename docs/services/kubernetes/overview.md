@@ -51,7 +51,7 @@ Le détail de chaque champ est décrit dans les [concepts](./concepts.md) et le 
 ### Control Plane
 
 - Géré par Hikube, sans maintenance nécessaire de votre part
-- Dimensionné par une taille (**Taille de l'instance Control Plane** : `u1.small` ou `u1.2xmedium`, appliquée à ses quatre composants) et un nombre d'instances (**Haute Disponibilité du Control Plane** : 1, 3 ou 5)
+- Dimensionné par une taille (**Taille de l'instance Control Plane** : `s1.small` ou `s1.medium`, appliquée à ses quatre composants) et un nombre d'instances (**Haute Disponibilité du Control Plane** : 1, 3 ou 5)
 - Accès via l'API standard Kubernetes (`kubectl`, client SDK, etc.) avec le kubeconfig téléchargé depuis la console
 
 ### Groupes de nœuds

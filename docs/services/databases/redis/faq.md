@@ -11,7 +11,7 @@ Redis sur Hikube est déployé en architecture **Redis Sentinel** pour la haute 
 
 - **Redis Sentinel** surveille les instances Redis et effectue un **basculement automatique** (failover) en cas de panne du master.
 - Un **quorum** de sentinelles décide du failover. Trois sentinelles sont toujours déployées, quel que soit le nombre de réplicas Redis : le basculement fonctionne dès **2 réplicas**.
-- Les sentinelles comptent dans les quotas du projet (CPU et mémoire, à la taille de la préconfiguration du cluster), mais ne sont pas facturées.
+- Les sentinelles comptent dans les quotas du projet (CPU et mémoire, à la taille de la préconfiguration du cluster).
 - L'adresse du champ **Hôte** suit le master : après un basculement, elle pointe automatiquement vers le nouveau master, sans changement d'adresse.
 
 :::tip

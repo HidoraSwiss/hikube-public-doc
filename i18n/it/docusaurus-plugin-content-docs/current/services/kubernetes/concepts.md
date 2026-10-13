@@ -120,12 +120,12 @@ Il control plane si dimensiona nel passaggio **General** della procedura guidata
 
 ### Control Plane Instance Size
 
-Dimensione applicata a ciascuno dei quattro componenti del control plane: API server, Controller manager, Scheduler e Konnectivity. L'elenco è fornito dalla piattaforma e ogni opzione mostra la propria CPU e la propria memoria, ad esempio «u1.small — 1 CPU / 2Gi».
+Dimensione applicata a ciascuno dei quattro componenti del control plane: API server, Controller manager, Scheduler e Konnectivity. L'elenco è fornito dalla piattaforma e ogni opzione mostra la propria CPU e la propria memoria, ad esempio «s1.small — 1 CPU / 2Gi».
 
 | Dimensione | vCPU | RAM (per componente) |
 |------------|------|----------------------|
-| `u1.small` | 1 | 2 GB |
-| `u1.2xmedium` | 2 | 4 GB |
+| `s1.small` | 1 | 2 GB |
+| `s1.medium` | 2 | 4 GB |
 
 Nessuna dimensione è preselezionata: il campo mostra «Select a size» finché non ne sceglie una. Se l'elenco non può essere caricato, la console lo segnala: «The preset list could not be loaded. Try again later or contact support.»
 
@@ -140,7 +140,7 @@ Il dimensionamento componente per componente (risorse dedicate all'API Server, a
 Numero di istanze del control plane: **1**, **3 (HA)** o **5 (HA)**. Il valore predefinito è 3.
 Un numero dispari di istanze garantisce il quorum di `etcd`; utilizzi almeno 3 istanze in produzione.
 
-Sotto il campo, la console mostra l'impronta conteggiata nella quota del progetto, ad esempio «→ 3 replicas × 4 components = 12 CPU · 24 GiB counted against the quota» per la dimensione `u1.small`: la quota conteggia i quattro componenti di ogni istanza del control plane.
+Sotto il campo, la console mostra l'impronta conteggiata nella quota del progetto, ad esempio «→ 3 replicas × 4 components = 12 CPU · 24 GiB counted against the quota» per la dimensione `s1.small`: la quota conteggia i quattro componenti di ogni istanza del control plane.
 
 :::warning
 La dimensione e il numero di istanze del control plane non sono modificabili nella console dopo la creazione del cluster. Per cambiarli, contatti il supporto.
