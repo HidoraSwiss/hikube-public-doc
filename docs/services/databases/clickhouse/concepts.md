@@ -1,6 +1,8 @@
 ---
 sidebar_position: 2
-title: Concepts
+title: "Concepts — ClickHouse"
+sidebar_label: Concepts
+description: "Comprenez ClickHouse sur Hikube : architecture, sharding et réplication, rôle de ClickHouse Keeper, sauvegardes chiffrées vers S3, utilisateurs et presets."
 ---
 
 # Concepts — ClickHouse

@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Risoluzione dei problemi
+title: "Risoluzione dei problemi — Redis"
+sidebar_label: Risoluzione dei problemi
+description: "Risolvete i problemi comuni di Redis su Hikube: cluster in errore, host in attesa, timeout, NOAUTH o WRONGPASS, memoria satura, failover che non avviene."
 ---
 
 # Risoluzione dei problemi — Redis

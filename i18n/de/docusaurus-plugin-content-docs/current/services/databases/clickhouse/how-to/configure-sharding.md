@@ -1,5 +1,6 @@
 ---
 title: "ClickHouse-Sharding konfigurieren"
+description: "Wählen Sie Shards und Replikate für eine ClickHouse-Instanz auf Hikube, beantragen Sie die Topologie und erstellen Sie Distributed-Tabellen."
 sidebar_position: 3
 ---
 

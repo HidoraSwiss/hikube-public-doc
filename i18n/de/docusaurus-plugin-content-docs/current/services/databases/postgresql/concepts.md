@@ -1,6 +1,8 @@
 ---
 sidebar_position: 2
-title: Konzepte
+title: "Konzepte — PostgreSQL"
+sidebar_label: Konzepte
+description: "Verstehen Sie PostgreSQL auf Hikube: WAL-Streaming-Replikation, automatisches Failover, Systemdatenbanken, Namensregeln, Presets, Netzwerkzugang und Backups."
 ---
 
 # Konzepte — PostgreSQL

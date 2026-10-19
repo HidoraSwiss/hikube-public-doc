@@ -1,6 +1,7 @@
 ---
 sidebar_position: 2
 title: Key concepts
+description: "The key Hikube notions: web console, organization, projects, quotas and managed services, to understand how your resources are organized and managed."
 ---
 
 # Hikube key concepts

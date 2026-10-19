@@ -1,6 +1,8 @@
 ---
 sidebar_position: 3
-title: Quick start
+title: "Deploy MongoDB in 5 minutes"
+sidebar_label: Quick start
+description: "Create a MongoDB replica set from the Hikube console, give a user access to an application database and connect to it with mongosh."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

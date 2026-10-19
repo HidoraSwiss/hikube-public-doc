@@ -1,6 +1,8 @@
 ---
 sidebar_position: 3
-title: Avvio rapido
+title: "Creare la prima macchina virtuale"
+sidebar_label: Avvio rapido
+description: "Create una VM Ubuntu dalla console Hikube con IP pubblico, disco replicato e chiave SSH, poi collegatevi in SSH ed eliminatela dopo i test."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

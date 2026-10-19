@@ -1,6 +1,8 @@
 ---
 sidebar_position: 3
-title: Schnellstart
+title: "Erste Schritte mit NATS"
+sidebar_label: Schnellstart
+description: "Erste Schritte mit NATS auf Hikube: Instanz beim Support anfordern, JetStream-Stream erstellen, erste Nachricht senden und lesen, häufige Fehler beheben."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

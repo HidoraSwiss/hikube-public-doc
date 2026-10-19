@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Dépannage
+title: "Dépannage — Kubernetes"
+sidebar_label: Dépannage
+description: "Résolvez les problèmes courants du Kubernetes Hikube : cluster bloqué en création, quota, kubeconfig refusé ou expiré, nœuds NotReady, pods et PVC en Pending."
 ---
 
 # Dépannage — Kubernetes

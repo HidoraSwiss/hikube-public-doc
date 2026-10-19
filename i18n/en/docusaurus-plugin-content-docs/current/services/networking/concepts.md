@@ -1,6 +1,8 @@
 ---
 sidebar_position: 2
-title: Concepts
+title: "Concepts — Networking"
+sidebar_label: Concepts
+description: "Understand networking for Hikube VMs: the primary network, VPCs and subnets, naming rules, private address ranges, isolation and lifecycle."
 ---
 
 # Concepts — Networking

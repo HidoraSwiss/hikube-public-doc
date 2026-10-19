@@ -1,6 +1,8 @@
 ---
 sidebar_position: 3
-title: Démarrage rapide
+title: "Démarrage rapide avec Hikube"
+sidebar_label: Démarrage rapide
+description: "Connectez-vous à la console Hikube, créez un projet puis votre premier cluster Kubernetes, et interrogez-le avec kubectl en une dizaine de minutes."
 ---
 
 # Démarrage rapide avec Hikube

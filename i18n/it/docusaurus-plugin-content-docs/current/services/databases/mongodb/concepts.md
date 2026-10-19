@@ -1,6 +1,8 @@
 ---
 sidebar_position: 2
-title: Concetti
+title: "Concetti — MongoDB"
+sidebar_label: Concetti
+description: "I concetti di MongoDB su Hikube: replica set ed elezione del primary, sharding, utenti e ruoli per database, preset, accesso di rete e backup."
 ---
 
 # Concetti — MongoDB

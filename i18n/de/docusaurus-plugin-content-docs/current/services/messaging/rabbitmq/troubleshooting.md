@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Fehlerbehebung
+title: "Fehlerbehebung — RabbitMQ"
+sidebar_label: Fehlerbehebung
+description: "RabbitMQ-Probleme auf Hikube beheben: Cluster hängt bei Erstellung, Speicherquote, abgelehnte AMQP-Verbindung, blockierte Publikation, ungeroutete Nachrichten."
 ---
 
 # Fehlerbehebung — RabbitMQ

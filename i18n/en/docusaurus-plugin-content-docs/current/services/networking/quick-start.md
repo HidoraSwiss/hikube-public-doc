@@ -1,6 +1,8 @@
 ---
 sidebar_position: 3
-title: Quick start
+title: "Create a VPC and connect two VMs to it"
+sidebar_label: Quick start
+description: "Create a VPC with a subnet from the Hikube console, connect two virtual machines to it and check that they communicate over their private addresses."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

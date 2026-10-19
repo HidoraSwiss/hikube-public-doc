@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Dépannage
+title: "Dépannage — Machines virtuelles"
+sidebar_label: Dépannage
+description: "Résolvez les problèmes courants des VM Hikube : assistant bloqué, VM en erreur, timeout ou refus SSH, disque ajouté invisible, DNS .local, VM sans réponse."
 ---
 
 # Dépannage — Machines virtuelles

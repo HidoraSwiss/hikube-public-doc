@@ -1,6 +1,8 @@
 ---
 sidebar_position: 6
-title: FAQ
+title: "FAQ — Bucket S3"
+sidebar_label: FAQ
+description: "Risposte alle domande frequenti sui bucket S3 Hikube: endpoint, nome S3 del bucket, strumenti compatibili, chiavi perse, blocco WORM e cifratura."
 ---
 
 # FAQ — Bucket S3

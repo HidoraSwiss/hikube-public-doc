@@ -1,6 +1,8 @@
 ---
 sidebar_position: 1
-title: Übersicht
+title: "PostgreSQL auf Hikube"
+sidebar_label: Übersicht
+description: "Lernen Sie den verwalteten PostgreSQL-Dienst von Hikube kennen: replizierter Cluster mit Primary und Standby, automatisches Failover, Versionen 15 bis 18."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

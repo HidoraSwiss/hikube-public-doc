@@ -1,5 +1,6 @@
 ---
 title: "Benutzer verwalten"
+description: "NATS-Benutzer auf Hikube verwalten: ein Konto pro Zweck festlegen, die Erstellung beim Support anfordern, die Verbindung mit der nats-CLI testen und prüfen."
 ---
 
 # NATS-Benutzer verwalten

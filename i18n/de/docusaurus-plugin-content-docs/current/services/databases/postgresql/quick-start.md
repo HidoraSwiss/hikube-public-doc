@@ -1,6 +1,8 @@
 ---
 sidebar_position: 3
-title: Schnellstart
+title: "PostgreSQL in 5 Minuten bereitstellen"
+sidebar_label: Schnellstart
+description: "Erstellen Sie in der Hikube-Konsole einen PostgreSQL-Cluster mit Datenbank und Benutzer, rufen Sie das generierte Passwort ab und verbinden Sie sich mit psql."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

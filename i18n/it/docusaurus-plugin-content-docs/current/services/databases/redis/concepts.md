@@ -1,6 +1,8 @@
 ---
 sidebar_position: 2
-title: Concetti
+title: "Concetti — Redis"
+sidebar_label: Concetti
+description: "I concetti di Redis su Hikube: architettura master e repliche, failover gestito da Redis Sentinel, persistenza su disco, autenticazione e accesso di rete."
 ---
 
 # Concetti — Redis

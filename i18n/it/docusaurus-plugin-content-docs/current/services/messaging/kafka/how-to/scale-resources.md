@@ -1,5 +1,6 @@
 ---
 title: "Come scalare il cluster"
+description: "Scalare un cluster Kafka su Hikube: capire il bisogno, scegliere numero di broker, preset e storage, dimensionare ZooKeeper e farne richiesta al supporto."
 ---
 
 # Come scalare il cluster Kafka

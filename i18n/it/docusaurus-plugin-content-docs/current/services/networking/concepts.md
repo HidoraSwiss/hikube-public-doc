@@ -1,6 +1,8 @@
 ---
 sidebar_position: 2
-title: Concetti
+title: "Concetti — Rete"
+sidebar_label: Concetti
+description: "I concetti della rete delle VM Hikube: rete principale, VPC e sottoreti, regole di denominazione, intervalli di indirizzi privati, isolamento e ciclo di vita."
 ---
 
 # Concetti — Rete

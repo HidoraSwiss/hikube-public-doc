@@ -1,6 +1,7 @@
 ---
 sidebar_position: 1
 title: Introduction to Hikube
+description: "Discover Hikube, a sovereign cloud hosted in Switzerland: infrastructure across three datacenters, available services, security, isolation and prerequisites."
 ---
 
 # Introduction to Hikube

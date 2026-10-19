@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Fehlerbehebung
+title: "Fehlerbehebung — PostgreSQL"
+sidebar_label: Fehlerbehebung
+description: "Beheben Sie häufige PostgreSQL-Probleme auf Hikube: Cluster hängt oder im Fehler, Verbindung abgelehnt, Authentifizierung fehlgeschlagen, volle Festplatte."
 ---
 
 # Fehlerbehebung — PostgreSQL

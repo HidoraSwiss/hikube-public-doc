@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Troubleshooting
+title: "Troubleshooting — Networking"
+sidebar_label: Troubleshooting
+description: "Fix common Hikube VPC problems: CIDR block or name rejected, VPC in error, interface without an address, VMs that cannot reach each other, lost Internet access."
 ---
 
 # Troubleshooting — Networking

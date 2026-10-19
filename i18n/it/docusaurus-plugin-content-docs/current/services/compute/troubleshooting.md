@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Risoluzione dei problemi
+title: "Risoluzione dei problemi — Macchine virtuali"
+sidebar_label: Risoluzione dei problemi
+description: "Risolvete i problemi comuni delle VM Hikube: procedura guidata bloccata, VM in errore, timeout o rifiuto SSH, disco aggiunto non visibile e DNS .local."
 ---
 
 # Risoluzione dei problemi — Macchine virtuali

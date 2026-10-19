@@ -1,6 +1,8 @@
 ---
 sidebar_position: 3
-title: Avvio rapido
+title: "Iniziare con Kafka"
+sidebar_label: Avvio rapido
+description: "Iniziare con Kafka su Hikube: richiedere un'istanza al supporto, pubblicare e consumare un primo messaggio su un topic e diagnosticare gli errori."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

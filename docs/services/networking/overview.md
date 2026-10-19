@@ -1,6 +1,8 @@
 ---
 sidebar_position: 1
-title: Vue d'ensemble
+title: "Réseaux privés sur Hikube"
+sidebar_label: Vue d'ensemble
+description: "Découvrez les réseaux privés Hikube : des VPC isolés par projet, composés de sous-réseaux IPv4 privés, pour faire communiquer vos VM entre elles."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Dépannage
+title: "Dépannage — ClickHouse"
+sidebar_label: Dépannage
+description: "Résolvez les problèmes de ClickHouse sur Hikube : requêtes lentes sur gros volumes, disque insuffisant, erreurs de réplication ou de Keeper, authentification."
 ---
 
 # Dépannage — ClickHouse

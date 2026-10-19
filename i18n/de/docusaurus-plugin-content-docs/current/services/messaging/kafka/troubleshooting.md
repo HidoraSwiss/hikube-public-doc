@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Fehlerbehebung
+title: "Fehlerbehebung — Kafka"
+sidebar_label: Fehlerbehebung
+description: "Häufige Kafka-Probleme auf Hikube: Verbindungsfehler, Verlust des ZooKeeper-Quorums, nicht verfügbare Broker, Consumer Lag, Speichermangel und Duplikate."
 ---
 
 # Fehlerbehebung — Kafka

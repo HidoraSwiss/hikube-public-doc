@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Troubleshooting
+title: "Troubleshooting — Disks"
+sidebar_label: Troubleshooting
+description: "Fix common Hikube disk problems: quota exceeded, minimum size, disk in error or not visible in the VM, resizing not taken into account, deletion that fails."
 ---
 
 # Troubleshooting — Disks

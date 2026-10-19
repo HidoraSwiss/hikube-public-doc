@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Dépannage
+title: "Dépannage — Réseau"
+sidebar_label: Dépannage
+description: "Résolvez les problèmes courants des VPC Hikube : bloc CIDR ou nom refusé, VPC en erreur, interface sans adresse, VM qui ne communiquent pas, perte d'Internet."
 ---
 
 # Dépannage — Réseau

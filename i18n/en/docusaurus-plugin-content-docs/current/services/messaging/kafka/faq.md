@@ -1,6 +1,8 @@
 ---
 sidebar_position: 6
-title: FAQ
+title: "FAQ — Kafka"
+sidebar_label: FAQ
+description: "Common questions about Kafka on Hikube: getting a cluster, partitions and replication, ZooKeeper, cleanup.policy, consumer groups, presets and external access."
 ---
 
 # FAQ — Kafka

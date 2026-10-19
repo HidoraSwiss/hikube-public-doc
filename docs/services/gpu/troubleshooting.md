@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Dépannage
+title: "Dépannage — GPU"
+sidebar_label: Dépannage
+description: "Solutions aux problèmes GPU sur Hikube : modèles indisponibles, VM qui ne redémarre pas, GPU non détecté, drivers NVIDIA manquants et pods GPU en Pending."
 ---
 
 # Dépannage — GPU

@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Troubleshooting
+title: "Troubleshooting — ClickHouse"
+sidebar_label: Troubleshooting
+description: "Fix common ClickHouse issues on Hikube: slow queries on large volumes, insufficient disk space, replication or Keeper errors, authentication refused."
 ---
 
 # Troubleshooting — ClickHouse

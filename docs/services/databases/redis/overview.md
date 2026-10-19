@@ -1,6 +1,8 @@
 ---
 sidebar_position: 1
-title: Vue d'ensemble
+title: "Redis sur Hikube"
+sidebar_label: Vue d'ensemble
+description: "Découvrez le service Redis managé de Hikube : un master et ses réplicas surveillés par Redis Sentinel, avec failover automatique et gestion depuis la console."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

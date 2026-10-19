@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Troubleshooting
+title: "Troubleshooting — Virtual machines"
+sidebar_label: Troubleshooting
+description: "Fix common Hikube VM problems: a blocked wizard, a VM in error, SSH timeout or denial, an added disk not showing, .local DNS and an unresponsive VM."
 ---
 
 # Troubleshooting — Virtual machines

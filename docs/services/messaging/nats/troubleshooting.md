@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Dépannage
+title: "Dépannage — NATS"
+sidebar_label: Dépannage
+description: "Problèmes courants de NATS sur Hikube : messages perdus sans JetStream, consumer qui ne reçoit rien, stockage JetStream plein, mémoire, connexion refusée."
 ---
 
 # Dépannage — NATS

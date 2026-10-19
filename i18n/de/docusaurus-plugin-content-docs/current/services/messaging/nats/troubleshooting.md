@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Fehlerbehebung
+title: "Fehlerbehebung — NATS"
+sidebar_label: Fehlerbehebung
+description: "Häufige NATS-Probleme auf Hikube: verlorene Nachrichten ohne JetStream, Consumer empfängt nichts, voller JetStream-Speicher, Speichermangel, Verbindungsfehler."
 ---
 
 # Fehlerbehebung — NATS

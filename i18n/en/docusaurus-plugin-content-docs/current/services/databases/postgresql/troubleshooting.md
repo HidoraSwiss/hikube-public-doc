@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Troubleshooting
+title: "Troubleshooting — PostgreSQL"
+sidebar_label: Troubleshooting
+description: "Fix common PostgreSQL issues on Hikube: cluster stuck or in error, connection refused, authentication failure, permission denied, full disk."
 ---
 
 # Troubleshooting — PostgreSQL

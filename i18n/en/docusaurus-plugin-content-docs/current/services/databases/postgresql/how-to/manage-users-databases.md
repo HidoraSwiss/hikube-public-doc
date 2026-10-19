@@ -1,5 +1,6 @@
 ---
-title: "How to manage users and databases"
+title: "How to manage users and databases — PostgreSQL"
+sidebar_label: "How to manage users and databases"
 sidebar_position: 1
 ---
 

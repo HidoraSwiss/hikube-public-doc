@@ -1,5 +1,6 @@
 ---
 title: "Topics erstellen und verwalten"
+description: "Kafka-Topics auf Hikube erstellen und verwalten: Partitionen und Replikate festlegen, Aufbewahrung und Cleanup-Policy wählen, Anfrage senden und prüfen."
 ---
 
 # Topics erstellen und verwalten

@@ -1,6 +1,8 @@
 ---
 sidebar_position: 3
-title: Schnellstart
+title: "Einen RabbitMQ-Cluster in 5 Minuten erstellen"
+sidebar_label: Schnellstart
+description: "Einen RabbitMQ-Cluster in der Hikube-Konsole erstellen, Zugangsdaten abrufen, dann eine Quorum Queue anlegen und eine erste Nachricht senden."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

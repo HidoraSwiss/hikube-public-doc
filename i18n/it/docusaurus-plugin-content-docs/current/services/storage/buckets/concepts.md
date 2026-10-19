@@ -1,6 +1,8 @@
 ---
 sidebar_position: 2
-title: Concetti
+title: "Concetti — Bucket S3"
+sidebar_label: Concetti
+description: "Come funzionano i bucket S3 su Hikube: replica su tre datacenter, utenti e permessi, ambito delle chiavi, opzioni fissate alla creazione e limiti del servizio."
 ---
 
 # Concetti — Bucket S3

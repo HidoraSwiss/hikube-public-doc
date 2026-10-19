@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Troubleshooting
+title: "Troubleshooting — Kubernetes"
+sidebar_label: Troubleshooting
+description: "Fix common Hikube Kubernetes problems: a cluster stuck in creation, quota, a refused or expired kubeconfig, NotReady nodes, and pods or PVCs in Pending."
 ---
 
 # Troubleshooting — Kubernetes

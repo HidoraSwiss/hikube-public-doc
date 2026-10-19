@@ -1,5 +1,6 @@
 ---
-title: "Come modificare le risorse di un cluster"
+title: "Come modificare le risorse di un cluster — PostgreSQL"
+sidebar_label: "Come modificare le risorse di un cluster"
 sidebar_position: 2
 ---
 

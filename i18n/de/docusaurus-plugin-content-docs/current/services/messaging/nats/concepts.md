@@ -1,6 +1,8 @@
 ---
 sidebar_position: 2
-title: Konzepte
+title: "Konzepte — NATS"
+sidebar_label: Konzepte
+description: "NATS auf Hikube verstehen: Architektur, Subjects, Pub/Sub, Queue Groups und Request/Reply, JetStream, Benutzerverwaltung, Presets und Grenzen des Dienstes."
 ---
 
 # Konzepte — NATS

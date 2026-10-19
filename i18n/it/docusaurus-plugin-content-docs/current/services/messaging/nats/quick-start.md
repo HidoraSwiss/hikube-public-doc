@@ -1,6 +1,8 @@
 ---
 sidebar_position: 3
-title: Avvio rapido
+title: "Iniziare con NATS"
+sidebar_label: Avvio rapido
+description: "Iniziare con NATS su Hikube: richiedere un'istanza al supporto, creare uno stream JetStream, pubblicare e leggere un primo messaggio, risolvere errori comuni."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

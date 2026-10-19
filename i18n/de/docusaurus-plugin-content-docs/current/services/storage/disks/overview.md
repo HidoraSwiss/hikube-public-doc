@@ -1,6 +1,8 @@
 ---
 sidebar_position: 1
-title: Übersicht
+title: "Disks auf Hikube"
+sidebar_label: Übersicht
+description: "Lernen Sie Hikube-Disks kennen: persistente, replizierte Block-Volumes, die Sie in der Konsole erstellen, an VMs anhängen, vergrößern oder umhängen."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

@@ -1,6 +1,8 @@
 ---
 sidebar_position: 6
-title: FAQ
+title: "FAQ — Disques"
+sidebar_label: FAQ
+description: "Réponses aux questions sur les disques Hikube : différence avec un bucket S3, attachement aux VM, réduction de taille, choix de la réplication, suppression."
 ---
 
 # FAQ — Disques

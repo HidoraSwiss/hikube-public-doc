@@ -1,6 +1,8 @@
 ---
 sidebar_position: 2
-title: Konzepte
+title: "Konzepte — Netzwerk"
+sidebar_label: Konzepte
+description: "Verstehen Sie das Netzwerk der Hikube-VMs: primäres Netzwerk, VPCs und Subnetze, Benennungsregeln, private Adressbereiche, Isolation und Lebenszyklus."
 ---
 
 # Konzepte — Netzwerk

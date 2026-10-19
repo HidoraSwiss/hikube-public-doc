@@ -1,6 +1,8 @@
 ---
 sidebar_position: 2
-title: Concetti
+title: "Concetti — ClickHouse"
+sidebar_label: Concetti
+description: "I concetti di ClickHouse su Hikube: architettura, sharding e replica, ruolo di ClickHouse Keeper, backup cifrati su S3, utenti e preset di risorse."
 ---
 
 # Concetti — ClickHouse

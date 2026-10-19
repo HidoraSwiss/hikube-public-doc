@@ -1,6 +1,8 @@
 ---
 sidebar_position: 3
-title: Schnellstart
+title: "Ihre erste Disk erstellen und verwenden"
+sidebar_label: Schnellstart
+description: "Erstellen Sie eine Daten-Disk in der Hikube-Konsole, hängen Sie sie an eine virtuelle Maschine an und formatieren und mounten Sie sie im System."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

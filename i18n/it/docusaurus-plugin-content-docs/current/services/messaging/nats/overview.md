@@ -1,6 +1,8 @@
 ---
 sidebar_position: 1
-title: Panoramica
+title: "NATS su Hikube"
+sidebar_label: Panoramica
+description: "Scoprire NATS su Hikube, fornito tramite il supporto: architettura leggera, protocolli supportati, JetStream e messaggistica in tempo reale tra microservizi."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

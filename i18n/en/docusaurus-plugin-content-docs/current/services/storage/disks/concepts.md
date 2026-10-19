@@ -1,6 +1,8 @@
 ---
 sidebar_position: 2
-title: Concepts
+title: "Concepts — Disks"
+sidebar_label: Concepts
+description: "Understand Hikube disks: persistent block volumes, statuses, disk source, replication, encryption, size and project quota, and the limits of the service."
 ---
 
 # Concepts — Disks

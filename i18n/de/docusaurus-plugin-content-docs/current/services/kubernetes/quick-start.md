@@ -1,6 +1,8 @@
 ---
 sidebar_position: 3
-title: Schnellstart
+title: "Einen Kubernetes-Cluster in wenigen Minuten erstellen"
+sidebar_label: Schnellstart
+description: "Erstellen Sie in der Hikube-Konsole einen Kubernetes-Cluster, laden Sie dessen kubeconfig herunter und testen Sie den Zugriff mit einer Demo-Anwendung."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

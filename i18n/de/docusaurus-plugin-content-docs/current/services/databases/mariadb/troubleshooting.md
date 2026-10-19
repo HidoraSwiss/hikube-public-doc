@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Fehlerbehebung
+title: "Fehlerbehebung — MariaDB"
+sidebar_label: Fehlerbehebung
+description: "Beheben Sie häufige MariaDB-Probleme auf Hikube: Cluster im Fehler, Verbindung abgelehnt, Access denied, volle Festplatte, nicht synchrone Replikation."
 ---
 
 # Fehlerbehebung — MariaDB

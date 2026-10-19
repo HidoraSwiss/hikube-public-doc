@@ -1,6 +1,8 @@
 ---
 sidebar_position: 3
-title: Quick start
+title: "Create your first S3 bucket"
+sidebar_label: Quick start
+description: "Create your first S3 bucket from the Hikube console, retrieve its access credentials and upload a first file with the AWS CLI or the MinIO Client."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

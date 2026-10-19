@@ -1,6 +1,8 @@
 ---
 sidebar_position: 2
-title: Konzepte
+title: "Konzepte — Redis"
+sidebar_label: Konzepte
+description: "Verstehen Sie Redis auf Hikube: Master- und Replikat-Architektur, Failover durch Redis Sentinel, Persistenz, Authentifizierung und Netzwerkzugang."
 ---
 
 # Konzepte — Redis

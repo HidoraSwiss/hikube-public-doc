@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Risoluzione dei problemi
+title: "Risoluzione dei problemi — Bucket S3"
+sidebar_label: Risoluzione dei problemi
+description: "Risolvere i problemi comuni dei bucket S3 Hikube: errori AccessDenied, credenziali introvabili, nome già in uso, eliminazione non riuscita e upload lenti."
 ---
 
 # Risoluzione dei problemi — Bucket S3

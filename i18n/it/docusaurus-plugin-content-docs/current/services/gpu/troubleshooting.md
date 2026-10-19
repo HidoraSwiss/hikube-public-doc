@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Risoluzione dei problemi
+title: "Risoluzione dei problemi — GPU"
+sidebar_label: Risoluzione dei problemi
+description: "Soluzioni ai problemi GPU su Hikube: modelli non disponibili, VM che non si riavvia, GPU non rilevata, driver NVIDIA mancanti e pod GPU in Pending."
 ---
 
 # Risoluzione dei problemi — GPU

@@ -1,6 +1,8 @@
 ---
 sidebar_position: 6
-title: FAQ
+title: "FAQ — Rete"
+sidebar_label: FAQ
+description: "Risposte alle domande sui VPC Hikube: ruolo rispetto all'IP pubblico, più VPC per VM, intervalli di indirizzi, interconnessione, firewall ed eliminazione."
 ---
 
 # FAQ — Rete

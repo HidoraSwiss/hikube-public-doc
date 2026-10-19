@@ -1,6 +1,8 @@
 ---
 sidebar_position: 2
-title: Concetti
+title: "Concetti — Dischi"
+sidebar_label: Concetti
+description: "I concetti dei dischi Hikube: volumi a blocchi persistenti, stati, origine del disco, replica, cifratura, dimensione e quota del progetto, limiti del servizio."
 ---
 
 # Concetti — Dischi

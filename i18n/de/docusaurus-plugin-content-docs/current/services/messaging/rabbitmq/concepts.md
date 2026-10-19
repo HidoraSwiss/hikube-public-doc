@@ -1,6 +1,8 @@
 ---
 sidebar_position: 2
-title: Konzepte
+title: "Konzepte — RabbitMQ"
+sidebar_label: Konzepte
+description: "RabbitMQ auf Hikube verstehen: Architektur, Bereitstellungsmodi, Exchanges und Routing, Quorum Queues, vhosts, Benutzerrechte und Grenzen des Dienstes."
 ---
 
 # Konzepte — RabbitMQ

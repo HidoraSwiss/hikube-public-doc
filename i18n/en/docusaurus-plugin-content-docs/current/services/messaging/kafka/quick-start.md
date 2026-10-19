@@ -1,6 +1,8 @@
 ---
 sidebar_position: 3
-title: Quick start
+title: "Getting started with Kafka"
+sidebar_label: Quick start
+description: "Get started with Kafka on Hikube: request an instance from support, produce and consume a first message on a topic, and diagnose connection errors."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

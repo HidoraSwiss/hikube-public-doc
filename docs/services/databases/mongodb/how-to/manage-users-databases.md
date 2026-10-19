@@ -1,5 +1,6 @@
 ---
-title: "Comment gérer les utilisateurs et bases de données"
+title: "Comment gérer les utilisateurs et bases de données — MongoDB"
+sidebar_label: "Comment gérer les utilisateurs et bases de données"
 sidebar_position: 1
 ---
 

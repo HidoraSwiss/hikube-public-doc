@@ -1,6 +1,8 @@
 ---
 sidebar_position: 2
-title: Concepts
+title: "Concepts — Kubernetes"
+sidebar_label: Concepts
+description: "Les notions du Kubernetes managé d'Hikube : architecture, control plane et haute disponibilité, groupes de nœuds, GPU, addons, accès au cluster et quotas."
 ---
 
 # Concepts — Kubernetes

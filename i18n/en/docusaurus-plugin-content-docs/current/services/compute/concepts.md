@@ -1,6 +1,8 @@
 ---
 sidebar_position: 2
-title: Concepts
+title: "Concepts — Virtual machines"
+sidebar_label: Concepts
+description: "The notions behind Hikube virtual machines: architecture, instance types, storage, networking, lifecycle, what can change after creation, and quotas."
 ---
 
 # Concepts — Virtual machines

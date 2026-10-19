@@ -1,6 +1,7 @@
 ---
 sidebar_position: 2
 title: Concepts clés
+description: "Les notions clés d'Hikube : console web, organisation, projets, quotas et services managés, pour comprendre comment vos ressources sont organisées et pilotées."
 ---
 
 # Concepts clés d'Hikube

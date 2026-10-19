@@ -1,6 +1,8 @@
 ---
 sidebar_position: 3
-title: Démarrage rapide
+title: "Déployer Redis en 5 minutes"
+sidebar_label: Démarrage rapide
+description: "Créez un cluster Redis depuis la console Hikube, récupérez le mot de passe généré par la plateforme et connectez-vous avec redis-cli pour vos premiers tests."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

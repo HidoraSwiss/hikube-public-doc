@@ -1,6 +1,8 @@
 ---
 sidebar_position: 1
-title: Übersicht
+title: "Private Netzwerke auf Hikube"
+sidebar_label: Übersicht
+description: "Lernen Sie private Netzwerke auf Hikube kennen: pro Projekt isolierte VPCs aus privaten IPv4-Subnetzen, über die Ihre VMs miteinander kommunizieren."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

@@ -1,6 +1,8 @@
 ---
 sidebar_position: 2
-title: Concetti
+title: "Concetti — Kafka"
+sidebar_label: Concetti
+description: "Comprendere Kafka su Hikube: architettura con broker e ZooKeeper, topic e partizioni, configurazione dei topic, preset di risorse, limiti e quote."
 ---
 
 # Concetti — Kafka

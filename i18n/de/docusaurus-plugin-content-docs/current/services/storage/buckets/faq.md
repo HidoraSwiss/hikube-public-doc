@@ -1,6 +1,8 @@
 ---
 sidebar_position: 6
-title: FAQ
+title: "FAQ — S3-Buckets"
+sidebar_label: FAQ
+description: "Antworten auf häufige Fragen zu Hikube S3-Buckets: Endpoint, S3-Name des Buckets, kompatible Tools, verlorene Schlüssel, WORM-Sperre und Verschlüsselung."
 ---
 
 # FAQ — S3-Buckets

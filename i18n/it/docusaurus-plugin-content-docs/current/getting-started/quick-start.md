@@ -1,6 +1,8 @@
 ---
 sidebar_position: 3
-title: Avvio rapido
+title: "Avvio rapido con Hikube"
+sidebar_label: Avvio rapido
+description: "Accedete alla console Hikube, create un progetto e poi il vostro primo cluster Kubernetes, e interrogatelo con kubectl in una decina di minuti."
 ---
 
 # Avvio rapido con Hikube

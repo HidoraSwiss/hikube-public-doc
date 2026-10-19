@@ -1,6 +1,8 @@
 ---
 sidebar_position: 2
-title: Konzepte
+title: "Konzepte — S3-Buckets"
+sidebar_label: Konzepte
+description: "Verstehen Sie, wie S3-Buckets auf Hikube funktionieren: Replikation über drei Rechenzentren, Benutzer und Rechte, Schlüsselumfang, feste Optionen und Limits."
 ---
 
 # Konzepte — S3-Buckets

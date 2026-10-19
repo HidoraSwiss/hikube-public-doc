@@ -1,6 +1,8 @@
 ---
 sidebar_position: 6
-title: FAQ
+title: "FAQ — NATS"
+sidebar_label: FAQ
+description: "Domande frequenti su NATS su Hikube: ottenere un cluster, attivare JetStream, pub/sub e queue group, wildcard, preset, persistenza e configurazione del server."
 ---
 
 # FAQ — NATS

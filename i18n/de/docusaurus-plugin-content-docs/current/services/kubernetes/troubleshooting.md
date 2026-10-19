@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Fehlerbehebung
+title: "Fehlerbehebung — Kubernetes"
+sidebar_label: Fehlerbehebung
+description: "Beheben Sie häufige Kubernetes-Probleme auf Hikube: hängende Clustererstellung, Quota, abgelehnte oder abgelaufene kubeconfig, NotReady-Knoten, Pending-Pods."
 ---
 
 # Fehlerbehebung — Kubernetes

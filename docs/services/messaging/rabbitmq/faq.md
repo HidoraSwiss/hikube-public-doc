@@ -1,6 +1,8 @@
 ---
 sidebar_position: 6
-title: FAQ
+title: "FAQ — RabbitMQ"
+sidebar_label: FAQ
+description: "Questions fréquentes sur RabbitMQ sur Hikube : quorum ou classic queues, vhosts, exchanges, port de connexion, droits, mot de passe et interface de management."
 ---
 
 # FAQ — RabbitMQ

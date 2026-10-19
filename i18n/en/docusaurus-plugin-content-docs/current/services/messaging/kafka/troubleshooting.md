@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Troubleshooting
+title: "Troubleshooting — Kafka"
+sidebar_label: Troubleshooting
+description: "Common Kafka issues on Hikube: connection failures, ZooKeeper quorum loss, unavailable brokers, consumer lag, out-of-memory restarts and duplicate messages."
 ---
 
 # Troubleshooting — Kafka

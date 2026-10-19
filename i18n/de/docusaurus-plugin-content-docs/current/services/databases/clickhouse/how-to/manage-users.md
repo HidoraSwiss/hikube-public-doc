@@ -1,5 +1,6 @@
 ---
 title: "ClickHouse-Benutzer und -Profile verwalten"
+description: "Lassen Sie ClickHouse-Benutzer auf Hikube vom Support anlegen, mit Vollzugriff oder nur Lesezugriff, und prüfen Sie ihre Rechte mit clickhouse-client."
 sidebar_position: 1
 ---
 

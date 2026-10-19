@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Risoluzione dei problemi
+title: "Risoluzione dei problemi — PostgreSQL"
+sidebar_label: Risoluzione dei problemi
+description: "Risolvete i problemi comuni di PostgreSQL su Hikube: cluster bloccato o in errore, connessione rifiutata, autenticazione, permission denied, disco pieno."
 ---
 
 # Risoluzione dei problemi — PostgreSQL

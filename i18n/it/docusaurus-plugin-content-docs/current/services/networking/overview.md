@@ -1,6 +1,8 @@
 ---
 sidebar_position: 1
-title: Panoramica
+title: "Reti private su Hikube"
+sidebar_label: Panoramica
+description: "Panoramica delle reti private Hikube: VPC isolati per progetto, composti da sottoreti IPv4 private, per far comunicare tra loro le macchine virtuali."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

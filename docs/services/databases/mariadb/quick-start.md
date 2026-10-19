@@ -1,6 +1,8 @@
 ---
 sidebar_position: 3
-title: Démarrage rapide
+title: "Déployer MariaDB en 5 minutes"
+sidebar_label: Démarrage rapide
+description: "Créez un cluster MariaDB depuis la console Hikube, donnez à un utilisateur l'accès à une base applicative et connectez-vous avec un client MySQL."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

@@ -1,6 +1,8 @@
 ---
 sidebar_position: 3
-title: Schnellstart
+title: "MariaDB in 5 Minuten bereitstellen"
+sidebar_label: Schnellstart
+description: "Erstellen Sie in der Hikube-Konsole einen MariaDB-Cluster, geben Sie einem Benutzer Zugriff auf eine Anwendungsdatenbank und verbinden Sie sich per MySQL."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

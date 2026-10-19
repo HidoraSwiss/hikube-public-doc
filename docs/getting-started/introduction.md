@@ -1,6 +1,7 @@
 ---
 sidebar_position: 1
 title: Introduction à Hikube
+description: "Découvrez Hikube, cloud souverain hébergé en Suisse : infrastructure sur trois datacenters, services proposés, sécurité, isolation et prérequis pour démarrer."
 ---
 
 # Introduction à Hikube

@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Risoluzione dei problemi
+title: "Risoluzione dei problemi — Dischi"
+sidebar_label: Risoluzione dei problemi
+description: "Risolvere i problemi comuni dei dischi Hikube: quota superata, dimensione minima, disco in errore o non visibile nella VM, ridimensionamento, eliminazione."
 ---
 
 # Risoluzione dei problemi — Dischi

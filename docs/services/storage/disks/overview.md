@@ -1,6 +1,8 @@
 ---
 sidebar_position: 1
-title: Vue d'ensemble
+title: "Disques sur Hikube"
+sidebar_label: Vue d'ensemble
+description: "Découvrez les disques Hikube, volumes bloc persistants et répliqués que vous créez, attachez, agrandissez ou déplacez entre vos VM depuis la console."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';
