@@ -1,6 +1,8 @@
 ---
 sidebar_position: 6
-title: FAQ
+title: "FAQ — GPU"
+sidebar_label: FAQ
+description: "Häufige Fragen zu GPUs auf Hikube: verfügbare Modelle, mehrere GPUs pro VM, CPU/GPU-Verhältnis, NVIDIA-Treiber, GPUs in Kubernetes-Pods und Erkennung."
 ---
 
 # FAQ — GPU

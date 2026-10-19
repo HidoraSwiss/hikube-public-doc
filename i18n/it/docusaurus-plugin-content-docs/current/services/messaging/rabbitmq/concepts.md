@@ -1,6 +1,8 @@
 ---
 sidebar_position: 2
-title: Concetti
+title: "Concetti — RabbitMQ"
+sidebar_label: Concetti
+description: "Comprendere RabbitMQ su Hikube: architettura, modalità di deployment, exchange e instradamento, quorum queue, vhost, permessi utente e limiti del servizio."
 ---
 
 # Concetti — RabbitMQ

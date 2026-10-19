@@ -1,6 +1,8 @@
 ---
 sidebar_position: 6
-title: FAQ
+title: "FAQ — Redis"
+sidebar_label: FAQ
+description: "Answers to common questions about Redis on Hikube: how Sentinel works, persistence, authentication, lost password, scaling, connecting and ACLs."
 ---
 
 # FAQ — Redis

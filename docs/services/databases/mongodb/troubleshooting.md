@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Dépannage
+title: "Dépannage — MongoDB"
+sidebar_label: Dépannage
+description: "Résolvez les problèmes de MongoDB sur Hikube : cluster en erreur, connexion refusée, not primary, Authentication failed, not authorized, disque plein."
 ---
 
 # Dépannage — MongoDB

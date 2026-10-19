@@ -1,6 +1,8 @@
 ---
 sidebar_position: 1
-title: Overview
+title: "Managed Kubernetes on Hikube"
+sidebar_label: Overview
+description: "Overview of Hikube managed Kubernetes: a control plane run by the platform, worker nodes in your project, persistent storage, versions and built-in addons."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

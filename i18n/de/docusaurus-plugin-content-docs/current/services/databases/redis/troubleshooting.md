@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Fehlerbehebung
+title: "Fehlerbehebung — Redis"
+sidebar_label: Fehlerbehebung
+description: "Beheben Sie häufige Redis-Probleme auf Hikube: Cluster im Fehler, Host ausstehend, Timeout, NOAUTH oder WRONGPASS, voller Speicher, ausbleibendes Failover."
 ---
 
 # Fehlerbehebung — Redis

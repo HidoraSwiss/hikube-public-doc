@@ -1,5 +1,6 @@
 ---
 title: "How to configure ClickHouse sharding"
+description: "Choose shards and replicas for a ClickHouse instance on Hikube, request the topology from support and create ReplicatedMergeTree and Distributed tables."
 sidebar_position: 3
 ---
 

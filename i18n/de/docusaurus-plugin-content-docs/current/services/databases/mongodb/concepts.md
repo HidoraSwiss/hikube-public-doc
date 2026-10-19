@@ -1,6 +1,8 @@
 ---
 sidebar_position: 2
-title: Konzepte
+title: "Konzepte — MongoDB"
+sidebar_label: Konzepte
+description: "Verstehen Sie MongoDB auf Hikube: Replica Set und Wahl des Primary, Sharding, Benutzer und Rollen pro Datenbank, Presets, Netzwerkzugang und Backups."
 ---
 
 # Konzepte — MongoDB

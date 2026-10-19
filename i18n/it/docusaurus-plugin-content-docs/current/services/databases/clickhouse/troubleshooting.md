@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Risoluzione dei problemi
+title: "Risoluzione dei problemi — ClickHouse"
+sidebar_label: Risoluzione dei problemi
+description: "Risolvete i problemi comuni di ClickHouse su Hikube: query lente su grandi volumi, spazio su disco insufficiente, errori di replica o di Keeper, autenticazione."
 ---
 
 # Risoluzione dei problemi — ClickHouse

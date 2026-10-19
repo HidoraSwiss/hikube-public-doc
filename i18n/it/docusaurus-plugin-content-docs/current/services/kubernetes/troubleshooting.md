@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Risoluzione dei problemi
+title: "Risoluzione dei problemi — Kubernetes"
+sidebar_label: Risoluzione dei problemi
+description: "Risolvete i problemi comuni del Kubernetes Hikube: cluster bloccato in creazione, quota, kubeconfig rifiutato o scaduto, nodi NotReady, pod e PVC in Pending."
 ---
 
 # Risoluzione dei problemi — Kubernetes

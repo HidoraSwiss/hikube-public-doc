@@ -1,6 +1,8 @@
 ---
 sidebar_position: 2
-title: Concetti
+title: "Concetti — Kubernetes"
+sidebar_label: Concetti
+description: "Le nozioni del Kubernetes gestito di Hikube: architettura, control plane e alta disponibilità, gruppi di nodi, GPU, addon, accesso al cluster e quote."
 ---
 
 # Concetti — Kubernetes

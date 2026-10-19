@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Dépannage
+title: "Dépannage — Buckets S3"
+sidebar_label: Dépannage
+description: "Résolvez les problèmes courants des buckets S3 Hikube : erreurs AccessDenied, identifiants introuvables, nom déjà utilisé, suppression bloquée, uploads lents."
 ---
 
 # Dépannage — Buckets S3

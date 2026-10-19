@@ -1,6 +1,8 @@
 ---
 sidebar_position: 6
-title: FAQ
+title: "FAQ — MongoDB"
+sidebar_label: FAQ
+description: "Answers to common questions about MongoDB on Hikube: version, number of replicas, sharding, connection address, user permissions, password and backups."
 ---
 
 # FAQ — MongoDB

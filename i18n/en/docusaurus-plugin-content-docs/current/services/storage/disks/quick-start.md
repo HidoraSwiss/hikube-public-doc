@@ -1,6 +1,8 @@
 ---
 sidebar_position: 3
-title: Quick start
+title: "Create and use your first disk"
+sidebar_label: Quick start
+description: "Create a data disk in the Hikube console, attach it to a virtual machine, then format and mount it in the operating system so you can use it."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

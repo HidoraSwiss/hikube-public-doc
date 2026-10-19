@@ -1,6 +1,8 @@
 ---
 sidebar_position: 3
-title: Démarrage rapide
+title: "Créer et utiliser votre premier disque"
+sidebar_label: Démarrage rapide
+description: "Créez un disque de données dans la console Hikube, attachez-le à une machine virtuelle, puis formatez-le et montez-le dans le système pour l'utiliser."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Fehlerbehebung
+title: "Fehlerbehebung — MongoDB"
+sidebar_label: Fehlerbehebung
+description: "Beheben Sie häufige MongoDB-Probleme auf Hikube: Cluster im Fehler, Verbindung abgelehnt, not primary, Authentication failed, not authorized, volle Festplatte."
 ---
 
 # Fehlerbehebung — MongoDB

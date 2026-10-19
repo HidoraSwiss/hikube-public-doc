@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Troubleshooting
+title: "Troubleshooting — RabbitMQ"
+sidebar_label: Troubleshooting
+description: "Fix common RabbitMQ issues on Hikube: cluster stuck in creation, storage quota exceeded, refused AMQP connections, blocked publishing and unroutable messages."
 ---
 
 # Troubleshooting — RabbitMQ

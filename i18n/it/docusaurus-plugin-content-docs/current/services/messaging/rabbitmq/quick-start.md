@@ -1,6 +1,8 @@
 ---
 sidebar_position: 3
-title: Avvio rapido
+title: "Creare un cluster RabbitMQ in 5 minuti"
+sidebar_label: Avvio rapido
+description: "Creare un cluster RabbitMQ dalla console Hikube, recuperarne le credenziali, poi dichiarare una quorum queue e inviare un primo messaggio in pochi minuti."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

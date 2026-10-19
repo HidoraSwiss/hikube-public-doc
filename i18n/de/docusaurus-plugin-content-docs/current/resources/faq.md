@@ -1,6 +1,7 @@
 ---
 sidebar_position: 2
-title: FAQ
+title: "Häufig gestellte Fragen"
+sidebar_label: FAQ
 ---
 
 # Häufig gestellte Fragen

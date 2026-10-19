@@ -1,6 +1,8 @@
 ---
 sidebar_position: 3
-title: Quick start
+title: "Get started with NATS"
+sidebar_label: Quick start
+description: "Get started with NATS on Hikube: request an instance from support, create a JetStream stream, publish and consume a first message, then fix common errors."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

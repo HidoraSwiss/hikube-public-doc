@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Risoluzione dei problemi
+title: "Risoluzione dei problemi — Rete"
+sidebar_label: Risoluzione dei problemi
+description: "Risolvere i problemi comuni dei VPC Hikube: blocco CIDR o nome rifiutato, VPC in errore, interfaccia senza indirizzo, VM isolate, Internet perso."
 ---
 
 # Risoluzione dei problemi — Rete

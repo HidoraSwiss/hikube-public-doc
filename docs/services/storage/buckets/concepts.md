@@ -1,6 +1,8 @@
 ---
 sidebar_position: 2
-title: Concepts
+title: "Concepts — Buckets S3"
+sidebar_label: Concepts
+description: "Comprenez le fonctionnement des buckets S3 sur Hikube : réplication sur trois datacenters, utilisateurs et droits, portée des clés, options fixées et limites."
 ---
 
 # Concepts — Buckets S3

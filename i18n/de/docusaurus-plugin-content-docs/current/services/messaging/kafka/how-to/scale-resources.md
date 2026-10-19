@@ -1,5 +1,6 @@
 ---
 title: "Cluster skalieren"
+description: "Einen Kafka-Cluster auf Hikube skalieren: Bedarf ermitteln, Anzahl der Broker, Preset und Speicher wählen, ZooKeeper dimensionieren und beim Support anfragen."
 ---
 
 # Kafka-Cluster skalieren

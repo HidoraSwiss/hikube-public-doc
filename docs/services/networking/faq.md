@@ -1,6 +1,8 @@
 ---
 sidebar_position: 6
-title: FAQ
+title: "FAQ — Réseau"
+sidebar_label: FAQ
+description: "Réponses aux questions sur les VPC Hikube : rôle face à l'IP publique, plusieurs VPC par VM, plages d'adresses, interconnexion, pare-feu et suppression."
 ---
 
 # FAQ — Réseau

@@ -1,6 +1,8 @@
 ---
 sidebar_position: 2
-title: Concepts
+title: "Concepts — Réseau"
+sidebar_label: Concepts
+description: "Comprenez le réseau des VM Hikube : réseau principal, VPC et sous-réseaux, règles de nommage, plages d'adresses privées, isolation et cycle de vie."
 ---
 
 # Concepts — Réseau

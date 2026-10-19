@@ -1,5 +1,6 @@
 ---
 title: "Come gestire gli utenti"
+description: "Gestire gli utenti NATS su Hikube: definire un account per ogni uso, richiederne la creazione al supporto, testare la connessione con la CLI nats e verificarla."
 ---
 
 # Come gestire gli utenti NATS

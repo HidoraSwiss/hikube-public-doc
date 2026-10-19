@@ -1,6 +1,8 @@
 ---
 sidebar_position: 1
-title: Überblick
+title: "Verwaltetes Kubernetes auf Hikube im Überblick"
+sidebar_label: Überblick
+description: "Überblick über das verwaltete Kubernetes von Hikube: von der Plattform betriebene Control Plane, Worker-Knoten im Projekt, Speicher, Versionen und Addons."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

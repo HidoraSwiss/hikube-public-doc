@@ -1,6 +1,8 @@
 ---
 sidebar_position: 3
-title: Avvio rapido
+title: "Creare e utilizzare il primo disco"
+sidebar_label: Avvio rapido
+description: "Create un disco dati nella console Hikube, collegatelo a una macchina virtuale, poi formattatelo e montatelo nel sistema operativo per utilizzarlo."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

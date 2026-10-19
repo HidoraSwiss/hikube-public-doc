@@ -1,6 +1,8 @@
 ---
 sidebar_position: 1
-title: Übersicht
+title: "Virtuelle Maschinen auf Hikube"
+sidebar_label: Übersicht
+description: "Überblick über die virtuellen Maschinen von Hikube: Funktionen der Konsole, Instanzserien S, U und M, Betriebssysteme, Konnektivität und Isolation."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

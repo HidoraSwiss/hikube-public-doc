@@ -1,6 +1,8 @@
 ---
 sidebar_position: 1
-title: Übersicht
+title: "S3-Buckets auf Hikube"
+sidebar_label: Übersicht
+description: "Lernen Sie die S3-Buckets von Hikube kennen: S3-kompatibler Objektspeicher, über drei Rechenzentren in der Schweiz repliziert, Anwendungsfälle und Isolation."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

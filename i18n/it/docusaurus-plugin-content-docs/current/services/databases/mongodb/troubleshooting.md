@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Risoluzione dei problemi
+title: "Risoluzione dei problemi — MongoDB"
+sidebar_label: Risoluzione dei problemi
+description: "Risolvete i problemi di MongoDB su Hikube: cluster in errore, connessione rifiutata, not primary, Authentication failed, not authorized, disco pieno."
 ---
 
 # Risoluzione dei problemi — MongoDB

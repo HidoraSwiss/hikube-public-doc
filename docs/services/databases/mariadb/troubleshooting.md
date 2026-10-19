@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Dépannage
+title: "Dépannage — MariaDB"
+sidebar_label: Dépannage
+description: "Résolvez les problèmes de MariaDB sur Hikube : cluster en erreur, connexion refusée, Access denied, erreurs d'accès, disque plein, réplication désynchronisée."
 ---
 
 # Dépannage — MariaDB

@@ -1,6 +1,8 @@
 ---
 sidebar_position: 2
-title: Konzepte
+title: "Konzepte — Disks"
+sidebar_label: Konzepte
+description: "Verstehen Sie Hikube-Disks: persistente Block-Volumes, Status, Quelle der Disk, Replikation, Verschlüsselung, Größe und Projektquota sowie die Limits."
 ---
 
 # Konzepte — Disks

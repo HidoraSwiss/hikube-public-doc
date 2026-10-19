@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Fehlerbehebung
+title: "Fehlerbehebung — Disks"
+sidebar_label: Fehlerbehebung
+description: "Beheben Sie häufige Probleme mit Hikube-Disks: Quota überschritten, Mindestgröße, Disk im Fehler oder in der VM unsichtbar, Größenänderung, Löschen."
 ---
 
 # Fehlerbehebung — Disks

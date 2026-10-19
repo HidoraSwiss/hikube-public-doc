@@ -1,6 +1,8 @@
 ---
 sidebar_position: 2
-title: Concepts
+title: "Concepts — PostgreSQL"
+sidebar_label: Concepts
+description: "Comprenez PostgreSQL sur Hikube : streaming des WAL, failover automatique, bases système, règles de nommage, presets, accès réseau et sauvegardes."
 ---
 
 # Concepts — PostgreSQL

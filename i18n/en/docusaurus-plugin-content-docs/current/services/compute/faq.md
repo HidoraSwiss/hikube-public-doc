@@ -1,6 +1,8 @@
 ---
 sidebar_position: 6
-title: FAQ
+title: "FAQ — Virtual machines"
+sidebar_label: FAQ
+description: "Answers to common questions about Hikube VMs: available images, choosing an instance type, disks, SSH access, cloud-init, firewall and VNC console."
 ---
 
 # FAQ — Virtual machines

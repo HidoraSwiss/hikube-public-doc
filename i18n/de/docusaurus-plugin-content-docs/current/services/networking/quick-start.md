@@ -1,6 +1,8 @@
 ---
 sidebar_position: 3
-title: Schnellstart
+title: "Ein VPC erstellen und zwei VMs damit verbinden"
+sidebar_label: Schnellstart
+description: "Erstellen Sie in der Hikube-Konsole ein VPC mit einem Subnetz, verbinden Sie zwei VMs damit und prüfen Sie, dass sie über private Adressen kommunizieren."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

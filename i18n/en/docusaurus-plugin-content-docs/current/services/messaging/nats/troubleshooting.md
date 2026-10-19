@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Troubleshooting
+title: "Troubleshooting — NATS"
+sidebar_label: Troubleshooting
+description: "Common NATS issues on Hikube: messages lost without JetStream, consumers receiving nothing, full JetStream storage, insufficient memory, refused connections."
 ---
 
 # Troubleshooting — NATS

@@ -1,6 +1,8 @@
 ---
 sidebar_position: 1
-title: Panoramica
+title: "Presentazione del Kubernetes gestito su Hikube"
+sidebar_label: Panoramica
+description: "Il Kubernetes gestito di Hikube: control plane gestito dalla piattaforma, nodi worker nel progetto, storage persistente, versioni e addon integrati."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

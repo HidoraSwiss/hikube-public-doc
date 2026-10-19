@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Dépannage
+title: "Dépannage — PostgreSQL"
+sidebar_label: Dépannage
+description: "Résolvez les problèmes courants de PostgreSQL sur Hikube : cluster bloqué ou en erreur, connexion refusée, authentification, permission denied, disque plein."
 ---
 
 # Dépannage — PostgreSQL

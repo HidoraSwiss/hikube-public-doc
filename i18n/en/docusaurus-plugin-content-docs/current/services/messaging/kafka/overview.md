@@ -1,6 +1,8 @@
 ---
 sidebar_position: 1
-title: Overview
+title: "Kafka on Hikube"
+sidebar_label: Overview
+description: "Discover Kafka on Hikube, provisioned through support: its architecture and use cases such as system integration, real-time analytics and IoT data collection."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

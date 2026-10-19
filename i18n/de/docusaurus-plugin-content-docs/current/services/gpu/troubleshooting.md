@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Fehlerbehebung
+title: "Fehlerbehebung — GPU"
+sidebar_label: Fehlerbehebung
+description: "Lösungen für GPU-Probleme auf Hikube: nicht verfügbare Modelle, VM startet nicht neu, GPU nicht erkannt, fehlende NVIDIA-Treiber und GPU-Pods in Pending."
 ---
 
 # Fehlerbehebung — GPU

@@ -1,5 +1,6 @@
 ---
-title: "Die Ressourcen eines Clusters ändern"
+title: "Die Ressourcen eines Clusters ändern — MongoDB"
+sidebar_label: "Die Ressourcen eines Clusters ändern"
 sidebar_position: 2
 ---
 

@@ -1,5 +1,6 @@
 ---
 title: "Comment scaler verticalement ClickHouse"
+description: "Mesurez la consommation mémoire et disque d'une instance ClickHouse sur Hikube, puis demandez au support un autre preset ou plus de stockage pour ses réplicas."
 sidebar_position: 2
 ---
 

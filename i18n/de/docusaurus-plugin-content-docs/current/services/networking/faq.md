@@ -1,6 +1,8 @@
 ---
 sidebar_position: 6
-title: FAQ
+title: "FAQ — Netzwerk"
+sidebar_label: FAQ
+description: "Antworten auf Fragen zu Hikube-VPCs: Zweck neben der öffentlichen IP, mehrere VPCs pro VM, Adressbereiche, Verbindung von VPCs, Firewall und Löschen."
 ---
 
 # FAQ — Netzwerk

@@ -1,6 +1,8 @@
 ---
 sidebar_position: 1
-title: Vue d'ensemble
+title: "Machines virtuelles sur Hikube"
+sidebar_label: Vue d'ensemble
+description: "Vue d'ensemble des machines virtuelles Hikube : ce que permet la console, séries d'instance S, U et M, systèmes d'exploitation, connectivité et isolation."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

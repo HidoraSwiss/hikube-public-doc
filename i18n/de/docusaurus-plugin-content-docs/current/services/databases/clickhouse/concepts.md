@@ -1,6 +1,8 @@
 ---
 sidebar_position: 2
-title: Konzepte
+title: "Konzepte — ClickHouse"
+sidebar_label: Konzepte
+description: "Verstehen Sie ClickHouse auf Hikube: Architektur, Sharding und Replikation, Rolle von ClickHouse Keeper, verschlüsselte Backups nach S3, Benutzer und Presets."
 ---
 
 # Konzepte — ClickHouse

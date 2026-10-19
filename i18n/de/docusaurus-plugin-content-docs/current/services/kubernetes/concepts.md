@@ -1,6 +1,8 @@
 ---
 sidebar_position: 2
-title: Konzepte
+title: "Konzepte — Kubernetes"
+sidebar_label: Konzepte
+description: "Die Konzepte des verwalteten Kubernetes von Hikube: Architektur, Control Plane und Hochverfügbarkeit, Knotengruppen, GPUs, Addons, Clusterzugriff und Quotas."
 ---
 
 # Konzepte — Kubernetes

@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Risoluzione dei problemi
+title: "Risoluzione dei problemi — MariaDB"
+sidebar_label: Risoluzione dei problemi
+description: "Risolvete i problemi di MariaDB su Hikube: cluster in errore, connessione rifiutata, Access denied, errori di accesso, disco pieno, replica non sincronizzata."
 ---
 
 # Risoluzione dei problemi — MariaDB

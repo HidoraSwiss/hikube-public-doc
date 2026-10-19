@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Dépannage
+title: "Dépannage — Kafka"
+sidebar_label: Dépannage
+description: "Problèmes courants de Kafka sur Hikube : connexion impossible, perte du quorum ZooKeeper, broker indisponible, consumer lag, manque de mémoire, doublons."
 ---
 
 # Dépannage — Kafka

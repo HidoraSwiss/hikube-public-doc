@@ -1,6 +1,8 @@
 ---
 sidebar_position: 1
-title: Vue d'ensemble
+title: "MongoDB sur Hikube"
+sidebar_label: Vue d'ensemble
+description: "Découvrez le service MongoDB managé de Hikube : base orientée documents déployée en replica set auto-réparant, avec une topologie shardée en option."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

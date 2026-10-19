@@ -1,6 +1,8 @@
 ---
 sidebar_position: 6
-title: FAQ
+title: "FAQ — Kubernetes"
+sidebar_label: FAQ
+description: "Frequently asked questions about Hikube managed Kubernetes: cluster creation, instance types, storage class, addons, kubeconfig, scaling and GPU nodes."
 ---
 
 # FAQ — Kubernetes

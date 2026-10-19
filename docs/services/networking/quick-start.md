@@ -1,6 +1,8 @@
 ---
 sidebar_position: 3
-title: Démarrage rapide
+title: "Créer un VPC et y relier deux VM"
+sidebar_label: Démarrage rapide
+description: "Créez un VPC avec un sous-réseau depuis la console Hikube, reliez-y deux machines virtuelles et vérifiez qu'elles communiquent par leurs adresses privées."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

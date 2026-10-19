@@ -1,6 +1,8 @@
 ---
 sidebar_position: 1
-title: Overview
+title: "PostgreSQL on Hikube"
+sidebar_label: Overview
+description: "Discover the Hikube managed PostgreSQL service: a replicated primary and standby cluster, automatic failover, versions 15 to 18, managed from the console."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

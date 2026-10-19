@@ -1,6 +1,7 @@
 ---
 sidebar_position: 1
 title: Vue d'ensemble des GPU
+description: "Les GPU NVIDIA d'Hikube (L40S, A100, H100, RTX 6000 Pro) sur machines virtuelles ou nœuds Kubernetes : modes d'utilisation, architecture, facturation et quotas."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

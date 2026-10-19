@@ -1,6 +1,8 @@
 ---
 sidebar_position: 1
-title: Panoramica
+title: "RabbitMQ su Hikube"
+sidebar_label: Panoramica
+description: "Scoprire RabbitMQ gestito su Hikube: messaggistica AMQP in self-service dalla console, architettura e casi d'uso come la comunicazione tra microservizi."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

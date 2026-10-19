@@ -1,6 +1,8 @@
 ---
 sidebar_position: 2
-title: Konzepte
+title: "Konzepte — Virtuelle Maschinen"
+sidebar_label: Konzepte
+description: "Die Konzepte der virtuellen Maschinen von Hikube: Architektur, Instanztypen, Speicher, Netzwerk, Lebenszyklus, Änderungen nach der Erstellung und Quotas."
 ---
 
 # Konzepte — Virtuelle Maschinen

@@ -1,6 +1,8 @@
 ---
 sidebar_position: 1
-title: Panoramica
+title: "ClickHouse su Hikube"
+sidebar_label: Panoramica
+description: "Scoprite ClickHouse su Hikube, database SQL colonnare per l'analisi OLAP, e scegliete il numero di shard e di repliche in base ai volumi di dati."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

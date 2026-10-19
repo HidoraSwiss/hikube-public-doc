@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Troubleshooting
+title: "Troubleshooting — GPU"
+sidebar_label: Troubleshooting
+description: "Solutions to GPU problems on Hikube: unavailable models, a VM that will not restart, an undetected GPU, missing NVIDIA drivers and GPU pods stuck in Pending."
 ---
 
 # Troubleshooting — GPU

@@ -1,6 +1,7 @@
 ---
 sidebar_position: 2
 title: Schlüsselkonzepte
+description: "Die Schlüsselbegriffe von Hikube: Webkonsole, Organisation, Projekte, Quotas und verwaltete Dienste, damit Sie verstehen, wie Ihre Ressourcen organisiert sind."
 ---
 
 # Schlüsselkonzepte von Hikube

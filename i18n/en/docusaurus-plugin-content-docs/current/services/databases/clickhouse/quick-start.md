@@ -1,6 +1,8 @@
 ---
 sidebar_position: 3
-title: Quick start
+title: "Getting started with ClickHouse"
+sidebar_label: Quick start
+description: "Prepare a request for a ClickHouse instance on Hikube through support, then connect with clickhouse-client and create a first analytical table."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

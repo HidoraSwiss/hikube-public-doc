@@ -1,6 +1,8 @@
 ---
 sidebar_position: 3
-title: Quick start
+title: "Create your first virtual machine"
+sidebar_label: Quick start
+description: "Create an Ubuntu VM from the Hikube console with a public IP, a replicated disk and an SSH key, then connect over SSH and delete it after testing."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

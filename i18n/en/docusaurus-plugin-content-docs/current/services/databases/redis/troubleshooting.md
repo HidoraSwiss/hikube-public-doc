@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Troubleshooting
+title: "Troubleshooting — Redis"
+sidebar_label: Troubleshooting
+description: "Fix common Redis issues on Hikube: cluster in error, pending host, connection timeout, NOAUTH or WRONGPASS, memory full, failover that does not happen."
 ---
 
 # Troubleshooting — Redis

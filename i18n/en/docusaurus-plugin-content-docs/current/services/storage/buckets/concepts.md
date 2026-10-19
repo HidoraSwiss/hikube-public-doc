@@ -1,6 +1,8 @@
 ---
 sidebar_position: 2
-title: Concepts
+title: "Concepts — S3 Buckets"
+sidebar_label: Concepts
+description: "Understand how S3 buckets work on Hikube: replication across three datacenters, users and permissions, key scope, options set at creation, and limits."
 ---
 
 # Concepts — S3 Buckets

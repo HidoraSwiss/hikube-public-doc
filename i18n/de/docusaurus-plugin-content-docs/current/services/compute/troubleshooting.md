@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Fehlerbehebung
+title: "Fehlerbehebung — Virtuelle Maschinen"
+sidebar_label: Fehlerbehebung
+description: "Beheben Sie häufige Probleme mit Hikube-VMs: blockierter Assistent, VM im Fehlerstatus, SSH-Timeout oder -Ablehnung, fehlende Festplatte, .local-DNS."
 ---
 
 # Fehlerbehebung — Virtuelle Maschinen

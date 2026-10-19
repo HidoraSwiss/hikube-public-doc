@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Risoluzione dei problemi
+title: "Risoluzione dei problemi — Kafka"
+sidebar_label: Risoluzione dei problemi
+description: "Problemi comuni di Kafka su Hikube: connessione impossibile, perdita del quorum ZooKeeper, broker non disponibile, consumer lag, memoria, duplicati."
 ---
 
 # Risoluzione dei problemi — Kafka

@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Dépannage
+title: "Dépannage — Disques"
+sidebar_label: Dépannage
+description: "Résolvez les problèmes courants des disques Hikube : quota dépassé, taille minimale, disque en erreur ou invisible dans la VM, redimensionnement, suppression."
 ---
 
 # Dépannage — Disques

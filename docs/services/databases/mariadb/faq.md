@@ -1,6 +1,8 @@
 ---
 sidebar_position: 6
-title: FAQ
+title: "FAQ — MariaDB"
+sidebar_label: FAQ
+description: "Questions courantes sur MariaDB Hikube : compatibilité MySQL, choix de version, réplication, création de base, accès des utilisateurs, mot de passe perdu."
 ---
 
 # FAQ — MariaDB

@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Fehlerbehebung
+title: "Fehlerbehebung — Netzwerk"
+sidebar_label: Fehlerbehebung
+description: "Beheben Sie häufige Probleme mit Hikube-VPCs: abgelehnter CIDR-Block oder Name, VPC im Fehler, Interface ohne Adresse, VMs ohne Verbindung, Internetverlust."
 ---
 
 # Fehlerbehebung — Netzwerk

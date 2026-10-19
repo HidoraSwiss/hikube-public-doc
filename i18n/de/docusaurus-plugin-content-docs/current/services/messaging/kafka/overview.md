@@ -1,6 +1,8 @@
 ---
 sidebar_position: 1
-title: Übersicht
+title: "Kafka auf Hikube"
+sidebar_label: Übersicht
+description: "Kafka auf Hikube, über den Support bereitgestellt: Architektur und Anwendungsfälle wie Systemintegration, Echtzeitanalyse und Erfassung von IoT-Daten."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

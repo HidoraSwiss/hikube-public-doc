@@ -1,6 +1,8 @@
 ---
 sidebar_position: 3
-title: Quick start
+title: "Hikube quick start"
+sidebar_label: Quick start
+description: "Sign in to the Hikube console, create a project and then your first Kubernetes cluster, and query it with kubectl in about ten minutes."
 ---
 
 # Hikube quick start

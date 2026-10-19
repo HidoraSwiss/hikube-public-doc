@@ -1,6 +1,8 @@
 ---
 sidebar_position: 3
-title: Schnellstart
+title: "Ihre erste virtuelle Maschine erstellen"
+sidebar_label: Schnellstart
+description: "Erstellen Sie in der Hikube-Konsole eine Ubuntu-VM mit öffentlicher IP, repliziertem Datenträger und SSH-Schlüssel, und verbinden Sie sich danach per SSH."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

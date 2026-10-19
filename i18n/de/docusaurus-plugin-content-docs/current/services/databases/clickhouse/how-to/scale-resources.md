@@ -1,5 +1,6 @@
 ---
 title: "ClickHouse vertikal skalieren"
+description: "Messen Sie Speicher- und Plattennutzung einer ClickHouse-Instanz auf Hikube und fordern Sie beim Support ein anderes Preset oder mehr Speicherplatz an."
 sidebar_position: 2
 ---
 

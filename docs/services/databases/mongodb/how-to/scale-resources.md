@@ -1,5 +1,6 @@
 ---
-title: "Comment modifier les ressources d'un cluster"
+title: "Comment modifier les ressources d'un cluster — MongoDB"
+sidebar_label: "Comment modifier les ressources d'un cluster"
 sidebar_position: 2
 ---
 

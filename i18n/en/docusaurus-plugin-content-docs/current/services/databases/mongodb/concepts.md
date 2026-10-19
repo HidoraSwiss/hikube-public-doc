@@ -1,6 +1,8 @@
 ---
 sidebar_position: 2
-title: Concepts
+title: "Concepts — MongoDB"
+sidebar_label: Concepts
+description: "Understand MongoDB on Hikube: replica set and primary election, sharding, per-database users and roles, presets, network access and backups."
 ---
 
 # Concepts — MongoDB

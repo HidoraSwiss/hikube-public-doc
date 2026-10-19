@@ -1,6 +1,8 @@
 ---
 sidebar_position: 6
-title: FAQ
+title: "FAQ — PostgreSQL"
+sidebar_label: FAQ
+description: "Réponses aux questions courantes sur PostgreSQL Hikube : presets, réplicas, adresse de connexion, mot de passe perdu, noms refusés, extensions et sauvegardes."
 ---
 
 # FAQ — PostgreSQL

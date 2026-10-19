@@ -1,6 +1,7 @@
 ---
 sidebar_position: 1
 title: GPU-Übersicht
+description: "NVIDIA-GPUs auf Hikube (L40S, A100, H100, RTX 6000 Pro) für virtuelle Maschinen oder Kubernetes-Knoten: Nutzungsmodi, Architektur, Abrechnung und Quotas."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

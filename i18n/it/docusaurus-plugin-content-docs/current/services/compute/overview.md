@@ -1,6 +1,8 @@
 ---
 sidebar_position: 1
-title: Panoramica
+title: "Macchine virtuali su Hikube"
+sidebar_label: Panoramica
+description: "Panoramica delle macchine virtuali Hikube: cosa permette la console, serie di istanze S, U e M, sistemi operativi, connettività e isolamento."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

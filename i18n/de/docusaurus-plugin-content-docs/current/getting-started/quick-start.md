@@ -1,6 +1,8 @@
 ---
 sidebar_position: 3
-title: Schnellstart
+title: "Schnellstart mit Hikube"
+sidebar_label: Schnellstart
+description: "Melden Sie sich an der Hikube-Konsole an, erstellen Sie ein Projekt und Ihren ersten Kubernetes-Cluster und fragen Sie ihn in etwa zehn Minuten mit kubectl ab."
 ---
 
 # Schnellstart mit Hikube

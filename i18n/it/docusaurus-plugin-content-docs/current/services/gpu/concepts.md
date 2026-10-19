@@ -1,6 +1,8 @@
 ---
 sidebar_position: 2
-title: Concetti
+title: "Concetti — GPU"
+sidebar_label: Concetti
+description: "Le nozioni GPU su Hikube: passthrough PCI nelle VM, NVIDIA GPU Operator su Kubernetes, modelli e disponibilità, e confronto tra le due modalità d'uso."
 ---
 
 # Concetti — GPU

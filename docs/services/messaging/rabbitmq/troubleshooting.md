@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Dépannage
+title: "Dépannage — RabbitMQ"
+sidebar_label: Dépannage
+description: "Problèmes courants de RabbitMQ sur Hikube : cluster bloqué en création, quota de stockage, connexion AMQP refusée, publications bloquées, messages non routés."
 ---
 
 # Dépannage — RabbitMQ

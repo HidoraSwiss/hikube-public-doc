@@ -1,5 +1,6 @@
 ---
 title: "How to manage users"
+description: "Manage NATS users on Hikube: define one account per purpose, request their creation from support, test the connection with the nats CLI and verify it."
 ---
 
 # How to manage NATS users

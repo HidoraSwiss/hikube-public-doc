@@ -2,3 +2,6 @@ User-agent: *
 Allow: /
 
 Sitemap: https://docs.hikube.cloud/sitemap.xml
+Sitemap: https://docs.hikube.cloud/en/sitemap.xml
+Sitemap: https://docs.hikube.cloud/de/sitemap.xml
+Sitemap: https://docs.hikube.cloud/it/sitemap.xml

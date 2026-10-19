@@ -1,6 +1,8 @@
 ---
 sidebar_position: 1
-title: Overview
+title: "Disks on Hikube"
+sidebar_label: Overview
+description: "Discover Hikube disks, persistent and replicated block volumes that you create, attach, expand or move between your virtual machines from the console."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

@@ -1,6 +1,8 @@
 ---
 sidebar_position: 2
-title: Concepts
+title: "Concepts — Redis"
+sidebar_label: Concepts
+description: "Understand Redis on Hikube: master and replica architecture, failover driven by Redis Sentinel, on-disk persistence, authentication and network access."
 ---
 
 # Concepts — Redis

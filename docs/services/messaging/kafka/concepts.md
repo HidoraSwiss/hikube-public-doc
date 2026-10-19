@@ -1,6 +1,8 @@
 ---
 sidebar_position: 2
-title: Concepts
+title: "Concepts — Kafka"
+sidebar_label: Concepts
+description: "Comprendre Kafka sur Hikube : architecture brokers et ZooKeeper, topics et partitions, configuration des topics, presets de ressources, limites et quotas."
 ---
 
 # Concepts — Kafka

@@ -1,6 +1,8 @@
 ---
 sidebar_position: 1
-title: Übersicht
+title: "Redis auf Hikube"
+sidebar_label: Übersicht
+description: "Lernen Sie den verwalteten Redis-Dienst von Hikube kennen: ein Master und seine Replikate, überwacht von Redis Sentinel, mit automatischem Failover."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

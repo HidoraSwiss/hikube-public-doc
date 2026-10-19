@@ -1,5 +1,6 @@
 ---
-title: "How to configure automatic backups"
+title: "How to configure automatic backups — MariaDB"
+sidebar_label: "How to configure automatic backups"
 sidebar_position: 3
 ---
 

@@ -1,6 +1,8 @@
 ---
 sidebar_position: 1
-title: Overview
+title: "MariaDB on Hikube"
+sidebar_label: Overview
+description: "Discover the Hikube managed MariaDB service, compatible with MySQL clients: a replicated cluster with automatic failover, managed from the console."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Dépannage
+title: "Dépannage — Redis"
+sidebar_label: Dépannage
+description: "Résolvez les problèmes de Redis sur Hikube : cluster en erreur, hôte en attente, timeout, NOAUTH ou WRONGPASS, mémoire saturée, failover absent."
 ---
 
 # Dépannage — Redis

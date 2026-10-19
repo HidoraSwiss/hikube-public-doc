@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Troubleshooting
+title: "Troubleshooting — S3 Buckets"
+sidebar_label: Troubleshooting
+description: "Fix common Hikube S3 bucket problems: AccessDenied errors, missing credentials, bucket name already taken, deletion that fails, and slow uploads."
 ---
 
 # Troubleshooting — S3 Buckets

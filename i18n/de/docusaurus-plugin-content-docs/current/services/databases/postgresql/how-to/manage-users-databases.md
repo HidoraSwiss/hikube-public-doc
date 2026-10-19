@@ -1,5 +1,6 @@
 ---
-title: "Benutzer und Datenbanken verwalten"
+title: "Benutzer und Datenbanken verwalten — PostgreSQL"
+sidebar_label: "Benutzer und Datenbanken verwalten"
 sidebar_position: 1
 ---
 

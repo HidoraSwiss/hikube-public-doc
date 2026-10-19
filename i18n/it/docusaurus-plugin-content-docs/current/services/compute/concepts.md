@@ -1,6 +1,8 @@
 ---
 sidebar_position: 2
-title: Concetti
+title: "Concetti — Macchine virtuali"
+sidebar_label: Concetti
+description: "Le nozioni delle macchine virtuali Hikube: architettura, tipi di istanza, storage, rete, ciclo di vita, modifiche possibili dopo la creazione e quote."
 ---
 
 # Concetti — Macchine virtuali

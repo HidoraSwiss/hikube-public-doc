@@ -1,6 +1,8 @@
 ---
 sidebar_position: 6
-title: FAQ
+title: "FAQ — ClickHouse"
+sidebar_label: FAQ
+description: "Questions courantes sur ClickHouse dans Hikube : shards et réplicas, rôle de Keeper, usage OLTP, presets, distribution des données et sauvegardes."
 ---
 
 # FAQ — ClickHouse

@@ -1,6 +1,8 @@
 ---
 sidebar_position: 1
-title: Overview
+title: "Virtual machines on Hikube"
+sidebar_label: Overview
+description: "Overview of Hikube virtual machines: what the console lets you do, S, U and M instance series, operating systems, connectivity and isolation."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

@@ -1,6 +1,8 @@
 ---
 sidebar_position: 3
-title: Quick start
+title: "Deploy MariaDB in 5 minutes"
+sidebar_label: Quick start
+description: "Create a MariaDB cluster from the Hikube console, give a user access to an application database and connect to it with a MySQL client."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

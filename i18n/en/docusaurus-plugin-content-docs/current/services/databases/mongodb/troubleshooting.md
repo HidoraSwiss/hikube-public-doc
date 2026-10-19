@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Troubleshooting
+title: "Troubleshooting — MongoDB"
+sidebar_label: Troubleshooting
+description: "Fix common MongoDB issues on Hikube: cluster in error, connection refused, not primary error, Authentication failed, not authorized, full disk."
 ---
 
 # Troubleshooting — MongoDB

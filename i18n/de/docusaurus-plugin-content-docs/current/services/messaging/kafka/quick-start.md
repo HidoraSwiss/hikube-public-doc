@@ -1,6 +1,8 @@
 ---
 sidebar_position: 3
-title: Schnellstart
+title: "Erste Schritte mit Kafka"
+sidebar_label: Schnellstart
+description: "Erste Schritte mit Kafka auf Hikube: Instanz beim Support anfordern, eine erste Nachricht in einem Topic senden und lesen und Fehler diagnostizieren."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

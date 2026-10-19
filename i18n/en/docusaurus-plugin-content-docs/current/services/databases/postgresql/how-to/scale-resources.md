@@ -1,5 +1,6 @@
 ---
-title: "How to scale a cluster's resources"
+title: "How to scale a cluster's resources — PostgreSQL"
+sidebar_label: "How to scale a cluster's resources"
 sidebar_position: 2
 ---
 

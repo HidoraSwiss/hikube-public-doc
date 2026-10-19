@@ -1,6 +1,8 @@
 ---
 sidebar_position: 3
-title: Démarrage rapide
+title: "Démarrer avec ClickHouse"
+sidebar_label: Démarrage rapide
+description: "Préparez la demande d'une instance ClickHouse sur Hikube auprès du support, puis connectez-vous avec clickhouse-client et créez une première table analytique."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

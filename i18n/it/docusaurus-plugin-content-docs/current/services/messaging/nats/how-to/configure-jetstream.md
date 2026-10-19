@@ -1,5 +1,6 @@
 ---
 title: "Come configurare JetStream"
+description: "Configurare JetStream per NATS su Hikube: dimensionare lo storage, regolare la configurazione del server, creare uno stream e testarlo con la CLI nats."
 ---
 
 # Come configurare JetStream

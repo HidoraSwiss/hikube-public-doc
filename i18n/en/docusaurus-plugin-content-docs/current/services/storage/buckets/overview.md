@@ -1,6 +1,8 @@
 ---
 sidebar_position: 1
-title: Overview
+title: "S3 Buckets on Hikube"
+sidebar_label: Overview
+description: "Discover Hikube S3 buckets: S3-compatible object storage replicated across three datacenters in Switzerland, use cases, isolation and console management."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

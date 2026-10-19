@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Troubleshooting
+title: "Troubleshooting — MariaDB"
+sidebar_label: Troubleshooting
+description: "Fix common MariaDB issues on Hikube: cluster in error, connection refused, Access denied, errors in Manage Access, full disk, replication out of sync."
 ---
 
 # Troubleshooting — MariaDB

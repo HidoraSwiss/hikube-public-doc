@@ -1,6 +1,8 @@
 ---
 sidebar_position: 3
-title: Avvio rapido
+title: "Creare un VPC e collegarvi due VM"
+sidebar_label: Avvio rapido
+description: "Create un VPC con una sottorete dalla console Hikube, collegatevi due macchine virtuali e verificate che comunichino tramite i loro indirizzi privati."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

@@ -1,5 +1,6 @@
 ---
 title: "Come gestire utenti e profili ClickHouse"
+description: "Richiedete al supporto la creazione di utenti ClickHouse su Hikube, con accesso completo o in sola lettura, e verificatene i permessi con clickhouse-client."
 sidebar_position: 1
 ---
 

@@ -24,7 +24,7 @@
     "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.how-to-services-storage-buckets.link.generated-index.title": {
-    "message": "Guides pratiques",
+    "message": "Guides pratiques — Buckets S3",
     "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.Databases": {
@@ -40,7 +40,7 @@
     "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.how-to-services-databases-clickhouse.link.generated-index.title": {
-    "message": "Guides pratiques",
+    "message": "Guides pratiques — ClickHouse",
     "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.PostgreSQL": {
@@ -52,7 +52,7 @@
     "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.how-to-services-databases-postgresql.link.generated-index.title": {
-    "message": "Guides pratiques",
+    "message": "Guides pratiques — PostgreSQL",
     "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.MariaDB": {
@@ -64,7 +64,7 @@
     "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.how-to-services-databases-mariadb.link.generated-index.title": {
-    "message": "Guides pratiques",
+    "message": "Guides pratiques — MariaDB",
     "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.Redis": {
@@ -76,7 +76,7 @@
     "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.how-to-services-databases-redis.link.generated-index.title": {
-    "message": "Guides pratiques",
+    "message": "Guides pratiques — Redis",
     "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.Ressources de calcul": {
@@ -88,7 +88,7 @@
     "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.how-to-services-compute.link.generated-index.title": {
-    "message": "Guides pratiques",
+    "message": "Guides pratiques — Machines virtuelles",
     "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.GPU": {
@@ -100,7 +100,7 @@
     "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.how-to-services-gpu.link.generated-index.title": {
-    "message": "Guides pratiques",
+    "message": "Guides pratiques — GPU",
     "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.Kubernetes": {
@@ -112,7 +112,7 @@
     "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.how-to-services-kubernetes.link.generated-index.title": {
-    "message": "Guides pratiques",
+    "message": "Guides pratiques — Kubernetes",
     "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.Plugins": {
@@ -132,7 +132,7 @@
     "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.how-to-services-messaging-kafka.link.generated-index.title": {
-    "message": "Guides pratiques",
+    "message": "Guides pratiques — Kafka",
     "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.RabbitMQ": {
@@ -144,7 +144,7 @@
     "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.how-to-services-messaging-rabbitmq.link.generated-index.title": {
-    "message": "Guides pratiques",
+    "message": "Guides pratiques — RabbitMQ",
     "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.NATS": {
@@ -156,7 +156,7 @@
     "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.how-to-services-messaging-nats.link.generated-index.title": {
-    "message": "Guides pratiques",
+    "message": "Guides pratiques — NATS",
     "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.Ressources": {
@@ -184,7 +184,7 @@
     "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.how-to-services-storage-disks.link.generated-index.title": {
-    "message": "Guides pratiques",
+    "message": "Guides pratiques — Disques",
     "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.how-to-services-networking": {
@@ -192,7 +192,7 @@
     "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.how-to-services-networking.link.generated-index.title": {
-    "message": "Guides pratiques",
+    "message": "Guides pratiques — Réseau",
     "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.how-to-services-databases-mongodb": {
@@ -200,7 +200,63 @@
     "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.how-to-services-databases-mongodb.link.generated-index.title": {
-    "message": "Guides pratiques",
+    "message": "Guides pratiques — MongoDB",
     "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-storage-disks.link.generated-index.description": {
+    "message": "Guides pas à pas pour Disques sur Hikube : chaque guide décrit une tâche précise à réaliser depuis la console, avec ses étapes et ses vérifications.",
+    "description": "The generated-index page description for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-storage-buckets.link.generated-index.description": {
+    "message": "Guides pas à pas pour Buckets S3 sur Hikube : chaque guide décrit une tâche précise à réaliser depuis la console, avec ses étapes et ses vérifications.",
+    "description": "The generated-index page description for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-databases-postgresql.link.generated-index.description": {
+    "message": "Guides pas à pas pour PostgreSQL sur Hikube : chaque guide décrit une tâche précise à réaliser depuis la console, avec ses étapes et ses vérifications.",
+    "description": "The generated-index page description for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-databases-mariadb.link.generated-index.description": {
+    "message": "Guides pas à pas pour MariaDB sur Hikube : chaque guide décrit une tâche précise à réaliser depuis la console, avec ses étapes et ses vérifications.",
+    "description": "The generated-index page description for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-databases-mongodb.link.generated-index.description": {
+    "message": "Guides pas à pas pour MongoDB sur Hikube : chaque guide décrit une tâche précise à réaliser depuis la console, avec ses étapes et ses vérifications.",
+    "description": "The generated-index page description for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-databases-redis.link.generated-index.description": {
+    "message": "Guides pas à pas pour Redis sur Hikube : chaque guide décrit une tâche précise à réaliser depuis la console, avec ses étapes et ses vérifications.",
+    "description": "The generated-index page description for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-databases-clickhouse.link.generated-index.description": {
+    "message": "Guides pas à pas pour ClickHouse sur Hikube : chaque guide décrit une tâche précise à réaliser depuis la console, avec ses étapes et ses vérifications.",
+    "description": "The generated-index page description for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-compute.link.generated-index.description": {
+    "message": "Guides pas à pas pour Machines virtuelles sur Hikube : chaque guide décrit une tâche précise à réaliser depuis la console, avec ses étapes et ses vérifications.",
+    "description": "The generated-index page description for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-gpu.link.generated-index.description": {
+    "message": "Guides pas à pas pour GPU sur Hikube : chaque guide décrit une tâche précise à réaliser depuis la console, avec ses étapes et ses vérifications.",
+    "description": "The generated-index page description for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-kubernetes.link.generated-index.description": {
+    "message": "Guides pas à pas pour Kubernetes sur Hikube : chaque guide décrit une tâche précise à réaliser depuis la console, avec ses étapes et ses vérifications.",
+    "description": "The generated-index page description for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-networking.link.generated-index.description": {
+    "message": "Guides pas à pas pour Réseau sur Hikube : chaque guide décrit une tâche précise à réaliser depuis la console, avec ses étapes et ses vérifications.",
+    "description": "The generated-index page description for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-messaging-rabbitmq.link.generated-index.description": {
+    "message": "Guides pas à pas pour RabbitMQ sur Hikube : chaque guide décrit une tâche précise à réaliser depuis la console, avec ses étapes et ses vérifications.",
+    "description": "The generated-index page description for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-messaging-kafka.link.generated-index.description": {
+    "message": "Guides pas à pas pour Kafka sur Hikube : chaque guide décrit une tâche précise à réaliser depuis la console, avec ses étapes et ses vérifications.",
+    "description": "The generated-index page description for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-messaging-nats.link.generated-index.description": {
+    "message": "Guides pas à pas pour NATS sur Hikube : chaque guide décrit une tâche précise à réaliser depuis la console, avec ses étapes et ses vérifications.",
+    "description": "The generated-index page description for category 'Guides pratiques' in sidebar 'docsSidebar'"
   }
 }

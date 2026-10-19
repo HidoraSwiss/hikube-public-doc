@@ -1,5 +1,6 @@
 ---
 title: "Comment créer et gérer les topics"
+description: "Créer et gérer les topics Kafka sur Hikube : définir partitions et réplicas, choisir rétention et politique de nettoyage, transmettre la demande et vérifier."
 ---
 
 # Comment créer et gérer les topics

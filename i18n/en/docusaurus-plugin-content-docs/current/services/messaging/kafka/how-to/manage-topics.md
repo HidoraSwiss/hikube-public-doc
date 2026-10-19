@@ -1,5 +1,6 @@
 ---
 title: "How to create and manage topics"
+description: "Create and manage Kafka topics on Hikube: define partitions and replicas, choose retention and cleanup policy, submit the request and verify the topics."
 ---
 
 # How to create and manage topics

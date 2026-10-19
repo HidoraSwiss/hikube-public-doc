@@ -1,6 +1,7 @@
 ---
 sidebar_position: 1
 title: Introduzione a Hikube
+description: "Scoprite Hikube, cloud sovrano ospitato in Svizzera: infrastruttura su tre datacenter, servizi offerti, sicurezza, isolamento e prerequisiti per iniziare."
 ---
 
 # Introduzione a Hikube

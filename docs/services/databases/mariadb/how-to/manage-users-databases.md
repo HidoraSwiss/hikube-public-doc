@@ -1,5 +1,6 @@
 ---
-title: "Comment gérer les utilisateurs et bases de données"
+title: "Comment gérer les utilisateurs et bases de données — MariaDB"
+sidebar_label: "Comment gérer les utilisateurs et bases de données"
 sidebar_position: 1
 ---
 

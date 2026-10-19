@@ -1,6 +1,8 @@
 ---
 sidebar_position: 2
-title: Concepts
+title: "Concepts — MariaDB"
+sidebar_label: Concepts
+description: "Comprenez MariaDB sur Hikube : réplication binlog, failover automatique, utilisateurs et rôles, nommage, préconfigurations, accès réseau et sauvegardes."
 ---
 
 # Concepts — MariaDB

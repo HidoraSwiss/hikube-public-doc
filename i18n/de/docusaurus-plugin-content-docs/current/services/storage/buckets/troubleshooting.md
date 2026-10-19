@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Fehlerbehebung
+title: "Fehlerbehebung — S3-Buckets"
+sidebar_label: Fehlerbehebung
+description: "Beheben Sie häufige Probleme mit Hikube S3-Buckets: AccessDenied-Fehler, fehlende Zugangsdaten, bereits vergebener Name, Löschfehler und langsame Uploads."
 ---
 
 # Fehlerbehebung — S3-Buckets

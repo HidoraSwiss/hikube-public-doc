@@ -1,6 +1,8 @@
 ---
 sidebar_position: 3
-title: Démarrage rapide
+title: "Démarrer avec Kafka"
+sidebar_label: Démarrage rapide
+description: "Démarrer avec Kafka sur Hikube : demander une instance au support, publier puis consommer un premier message sur un topic et diagnostiquer les erreurs."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

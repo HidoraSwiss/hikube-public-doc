@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Fehlerbehebung
+title: "Fehlerbehebung — ClickHouse"
+sidebar_label: Fehlerbehebung
+description: "Beheben Sie häufige ClickHouse-Probleme auf Hikube: langsame Abfragen auf großen Daten, wenig Speicherplatz, Replikations- oder Keeper-Fehler, Anmeldung."
 ---
 
 # Fehlerbehebung — ClickHouse

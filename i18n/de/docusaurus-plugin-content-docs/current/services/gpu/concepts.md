@@ -1,6 +1,8 @@
 ---
 sidebar_position: 2
-title: Konzepte
+title: "Konzepte — GPU"
+sidebar_label: Konzepte
+description: "Die GPU-Konzepte von Hikube: PCI-Passthrough für VMs, NVIDIA GPU Operator unter Kubernetes, Modelle und Verfügbarkeit sowie ein Vergleich beider Modi."
 ---
 
 # Konzepte — GPU

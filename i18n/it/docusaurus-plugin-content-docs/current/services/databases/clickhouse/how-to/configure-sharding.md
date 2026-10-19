@@ -1,5 +1,6 @@
 ---
 title: "Come configurare lo sharding di ClickHouse"
+description: "Scegliete shard e repliche per un'istanza ClickHouse su Hikube, richiedete la topologia al supporto e create tabelle ReplicatedMergeTree e Distributed."
 sidebar_position: 3
 ---
 

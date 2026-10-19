@@ -1,6 +1,8 @@
 ---
 sidebar_position: 2
-title: Concepts
+title: "Concepts — RabbitMQ"
+sidebar_label: Concepts
+description: "Understand RabbitMQ on Hikube: architecture, deployment modes, exchanges and routing, quorum queues, vhosts, user permissions and the limits of the service."
 ---
 
 # Concepts — RabbitMQ

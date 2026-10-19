@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
-title: Risoluzione dei problemi
+title: "Risoluzione dei problemi — RabbitMQ"
+sidebar_label: Risoluzione dei problemi
+description: "Problemi di RabbitMQ su Hikube: cluster bloccato in creazione, quota di storage, connessione AMQP rifiutata, pubblicazioni bloccate, messaggi non instradati."
 ---
 
 # Risoluzione dei problemi — RabbitMQ

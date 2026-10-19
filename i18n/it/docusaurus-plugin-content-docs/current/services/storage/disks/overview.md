@@ -1,6 +1,8 @@
 ---
 sidebar_position: 1
-title: Panoramica
+title: "Dischi su Hikube"
+sidebar_label: Panoramica
+description: "Panoramica dei dischi Hikube, volumi a blocchi persistenti e replicati da creare, collegare, ingrandire o spostare tra le macchine virtuali dalla console."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

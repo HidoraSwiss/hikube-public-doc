@@ -1,6 +1,7 @@
 ---
 sidebar_position: 2
 title: Concetti chiave
+description: "Le nozioni chiave di Hikube: console web, organizzazione, progetti, quote e servizi gestiti, per capire come sono organizzate e gestite le vostre risorse."
 ---
 
 # Concetti chiave di Hikube

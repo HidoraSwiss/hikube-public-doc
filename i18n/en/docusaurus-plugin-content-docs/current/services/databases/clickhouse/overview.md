@@ -1,6 +1,8 @@
 ---
 sidebar_position: 1
-title: Overview
+title: "ClickHouse on Hikube"
+sidebar_label: Overview
+description: "Discover ClickHouse on Hikube, a column-oriented SQL database for OLAP analytics, and choose the number of shards and replicas for your data volumes."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

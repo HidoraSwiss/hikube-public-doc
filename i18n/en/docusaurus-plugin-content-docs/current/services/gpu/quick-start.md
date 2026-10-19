@@ -1,6 +1,8 @@
 ---
 sidebar_position: 3
-title: Quick start
+title: "Create a VM with a GPU"
+sidebar_label: Quick start
+description: "Create an Ubuntu VM with an NVIDIA GPU from the Hikube console, connect over SSH and check with nvidia-smi that the GPU is ready to use."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

@@ -1,6 +1,8 @@
 ---
 sidebar_position: 2
-title: Concetti
+title: "Concetti — PostgreSQL"
+sidebar_label: Concetti
+description: "I concetti di PostgreSQL su Hikube: streaming dei WAL, failover automatico, database di sistema, regole sui nomi, preset, accesso di rete e backup."
 ---
 
 # Concetti — PostgreSQL

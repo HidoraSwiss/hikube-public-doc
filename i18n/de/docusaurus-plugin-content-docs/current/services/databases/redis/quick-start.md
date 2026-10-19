@@ -1,6 +1,8 @@
 ---
 sidebar_position: 3
-title: Schnellstart
+title: "Redis in 5 Minuten bereitstellen"
+sidebar_label: Schnellstart
+description: "Erstellen Sie in der Hikube-Konsole einen Redis-Cluster, rufen Sie das generierte Passwort ab und testen Sie die Verbindung mit redis-cli."
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';

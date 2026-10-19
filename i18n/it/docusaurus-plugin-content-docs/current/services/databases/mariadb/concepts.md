@@ -1,6 +1,8 @@
 ---
 sidebar_position: 2
-title: Concetti
+title: "Concetti — MariaDB"
+sidebar_label: Concetti
+description: "I concetti di MariaDB su Hikube: replica tramite binlog, failover automatico, utenti e ruoli, regole sui nomi, preset, accesso di rete e backup."
 ---
 
 # Concetti — MariaDB
