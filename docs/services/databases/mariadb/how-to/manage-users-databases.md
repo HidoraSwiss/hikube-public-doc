@@ -125,7 +125,7 @@ curl -sS -X PATCH "$HIKUBE_API/mariadb/v1alpha1/projects/$PROJECT_ID/clusters/de
   }'
 ```
 
-L'objet `config.databases` remplace l'ensemble des droits de l'utilisateur : une base absente de la requête lui est retirée. `config.maxUserConnections` est lui aussi réécrit (`0`, illimité, s'il est omis). Consultez la configuration actuelle avec `GET $HIKUBE_API/mariadb/v1alpha1/projects/$PROJECT_ID/clusters/demomariadb/users/reportreader`.
+L'objet `config.databases`, s'il est envoyé, remplace l'ensemble des droits de l'utilisateur : une base absente de la requête lui est retirée, et `{}` les retire tous. `config.maxUserConnections` n'est modifié que s'il est envoyé (`0` : illimité) ; voir [Mises à jour partielles](../../../../api/overview.md#mises-a-jour-partielles). Consultez la configuration actuelle avec `GET $HIKUBE_API/mariadb/v1alpha1/projects/$PROJECT_ID/clusters/demomariadb/users/reportreader`.
 
 </TabItem>
 </Tabs>

@@ -153,24 +153,18 @@ Sur la page de détail de chaque VM, section **Réseau et Sécurité** :
 </TabItem>
 <TabItem value="api" label="API">
 
-Une VM se relie à un sous-réseau en modifiant la VM (`PATCH /instance/v1alpha1/projects/{projectId}/instances/{name}`). `instanceType` et `disks` sont obligatoires ; si vous envoyez `network`, reprenez `publicIpv4` et le pare-feu actuels. Pour chacune des deux VM :
+Une VM se relie à un sous-réseau en modifiant la VM (`PATCH /instance/v1alpha1/projects/{projectId}/instances/{name}`). C'est une [mise à jour partielle](../../api/overview.md#mises-a-jour-partielles) : un corps qui ne contient que `network.vpcs` garde le type d'instance, les disques, l'adresse publique et le pare-feu. Pour chacune des deux VM :
 
 ```bash
 VM=vm1   # nom de la VM
 
-curl -sS "$HIKUBE_API/instance/v1alpha1/projects/$PROJECT_ID/instances/$VM" \
-  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" \
-| jq '{instanceType, disks: (.disks | map({name})),
-       network: {publicIpv4: .network.publicIpv4, firewall: .network.firewall,
-                 vpcs: [{name: "vpcdemo", subnets: ["app"]}]}}' > vm-update.json
-
 curl -sS -X PATCH "$HIKUBE_API/instance/v1alpha1/projects/$PROJECT_ID/instances/$VM" \
   -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" \
   -H "Content-Type: application/json" \
-  -d @vm-update.json
+  -d '{"network": {"vpcs": [{"name": "vpcdemo", "subnets": ["app"]}]}}'
 ```
 
-La liste `vpcs` remplace les connexions VPC actuelles de la VM ; chaque connexion doit nommer au moins un sous-réseau. Pour une nouvelle VM, placez le même bloc `network.vpcs` dans le corps de création.
+La liste `vpcs` remplace les connexions VPC actuelles de la VM, et `[]` les retire toutes ; chaque connexion doit nommer au moins un sous-réseau. Pour une nouvelle VM, placez le même bloc `network.vpcs` dans le corps de création.
 
 Relevez ensuite l'adresse privée de chaque VM :
 

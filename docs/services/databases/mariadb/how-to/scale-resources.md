@@ -65,26 +65,22 @@ curl -sS "$HIKUBE_API/mariadb/v1alpha1/projects/$PROJECT_ID/clusters/demomariadb
 </TabItem>
 <TabItem value="api" label="API">
 
-La modification passe par `PATCH /mariadb/v1alpha1/projects/{projectId}/clusters/{name}`, dont le corps accepte quatre champs :
+La modification passe par `PATCH /mariadb/v1alpha1/projects/{projectId}/clusters/{name}`, une [mise à jour partielle](../../../../api/overview.md#mises-a-jour-partielles) : seuls les champs envoyés changent. Le corps accepte quatre champs :
 
-| Champ | Comportement s'il est omis |
-|-------|----------------------------|
-| `version` | Obligatoire (`v10.6`, `v10.11`, `v11.4` ou `v11.8`) ; ne revenez pas à une version antérieure |
-| `size` | Obligatoire (1 à 4096 Go) |
-| `replicas` | Conservé ; un passage entre standalone (`1`) et cluster (`2` à `8`) est refusé (`400`) |
-| `external` | **Désactivé** : un champ absent vaut `false` |
+| Champ | Règle |
+|-------|-------|
+| `version` | `v10.6`, `v10.11`, `v11.4` ou `v11.8` ; une version antérieure est refusée |
+| `size` | 1 à 4096 Go |
+| `replicas` | Un passage entre standalone (`1`) et cluster (`2` à `8`) est refusé (`400`, code `110201`) |
+| `external` | `true` ou `false` |
 
-La préconfiguration (`preset`) n'est pas modifiable par l'API non plus. Partez de la configuration actuelle et ne changez que les valeurs voulues, par exemple la taille du disque :
+La préconfiguration (`preset`) n'est pas modifiable par l'API. Par exemple, pour passer le disque à 20 Go :
 
 ```bash
-curl -sS "$HIKUBE_API/mariadb/v1alpha1/projects/$PROJECT_ID/clusters/demomariadb" \
-  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" \
-| jq '{version, replicas, size, external} | .size = 20' > mariadb-update.json
-
 curl -sS -X PATCH "$HIKUBE_API/mariadb/v1alpha1/projects/$PROJECT_ID/clusters/demomariadb" \
   -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" \
   -H "Content-Type: application/json" \
-  -d @mariadb-update.json
+  -d '{"size": 20}'
 ```
 
 </TabItem>

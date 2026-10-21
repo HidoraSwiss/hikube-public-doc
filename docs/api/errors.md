@@ -65,6 +65,7 @@ Cette réponse uniforme est volontaire : elle ne révèle rien sur l'existence d
 | `10001` | 401 | Authentification absente ou invalide |
 | `10002` | 403 | Accès refusé (voir ci-dessus) |
 | `10004` | 503 | La clé n'a pas pu être vérifiée pour le moment. Ce n'est pas un refus : la clé n'est pas en cause, réessayez |
+| `10006` | 400 | Un chemin de `updateMask` ne désigne aucun champ modifiable de la requête `PATCH` (voir [Mises à jour partielles](./overview.md#mises-a-jour-partielles)) |
 
 Un client qui annule sa requête ou dépasse son propre délai reçoit `499` ou `504`, sans code numérique.
 

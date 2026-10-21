@@ -125,25 +125,20 @@ Le nom et l'image système ne sont pas modifiables.
 </TabItem>
 <TabItem value="api" label="API">
 
-La modification passe par `PATCH /instance/v1alpha1/projects/{projectId}/instances/{name}`. Règles de cette requête :
+La modification passe par `PATCH /instance/v1alpha1/projects/{projectId}/instances/{name}`, une [mise à jour partielle](../../../api/overview.md#mises-a-jour-partielles) : seuls les champs envoyés changent. Règles propres aux VM :
 
-- `instanceType` et `disks` sont **obligatoires** ;
-- la liste `disks` **remplace** la liste actuelle : un disque absent est détaché, un nouveau nom crée un disque (avec `size`) ; le disque système reste en première position ;
-- les autres champs omis (`sshKeys`, `userData`, `gpus`, `network`…) gardent leur valeur ;
-- si vous envoyez `network`, indiquez toujours `publicIpv4` : sa valeur est appliquée telle quelle ;
-- une liste vide (`gpus`, `network.vpcs`, `network.firewall.allowedInboundPorts`) ne retire rien ; à ce jour, l'API publique ne permet pas de vider ces listes.
+- `disks`, s'il est envoyé, **remplace** la liste actuelle : un disque absent est détaché (pas supprimé), un nouveau nom crée un disque (avec `size`), et le disque système doit rester en première position ;
+- `network` se modifie champ par champ : `{"network": {"publicIpv4": true}}` garde le pare-feu et les VPC ;
+- une liste envoyée remplace la liste actuelle, et `[]` la vide : `gpus`, `sshKeys`, `network.vpcs`, `network.firewall.allowedInboundPorts` ;
+- `userData: ""` retire les données utilisateur d'une VM Linux ; sur une VM Windows, elles sont générées par la plateforme et ne se modifient pas.
 
-Exemple : passer la VM en `u1.2xlarge` en conservant ses disques :
+Exemple : passer la VM en `u1.2xlarge` :
 
 ```bash
-curl -sS "$HIKUBE_API/instance/v1alpha1/projects/$PROJECT_ID/instances/$VM" \
-  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" \
-| jq '{instanceType: "u1.2xlarge", disks: (.disks | map({name}))}' > vm-update.json
-
 curl -sS -X PATCH "$HIKUBE_API/instance/v1alpha1/projects/$PROJECT_ID/instances/$VM" \
   -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" \
   -H "Content-Type: application/json" \
-  -d @vm-update.json
+  -d '{"instanceType": "u1.2xlarge"}'
 ```
 
 Comme dans la console, un changement de type d'instance, de disques ou de GPU redémarre la VM. Le nom et l'image système ne sont pas modifiables.

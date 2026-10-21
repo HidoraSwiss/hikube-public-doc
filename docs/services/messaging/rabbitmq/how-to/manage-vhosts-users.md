@@ -127,7 +127,7 @@ Le mot de passe de l'utilisateur n'est pas modifié par cette opération.
 </TabItem>
 <TabItem value="api" label="API">
 
-`PATCH .../users/{username}` remplace l'ensemble des droits de l'utilisateur : les vhosts absents de `config.vhosts` lui sont retirés. Envoyez donc la liste complète des accès voulus :
+`PATCH .../users/{username}` est une [mise à jour partielle](../../../../api/overview.md#mises-a-jour-partielles), mais `config.vhosts`, s'il est envoyé, remplace l'ensemble des droits de l'utilisateur : les vhosts absents lui sont retirés. Envoyez donc la liste complète des accès voulus :
 
 ```bash
 curl -sS -X PATCH "$HIKUBE_API/rabbitmq/v1alpha1/projects/$PROJECT_ID/clusters/rabbitdemo/users/consumer" \

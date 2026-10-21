@@ -69,23 +69,19 @@ curl -sS "$HIKUBE_API/redis/v1alpha1/projects/$PROJECT_ID/clusters/democache" \
 
 ### 2. Envoyer la nouvelle configuration
 
-`PATCH /redis/v1alpha1/projects/{projectId}/clusters/{name}` exige `version`, `preset` et `size`, et applique toujours `external` et `authEnabled` : un booléen omis vaut `false`, ce qui couperait l'accès externe ou l'authentification. Renvoyez donc la configuration complète, avec vos modifications. Par exemple, pour passer en `medium` avec un volume de 20 Go :
+`PATCH /redis/v1alpha1/projects/{projectId}/clusters/{name}` est une [mise à jour partielle](../../../../api/overview.md#mises-a-jour-partielles) : seuls les champs envoyés changent, et l'accès externe comme l'authentification restent tels quels s'ils sont absents. Par exemple, pour passer en `medium` avec un volume de 20 Go :
 
 ```bash
-curl -sS "$HIKUBE_API/redis/v1alpha1/projects/$PROJECT_ID/clusters/democache" \
-  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" \
-| jq '{version, preset: "medium", size: 20, external, authEnabled}' > redis-update.json
-
 curl -sS -X PATCH "$HIKUBE_API/redis/v1alpha1/projects/$PROJECT_ID/clusters/democache" \
   -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" \
   -H "Content-Type: application/json" \
-  -d @redis-update.json
+  -d '{"preset": "medium", "size": 20}'
 ```
 
 - `version` : `v7` ou `v8` ;
 - `preset` : `nano`, `micro`, `small`, `medium`, `large`, `xlarge` ou `2xlarge` (`GET /redis/v1alpha1/presets`) ;
 - `size` : taille du volume de chaque nœud, en Go ;
-- `replicas` est facultatif : laissez-le de côté. L'API refuse de passer d'un nœud unique au mode cluster, ou l'inverse.
+- `replicas` : l'API refuse de passer d'un nœud unique au mode cluster, ou l'inverse (code `120201`).
 
 La réponse décrit le cluster mis à jour.
 

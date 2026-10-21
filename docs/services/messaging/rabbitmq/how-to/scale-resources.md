@@ -65,22 +65,18 @@ curl -sS "$HIKUBE_API/rabbitmq/v1alpha1/projects/$PROJECT_ID/clusters/rabbitdemo
 
 ### 2. Envoyer la nouvelle configuration
 
-`PATCH /rabbitmq/v1alpha1/projects/{projectId}/clusters/{name}` exige `version` et `size`, et applique toujours `external` : un `external` omis vaut `false` et coupe l'accès externe. Le corps n'a pas de champ `preset`. Renvoyez donc `version`, `size` et `external`, avec vos modifications. Par exemple, pour passer le disque à 20 Go :
+`PATCH /rabbitmq/v1alpha1/projects/{projectId}/clusters/{name}` est une [mise à jour partielle](../../../../api/overview.md#mises-a-jour-partielles) : seuls les champs envoyés changent, et l'accès externe reste tel quel s'il est absent. Le corps n'a pas de champ `preset`. Par exemple, pour passer le disque à 20 Go :
 
 ```bash
-curl -sS "$HIKUBE_API/rabbitmq/v1alpha1/projects/$PROJECT_ID/clusters/rabbitdemo" \
-  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" \
-| jq '{version, size: 20, external}' > rabbitmq-update.json
-
 curl -sS -X PATCH "$HIKUBE_API/rabbitmq/v1alpha1/projects/$PROJECT_ID/clusters/rabbitdemo" \
   -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" \
   -H "Content-Type: application/json" \
-  -d @rabbitmq-update.json
+  -d '{"size": 20}'
 ```
 
 - `version` : `v3.13`, `v4.0`, `v4.1` ou `v4.2` ;
 - `size` : taille du disque de chaque nœud, en Go ; comme dans la console, elle ne peut qu'augmenter ;
-- `replicas` est facultatif : laissez-le de côté. L'API refuse de passer d'un nœud unique à plusieurs nœuds, ou l'inverse.
+- `replicas` : l'API refuse de passer d'un nœud unique à plusieurs nœuds, ou l'inverse (code `140201`).
 
 La réponse décrit le cluster mis à jour. Le changement de version a les mêmes effets que depuis la console (voir l'avertissement de l'onglet **Console**).
 
