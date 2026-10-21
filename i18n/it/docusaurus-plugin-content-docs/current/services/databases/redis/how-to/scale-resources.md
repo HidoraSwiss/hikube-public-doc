@@ -48,6 +48,8 @@ Faccia clic su **Save changes**. Il messaggio «Changes saved» conferma l'appli
 
 Una versione inferiore o una dimensione del volume ridotta è rifiutata: la console mostra «An error occurred while updating the cluster.», seguito dal motivo restituito dall'API (codici `120203` per la versione, `120204` per il volume).
 
+Una modifica di **Authentication required** si applica ai server Redis solo dopo un riavvio del cluster. Dopo il salvataggio, la console propone il riavvio: confermi con **Restart**, oppure faccia clic su **Later** e riavvii più tardi dal banner **Restart required** della pagina del cluster. Si veda [Riavviare un cluster](./restart-cluster.md).
+
 :::warning
 Disattivare l'autenticazione su un cluster esposto sulla rete pubblica rende i suoi dati accessibili a chiunque conosca l'indirizzo. Mantenga l'autenticazione attivata.
 :::
@@ -65,3 +67,4 @@ redis-cli -h <host> -p 6379 INFO memory | grep -E 'used_memory_human|maxmemory_h
 
 - [Configurare l'alta disponibilità](./configure-ha.md)
 - [Rinnovare la password](./rotate-password.md)
+- [Riavviare un cluster](./restart-cluster.md)

@@ -49,13 +49,30 @@ description: "Résolvez les problèmes de Redis sur Hikube : cluster en erreur, 
 
 ### Authentification échoue (`NOAUTH` ou `WRONGPASS`)
 
-**Cause** : le client n'envoie pas de mot de passe, utilise un mot de passe erroné, ou un mot de passe révoqué par une rotation.
+**Cause** : le client n'envoie pas de mot de passe ou utilise un mot de passe erroné. Après une rotation, le nouveau mot de passe est refusé (`WRONGPASS`) tant que le cluster n'a pas redémarré, et l'ancien cesse de fonctionner une fois le cluster redémarré.
 
 **Solution** :
 
 1. Vérifiez la valeur fournie au client (`REDISCLI_AUTH`, option `-a` ou configuration applicative).
-2. En cas de doute, générez un nouveau mot de passe depuis la section **Sécurité** (**Effectuer une rotation**) et mettez à jour vos applications. Voir [Renouveler le mot de passe](./how-to/rotate-password.md).
-3. Si l'option **Authentification requise** a été modifiée, mettez à jour les clients en conséquence.
+2. Si la page du cluster affiche le bandeau **Redémarrage requis**, une rotation ou un changement d'authentification attend un redémarrage : cliquez sur **Redémarrer maintenant**. Voir [Redémarrer un cluster](./how-to/restart-cluster.md).
+3. En cas de doute, générez un nouveau mot de passe depuis la section **Sécurité** (**Effectuer une rotation**), redémarrez le cluster et mettez à jour vos applications. Voir [Renouveler le mot de passe](./how-to/rotate-password.md).
+4. Si l'option **Authentification requise** a été modifiée, mettez à jour les clients en conséquence.
+
+### Redis accepte encore les connexions sans mot de passe après l'activation de l'authentification
+
+**Cause** : l'activation de l'**Authentification requise** sur un cluster existant est enregistrée immédiatement, mais n'atteint les serveurs Redis qu'après un redémarrage du cluster. D'ici là, ils gardent leur configuration précédente. Il en va de même pour la désactivation de l'authentification et pour la rotation du mot de passe : les serveurs acceptent l'ancien mot de passe jusqu'au redémarrage.
+
+**Solution** :
+
+1. Ouvrez la page du cluster : le bandeau **Redémarrage requis** confirme qu'un redémarrage est en attente.
+2. Cliquez sur **Redémarrer maintenant** (ou sur **Redémarrer**), puis confirmez avec **Redémarrer**. Le cluster est injoignable pendant environ une minute : choisissez un moment de faible charge.
+3. Vérifiez qu'une connexion sans mot de passe est désormais refusée :
+   ```bash
+   redis-cli -h <hôte> -p 6379 ping
+   # NOAUTH Authentication required.
+   ```
+
+Voir [Redémarrer un cluster](./how-to/restart-cluster.md).
 
 ### Mémoire saturée (`OOM command not allowed`)
 

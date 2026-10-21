@@ -48,6 +48,8 @@ Cliquez sur **Enregistrer les modifications**. Le message « Modifications enreg
 
 Une version inférieure ou une taille de volume réduite est refusée : la console affiche « Une erreur est survenue lors de la mise à jour du cluster. », suivi de la raison renvoyée par l'API (codes `120203` pour la version, `120204` pour le volume).
 
+Un changement de l'**Authentification requise** ne s'applique aux serveurs Redis qu'après un redémarrage du cluster. Après l'enregistrement, la console propose de redémarrer : confirmez avec **Redémarrer**, ou cliquez sur **Plus tard** et redémarrez depuis le bandeau **Redémarrage requis** de la page du cluster. Voir [Redémarrer un cluster](./restart-cluster.md).
+
 :::warning
 Désactiver l'authentification sur un cluster exposé au réseau public rend vos données accessibles à quiconque connaît l'adresse. Conservez l'authentification activée.
 :::
@@ -65,3 +67,4 @@ redis-cli -h <hôte> -p 6379 INFO memory | grep -E 'used_memory_human|maxmemory_
 
 - [Configurer la haute disponibilité](./configure-ha.md)
 - [Renouveler le mot de passe](./rotate-password.md)
+- [Redémarrer un cluster](./restart-cluster.md)

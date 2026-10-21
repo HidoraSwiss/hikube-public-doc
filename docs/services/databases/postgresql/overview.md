@@ -58,6 +58,7 @@ graph TD
 | Bases de données et extensions PostgreSQL | Oui |
 | Utilisateurs, droits par base (admin / lecture seule), rotation du mot de passe | Oui |
 | Montée de version, changement de preset, augmentation de la taille du disque, modification de l'accès externe | Oui |
+| Redémarrage du cluster | Oui |
 | Modification du nombre de réplicas après création | Non, [contactez le support](mailto:support@hidora.io) |
 | Sauvegardes et restauration | Non, [contactez le support](mailto:support@hidora.io) |
 

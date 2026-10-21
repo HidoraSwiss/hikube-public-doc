@@ -60,7 +60,11 @@ Always keep authentication enabled, especially if the public network is enabled.
 
 ### I lost the password. How can I recover it?
 
-It cannot be read back. Generate a new one from the **Security** section of the cluster page (**Rotate password**). See [Renew the password](./how-to/rotate-password.md).
+It cannot be read back. Generate a new one from the **Security** section of the cluster page (**Rotate password**), then restart the cluster: the new password is only accepted after this restart. See [Renew the password](./how-to/rotate-password.md).
+
+### I enabled authentication, but Redis still accepts connections without a password. Why?
+
+Enabling or disabling authentication on an existing cluster, like renewing its password, is saved immediately but only applies to the Redis servers after the cluster restarts. While the cluster page shows the **Restart required** banner, click **Restart now**. The cluster is unreachable for about a minute. See [Restart a cluster](./how-to/restart-cluster.md).
 
 ### How do I scale Redis?
 

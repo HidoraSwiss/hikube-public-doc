@@ -59,6 +59,7 @@ graph TD
 | Cluster creation (version 7 or 8, preset, 1 to 8 replicas, volume size, public network, authentication) | Yes |
 | Password rotation | Yes |
 | Version upgrade, preset change, volume size increase, change of external access and authentication | Yes |
+| Cluster restart | Yes |
 | Changing the number of replicas after creation | No, [contact support](mailto:support@hidora.io) |
 
 ---

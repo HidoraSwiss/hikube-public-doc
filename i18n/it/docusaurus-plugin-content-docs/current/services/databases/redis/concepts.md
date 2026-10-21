@@ -107,6 +107,8 @@ L'opzione **Enable authentication** è attiva per impostazione predefinita nella
 - **Attivata**: alla creazione viene generata una password, mostrata una sola volta insieme all'utente `default`. Può rinnovarla in qualsiasi momento dalla sezione **Security** della pagina del cluster (**Rotate password**).
 - **Disattivata**: il cluster accetta connessioni senza password. Da evitare, in particolare con la rete pubblica attivata.
 
+L'opzione resta modificabile dopo la creazione, da **Edit**. Una modifica dell'autenticazione, come una rotazione della password, si applica ai server Redis solo dopo un [riavvio del cluster](./how-to/restart-cluster.md): fino ad allora, mantengono la configurazione precedente.
+
 Redis su Hikube non offre nella console la gestione di più utenti (ACL): l'accesso si basa su questa password globale.
 
 ---

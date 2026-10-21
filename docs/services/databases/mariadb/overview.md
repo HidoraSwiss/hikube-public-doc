@@ -62,6 +62,7 @@ graph TD
 | Création d'un cluster (version 10.6, 10.11, 11.4 ou 11.8, préconfiguration, taille du disque, 1, 3 ou 5 réplicas, accès externe) | Oui |
 | Utilisateurs et accès par base (admin / lecture seule), rotation du mot de passe | Oui |
 | Montée de version, augmentation de la taille du disque, modification de l'accès externe | Oui |
+| Redémarrage du cluster | Oui |
 | Modification de la préconfiguration ou du nombre de réplicas après création | Non, [contactez le support](mailto:support@hidora.io) |
 | Sauvegardes et restauration | Non, [contactez le support](mailto:support@hidora.io) |
 

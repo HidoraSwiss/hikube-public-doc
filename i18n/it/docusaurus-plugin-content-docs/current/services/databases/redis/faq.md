@@ -60,7 +60,11 @@ Mantenga sempre l'autenticazione attivata, in particolare se la rete pubblica è
 
 ### Ho smarrito la password. Come recuperarla?
 
-Non può essere riletta. Ne generi una nuova dalla sezione **Security** della pagina del cluster (**Rotate password**). Si veda [Rinnovare la password](./how-to/rotate-password.md).
+Non può essere riletta. Ne generi una nuova dalla sezione **Security** della pagina del cluster (**Rotate password**), quindi riavvii il cluster: la nuova password viene accettata solo dopo questo riavvio. Si veda [Rinnovare la password](./how-to/rotate-password.md).
+
+### Ho attivato l'autenticazione, ma Redis accetta ancora connessioni senza password. Perché?
+
+L'attivazione o la disattivazione dell'autenticazione su un cluster esistente, come il rinnovo della sua password, viene salvata immediatamente ma si applica ai server Redis solo dopo un riavvio del cluster. Finché la pagina del cluster mostra il banner **Restart required**, faccia clic su **Restart now**. Il cluster non è raggiungibile per circa un minuto. Si veda [Riavviare un cluster](./how-to/restart-cluster.md).
 
 ### Come scalare Redis?
 

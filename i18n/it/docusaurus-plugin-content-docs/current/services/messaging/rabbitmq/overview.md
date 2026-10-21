@@ -23,6 +23,7 @@ I cluster si creano e si gestiscono in self-service dalla [console Hikube](https
 - **Assegnare diritti per vhost** a ciascun utente (**Administrator** o **Read-only**);
 - **Generare una nuova password** per un utente;
 - **Modificare** un cluster esistente: aggiornamento di versione, aumento della dimensione del disco, accesso esterno;
+- **Riavviare** un cluster;
 - **Eliminare** un cluster, un vhost o un utente.
 
 ---
