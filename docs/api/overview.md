@@ -91,8 +91,37 @@ Les catalogues (images, types d'instance, versions, presets, GPU, tarifs) ne dé
 - **Format** : les corps de requête et de réponse sont en JSON (`Content-Type: application/json`), avec des noms de champs en *camelCase* (`instanceType`, `asyncReplication`). Les dates suivent la RFC 3339 (`2026-10-05T09:30:00Z`).
 - **Verbes** : `GET` consulte, `POST` crée ou lance une action, `PATCH` modifie, `PUT` lance une action sur une VM (démarrer, arrêter…), `DELETE` supprime.
 - **Opérations asynchrones** : une création ou une modification renvoie la ressource aussitôt, avec un champ `status` (`provisioning`, puis `ready`). Interrogez la ressource avec `GET` jusqu'à l'état attendu avant de l'utiliser.
-- **Modifications** : selon le service, une requête `PATCH` peut remplacer toute la configuration, pas seulement les champs envoyés. Partez de la réponse d'un `GET`, changez les champs voulus et renvoyez l'ensemble ; chaque guide précise le cas de son service.
+- **Modifications** : un `PATCH` est une mise à jour partielle, seuls les champs envoyés changent (voir [Mises à jour partielles](#mises-a-jour-partielles)).
 - **Erreurs** : une erreur renvoie un code HTTP et un corps JSON avec un code numérique stable (voir [Erreurs](./errors.md)).
+
+---
+
+## Mises à jour partielles {#mises-a-jour-partielles}
+
+Toutes les requêtes `PATCH` suivent la même règle : **seuls les champs envoyés sont modifiés**. Il n'est pas nécessaire de relire la ressource et de la renvoyer en entier.
+
+- **Champ absent** : un champ absent du corps, ou envoyé à `null`, garde sa valeur. `{"external": true}` sur un cluster Redis active l'accès externe et garde la version, la taille et l'authentification.
+- **Champ envoyé** : sa valeur est appliquée telle quelle, y compris une valeur vide (`false`, `0`, `""`). Elle est validée comme à la création : une taille de `0` est refusée.
+- **Sous-objet** : il est modifié champ par champ. `{"network": {"publicIpv4": true}}` sur une VM ne touche ni au pare-feu ni aux VPC.
+- **Liste ou carte** : envoyée, elle remplace celle en place, et `[]` ou `{}` la vide. `{"network": {"vpcs": []}}` détache tous les VPC d'une VM ; `{"config": {"databases": {}}}` retire tous les droits d'un utilisateur de base de données.
+- **Configuration libre** (surcharges Helm d'un cluster Kubernetes : `config.cni`, `config.dns`, `config.verticalPodAutoscaler`, `configOverride` des addons) : un objet envoyé remplace la surcharge en place, `{}` ne change rien, et `null` la retire.
+- **Corps vide** : `{}` ne modifie rien et renvoie la ressource telle qu'elle est enregistrée.
+- **Champs non modifiables** : le nom et les identifiants du chemin sont ignorés s'ils figurent dans le corps. Les champs fixés à la création (par exemple le mode d'un cluster de base de données, standalone ou répliqué) sont refusés avec un code propre au service.
+
+Par exemple, pour activer l'accès externe d'un cluster Redis sans rien changer d'autre :
+
+```bash
+curl -sS -X PATCH "$HIKUBE_API/redis/v1alpha1/projects/$PROJECT_ID/clusters/democache" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"external": true}'
+```
+
+### Le champ `updateMask`
+
+Chaque requête `PATCH` accepte un champ facultatif `updateMask` : la liste, séparée par des virgules, des chemins à modifier, en *camelCase* (`external,authEnabled`). Sans lui, les chemins sont déduits des champs présents dans le corps, ce qui suffit dans la plupart des cas.
+
+Avec `updateMask`, seuls les chemins listés sont modifiés, avec la valeur du corps. Un chemin listé mais absent du corps prend sa valeur vide : `{"updateMask": "external"}` seul **désactive** l'accès externe. Un chemin qui ne désigne aucun champ modifiable est refusé avec le code `10006` (voir [Erreurs](./errors.md)).
 
 ---
 

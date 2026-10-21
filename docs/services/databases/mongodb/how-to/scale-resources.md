@@ -70,31 +70,27 @@ MongoDB ne prend en charge les montées de version majeure que d'une version à 
 </TabItem>
 <TabItem value="api" label="API">
 
-La modification passe par `PATCH /mongodb/v1alpha1/projects/{projectId}/clusters/{name}`, dont le corps accepte cinq champs :
+La modification passe par `PATCH /mongodb/v1alpha1/projects/{projectId}/clusters/{name}`, une [mise à jour partielle](../../../../api/overview.md#mises-a-jour-partielles) : seuls les champs envoyés changent. Le corps accepte cinq champs :
 
-| Champ | Comportement s'il est omis |
-|-------|----------------------------|
-| `version` | Obligatoire (`v6`, `v7` ou `v8`) ; montez d'une version majeure à la fois |
-| `size` | Obligatoire (1 à 4096 Go) |
-| `replicas` | Conservé ; un passage entre standalone (`1`) et replica set (`2` à `8`) est refusé (`400`) |
-| `external` | **Désactivé** : un champ absent vaut `false` |
-| `sharding` | **Désactivé** : renvoyez toujours l'objet `sharding` tel que le renvoie `GET` |
+| Champ | Règle |
+|-------|-------|
+| `version` | `v6`, `v7` ou `v8` ; montez d'une version majeure à la fois |
+| `size` | 1 à 4096 Go |
+| `replicas` | Un passage entre standalone (`1`) et replica set (`2` à `8`) est refusé (`400`, code `150201`) |
+| `external` | `true` ou `false` |
+| `sharding` | Laissez-le de côté (voir l'avertissement ci-dessous) |
 
-La préconfiguration (`preset`) n'est pas modifiable par l'API non plus. Partez de la configuration actuelle et ne changez que les valeurs voulues, par exemple la taille du disque :
+La préconfiguration (`preset`) n'est pas modifiable par l'API. Par exemple, pour passer le disque à 20 Go :
 
 ```bash
-curl -sS "$HIKUBE_API/mongodb/v1alpha1/projects/$PROJECT_ID/clusters/demomongo" \
-  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" \
-| jq '{version, replicas, size, external, sharding} | .size = 20' > mongo-update.json
-
 curl -sS -X PATCH "$HIKUBE_API/mongodb/v1alpha1/projects/$PROJECT_ID/clusters/demomongo" \
   -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" \
   -H "Content-Type: application/json" \
-  -d @mongo-update.json
+  -d '{"size": 20}'
 ```
 
 :::warning
-Ne modifiez pas l'objet `sharding` : la topologie d'un cluster existant ne se change pas, comme dans la console. Pour la modifier, [contactez le support](mailto:support@hidora.io).
+N'envoyez pas `sharding` : la topologie d'un cluster existant ne se change pas, comme dans la console, et un cluster partitionné le reste tant que le champ est absent. Pour la modifier, [contactez le support](mailto:support@hidora.io).
 :::
 
 </TabItem>

@@ -80,30 +80,25 @@ curl -sS "$HIKUBE_API/postgres/v1alpha1/projects/$PROJECT_ID/clusters/demopg" \
 </TabItem>
 <TabItem value="api" label="API">
 
-La modification passe par `PATCH /postgres/v1alpha1/projects/{projectId}/clusters/{name}`. Le corps reprend les champs de la configuration :
+La modification passe par `PATCH /postgres/v1alpha1/projects/{projectId}/clusters/{name}`, une [mise à jour partielle](../../../../api/overview.md#mises-a-jour-partielles) : seuls les champs envoyés changent.
 
-| Champ | Comportement s'il est omis |
-|-------|----------------------------|
-| `version` | Obligatoire (`v15` à `v18`) ; seule une montée de version est possible, comme dans la console |
-| `size` | Obligatoire (1 à 4096 Go) |
-| `preset` | Conservé |
-| `replicas` | Conservé ; un passage entre standalone (`1`) et cluster (`2` à `8`) est refusé (`400`) |
-| `external` | **Désactivé** : un champ absent vaut `false` |
-| `quorum` | Remis à zéro (`minSyncReplicas` et `maxSyncReplicas` à `0`) |
-| `config.maxConnections` | Conservé |
+| Champ | Règle |
+|-------|-------|
+| `version` | `v15` à `v18` ; seule une montée de version est possible, comme dans la console |
+| `size` | 1 à 4096 Go |
+| `preset` | Un preset de la liste ci-dessus |
+| `replicas` | Un passage entre standalone (`1`) et cluster (`2` à `8`) est refusé (`400`, code `80201`) |
+| `external` | `true` ou `false` |
+| `quorum.minSyncReplicas`, `quorum.maxSyncReplicas` | Une borne peut être envoyée seule ; une fois appliquées, la borne basse ne doit pas dépasser la haute |
+| `config.maxConnections` | `0` revient à la valeur par défaut de PostgreSQL |
 
-Partez donc de la configuration actuelle et ne changez que les valeurs voulues, par exemple le preset et la taille du disque :
+Par exemple, pour changer le preset et la taille du disque :
 
 ```bash
-curl -sS "$HIKUBE_API/postgres/v1alpha1/projects/$PROJECT_ID/clusters/demopg" \
-  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" \
-| jq '{version, replicas, size, preset, external, config, quorum}
-      | .preset = "medium" | .size = 20' > pg-update.json
-
 curl -sS -X PATCH "$HIKUBE_API/postgres/v1alpha1/projects/$PROJECT_ID/clusters/demopg" \
   -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" \
   -H "Content-Type: application/json" \
-  -d @pg-update.json
+  -d '{"preset": "medium", "size": 20}'
 ```
 
 </TabItem>

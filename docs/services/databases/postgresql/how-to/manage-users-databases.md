@@ -75,7 +75,7 @@ curl -sS -X PATCH "$HIKUBE_API/postgres/v1alpha1/projects/$PROJECT_ID/clusters/d
   -d '{"extensions": ["pg_stat_statements", "pgcrypto", "vector"]}'
 ```
 
-La liste `extensions` remplace la liste actuelle : indiquez toutes les extensions à conserver. Les droits des utilisateurs sur la base ne changent pas.
+La liste `extensions`, si elle est envoyée, remplace la liste actuelle : indiquez toutes les extensions à conserver ; `[]` les retire toutes. Les droits des utilisateurs sur la base ne changent pas.
 
 </TabItem>
 </Tabs>
@@ -155,7 +155,7 @@ curl -sS -X PATCH "$HIKUBE_API/postgres/v1alpha1/projects/$PROJECT_ID/clusters/d
   }'
 ```
 
-L'objet `config.databases` remplace l'ensemble des droits de l'utilisateur : une base absente de la requête lui est retirée. De même, `config.privileges.replication` vaut `false` s'il est omis. Consultez les droits actuels avec `GET $HIKUBE_API/postgres/v1alpha1/projects/$PROJECT_ID/clusters/demopg/users/report_reader`.
+L'objet `config.databases`, s'il est envoyé, remplace l'ensemble des droits de l'utilisateur : une base absente de la requête lui est retirée, et `{}` les retire tous. `config.privileges.replication` n'est modifié que s'il est envoyé ; voir [Mises à jour partielles](../../../../api/overview.md#mises-a-jour-partielles). Consultez les droits actuels avec `GET $HIKUBE_API/postgres/v1alpha1/projects/$PROJECT_ID/clusters/demopg/users/report_reader`.
 
 </TabItem>
 </Tabs>

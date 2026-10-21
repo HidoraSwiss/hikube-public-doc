@@ -42,20 +42,19 @@ La page de modification présente les sections **Informations générales**, **G
 </TabItem>
 <TabItem value="api" label="API">
 
-Les groupes de nœuds se modifient avec `PATCH /kubernetes/v1alpha1/projects/{projectId}/clusters/{name}`. Cette requête décrit la configuration **complète** du cluster :
+Les groupes de nœuds se modifient avec `PATCH /kubernetes/v1alpha1/projects/{projectId}/clusters/{name}`, une [mise à jour partielle](../../../api/overview.md#mises-a-jour-partielles) : un corps qui ne contient que `nodeGroups` laisse la version, le plan de contrôle et les addons tels quels. En revanche, `nodeGroups` est remplacé en entier :
 
-- `version`, `controlPlane` et au moins un groupe dans `nodeGroups` sont obligatoires ;
 - un groupe absent de `nodeGroups` est **supprimé** ;
-- les addons sont réappliqués tels qu'envoyés : un addon absent ou à `enabled: false` est désactivé.
+- au moins un groupe est obligatoire.
 
-Partez donc de la configuration actuelle, enregistrée dans un fichier :
+Partez donc des groupes actuels, enregistrés dans un fichier :
 
 ```bash
 CLUSTER=democluster   # nom du cluster
 
 curl -sS "$HIKUBE_API/kubernetes/v1alpha1/projects/$PROJECT_ID/clusters/$CLUSTER" \
   -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" \
-| jq 'del(.id, .projectId, .name, .createdAt, .updatedAt, .status)' > cluster.json
+| jq '{nodeGroups}' > cluster.json
 
 jq '.nodeGroups' cluster.json
 ```

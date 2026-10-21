@@ -60,7 +60,7 @@ curl -sS -X PATCH "$HIKUBE_API/disk/v1alpha1/projects/$PROJECT_ID/disks/data01" 
   -d '{"size": 40}'
 ```
 
-La réponse décrit le disque avec sa nouvelle `size`. Comme dans la console, n'envoyez qu'une taille supérieure ou égale à la taille actuelle : l'API ne vérifie pas elle-même ce point.
+La réponse décrit le disque avec sa nouvelle `size`. Comme dans la console, la taille ne peut qu'augmenter : une taille inférieure à la taille actuelle est refusée (`400`, code `30200`).
 
 </TabItem>
 </Tabs>

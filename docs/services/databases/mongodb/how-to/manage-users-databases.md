@@ -99,7 +99,7 @@ curl -sS -X PATCH "$HIKUBE_API/mongodb/v1alpha1/projects/$PROJECT_ID/clusters/de
   }'
 ```
 
-L'objet `config.databases` remplace l'ensemble des droits de l'utilisateur : une base absente de la requête lui est retirée, et au moins une entrée doit subsister. Consultez les droits actuels avec `GET $HIKUBE_API/mongodb/v1alpha1/projects/$PROJECT_ID/clusters/demomongo/users/reportreader`.
+L'objet `config.databases`, s'il est envoyé, remplace l'ensemble des droits de l'utilisateur : une base absente de la requête lui est retirée, et au moins une entrée doit subsister. Un corps sans `config.databases` ne change rien ; voir [Mises à jour partielles](../../../../api/overview.md#mises-a-jour-partielles). Consultez les droits actuels avec `GET $HIKUBE_API/mongodb/v1alpha1/projects/$PROJECT_ID/clusters/demomongo/users/reportreader`.
 
 </TabItem>
 </Tabs>

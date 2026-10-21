@@ -152,14 +152,14 @@ Une fois l'opération terminée, le disque passe au statut **En cours d'utilisat
 </TabItem>
 <TabItem value="api" label="API">
 
-Un disque s'attache en modifiant la VM : `PATCH /instance/v1alpha1/projects/{projectId}/instances/{name}`. `instanceType` et `disks` sont obligatoires, et la liste `disks` remplace la liste actuelle (le disque système reste en première position) ; les champs omis sont conservés. Partez donc de la configuration actuelle et ajoutez le disque à la fin :
+Un disque s'attache en modifiant la VM : `PATCH /instance/v1alpha1/projects/{projectId}/instances/{name}`, une [mise à jour partielle](../../../api/overview.md#mises-a-jour-partielles) où les champs omis sont conservés. La liste `disks`, elle, remplace la liste actuelle (le disque système reste en première position). Partez donc des disques actuels et ajoutez le disque à la fin :
 
 ```bash
 VM=myvm   # nom de votre VM
 
 curl -sS "$HIKUBE_API/instance/v1alpha1/projects/$PROJECT_ID/instances/$VM" \
   -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" \
-| jq '{instanceType, disks: ((.disks | map({name})) + [{name: "data01"}])}' > vm-update.json
+| jq '{disks: ((.disks | map({name})) + [{name: "data01"}])}' > vm-update.json
 
 curl -sS -X PATCH "$HIKUBE_API/instance/v1alpha1/projects/$PROJECT_ID/instances/$VM" \
   -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" \
@@ -249,7 +249,7 @@ Voir aussi le [dépannage complet](./troubleshooting.md).
    ```bash
    curl -sS "$HIKUBE_API/instance/v1alpha1/projects/$PROJECT_ID/instances/$VM" \
      -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" \
-   | jq '{instanceType, disks: (.disks | map(select(.name != "data01")) | map({name}))}' > vm-update.json
+   | jq '{disks: (.disks | map(select(.name != "data01")) | map({name}))}' > vm-update.json
 
    curl -sS -X PATCH "$HIKUBE_API/instance/v1alpha1/projects/$PROJECT_ID/instances/$VM" \
      -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" \
