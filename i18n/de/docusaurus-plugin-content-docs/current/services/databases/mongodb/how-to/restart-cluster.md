@@ -15,7 +15,7 @@ Diese Anleitung erklärt, wie Sie einen MongoDB-Cluster über die [Hikube-Konsol
 
 ## Was beim Neustart passiert
 
-Alle Pods des Clusters werden gleichzeitig neu erstellt:
+Alle Instanzen des Clusters werden gleichzeitig neu gestartet:
 
 - der Cluster ist für einige Sekunden nicht erreichbar, solange die Mitglieder neu starten;
 - offene Verbindungen werden getrennt, und Ihre Anwendungen müssen sich neu verbinden;
@@ -42,7 +42,7 @@ Planen Sie den Neustart in einem Wartungsfenster oder außerhalb der Spitzenzeit
 Die Meldung „Restart started“ bestätigt, dass die Anfrage angenommen wurde. Der Neustart läuft im Hintergrund weiter.
 
 :::note
-Ein Cluster, der noch erstellt wird, hat noch nichts neu zu starten: Die Anfrage wird abgelehnt. Warten Sie, bis der Cluster den Status **Ready** hat, und lösen Sie den Neustart dann erneut aus.
+Ein Cluster, der noch erstellt wird, hat noch nichts neu zu starten: Die Anfrage wird abgelehnt. Warten Sie nach dem Wechsel in den Status **Ready** einige Minuten, bis der Cluster vollständig gestartet ist, und lösen Sie den Neustart dann erneut aus.
 :::
 
 ## Überprüfung

@@ -42,7 +42,7 @@ Pianifichi il riavvio in una finestra di manutenzione o al di fuori delle ore di
 Il messaggio «Restart started» conferma che la richiesta è stata accettata. Il riavvio prosegue in background.
 
 :::note
-Un cluster ancora in fase di creazione non ha ancora nulla da riavviare: la richiesta viene rifiutata. Attenda che il cluster abbia lo stato **Ready**, quindi rilanci il riavvio.
+Un cluster ancora in fase di creazione non ha ancora nulla da riavviare: la richiesta viene rifiutata. Dopo il passaggio allo stato **Ready**, attenda qualche minuto che il cluster finisca di avviarsi, quindi rilanci il riavvio.
 :::
 
 ## Verifica

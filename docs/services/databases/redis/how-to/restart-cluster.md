@@ -25,7 +25,7 @@ Tant qu'un redémarrage est en attente, la page du cluster affiche le bandeau **
 
 ## Ce qui se passe pendant le redémarrage
 
-Tous les pods du cluster sont recréés en même temps, sentinelles comprises :
+Toutes les instances du cluster redémarrent en même temps, sentinelles comprises :
 
 - le cluster est injoignable pendant environ une minute ;
 - les connexions ouvertes sont coupées et vos applications doivent se reconnecter ;
@@ -55,7 +55,7 @@ La console propose aussi le redémarrage au bon moment :
 - dans la fenêtre qui affiche le nouveau mot de passe après une rotation, avec le bouton **Redémarrer maintenant**.
 
 :::note
-Un cluster encore en cours de création n'a rien à redémarrer : la demande est refusée. Attendez que le cluster soit au statut **Prêt**, puis relancez le redémarrage.
+Un cluster encore en cours de création n'a rien à redémarrer : la demande est refusée. Patientez quelques minutes après le passage au statut **Prêt**, le temps que le cluster finisse de démarrer, puis relancez le redémarrage.
 :::
 
 ## Vérification

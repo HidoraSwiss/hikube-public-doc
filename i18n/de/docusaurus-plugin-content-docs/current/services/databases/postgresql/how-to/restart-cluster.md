@@ -42,7 +42,7 @@ Planen Sie den Neustart in einem Wartungsfenster oder außerhalb der Spitzenzeit
 Die Meldung „Restart started“ bestätigt, dass die Anfrage angenommen wurde. Der Neustart läuft im Hintergrund weiter.
 
 :::note
-Ein Cluster, der noch erstellt wird, hat noch nichts neu zu starten: Die Anfrage wird abgelehnt. Warten Sie, bis der Cluster den Status **Ready** hat, und lösen Sie den Neustart dann erneut aus.
+Ein Cluster, der noch erstellt wird, hat noch nichts neu zu starten: Die Anfrage wird abgelehnt. Warten Sie nach dem Wechsel in den Status **Ready** einige Minuten, bis der Cluster vollständig gestartet ist, und lösen Sie den Neustart dann erneut aus.
 :::
 
 ## Überprüfung

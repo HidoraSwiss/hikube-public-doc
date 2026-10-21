@@ -25,7 +25,7 @@ Finché un riavvio è in sospeso, la pagina del cluster mostra il banner **Resta
 
 ## Cosa succede durante il riavvio
 
-Tutti i pod del cluster vengono ricreati contemporaneamente, sentinelle comprese:
+Tutte le istanze del cluster vengono riavviate contemporaneamente, sentinelle comprese:
 
 - il cluster non è raggiungibile per circa un minuto;
 - le connessioni aperte vengono interrotte e le sue applicazioni devono riconnettersi;
@@ -55,7 +55,7 @@ La console propone il riavvio anche al momento opportuno:
 - nella finestra che mostra la nuova password dopo una rotazione, con il pulsante **Restart now**.
 
 :::note
-Un cluster ancora in fase di creazione non ha ancora nulla da riavviare: la richiesta viene rifiutata. Attenda che il cluster abbia lo stato **Ready**, quindi rilanci il riavvio.
+Un cluster ancora in fase di creazione non ha ancora nulla da riavviare: la richiesta viene rifiutata. Dopo il passaggio allo stato **Ready**, attenda qualche minuto che il cluster finisca di avviarsi, quindi rilanci il riavvio.
 :::
 
 ## Verifica

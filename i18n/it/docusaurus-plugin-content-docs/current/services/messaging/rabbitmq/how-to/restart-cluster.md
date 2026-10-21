@@ -14,7 +14,7 @@ Questa guida spiega come riavviare un cluster RabbitMQ dalla [console Hikube](ht
 
 ## Cosa succede durante il riavvio
 
-Tutti i pod del cluster vengono ricreati contemporaneamente:
+Tutte le istanze del cluster vengono riavviate contemporaneamente:
 
 - il cluster non è raggiungibile per qualche secondo, il tempo che i nodi si riavviino;
 - le connessioni AMQP aperte vengono interrotte e i suoi client devono riconnettersi;
@@ -40,7 +40,7 @@ Nel menu **DB & Messaging** → **RabbitMQ**, faccia clic sul cluster.
 Il messaggio «Restart started» conferma che la richiesta è stata accettata. Il riavvio prosegue in background.
 
 :::note
-Un cluster ancora in fase di creazione non ha ancora nulla da riavviare: la richiesta viene rifiutata. Attenda che il cluster abbia lo stato **Ready**, quindi rilanci il riavvio.
+Un cluster ancora in fase di creazione non ha ancora nulla da riavviare: la richiesta viene rifiutata. Dopo il passaggio allo stato **Ready**, attenda qualche minuto che il cluster finisca di avviarsi, quindi rilanci il riavvio.
 :::
 
 ## Verifica

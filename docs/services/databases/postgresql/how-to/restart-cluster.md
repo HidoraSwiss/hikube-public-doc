@@ -42,7 +42,7 @@ Planifiez le redémarrage dans une fenêtre de maintenance ou en dehors des heur
 Le message « Redémarrage lancé » confirme la prise en compte. Le redémarrage se poursuit en arrière-plan.
 
 :::note
-Un cluster encore en cours de création n'a rien à redémarrer : la demande est refusée. Attendez que le cluster soit au statut **Prêt**, puis relancez le redémarrage.
+Un cluster encore en cours de création n'a rien à redémarrer : la demande est refusée. Patientez quelques minutes après le passage au statut **Prêt**, le temps que le cluster finisse de démarrer, puis relancez le redémarrage.
 :::
 
 ## Vérification

@@ -25,7 +25,7 @@ Solange ein Neustart aussteht, zeigt die Seite des Clusters das Banner **Restart
 
 ## Was beim Neustart passiert
 
-Alle Pods des Clusters werden gleichzeitig neu erstellt, einschließlich der Sentinels:
+Alle Instanzen des Clusters werden gleichzeitig neu gestartet, einschließlich der Sentinels:
 
 - der Cluster ist etwa eine Minute lang nicht erreichbar;
 - offene Verbindungen werden getrennt, und Ihre Anwendungen müssen sich neu verbinden;
@@ -55,7 +55,7 @@ Die Konsole bietet den Neustart auch im passenden Moment an:
 - im Fenster, das nach einer Rotation das neue Passwort anzeigt, mit der Schaltfläche **Restart now**.
 
 :::note
-Ein Cluster, der noch erstellt wird, hat noch nichts neu zu starten: Die Anfrage wird abgelehnt. Warten Sie, bis der Cluster den Status **Ready** hat, und lösen Sie den Neustart dann erneut aus.
+Ein Cluster, der noch erstellt wird, hat noch nichts neu zu starten: Die Anfrage wird abgelehnt. Warten Sie nach dem Wechsel in den Status **Ready** einige Minuten, bis der Cluster vollständig gestartet ist, und lösen Sie den Neustart dann erneut aus.
 :::
 
 ## Überprüfung

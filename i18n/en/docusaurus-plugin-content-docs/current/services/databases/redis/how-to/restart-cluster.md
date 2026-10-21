@@ -25,7 +25,7 @@ While a restart is pending, the cluster page shows the **Restart required** bann
 
 ## What happens during the restart
 
-All pods of the cluster are recreated at once, sentinels included:
+All instances of the cluster restart at once, sentinels included:
 
 - the cluster is unreachable for about a minute;
 - open connections are closed and your applications must reconnect;
@@ -55,7 +55,7 @@ The console also offers the restart at the right time:
 - in the window that shows the new password after a rotation, with the **Restart now** button.
 
 :::note
-A cluster that is still being created has nothing to restart yet: the request is refused. Wait until the cluster has the status **Ready**, then start the restart again.
+A cluster that is still being created has nothing to restart yet: the request is refused. Wait a few minutes after the cluster reaches the status **Ready**, while it finishes starting, then start the restart again.
 :::
 
 ## Verification

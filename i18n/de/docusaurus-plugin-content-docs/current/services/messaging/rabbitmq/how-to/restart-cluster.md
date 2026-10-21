@@ -14,7 +14,7 @@ Diese Anleitung erklärt, wie Sie einen RabbitMQ-Cluster über die [Hikube-Konso
 
 ## Was beim Neustart passiert
 
-Alle Pods des Clusters werden gleichzeitig neu erstellt:
+Alle Instanzen des Clusters werden gleichzeitig neu gestartet:
 
 - der Cluster ist für einige Sekunden nicht erreichbar, solange die Knoten neu starten;
 - offene AMQP-Verbindungen werden getrennt, und Ihre Clients müssen sich neu verbinden;
@@ -40,7 +40,7 @@ Klicken Sie im Menü **DB & Messaging** → **RabbitMQ** auf den Cluster.
 Die Meldung „Restart started“ bestätigt, dass die Anfrage angenommen wurde. Der Neustart läuft im Hintergrund weiter.
 
 :::note
-Ein Cluster, der noch erstellt wird, hat noch nichts neu zu starten: Die Anfrage wird abgelehnt. Warten Sie, bis der Cluster den Status **Ready** hat, und lösen Sie den Neustart dann erneut aus.
+Ein Cluster, der noch erstellt wird, hat noch nichts neu zu starten: Die Anfrage wird abgelehnt. Warten Sie nach dem Wechsel in den Status **Ready** einige Minuten, bis der Cluster vollständig gestartet ist, und lösen Sie den Neustart dann erneut aus.
 :::
 
 ## Überprüfung

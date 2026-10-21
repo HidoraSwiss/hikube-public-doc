@@ -15,7 +15,7 @@ Ce guide explique comment redémarrer un cluster MariaDB depuis la [console Hiku
 
 ## Ce qui se passe pendant le redémarrage
 
-Tous les pods du cluster sont recréés en même temps :
+Toutes les instances du cluster redémarrent en même temps :
 
 - le cluster est injoignable pendant quelques secondes, le temps que les instances redémarrent ;
 - les connexions ouvertes sont coupées et vos applications doivent se reconnecter ;
@@ -40,7 +40,7 @@ Planifiez le redémarrage dans une fenêtre de maintenance ou en dehors des heur
 Le message « Redémarrage lancé » confirme la prise en compte. Le redémarrage se poursuit en arrière-plan.
 
 :::note
-Un cluster encore en cours de création n'a rien à redémarrer : la demande est refusée. Attendez que le cluster soit au statut **Prêt**, puis relancez le redémarrage.
+Un cluster encore en cours de création n'a rien à redémarrer : la demande est refusée. Patientez quelques minutes après le passage au statut **Prêt**, le temps que le cluster finisse de démarrer, puis relancez le redémarrage.
 :::
 
 ## Vérification

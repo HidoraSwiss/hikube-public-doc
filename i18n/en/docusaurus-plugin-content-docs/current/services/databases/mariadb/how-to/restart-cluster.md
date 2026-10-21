@@ -15,7 +15,7 @@ This guide explains how to restart a MariaDB cluster from the [Hikube console](h
 
 ## What happens during the restart
 
-All pods of the cluster are recreated at once:
+All instances of the cluster restart at once:
 
 - the cluster is unreachable for a few seconds while the instances restart;
 - open connections are closed and your applications must reconnect;
@@ -40,7 +40,7 @@ Plan the restart in a maintenance window or outside peak hours, and check that y
 The "Restart started" message confirms that the request was accepted. The restart continues in the background.
 
 :::note
-A cluster that is still being created has nothing to restart yet: the request is refused. Wait until the cluster has the status **Ready**, then start the restart again.
+A cluster that is still being created has nothing to restart yet: the request is refused. Wait a few minutes after the cluster reaches the status **Ready**, while it finishes starting, then start the restart again.
 :::
 
 ## Verification
