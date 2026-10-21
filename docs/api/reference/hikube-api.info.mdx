@@ -1,7 +1,7 @@
 ---
 id: hikube-api
 title: "Hikube API"
-description: "This API is intended to manage resources of Hikube Platform."
+description: "Manage the resources of the Hikube platform."
 sidebar_label: Introduction
 sidebar_position: 0
 hide_title: true
@@ -35,7 +35,337 @@ import Export from "@theme/ApiExplorer/Export";
 
 
 
-This API is intended to manage resources of Hikube Platform.
+Manage the resources of the Hikube platform.
+
+## Errors
+
+An error response carries an HTTP status for the class of the error and a JSON body (`ErrorResponse`) whose `code` identifies the precise error:
+
+```json
+{"requestId": "4bf92f3577b34da6a3ce929d0e0e4736", "code": 20101, "message": "invalid name: must be at least 3 characters", "details": []}
+```
+
+A code reads as a service prefix followed by three digits: `001`–`099` are platform errors (not found, already exists, unavailable…), `100`–`199` invalid input, `200`–`299` business rules. Handle errors on `code`: the wording of `message` may change.
+
+### Common
+
+| Code | Error |
+|------|-------|
+| 10001 | Authentication failed: invalid bearer token |
+| 10002 | Permission denied: missing or invalid credentials, or credentials that do not allow this operation |
+| 10003 | Event stream ticket expired |
+| 10004 | The api-key could not be checked (temporary); retry, the key is not known to be invalid |
+| 10005 | Refused by a platform admission policy; the message names the field, `details` the policy and its reason |
+| 10006 | Invalid update_mask: a path names no updatable field, or one key of a collection |
+
+### Instance
+
+| Code | Error |
+|------|-------|
+| 20001 | Instance not found |
+| 20002 | Instance already exists |
+| 20003 | Permission denied on the instance |
+| 20004 | Instance modified concurrently; retry |
+| 20005 | Instance platform unavailable |
+| 20006 | Instance provisioning failed |
+| 20007 | A dependency of the instance is not ready |
+| 20008 | The disks of the instance could not be read |
+| 20009 | A disk of the instance could not be created or updated |
+| 20100 | Invalid project_id |
+| 20101 | Invalid instance name |
+| 20102 | Invalid instance_type |
+| 20103 | Unknown instance_type |
+| 20104 | Invalid image, or image missing while the first disk has none |
+| 20105 | Unknown cloud image |
+| 20106 | disks is required |
+| 20107 | Invalid disk name |
+| 20108 | Invalid disk size |
+| 20109 | Duplicate disk name |
+| 20110 | Invalid SSH key |
+| 20111 | Invalid port number (above 65535) |
+| 20112 | Unknown GPU type |
+| 20113 | VPC not found in the project |
+| 20114 | The instance type has too little RAM for a GPU (4 GiB minimum) |
+| 20115 | User data cannot be set on a Windows instance: the platform generates it |
+| 20200 | Disk already attached to another instance |
+| 20201 | Instance already running |
+| 20202 | Instance already stopped |
+| 20203 | Instance cannot be restarted in its current state |
+| 20204 | GPU type not available |
+| 20205 | Not enough GPUs available to start the instance |
+| 20206 | No public IPv4 address available |
+| 20207 | No single node can host all the requested GPUs |
+| 20208 | The system disk of an instance cannot be replaced, detached or moved |
+
+### Disk
+
+| Code | Error |
+|------|-------|
+| 30001 | Disk not found |
+| 30002 | Disk already exists |
+| 30003 | Permission denied on the disk |
+| 30005 | Disk platform unavailable |
+| 30006 | Disk provisioning failed |
+| 30007 | Disk attached to an instance |
+| 30100 | Invalid project_id |
+| 30101 | Invalid disk name |
+| 30102 | Invalid disk size |
+| 30103 | Unknown cloud image |
+| 30104 | Invalid custom image URL |
+| 30105 | Invalid custom image OS |
+| 30200 | Disk cannot be shrunk |
+| 30201 | Disk detached but still used by a running instance until it restarts |
+
+### Project
+
+| Code | Error |
+|------|-------|
+| 40001 | Project not found |
+| 40002 | Project already exists |
+| 40003 | Permission denied on the project |
+| 40005 | Project platform unavailable |
+| 40006 | Project provisioning failed |
+| 40100 | Invalid organization_id |
+| 40101 | Invalid project name |
+| 40102 | Invalid hostname |
+| 40103 | Invalid CPU quota |
+| 40104 | Invalid memory quota |
+| 40105 | Invalid storage quota |
+| 40200 | etcd cannot be disabled while Kubernetes clusters exist |
+| 40201 | A quota cannot be lowered below current usage |
+| 40202 | A quota cannot exceed what the organization has left |
+
+### Bucket
+
+| Code | Error |
+|------|-------|
+| 50001 | Bucket not found |
+| 50002 | Bucket already exists |
+| 50003 | Permission denied on the bucket |
+| 50005 | Bucket platform unavailable |
+| 50010 | Bucket user not found |
+| 50011 | Bucket user already exists |
+| 50100 | Invalid project_id |
+| 50101 | Invalid bucket name |
+| 50102 | Invalid bucket username |
+
+### IAM
+
+| Code | Error |
+|------|-------|
+| 60001 | User not found |
+| 60002 | User already exists |
+| 60003 | Permission denied, including an api-key scope above the caller's own |
+| 60005 | IAM platform unavailable |
+| 60006 | Api-key not found |
+| 60007 | Api-key store failure; retrying is safe |
+| 60008 | Api-keys are not enabled |
+| 60009 | Api-key limit of the project reached |
+| 60100 | Invalid organization_id |
+| 60101 | Invalid username |
+| 60102 | Invalid email |
+| 60103 | Invalid first name |
+| 60104 | Invalid last name |
+| 60105 | Invalid project_id |
+| 60106 | Invalid api-key scope |
+| 60107 | Invalid api-key id |
+| 60108 | Invalid api-key name |
+| 60109 | Invalid api-key validity |
+
+### Organization
+
+| Code | Error |
+|------|-------|
+| 60001 | Organization not found |
+| 60100 | Invalid organization_id |
+
+### Kubernetes
+
+| Code | Error |
+|------|-------|
+| 70001 | Cluster not found |
+| 70002 | Cluster already exists |
+| 70003 | Permission denied on the cluster |
+| 70005 | Kubernetes platform unavailable |
+| 70006 | Cluster provisioning failed |
+| 70100 | Invalid project_id |
+| 70101 | Invalid cluster name |
+| 70102 | Invalid version |
+| 70103 | Unsupported Kubernetes version |
+| 70104 | Invalid control plane replicas |
+| 70105 | Node groups are required |
+| 70106 | Invalid node group name |
+| 70107 | Unknown node group instance_type |
+| 70108 | Invalid node group replicas |
+| 70109 | max_replicas lower than min_replicas |
+| 70110 | Unknown GPU type |
+| 70111 | Unknown control plane preset |
+| 70112 | Invalid hostname |
+| 70113 | Invalid node group storage size |
+| 70200 | GPU type not available |
+| 70201 | No public IPv4 address available |
+| 70202 | No single node can host the GPUs of a node group |
+| 70203 | An addon is enabled without the addon it requires |
+| 70204 | GPUs cannot be added to or all removed from an existing node group |
+| 70205 | Project datastore being provisioned: retry later |
+| 70206 | Version downgrade refused |
+| 70207 | Project etcd disabled by GitOps: do not retry |
+| 70208 | Project etcd failed to deploy: do not retry |
+
+### Postgres
+
+| Code | Error |
+|------|-------|
+| 80001 | Cluster not found |
+| 80002 | Cluster already exists |
+| 80003 | Permission denied on the cluster |
+| 80005 | Postgres platform unavailable |
+| 80006 | Cluster provisioning failed |
+| 80100 | Invalid project_id |
+| 80101 | Invalid cluster name |
+| 80102 | Invalid or unsupported version |
+| 80103 | Invalid replicas |
+| 80104 | Invalid storage size |
+| 80105 | Invalid database name |
+| 80106 | Invalid max_connections |
+| 80107 | Invalid quorum configuration |
+| 80108 | Unknown preset |
+| 80109 | Unknown extension |
+| 80150 | Invalid username |
+| 80151 | Unknown user role |
+| 80152 | Unknown database role |
+| 80200 | Password generation failed |
+| 80201 | The cluster mode cannot be changed after creation |
+| 80202 | No public IPv4 address available |
+| 80203 | Version downgrade refused |
+| 80204 | Storage cannot be shrunk |
+
+### Account
+
+| Code | Error |
+|------|-------|
+| 90001 | Account not found |
+| 90005 | Account service unavailable |
+
+### MariaDB
+
+| Code | Error |
+|------|-------|
+| 110001 | Cluster not found |
+| 110002 | Cluster already exists |
+| 110003 | Permission denied on the cluster |
+| 110005 | MariaDB platform unavailable |
+| 110006 | Cluster provisioning failed |
+| 110100 | Invalid project_id |
+| 110101 | Invalid cluster name |
+| 110102 | Invalid or unsupported version |
+| 110103 | Invalid replicas |
+| 110104 | Invalid storage size |
+| 110105 | Invalid database name |
+| 110106 | Invalid max_user_connections |
+| 110107 | Unknown preset |
+| 110150 | Invalid username |
+| 110151 | Unknown database role |
+| 110200 | Password generation failed |
+| 110201 | The cluster mode cannot be changed after creation |
+| 110202 | No public IPv4 address available |
+| 110203 | Version downgrade refused |
+| 110204 | Storage cannot be shrunk |
+
+### Redis
+
+| Code | Error |
+|------|-------|
+| 120001 | Cluster not found |
+| 120002 | Cluster already exists |
+| 120003 | Permission denied on the cluster |
+| 120005 | Redis platform unavailable |
+| 120006 | Cluster provisioning failed |
+| 120100 | Invalid project_id |
+| 120101 | Invalid cluster name |
+| 120102 | Invalid or unsupported version |
+| 120103 | Invalid replicas |
+| 120104 | Invalid storage size |
+| 120105 | Unknown preset |
+| 120200 | Password generation failed |
+| 120201 | The cluster mode cannot be changed after creation |
+| 120202 | No public IPv4 address available |
+| 120203 | Version downgrade refused |
+| 120204 | Storage cannot be shrunk |
+
+### RabbitMQ
+
+| Code | Error |
+|------|-------|
+| 140001 | Cluster not found |
+| 140002 | Cluster already exists |
+| 140003 | Permission denied on the cluster |
+| 140005 | RabbitMQ platform unavailable |
+| 140006 | Cluster provisioning failed |
+| 140100 | Invalid project_id |
+| 140101 | Invalid cluster name |
+| 140102 | Invalid replicas |
+| 140103 | Invalid storage size |
+| 140104 | Invalid or unsupported version |
+| 140105 | Unknown preset |
+| 140150 | Invalid username |
+| 140160 | Invalid vhost name |
+| 140161 | Unknown vhost role |
+| 140200 | Password generation failed |
+| 140201 | The cluster mode cannot be changed after creation |
+| 140202 | No public IPv4 address available |
+| 140203 | Version downgrade refused |
+| 140204 | Storage cannot be shrunk |
+
+### MongoDB
+
+| Code | Error |
+|------|-------|
+| 150001 | Cluster not found |
+| 150002 | Cluster already exists |
+| 150003 | Permission denied on the cluster |
+| 150005 | MongoDB platform unavailable |
+| 150006 | Cluster provisioning failed |
+| 150100 | Invalid project_id |
+| 150101 | Invalid cluster name |
+| 150102 | Invalid or unsupported version |
+| 150103 | Invalid replicas |
+| 150104 | Invalid storage size |
+| 150105 | Invalid database name |
+| 150106 | Invalid sharding configuration |
+| 150107 | Unknown preset |
+| 150150 | Invalid username |
+| 150151 | Unknown database role |
+| 150200 | Password generation failed |
+| 150201 | The cluster mode cannot be changed after creation |
+| 150202 | No public IPv4 address available |
+| 150203 | Version downgrade refused |
+| 150204 | Storage cannot be shrunk |
+
+### Network
+
+| Code | Error |
+|------|-------|
+| 160001 | VPC not found |
+| 160002 | VPC already exists |
+| 160003 | VPC used by instances; detach them first |
+| 160005 | Network platform unavailable |
+| 160010 | Subnet not found |
+| 160011 | Subnet already exists |
+| 160012 | Subnet used by instances; detach them first |
+| 160100 | Invalid project_id |
+| 160101 | Invalid VPC name |
+| 160150 | Invalid subnet name |
+| 160151 | Invalid CIDR |
+| 160152 | CIDR overlaps another subnet or a reserved range |
+| 160153 | CIDR is not a private range |
+| 160154 | CIDR is not IPv4 |
+
+### Billing
+
+| Code | Error |
+|------|-------|
+| 170100 | Unknown currency |
 
 <div
   style={{"marginBottom":"2rem"}}
