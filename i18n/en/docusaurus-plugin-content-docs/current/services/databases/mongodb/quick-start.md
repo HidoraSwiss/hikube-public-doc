@@ -88,7 +88,7 @@ The **Finish** step confirms the creation ("Creation complete!"). Click **Finish
 | **Ready** | The cluster is operational |
 | **Error** | The platform could not apply the cluster's creation or its last change |
 
-**Expected result:** after a few minutes, the status changes to **Ready**. The page shows the **MongoDB Version**, the **Replicas**, the **Allocated Size** and the **Preset**, as well as the **Network and Connection** card (**Host**, **External Access**, **Sharding**). For a replica set with external access, the **Host** field is replaced by **Replica set rs0 members**: one address per member, each with a copy button.
+**Expected result:** after a few minutes, the status changes to **Ready**. The page shows the **MongoDB Version**, the **Replicas**, the **Allocated Size** and the **Preset**, as well as the **Network and Connection** card: the **Internal** and **External** address zones, and **Sharding**. For a replica set with external access, the **External** zone lists one address per member (**member 1**, **member 2**…), each with a copy button.
 
 ---
 
@@ -110,13 +110,19 @@ The user has the chosen role on the database entered in the **Users** step: in t
 
 ## Step 5: Connection and tests
 
-On a replica set, connect directly to one member: copy one of the addresses listed under **Replica set rs0 members**, or the **External connection string** of the **Network and Connection** card.
+From your workstation, on a replica set, connect directly to one member: copy one of the addresses in the **External** zone, or the **External connection string** of the **Network and Connection** card.
 
 ```bash
 mongosh "mongodb://<member>:27017/myapp?directConnection=true&authSource=admin" --username app-user
 ```
 
-On a sharded cluster, use the address of the **Host** field: `mongosh "mongodb://<host>:27017/myapp?authSource=admin" --username app-user`.
+On a sharded cluster, use the address in the **External** zone: `mongosh "mongodb://<host>:27017/myapp?authSource=admin" --username app-user`.
+
+From a VM or a Kubernetes cluster of the project, use the host in the **Internal** zone, without external access. On a replica set, add `replicaSet=rs0`, as the console reminds you: the driver then finds the primary by itself.
+
+```bash
+mongosh "mongodb://<internal-host>:27017/myapp?replicaSet=rs0&authSource=admin" --username app-user
+```
 
 The connection is not encrypted (no TLS): do not add `--tls`.
 
@@ -143,11 +149,15 @@ The member you reach may be a secondary, which does not accept writes: `insertOn
 
 ## Step 6: Quick troubleshooting
 
-### The Host field shows "Not defined"
+### The External zone shows "Disabled" or "Waiting for allocation…"
 
-**External Access** is disabled, or the public address has not been assigned yet. Enable it via **Edit** if needed, then wait a few moments.
+"Disabled": **External Access** is turned off. Enable it via **Edit** if you need to connect from the Internet; from the project, use the host in the **Internal** zone. "Waiting for allocation…": the public address has not been assigned yet, wait a few moments.
 
-On a replica set with external access, each member receives its own public address: the **Network and Connection** card lists them under **Replica set rs0 members** as soon as they are assigned. Connect to one of them with `directConnection=true`, without the `replicaSet` parameter: the members advertise themselves under in-cluster names, which do not resolve from outside.
+On a replica set with external access, each member receives its own public address: the **External** zone lists them as soon as they are assigned. Connect to one of them with `directConnection=true`, without the `replicaSet` parameter: the members advertise themselves under in-cluster names, which do not resolve from outside.
+
+### The internal host does not resolve from a VM
+
+Copy the full name from the **Internal** zone, without shortening it. On Debian 13, the name does not resolve without configuration: see [Reaching a managed service in the project](../../compute/how-to/configure-network.md#reaching-a-managed-service-in-the-project).
 
 ### `Authentication failed`
 

@@ -101,7 +101,10 @@ Der Schritt **Finish** des Assistenten zeigt unter **User Credentials** das **Pa
 Kopieren Sie diese Passwörter sofort: Sie werden nicht mehr angezeigt. Bei Verlust generieren Sie im Abschnitt **Users** ein neues (**Actions** → **Change Password**).
 :::
 
-Die Adresse bleibt in der Karte **Connection and network** auf der Seite des Clusters einsehbar, Feld **Host**.
+Die Karte **Connection and network** auf der Seite des Clusters zeigt die Adressen des Clusters in zwei Bereichen an, jeweils mit einer Kopierschaltfläche:
+
+- **Internal**, *From the project's resources only*: der interne Host, immer vorhanden, und der Port (`3306`). Er ist von den VMs und Kubernetes-Clustern desselben Projekts aus erreichbar, ohne externen Zugriff;
+- **External**, *From the Internet*: die öffentliche Adresse, wenn der **External Access** aktiviert ist.
 
 ### Zugriff auf die Anwendungsdatenbank
 
@@ -111,9 +114,13 @@ Die im Schritt **Users** angegebene Datenbank `myapp` wurde erstellt, und der Be
 
 ## Schritt 5: Verbindung und Tests
 
+Von Ihrem Rechner aus verwenden Sie die Adresse aus dem Bereich **External**:
+
 ```bash
 mysql -h <host> -P 3306 -u app-user -p myapp
 ```
+
+Von einer VM oder einem Kubernetes-Cluster des Projekts aus verwenden Sie den Host aus dem Bereich **Internal**: `mysql -h <internal-host> -P 3306 -u app-user -p myapp`.
 
 Geben Sie das Passwort ein und prüfen Sie dann die Verbindung:
 
@@ -142,9 +149,13 @@ Der Client `mariadb` akzeptiert dieselben Optionen: `mariadb -h <host> -P 3306 -
 
 ## Schritt 6: Schnelle Fehlerbehebung
 
-### Das Feld Host zeigt „Not defined“ an
+### Der Bereich External zeigt „Disabled“ oder „Waiting for allocation…“ an
 
-Der **External Access** ist deaktiviert, oder die öffentliche IP-Adresse ist noch nicht zugewiesen. Aktivieren Sie ihn bei Bedarf über **Edit** und warten Sie einen Moment.
+„Disabled“: Der **External Access** ist ausgeschaltet. Aktivieren Sie ihn über **Edit**, wenn Sie sich aus dem Internet verbinden müssen; aus dem Projekt verwenden Sie den Host aus dem Bereich **Internal**. „Waiting for allocation…“: Die öffentliche Adresse ist noch nicht zugewiesen, warten Sie einige Augenblicke.
+
+### Der interne Host wird von einer VM aus nicht aufgelöst
+
+Kopieren Sie den vollständigen Namen aus dem Bereich **Internal**, ohne ihn zu kürzen. Unter Debian 13 wird der Name ohne Konfiguration nicht aufgelöst: siehe [Einen verwalteten Dienst des Projekts erreichen](../../compute/how-to/configure-network.md#einen-verwalteten-dienst-des-projekts-erreichen).
 
 ### `Access denied for user`
 

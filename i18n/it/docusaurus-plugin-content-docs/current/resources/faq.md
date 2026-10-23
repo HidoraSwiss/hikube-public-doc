@@ -59,7 +59,9 @@ Vedere: [PostgreSQL](../services/databases/postgresql/quick-start.md), [MariaDB]
 
 ## 6. Come si espone un database su Internet?
 
-Attivi l'opzione **External access** alla creazione del cluster oppure in **Edit**. Viene quindi assegnato un IP pubblico, visualizzato nel campo **Host** della pagina di dettaglio. Per un replica set MongoDB, la pagina di dettaglio elenca l'indirizzo di ogni membro.
+Attivi l'opzione **External access** alla creazione del cluster oppure in **Edit**. Viene quindi assegnato un IP pubblico, visualizzato nella zona **External** della pagina di dettaglio. Per un replica set MongoDB, la zona elenca l'indirizzo di ogni membro.
+
+Per connettersi da una VM o da un cluster Kubernetes dello stesso progetto, l'accesso esterno non è necessario: utilizzi l'host della zona **Internal**, sempre visualizzato.
 
 :::warning
 Esponga un database solo se necessario e utilizzi password robuste.

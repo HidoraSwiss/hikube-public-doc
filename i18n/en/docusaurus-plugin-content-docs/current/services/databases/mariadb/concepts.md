@@ -154,8 +154,9 @@ Defining custom CPU/memory resources is not offered in the console; contact supp
 
 ## Network access
 
-- **External access disabled** (default): the cluster is not exposed on the Internet. The **Host** field of the **Connection and network** card shows **Not defined**.
-- **External access enabled**: the platform assigns a public IP address, shown in the **Host** field. The port is the standard MySQL port, `3306`.
+- **Internal host**: always assigned, shown in the **Internal** zone of the **Connection and network** card. It points to the server that accepts writes and is reachable from the VMs and Kubernetes clusters of the same project, not from another project or from the Internet.
+- **External access disabled** (default): the cluster is not exposed on the Internet. The **External** zone shows **Disabled**.
+- **External access enabled**: the platform assigns a public IP address, shown in the **External** zone. The port is the standard MySQL port, `3306`.
 
 ---
 

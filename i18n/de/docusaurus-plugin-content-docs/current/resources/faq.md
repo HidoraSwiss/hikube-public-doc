@@ -59,7 +59,9 @@ Siehe: [PostgreSQL](../services/databases/postgresql/quick-start.md), [MariaDB](
 
 ## 6. Wie mache ich eine Datenbank im Internet erreichbar?
 
-Aktivieren Sie die Option **External access** bei der Erstellung des Clusters oder über **Edit**. Daraufhin wird eine öffentliche IP zugewiesen und im Feld **Host** der Detailseite angezeigt. Bei einem MongoDB-Replica-Set listet die Detailseite die Adresse jedes Mitglieds auf.
+Aktivieren Sie die Option **External access** bei der Erstellung des Clusters oder über **Edit**. Daraufhin wird eine öffentliche IP zugewiesen und im Bereich **External** der Detailseite angezeigt. Bei einem MongoDB-Replica-Set listet der Bereich die Adresse jedes Mitglieds auf.
+
+Um sich von einer VM oder einem Kubernetes-Cluster desselben Projekts aus zu verbinden, ist kein externer Zugriff nötig: Verwenden Sie den Host aus dem Bereich **Internal**, der immer angezeigt wird.
 
 :::warning
 Machen Sie eine Datenbank nur erreichbar, wenn es nötig ist, und verwenden Sie starke Passwörter.

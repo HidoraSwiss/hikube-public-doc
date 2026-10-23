@@ -46,6 +46,7 @@ graph TB
 | **System-Disk** | Erste Disk der VM, von der gebootet wird. Sie trägt standardmäßig den Namen der VM. |
 | **Daten-Disk** | Zusätzliche Disk, bei der Erstellung leer. Sie erscheint im Betriebssystem als zusätzliches Blockgerät (`/dev/vdb`, `/dev/vdc`…). |
 | **Replikation** | Modus, in dem die Daten einer Disk auf mehrere Knoten kopiert werden: **Asynchronous** oder **Synchronous**. |
+| **mgmt-IP** | Adresse der VM im Netzwerk ihres Projekts, beim Start zugewiesen, mit oder ohne öffentliche IP. Erreichbar von den anderen Ressourcen des Projekts; angezeigt im Bereich **Internal** der Detailseite. |
 | **Firewall** | Filterung des eingehenden Datenverkehrs auf der öffentlichen IP: Nur die erlaubten Ports sind geöffnet. |
 | **VPC** | Privates Netzwerk des Projekts, in Subnetze unterteilt, mit dem eine VM verbunden werden kann. Siehe [Netzwerk](../networking/concepts.md). |
 | **cloud-init (User Data)** | Initialisierungsskript, das beim Start der VM ausgeführt wird (Pakete, Benutzer, Befehle). Für Windows nicht verfügbar. |

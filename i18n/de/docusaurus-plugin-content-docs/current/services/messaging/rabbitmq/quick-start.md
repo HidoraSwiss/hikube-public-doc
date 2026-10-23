@@ -96,7 +96,7 @@ Klicken Sie anschließend auf **Finish**, um zur Liste der Cluster zurückzukehr
 2. Klicken Sie auf den Cluster, um seine Detailseite zu öffnen:
    - **General Information**: **Version**, **Replicas**, **Volume Size**;
    - **VHosts** und **Users**: die vom Assistenten erstellten Elemente;
-   - **Connection**: **Host**, **Status** und **External Access** (**Enabled** oder **Disabled**).
+   - **Connection**: die Adressbereiche **Internal** und **External** sowie der **Status**.
 
 ---
 
@@ -109,14 +109,10 @@ Für die Verbindung benötigen Sie:
 | **Username** | Abschnitt **Users** der Clusterseite |
 | **Password** | Im Bildschirm **Done** des Assistenten kopiert (Schritt 2) |
 | **VHost** | Abschnitt **VHosts** der Clusterseite |
-| **Host** | Feld **Host** im Abschnitt **Connection** |
+| **Host** | Abschnitt **Connection**: Bereich **Internal** aus dem Projekt, Bereich **External** aus dem Internet |
 | **Port** | 5672 (AMQP) |
 
-Solange die Adresse nicht zugewiesen ist, zeigt das Feld **Host** „Not available / Creating“ an. Sobald die Adresse zugewiesen ist, kopieren Sie sie mit der Kopierschaltfläche.
-
-:::note
-Das Feld **Host** ist ausgefüllt, wenn der **External Access** aktiviert ist. Ohne externen Zugriff bleibt der Cluster von den VMs und Kubernetes-Clustern des Projekts über eine interne Adresse erreichbar, die die Konsole nicht anzeigt: [Wenden Sie sich an den Support](mailto:support@hidora.io), um sie zu erhalten.
-:::
+Der Bereich **Internal** zeigt immer den internen Host des Clusters an, der von den VMs und Kubernetes-Clustern des Projekts aus erreichbar ist. Der Bereich **External** zeigt die öffentliche Adresse an, wenn der **External Access** aktiviert ist; andernfalls zeigt er **Disabled** an, und „Waiting for allocation…“, solange die Adresse nicht zugewiesen ist. Kopieren Sie die Adresse mit der Kopierschaltfläche.
 
 Der Bildschirm **Done** des Assistenten zeigt außerdem, sofern der Host bereits bekannt ist, eine Verbindungszeichenfolge der folgenden Form an:
 
@@ -178,7 +174,7 @@ Nachricht empfangen: Hello Hikube!
 | Der Cluster bleibt im Status **Creating** | Bereitstellung läuft | Warten Sie einige Minuten; ändert sich der Status nicht, lesen Sie die [Fehlerbehebung](./troubleshooting.md) |
 | Status **Error** | Die Plattform konnte die Erstellung oder die letzte Änderung des Clusters nicht anwenden | [Wenden Sie sich an den Support](mailto:support@hidora.io) und geben Sie den Namen und die Kennung des Clusters an |
 | `ACCESS_REFUSED` beim Verbinden | Falsches Passwort oder Benutzer ohne Rechte auf dem VHost | Prüfen Sie den VHost unter **Manage Access**; generieren Sie bei Bedarf das Passwort neu |
-| Verbindung nicht möglich (Timeout) | Externer Zugriff deaktiviert, falscher Host oder Port | Prüfen Sie **External Access** und **Host** im Abschnitt **Connection**; der AMQP-Port ist 5672 |
+| Verbindung nicht möglich (Timeout) | Externer Zugriff deaktiviert, falscher Host oder Port | Prüfen Sie den Bereich **External** im Abschnitt **Connection** (aus dem Projekt den Bereich **Internal**); der AMQP-Port ist 5672 |
 | `NOT_FOUND - no vhost` | Falscher VHost-Name im Client | Verwenden Sie exakt den im Abschnitt **VHosts** angezeigten Namen |
 
 ---

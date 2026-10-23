@@ -33,7 +33,7 @@ FROM pg_stat_user_tables
 ORDER BY n_live_tup DESC;
 ```
 
-Aktualisieren Sie anschließend die Konfiguration Ihrer Anwendungen mit der Adresse des neuen Clusters (Feld **Host** auf seiner Seite) und den zugehörigen Zugangsdaten.
+Aktualisieren Sie anschließend die Konfiguration Ihrer Anwendungen mit der Adresse des neuen Clusters (Bereiche **Internal** und **External** auf seiner Seite) und den zugehörigen Zugangsdaten.
 
 ## Wiederherstellung eines logischen Exports
 

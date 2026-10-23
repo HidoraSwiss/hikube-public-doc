@@ -38,7 +38,7 @@ Se l'immagine della VM è Debian o Ubuntu e un VPC è selezionato, la sezione mo
 Nella pagina di dettaglio della VM, sezione **Network & Security**:
 
 - **VPC Networks** elenca ogni VPC con le sue **Connected subnets** e il relativo intervallo, ad esempio `app (172.16.0.0/24)`;
-- **IP Addresses** aggiunge un indirizzo **Secondary** per sottorete.
+- la zona **Internal** aggiunge un indirizzo per sottorete, accanto all'IP **mgmt**.
 
 ### 4. Verificare nel sistema operativo
 

@@ -38,7 +38,7 @@ If the VM image is Debian or Ubuntu and a VPC is checked, the section shows the 
 On the VM's detail page, **Network & Security** section:
 
 - **VPC Networks** lists each VPC with its **Connected subnets** and their range, for example `app (172.16.0.0/24)`;
-- **IP Addresses** adds one **Secondary** address per subnet.
+- the **Internal** zone adds one address per subnet, next to the **mgmt** IP.
 
 ### 4. Check in the OS
 

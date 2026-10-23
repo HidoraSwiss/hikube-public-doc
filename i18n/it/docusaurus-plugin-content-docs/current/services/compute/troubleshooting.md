@@ -72,7 +72,7 @@ Se la console indica che le quote del progetto non sono disponibili, la creazion
 
 **Soluzione**:
 
-1. Nella pagina di dettaglio, sezione **Network & Security**: **Public IP** deve essere **Active** e la porta **22** deve comparire in **Firewall & Ports**.
+1. Nella pagina di dettaglio, sezione **Network & Security**: la zona **External** deve mostrare un indirizzo (e non **Disabled**), e la porta **22** deve comparire in **Firewall & Ports**.
 2. In caso contrario, faccia clic su **Edit**, attivi **Public IPv4 Address**, selezioni **SSH (22)** in **Allowed Ports**, poi faccia clic su **Save**.
 3. Subito dopo la creazione, attenda uno o due minuti che il sistema operativo abbia terminato l'avvio.
 4. Esegua un test in modalità dettagliata:

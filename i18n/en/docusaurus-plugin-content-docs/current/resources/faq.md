@@ -59,7 +59,9 @@ See: [PostgreSQL](../services/databases/postgresql/quick-start.md), [MariaDB](..
 
 ## 6. How do I expose a database to the Internet?
 
-Enable the **External access** option when creating the cluster or in **Edit**. A public IP is then assigned and shown in the **Host** field of the detail page. For a MongoDB replica set, the detail page lists the address of each member.
+Enable the **External access** option when creating the cluster or in **Edit**. A public IP is then assigned and shown in the **External** zone of the detail page. For a MongoDB replica set, the zone lists the address of each member.
+
+To connect from a VM or a Kubernetes cluster of the same project, external access is not needed: use the host in the **Internal** zone, which is always shown.
 
 :::warning
 Only expose a database if necessary, and use strong passwords.

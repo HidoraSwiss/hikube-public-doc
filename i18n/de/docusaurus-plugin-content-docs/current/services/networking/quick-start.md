@@ -76,7 +76,7 @@ Für eine neue VM treffen Sie dieselbe Auswahl im Schritt **Network** des Assist
 Auf der Detailseite jeder VM, Abschnitt **Network & Security**:
 
 - **VPC Networks** zeigt `vpc-demo` und `app (172.16.0.0/24)` an;
-- **IP Addresses** zeigt eine **Secondary**-Adresse in `172.16.0.0/24` an. Notieren Sie die der zweiten VM.
+- der Bereich **Internal** zeigt neben der **mgmt**-IP eine Adresse in `172.16.0.0/24` an. Notieren Sie die der zweiten VM.
 
 ---
 

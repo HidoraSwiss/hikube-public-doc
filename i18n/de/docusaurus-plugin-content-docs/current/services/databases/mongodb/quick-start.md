@@ -88,7 +88,7 @@ Der Schritt **Finish** bestätigt die Erstellung („Creation complete!“). Kli
 | **Ready** | Der Cluster ist betriebsbereit |
 | **Error** | Die Plattform konnte die Erstellung oder die letzte Änderung des Clusters nicht anwenden |
 
-**Erwartetes Ergebnis:** Nach einigen Minuten wechselt der Status auf **Ready**. Die Seite zeigt die **MongoDB Version**, die **Replicas**, die **Allocated Size** und das **Preset** sowie die Karte **Network and Connection** (**Host**, **External Access**, **Sharding**). Bei einem Replica Set mit externem Zugriff tritt an die Stelle des Felds **Host** die Liste **Replica set rs0 members**: eine Adresse pro Mitglied, jeweils mit einer Kopierschaltfläche.
+**Erwartetes Ergebnis:** Nach einigen Minuten wechselt der Status auf **Ready**. Die Seite zeigt die **MongoDB Version**, die **Replicas**, die **Allocated Size** und das **Preset** sowie die Karte **Network and Connection**: die Adressbereiche **Internal** und **External** und das **Sharding**. Bei einem Replica Set mit externem Zugriff listet der Bereich **External** eine Adresse pro Mitglied auf (**member 1**, **member 2**…), jeweils mit einer Kopierschaltfläche.
 
 ---
 
@@ -110,13 +110,19 @@ Der Benutzer verfügt über die gewählte Rolle auf der im Schritt **Users** ang
 
 ## Schritt 5: Verbindung und Tests
 
-Bei einem Replica Set verbinden Sie sich direkt mit einem Mitglied: Kopieren Sie eine der unter **Replica set rs0 members** aufgeführten Adressen oder den **External connection string** der Karte **Network and Connection**.
+Von Ihrem Rechner aus verbinden Sie sich bei einem Replica Set direkt mit einem Mitglied: Kopieren Sie eine der Adressen aus dem Bereich **External** oder den **External connection string** der Karte **Network and Connection**.
 
 ```bash
 mongosh "mongodb://<member>:27017/myapp?directConnection=true&authSource=admin" --username app-user
 ```
 
-Bei einem Cluster mit Sharding verwenden Sie die Adresse aus dem Feld **Host**: `mongosh "mongodb://<host>:27017/myapp?authSource=admin" --username app-user`.
+Bei einem Cluster mit Sharding verwenden Sie die Adresse aus dem Bereich **External**: `mongosh "mongodb://<host>:27017/myapp?authSource=admin" --username app-user`.
+
+Von einer VM oder einem Kubernetes-Cluster des Projekts aus verwenden Sie den Host aus dem Bereich **Internal**, ohne externen Zugriff. Bei einem Replica Set fügen Sie `replicaSet=rs0` hinzu, wie die Konsole in Erinnerung ruft: Der Treiber findet das Primary dann selbst.
+
+```bash
+mongosh "mongodb://<internal-host>:27017/myapp?replicaSet=rs0&authSource=admin" --username app-user
+```
 
 Die Verbindung ist nicht verschlüsselt (kein TLS): Fügen Sie `--tls` nicht hinzu.
 
@@ -143,11 +149,15 @@ Das erreichte Mitglied kann ein Secondary sein, das keine Schreibvorgänge annim
 
 ## Schritt 6: Schnelle Fehlerbehebung
 
-### Das Feld Host zeigt „Not defined“ an
+### Der Bereich External zeigt „Disabled“ oder „Waiting for allocation…“ an
 
-Der **External access** ist deaktiviert, oder die öffentliche Adresse ist noch nicht zugewiesen. Aktivieren Sie ihn bei Bedarf über **Edit** und warten Sie einige Augenblicke.
+„Disabled“: Der **External access** ist ausgeschaltet. Aktivieren Sie ihn über **Edit**, wenn Sie sich aus dem Internet verbinden müssen; aus dem Projekt verwenden Sie den Host aus dem Bereich **Internal**. „Waiting for allocation…“: Die öffentliche Adresse ist noch nicht zugewiesen, warten Sie einige Augenblicke.
 
-Bei einem Replica Set mit externem Zugriff erhält jedes Mitglied eine eigene öffentliche Adresse: Die Karte **Network and Connection** listet sie unter **Replica set rs0 members** auf, sobald sie zugewiesen sind. Verbinden Sie sich mit einer davon mit `directConnection=true`, ohne den Parameter `replicaSet`: Die Mitglieder melden sich unter clusterinternen Namen, die von außen nicht aufgelöst werden.
+Bei einem Replica Set mit externem Zugriff erhält jedes Mitglied eine eigene öffentliche Adresse: Der Bereich **External** listet sie auf, sobald sie zugewiesen sind. Verbinden Sie sich mit einer davon mit `directConnection=true`, ohne den Parameter `replicaSet`: Die Mitglieder melden sich unter clusterinternen Namen, die von außen nicht aufgelöst werden.
+
+### Der interne Host wird von einer VM aus nicht aufgelöst
+
+Kopieren Sie den vollständigen Namen aus dem Bereich **Internal**, ohne ihn zu kürzen. Unter Debian 13 wird der Name ohne Konfiguration nicht aufgelöst: siehe [Einen verwalteten Dienst des Projekts erreichen](../../compute/how-to/configure-network.md#einen-verwalteten-dienst-des-projekts-erreichen).
 
 ### `Authentication failed`
 

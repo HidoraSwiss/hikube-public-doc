@@ -38,7 +38,7 @@ Ist das Image der VM Debian oder Ubuntu und ein VPC angehakt, zeigt der Abschnit
 Auf der Detailseite der VM, Abschnitt **Network & Security**:
 
 - **VPC Networks** listet jedes VPC mit seinen **Connected subnets** und deren Bereich auf, zum Beispiel `app (172.16.0.0/24)`;
-- **IP Addresses** fügt pro Subnetz eine **Secondary**-Adresse hinzu.
+- der Bereich **Internal** fügt neben der **mgmt**-IP pro Subnetz eine Adresse hinzu.
 
 ### 4. Im Betriebssystem prüfen
 

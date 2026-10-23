@@ -154,8 +154,9 @@ Die Festlegung freier CPU-/Arbeitsspeicher-Ressourcen wird in der Konsole nicht 
 
 ## Netzwerkzugriff
 
-- **Externer Zugriff deaktiviert** (Standard): Der Cluster ist nicht im Internet erreichbar. Das Feld **Host** der Karte **Connection and network** zeigt **Not defined** an.
-- **Externer Zugriff aktiviert**: Die Plattform weist eine öffentliche IP-Adresse zu, die im Feld **Host** angezeigt wird. Der Port ist der MySQL-Standardport `3306`.
+- **Interner Host**: immer zugewiesen, angezeigt im Bereich **Internal** der Karte **Connection and network**. Er zeigt auf den Server, der Schreibvorgänge annimmt, und ist von den VMs und Kubernetes-Clustern desselben Projekts aus erreichbar, nicht aus einem anderen Projekt und nicht aus dem Internet.
+- **Externer Zugriff deaktiviert** (Standard): Der Cluster ist nicht im Internet erreichbar. Der Bereich **External** zeigt **Disabled** an.
+- **Externer Zugriff aktiviert**: Die Plattform weist eine öffentliche IP-Adresse zu, die im Bereich **External** angezeigt wird. Der Port ist der MySQL-Standardport `3306`.
 
 ---
 

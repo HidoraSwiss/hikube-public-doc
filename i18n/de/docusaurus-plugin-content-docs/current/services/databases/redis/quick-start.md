@@ -79,7 +79,7 @@ Der Schritt **Done** zeigt „Cluster successfully created“ an. Klicken Sie au
 | **Ready** | Der Cluster ist betriebsbereit |
 | **Error** | Die Plattform konnte die Erstellung oder die letzte Änderung des Clusters nicht anwenden |
 
-**Erwartetes Ergebnis:** Nach einigen Minuten zeigt der Abschnitt **Connection** der Cluster-Seite den **Status** **Ready** und den **Host** des Clusters an.
+**Erwartetes Ergebnis:** Nach einigen Minuten zeigt der Abschnitt **Connection** der Cluster-Seite den **Status** **Ready** und den internen Host des Clusters an.
 
 ---
 
@@ -95,11 +95,16 @@ Ist die Authentifizierung aktiviert, zeigt der Schritt **Done** des Assistenten 
 Kopieren Sie das Passwort sofort: Es wird nicht erneut angezeigt. Bei Verlust generieren Sie im Abschnitt **Security** der Cluster-Seite ein neues (**Rotate password**). Siehe [Passwort erneuern](./how-to/rotate-password.md).
 :::
 
-Die Adresse bleibt auf der Cluster-Seite einsehbar, Abschnitt **Connection**, Feld **Host** (Kopier-Schaltfläche rechts).
+Der Abschnitt **Connection** auf der Cluster-Seite zeigt die Adressen des Clusters in zwei Bereichen an, jeweils mit einer Kopierschaltfläche:
+
+- **Internal**, *From the project's resources only*: der interne Host, immer vorhanden, und der Port (`6379`). Er ist von den VMs und Kubernetes-Clustern desselben Projekts aus erreichbar, ohne externen Zugriff;
+- **External**, *From the Internet*: die öffentliche Adresse, wenn der **External access** aktiviert ist.
 
 ---
 
 ## Schritt 5: Verbindung und Tests
+
+Von Ihrem Rechner aus verwenden Sie die Adresse aus dem Bereich **External**; von einer VM oder einem Kubernetes-Cluster des Projekts aus den Host aus dem Bereich **Internal**.
 
 ```bash
 export REDIS_HOST=<host>
@@ -126,9 +131,13 @@ Die Variable `REDISCLI_AUTH` verhindert, dass das Passwort im Shell-Verlauf ersc
 
 ## Schritt 6: Schnelle Fehlerbehebung
 
-### Der Host zeigt „Waiting for allocation...“ an
+### Der Bereich External zeigt „Disabled“ oder „Waiting for allocation…“ an
 
-Das öffentliche Netzwerk ist deaktiviert, oder die öffentliche IP-Adresse ist noch nicht zugewiesen. Aktivieren Sie bei Bedarf **External access** über **Edit** und warten Sie einige Augenblicke.
+„Disabled“: Der **External access** ist ausgeschaltet. Aktivieren Sie ihn über **Edit**, wenn Sie sich aus dem Internet verbinden müssen; aus dem Projekt verwenden Sie den Host aus dem Bereich **Internal**. „Waiting for allocation…“: Die öffentliche Adresse ist noch nicht zugewiesen, warten Sie einige Augenblicke.
+
+### Der interne Host wird von einer VM aus nicht aufgelöst
+
+Kopieren Sie den vollständigen Namen aus dem Bereich **Internal**, ohne ihn zu kürzen. Unter Debian 13 wird der Name ohne Konfiguration nicht aufgelöst: siehe [Einen verwalteten Dienst des Projekts erreichen](../../compute/how-to/configure-network.md#einen-verwalteten-dienst-des-projekts-erreichen).
 
 ### `NOAUTH Authentication required` oder `WRONGPASS`
 

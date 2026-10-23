@@ -50,7 +50,7 @@ Wenn der Master nicht mehr verfügbar ist:
 2. Eine Replica wird zum neuen Master befördert.
 3. Die übrigen Replicas werden so umkonfiguriert, dass sie ihm folgen.
 
-Bei aktiviertem öffentlichem Netzwerk zeigt die im Feld **Host** angezeigte Adresse auf den aktuellen Master: Ihre Clients müssen nach einem Failover die Adresse nicht ändern, die offenen Verbindungen werden jedoch getrennt und müssen neu aufgebaut werden.
+Der Host aus dem Bereich **Internal** und, bei aktiviertem öffentlichem Netzwerk, die Adresse aus dem Bereich **External** zeigen auf den aktuellen Master: Ihre Clients müssen nach einem Failover die Adresse nicht ändern, die offenen Verbindungen werden jedoch getrennt und müssen neu aufgebaut werden.
 
 :::note
 Konfigurieren Sie Ihre Redis-Clients mit automatischer Wiederverbindung und Wiederholungsintervallen, um die Umschaltung abzufangen.

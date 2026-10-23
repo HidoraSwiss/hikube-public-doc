@@ -76,7 +76,7 @@ Apra il menu **Actions** dell'utente, scelga **Delete user**, inserisca il suo n
 mongosh "mongodb://<host>:27017/analytics?directConnection=true&authSource=admin" --username report-reader
 ```
 
-Su un replica set, `<host>` è l'indirizzo di uno dei **Replica set rs0 members** elencati nel riquadro **Network and Connection**.
+Su un replica set, `<host>` è l'indirizzo di uno dei membri elencati nella zona **External** del riquadro **Network and Connection**.
 
 ```javascript
 // Deve riuscire

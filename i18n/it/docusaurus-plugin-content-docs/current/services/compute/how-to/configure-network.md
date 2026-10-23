@@ -20,7 +20,7 @@ Una VM Hikube può essere esposta su Internet tramite un IP pubblico IPv4, filtr
 |---------------|-------|-------------|
 | **Public IPv4 Address** attivato + **Enable Firewall** selezionato | Solo le **Allowed Ports** sono raggiungibili da Internet | Produzione, servizi mirati (consigliato) |
 | **Public IPv4 Address** attivato + firewall non selezionato | Tutte le porte della VM sono raggiungibili da Internet | VPN, gateway, protocolli a porte dinamiche |
-| **Public IPv4 Address** disattivato | Nessuna esposizione su Internet | VM interna, raggiungibile tramite un [VPC](../../networking/overview.md) |
+| **Public IPv4 Address** disattivato | Nessuna esposizione su Internet | VM interna, raggiungibile tramite il suo IP **mgmt** o tramite un [VPC](../../networking/overview.md) |
 
 :::tip Raccomandazione
 Mantenga il firewall attivato in produzione e apra solo le porte necessarie.
@@ -53,10 +53,14 @@ In **VPC Networks (Secondary)**, selezioni un VPC e poi una o più delle sue **S
 
 ## Verifica
 
-Nella pagina di dettaglio, sezione **Network & Security**:
+Nella pagina di dettaglio, sezione **Network & Security**, gli indirizzi della VM sono suddivisi in due zone:
 
-- **Public IP**: **Active** o **Disabled**;
-- **IP Addresses**: l'indirizzo **Primary** e, se presenti, gli indirizzi **Secondary** delle sottoreti VPC;
+- **Internal**, *From the project's resources only*: l'indirizzo con l'etichetta **mgmt**, poi, se presenti, gli indirizzi delle sottoreti VPC (vedere [Gli indirizzi di una VM](#gli-indirizzi-di-una-vm));
+- **External**, *From the Internet*: l'IP pubblico. Senza IP pubblico, la zona indica **Disabled** e « This instance has no public IP. ». Finché l'indirizzo non è assegnato, indica « Waiting for allocation… ».
+
+Seguono poi:
+
+- **SSH Connection**: il comando pronto da copiare, sull'IP pubblico, oppure sull'IP **mgmt** se la VM non ha un IP pubblico;
 - **VPC Networks**: i VPC e le sottoreti connessi;
 - **Firewall & Ports**: le porte aperte, oppure **No ports open**.
 
@@ -76,6 +80,44 @@ nc -zv -w 5 <ip-pubblico> 8080
 :::warning Firewall disattivato
 Senza il firewall Hikube, la VM è completamente esposta. Configuri un firewall nel sistema operativo (ufw, firewalld, nftables) prima di disattivare l'opzione.
 :::
+
+## Gli indirizzi di una VM
+
+### L'IP mgmt
+
+Ogni VM riceve all'avvio un indirizzo sulla rete del suo progetto: l'IP **mgmt**, visualizzato nella zona **Internal**. Esiste che l'IP pubblico sia attivato o meno ed è raggiungibile dalle altre risorse dello stesso progetto, ad esempio le altre VM. È l'indirizzo da utilizzare tra due VM del progetto senza passare da Internet. Finché la VM è arrestata, la zona **Internal** indica « Assigned when the instance starts. ».
+
+Il firewall Hikube non filtra questo traffico: se necessario, lo filtri con il firewall del sistema operativo. Per raggiungere la VM da un altro progetto o da Internet, utilizzi il suo IP pubblico.
+
+### L'IP pubblico
+
+L'indirizzo della zona **External** è quello da utilizzare da Internet. A seconda del pool di indirizzi, può appartenere a un intervallo privato (ad esempio `10.x.x.x`): si basi sulla zona in cui la console lo mostra, non sul suo intervallo.
+
+### Raggiungere un servizio gestito del progetto
+
+I database e RabbitMQ mostrano nella loro zona **Internal** un nome host completo, che termina con `.local`. Da una VM del progetto, lo copi così com'è, per intero: la sua forma breve non si risolve su tutte le immagini.
+
+Su Debian 13, il nome non si risolve senza configurazione: il sistema ignora il dominio di ricerca distribuito tramite DHCP. Aggiunga queste righe al **Cloud-Init script (User Data)** della VM (se la sua configurazione contiene già `write_files` o `runcmd`, unisca le voci agli elenchi esistenti):
+
+```yaml title="cloud-init.yaml"
+#cloud-config
+write_files:
+  - path: /etc/netplan/90-hikube-dns.yaml
+    permissions: '0600'
+    content: |
+      network:
+        version: 2
+        ethernets:
+          enp1s0:
+            dhcp4-overrides:
+              use-domains: true
+            dhcp6-overrides:
+              use-domains: true
+runcmd:
+  - netplan apply
+```
+
+Su una VM già avviata, scriva lo stesso file, quindi esegua `sudo netplan apply`. Ubuntu, AlmaLinux e Debian 12 risolvono il nome senza configurazione.
 
 ## Per approfondire
 

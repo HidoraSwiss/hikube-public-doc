@@ -76,7 +76,7 @@ For a new VM, make the same selection at the **Network** step of the **Create an
 On the detail page of each VM, **Network & Security** section:
 
 - **VPC Networks** shows `vpc-demo` and `app (172.16.0.0/24)`;
-- **IP Addresses** shows a **Secondary** address in `172.16.0.0/24`. Note the one of the second VM.
+- the **Internal** zone shows, next to the **mgmt** IP, an address in `172.16.0.0/24`. Note the one of the second VM.
 
 ---
 

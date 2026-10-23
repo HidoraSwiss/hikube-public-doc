@@ -28,9 +28,9 @@ description: "Fix common Redis issues on Hikube: cluster in error, pending host,
 
 **Solution**: keep the current version or a higher one, and a volume size at least equal to the current size.
 
-### The host shows "Waiting for allocation..."
+### The External zone shows "Disabled" or "Waiting for allocation…"
 
-**Cause**: the public network is disabled, or the public IP address has not been assigned yet.
+**Cause**: external access is disabled, or the public IP address has not been assigned yet. From a VM or a Kubernetes cluster of the project, external access is not needed: use the host in the **Internal** zone.
 
 **Solution**:
 

@@ -140,7 +140,8 @@ Vedere: [Macchine virtuali - Risoluzione dei problemi](../services/compute/troub
 
 **Soluzioni:**
 - verifichi che l'**External access** sia attivato sul cluster (**Edit**);
-- utilizzi l'indirizzo visualizzato nel campo **Host** della pagina di dettaglio. Finché non è assegnato, la connessione esterna non è possibile. Per un replica set MongoDB, la pagina di dettaglio elenca l'indirizzo di ogni membro: si connetta a un membro con `directConnection=true`;
+- utilizzi l'indirizzo visualizzato nella zona **External** della pagina di dettaglio. Finché non è assegnato («Waiting for allocation…»), la connessione esterna non è possibile. Per un replica set MongoDB, la zona elenca l'indirizzo di ogni membro: si connetta a un membro con `directConnection=true`;
+- da una VM o da un cluster Kubernetes dello stesso progetto, l'accesso esterno non è necessario: utilizzi l'host della zona **Internal**;
 - verifichi l'utente e la password visualizzati nella console.
 
 ### Password rifiutata

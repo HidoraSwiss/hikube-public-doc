@@ -49,6 +49,12 @@ Alla creazione, faccia clic su **Add a disk** al passaggio **Storage**. Su una V
 
 ---
 
+### Come raggiungere una VM che non ha un IP pubblico?
+
+Tramite il suo IP **mgmt**, visualizzato nella zona **Internal** della sezione **Network & Security**: è raggiungibile dalle altre risorse dello stesso progetto, ad esempio le altre VM, e il blocco **SSH Connection** lo utilizza quando la VM non ha un IP pubblico. Da Internet o da un altro progetto, attivi **Public IPv4 Address**. Vedere [Gli indirizzi di una VM](./how-to/configure-network.md#gli-indirizzi-di-una-vm).
+
+---
+
 ### Come connettersi in SSH?
 
 1. Aggiunga la sua chiave pubblica in **Authorized SSH keys** (passaggio **Network** della procedura guidata, oppure **Edit** > **Advanced Configuration** > **SSH Keys**).

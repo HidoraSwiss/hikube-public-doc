@@ -46,6 +46,7 @@ graph TB
 | **Disco di sistema** | Primo disco della VM, quello da cui si avvia. Per impostazione predefinita porta il nome della VM. |
 | **Disco dati** | Disco aggiuntivo, vuoto alla creazione. Compare nel sistema operativo come dispositivo a blocchi aggiuntivo (`/dev/vdb`, `/dev/vdc`…). |
 | **Replica** | Modalità di copia dei dati di un disco su più nodi: **Asynchronous** o **Synchronous**. |
+| **IP mgmt** | Indirizzo della VM sulla rete del suo progetto, assegnato all'avvio, con o senza IP pubblico. Raggiungibile dalle altre risorse del progetto; visualizzato nella zona **Internal** della pagina di dettaglio. |
 | **Firewall** | Filtraggio del traffico in ingresso sull'IP pubblico: solo le porte autorizzate sono aperte. |
 | **VPC** | Rete privata del progetto, suddivisa in sottoreti, a cui una VM può essere collegata. Vedere [Rete](../networking/concepts.md). |
 | **cloud-init (User Data)** | Script di inizializzazione eseguito all'avvio della VM (pacchetti, utenti, comandi). Non disponibile per Windows. |

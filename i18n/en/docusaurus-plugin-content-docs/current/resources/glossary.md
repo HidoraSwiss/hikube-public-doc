@@ -11,7 +11,7 @@ Find here the definitions of the terms and concepts used in the Hikube documenta
 
 | **Term** | **Definition** | **Documentation** |
 |-----------|---------------|-------------------|
-| **External access** | Option of databases and RabbitMQ that assigns a public IP to the cluster; the address is shown in the **Host** field of the detail page (for a MongoDB replica set, the address of each member). | [PostgreSQL - Concepts](../services/databases/postgresql/concepts.md) |
+| **External access** | Option of databases and RabbitMQ that assigns a public IP to the cluster; the address is shown in the **External** zone of the detail page (for a MongoDB replica set, the address of each member). The internal host, reachable from the project, is shown in the **Internal** zone with or without external access. | [PostgreSQL - Concepts](../services/databases/postgresql/concepts.md) |
 | **Add-on / Extension** | Component that can be enabled on a Kubernetes cluster from the **Addons** step of the wizard (cert-manager, Ingress NGINX, monitoring, etc.). | [Kubernetes - Concepts](../services/kubernetes/concepts.md) |
 | **AMQP** | Advanced Message Queuing Protocol. Standard messaging protocol used notably by RabbitMQ for communication between applications. | [RabbitMQ - Overview](../services/messaging/rabbitmq/overview.md) |
 | **ClickHouse Keeper** | Distributed consensus service built into ClickHouse, used to coordinate the cluster nodes (alternative to ZooKeeper). | [ClickHouse - Overview](../services/databases/clickhouse/overview.md) |

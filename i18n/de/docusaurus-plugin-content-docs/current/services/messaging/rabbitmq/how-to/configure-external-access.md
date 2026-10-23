@@ -23,9 +23,11 @@ Aktivieren Sie im Schritt **Configuration** des Assistenten **Create a RabbitMQ 
 
 ## Die öffentliche Adresse abrufen
 
+Von einer VM oder einem Kubernetes-Cluster des Projekts aus ist kein externer Zugriff nötig: Verwenden Sie den Host aus dem Bereich **Internal**, der immer angezeigt wird.
+
 1. Öffnen Sie die Seite des Clusters.
-2. Prüfen Sie im Abschnitt **Connection**, ob **External Access** den Wert **Enabled** anzeigt.
-3. Kopieren Sie den Wert des Feldes **Host**. Solange die Adresse nicht zugewiesen ist, zeigt das Feld „Not available / Creating“ an.
+2. Sehen Sie sich im Abschnitt **Connection** den Bereich **External** an: Er zeigt **Disabled** an, wenn der externe Zugriff ausgeschaltet ist, und „Waiting for allocation…“, solange die Adresse nicht zugewiesen ist.
+3. Kopieren Sie die Adresse aus dem Bereich **External** mit ihrer Kopierschaltfläche.
 
 Ihre Clients verbinden sich anschließend mit diesem Host über den Port **5672**:
 

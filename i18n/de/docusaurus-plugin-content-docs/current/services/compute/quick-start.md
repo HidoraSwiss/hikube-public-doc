@@ -100,9 +100,9 @@ Klicken Sie auf den Namen der VM, um ihre Detailseite zu öffnen. Dort finden Si
 
 - **Resources & Characteristics**: Instanztyp, System-Image, Standardbenutzer, vCPU und RAM;
 - **Storage & Disks**: angebundene Disks, Größe, Replikation, Verschlüsselung;
-- **Network & Security**: **Public IP**, **SSH Connection**, **IP Addresses**, **Firewall & Ports**.
+- **Network & Security**: die Adressen der VM, im Bereich **Internal** (die **mgmt**-IP, aus dem Projekt erreichbar) und im Bereich **External** (die öffentliche IP, aus dem Internet erreichbar), danach **SSH Connection** und **Firewall & Ports**.
 
-**Erwartetes Ergebnis:** Status **Running**, **Public IP** auf **Active**, Port **22** unter **Firewall & Ports** aufgeführt.
+**Erwartetes Ergebnis:** Status **Running**, eine Adresse im Bereich **External**, Port **22** unter **Firewall & Ports** aufgeführt.
 
 ---
 

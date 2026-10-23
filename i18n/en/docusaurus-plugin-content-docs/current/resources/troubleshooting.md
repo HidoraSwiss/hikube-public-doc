@@ -140,7 +140,8 @@ See: [Virtual machines - Troubleshooting](../services/compute/troubleshooting.md
 
 **Solutions:**
 - check that **External access** is enabled on the cluster (**Edit**);
-- use the address shown in the **Host** field of the detail page. Until it is assigned, external connections are not possible. For a MongoDB replica set, the detail page lists the address of each member: connect to a member with `directConnection=true`;
+- use the address shown in the **External** zone of the detail page. Until it is assigned ("Waiting for allocation…"), external connections are not possible. For a MongoDB replica set, the zone lists the address of each member: connect to a member with `directConnection=true`;
+- from a VM or a Kubernetes cluster of the same project, you do not need external access: use the host in the **Internal** zone;
 - check the user and password shown in the console.
 
 ### Password rejected
