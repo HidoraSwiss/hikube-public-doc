@@ -85,7 +85,7 @@ Sans pare-feu Hikube, la VM est entièrement exposée. Configurez un pare-feu da
 
 ### L'IP mgmt
 
-Toute VM reçoit au démarrage une adresse sur le réseau de son projet : l'IP **mgmt**, affichée dans la zone **Interne**. Elle existe que l'IP publique soit activée ou non, et elle est joignable depuis les autres ressources du même projet, par exemple ses autres VM. C'est l'adresse à utiliser entre deux VM du projet sans passer par Internet. Tant que la VM est arrêtée, la zone **Interne** indique « Attribuée au démarrage de l'instance. ».
+Toute VM reçoit au démarrage une adresse sur le réseau de son projet : l'IP **mgmt** (pour *management*), affichée dans la zone **Interne**. Elle existe que l'IP publique soit activée ou non, et elle est joignable depuis les autres ressources du même projet, par exemple ses autres VM. C'est l'adresse à utiliser entre deux VM du projet sans passer par Internet. Tant que la VM est arrêtée, la zone **Interne** indique « Attribuée au démarrage de l'instance. ».
 
 Le pare-feu Hikube ne filtre pas ce trafic : filtrez-le, si besoin, avec le pare-feu de l'OS. Pour joindre la VM depuis un autre projet ou depuis Internet, utilisez son IP publique.
 

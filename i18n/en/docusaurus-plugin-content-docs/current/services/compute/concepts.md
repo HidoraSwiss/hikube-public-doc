@@ -46,7 +46,7 @@ graph TB
 | **System disk** | First disk of the VM, the one it boots from. By default it is named after the VM. |
 | **Data disk** | Additional disk, empty at creation. It appears in the OS as an additional block device (`/dev/vdb`, `/dev/vdc`…). |
 | **Replication** | How a disk's data is copied across several nodes: **Asynchronous** or **Synchronous**. |
-| **mgmt IP** | Address of the VM on its project's network, assigned at startup, with or without a public IP. Reachable from the other resources of the project; shown in the **Internal** zone of the detail page. |
+| **mgmt IP** | *Management* IP: address of the VM on its project's network, assigned at startup, with or without a public IP. Reachable from the other resources of the project; shown in the **Internal** zone of the detail page. |
 | **Firewall** | Filtering of inbound traffic on the public IP: only the allowed ports are open. |
 | **VPC** | Private network of the project, divided into subnets, to which a VM can be connected. See [Networking](../networking/concepts.md). |
 | **cloud-init (User Data)** | Initialization script run when the VM boots (packages, users, commands). Not available for Windows. |

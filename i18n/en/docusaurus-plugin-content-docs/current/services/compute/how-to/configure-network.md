@@ -85,7 +85,7 @@ Without the Hikube firewall, the VM is fully exposed. Configure a firewall in th
 
 ### The mgmt IP
 
-Every VM receives, when it starts, an address on its project's network: the **mgmt** IP, shown in the **Internal** zone. It exists whether or not the public IP is enabled, and it is reachable from the other resources of the same project, for example its other VMs. It is the address to use between two VMs of the project without going through the Internet. While the VM is stopped, the **Internal** zone shows "Assigned when the instance starts.".
+Every VM receives, when it starts, an address on its project's network: the **mgmt** IP (for *management*), shown in the **Internal** zone. It exists whether or not the public IP is enabled, and it is reachable from the other resources of the same project, for example its other VMs. It is the address to use between two VMs of the project without going through the Internet. While the VM is stopped, the **Internal** zone shows "Assigned when the instance starts.".
 
 The Hikube firewall does not filter this traffic: filter it, if needed, with the OS firewall. To reach the VM from another project or from the Internet, use its public IP.
 

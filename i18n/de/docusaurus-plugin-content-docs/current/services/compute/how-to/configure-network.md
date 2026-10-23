@@ -85,7 +85,7 @@ Ohne Hikube-Firewall ist die VM vollständig exponiert. Konfigurieren Sie eine F
 
 ### Die mgmt-IP
 
-Jede VM erhält beim Start eine Adresse im Netzwerk ihres Projekts: die **mgmt**-IP, angezeigt im Bereich **Internal**. Sie besteht unabhängig davon, ob die öffentliche IP aktiviert ist, und ist von den anderen Ressourcen desselben Projekts aus erreichbar, zum Beispiel von dessen anderen VMs. Sie ist die Adresse, die zwischen zwei VMs des Projekts ohne Umweg über das Internet zu verwenden ist. Solange die VM gestoppt ist, zeigt der Bereich **Internal** „Assigned when the instance starts.“ an.
+Jede VM erhält beim Start eine Adresse im Netzwerk ihres Projekts: die **mgmt**-IP (für *Management*), angezeigt im Bereich **Internal**. Sie besteht unabhängig davon, ob die öffentliche IP aktiviert ist, und ist von den anderen Ressourcen desselben Projekts aus erreichbar, zum Beispiel von dessen anderen VMs. Sie ist die Adresse, die zwischen zwei VMs des Projekts ohne Umweg über das Internet zu verwenden ist. Solange die VM gestoppt ist, zeigt der Bereich **Internal** „Assigned when the instance starts.“ an.
 
 Die Hikube-Firewall filtert diesen Datenverkehr nicht: Filtern Sie ihn bei Bedarf mit der Firewall des Betriebssystems. Um die VM aus einem anderen Projekt oder aus dem Internet zu erreichen, verwenden Sie ihre öffentliche IP.
 
