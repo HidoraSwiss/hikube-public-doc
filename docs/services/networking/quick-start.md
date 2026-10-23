@@ -76,7 +76,7 @@ Pour une nouvelle VM, faites la même sélection à l'étape **Réseau** de l'as
 Sur la page de détail de chaque VM, section **Réseau et Sécurité** :
 
 - **Réseaux VPC** affiche `vpc-demo` et `app (172.16.0.0/24)` ;
-- **Adresses IP** affiche une adresse **Secondaire** dans `172.16.0.0/24`. Notez celle de la seconde VM.
+- la zone **Interne** affiche, à côté de l'IP **mgmt**, une adresse dans `172.16.0.0/24`. Notez celle de la seconde VM.
 
 ---
 

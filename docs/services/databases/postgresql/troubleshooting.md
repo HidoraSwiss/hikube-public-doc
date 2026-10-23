@@ -39,7 +39,7 @@ description: "Résolvez les problèmes courants de PostgreSQL sur Hikube : clust
 **Solution** :
 
 1. Dans la page du cluster, vérifiez que la carte **Accès externe** indique **Activé**. Sinon, activez-le via **Modifier**.
-2. Vérifiez que le champ **Hôte (Host)** contient une adresse et non **Non défini**.
+2. Vérifiez que la zone **Externe** de la carte **Connexion et Bases de données** contient une adresse, et non **Désactivé** ou « En attente d'attribution… ».
 3. Utilisez le port `5432` et testez la connectivité :
    ```bash
    pg_isready -h <hôte> -p 5432

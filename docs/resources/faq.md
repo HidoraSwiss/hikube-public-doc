@@ -59,7 +59,9 @@ Voir : [PostgreSQL](../services/databases/postgresql/quick-start.md), [MariaDB](
 
 ## 6. Comment exposer une base de données sur Internet ?
 
-Activez l'option **Accès externe** à la création du cluster ou dans **Modifier**. Une IP publique est alors attribuée et affichée dans le champ **Hôte** de la page de détail. Pour un replica set MongoDB, la page de détail liste l'adresse de chaque membre.
+Activez l'option **Accès externe** à la création du cluster ou dans **Modifier**. Une IP publique est alors attribuée et affichée dans la zone **Externe** de la page de détail. Pour un replica set MongoDB, la zone liste l'adresse de chaque membre.
+
+Pour vous connecter depuis une VM ou un cluster Kubernetes du même projet, l'accès externe n'est pas nécessaire : utilisez l'hôte de la zone **Interne**, toujours affiché.
 
 :::warning
 N'exposez une base de données que si c'est nécessaire, et utilisez des mots de passe robustes.

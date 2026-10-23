@@ -38,7 +38,7 @@ Si l'image de la VM est Debian ou Ubuntu et qu'un VPC est coché, la section aff
 Sur la page de détail de la VM, section **Réseau et Sécurité** :
 
 - **Réseaux VPC** liste chaque VPC avec ses **Sous-réseaux connectés** et leur plage, par exemple `app (172.16.0.0/24)` ;
-- **Adresses IP** ajoute une adresse **Secondaire** par sous-réseau.
+- la zone **Interne** ajoute une adresse par sous-réseau, à côté de l'IP **mgmt**.
 
 ### 4. Vérifier dans l'OS
 

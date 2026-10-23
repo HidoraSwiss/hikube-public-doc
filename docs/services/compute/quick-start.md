@@ -100,9 +100,9 @@ Cliquez sur le nom de la VM pour ouvrir sa page de détail. Vous y trouvez :
 
 - **Ressources & Caractéristiques** : type d'instance, image système, utilisateur par défaut, vCPU et RAM ;
 - **Stockage & Disques** : disques attachés, taille, réplication, chiffrement ;
-- **Réseau et Sécurité** : **IP Publique**, **Connexion SSH**, **Adresses IP**, **Pare-feu & Ports**.
+- **Réseau et Sécurité** : les adresses de la VM, en zone **Interne** (l'IP **mgmt**, joignable depuis le projet) et en zone **Externe** (l'IP publique, joignable depuis Internet), puis **Connexion SSH** et **Pare-feu & Ports**.
 
-**Résultat attendu :** statut **Actif**, **IP Publique** à **Active**, port **22** listé sous **Pare-feu & Ports**.
+**Résultat attendu :** statut **Actif**, une adresse dans la zone **Externe**, port **22** listé sous **Pare-feu & Ports**.
 
 ---
 

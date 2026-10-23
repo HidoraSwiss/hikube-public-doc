@@ -79,7 +79,7 @@ L'étape **Résumé** affiche « Cluster créé avec succès ». Cliquez sur **T
 | **Prêt** | Le cluster est opérationnel |
 | **Erreur** | La plateforme n'a pas pu appliquer la création ou la dernière modification du cluster |
 
-**Résultat attendu :** après quelques minutes, la section **Connexion** de la page du cluster affiche le **Statut** **Prêt** et l'**Hôte** du cluster.
+**Résultat attendu :** après quelques minutes, la section **Connexion** de la page du cluster affiche le **Statut** **Prêt** et l'hôte interne du cluster.
 
 ---
 
@@ -95,11 +95,16 @@ Lorsque l'authentification est activée, l'étape **Résumé** de l'assistant af
 Copiez le mot de passe immédiatement : il ne sera plus affiché. En cas de perte, générez-en un nouveau depuis la section **Sécurité** de la page du cluster (**Effectuer une rotation**). Voir [Renouveler le mot de passe](./how-to/rotate-password.md).
 :::
 
-L'adresse reste consultable dans la page du cluster, section **Connexion**, champ **Hôte** (bouton de copie à droite).
+La section **Connexion** de la page du cluster affiche ses adresses en deux zones, chacune avec un bouton de copie :
+
+- **Interne**, *Depuis les ressources du projet uniquement* : l'hôte interne, toujours renseigné, et le port (`6379`). Il se joint depuis les VM et les clusters Kubernetes du même projet, sans accès externe ;
+- **Externe**, *Depuis Internet* : l'adresse publique, lorsque l'**Accès externe** est activé.
 
 ---
 
 ## Étape 5 : Connexion et tests
+
+Depuis votre poste, utilisez l'adresse de la zone **Externe** ; depuis une VM ou un cluster Kubernetes du projet, l'hôte de la zone **Interne**.
 
 ```bash
 export REDIS_HOST=<hôte>
@@ -126,9 +131,13 @@ La variable `REDISCLI_AUTH` évite de faire apparaître le mot de passe dans l'h
 
 ## Étape 6 : Dépannage rapide
 
-### L'hôte affiche « En attente d'attribution... »
+### La zone Externe affiche « Désactivé » ou « En attente d'attribution… »
 
-Le réseau public est désactivé, ou l'adresse IP publique n'est pas encore attribuée. Activez **Accès externe** via **Modifier** si nécessaire, puis patientez quelques instants.
+« Désactivé » : l'**Accès externe** est coupé. Activez-le via **Modifier** si vous devez vous connecter depuis Internet ; depuis le projet, utilisez l'hôte de la zone **Interne**. « En attente d'attribution… » : l'adresse publique n'est pas encore attribuée, patientez quelques instants.
+
+### L'hôte interne ne se résout pas depuis une VM
+
+Copiez le nom complet de la zone **Interne**, sans le raccourcir. Sur Debian 13, le nom ne se résout pas sans configuration : voir [Joindre un service managé du projet](../../compute/how-to/configure-network.md#joindre-un-service-managé-du-projet).
 
 ### `NOAUTH Authentication required` ou `WRONGPASS`
 

@@ -72,7 +72,7 @@ Si la console indique que les quotas du projet sont indisponibles, la création 
 
 **Solution** :
 
-1. Sur la page de détail, section **Réseau et Sécurité** : **IP Publique** doit être **Active** et le port **22** doit figurer sous **Pare-feu & Ports**.
+1. Sur la page de détail, section **Réseau et Sécurité** : la zone **Externe** doit afficher une adresse (et non **Désactivé**), et le port **22** doit figurer sous **Pare-feu & Ports**.
 2. Sinon, cliquez sur **Modifier**, activez **Adresse IPv4 Publique**, cochez **SSH (22)** dans **Ports Autorisés**, puis **Enregistrer**.
 3. Juste après la création, attendez une à deux minutes que l'OS ait fini de démarrer.
 4. Testez en mode verbeux :

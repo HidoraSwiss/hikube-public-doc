@@ -154,8 +154,9 @@ La définition de ressources CPU/mémoire libres n'est pas proposée dans la con
 
 ## Accès réseau
 
-- **Accès externe désactivé** (par défaut) : le cluster n'est pas exposé sur Internet. Le champ **Hôte (Host)** de la carte **Connexion et réseau** affiche **Non défini**.
-- **Accès externe activé** : la plateforme attribue une adresse IP publique, affichée dans le champ **Hôte (Host)**. Le port est le port MySQL standard, `3306`.
+- **Hôte interne** : toujours attribué, affiché dans la zone **Interne** de la carte **Connexion et réseau**. Il pointe vers le serveur qui accepte les écritures et se joint depuis les VM et les clusters Kubernetes du même projet, pas depuis un autre projet ni depuis Internet.
+- **Accès externe désactivé** (par défaut) : le cluster n'est pas exposé sur Internet. La zone **Externe** affiche **Désactivé**.
+- **Accès externe activé** : la plateforme attribue une adresse IP publique, affichée dans la zone **Externe**. Le port est le port MySQL standard, `3306`.
 
 ---
 

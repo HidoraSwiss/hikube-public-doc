@@ -28,9 +28,9 @@ description: "Résolvez les problèmes de Redis sur Hikube : cluster en erreur, 
 
 **Solution** : conservez la version actuelle ou une version supérieure, et une taille de volume au moins égale à la taille actuelle.
 
-### L'hôte affiche « En attente d'attribution... »
+### La zone Externe affiche « Désactivé » ou « En attente d'attribution… »
 
-**Cause** : le réseau public est désactivé, ou l'adresse IP publique n'est pas encore attribuée.
+**Cause** : l'accès externe est désactivé, ou l'adresse IP publique n'est pas encore attribuée. Depuis une VM ou un cluster Kubernetes du projet, l'accès externe n'est pas nécessaire : utilisez l'hôte de la zone **Interne**.
 
 **Solution** :
 

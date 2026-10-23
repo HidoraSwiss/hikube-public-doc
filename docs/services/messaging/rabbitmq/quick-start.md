@@ -96,7 +96,7 @@ Cliquez ensuite sur **Terminer** pour revenir à la liste des clusters.
 2. Cliquez sur le cluster pour ouvrir sa page de détail :
    - **Informations générales** : **Version**, **Réplicas**, **Taille du volume** ;
    - **VHosts** et **Utilisateurs** : les éléments créés par l'assistant ;
-   - **Connexion** : **Hôte (Host)**, **Statut** et **Accès externe** (**Activé** ou **Désactivé**).
+   - **Connexion** : les zones d'adresses **Interne** et **Externe**, et le **Statut**.
 
 ---
 
@@ -109,14 +109,10 @@ Pour vous connecter, il vous faut :
 | **Nom d'utilisateur** | Section **Utilisateurs** de la page du cluster |
 | **Mot de passe** | Copié à l'écran **Résumé** de l'assistant (étape 2) |
 | **VHost** | Section **VHosts** de la page du cluster |
-| **Hôte** | Champ **Hôte (Host)** de la section **Connexion** |
+| **Hôte** | Section **Connexion** : zone **Interne** depuis le projet, zone **Externe** depuis Internet |
 | **Port** | 5672 (AMQP) |
 
-Tant que l'adresse n'est pas attribuée, le champ **Hôte (Host)** affiche « Non disponible / En création ». Une fois l'adresse attribuée, copiez-la avec le bouton de copie.
-
-:::note
-Le champ **Hôte (Host)** est renseigné lorsque l'**Accès externe** est activé. Sans accès externe, le cluster reste joignable depuis les VM et les clusters Kubernetes du projet par une adresse interne, que la console n'affiche pas : [contactez le support](mailto:support@hidora.io) pour l'obtenir.
-:::
+La zone **Interne** affiche toujours l'hôte interne du cluster, joignable depuis les VM et les clusters Kubernetes du projet. La zone **Externe** affiche l'adresse publique lorsque l'**Accès externe** est activé ; sinon elle indique **Désactivé**, et « En attente d'attribution… » tant que l'adresse n'est pas attribuée. Copiez l'adresse avec le bouton de copie.
 
 L'écran **Résumé** de l'assistant affiche aussi, lorsque l'hôte est déjà connu, une chaîne de connexion de la forme :
 
@@ -178,7 +174,7 @@ Message reçu : Hello Hikube!
 | Le cluster reste **En création** | Provisionnement en cours | Patientez quelques minutes ; si le statut ne change pas, consultez le [dépannage](./troubleshooting.md) |
 | Statut **Erreur** | La plateforme n'a pas pu appliquer la création ou la dernière modification du cluster | [Contactez le support](mailto:support@hidora.io) en indiquant le nom et l'identifiant du cluster |
 | `ACCESS_REFUSED` à la connexion | Mot de passe erroné, ou utilisateur sans droit sur le vhost | Vérifiez le vhost dans **Gérer les accès** ; régénérez le mot de passe si nécessaire |
-| Connexion impossible (timeout) | Accès externe désactivé, mauvais hôte ou port | Vérifiez **Accès externe** et **Hôte (Host)** dans la section **Connexion** ; le port AMQP est 5672 |
+| Connexion impossible (timeout) | Accès externe désactivé, mauvais hôte ou port | Vérifiez la zone **Externe** de la section **Connexion** (depuis le projet, la zone **Interne**) ; le port AMQP est 5672 |
 | `NOT_FOUND - no vhost` | Nom de vhost incorrect dans le client | Utilisez exactement le nom affiché dans la section **VHosts** |
 
 ---

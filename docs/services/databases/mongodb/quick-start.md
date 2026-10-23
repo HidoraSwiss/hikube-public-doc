@@ -88,7 +88,7 @@ L'étape **Résumé** confirme la création (« Création terminée ! »). Cliqu
 | **Prêt** | Le cluster est opérationnel |
 | **Erreur** | La plateforme n'a pas pu appliquer la création ou la dernière modification du cluster |
 
-**Résultat attendu :** après quelques minutes, le statut passe à **Prêt**. La page affiche la **Version MongoDB**, les **Réplicas**, la **Taille allouée** et la **Préconfiguration**, ainsi que la carte **Connexion et réseau** (**Hôte (Host)**, **Accès externe**, **Sharding**). Pour un replica set avec accès externe, le champ **Hôte (Host)** laisse place à **Membres du replica set rs0** : une adresse par membre, chacune avec un bouton de copie.
+**Résultat attendu :** après quelques minutes, le statut passe à **Prêt**. La page affiche la **Version MongoDB**, les **Réplicas**, la **Taille allouée** et la **Préconfiguration**, ainsi que la carte **Connexion et réseau** : les zones d'adresses **Interne** et **Externe**, et le **Sharding**. Pour un replica set avec accès externe, la zone **Externe** liste une adresse par membre (**membre 1**, **membre 2**…), chacune avec un bouton de copie.
 
 ---
 
@@ -110,13 +110,19 @@ L'utilisateur dispose du rôle choisi sur la base indiquée à l'étape **Utilis
 
 ## Étape 5 : Connexion et tests
 
-Sur un replica set, connectez-vous directement à un membre : copiez l'une des adresses listées sous **Membres du replica set rs0**, ou la **Chaîne de connexion externe** de la carte **Connexion et réseau**.
+Depuis votre poste, sur un replica set, connectez-vous directement à un membre : copiez l'une des adresses de la zone **Externe**, ou la **Chaîne de connexion externe** de la carte **Connexion et réseau**.
 
 ```bash
 mongosh "mongodb://<membre>:27017/myapp?directConnection=true&authSource=admin" --username app-user
 ```
 
-Sur un cluster shardé, utilisez l'adresse du champ **Hôte (Host)** : `mongosh "mongodb://<hôte>:27017/myapp?authSource=admin" --username app-user`.
+Sur un cluster shardé, utilisez l'adresse de la zone **Externe** : `mongosh "mongodb://<hôte>:27017/myapp?authSource=admin" --username app-user`.
+
+Depuis une VM ou un cluster Kubernetes du projet, utilisez l'hôte de la zone **Interne**, sans accès externe. Sur un replica set, ajoutez `replicaSet=rs0`, comme le rappelle la console : le pilote trouve alors lui-même le primaire.
+
+```bash
+mongosh "mongodb://<hôte-interne>:27017/myapp?replicaSet=rs0&authSource=admin" --username app-user
+```
 
 La connexion n'est pas chiffrée (pas de TLS) : n'ajoutez pas `--tls`.
 
@@ -143,11 +149,15 @@ Le membre joint peut être un secondaire, qui n'accepte pas les écritures : `in
 
 ## Étape 6 : Dépannage rapide
 
-### Le champ Hôte (Host) affiche « Non défini »
+### La zone Externe affiche « Désactivé » ou « En attente d'attribution… »
 
-L'**Accès externe** est désactivé, ou l'adresse publique n'est pas encore attribuée. Activez-le via **Modifier** si besoin, puis patientez quelques instants.
+« Désactivé » : l'**Accès externe** est coupé. Activez-le via **Modifier** si vous devez vous connecter depuis Internet ; depuis le projet, utilisez l'hôte de la zone **Interne**. « En attente d'attribution… » : l'adresse publique n'est pas encore attribuée, patientez quelques instants.
 
-Sur un replica set avec accès externe, chaque membre reçoit sa propre adresse publique : la carte **Connexion et réseau** les liste sous **Membres du replica set rs0** dès qu'elles sont attribuées. Connectez-vous à l'une d'elles avec `directConnection=true`, sans paramètre `replicaSet` : les membres s'annoncent sous des noms internes au cluster, qui ne se résolvent pas depuis l'extérieur.
+Sur un replica set avec accès externe, chaque membre reçoit sa propre adresse publique : la zone **Externe** les liste dès qu'elles sont attribuées. Connectez-vous à l'une d'elles avec `directConnection=true`, sans paramètre `replicaSet` : les membres s'annoncent sous des noms internes au cluster, qui ne se résolvent pas depuis l'extérieur.
+
+### L'hôte interne ne se résout pas depuis une VM
+
+Copiez le nom complet de la zone **Interne**, sans le raccourcir. Sur Debian 13, le nom ne se résout pas sans configuration : voir [Joindre un service managé du projet](../../compute/how-to/configure-network.md#joindre-un-service-managé-du-projet).
 
 ### `Authentication failed`
 

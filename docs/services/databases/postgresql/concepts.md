@@ -159,8 +159,9 @@ La définition de ressources CPU/mémoire libres (hors preset) n'est pas propos�
 
 ## Accès réseau
 
-- **Accès externe désactivé** (par défaut) : le cluster n'est pas exposé sur Internet. Le champ **Hôte (Host)** de la page du cluster affiche **Non défini**.
-- **Accès externe activé** : la plateforme attribue une adresse IP publique, affichée dans le champ **Hôte (Host)**. Le port est le port PostgreSQL standard, `5432`.
+- **Hôte interne** : toujours attribué, affiché dans la zone **Interne** de la carte **Connexion et Bases de données**. Il pointe vers le primaire et se joint depuis les VM et les clusters Kubernetes du même projet, pas depuis un autre projet ni depuis Internet.
+- **Accès externe désactivé** (par défaut) : le cluster n'est pas exposé sur Internet. La zone **Externe** affiche **Désactivé**.
+- **Accès externe activé** : la plateforme attribue une adresse IP publique, affichée dans la zone **Externe**. Le port est le port PostgreSQL standard, `5432`.
 
 L'accès externe peut être activé ou désactivé après la création, depuis **Modifier**. Son coût (adresse IP publique) est inclus dans le **Coût estimé** de l'assistant.
 
