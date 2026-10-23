@@ -89,10 +89,6 @@ Toute VM reçoit au démarrage une adresse sur le réseau de son projet : l'IP *
 
 Le pare-feu Hikube ne filtre pas ce trafic : filtrez-le, si besoin, avec le pare-feu de l'OS. Pour joindre la VM depuis un autre projet ou depuis Internet, utilisez son IP publique.
 
-### L'IP publique
-
-L'adresse de la zone **Externe** est celle à utiliser depuis Internet. Selon le pool d'adresses, elle peut appartenir à une plage privée (par exemple `10.x.x.x`) : fiez-vous à la zone dans laquelle la console l'affiche, pas à sa plage.
-
 ### Joindre un service managé du projet
 
 Les bases de données et RabbitMQ affichent dans leur zone **Interne** un nom d'hôte complet, qui se termine par `.local`. Depuis une VM du projet, copiez-le tel quel, en entier : sa forme courte ne se résout pas sur toutes les images.

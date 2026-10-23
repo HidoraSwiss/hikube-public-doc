@@ -89,10 +89,6 @@ Every VM receives, when it starts, an address on its project's network: the **mg
 
 The Hikube firewall does not filter this traffic: filter it, if needed, with the OS firewall. To reach the VM from another project or from the Internet, use its public IP.
 
-### The public IP
-
-The address in the **External** zone is the one to use from the Internet. Depending on the address pool, it may belong to a private range (for example `10.x.x.x`): rely on the zone in which the console shows it, not on its range.
-
 ### Reaching a managed service in the project
 
 Databases and RabbitMQ show a full host name in their **Internal** zone, ending in `.local`. From a VM of the project, copy it as is, in full: its short form does not resolve on every image.

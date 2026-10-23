@@ -89,10 +89,6 @@ Jede VM erhält beim Start eine Adresse im Netzwerk ihres Projekts: die **mgmt**
 
 Die Hikube-Firewall filtert diesen Datenverkehr nicht: Filtern Sie ihn bei Bedarf mit der Firewall des Betriebssystems. Um die VM aus einem anderen Projekt oder aus dem Internet zu erreichen, verwenden Sie ihre öffentliche IP.
 
-### Die öffentliche IP
-
-Die Adresse im Bereich **External** ist diejenige, die aus dem Internet zu verwenden ist. Je nach Adresspool kann sie zu einem privaten Bereich gehören (zum Beispiel `10.x.x.x`): Verlassen Sie sich auf den Bereich, in dem die Konsole sie anzeigt, nicht auf ihren Adressbereich.
-
 ### Einen verwalteten Dienst des Projekts erreichen
 
 Die Datenbanken und RabbitMQ zeigen in ihrem Bereich **Internal** einen vollständigen Hostnamen an, der auf `.local` endet. Kopieren Sie ihn von einer VM des Projekts aus unverändert und vollständig: Seine Kurzform wird nicht auf allen Images aufgelöst.

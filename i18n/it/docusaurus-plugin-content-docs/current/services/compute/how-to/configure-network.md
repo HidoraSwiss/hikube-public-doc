@@ -89,10 +89,6 @@ Ogni VM riceve all'avvio un indirizzo sulla rete del suo progetto: l'IP **mgmt**
 
 Il firewall Hikube non filtra questo traffico: se necessario, lo filtri con il firewall del sistema operativo. Per raggiungere la VM da un altro progetto o da Internet, utilizzi il suo IP pubblico.
 
-### L'IP pubblico
-
-L'indirizzo della zona **External** è quello da utilizzare da Internet. A seconda del pool di indirizzi, può appartenere a un intervallo privato (ad esempio `10.x.x.x`): si basi sulla zona in cui la console lo mostra, non sul suo intervallo.
-
 ### Raggiungere un servizio gestito del progetto
 
 I database e RabbitMQ mostrano nella loro zona **Internal** un nome host completo, che termina con `.local`. Da una VM del progetto, lo copi così com'è, per intero: la sua forma breve non si risolve su tutte le immagini.
