@@ -146,7 +146,7 @@ lsblk
 | Symptôme | Vérification |
 |----------|--------------|
 | **Suivant** reste grisé à l'étape Configuration ou Stockage | Un quota du projet est dépassé : réduisez le gabarit ou la taille du disque, ou faites augmenter les quotas du projet. |
-| `Connection timed out` en SSH | Vérifiez sur la page de détail que **IP Publique** est **Active** et que le port 22 figure dans **Pare-feu & Ports**. |
+| `Connection timed out` en SSH | Vérifiez sur la page de détail que la zone **Externe** affiche une adresse et que le port 22 figure dans **Pare-feu & Ports**. |
 | `Permission denied (publickey)` | Vérifiez l'utilisateur (bloc **Connexion SSH**) et que la clé privée utilisée correspond à la clé publique listée dans **Configuration avancée** > **Clés SSH**. |
 | Statut **Erreur** ou **Échec** | Consultez le [dépannage](./troubleshooting.md). |
 

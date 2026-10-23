@@ -44,7 +44,7 @@ description: "Résolvez les problèmes de Redis sur Hikube : cluster en erreur, 
 **Solution** :
 
 1. Vérifiez que le **Statut** de la section **Connexion** est **Prêt**.
-2. Copiez l'**Hôte** avec le bouton de copie pour éviter les erreurs de saisie.
+2. Copiez l'adresse avec son bouton de copie pour éviter les erreurs de saisie : zone **Externe** depuis Internet, zone **Interne** depuis le projet.
 3. Vérifiez qu'aucun pare-feu sortant de votre réseau ne bloque le port `6379`.
 
 ### Authentification échoue (`NOAUTH` ou `WRONGPASS`)

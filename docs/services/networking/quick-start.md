@@ -110,7 +110,7 @@ sudo netplan apply
 ip -br addr show enp2s0
 ```
 
-**Résultat attendu :** `enp2s0` est `UP` avec une adresse en `172.16.0.x/24`, celle affichée comme **Secondaire** dans la console. Faites de même sur la seconde VM.
+**Résultat attendu :** `enp2s0` est `UP` avec une adresse en `172.16.0.x/24`, celle affichée dans la zone **Interne** de la console, à côté de l'IP **mgmt**. Faites de même sur la seconde VM.
 
 Testez la communication avec la seconde VM sur son adresse privée :
 
@@ -118,7 +118,7 @@ Testez la communication avec la seconde VM sur son adresse privée :
 ping -c 3 172.16.0.11
 ```
 
-Remplacez `172.16.0.11` par l'adresse **Secondaire** relevée à l'étape 4. Le ping doit répondre ; ce trafic ne passe ni par Internet ni par le pare-feu de l'IP publique.
+Remplacez `172.16.0.11` par l'adresse du sous-réseau relevée à l'étape 4. Le ping doit répondre ; ce trafic ne passe ni par Internet ni par le pare-feu de l'IP publique.
 
 ---
 
