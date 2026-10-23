@@ -102,11 +102,11 @@ Toutes les requêtes `PATCH` suivent la même règle : **seuls les champs envoy�
 
 - **Champ absent** : un champ absent du corps, ou envoyé à `null`, garde sa valeur. `{"external": true}` sur un cluster Redis active l'accès externe et garde la version, la taille et l'authentification.
 - **Champ envoyé** : sa valeur est appliquée telle quelle, y compris une valeur vide (`false`, `0`, `""`). Elle est validée comme à la création : une taille de `0` est refusée.
-- **Sous-objet** : il est modifié champ par champ. `{"network": {"publicIpv4": true}}` sur une VM ne touche ni au pare-feu ni aux VPC.
+- **Sous-objet** : il est modifié champ par champ. `{"network": {"publicIpv4": true}}` sur une VM ne touche ni au pare-feu ni aux VPC. Envoyé vide, en revanche, il remet **chacun de ses champs** à sa valeur vide : `{"network": {}}` retire l'adresse publique, désactive le pare-feu et détache tous les VPC.
 - **Liste ou carte** : envoyée, elle remplace celle en place, et `[]` ou `{}` la vide. `{"network": {"vpcs": []}}` détache tous les VPC d'une VM ; `{"config": {"databases": {}}}` retire tous les droits d'un utilisateur de base de données.
 - **Configuration libre** (surcharges Helm d'un cluster Kubernetes : `config.cni`, `config.dns`, `config.verticalPodAutoscaler`, `configOverride` des addons) : un objet envoyé remplace la surcharge en place, `{}` ne change rien, et `null` la retire.
 - **Corps vide** : `{}` ne modifie rien et renvoie la ressource telle qu'elle est enregistrée.
-- **Champs non modifiables** : le nom et les identifiants du chemin sont ignorés s'ils figurent dans le corps. Les champs fixés à la création (par exemple le mode d'un cluster de base de données, standalone ou répliqué) sont refusés avec un code propre au service.
+- **Champs non modifiables** : le nom et les identifiants du chemin sont ignorés s'ils figurent dans le corps. Un champ fixé à la création (par exemple le mode d'un cluster de base de données, standalone ou répliqué) peut être renvoyé avec sa valeur actuelle ; une autre valeur est refusée avec un code propre au service. Un champ absent de la requête de modification (comme `preset` sur MariaDB ou `image` sur une VM) est refusé comme champ inconnu (`400`).
 
 Par exemple, pour activer l'accès externe d'un cluster Redis sans rien changer d'autre :
 
