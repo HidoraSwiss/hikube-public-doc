@@ -44,7 +44,7 @@ description: "Fix common Redis issues on Hikube: cluster in error, pending host,
 **Solution**:
 
 1. Check that the **Status** in the **Connection** section is **Ready**.
-2. Copy the **Host** with the copy button to avoid typing errors.
+2. Copy the address with its copy button to avoid typing errors: **External** zone from the Internet, **Internal** zone from the project.
 3. Check that no outbound firewall on your network is blocking port `6379`.
 
 ### Authentication fails (`NOAUTH` or `WRONGPASS`)

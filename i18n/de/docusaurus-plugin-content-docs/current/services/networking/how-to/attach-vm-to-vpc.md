@@ -74,7 +74,7 @@ sudo netplan apply
 ip -br addr show enp2s0
 ```
 
-**Erwartetes Ergebnis:** `enp2s0` ist `UP` mit der in der Konsole angezeigten **Secondary**-Adresse, zum Beispiel `172.16.0.11/24`.
+**Erwartetes Ergebnis:** `enp2s0` ist `UP` mit der Adresse des Subnetzes, die im Bereich **Internal** der Konsole angezeigt wird, zum Beispiel `172.16.0.11/24`.
 
 `use-routes: false` verhindert, dass die VPC-Schnittstelle die Standardroute ersetzt: Der Internetzugang läuft weiterhin über die Hauptschnittstelle.
 

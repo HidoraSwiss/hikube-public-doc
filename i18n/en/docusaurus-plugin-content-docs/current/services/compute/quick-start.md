@@ -146,7 +146,7 @@ lsblk
 | Symptom | Check |
 |----------|--------------|
 | **Next** stays greyed out at the Configuration or Storage step | A project quota is exceeded: reduce the instance type or the disk size, or have the project quotas increased. |
-| `Connection timed out` over SSH | On the detail page, check that **Public IP** is **Active** and that port 22 appears in **Firewall & Ports**. |
+| `Connection timed out` over SSH | On the detail page, check that the **External** zone shows an address and that port 22 appears in **Firewall & Ports**. |
 | `Permission denied (publickey)` | Check the user (**SSH Connection** block) and that the private key you use matches the public key listed in **Advanced Configuration** > **SSH Keys**. |
 | Status **Error** or **Failed** | See [Troubleshooting](./troubleshooting.md). |
 

@@ -37,7 +37,7 @@ La pagina **Edit RabbitMQ cluster** mostra il riquadro **Cluster settings**. I c
 - **External access**: attivi o disattivi l'interruttore.
 
 :::warning Cambio di versione
-Quando cambia la versione, compare l'avviso « The cluster instances will restart »: una versione aggiornata non può più essere riportata indietro. Il cambio di versione ricrea i nodi RabbitMQ uno alla volta: con una sola replica, il cluster non è disponibile durante il riavvio (nell'ordine di uno o due minuti) e i client devono riconnettersi. L'indirizzo del campo **Host** non cambia. Verifichi il cambio di versione su un cluster non di produzione prima di applicarlo a un cluster di produzione e controlli la compatibilità dei suoi client con la versione di destinazione.
+Quando cambia la versione, compare l'avviso « The cluster instances will restart »: una versione aggiornata non può più essere riportata indietro. Il cambio di versione ricrea i nodi RabbitMQ uno alla volta: con una sola replica, il cluster non è disponibile durante il riavvio (nell'ordine di uno o due minuti) e i client devono riconnettersi. Gli indirizzi delle zone **Internal** ed **External** non cambiano. Verifichi il cambio di versione su un cluster non di produzione prima di applicarlo a un cluster di produzione e controlli la compatibilità dei suoi client con la versione di destinazione.
 :::
 
 ### 3. Salvare

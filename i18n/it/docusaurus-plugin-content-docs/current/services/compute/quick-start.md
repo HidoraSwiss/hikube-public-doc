@@ -146,7 +146,7 @@ lsblk
 | Sintomo | Verifica |
 |----------|--------------|
 | **Next** resta disattivato al passaggio Configuration o Storage | Una quota del progetto è superata: riduca il formato o la dimensione del disco, oppure faccia aumentare le quote del progetto. |
-| `Connection timed out` in SSH | Verifichi nella pagina di dettaglio che **Public IP** sia **Active** e che la porta 22 compaia in **Firewall & Ports**. |
+| `Connection timed out` in SSH | Verifichi nella pagina di dettaglio che la zona **External** mostri un indirizzo e che la porta 22 compaia in **Firewall & Ports**. |
 | `Permission denied (publickey)` | Verifichi l'utente (blocco **SSH Connection**) e che la chiave privata utilizzata corrisponda alla chiave pubblica elencata in **Advanced Configuration** > **SSH Keys**. |
 | Stato **Error** o **Failed** | Consulti la [risoluzione dei problemi](./troubleshooting.md). |
 
