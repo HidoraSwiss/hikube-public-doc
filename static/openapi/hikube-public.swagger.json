@@ -2572,7 +2572,7 @@
     "/backup/v1alpha1/projects/{projectId}/restores/{name}/cancel": {
       "put": {
         "summary": "Cancel Restore",
-        "description": "Stops an unfinished VM instance or disk restore, ending it failed with a message saying what it leaves behind. Its data transfers are cancelled, and a Velero restore not started yet is removed. Refused with FailedPrecondition for Postgres and MariaDB, whose restores fail on their own after thirty minutes, for a VM restore that has not started moving data yet (retry in a few seconds), and for a restore that is finished or finishing. Nothing is reverted: the VM may be left stopped with its disks set aside, and restoring again brings it back.",
+        "description": "Stops an unfinished VM instance or disk restore, ending it failed with a message saying what it leaves behind. Its data transfers are cancelled, and a restore not started yet is removed. Refused with FailedPrecondition for Postgres and MariaDB, whose restores fail on their own after thirty minutes, for a VM restore that has not started moving data yet (retry in a few seconds), and for a restore that is finished or finishing. Nothing is reverted: the VM may be left stopped with its disks set aside, and restoring again brings it back.",
         "operationId": "BackupService_CancelRestore",
         "responses": {
           "200": {
@@ -21479,7 +21479,7 @@
           "type": "string"
         }
       },
-      "description": "ApplicationRef names an application inside the project. The API group is\nalways apps.cozystack.io and is therefore not part of the contract."
+      "description": "ApplicationRef names an application inside the project."
     },
     "v1Backup": {
       "type": "object",
@@ -21523,11 +21523,11 @@
         "sizeBytes": {
           "type": "string",
           "format": "int64",
-          "description": "Absent unless the driver measured it.\n\nCozystack v1.6.3 fills status.artifact.sizeBytes from its etcd strategy\nalone; the cnpg, velero and mariadb strategies build an artifact carrying\nthe URI and nothing else, so none of the four kinds this API exposes\nreports a size today. Absent rather than 0, because a zero that looks like\na measurement is worse than no answer — the same reasoning Cozystack's own\nMariaDB controller applies when it leaves Artifact nil rather than set an\nempty URI."
+          "description": "Absent unless the size was measured. None of the four kinds reports a\nsize today. Absent rather than 0, because a zero that looks like a\nmeasurement is worse than no answer."
         },
         "restorable": {
           "type": "boolean",
-          "description": "Whether a restore from this backup would be admitted, as far as the API\ncan tell without reading the bucket: the backup is ready, a destination of\nthe name it was written to exists, is not being deleted, and was created\nbefore the backup was taken — a destination created after it is another\none under the same name, and may point at another bucket. For the VM\nkinds, the storage layer must also still hold the archive: Velero removes\nit, data included, at the end of its retention, while this record stays.\n\nIt is not a check that the archive's objects are in the bucket. When\nfalse, not_restorable_cause says which situation it is."
+          "description": "Whether a restore from this backup would be admitted, as far as the API\ncan tell without reading the bucket: the backup is ready, a destination of\nthe name it was written to exists, is not being deleted, and was created\nbefore the backup was taken — a destination created after it is another\none under the same name, and may point at another bucket. For the VM\nkinds, the storage layer must also still hold the archive: it is removed,\ndata included, at the end of its retention, while this record stays.\n\nIt is not a check that the archive's objects are in the bucket. When\nfalse, not_restorable_cause says which situation it is."
         },
         "covers": {
           "type": "array",
@@ -21682,7 +21682,7 @@
         },
         "progress": {
           "$ref": "#/definitions/v1TransferProgress",
-          "description": "Absent for the Postgres and MariaDB kinds, and once the run's Velero\nrecords have been collected. See TransferProgress."
+          "description": "Absent for the Postgres and MariaDB kinds, and once the run's transfer\nrecords have been collected. See TransferProgress."
         }
       },
       "description": "BackupJob is one backup run, whether started on demand or by a plan."
@@ -23049,7 +23049,7 @@
         "earliest": {
           "type": "string",
           "format": "date-time",
-          "description": "The first instant from which a restore of this backup can be consistent,\nand the instant restore_point backup aims at. PostgreSQL cannot stop\nreplaying before the backup it replays onto was consistent, so this — not\ntaken_at, which is when the base backup began — is the earliest instant\nreachable. It is the end of the base backup as barman recorded it, or,\nwhen a transaction written before the position the backup ended at is\nstamped later than that, that transaction's time: aimed earlier, the\nrestore would stop before it reached consistency."
+          "description": "The first instant from which a restore of this backup can be consistent,\nand the instant restore_point backup aims at. PostgreSQL cannot stop\nreplaying before the backup it replays onto was consistent, so this — not\ntaken_at, which is when the base backup began — is the earliest instant\nreachable. It is the end of the base backup as the archive records it, or,\nwhen a transaction written before the position the backup ended at is\nstamped later than that, that transaction's time: aimed earlier, the\nrestore would stop before it reached consistency."
         },
         "latest": {
           "type": "string",
@@ -23066,12 +23066,12 @@
         },
         "latestRestorable": {
           "type": "boolean",
-          "description": "Whether restore_point latest replays this backup's history. False only\nwhen it is established that it does not: the stream's most recent backup\nlies on another timeline — a branch left by an earlier in-place restore\ninto the same stream — which is where CloudNativePG would start from.\nTrue when the stream's backup catalog could not be read: CreateRestore\nreads it again, and refuses then with 180221 if the branch is established,\nor 180220 if the catalog still cannot be read."
+          "description": "Whether restore_point latest replays this backup's history. False only\nwhen it is established that it does not: the stream's most recent backup\nlies on another timeline — a branch left by an earlier in-place restore\ninto the same stream — which is where the restore would start from.\nTrue when the stream's backup catalog could not be read: CreateRestore\nreads it again, and refuses then with 180221 if the branch is established,\nor 180220 if the catalog still cannot be read."
         },
         "crossTimelineAfter": {
           "type": "string",
           "format": "date-time",
-          "description": "The first instant from which CloudNativePG would start from a backup on\nanother timeline, rather than one on this backup's history: instants at\nor after it are refused (180221). Absent when none is established — no\nsuch backup exists, which is the case of every stream with a single\nhistory, or the catalog could not be read, in which case CreateRestore\nreads it again and refuses an instant it still cannot place (180220)."
+          "description": "The first instant from which a restore would start from a backup on\nanother timeline, rather than one on this backup's history: instants at\nor after it are refused (180221). Absent when none is established — no\nsuch backup exists, which is the case of every stream with a single\nhistory, or the catalog could not be read, in which case CreateRestore\nreads it again and refuses an instant it still cannot place (180220)."
         }
       },
       "description": "RecoveryWindow is what a point-in-time restore can reach from one Postgres\nbackup. A restore asking for an instant outside it is refused up front,\nrather than accepted and left to time out thirty minutes later."
@@ -23181,7 +23181,7 @@
         },
         "progress": {
           "$ref": "#/definitions/v1TransferProgress",
-          "description": "Absent for the Postgres and MariaDB kinds, and once the restore's Velero\nrecords have been collected. See TransferProgress."
+          "description": "Absent for the Postgres and MariaDB kinds, and once the restore's transfer\nrecords have been collected. See TransferProgress."
         },
         "originalDisks": {
           "type": "string",
@@ -23317,7 +23317,7 @@
           "description": "Derived from the two above so every client shows the same number rather\nthan each rounding its own way. 0 to 100."
         }
       },
-      "description": "TransferProgress reports how far a transfer has got.\n\nIt is present only for the VM kinds. Their data moves through Velero, which\nmeasures it; the Postgres and MariaDB drivers hand the transfer to barman and\nto a dump job, neither of which reports anything countable. The message is\ntherefore absent rather than zeroed for those kinds, so a client can tell\n\"no progress available for this kind\" from \"nothing transferred yet\".\n\nbytes_total is the volume read, not the space the archive occupies: Velero\ndeduplicates into a content-addressed repository, so the stored size is not a\nper-backup quantity at all. Label it as data transferred, never as the size\nof the backup."
+      "description": "TransferProgress reports how far a transfer has got.\n\nIt is present only for the VM kinds, whose transfer is measured; the\nPostgres and MariaDB kinds report nothing countable. The message is\ntherefore absent rather than zeroed for those kinds, so a client can tell\n\"no progress available for this kind\" from \"nothing transferred yet\".\n\nbytes_total is the volume read, not the space the archive occupies: the\narchives are deduplicated, so the stored size is not a per-backup quantity\nat all. Label it as data transferred, never as the size of the backup."
     },
     "v1UpdateDatabaseResponse": {
       "type": "object",
