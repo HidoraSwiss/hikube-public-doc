@@ -4,7 +4,7 @@ authors: [hikube]
 tags: [release]
 ---
 
-Die Konsole begleitet die API v1.6.0 mit einer neuen Ansicht **Backups**: Ziele, Zeitpläne, Sicherungen auf Abruf, Archive und Wiederherstellungen von VMs, Festplatten sowie PostgreSQL- und MariaDB-Datenbanken. Verwaltete Datenbanken lassen sich von ihrer Seite aus neu starten, und die Seiten der VMs und Datenbanken trennen interne von externen Adressen.
+Die Konsole begleitet die API v1.6.0 mit einer neuen Ansicht **Backups**: Ziele, Zeitpläne, Sicherungen auf Abruf, Archive und Wiederherstellungen von VMs, Festplatten sowie PostgreSQL- und MariaDB-Datenbanken. Die Projekteinstellungen verwalten seine API-Schlüssel, verwaltete Datenbanken lassen sich von ihrer Seite aus neu starten, und die Seiten der VMs und Datenbanken trennen interne von externen Adressen.
 
 <!-- truncate -->
 
@@ -27,6 +27,8 @@ Die Konsole begleitet die API v1.6.0 mit einer neuen Ansicht **Backups**: Ziele,
 - **Archive** — Ein Archiv, das nicht wiederhergestellt werden kann, nennt den Grund: Archiv noch nicht bereit, Ziel gelöscht, in Löschung oder seither neu erstellt, Daten am Ende ihrer Aufbewahrung gelöscht. Mehrere Archive einer Anwendung lassen sich auf einmal löschen: Die Bestätigung verlangt die Eingabe ihrer Anzahl. Die Konsole gibt an, ob das Löschen die Daten vernichtet (VMs und Festplatten) oder das Archiv in Ihrem Bucket lässt (Datenbanken). Durch einen WORM-Bucket gesperrte Archive werden mit dem Ende ihrer Sperre ausgenommen.
 
 - **Abbrechen** — Eine laufende Sicherung und die Wiederherstellung einer VM können abgebrochen werden. Ist der Abbruch noch nicht möglich oder noch abzuschließen, sagt die Konsole dies und bietet **Retry** an.
+
+- **API-Schlüssel** — In den Projekteinstellungen erscheint für dessen Administratoren eine Karte **API keys**. **Create a key** verlangt einen Namen, eine **Access level** (**Read**, **Use**, **Admin** oder **Super admin**, nie über Ihrer eigenen) und eine **Validity** von 1 Tag bis 1 Jahr. Der Schlüssel wird nur einmal angezeigt, mit einem Beispielaufruf. Die Liste zeigt Stufe, Erstellung, Ablauf (**Expires soon** in den letzten 7 Tagen, dann **Expired**) und letzte Verwendung jedes Schlüssels. **Renew** erstellt einen neuen Schlüssel mit gleichem Namen und gleicher Stufe und bietet danach an, den alten zu widerrufen. Der Widerruf wird mit dem Namen des Schlüssels bestätigt. Siehe [Authentifizierung](/api/authentication/).
 
 - **Verwaltete Datenbanken** — Auf der Seite der PostgreSQL-, MariaDB-, MongoDB-, RabbitMQ- und Redis-Cluster erscheint eine Schaltfläche **Restart**. Die Bestätigung nennt die Unterbrechung: schrittweiser Neustart bei PostgreSQL, kurze Unterbrechung bei den anderen. Die Daten bleiben erhalten.
 

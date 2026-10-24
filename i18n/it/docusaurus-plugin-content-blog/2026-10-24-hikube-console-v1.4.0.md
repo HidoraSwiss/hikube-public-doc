@@ -4,7 +4,7 @@ authors: [hikube]
 tags: [release]
 ---
 
-La console accompagna l'API v1.6.0 con una nuova schermata **Backups**: destinazioni, programmazioni, backup su richiesta, archivi e ripristini delle VM, dei dischi e dei database PostgreSQL e MariaDB. I database gestiti si riavviano dalla loro scheda, e le schede delle VM e dei database separano gli indirizzi interni da quelli esterni.
+La console accompagna l'API v1.6.0 con una nuova schermata **Backups**: destinazioni, programmazioni, backup su richiesta, archivi e ripristini delle VM, dei dischi e dei database PostgreSQL e MariaDB. Le impostazioni del progetto gestiscono le sue chiavi API, i database gestiti si riavviano dalla loro scheda, e le schede delle VM e dei database separano gli indirizzi interni da quelli esterni.
 
 <!-- truncate -->
 
@@ -27,6 +27,8 @@ La console accompagna l'API v1.6.0 con una nuova schermata **Backups**: destinaz
 - **Archivi** — Un archivio che non può essere ripristinato dice perché: archivio non ancora pronto, destinazione eliminata, in corso di eliminazione o ricreata nel frattempo, dati cancellati a fine conservazione. Più archivi di un'applicazione si eliminano in una volta: la conferma chiede di digitarne il numero. La console precisa se l'eliminazione distrugge i dati (VM e dischi) o lascia l'archivio nel vostro bucket (database). Gli archivi bloccati da un bucket WORM vengono esclusi, con la data di fine del blocco.
 
 - **Annullamento** — Un backup in corso e il ripristino di una VM possono essere annullati. Quando l'annullamento non è ancora possibile o resta da completare, la console lo dice e propone **Retry**.
+
+- **Chiavi API** — Nelle impostazioni del progetto compare, per i suoi amministratori, una scheda **API keys**. **Create a key** chiede un nome, un **Access level** (**Read**, **Use**, **Admin** o **Super admin**, mai al di sopra del vostro) e una **Validity** da 1 giorno a 1 anno. La chiave viene mostrata una sola volta, con un esempio di chiamata. L'elenco indica livello, creazione, scadenza (**Expires soon** negli ultimi 7 giorni, poi **Expired**) e ultimo utilizzo di ogni chiave. **Renew** crea una nuova chiave con lo stesso nome e lo stesso livello, poi propone di revocare quella vecchia. La revoca si conferma con il nome della chiave. Vedere [Autenticazione](/api/authentication/).
 
 - **Database gestiti** — Nella scheda dei cluster PostgreSQL, MariaDB, MongoDB, RabbitMQ e Redis compare un pulsante **Restart**. La conferma precisa l'interruzione: riavvio progressivo per PostgreSQL, breve interruzione per gli altri. I dati vengono conservati.
 

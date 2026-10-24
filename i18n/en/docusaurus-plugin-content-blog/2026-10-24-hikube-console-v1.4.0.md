@@ -4,7 +4,7 @@ authors: [hikube]
 tags: [release]
 ---
 
-The console accompanies API v1.6.0 with a new **Backups** screen: destinations, schedules, on-demand backups, archives and restores of VMs, disks, and PostgreSQL and MariaDB databases. Managed databases can be restarted from their page, and the VM and database pages separate internal addresses from external ones.
+The console accompanies API v1.6.0 with a new **Backups** screen: destinations, schedules, on-demand backups, archives and restores of VMs, disks, and PostgreSQL and MariaDB databases. The project settings manage its API keys, managed databases can be restarted from their page, and the VM and database pages separate internal addresses from external ones.
 
 <!-- truncate -->
 
@@ -27,6 +27,8 @@ The console accompanies API v1.6.0 with a new **Backups** screen: destinations, 
 - **Archives** — An archive that cannot be restored says why: archive not ready yet, destination deleted, being deleted or created again since, data erased at the end of its retention. Several archives of an application can be deleted at once: the confirmation asks you to type their number. The console says whether the deletion destroys the data (VMs and disks) or leaves the archive in your bucket (databases). Archives locked by a WORM bucket are left out, with the date their lock ends.
 
 - **Cancellation** — A running backup and a VM restore can be cancelled. When the cancellation is not possible yet or still has to be finished, the console says so and offers **Retry**.
+
+- **API keys** — An **API keys** card appears in the project settings, for its administrators. **Create a key** asks for a name, an **Access level** (**Read**, **Use**, **Admin** or **Super admin**, never above your own) and a **Validity** from 1 day to 1 year. The key is shown only once, with an example call. The list gives the level, creation, expiry (**Expires soon** in the last 7 days, then **Expired**) and last use of each key. **Renew** creates a new key with the same name and level, then offers to revoke the old one. Revocation is confirmed with the key's name. See [Authentication](/api/authentication/).
 
 - **Managed databases** — A **Restart** button appears on the page of PostgreSQL, MariaDB, MongoDB, RabbitMQ and Redis clusters. The confirmation states the interruption: rolling restart for PostgreSQL, brief interruption for the others. Data is kept.
 

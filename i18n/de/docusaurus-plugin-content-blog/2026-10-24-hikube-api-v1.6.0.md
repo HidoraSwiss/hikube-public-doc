@@ -4,11 +4,13 @@ authors: [hikube]
 tags: [release]
 ---
 
-Die API erhält einen Dienst für Sicherung und Wiederherstellung von PostgreSQL, MariaDB, VMs und Festplatten, einschließlich der Wiederherstellung von PostgreSQL zu einem bestimmten Zeitpunkt. Verwaltete Datenbanken lassen sich neu starten, und eine VM gibt ihre interne und ihre öffentliche Adresse jetzt getrennt zurück. `PATCH`-Anfragen werden zu echten Teilaktualisierungen: Ein Feld, das im Body fehlt, behält seinen Wert.
+Die API öffnet sich mit API-Schlüsseln für Automatisierungswerkzeuge und erhält einen Dienst für Sicherung und Wiederherstellung von PostgreSQL, MariaDB, VMs und Festplatten, einschließlich der Wiederherstellung von PostgreSQL zu einem bestimmten Zeitpunkt. Verwaltete Datenbanken lassen sich neu starten, und eine VM gibt ihre interne und ihre öffentliche Adresse jetzt getrennt zurück. `PATCH`-Anfragen werden zu echten Teilaktualisierungen: Ein Feld, das im Body fehlt, behält seinen Wert.
 
 <!-- truncate -->
 
 ## Hinzugefügt
+
+- **API-Schlüssel** — Werkzeuge ohne Sitzung, etwa eine CI-Pipeline, Terraform oder ein Skript, authentifizieren sich mit einem API-Schlüssel im Header `X-Hikube-Api-Key`. Ein Schlüssel wirkt auf ein einziges Projekt, mit einer Berechtigungsstufe (`read`, `write`, `admin` oder `superadmin`), die den Rollen des Projekts folgt. Er läuft nach 1 bis 365 Tagen ab (standardmäßig 90), und sein Geheimnis wird nur einmal angezeigt, bei der Erstellung. Die Administratoren des Projekts erstellen, listen und widerrufen seine Schlüssel in der Konsole oder per `POST`, `GET` und `DELETE` auf `/iam/v1alpha1/projects/{project_id}/api-keys`. Niemand kann einem Schlüssel mehr Rechte geben als die eigenen (`60003`), und die Zahl aktiver Schlüssel pro Projekt ist begrenzt (`60009`). Ein Schlüssel kann weder Schlüssel verwalten noch auf Konto, Organisation oder Projekte einwirken. Siehe [Authentifizierung](/api/authentication/).
 
 - **Sicherungen** — Ein neuer Dienst sichert und stellt PostgreSQL- und MariaDB-Cluster, VMs und Festplatten wieder her. Die übrigen Dienste (MongoDB, Redis, RabbitMQ, Kubernetes, Buckets) werden nicht unterstützt: Eine Anfrage für einen davon wird mit dem Code `180107` abgelehnt.
 
@@ -32,14 +34,19 @@ Die API erhält einen Dienst für Sicherung und Wiederherstellung von PostgreSQL
 
 - **Compute** — Das Feld `network.internalIp` liefert die Adresse der VM im Netzwerk ihres Projekts, mit oder ohne öffentliche IP. Sie ist von den übrigen Ressourcen des Projekts aus erreichbar, vorbehaltlich der Firewall des Gastsystems. Sie wird beim Lesen und Auflisten von VMs zurückgegeben und ist leer, solange die VM gestoppt ist. Das Feld `network.publicIp` liefert die öffentliche Adresse, wenn `publicIpv4` aktiviert ist. Sie kann zu einem privaten Bereich gehören: Leiten Sie sie nicht aus ihrem Bereich ab.
 
-- **Teilaktualisierungen** — Jede Aktualisierungsanfrage akzeptiert ein optionales Feld `updateMask`. Senden Sie es nicht, wird es aus den Schlüsseln des JSON-Bodys abgeleitet. Ein Pfad, der kein änderbares Feld bezeichnet, oder ein einzelner Schlüssel einer Sammlung (etwa `nodeGroups.workers`) wird mit dem Code `10006` abgelehnt. Die OpenAPI-Spezifikation listet die änderbaren Pfade jeder Ressource auf.
+- **Teilaktualisierungen** — Jede Aktualisierungsanfrage akzeptiert ein optionales Feld `updateMask`. Senden Sie es nicht, wird es aus den Schlüsseln des JSON-Bodys abgeleitet. Ein Pfad, der kein änderbares Feld bezeichnet, oder ein einzelner Schlüssel einer Sammlung (etwa `nodeGroups.workers`) wird mit dem Code `10006` abgelehnt. Die OpenAPI-Spezifikation listet die änderbaren Pfade jeder Ressource auf. Siehe [Teilaktualisierungen](/api/overview/#mises-a-jour-partielles).
 
-- **Fehlercodes** — Jede neue Ablehnung hat ihren eigenen Code. Alle werden mit HTTP 400 zurückgegeben, außer `10005`, das je nach Regel mit 403 oder 400 zurückgegeben wird.
+- **Fehlercodes** — Jede neue Ablehnung hat ihren eigenen Code. Sie werden mit HTTP 400 zurückgegeben, sofern nicht anders angegeben. Das Fehlerformat ist unter [Fehler](/api/errors/) beschrieben.
 
 | Code | Dienst | Bedeutung |
 | --- | --- | --- |
-| `10005` | Alle | Von einer Regel der Plattform abgelehnt: Die Meldung nennt das abgelehnte Feld, `details` die Regel und ihren Grund |
+| `10004` | Alle | HTTP 503: Der API-Schlüssel konnte nicht geprüft werden. Erneut versuchen: Der Schlüssel gilt nicht als ungültig |
+| `10005` | Alle | HTTP 403 oder 400: Von einer Regel der Plattform abgelehnt: Die Meldung nennt das abgelehnte Feld, `details` die Regel und ihren Grund |
 | `10006` | Alle | Ungültige `updateMask`: unbekannter Pfad oder Schlüssel einer Sammlung |
+| `60003` | API-Schlüssel | HTTP 403: Berechtigungsstufe über Ihrer eigenen |
+| `60006` | API-Schlüssel | HTTP 404: Schlüssel in diesem Projekt nicht gefunden |
+| `60009` | API-Schlüssel | Höchstzahl aktiver Schlüssel für das Projekt erreicht |
+| `60106` bis `60109` | API-Schlüssel | Ungültige Stufe, Kennung, Name oder Gültigkeit des Schlüssels |
 | `20115` | Compute | Die UserData einer Windows-VM werden von der Plattform erzeugt und können nicht geändert werden |
 | `40202` | Projekte | Das angeforderte Kontingent übersteigt, was der Organisation noch bleibt |
 | `80205` / `110205` / `120205` / `140205` / `150205` | PostgreSQL / MariaDB / Redis / RabbitMQ / MongoDB | Der Cluster wird noch erstellt: noch nichts neu zu starten |

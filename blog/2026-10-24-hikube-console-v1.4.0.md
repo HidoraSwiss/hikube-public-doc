@@ -4,7 +4,7 @@ authors: [hikube]
 tags: [release]
 ---
 
-La console accompagne l'API v1.6.0 avec un nouvel écran **Sauvegardes** : destinations, programmations, sauvegardes à la demande, archives et restaurations des VM, des disques et des bases PostgreSQL et MariaDB. Les bases managées se redémarrent depuis leur fiche, et les fiches des VM et des bases séparent les adresses internes des adresses externes.
+La console accompagne l'API v1.6.0 avec un nouvel écran **Sauvegardes** : destinations, programmations, sauvegardes à la demande, archives et restaurations des VM, des disques et des bases PostgreSQL et MariaDB. Les paramètres du projet gèrent ses clés d'API, les bases managées se redémarrent depuis leur fiche, et les fiches des VM et des bases séparent les adresses internes des adresses externes.
 
 <!-- truncate -->
 
@@ -27,6 +27,8 @@ La console accompagne l'API v1.6.0 avec un nouvel écran **Sauvegardes** : desti
 - **Archives** — Une archive qui ne peut pas être restaurée dit pourquoi : archive pas encore prête, destination supprimée, en cours de suppression ou recréée depuis, données effacées en fin de rétention. Plusieurs archives d'une application se suppriment en une fois : la confirmation demande de saisir leur nombre. La console précise si la suppression détruit les données (VM et disques) ou laisse l'archive dans votre bucket (bases de données). Les archives verrouillées par un bucket WORM sont écartées, avec leur date de fin de verrou.
 
 - **Annulation** — Une sauvegarde en cours et la restauration d'une VM peuvent être annulées. Quand l'annulation n'est pas encore possible ou reste à terminer, la console le dit et propose **Réessayer**.
+
+- **Clés d'API** — Une carte **Clés d'API** apparaît dans les paramètres du projet, pour ses administrateurs. **Créer une clé** demande un nom, un **Niveau de droits** (**Lecture**, **Utilisation**, **Administration** ou **Super-administration**, jamais au-dessus du vôtre) et une **Validité** de 1 jour à 1 an. La clé s'affiche une seule fois, avec un exemple d'appel. La liste indique le niveau, la création, l'expiration (**Expire bientôt** dans les 7 derniers jours, puis **Expirée**) et la dernière utilisation de chaque clé. **Renouveler** crée une nouvelle clé de même nom et de même niveau, et propose ensuite de révoquer l'ancienne. La révocation se confirme par le nom de la clé. Voir [Authentification](/api/authentication/).
 
 - **Bases de données managées** — Un bouton **Redémarrer** apparaît sur la fiche des clusters PostgreSQL, MariaDB, MongoDB, RabbitMQ et Redis. La confirmation précise l'interruption : redémarrage progressif pour PostgreSQL, interruption brève pour les autres. Les données sont conservées.
 

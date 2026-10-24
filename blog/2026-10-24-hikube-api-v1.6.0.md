@@ -4,11 +4,13 @@ authors: [hikube]
 tags: [release]
 ---
 
-L'API gagne un service de sauvegarde et de restauration pour PostgreSQL, MariaDB, les VM et les disques, avec la restauration PostgreSQL à un instant précis. Les bases managées peuvent être redémarrées, et une VM renvoie désormais à part son adresse interne et son adresse publique. Les requêtes `PATCH` deviennent de vraies mises à jour partielles : un champ absent du corps garde sa valeur.
+L'API s'ouvre aux outils d'automatisation avec les clés d'API, et gagne un service de sauvegarde et de restauration pour PostgreSQL, MariaDB, les VM et les disques, avec la restauration PostgreSQL à un instant précis. Les bases managées peuvent être redémarrées, et une VM renvoie désormais à part son adresse interne et son adresse publique. Les requêtes `PATCH` deviennent de vraies mises à jour partielles : un champ absent du corps garde sa valeur.
 
 <!-- truncate -->
 
 ## Ajouté
+
+- **Clés d'API** — Les outils sans session, comme un pipeline de CI, Terraform ou un script, s'authentifient avec une clé d'API transmise dans l'en-tête `X-Hikube-Api-Key`. Une clé agit sur un seul projet, avec un niveau de droits (`read`, `write`, `admin` ou `superadmin`) qui suit les rôles du projet. Elle expire au bout de 1 à 365 jours (90 par défaut), et son secret n'est affiché qu'une fois, à la création. Les administrateurs du projet créent, listent et révoquent ses clés depuis la console, ou par `POST`, `GET` et `DELETE` sur `/iam/v1alpha1/projects/{project_id}/api-keys`. Personne ne peut donner à une clé plus de droits que les siens (`60003`), et le nombre de clés actives par projet est limité (`60009`). Une clé ne peut ni gérer les clés, ni agir sur le compte, l'organisation ou les projets. Voir [Authentification](/api/authentication/).
 
 - **Sauvegardes** — Un nouveau service sauvegarde et restaure les clusters PostgreSQL et MariaDB, les VM et les disques. Les autres services (MongoDB, Redis, RabbitMQ, Kubernetes, buckets) ne sont pas pris en charge : une demande les concernant est refusée avec le code `180107`.
 
@@ -32,14 +34,19 @@ L'API gagne un service de sauvegarde et de restauration pour PostgreSQL, MariaDB
 
 - **Compute** — Le champ `network.internalIp` donne l'adresse de la VM sur le réseau de son projet, avec ou sans IP publique. Elle est joignable depuis les autres ressources du projet, sous réserve du pare-feu du système invité. Elle est renvoyée par la lecture et la liste des VM, et vide tant que la VM est arrêtée. Le champ `network.publicIp` donne l'adresse publique, quand `publicIpv4` est activé. Elle peut appartenir à une plage privée : ne la déduisez pas de sa plage.
 
-- **Mises à jour partielles** — Chaque requête de mise à jour accepte un champ facultatif `updateMask`. Si vous ne l'envoyez pas, il est déduit des clés du corps JSON. Un chemin qui ne désigne aucun champ modifiable, ou une seule clé d'une collection (comme `nodeGroups.workers`), est refusé avec le code `10006`. La spécification OpenAPI liste les chemins modifiables de chaque ressource.
+- **Mises à jour partielles** — Chaque requête de mise à jour accepte un champ facultatif `updateMask`. Si vous ne l'envoyez pas, il est déduit des clés du corps JSON. Un chemin qui ne désigne aucun champ modifiable, ou une seule clé d'une collection (comme `nodeGroups.workers`), est refusé avec le code `10006`. La spécification OpenAPI liste les chemins modifiables de chaque ressource. Voir [Mises à jour partielles](/api/overview/#mises-a-jour-partielles).
 
-- **Codes d'erreur** — Les nouveaux refus ont chacun leur code. Tous sont renvoyés en HTTP 400, sauf `10005`, renvoyé en 403 ou en 400 selon la règle.
+- **Codes d'erreur** — Les nouveaux refus ont chacun leur code. Ils sont renvoyés en HTTP 400, sauf indication contraire. Le format des erreurs est décrit dans [Erreurs](/api/errors/).
 
 | Code | Service | Signification |
 | --- | --- | --- |
-| `10005` | Tous | Refus d'une règle de la plateforme : le message nomme le champ refusé, `details` la règle et sa raison |
+| `10004` | Tous | HTTP 503 : la clé d'API n'a pas pu être vérifiée. Réessayez : la clé n'est pas jugée invalide |
+| `10005` | Tous | HTTP 403 ou 400 : refus d'une règle de la plateforme : le message nomme le champ refusé, `details` la règle et sa raison |
 | `10006` | Tous | `updateMask` invalide : chemin inconnu, ou clé d'une collection |
+| `60003` | Clés d'API | HTTP 403 : niveau de droits supérieur aux vôtres |
+| `60006` | Clés d'API | HTTP 404 : clé introuvable dans ce projet |
+| `60009` | Clés d'API | Nombre maximal de clés actives atteint pour le projet |
+| `60106` à `60109` | Clés d'API | Niveau, identifiant, nom ou validité de la clé invalide |
 | `20115` | Compute | Le UserData d'une VM Windows est généré par la plateforme et ne peut pas être modifié |
 | `40202` | Projets | Le quota demandé dépasse ce qu'il reste à l'organisation |
 | `80205` / `110205` / `120205` / `140205` / `150205` | PostgreSQL / MariaDB / Redis / RabbitMQ / MongoDB | Le cluster est encore en création : rien à redémarrer pour l'instant |

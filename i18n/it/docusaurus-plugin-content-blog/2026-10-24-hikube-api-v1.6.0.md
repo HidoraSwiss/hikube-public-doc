@@ -4,11 +4,13 @@ authors: [hikube]
 tags: [release]
 ---
 
-L'API si arricchisce di un servizio di backup e ripristino per PostgreSQL, MariaDB, VM e dischi, con il ripristino PostgreSQL a un istante preciso. I database gestiti possono essere riavviati, e una VM restituisce ora separatamente il proprio indirizzo interno e il proprio indirizzo pubblico. Le richieste `PATCH` diventano veri aggiornamenti parziali: un campo assente dal corpo mantiene il suo valore.
+L'API si apre agli strumenti di automazione con le chiavi API, e si arricchisce di un servizio di backup e ripristino per PostgreSQL, MariaDB, VM e dischi, con il ripristino PostgreSQL a un istante preciso. I database gestiti possono essere riavviati, e una VM restituisce ora separatamente il proprio indirizzo interno e il proprio indirizzo pubblico. Le richieste `PATCH` diventano veri aggiornamenti parziali: un campo assente dal corpo mantiene il suo valore.
 
 <!-- truncate -->
 
 ## Aggiunto
+
+- **Chiavi API** — Gli strumenti senza sessione, come una pipeline di CI, Terraform o uno script, si autenticano con una chiave API trasmessa nell'intestazione `X-Hikube-Api-Key`. Una chiave agisce su un solo progetto, con un livello di permessi (`read`, `write`, `admin` o `superadmin`) che segue i ruoli del progetto. Scade dopo 1-365 giorni (90 per impostazione predefinita), e il suo segreto viene mostrato una sola volta, alla creazione. Gli amministratori del progetto ne creano, elencano e revocano le chiavi dalla console, oppure con `POST`, `GET` e `DELETE` su `/iam/v1alpha1/projects/{project_id}/api-keys`. Nessuno può dare a una chiave più permessi dei propri (`60003`), e il numero di chiavi attive per progetto è limitato (`60009`). Una chiave non può né gestire le chiavi né agire sull'account, sull'organizzazione o sui progetti. Vedere [Autenticazione](/api/authentication/).
 
 - **Backup** — Un nuovo servizio esegue il backup e il ripristino dei cluster PostgreSQL e MariaDB, delle VM e dei dischi. Gli altri servizi (MongoDB, Redis, RabbitMQ, Kubernetes, bucket) non sono supportati: una richiesta che li riguarda viene rifiutata con il codice `180107`.
 
@@ -32,14 +34,19 @@ L'API si arricchisce di un servizio di backup e ripristino per PostgreSQL, Maria
 
 - **Compute** — Il campo `network.internalIp` fornisce l'indirizzo della VM sulla rete del suo progetto, con o senza IP pubblico. È raggiungibile dalle altre risorse del progetto, fatto salvo il firewall del sistema guest. Viene restituito dalla lettura e dall'elenco delle VM, ed è vuoto finché la VM è ferma. Il campo `network.publicIp` fornisce l'indirizzo pubblico, quando `publicIpv4` è attivato. Può appartenere a un intervallo privato: non deducetelo dal suo intervallo.
 
-- **Aggiornamenti parziali** — Ogni richiesta di aggiornamento accetta un campo facoltativo `updateMask`. Se non lo inviate, viene dedotto dalle chiavi del corpo JSON. Un percorso che non indica alcun campo modificabile, o una singola chiave di una raccolta (come `nodeGroups.workers`), viene rifiutato con il codice `10006`. La specifica OpenAPI elenca i percorsi modificabili di ogni risorsa.
+- **Aggiornamenti parziali** — Ogni richiesta di aggiornamento accetta un campo facoltativo `updateMask`. Se non lo inviate, viene dedotto dalle chiavi del corpo JSON. Un percorso che non indica alcun campo modificabile, o una singola chiave di una raccolta (come `nodeGroups.workers`), viene rifiutato con il codice `10006`. La specifica OpenAPI elenca i percorsi modificabili di ogni risorsa. Vedere [Aggiornamenti parziali](/api/overview/#mises-a-jour-partielles).
 
-- **Codici di errore** — Ogni nuovo rifiuto ha il proprio codice. Tutti sono restituiti con HTTP 400, tranne `10005`, restituito con 403 o 400 a seconda della regola.
+- **Codici di errore** — Ogni nuovo rifiuto ha il proprio codice. Sono restituiti con HTTP 400, salvo indicazione contraria. Il formato degli errori è descritto in [Errori](/api/errors/).
 
 | Codice | Servizio | Significato |
 | --- | --- | --- |
-| `10005` | Tutti | Rifiuto di una regola della piattaforma: il messaggio indica il campo rifiutato, `details` la regola e il suo motivo |
+| `10004` | Tutti | HTTP 503: la chiave API non ha potuto essere verificata. Riprovate: la chiave non è considerata non valida |
+| `10005` | Tutti | HTTP 403 o 400: rifiuto di una regola della piattaforma: il messaggio indica il campo rifiutato, `details` la regola e il suo motivo |
 | `10006` | Tutti | `updateMask` non valido: percorso sconosciuto, o chiave di una raccolta |
+| `60003` | Chiavi API | HTTP 403: livello di permessi superiore ai vostri |
+| `60006` | Chiavi API | HTTP 404: chiave non trovata in questo progetto |
+| `60009` | Chiavi API | Numero massimo di chiavi attive raggiunto per il progetto |
+| da `60106` a `60109` | Chiavi API | Livello, identificativo, nome o validità della chiave non validi |
 | `20115` | Compute | Lo UserData di una VM Windows è generato dalla piattaforma e non può essere modificato |
 | `40202` | Progetti | La quota richiesta supera ciò che resta all'organizzazione |
 | `80205` / `110205` / `120205` / `140205` / `150205` | PostgreSQL / MariaDB / Redis / RabbitMQ / MongoDB | Il cluster è ancora in creazione: nulla da riavviare per ora |
