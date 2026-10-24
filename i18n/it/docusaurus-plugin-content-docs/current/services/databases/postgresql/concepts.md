@@ -168,7 +168,7 @@ L'accesso esterno può essere attivato o disattivato dopo la creazione, tramite 
 
 ## Backup e ripristino
 
-La configurazione dei backup e il ripristino non sono proposti nella console; contatti il supporto. Consulti [Configurare i backup](./how-to/configure-backups.md).
+I cluster PostgreSQL si salvano verso un bucket S3 del progetto e si ripristinano dalla scheda **Backups** della loro pagina, con il [servizio di backup](../../backups/overview.md). I log delle transazioni sono archiviati in continuo tra due backup, il che permette di ripristinare il database a un istante preciso. Consulti [Configurare i backup](./how-to/configure-backups.md) e [Ripristinare un backup](./how-to/restore-backup.md).
 
 ---
 

@@ -1,21 +1,14 @@
 ---
 title: "Come ripristinare un backup"
 sidebar_position: 4
+description: "Ripristini un cluster MariaDB Hikube dalla console, sul cluster di origine o su un altro cluster, oppure riesegua lei stesso un'esportazione mysqldump."
 ---
 
 # Come ripristinare un backup
 
-:::info Disponibilità
-Il ripristino dei backup MariaDB non è ancora disponibile in modalità self-service nella [console Hikube](https://console.hikube.cloud).
-Per ripristinare un cluster a partire da un backup gestito dalla piattaforma, [contatti il supporto](mailto:support@hidora.io).
-:::
+Un archivio MariaDB si ripristina dalla scheda **Backups** della pagina del cluster, nella [console Hikube](https://console.hikube.cloud), oppure da **Infrastructure** > **Backups** > **Archives**. Vedere [Ripristinare un database PostgreSQL o MariaDB](../../../backups/how-to/restore-database.md).
 
-## Informazioni da preparare
-
-| Informazione | Esempio |
-|--------------|---------|
-| Progetto e nome del cluster | `prod` / `shop-db` |
-| Backup da ripristinare | Il più recente, oppure una data precisa |
+Il ripristino scrive **sul cluster di origine** oppure **su un altro cluster MariaDB** esistente del progetto. L'archivio viene rieseguito nel target: ogni tabella che contiene sostituisce la tabella con lo stesso nome; le tabelle e i database che non contiene vengono conservati.
 
 ## Ripristino di un'esportazione logica
 

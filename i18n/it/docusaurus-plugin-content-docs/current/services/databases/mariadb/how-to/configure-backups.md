@@ -2,33 +2,24 @@
 title: "Come configurare i backup automatici — MariaDB"
 sidebar_label: "Come configurare i backup automatici"
 sidebar_position: 3
+description: "Pianifichi i backup di un cluster MariaDB Hikube dalla console, verso un bucket del suo progetto, ed esporti un database su richiesta con mysqldump."
 ---
 
 # Come configurare i backup automatici
 
-:::info Disponibilità
-La configurazione dei backup MariaDB non è ancora disponibile in modalità self-service nella [console Hikube](https://console.hikube.cloud).
-Per attivare o modificare i backup di un cluster, [contatti il supporto](mailto:support@hidora.io).
-:::
+I cluster MariaDB si salvano con il [servizio di backup](../../../backups/overview.md) di Hikube, dalla scheda **Backups** della pagina del cluster nella [console Hikube](https://console.hikube.cloud).
 
 ## Principio
 
-I backup dei cluster MariaDB si basano su snapshot **cifrati** inviati verso uno storage a oggetti compatibile S3, pianificati a intervalli regolari e soggetti a una **strategia di conservazione** che ne determina la durata di conservazione.
+Ogni backup è un'esportazione completa del cluster, pianificata o su richiesta, scritta in un bucket S3 del suo progetto e conservata secondo la **conservazione** della destinazione.
 
-## Informazioni da preparare
+## Passaggi
 
-Per una richiesta di attivazione, indichi al supporto:
+1. Crei una destinazione in **Infrastructure** > **Backups** > **Destinations**: vedere [Creare una destinazione](../../../backups/how-to/create-destination.md).
+2. Apra **MariaDB**, il cluster, poi la scheda **Backups**.
+3. Faccia clic su **Schedule**, scelga la destinazione e l'orario, poi **Schedule**. Vedere [Pianificare i backup](../../../backups/how-to/schedule-backups.md).
 
-| Informazione | Esempio |
-|--------------|---------|
-| Progetto e nome del cluster | `prod` / `shop-db` |
-| Frequenza dei backup | Ogni giorno alle 2:00 |
-| Conservazione desiderata | 7 backup giornalieri, 4 settimanali |
-| Bucket di destinazione | Un bucket [Hikube Object Storage](../../../storage/buckets/overview.md) dedicato o uno storage S3 esterno |
-
-:::warning
-Non trasmetta mai chiavi di accesso S3 tramite un canale non sicuro. Il supporto le indicherà la procedura adeguata.
-:::
+Per conservare backup su durate diverse (ad esempio giornalieri conservati 7 giorni e settimanali conservati 30 giorni), crei due destinazioni, ciascuna con la propria conservazione, e una pianificazione verso ciascuna.
 
 ## Backup logico su richiesta
 
@@ -45,4 +36,4 @@ L'opzione `--single-transaction` produce un'esportazione coerente senza bloccare
 ## Per approfondire
 
 - [Ripristinare un backup](./restore-backup.md)
-- [Concetti MariaDB](../concepts.md)
+- [Concetti dei backup](../../../backups/concepts.md)

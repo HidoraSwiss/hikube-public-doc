@@ -106,7 +106,7 @@ See: [PostgreSQL - Concepts](../services/databases/postgresql/concepts.md), [Red
 
 ## 11. Are database backups available in the console?
 
-Not yet. Backup configuration and restores are currently handled by support. See for example [PostgreSQL - Backups](../services/databases/postgresql/how-to/configure-backups.md).
+Yes. PostgreSQL and MariaDB databases, as well as virtual machines and disks, are backed up and restored from the console, in the **Infrastructure** > **Backups** menu and the **Backups** tab of each resource. See [Backups](../services/backups/overview.md).
 
 ---
 

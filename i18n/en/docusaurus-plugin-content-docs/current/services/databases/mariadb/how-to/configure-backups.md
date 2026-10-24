@@ -2,33 +2,24 @@
 title: "How to configure automatic backups — MariaDB"
 sidebar_label: "How to configure automatic backups"
 sidebar_position: 3
+description: "Schedule the backups of a Hikube MariaDB cluster from the console, to a bucket in your project, and export a database on demand with mysqldump."
 ---
 
 # How to configure automatic backups
 
-:::info Availability
-MariaDB backup configuration is not yet available as self-service in the [Hikube console](https://console.hikube.cloud).
-To enable or change a cluster's backups, [contact support](mailto:support@hidora.io).
-:::
+MariaDB clusters are backed up with the Hikube [backup service](../../../backups/overview.md), from the **Backups** tab of the cluster page in the [Hikube console](https://console.hikube.cloud).
 
 ## Principle
 
-MariaDB cluster backups rely on **encrypted** snapshots sent to S3-compatible object storage, scheduled at regular intervals and subject to a **retention strategy** that determines how long they are kept.
+Each backup is a full export of the cluster, scheduled or on demand, written to an S3 bucket in your project and kept according to the destination's **retention**.
 
-## Information to prepare
+## Steps
 
-For an activation request, give support the following:
+1. Create a destination in **Infrastructure** > **Backups** > **Destinations**: see [Create a destination](../../../backups/how-to/create-destination.md).
+2. Open **MariaDB**, the cluster, then the **Backups** tab.
+3. Click **Schedule**, choose the destination and the time pattern, then **Schedule**. See [Schedule backups](../../../backups/how-to/schedule-backups.md).
 
-| Information | Example |
-|-------------|---------|
-| Project and cluster name | `prod` / `shop-db` |
-| Backup frequency | Every day at 2 a.m. |
-| Desired retention | 7 daily backups, 4 weekly |
-| Destination bucket | A dedicated [Hikube Object Storage](../../../storage/buckets/overview.md) bucket or external S3 storage |
-
-:::warning
-Never send S3 access keys through an unsecured channel. Support will tell you the appropriate procedure.
-:::
+To keep backups for different periods (for example daily ones kept 7 days and weekly ones kept 30 days), create two destinations, each with its own retention, and a schedule to each.
 
 ## On-demand logical backup
 
@@ -45,4 +36,4 @@ The `--single-transaction` option produces a consistent export without locking I
 ## Going further
 
 - [Restore a backup](./restore-backup.md)
-- [MariaDB concepts](../concepts.md)
+- [Backup concepts](../../../backups/concepts.md)

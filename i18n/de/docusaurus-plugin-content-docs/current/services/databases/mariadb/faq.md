@@ -71,4 +71,4 @@ Diese Einstellungen werden in der Konsole nicht angeboten; wenden Sie sich an de
 
 ### Sind Backups verfügbar?
 
-Die Konfiguration von Backups und die Wiederherstellung werden in der Konsole nicht angeboten; wenden Sie sich an den Support. Siehe [Backups konfigurieren](./how-to/configure-backups.md).
+Ja, über die Registerkarte **Backups** der Cluster-Seite: Zeitplan, Backup auf Abruf und Wiederherstellung. Siehe [Backups konfigurieren](./how-to/configure-backups.md) und den [Backup-Service](../../backups/overview.md).

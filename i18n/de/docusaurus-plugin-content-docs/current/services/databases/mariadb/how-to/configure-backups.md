@@ -2,33 +2,24 @@
 title: "Automatische Backups konfigurieren — MariaDB"
 sidebar_label: "Automatische Backups konfigurieren"
 sidebar_position: 3
+description: "Planen Sie die Backups eines Hikube-MariaDB-Clusters in der Konsole, in einen Bucket Ihres Projekts, und exportieren Sie eine Datenbank bei Bedarf mit mysqldump."
 ---
 
 # Automatische Backups konfigurieren
 
-:::info Verfügbarkeit
-Die Konfiguration von MariaDB-Backups ist in der [Hikube-Konsole](https://console.hikube.cloud) noch nicht als Self-Service verfügbar.
-Um die Backups eines Clusters zu aktivieren oder zu ändern, [wenden Sie sich an den Support](mailto:support@hidora.io).
-:::
+MariaDB-Cluster werden mit dem [Backup-Service](../../../backups/overview.md) von Hikube gesichert, über die Registerkarte **Backups** der Cluster-Seite in der [Hikube-Konsole](https://console.hikube.cloud).
 
 ## Prinzip
 
-Die Backups der MariaDB-Cluster beruhen auf **verschlüsselten** Snapshots, die an einen S3-kompatiblen Objektspeicher gesendet werden, in regelmäßigen Abständen geplant sind und einer **Aufbewahrungsstrategie** unterliegen, die ihre Aufbewahrungsdauer festlegt.
+Jedes Backup ist ein vollständiger Export des Clusters, geplant oder auf Abruf, der in einen S3-Bucket Ihres Projekts geschrieben und gemäß der **Aufbewahrung** des Ziels aufbewahrt wird.
 
-## Vorzubereitende Informationen
+## Schritte
 
-Geben Sie dem Support für eine Aktivierungsanfrage Folgendes an:
+1. Erstellen Sie ein Ziel unter **Infrastructure** > **Backups** > **Destinations**: siehe [Ein Ziel erstellen](../../../backups/how-to/create-destination.md).
+2. Öffnen Sie **MariaDB**, den Cluster und dann die Registerkarte **Backups**.
+3. Klicken Sie auf **Schedule**, wählen Sie das Ziel und den Zeitplan, dann **Schedule**. Siehe [Backups planen](../../../backups/how-to/schedule-backups.md).
 
-| Information | Beispiel |
-|-------------|---------|
-| Projekt und Name des Clusters | `prod` / `shop-db` |
-| Häufigkeit der Backups | Täglich um 2 Uhr |
-| Gewünschte Aufbewahrung | 7 tägliche, 4 wöchentliche Backups |
-| Ziel-Bucket | Ein dedizierter Bucket in [Hikube Object Storage](../../../storage/buckets/overview.md) oder ein externer S3-Speicher |
-
-:::warning
-Übermitteln Sie S3-Zugriffsschlüssel niemals über einen unsicheren Kanal. Der Support teilt Ihnen das geeignete Verfahren mit.
-:::
+Um Backups unterschiedlich lange aufzubewahren (zum Beispiel tägliche Backups 7 Tage und wöchentliche 30 Tage), erstellen Sie zwei Ziele mit jeweils eigener Aufbewahrung und einen Zeitplan für jedes davon.
 
 ## Logisches Backup auf Abruf
 
@@ -45,4 +36,4 @@ Die Option `--single-transaction` erzeugt einen konsistenten Export, ohne die In
 ## Weiterführende Informationen
 
 - [Ein Backup wiederherstellen](./restore-backup.md)
-- [MariaDB-Konzepte](../concepts.md)
+- [Konzepte der Backups](../../../backups/concepts.md)

@@ -161,7 +161,7 @@ La definizione di risorse CPU/memoria libere non è proposta nella console; cont
 
 ## Backup e ripristino
 
-La configurazione dei backup e il ripristino non sono proposti nella console; contatti il supporto. Consulti [Configurare i backup](./how-to/configure-backups.md).
+I cluster MariaDB si salvano verso un bucket S3 del progetto e si ripristinano dalla scheda **Backups** della loro pagina, con il [servizio di backup](../../backups/overview.md). Consulti [Configurare i backup](./how-to/configure-backups.md) e [Ripristinare un backup](./how-to/restore-backup.md).
 
 ---
 

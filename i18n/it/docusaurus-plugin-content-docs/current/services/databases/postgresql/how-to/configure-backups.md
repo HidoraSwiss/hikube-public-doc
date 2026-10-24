@@ -2,36 +2,27 @@
 title: "Come configurare i backup automatici — PostgreSQL"
 sidebar_label: "Come configurare i backup automatici"
 sidebar_position: 3
+description: "Pianifichi i backup di un cluster PostgreSQL Hikube dalla console, verso un bucket del suo progetto, ed esporti un database su richiesta con pg_dump."
 ---
 
 # Come configurare i backup automatici
 
-:::info Disponibilità
-La configurazione dei backup PostgreSQL non è ancora disponibile in modalità self-service nella [console Hikube](https://console.hikube.cloud).
-Per attivare o modificare i backup di un cluster, [contatti il supporto](mailto:support@hidora.io).
-:::
+I cluster PostgreSQL si salvano con il [servizio di backup](../../../backups/overview.md) di Hikube, dalla scheda **Backups** della pagina del cluster nella [console Hikube](https://console.hikube.cloud).
 
 ## Principio
 
-I cluster PostgreSQL Hikube sono in grado di eseguire il backup di un database verso uno storage a oggetti compatibile S3:
+- **Backup completi**, pianificati o su richiesta, scritti in un bucket S3 del suo progetto;
+- **Archiviazione continua dei log delle transazioni** tra due backup, che consente di ripristinare il database a un istante preciso;
+- **Conservazione** in giorni, fissata dalla destinazione.
 
-- **Backup completi** (base backup) pianificati a intervalli regolari;
-- **Archiviazione continua dei WAL**, che consente il ripristino a un istante preciso (PITR, Point-In-Time Recovery);
-- **Politica di conservazione** che determina la durata di conservazione dei backup.
+## Passaggi
 
-## Informazioni da preparare
+1. Crei una destinazione in **Infrastructure** > **Backups** > **Destinations**: vedere [Creare una destinazione](../../../backups/how-to/create-destination.md).
+2. Apra **PostgreSQL**, il cluster, poi la scheda **Backups**.
+3. Faccia clic su **Schedule**, scelga la destinazione e l'orario, poi **Schedule**. Vedere [Pianificare i backup](../../../backups/how-to/schedule-backups.md).
 
-Per una richiesta di attivazione, indichi al supporto:
-
-| Informazione | Esempio |
-|--------------|---------|
-| Progetto e nome del cluster | `prod` / `orders-db` |
-| Frequenza dei backup completi | Ogni giorno alle 2:00 |
-| Durata di conservazione | 30 giorni |
-| Bucket di destinazione | Un bucket [Hikube Object Storage](../../../storage/buckets/overview.md) dedicato o uno storage S3 esterno |
-
-:::warning
-Non trasmetta mai chiavi di accesso S3 tramite un canale non sicuro. Il supporto le indicherà la procedura adeguata.
+:::warning Una sola destinazione per cluster
+Tutti i backup di uno stesso cluster PostgreSQL devono puntare alla stessa destinazione: una seconda destinazione viene rifiutata.
 :::
 
 ## Backup logico su richiesta
@@ -49,4 +40,4 @@ L'utente deve disporre del diritto **Administrator (Admin)** o **Read-only** sul
 ## Per approfondire
 
 - [Ripristinare un backup](./restore-backup.md)
-- [Concetti PostgreSQL](../concepts.md)
+- [Concetti dei backup](../../../backups/concepts.md)

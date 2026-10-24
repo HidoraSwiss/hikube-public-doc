@@ -1,21 +1,14 @@
 ---
 title: "Ein Backup wiederherstellen"
 sidebar_position: 4
+description: "Stellen Sie einen Hikube-MariaDB-Cluster in der Konsole wieder her, auf dem ursprünglichen Cluster oder auf einem anderen Cluster, oder spielen Sie selbst einen mysqldump-Export ein."
 ---
 
 # Ein Backup wiederherstellen
 
-:::info Verfügbarkeit
-Die Wiederherstellung von MariaDB-Backups ist in der [Hikube-Konsole](https://console.hikube.cloud) noch nicht als Self-Service verfügbar.
-Um einen Cluster aus einem von der Plattform verwalteten Backup wiederherzustellen, [wenden Sie sich an den Support](mailto:support@hidora.io).
-:::
+Ein MariaDB-Archiv wird über die Registerkarte **Backups** der Cluster-Seite in der [Hikube-Konsole](https://console.hikube.cloud) wiederhergestellt oder über **Infrastructure** > **Backups** > **Archives**. Siehe [Eine PostgreSQL- oder MariaDB-Datenbank wiederherstellen](../../../backups/how-to/restore-database.md).
 
-## Vorzubereitende Informationen
-
-| Information | Beispiel |
-|-------------|---------|
-| Projekt und Name des Clusters | `prod` / `shop-db` |
-| Wiederherzustellendes Backup | Das neueste oder ein bestimmtes Datum |
+Die Wiederherstellung schreibt entweder **auf den ursprünglichen Cluster** oder **auf einen anderen bestehenden MariaDB-Cluster** des Projekts. Das Archiv wird im Ziel eingespielt: Jede darin enthaltene Tabelle ersetzt die gleichnamige Tabelle; Tabellen und Datenbanken, die es nicht enthält, bleiben erhalten.
 
 ## Wiederherstellung eines logischen Exports
 

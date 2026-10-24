@@ -63,7 +63,7 @@ graph TD
 | Benutzer und Zugriff pro Datenbank (Admin / nur Lesen), Passwortrotation | Ja |
 | Versions-Upgrade, Vergrößerung der Disk, Änderung des externen Zugriffs | Ja |
 | Änderung des Presets oder der Anzahl der Replicas nach der Erstellung | Nein, [wenden Sie sich an den Support](mailto:support@hidora.io) |
-| Backups und Wiederherstellung | Nein, [wenden Sie sich an den Support](mailto:support@hidora.io) |
+| Geplante Backups oder Backups auf Abruf, Wiederherstellung | Ja, Registerkarte **Backups** (siehe [Backups](../../backups/overview.md)) |
 
 ---
 

@@ -1,30 +1,31 @@
 ---
 title: "Come ripristinare un backup (PITR)"
 sidebar_position: 4
+description: "Ripristini un cluster PostgreSQL Hikube dalla console: stato di un backup, stato più recente o istante preciso, sul cluster di origine o su un altro cluster."
 ---
 
 # Come ripristinare un backup (PITR)
 
-:::info Disponibilità
-Il ripristino dei backup PostgreSQL non è ancora disponibile in modalità self-service nella [console Hikube](https://console.hikube.cloud).
-Per ripristinare un cluster, [contatti il supporto](mailto:support@hidora.io).
-:::
+Un archivio PostgreSQL si ripristina dalla scheda **Backups** della pagina del cluster, nella [console Hikube](https://console.hikube.cloud), oppure da **Infrastructure** > **Backups** > **Archives**.
 
 ## Principio
 
-Quando i backup sono attivati su un cluster, l'archiviazione continua dei WAL consente di ripristinare i dati a un **istante preciso** (Point-In-Time Recovery). Il ripristino crea un **nuovo cluster**, con un nome diverso; il cluster di origine non viene modificato.
+Grazie all'archiviazione continua dei log delle transazioni, un ripristino può riportare il database:
 
-## Informazioni da preparare
+- allo **stato esatto di un backup**;
+- al suo **stato più recente**;
+- a un **istante preciso** (PITR, *Point-In-Time Recovery*), tra due backup.
 
-| Informazione | Esempio |
-|--------------|---------|
-| Progetto e nome del cluster di origine | `prod` / `orders-db` |
-| Nome desiderato per il cluster ripristinato | `orders-restored` |
-| Istante di ripristino (con fuso orario) | `2026-06-15 14:30 Europe/Zurich`, oppure « ultimo stato disponibile » |
+Il ripristino scrive **sul cluster di origine**, il cui contenuto viene sovrascritto, oppure **su un altro cluster PostgreSQL** esistente del progetto, della stessa versione principale.
+
+## Passaggi
+
+- [Ripristinare un database PostgreSQL o MariaDB](../../../backups/how-to/restore-database.md)
+- [Ripristinare un database PostgreSQL a un istante preciso](../../../backups/how-to/restore-point-in-time.md)
 
 ## Dopo il ripristino
 
-Il cluster ripristinato compare nell'elenco **PostgreSQL Clusters** del suo progetto. Verifichi i dati prima di far passare le sue applicazioni al nuovo cluster:
+Verifichi i dati prima di rimettere in servizio le sue applicazioni:
 
 ```sql
 -- Controllare il volume dei dati
@@ -33,7 +34,7 @@ FROM pg_stat_user_tables
 ORDER BY n_live_tup DESC;
 ```
 
-Aggiorni quindi la configurazione delle sue applicazioni con l'indirizzo del nuovo cluster (campo **Host** della sua pagina) e le credenziali associate.
+Se ha ripristinato su un altro cluster, aggiorni la configurazione delle sue applicazioni con il suo indirizzo (campo **Host** della sua pagina) e le sue credenziali.
 
 ## Ripristino di un'esportazione logica
 
