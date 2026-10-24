@@ -25,6 +25,7 @@ In the [Hikube console](https://console.hikube.cloud), VMs are managed from the 
 | Replay the cloud-init script | **Reload UserData**, then **Restart** |
 | Get the ready-to-copy SSH command | Detail page, **Network & Security** section > **SSH Connection** |
 | Connect the VM to a private network | **Network** step of the wizard, or **Networking** menu (see [VPCs and subnets](../networking/overview.md)) |
+| Back up the VM and its disks, restore it | Detail page, **Backups** tab (see [Backups](../backups/overview.md)) |
 
 ---
 

@@ -162,7 +162,7 @@ Defining custom CPU/memory resources is not offered in the console; contact supp
 
 ## Backup and restore
 
-Backup configuration and restore are not offered in the console; contact support. See [Configure backups](./how-to/configure-backups.md).
+MariaDB clusters are backed up to an S3 bucket in the project and restored from the **Backups** tab of their page, with the [backup service](../../backups/overview.md). See [Configure backups](./how-to/configure-backups.md) and [Restore a backup](./how-to/restore-backup.md).
 
 ---
 

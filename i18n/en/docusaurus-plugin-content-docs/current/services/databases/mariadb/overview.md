@@ -64,7 +64,7 @@ graph TD
 | Version upgrade, disk size increase, change of external access | Yes |
 | Cluster restart | Yes |
 | Changing the preset or the number of replicas after creation | No, [contact support](mailto:support@hidora.io) |
-| Backups and restore | No, [contact support](mailto:support@hidora.io) |
+| Scheduled or on-demand backups, restore | Yes, **Backups** tab (see [Backups](../../backups/overview.md)) |
 
 ---
 

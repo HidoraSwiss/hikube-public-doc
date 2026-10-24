@@ -162,7 +162,7 @@ Die Festlegung freier CPU-/Arbeitsspeicher-Ressourcen wird in der Konsole nicht 
 
 ## Backup und Wiederherstellung
 
-Die Konfiguration von Backups und die Wiederherstellung werden in der Konsole nicht angeboten; wenden Sie sich an den Support. Siehe [Backups konfigurieren](./how-to/configure-backups.md).
+MariaDB-Cluster werden mit dem [Backup-Service](../../backups/overview.md) in einen S3-Bucket des Projekts gesichert und über die Registerkarte **Backups** ihrer Seite wiederhergestellt. Siehe [Backups konfigurieren](./how-to/configure-backups.md) und [Ein Backup wiederherstellen](./how-to/restore-backup.md).
 
 ---
 

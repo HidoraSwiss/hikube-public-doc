@@ -64,7 +64,7 @@ graph TD
 | Aggiornamento di versione, aumento della dimensione del disco, modifica dell'accesso esterno | Sì |
 | Riavvio del cluster | Sì |
 | Modifica del preset o del numero di repliche dopo la creazione | No, [contatti il supporto](mailto:support@hidora.io) |
-| Backup e ripristino | No, [contatti il supporto](mailto:support@hidora.io) |
+| Backup pianificati o su richiesta, ripristino | Sì, scheda **Backups** (vedere [Backup](../../backups/overview.md)) |
 
 ---
 

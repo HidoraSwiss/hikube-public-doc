@@ -169,7 +169,7 @@ External access can be enabled or disabled after creation, from **Edit**. Its co
 
 ## Backup and restore
 
-Backup configuration and restore are not offered in the console; contact support. See [Configure backups](./how-to/configure-backups.md).
+PostgreSQL clusters are backed up to an S3 bucket in the project and restored from the **Backups** tab of their page, with the [backup service](../../backups/overview.md). Transaction logs are archived continuously between two backups, which makes it possible to restore the database to a point in time. See [Configure backups](./how-to/configure-backups.md) and [Restore a backup](./how-to/restore-backup.md).
 
 ---
 

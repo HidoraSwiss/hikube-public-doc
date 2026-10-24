@@ -79,4 +79,4 @@ These parameters are not offered in the console; contact support.
 
 ### Are backups available?
 
-Backup configuration and restore are not offered in the console; contact support. See [Configure backups](./how-to/configure-backups.md).
+Yes, from the **Backups** tab of the cluster page: scheduling, on-demand backup and restore, including to a point in time. See [Configure backups](./how-to/configure-backups.md) and the [backup service](../../backups/overview.md).

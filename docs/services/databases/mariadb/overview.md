@@ -64,7 +64,7 @@ graph TD
 | Montée de version, augmentation de la taille du disque, modification de l'accès externe | Oui |
 | Redémarrage du cluster | Oui |
 | Modification de la préconfiguration ou du nombre de réplicas après création | Non, [contactez le support](mailto:support@hidora.io) |
-| Sauvegardes et restauration | Non, [contactez le support](mailto:support@hidora.io) |
+| Sauvegardes programmées ou à la demande, restauration | Oui, onglet **Sauvegardes** (voir [Sauvegardes](../../backups/overview.md)) |
 
 ---
 

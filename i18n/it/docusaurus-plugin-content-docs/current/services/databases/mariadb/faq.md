@@ -71,4 +71,4 @@ Queste impostazioni non sono proposte nella console; contatti il supporto.
 
 ### I backup sono disponibili?
 
-La configurazione dei backup e il ripristino non sono proposti nella console; contatti il supporto. Consulti [Configurare i backup](./how-to/configure-backups.md).
+Sì, dalla scheda **Backups** della pagina del cluster: pianificazione, backup su richiesta e ripristino. Consulti [Configurare i backup](./how-to/configure-backups.md) e il [servizio di backup](../../backups/overview.md).

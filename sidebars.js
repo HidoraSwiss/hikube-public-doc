@@ -46,6 +46,7 @@ function withUniqueKeys(items) {
 const SERVICE_NAMES = {
   "services/storage/disks": "Disques",
   "services/storage/buckets": "Buckets S3",
+  "services/backups": "Sauvegardes",
   "services/databases/postgresql": "PostgreSQL",
   "services/databases/mariadb": "MariaDB",
   "services/databases/mongodb": "MongoDB",
@@ -129,6 +130,12 @@ const sidebars = {
               items: diatasisItems("services/storage/buckets"),
             },
           ],
+        },
+        {
+          type: "category",
+          label: "Sauvegardes",
+          link: { type: "doc", id: "services/backups/index" },
+          items: diatasisItems("services/backups"),
         },
         {
           type: "category",

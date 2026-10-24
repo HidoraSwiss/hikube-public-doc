@@ -169,7 +169,7 @@ Der externe Zugriff kann nach der Erstellung über **Edit** aktiviert oder deakt
 
 ## Backup und Wiederherstellung
 
-Die Konfiguration von Backups und die Wiederherstellung werden in der Konsole nicht angeboten; wenden Sie sich an den Support. Siehe [Backups konfigurieren](./how-to/configure-backups.md).
+PostgreSQL-Cluster werden mit dem [Backup-Service](../../backups/overview.md) in einen S3-Bucket des Projekts gesichert und über die Registerkarte **Backups** ihrer Seite wiederhergestellt. Die Transaktionsprotokolle werden zwischen zwei Backups kontinuierlich archiviert, sodass sich die Datenbank zu einem bestimmten Zeitpunkt wiederherstellen lässt. Siehe [Backups konfigurieren](./how-to/configure-backups.md) und [Ein Backup wiederherstellen](./how-to/restore-backup.md).
 
 ---
 

@@ -108,7 +108,7 @@ Siehe: [PostgreSQL - Konzepte](../services/databases/postgresql/concepts.md), [R
 
 ## 11. Sind Datenbank-Backups in der Konsole verfügbar?
 
-Noch nicht. Die Konfiguration der Backups und die Wiederherstellung erfolgen derzeit über den Support. Siehe zum Beispiel [PostgreSQL - Backups](../services/databases/postgresql/how-to/configure-backups.md).
+Ja. PostgreSQL- und MariaDB-Datenbanken sowie virtuelle Maschinen und Disks werden in der Konsole gesichert und wiederhergestellt, über das Menü **Infrastructure** > **Backups** und die Registerkarte **Backups** jeder Ressource. Siehe [Backups](../services/backups/overview.md).
 
 ---
 

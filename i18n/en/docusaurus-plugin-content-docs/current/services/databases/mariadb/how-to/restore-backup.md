@@ -1,21 +1,14 @@
 ---
 title: "How to restore a backup"
 sidebar_position: 4
+description: "Restore a Hikube MariaDB cluster from the console, onto the original cluster or onto another cluster, or replay a mysqldump export yourself."
 ---
 
 # How to restore a backup
 
-:::info Availability
-MariaDB backup restore is not yet available as self-service in the [Hikube console](https://console.hikube.cloud).
-To restore a cluster from a backup managed by the platform, [contact support](mailto:support@hidora.io).
-:::
+A MariaDB archive is restored from the **Backups** tab of the cluster page, in the [Hikube console](https://console.hikube.cloud), or from **Infrastructure** > **Backups** > **Archives**. See [Restore a PostgreSQL or MariaDB database](../../../backups/how-to/restore-database.md).
 
-## Information to prepare
-
-| Information | Example |
-|-------------|---------|
-| Project and cluster name | `prod` / `shop-db` |
-| Backup to restore | The most recent one, or a specific date |
+The restore writes either **onto the original cluster**, or **onto another existing MariaDB cluster** in the project. The archive is replayed into the target: each table it contains replaces the table of the same name; tables and databases it does not contain are kept.
 
 ## Restoring a logical export
 

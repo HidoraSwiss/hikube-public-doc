@@ -25,6 +25,7 @@ In der [Hikube-Konsole](https://console.hikube.cloud) verwalten Sie VMs über da
 | Das cloud-init-Skript erneut ausführen | **Reload UserData**, dann **Restart** |
 | Den kopierfertigen SSH-Befehl abrufen | Detailseite, Abschnitt **Network & Security** > **SSH Connection** |
 | Die VM mit einem privaten Netzwerk verbinden | Schritt **Network** des Assistenten oder Menü **Networking** (siehe [VPC und Subnetze](../networking/overview.md)) |
+| Die VM und ihre Disks sichern und wiederherstellen | Detailseite, Registerkarte **Backups** (siehe [Backups](../backups/overview.md)) |
 
 ---
 

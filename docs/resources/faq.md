@@ -108,7 +108,7 @@ Voir : [PostgreSQL - Concepts](../services/databases/postgresql/concepts.md), [R
 
 ## 11. Les sauvegardes de bases de données sont-elles disponibles dans la console ?
 
-Pas encore. La configuration des sauvegardes et la restauration se font aujourd'hui par le support. Voir par exemple [PostgreSQL - Sauvegardes](../services/databases/postgresql/how-to/configure-backups.md).
+Oui. Les bases PostgreSQL et MariaDB, ainsi que les machines virtuelles et les disques, se sauvegardent et se restaurent depuis la console, menu **Infrastructure** > **Sauvegardes** et onglet **Sauvegardes** de chaque ressource. Voir [Sauvegardes](../services/backups/overview.md).
 
 ---
 

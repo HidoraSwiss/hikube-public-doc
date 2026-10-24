@@ -60,7 +60,7 @@ graph TD
 | Versions-Upgrade, Änderung des Presets, Vergrößerung der Disk, Änderung des externen Zugriffs | Ja |
 | Neustart des Clusters | Ja |
 | Änderung der Anzahl der Replicas nach der Erstellung | Nein, [wenden Sie sich an den Support](mailto:support@hidora.io) |
-| Backups und Wiederherstellung | Nein, [wenden Sie sich an den Support](mailto:support@hidora.io) |
+| Geplante Backups oder Backups auf Abruf, Wiederherstellung (auch zu einem bestimmten Zeitpunkt) | Ja, Registerkarte **Backups** (siehe [Backups](../../backups/overview.md)) |
 
 ---
 
