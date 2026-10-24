@@ -79,4 +79,4 @@ Ces paramètres ne sont pas proposés dans la console ; contactez le support.
 
 ### Les sauvegardes sont-elles disponibles ?
 
-La configuration des sauvegardes et la restauration ne sont pas proposées dans la console ; contactez le support. Voir [Configurer les sauvegardes](./how-to/configure-backups.md).
+Oui, depuis l'onglet **Sauvegardes** de la page du cluster : programmation, sauvegarde à la demande et restauration, y compris à un instant précis. Voir [Configurer les sauvegardes](./how-to/configure-backups.md) et le [service de sauvegarde](../../backups/overview.md).

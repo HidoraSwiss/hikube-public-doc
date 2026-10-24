@@ -25,6 +25,7 @@ Dans la [console Hikube](https://console.hikube.cloud), les VM se gèrent depuis
 | Rejouer le script cloud-init | **Recharger UserData**, puis **Redémarrer** |
 | Obtenir la commande SSH prête à copier | Page de détail, section **Réseau et Sécurité** > **Connexion SSH** |
 | Relier la VM à un réseau privé | Étape **Réseau** de l'assistant, ou menu **Réseau** (voir [VPC et sous-réseaux](../networking/overview.md)) |
+| Sauvegarder la VM et ses disques, la restaurer | Page de détail, onglet **Sauvegardes** (voir [Sauvegardes](../backups/overview.md)) |
 
 ---
 

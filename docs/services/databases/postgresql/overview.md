@@ -59,7 +59,7 @@ graph TD
 | Utilisateurs, droits par base (admin / lecture seule), rotation du mot de passe | Oui |
 | Montée de version, changement de preset, augmentation de la taille du disque, modification de l'accès externe | Oui |
 | Modification du nombre de réplicas après création | Non, [contactez le support](mailto:support@hidora.io) |
-| Sauvegardes et restauration | Non, [contactez le support](mailto:support@hidora.io) |
+| Sauvegardes programmées ou à la demande, restauration (y compris à un instant précis) | Oui, onglet **Sauvegardes** (voir [Sauvegardes](../../backups/overview.md)) |
 
 ---
 

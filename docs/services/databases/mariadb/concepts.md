@@ -161,7 +161,7 @@ La définition de ressources CPU/mémoire libres n'est pas proposée dans la con
 
 ## Sauvegarde et restauration
 
-La configuration des sauvegardes et la restauration ne sont pas proposées dans la console ; contactez le support. Voir [Configurer les sauvegardes](./how-to/configure-backups.md).
+Les clusters MariaDB se sauvegardent vers un bucket S3 du projet et se restaurent depuis l'onglet **Sauvegardes** de leur page, avec le [service de sauvegarde](../../backups/overview.md). Voir [Configurer les sauvegardes](./how-to/configure-backups.md) et [Restaurer une sauvegarde](./how-to/restore-backup.md).
 
 ---
 
