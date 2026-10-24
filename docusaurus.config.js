@@ -162,6 +162,9 @@ const config = {
             outputDir: 'docs/api/reference',
             downloadUrl: '/openapi/hikube-public.swagger.json',
             hideSendButton: true,
+            // Propriétés dans les pages, sans fichiers JSON à côté : la
+            // référence reste en un fichier .api.mdx par opération.
+            externalJsonProps: false,
             showSchemas: false,
             sidebarOptions: {
               groupPathsBy: 'tag',

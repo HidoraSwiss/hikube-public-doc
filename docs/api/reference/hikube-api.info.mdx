@@ -239,6 +239,7 @@ A code reads as a service prefix followed by three digits: `001`–`099` are pla
 | 80202 | No public IPv4 address available |
 | 80203 | Version downgrade refused |
 | 80204 | Storage cannot be shrunk |
+| 80205 | Cluster has nothing to restart yet (still provisioning): retry once it is provisioned |
 
 ### Account
 
@@ -271,6 +272,7 @@ A code reads as a service prefix followed by three digits: `001`–`099` are pla
 | 110202 | No public IPv4 address available |
 | 110203 | Version downgrade refused |
 | 110204 | Storage cannot be shrunk |
+| 110205 | Cluster has nothing to restart yet (still provisioning): retry once it is provisioned |
 
 ### Redis
 
@@ -292,6 +294,9 @@ A code reads as a service prefix followed by three digits: `001`–`099` are pla
 | 120202 | No public IPv4 address available |
 | 120203 | Version downgrade refused |
 | 120204 | Storage cannot be shrunk |
+| 120205 | Cluster has nothing to restart yet (still provisioning): retry once it is provisioned |
+| 120206 | Password rotation refused: authentication is disabled on the cluster |
+| 120207 | Password rotation refused: authentication was just enabled and is still being set up, retry in a few seconds |
 
 ### RabbitMQ
 
@@ -316,6 +321,7 @@ A code reads as a service prefix followed by three digits: `001`–`099` are pla
 | 140202 | No public IPv4 address available |
 | 140203 | Version downgrade refused |
 | 140204 | Storage cannot be shrunk |
+| 140205 | Cluster has nothing to restart yet (still provisioning): retry once it is provisioned |
 
 ### MongoDB
 
@@ -341,6 +347,7 @@ A code reads as a service prefix followed by three digits: `001`–`099` are pla
 | 150202 | No public IPv4 address available |
 | 150203 | Version downgrade refused |
 | 150204 | Storage cannot be shrunk |
+| 150205 | Cluster has nothing to restart yet (still provisioning): retry once it is provisioned |
 
 ### Network
 
@@ -366,6 +373,66 @@ A code reads as a service prefix followed by three digits: `001`–`099` are pla
 | Code | Error |
 |------|-------|
 | 170100 | Unknown currency |
+
+### Backup
+
+| Code | Error |
+|------|-------|
+| 180001 | Destination not found |
+| 180002 | Plan not found |
+| 180003 | Backup run not found |
+| 180004 | Backup not found |
+| 180005 | Restore not found |
+| 180006 | Destination already exists |
+| 180007 | Plan already exists |
+| 180008 | Conflict: a name taken in the same second, or a concurrent change |
+| 180009 | Platform unavailable |
+| 180010 | Provisioning failed |
+| 180011 | Bucket not found in the project |
+| 180012 | Bucket user not found on the bucket |
+| 180013 | Application not found |
+| 180014 | Teardown incomplete: delete the destination again |
+| 180015 | Cancellation incomplete: cancel again to finish |
+| 180100 | project_id missing |
+| 180101 | Invalid destination name |
+| 180102 | Invalid plan name |
+| 180103 | Retention out of range |
+| 180105 | Schedule cannot be parsed, is an interval, or names a time zone |
+| 180106 | Schedule fires more than once an hour |
+| 180107 | Kind with no backup driver |
+| 180108 | Malformed recovery time, or combined with a restore point |
+| 180109 | Destructive confirmation missing |
+| 180110 | Invalid storage source |
+| 180111 | Application required |
+| 180112 | Value outside the accepted set |
+| 180113 | Name required |
+| 180200 | Destination not ready |
+| 180201 | Destination in use |
+| 180203 | Kind not supported by the destination |
+| 180204 | Backup not restorable, with the reason |
+| 180205 | A restore is already in progress for the application |
+| 180206 | Target kind does not match the backup |
+| 180207 | Point in time, or latest, on a kind other than Postgres |
+| 180208 | Separate target unsupported for the VM kinds |
+| 180209 | Destination being deleted |
+| 180210 | Backup being read by a restore |
+| 180211 | Source application gone: name a target |
+| 180212 | Postgres already written to another destination |
+| 180213 | No original disks to keep |
+| 180214 | Recovery time outside the window |
+| 180215 | Log archiving down |
+| 180216 | Run cannot be cancelled |
+| 180217 | Backup locked by its write-once bucket |
+| 180218 | Retention shorter than the bucket's lock |
+| 180219 | No transaction after the recovery time |
+| 180220 | Backup state cannot be verified now |
+| 180221 | The restore would leave the backup's history |
+| 180222 | The VM, or one of its disks, was created again since the backup |
+| 180223 | Restore cannot be cancelled |
+| 180224 | Postgres backup and target of different major versions |
+| 180225 | A disk cannot be restored over itself |
+| 180226 | Postgres still coming up from its last restore |
+| 180227 | Nothing to cancel yet: cancel again in a few seconds |
 
 <div
   style={{"marginBottom":"2rem"}}

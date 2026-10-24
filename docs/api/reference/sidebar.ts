@@ -8,6 +8,144 @@ const sidebar: SidebarsConfig = {
     },
     {
       type: "category",
+      label: "Backup",
+      items: [
+        {
+          type: "doc",
+          id: "api/reference/backup-service-list-destinations",
+          label: "List Backup Destinations",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/reference/backup-service-create-destination",
+          label: "Create Backup Destination",
+          className: "api-method post",
+        },
+        {
+          type: "doc",
+          id: "api/reference/backup-service-get-destination",
+          label: "Get Backup Destination",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/reference/backup-service-delete-destination",
+          label: "Delete Backup Destination",
+          className: "api-method delete",
+        },
+        {
+          type: "doc",
+          id: "api/reference/backup-service-update-destination",
+          label: "Update Backup Destination",
+          className: "api-method patch",
+        },
+        {
+          type: "doc",
+          id: "api/reference/backup-service-list-plans",
+          label: "List Backup Plans",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/reference/backup-service-create-plan",
+          label: "Create Backup Plan",
+          className: "api-method post",
+        },
+        {
+          type: "doc",
+          id: "api/reference/backup-service-get-plan",
+          label: "Get Backup Plan",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/reference/backup-service-delete-plan",
+          label: "Delete Backup Plan",
+          className: "api-method delete",
+        },
+        {
+          type: "doc",
+          id: "api/reference/backup-service-update-plan",
+          label: "Update Backup Plan",
+          className: "api-method patch",
+        },
+        {
+          type: "doc",
+          id: "api/reference/backup-service-list-jobs",
+          label: "List Backup Runs",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/reference/backup-service-create-job",
+          label: "Start Backup Run",
+          className: "api-method post",
+        },
+        {
+          type: "doc",
+          id: "api/reference/backup-service-get-job",
+          label: "Get Backup Run",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/reference/backup-service-cancel-job",
+          label: "Cancel Backup Run",
+          className: "api-method put",
+        },
+        {
+          type: "doc",
+          id: "api/reference/backup-service-list-backups",
+          label: "List Backups",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/reference/backup-service-get-backup",
+          label: "Get Backup",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/reference/backup-service-delete-backup",
+          label: "Delete Backup",
+          className: "api-method delete",
+        },
+        {
+          type: "doc",
+          id: "api/reference/backup-service-list-restores",
+          label: "List Restores",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/reference/backup-service-create-restore",
+          label: "Create Restore",
+          className: "api-method post",
+        },
+        {
+          type: "doc",
+          id: "api/reference/backup-service-get-restore",
+          label: "Get Restore",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/reference/backup-service-delete-restore",
+          label: "Delete Restore",
+          className: "api-method delete",
+        },
+        {
+          type: "doc",
+          id: "api/reference/backup-service-cancel-restore",
+          label: "Cancel Restore",
+          className: "api-method put",
+        },
+      ],
+    },
+    {
+      type: "category",
       label: "Billing",
       items: [
         {
@@ -336,6 +474,12 @@ const sidebar: SidebarsConfig = {
         },
         {
           type: "doc",
+          id: "api/reference/maria-db-service-restart-maria-db-cluster",
+          label: "Restart cluster",
+          className: "api-method post",
+        },
+        {
+          type: "doc",
           id: "api/reference/maria-db-service-list-databases",
           label: "List databases",
           className: "api-method get",
@@ -435,6 +579,12 @@ const sidebar: SidebarsConfig = {
           id: "api/reference/mongo-db-service-update-mongo-db-cluster",
           label: "Update cluster",
           className: "api-method patch",
+        },
+        {
+          type: "doc",
+          id: "api/reference/mongo-db-service-restart-mongo-db-cluster",
+          label: "Restart cluster",
+          className: "api-method post",
         },
         {
           type: "doc",
@@ -594,6 +744,12 @@ const sidebar: SidebarsConfig = {
         },
         {
           type: "doc",
+          id: "api/reference/postgres-service-restart-postgres-cluster",
+          label: "Restart cluster",
+          className: "api-method post",
+        },
+        {
+          type: "doc",
           id: "api/reference/postgres-service-list-databases",
           label: "List databases",
           className: "api-method get",
@@ -708,6 +864,12 @@ const sidebar: SidebarsConfig = {
         },
         {
           type: "doc",
+          id: "api/reference/rabbit-mq-service-restart-rabbit-mq-cluster",
+          label: "Restart cluster",
+          className: "api-method post",
+        },
+        {
+          type: "doc",
           id: "api/reference/rabbit-mq-service-list-users",
           label: "List users",
           className: "api-method get",
@@ -807,6 +969,12 @@ const sidebar: SidebarsConfig = {
           id: "api/reference/redis-service-update-redis-cluster",
           label: "Update cluster",
           className: "api-method patch",
+        },
+        {
+          type: "doc",
+          id: "api/reference/redis-service-restart-redis-cluster",
+          label: "Restart cluster",
+          className: "api-method post",
         },
         {
           type: "doc",
