@@ -9,9 +9,7 @@ import NavigationFooter from '@site/src/components/NavigationFooter';
 
 Un client de l'API publique (script, pipeline CI/CD, outil d'automatisation) s'authentifie avec une **clé d'API**. Une clé appartient à un **projet** et donne, sur ce seul projet, les droits de ses **scopes**.
 
-:::warning Préversion
-Les clés d'API font partie de la préversion de l'API publique. Leur gestion depuis la console arrive bientôt ; en attendant, voir [Obtenir une clé](#obtenir).
-:::
+Les administrateurs du projet créent et révoquent ses clés depuis la console, carte **Clés d'API** des paramètres du projet : voir [Obtenir une clé](#obtenir).
 
 ---
 
@@ -41,11 +39,11 @@ Une clé porte un ou plusieurs scopes. Chaque scope correspond à un niveau de d
 | Scope | Correspond au rôle | Usage |
 |-------|--------------------|-------|
 | `read` | Lecture | Toutes les opérations `GET` : ressources, état, catalogues |
-| `write` | Utilisation | Les droits de `read`. Aucune opération de l'API publique ne demande aujourd'hui `write` seul |
-| `admin` | Administration | Créer, modifier et supprimer des ressources ; démarrer, arrêter ou redémarrer une VM ; créer des utilisateurs et faire tourner leurs mots de passe |
+| `write` | Utilisation | Les droits de `read`, plus démarrer, arrêter et redémarrer une VM. Ni création, ni modification, ni suppression, ni lecture d'un identifiant |
+| `admin` | Administration | Créer, modifier et supprimer des ressources ; redémarrer une base managée ; créer des utilisateurs et faire tourner leurs mots de passe ; lire les identifiants (kubeconfig, mots de passe, clés S3) |
 | `superadmin` | Super-administration | Tous les droits sur le projet |
 
-Pour un pipeline qui déploie des ressources, il faut donc une clé `admin`. Pour un outil de supervision ou d'inventaire, une clé `read` suffit.
+Pour un pipeline qui déploie des ressources, il faut donc une clé `admin`. Pour un outil qui allume et éteint des VM selon un horaire, une clé `write` suffit ; pour un outil de supervision ou d'inventaire, une clé `read`.
 
 :::warning Une clé `read` reste un secret
 Toute clé d'API est un secret, quels que soient ses scopes : ne la partagez pas et conservez-la dans un gestionnaire de secrets.
@@ -81,7 +79,7 @@ La liste des clés d'un projet indique, pour chaque clé, sa date d'expiration (
 ## Limites
 
 - **Une clé, un projet.** Une clé n'agit que sur son projet. Une requête qui vise un autre projet, ou l'organisation, est refusée.
-- **Opérations accessibles.** Une clé n'appelle que les opérations de la [référence de l'API](./reference/hikube-api.info.mdx). La gestion du compte, de l'organisation, des projets, des membres et des clés elles-mêmes reste réservée à la console : **une clé ne peut pas créer ni révoquer de clé**.
+- **Opérations accessibles.** Une clé n'appelle que les opérations de la [référence de l'API](./reference/hikube-api.info.mdx). La gestion du compte, de l'organisation, des projets, des membres et des clés elles-mêmes reste réservée aux utilisateurs connectés : **une clé ne peut pas créer ni révoquer de clé**.
 - **Nombre de clés par projet.** Le nombre de clés actives d'un projet est limité selon l'offre de l'organisation : **1** pour l'offre d'essai Starter, **16** pour l'offre Entreprise. Les clés expirées ne comptent pas. Au-delà, la création est refusée (code `60009`) ; révoquez une clé pour libérer une place, ou contactez le support pour adapter la limite.
 - **Qui gère les clés.** Seuls les administrateurs du projet, ou de son organisation, créent, listent et révoquent les clés d'un projet. Personne ne peut créer une clé dont les scopes dépassent ses propres droits (code `60003`).
 
@@ -93,16 +91,20 @@ Avec une seule clé autorisée, le remplacement d'une clé impose une courte cou
 
 ## Obtenir une clé {#obtenir}
 
-La création et la révocation des clés seront bientôt disponibles dans la console, pour les administrateurs du projet ou de l'organisation.
+Les administrateurs du projet, ou de son organisation, créent les clés depuis la [console Hikube](https://console.hikube.cloud) :
 
-En attendant, demandez la clé au [support](mailto:support@hidora.io) en précisant :
+1. Ouvrez les paramètres du projet. La carte **Clés d'API** liste ses clés.
+2. Cliquez sur **Créer une clé**, puis renseignez :
+   - un nom (par exemple `ci-deploiement`) ;
+   - le **Niveau de droits** : **Lecture** (`read`), **Utilisation** (`write`), **Administration** (`admin`) ou **Super-administration** (`superadmin`), jamais au-dessus du vôtre ;
+   - la **Validité**, de 1 jour à 1 an.
+3. Copiez la clé : elle ne s'affiche qu'une seule fois, avec un exemple d'appel. Conservez-la aussitôt dans votre gestionnaire de secrets.
 
-- l'organisation et le projet concernés ;
-- un nom pour la clé (par exemple `ci-deploiement`) ;
-- les scopes souhaités (`read`, `write`, `admin` ou `superadmin`) ;
-- la durée de validité (`1d` à `365d`, `90d` par défaut).
+La liste indique, pour chaque clé, son niveau, sa création, son expiration (**Expire bientôt** dans les 7 derniers jours, puis **Expirée**) et sa dernière utilisation. **Renouveler** crée une nouvelle clé de même nom et de même niveau, puis propose de révoquer l'ancienne.
 
-La demande doit venir d'un administrateur du projet ou de l'organisation. Le support vous transmet la clé, affichée une seule fois, avec l'identifiant du projet (`projectId`) dont vous aurez besoin dans les chemins de l'API.
+Un administrateur connecté peut aussi gérer les clés par `POST`, `GET` et `DELETE` sur `/iam/v1alpha1/projects/{projectId}/api-keys`, avec sa session utilisateur et non avec une clé d'API. Le corps de création porte `name`, `scopes` (par exemple `["read"]`) et `validity` (`1d` à `365d`, `90d` par défaut) ; la réponse renvoie la clé complète dans `secret`, une seule fois.
+
+L'identifiant du projet (`projectId`), utilisé dans les chemins de l'API, figure dans l'exemple d'appel affiché avec la clé : c'est l'UUID qui suit `/projects/`.
 
 ---
 
@@ -114,7 +116,7 @@ Une clé révoquée est refusée dès la requête suivante. Révoquez une clé :
 - quand l'outil qui l'utilisait est retiré ;
 - quand la personne ou l'équipe qui en avait la charge change.
 
-En attendant l'écran de gestion des clés dans la console, la révocation se demande au [support](mailto:support@hidora.io), avec le `keyId` de la clé (la partie entre `sk_hk_` et le dernier `_`). Ne transmettez jamais le secret.
+Dans la carte **Clés d'API** des paramètres du projet, révoquez la clé puis confirmez en saisissant son nom. Avec une session utilisateur, `DELETE /iam/v1alpha1/projects/{projectId}/api-keys/{keyId}` fait de même : le `keyId` est la partie de la clé entre `sk_hk_` et le dernier `_`. Ne transmettez jamais le secret, y compris au support.
 
 Les clés d'un projet supprimé sont refusées dès la suppression, puis effacées.
 

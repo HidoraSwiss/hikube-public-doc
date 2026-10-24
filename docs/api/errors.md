@@ -65,6 +65,7 @@ Cette réponse uniforme est volontaire : elle ne révèle rien sur l'existence d
 | `10001` | 401 | Authentification absente ou invalide |
 | `10002` | 403 | Accès refusé (voir ci-dessus) |
 | `10004` | 503 | La clé n'a pas pu être vérifiée pour le moment. Ce n'est pas un refus : la clé n'est pas en cause, réessayez |
+| `10005` | 403 ou 400 | Refus d'une règle de la plateforme : le message nomme le champ refusé, `details` la règle et sa raison |
 | `10006` | 400 | Un chemin de `updateMask` ne désigne aucun champ modifiable de la requête `PATCH` (voir [Mises à jour partielles](./overview.md#mises-a-jour-partielles)) |
 
 Un client qui annule sa requête ou dépasse son propre délai reçoit `499` ou `504`, sans code numérique.
@@ -95,6 +96,7 @@ Chaque service a sa plage de codes. Les derniers chiffres suivent la même logiq
 | `150xxx` | MongoDB |
 | `160xxx` | Réseau |
 | `170xxx` | Tarifs |
+| `180xxx` | Sauvegardes |
 
 Quelques codes métier utiles :
 
@@ -106,8 +108,12 @@ Quelques codes métier utiles :
 | `20206` | 400 | Plus d'adresse IPv4 publique disponible |
 | `30007` | 400 | Le disque est attaché à une VM : détachez-le avant de le supprimer |
 | `80201`, `110201`, `120201`, `140201`, `150201` | 400 | Passage d'une instance unique à un cluster répliqué (ou l'inverse) impossible après la création |
+| `80205`, `110205`, `120205`, `140205`, `150205` | 400 | Redémarrage d'une base encore en cours de création : rien à redémarrer, réessayez une fois le cluster prêt |
 | `160003` / `160012` | 409 | Le VPC / le sous-réseau est encore utilisé par des VM, listées dans `details` |
 | `160152` | 400 | La plage d'adresses chevauche un sous-réseau existant |
+| `180200` | 400 | La destination de sauvegarde n'est pas encore prête |
+| `180205` | 400 | Une restauration est déjà en cours pour cette application |
+| `180214` | 400 | L'instant de restauration demandé sort de la fenêtre de restauration |
 
 La [référence de l'API](./reference/hikube-api.info.mdx) indique les codes HTTP possibles pour chaque opération.
 
@@ -115,7 +121,7 @@ La [référence de l'API](./reference/hikube-api.info.mdx) indique les codes HTT
 
 ## Codes liés aux clés d'API
 
-Ces codes concernent la gestion des clés (création, liste, révocation), réservée aux administrateurs depuis la console. Ils sont donnés ici pour référence.
+Ces codes concernent la gestion des clés (création, liste, révocation), réservée aux administrateurs du projet, depuis la console ou avec leur session utilisateur (voir [Obtenir une clé](./authentication.md#obtenir)).
 
 | Code | HTTP | Signification |
 |------|------|---------------|

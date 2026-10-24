@@ -27,11 +27,12 @@ L'API publique est en **préversion** (`v1alpha1`). Les chemins, les champs et l
 | Buckets S3 | `/bucket/v1alpha1` | Créer, lister, consulter, supprimer ; gérer les utilisateurs d'un bucket et faire tourner leurs clés |
 | Kubernetes | `/kubernetes/v1alpha1` | Créer, lister, consulter, modifier, supprimer un cluster ; télécharger son kubeconfig. Catalogues : versions, presets |
 | Réseau | `/network/v1alpha1` | VPC et sous-réseaux : créer, lister, consulter, supprimer |
-| PostgreSQL | `/postgres/v1alpha1` | Clusters, bases, utilisateurs (dont la rotation du mot de passe). Catalogues : presets, extensions |
-| MariaDB | `/mariadb/v1alpha1` | Clusters, bases, utilisateurs (dont la rotation du mot de passe). Catalogue : presets |
-| MongoDB | `/mongodb/v1alpha1` | Clusters, bases, utilisateurs (dont la rotation du mot de passe). Catalogue : presets |
-| Redis | `/redis/v1alpha1` | Clusters, rotation du mot de passe. Catalogue : presets |
-| RabbitMQ | `/rabbitmq/v1alpha1` | Clusters, utilisateurs, vhosts. Catalogue : presets |
+| PostgreSQL | `/postgres/v1alpha1` | Clusters (dont le redémarrage), bases, utilisateurs (dont la rotation du mot de passe). Catalogues : presets, extensions |
+| MariaDB | `/mariadb/v1alpha1` | Clusters (dont le redémarrage), bases, utilisateurs (dont la rotation du mot de passe). Catalogue : presets |
+| MongoDB | `/mongodb/v1alpha1` | Clusters (dont le redémarrage), bases, utilisateurs (dont la rotation du mot de passe). Catalogue : presets |
+| Redis | `/redis/v1alpha1` | Clusters (dont le redémarrage), rotation du mot de passe. Catalogue : presets |
+| RabbitMQ | `/rabbitmq/v1alpha1` | Clusters (dont le redémarrage), utilisateurs, vhosts. Catalogue : presets |
+| Sauvegardes | `/backup/v1alpha1` | Destinations, programmations (`plans`), sauvegardes à la demande et leur suivi (`jobs`), archives (`backups`), restaurations (`restores`), dont la restauration PostgreSQL à un instant précis ; annuler une sauvegarde ou une restauration en cours. Pour les VM, les disques et les bases PostgreSQL et MariaDB |
 | GPU | `/gpu/v1alpha1` | Catalogue des GPU disponibles (l'attribution se fait sur la VM ou le groupe de nœuds) |
 | Tarifs | `/billing/v1alpha1` | Grilles tarifaires (VM, bases de données, Kubernetes, licences, GPU, réseau, stockage bloc et objet) |
 

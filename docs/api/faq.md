@@ -13,13 +13,13 @@ Elle est en **préversion** (`v1alpha1`) : les chemins, les champs et l'URL publ
 
 ### Comment obtenir une clé d'API ?
 
-La gestion des clés arrive bientôt dans la console. En attendant, un administrateur du projet ou de l'organisation la demande au [support](mailto:support@hidora.io), en précisant le nom, les scopes et la durée de validité souhaités (voir [Obtenir une clé](./authentication.md#obtenir)).
+Un administrateur du projet ou de l'organisation la crée dans la console, carte **Clés d'API** des paramètres du projet, en choisissant son nom, son niveau de droits et sa durée de validité (voir [Obtenir une clé](./authentication.md#obtenir)).
 
 ---
 
 ### Où trouver l'identifiant de mon projet ?
 
-La console ne l'affiche pas encore. Il vous est communiqué avec la clé d'API. C'est un UUID, distinct du nom du projet et de l'**ID de l'Organisation** affiché dans **Mon Compte**.
+Dans l'exemple d'appel que la console affiche à la création d'une clé d'API : c'est l'UUID qui suit `/projects/`. Il est distinct du nom du projet et de l'**ID de l'Organisation** affiché dans **Mon Compte**.
 
 ---
 
@@ -49,13 +49,13 @@ Une clé oubliée ou divulguée finit ainsi par expirer d'elle-même. La durée 
 
 ### J'ai perdu le secret de ma clé. Peut-on me le renvoyer ?
 
-Non. Hikube ne conserve qu'une empreinte du secret, qui n'est affiché qu'à la création. Faites révoquer la clé perdue et créer une nouvelle clé.
+Non. Hikube ne conserve qu'une empreinte du secret, qui n'est affiché qu'à la création. Révoquez la clé perdue et créez-en une nouvelle, ou utilisez **Renouveler** dans la carte **Clés d'API** : la console crée une clé de même nom et de même niveau, puis propose de révoquer l'ancienne.
 
 ---
 
 ### Ma clé a fuité. Que faire ?
 
-Faites-la **révoquer immédiatement** (via le support, en attendant la console) en donnant son `keyId`, jamais le secret. La révocation prend effet dès la requête suivante. Créez ensuite une nouvelle clé et cherchez où l'ancienne a pu être utilisée.
+**Révoquez-la immédiatement** dans la carte **Clés d'API** des paramètres du projet. Si vous passez par le support, donnez son `keyId`, jamais le secret. La révocation prend effet dès la requête suivante. Créez ensuite une nouvelle clé et cherchez où l'ancienne a pu être utilisée.
 
 ---
 

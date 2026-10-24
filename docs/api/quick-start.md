@@ -37,17 +37,17 @@ L'API publique est en préversion (`v1alpha1`) : chemins et champs peuvent encor
 
 ## Étape 1 : Obtenir une clé et l'identifiant du projet {#project-id}
 
-La création des clés d'API depuis la console arrive bientôt. En attendant, un administrateur du projet ou de l'organisation demande la clé au [support](mailto:support@hidora.io), avec son nom, ses scopes et sa durée de validité (voir [Obtenir une clé](./authentication.md#obtenir)).
+Un administrateur du projet ou de l'organisation crée la clé dans la console : paramètres du projet, carte **Clés d'API**, **Créer une clé** (voir [Obtenir une clé](./authentication.md#obtenir)).
 
-Pour ce guide, demandez une clé avec le scope `admin` : elle doit pouvoir créer et supprimer un bucket. Une durée de `7d` suffit pour un essai.
+Pour ce guide, créez une clé de niveau **Administration** (`admin`) : elle doit pouvoir créer et supprimer un bucket. Une validité de 7 jours suffit pour un essai.
 
-Vous recevez :
+La console affiche :
 
 - la **clé**, de la forme `sk_hk_<keyId>_<secret>`. Elle n'est affichée qu'une fois : enregistrez-la aussitôt dans votre gestionnaire de secrets ;
-- l'**identifiant du projet** (`projectId`), un UUID tel que `01928f6e-7b2c-7d4e-9a10-3f5b6c7d8e9f`.
+- un exemple d'appel, qui contient l'**identifiant du projet** (`projectId`) après `/projects/` : un UUID tel que `01928f6e-7b2c-7d4e-9a10-3f5b6c7d8e9f`.
 
 :::note Identifiant du projet
-La console n'affiche pas encore l'identifiant du projet : il vous est communiqué avec la clé. Ne le confondez pas avec le nom du projet, ni avec l'**ID de l'Organisation** affiché dans **Mon Compte**.
+Relevez l'identifiant du projet dans l'exemple d'appel. Ne le confondez pas avec le nom du projet, ni avec l'**ID de l'Organisation** affiché dans **Mon Compte**.
 :::
 
 ---
