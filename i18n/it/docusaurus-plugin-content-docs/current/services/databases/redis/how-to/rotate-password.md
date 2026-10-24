@@ -9,18 +9,18 @@ Questa guida spiega come generare una nuova password per un cluster Redis dalla 
 
 ## Prerequisiti
 
-- Un cluster **Redis** con l'autenticazione attivata
-- L'elenco delle applicazioni che utilizzano questo cluster, per aggiornarle subito dopo la rotazione
+- Un cluster **Redis** con l'autenticazione attivata. Su un cluster senza autenticazione, la rotazione viene rifiutata: attivi prima **Authentication required** da **Edit** (si veda [Modificare le risorse](./scale-resources.md)).
+- L'elenco delle applicazioni che utilizzano questo cluster, per aggiornarle subito dopo il riavvio
 
 :::warning
-La rotazione revoca immediatamente la password attuale. Le applicazioni che la utilizzano ancora perdono l'accesso finché non vengono aggiornate.
+La nuova password si applica solo dopo un [riavvio del cluster](./restart-cluster.md). Fino ad allora, i server Redis accettano ancora la vecchia password e rifiutano la nuova. Il riavvio interrompe brevemente il cluster (circa un minuto): pianifichi la rotazione in una finestra di manutenzione.
 :::
 
 ## Passaggi
 
 ### 1. Aprire la sezione Security
 
-Apra **DB & Messaging** → **Redis**, quindi il cluster interessato. La sezione **Security** indica: «Generate a new global password for this cluster. This action will revoke the current password.»
+Apra **DB & Messaging** → **Redis**, quindi il cluster interessato. La sezione **Security** permette di generare una nuova password globale per questo cluster.
 
 ### 2. Avviare la rotazione
 
@@ -29,11 +29,20 @@ Apra **DB & Messaging** → **Redis**, quindi il cluster interessato. La sezione
 
 ### 3. Copiare la nuova password
 
-La finestra **Generated password** mostra la nuova password. La copi nel suo gestore di password: non verrà più mostrata dopo la chiusura della finestra. Faccia clic su **Done**.
+La finestra **Generated password** mostra la nuova password. La copi nel suo gestore di password: non verrà più mostrata dopo la chiusura della finestra.
 
-### 4. Aggiornare le applicazioni
+La finestra ricorda: «The new password is accepted only after the cluster restarts; until then, the servers still accept the previous one.»
 
-Sostituisca la vecchia password nella configurazione delle sue applicazioni (variabili d'ambiente, secret Kubernetes dei suoi cluster, file di configurazione), quindi le riavvii se non rileggono la configurazione a caldo.
+### 4. Riavviare il cluster
+
+1. Nella stessa finestra, faccia clic su **Restart now**, quindi confermi con **Restart**.
+2. Per riavviare più tardi, faccia clic su **Done**: la pagina del cluster mostra il banner **Restart required** fino al riavvio, con un pulsante **Restart now**.
+
+Il cluster non è raggiungibile per circa un minuto. Si veda [Riavviare un cluster](./restart-cluster.md).
+
+### 5. Aggiornare le applicazioni
+
+Una volta riavviato il cluster, sostituisca la vecchia password nella configurazione delle sue applicazioni (variabili d'ambiente, secret Kubernetes dei suoi cluster, file di configurazione), quindi le riavvii se non rileggono la configurazione a caldo. Prima del riavvio del cluster, la nuova password viene ancora rifiutata.
 
 ## Verifica
 
@@ -42,7 +51,10 @@ REDISCLI_AUTH='<nuova password>' redis-cli -h <host> -p 6379 ping
 # PONG
 ```
 
+Se il comando risponde `WRONGPASS`, il cluster non è ancora stato riavviato: verifichi se sulla pagina del cluster è visualizzato il banner **Restart required**.
+
 ## Per approfondire
 
+- [Riavviare un cluster](./restart-cluster.md)
 - [Concetti Redis](../concepts.md): autenticazione
 - [Risoluzione dei problemi Redis](../troubleshooting.md)

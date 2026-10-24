@@ -107,6 +107,8 @@ L'option **Activer l'authentification** est active par défaut dans l'assistant 
 - **Activée** : un mot de passe est généré à la création et affiché une seule fois, avec l'utilisateur `default`. Vous pouvez le renouveler à tout moment depuis la section **Sécurité** de la page du cluster (**Effectuer une rotation**).
 - **Désactivée** : le cluster accepte les connexions sans mot de passe. À éviter, en particulier avec le réseau public activé.
 
+L'option reste modifiable après la création, depuis **Modifier**. Un changement d'authentification, comme une rotation du mot de passe, ne s'applique aux serveurs Redis qu'après un [redémarrage du cluster](./how-to/restart-cluster.md) : d'ici là, ils gardent leur configuration précédente.
+
 Redis sur Hikube n'expose pas de gestion d'utilisateurs multiples (ACL) dans la console : l'accès repose sur ce mot de passe global.
 
 ---

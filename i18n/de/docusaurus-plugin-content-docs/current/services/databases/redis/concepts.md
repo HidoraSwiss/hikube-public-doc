@@ -107,6 +107,8 @@ Die Option **Enable authentication** ist im Assistenten standardmäßig aktivier
 - **Aktiviert**: Bei der Erstellung wird ein Passwort generiert und einmalig zusammen mit dem Benutzer `default` angezeigt. Sie können es jederzeit im Abschnitt **Security** der Cluster-Seite erneuern (**Rotate password**).
 - **Deaktiviert**: Der Cluster nimmt Verbindungen ohne Passwort an. Zu vermeiden, insbesondere bei aktiviertem öffentlichem Netzwerk.
 
+Die Option lässt sich nach der Erstellung über **Edit** ändern. Eine Änderung der Authentifizierung gilt, wie eine Rotation des Passworts, für die Redis-Server erst nach einem [Neustart des Clusters](./how-to/restart-cluster.md): Bis dahin behalten sie ihre bisherige Konfiguration.
+
 Redis auf Hikube bietet in der Konsole keine Verwaltung mehrerer Benutzer (ACL): Der Zugriff beruht auf diesem globalen Passwort.
 
 ---

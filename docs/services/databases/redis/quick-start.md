@@ -55,7 +55,7 @@ curl -sS "$HIKUBE_API/redis/v1alpha1/presets" \
   -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" | jq '.presets[] | {name, cpu, memory}'
 ```
 
-**Résultat attendu :** un objet `{"totalCount": ..., "clusters": [...]}`, puis la liste des préconfigurations (`nano` à `2xlarge`) avec leur CPU et leur mémoire.
+**Résultat attendu :** un objet `{"totalCount": ..., "clusters": [...]}`, puis la liste des préconfigurations (séries `u1`, `s1` et `m1`) avec leur CPU et leur mémoire.
 
 </TabItem>
 </Tabs>
@@ -106,7 +106,7 @@ curl -sS -X POST "$HIKUBE_API/redis/v1alpha1/projects/$PROJECT_ID/clusters" \
   -d '{
     "name": "democache",
     "version": "v8",
-    "preset": "small",
+    "preset": "s1.small",
     "size": 10,
     "replicas": 3,
     "external": true,
@@ -118,7 +118,7 @@ curl -sS -X POST "$HIKUBE_API/redis/v1alpha1/projects/$PROJECT_ID/clusters" \
 |-------|--------|----------|
 | `name` | `democache` | 16 caractères maximum, en minuscules ; identifie le cluster dans les chemins de l'API |
 | `version` | `v8` | `v7` ou `v8` |
-| `preset` | `small` | `nano`, `micro`, `small`, `medium`, `large`, `xlarge` ou `2xlarge` |
+| `preset` | `s1.small` | Une préconfiguration de `GET /redis/v1alpha1/presets` (séries `u1`, `s1` et `m1`) |
 | `size` | `10` | Taille du volume de chaque nœud, en Go (1 à 4096) |
 | `replicas` | `3` | 1 à 8 ; `1` = nœud unique, 2 et plus = mode cluster. Le mode ne peut plus changer après la création |
 | `external` | `true` | Accès depuis Internet (**Réseau public**) |

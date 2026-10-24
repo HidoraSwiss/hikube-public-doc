@@ -60,7 +60,11 @@ Lassen Sie die Authentifizierung immer aktiviert, insbesondere wenn das öffentl
 
 ### Ich habe das Passwort verloren. Wie kann ich es wiederherstellen?
 
-Es kann nicht erneut gelesen werden. Generieren Sie im Abschnitt **Security** der Cluster-Seite ein neues (**Rotate password**). Siehe [Passwort erneuern](./how-to/rotate-password.md).
+Es kann nicht erneut gelesen werden. Generieren Sie im Abschnitt **Security** der Cluster-Seite ein neues (**Rotate password**) und starten Sie den Cluster anschließend neu: Das neue Passwort wird erst nach diesem Neustart akzeptiert. Siehe [Passwort erneuern](./how-to/rotate-password.md).
+
+### Ich habe die Authentifizierung aktiviert, aber Redis nimmt weiterhin Verbindungen ohne Passwort an. Warum?
+
+Das Aktivieren oder Deaktivieren der Authentifizierung auf einem bestehenden Cluster wird, wie die Erneuerung seines Passworts, sofort gespeichert, gilt für die Redis-Server aber erst nach einem Neustart des Clusters. Solange die Seite des Clusters das Banner **Restart required** anzeigt, klicken Sie auf **Restart now**. Der Cluster ist etwa eine Minute lang nicht erreichbar. Siehe [Einen Cluster neu starten](./how-to/restart-cluster.md).
 
 ### Wie skaliere ich Redis?
 

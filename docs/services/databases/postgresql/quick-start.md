@@ -56,7 +56,7 @@ curl -sS "$HIKUBE_API/postgres/v1alpha1/presets" \
   -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" | jq -r '.presets[] | "\(.name)\t\(.cpu)\t\(.memory)"'
 ```
 
-**Résultat attendu :** un objet `{"totalCount": ..., "clusters": [...]}`, puis la liste des presets (`nano`, `micro`, `small`, `medium`, `large`, `xlarge`, `2xlarge`) avec leur CPU et leur mémoire.
+**Résultat attendu :** un objet `{"totalCount": ..., "clusters": [...]}`, puis la liste des presets (séries `u1`, `s1` et `m1`) avec leur CPU et leur mémoire.
 
 </TabItem>
 </Tabs>
@@ -130,7 +130,7 @@ curl -sS -X POST "$HIKUBE_API/postgres/v1alpha1/projects/$PROJECT_ID/clusters" \
     "version": "v18",
     "replicas": 1,
     "size": 10,
-    "preset": "small",
+    "preset": "s1.small",
     "external": true
   }'
 ```

@@ -117,7 +117,7 @@ curl -sS -X POST "$HIKUBE_API/mongodb/v1alpha1/projects/$PROJECT_ID/clusters" \
     "version": "v8",
     "replicas": 3,
     "size": 10,
-    "preset": "small",
+    "preset": "s1.small",
     "external": true
   }'
 ```
@@ -128,7 +128,7 @@ curl -sS -X POST "$HIKUBE_API/mongodb/v1alpha1/projects/$PROJECT_ID/clusters" \
 | `version` | **Version MongoDB** | `v6`, `v7` ou `v8` |
 | `replicas` | **Nombre de réplicas** | `1` (standalone) ou `2` à `8` (replica set) ; le mode ne change plus après la création |
 | `size` | **Taille du disque (Go)** | 1 à 4096 |
-| `preset` | **Préconfiguration (Preset)** | `nano`, `micro`, `small`, `medium`, `large`, `xlarge` ou `2xlarge` ; non modifiable après la création |
+| `preset` | **Préconfiguration (Preset)** | Une préconfiguration de `GET /mongodb/v1alpha1/presets` (séries `u1`, `s1` et `m1`) ; non modifiable après la création |
 | `external` | **Accès externe** | `true` pour exposer le cluster sur Internet |
 | `sharding` | **Sharding (Topologie distribuée)** | facultatif ; absent, le sharding est désactivé. Voir [Configurer le sharding](./how-to/configure-sharding.md) |
 

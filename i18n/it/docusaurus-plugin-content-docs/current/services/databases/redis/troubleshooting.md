@@ -49,13 +49,30 @@ description: "Risolvete i problemi comuni di Redis su Hikube: cluster in errore,
 
 ### L'autenticazione non riesce (`NOAUTH` o `WRONGPASS`)
 
-**Causa**: il client non invia alcuna password, utilizza una password errata oppure una password revocata da una rotazione.
+**Causa**: il client non invia alcuna password oppure utilizza una password errata. Dopo una rotazione, la nuova password viene rifiutata (`WRONGPASS`) finché il cluster non viene riavviato, e la vecchia smette di funzionare una volta riavviato il cluster.
 
 **Soluzione**:
 
 1. Verifichi il valore fornito al client (`REDISCLI_AUTH`, opzione `-a` o configurazione applicativa).
-2. In caso di dubbi, generi una nuova password dalla sezione **Security** (**Rotate password**) e aggiorni le sue applicazioni. Si veda [Rinnovare la password](./how-to/rotate-password.md).
-3. Se l'opzione **Authentication required** è stata modificata, aggiorni i client di conseguenza.
+2. Se la pagina del cluster mostra il banner **Restart required**, una rotazione o una modifica dell'autenticazione attende un riavvio: faccia clic su **Restart now**. Si veda [Riavviare un cluster](./how-to/restart-cluster.md).
+3. In caso di dubbi, generi una nuova password dalla sezione **Security** (**Rotate password**), riavvii il cluster e aggiorni le sue applicazioni. Si veda [Rinnovare la password](./how-to/rotate-password.md).
+4. Se l'opzione **Authentication required** è stata modificata, aggiorni i client di conseguenza.
+
+### Redis accetta ancora connessioni senza password dopo l'attivazione dell'autenticazione
+
+**Causa**: l'attivazione di **Authentication required** su un cluster esistente viene salvata immediatamente, ma raggiunge i server Redis solo dopo un riavvio del cluster. Fino ad allora, mantengono la configurazione precedente. Lo stesso vale per la disattivazione dell'autenticazione e per la rotazione della password: i server accettano la vecchia password fino al riavvio.
+
+**Soluzione**:
+
+1. Apra la pagina del cluster: il banner **Restart required** conferma che un riavvio è in sospeso.
+2. Faccia clic su **Restart now** (o su **Restart**), quindi confermi con **Restart**. Il cluster non è raggiungibile per circa un minuto: scelga un momento di basso carico.
+3. Verifichi che una connessione senza password venga ora rifiutata:
+   ```bash
+   redis-cli -h <host> -p 6379 ping
+   # NOAUTH Authentication required.
+   ```
+
+Si veda [Riavviare un cluster](./how-to/restart-cluster.md).
 
 ### Memoria satura (`OOM command not allowed`)
 

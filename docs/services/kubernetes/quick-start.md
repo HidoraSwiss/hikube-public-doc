@@ -123,7 +123,7 @@ curl -sS -X POST "$HIKUBE_API/kubernetes/v1alpha1/projects/$PROJECT_ID/clusters"
   -d '{
     "name": "democluster",
     "version": "v1.31",
-    "controlPlane": {"preset": "medium", "replicas": 3},
+    "controlPlane": {"preset": "s1.small", "replicas": 3},
     "nodeGroups": {
       "worker-pool-1": {
         "instanceType": "s1.large",

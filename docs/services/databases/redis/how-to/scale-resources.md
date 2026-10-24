@@ -55,6 +55,8 @@ Cliquez sur **Enregistrer les modifications**. Le message « Modifications enreg
 
 Une version inférieure ou une taille de volume réduite est refusée : la console affiche « Une erreur est survenue lors de la mise à jour du cluster. », suivi de la raison renvoyée par l'API (codes `120203` pour la version, `120204` pour le volume).
 
+Un changement de l'**Authentification requise** ne s'applique aux serveurs Redis qu'après un redémarrage du cluster. Après l'enregistrement, la console propose de redémarrer : confirmez avec **Redémarrer**, ou cliquez sur **Plus tard** et redémarrez depuis le bandeau **Redémarrage requis** de la page du cluster. Voir [Redémarrer un cluster](./restart-cluster.md).
+
 :::warning
 Désactiver l'authentification sur un cluster exposé au réseau public rend vos données accessibles à quiconque connaît l'adresse. Conservez l'authentification activée.
 :::
@@ -71,21 +73,21 @@ curl -sS "$HIKUBE_API/redis/v1alpha1/projects/$PROJECT_ID/clusters/democache" \
 
 ### 2. Envoyer la nouvelle configuration
 
-`PATCH /redis/v1alpha1/projects/{projectId}/clusters/{name}` est une [mise à jour partielle](../../../../api/overview.md#mises-a-jour-partielles) : seuls les champs envoyés changent, et l'accès externe comme l'authentification restent tels quels s'ils sont absents. Par exemple, pour passer en `medium` avec un volume de 20 Go :
+`PATCH /redis/v1alpha1/projects/{projectId}/clusters/{name}` est une [mise à jour partielle](../../../../api/overview.md#mises-a-jour-partielles) : seuls les champs envoyés changent, et l'accès externe comme l'authentification restent tels quels s'ils sont absents. Par exemple, pour passer en `s1.medium` avec un volume de 20 Go :
 
 ```bash
 curl -sS -X PATCH "$HIKUBE_API/redis/v1alpha1/projects/$PROJECT_ID/clusters/democache" \
   -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"preset": "medium", "size": 20}'
+  -d '{"preset": "s1.medium", "size": 20}'
 ```
 
 - `version` : `v7` ou `v8` ;
-- `preset` : `nano`, `micro`, `small`, `medium`, `large`, `xlarge` ou `2xlarge` (`GET /redis/v1alpha1/presets`) ;
+- `preset` : une préconfiguration proposée par `GET /redis/v1alpha1/presets`, qui donne aussi son CPU et sa mémoire ;
 - `size` : taille du volume de chaque nœud, en Go ;
 - `replicas` : l'API refuse de passer d'un nœud unique au mode cluster, ou l'inverse (code `120201`).
 
-La réponse décrit le cluster mis à jour.
+La réponse décrit le cluster mis à jour. Un changement de `authEnabled` ne s'applique aux serveurs qu'après un redémarrage : `restartRequired` vaut `true` jusqu'à l'appel de `POST /redis/v1alpha1/projects/{projectId}/clusters/{name}/restart` (voir [Redémarrer un cluster](./restart-cluster.md)).
 
 :::warning
 Désactiver l'authentification sur un cluster exposé au réseau public rend vos données accessibles à quiconque connaît l'adresse. Conservez `"authEnabled": true`.
@@ -107,3 +109,4 @@ redis-cli -h <hôte> -p 6379 INFO memory | grep -E 'used_memory_human|maxmemory_
 
 - [Configurer la haute disponibilité](./configure-ha.md)
 - [Renouveler le mot de passe](./rotate-password.md)
+- [Redémarrer un cluster](./restart-cluster.md)

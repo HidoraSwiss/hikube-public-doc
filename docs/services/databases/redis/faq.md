@@ -60,7 +60,11 @@ Conservez toujours l'authentification activée, en particulier si le réseau pub
 
 ### J'ai perdu le mot de passe. Comment le récupérer ?
 
-Il ne peut pas être relu. Générez-en un nouveau depuis la section **Sécurité** de la page du cluster (**Effectuer une rotation**). Voir [Renouveler le mot de passe](./how-to/rotate-password.md).
+Il ne peut pas être relu. Générez-en un nouveau depuis la section **Sécurité** de la page du cluster (**Effectuer une rotation**), puis redémarrez le cluster : le nouveau mot de passe n'est accepté qu'après ce redémarrage. Voir [Renouveler le mot de passe](./how-to/rotate-password.md).
+
+### J'ai activé l'authentification, mais Redis accepte encore les connexions sans mot de passe. Pourquoi ?
+
+Activer ou désactiver l'authentification sur un cluster existant, comme renouveler son mot de passe, est enregistré immédiatement mais ne s'applique aux serveurs Redis qu'après un redémarrage du cluster. Tant que la page du cluster affiche le bandeau **Redémarrage requis**, cliquez sur **Redémarrer maintenant**. Le cluster est injoignable pendant environ une minute. Voir [Redémarrer un cluster](./how-to/restart-cluster.md).
 
 ### Comment scaler Redis ?
 

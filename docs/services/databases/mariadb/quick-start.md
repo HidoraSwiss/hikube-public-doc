@@ -116,7 +116,7 @@ curl -sS -X POST "$HIKUBE_API/mariadb/v1alpha1/projects/$PROJECT_ID/clusters" \
     "version": "v11.8",
     "replicas": 1,
     "size": 10,
-    "preset": "small",
+    "preset": "s1.small",
     "external": true
   }'
 ```
@@ -127,7 +127,7 @@ curl -sS -X POST "$HIKUBE_API/mariadb/v1alpha1/projects/$PROJECT_ID/clusters" \
 | `version` | **Version MariaDB** | `v10.6`, `v10.11`, `v11.4` ou `v11.8` (préfixe `v`) |
 | `replicas` | **Nombre de réplicas** | `1` (standalone) ou `2` à `8` (cluster) ; le mode ne change plus après la création |
 | `size` | **Taille du disque (Go)** | 1 à 4096 |
-| `preset` | **Préconfiguration (Preset)** | `nano`, `micro`, `small`, `medium`, `large`, `xlarge` ou `2xlarge` ; non modifiable après la création |
+| `preset` | **Préconfiguration (Preset)** | Une préconfiguration de `GET /mariadb/v1alpha1/presets` (séries `u1`, `s1` et `m1`) ; non modifiable après la création |
 | `external` | **Accès externe** | `true` pour exposer le cluster sur Internet |
 
 L'utilisateur est créé à l'étape 4, car son mot de passe n'est renvoyé que dans la réponse de création.

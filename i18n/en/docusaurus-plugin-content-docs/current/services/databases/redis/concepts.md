@@ -107,6 +107,8 @@ The **Enable authentication** option is on by default in the wizard:
 - **Enabled**: a password is generated at creation and displayed only once, together with the `default` user. You can renew it at any time from the **Security** section of the cluster page (**Rotate password**).
 - **Disabled**: the cluster accepts connections without a password. Avoid this, especially with the public network enabled.
 
+The option can still be changed after creation, from **Edit**. An authentication change, like a password rotation, only applies to the Redis servers after a [cluster restart](./how-to/restart-cluster.md): until then, they keep their previous configuration.
+
 Redis on Hikube does not expose multi-user management (ACL) in the console: access relies on this cluster-wide password.
 
 ---

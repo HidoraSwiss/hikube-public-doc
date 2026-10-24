@@ -54,6 +54,7 @@ Wenn die Option **Sharding (Distributed Topology)** bei der Erstellung aktiviert
 | Erstellung eines Clusters (Version 6.0, 7.0 oder 8.0, Preset, Disk-Größe, 1, 3 oder 5 Replicas, externer Zugriff, Sharding) | Ja |
 | Benutzer und Zugriff pro Datenbank (Admin / schreibgeschützt), Passwortrotation | Ja |
 | Versions-Upgrade, Vergrößerung der Disk, Änderung des externen Zugriffs | Ja |
+| Neustart des Clusters | Ja |
 | Änderung des Presets, der Anzahl der Replicas oder des Shardings nach der Erstellung | Nein, [wenden Sie sich an den Support](mailto:support@hidora.io) |
 | Backups und Wiederherstellung | Nein, [wenden Sie sich an den Support](mailto:support@hidora.io) |
 

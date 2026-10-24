@@ -129,7 +129,7 @@ curl -sS -X POST "$HIKUBE_API/rabbitmq/v1alpha1/projects/$PROJECT_ID/clusters" \
   -d '{
     "name": "rabbitdemo",
     "version": "v4.2",
-    "preset": "small",
+    "preset": "s1.small",
     "size": 10,
     "replicas": 3,
     "external": true
@@ -140,7 +140,7 @@ curl -sS -X POST "$HIKUBE_API/rabbitmq/v1alpha1/projects/$PROJECT_ID/clusters" \
 |-------|--------|----------|
 | `name` | `rabbitdemo` | 16 caractères maximum, en minuscules ; identifie le cluster dans les chemins de l'API |
 | `version` | `v4.2` | `v3.13`, `v4.0`, `v4.1` ou `v4.2` |
-| `preset` | `small` | `nano`, `micro`, `small`, `medium`, `large`, `xlarge` ou `2xlarge` ; non modifiable après la création |
+| `preset` | `s1.small` | Une préconfiguration de `GET /rabbitmq/v1alpha1/presets` (séries `u1`, `s1` et `m1`) ; non modifiable après la création |
 | `size` | `10` | Taille du disque de chaque nœud, en Go (1 à 4096) |
 | `replicas` | `3` | La console propose 1, 3 ou 5 ; le mode (un nœud ou plusieurs) ne peut plus changer après la création |
 | `external` | `true` | **Accès externe** depuis Internet |
