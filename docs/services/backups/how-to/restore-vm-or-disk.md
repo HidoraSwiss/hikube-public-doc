@@ -4,6 +4,9 @@ sidebar_position: 5
 description: "Restaurez une machine virtuelle Hikube et tous ses disques depuis une archive, choisissez le sort des disques remplacés, et recréez une VM ou un disque supprimé."
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Comment restaurer une VM ou un disque
 
 Ce guide restaure une machine virtuelle, ou un disque supprimé, à partir d'une archive, depuis la [console Hikube](https://console.hikube.cloud).
@@ -11,6 +14,7 @@ Ce guide restaure une machine virtuelle, ou un disque supprimé, à partir d'une
 ## Prérequis
 
 - Une archive **Prête** et restaurable de la VM ou du disque (voir [Gérer les archives](./manage-archives.md)).
+- Pour l'onglet **API** : une clé d'API du projet (`admin` pour créer, modifier, lancer, restaurer ou supprimer ; `read` pour consulter) et les variables `HIKUBE_API`, `HIKUBE_API_KEY` et `PROJECT_ID` (voir [Préparer l'environnement](../../../api/quick-start.md#environnement)) ; les exemples utilisent `curl` et `jq`.
 
 ## Ce qu'il faut savoir
 
@@ -20,6 +24,9 @@ Ce guide restaure une machine virtuelle, ou un disque supprimé, à partir d'une
 - La VM est arrêtée pendant la restauration : prévoyez une interruption de service.
 
 ## Restaurer une VM
+
+<Tabs groupId="interface">
+<TabItem value="console" label="Console" default>
 
 1. Ouvrez **Instances VM**, la VM, puis son onglet **Sauvegardes**. Vous pouvez aussi partir de **Sauvegardes** > **Archives**.
 2. Sur la ligne de l'archive, cliquez sur **Restaurer**.
@@ -32,6 +39,27 @@ Ce guide restaure une machine virtuelle, ou un disque supprimé, à partir d'une
 
 4. Saisissez le nom de la VM pour confirmer, puis cliquez sur **Restaurer**.
 
+</TabItem>
+<TabItem value="api" label="API">
+
+```bash
+curl -sS -X POST "$HIKUBE_API/backup/v1alpha1/projects/$PROJECT_ID/restores" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "backup": "<archive>",
+    "originalDisks": "keep",
+    "confirmDestructive": true
+  }' | jq '.restore.name'
+```
+
+- Une VM ou un disque se restaure sur lui-même : n'envoyez pas de `target` (`180208` s'il désigne une autre ressource).
+- `originalDisks` : `discard` (par défaut, **Les supprimer** de la console) ou `keep` (**Les garder**). Avec `keep` sans disque à garder, la requête est refusée (`180213`).
+- `confirmDestructive: true` est obligatoire quand la VM existe encore (`180109` sinon).
+
+</TabItem>
+</Tabs>
+
 :::tip Quand garder les anciens disques
 Choisissez **Les garder** si vous n'êtes pas certain que l'archive est la bonne : vous pourrez attacher un ancien disque à une VM pour en récupérer des fichiers. Pensez à le supprimer ensuite depuis **Disques**.
 :::
@@ -42,14 +70,32 @@ Si la VM ou le disque a été supprimé, la console l'indique (**« … » a ét
 
 Pour une VM supprimée dont des disques ont survécu, le choix porte sur **Les disques qui ont survécu à cette machine**.
 
-Si une **nouvelle** VM ou un nouveau disque porte désormais le même nom, créé après la sauvegarde, la restauration est refusée : elle remplacerait les données d'une autre ressource. Supprimez d'abord cette ressource, puis restaurez. Il en va de même si l'un des disques contenus dans l'archive d'une VM a été supprimé puis recréé depuis la sauvegarde.
+Si une **nouvelle** VM ou un nouveau disque porte désormais le même nom, créé après la sauvegarde, la restauration est refusée : elle remplacerait les données d'une autre ressource. Supprimez d'abord cette ressource, puis restaurez. Il en va de même si l'un des disques contenus dans l'archive d'une VM a été supprimé puis recréé depuis la sauvegarde. Avec l'API, ce refus porte le code `180222`.
 
 ## Suivre la restauration
+
+<Tabs groupId="interface">
+<TabItem value="console" label="Console" default>
 
 - La section **Restaurations** de l'onglet **Sauvegardes** affiche le statut, le pourcentage de données transférées et le sort des disques d'origine (**Disques d'origine supprimés si la restauration réussit**, **Disques d'origine gardés**…).
 - Avant de passer à **Réussie**, la restauration vérifie que chaque disque de l'archive a bien été réécrit ; elle reste **En cours** pendant ces quelques secondes.
 - Une restauration qui échoue, ou que vous annulez, **ne supprime rien**, même avec **Les supprimer** : les anciens disques sont gardés sous le nom `<disque>-orig-<identifiant>`, et le message le dit (**Disques d'origine gardés : la restauration n'a pas réussi**). Relancer la restauration peut réussir.
 - Une restauration de VM ne s'arrête pas d'elle-même si elle reste bloquée : vous pouvez l'annuler (voir [Annuler une sauvegarde ou une restauration](./cancel-backup-or-restore.md)).
+
+</TabItem>
+<TabItem value="api" label="API">
+
+```bash
+curl -sS "$HIKUBE_API/backup/v1alpha1/projects/$PROJECT_ID/restores/<restauration>" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" | jq '.restore | {status, message, progress, originalDisks}'
+```
+
+- `progress.percent` donne le pourcentage de données transférées ; `progress` disparaît une fois le transfert terminé.
+- `originalDisks` rappelle le choix fait ; le `message` dit ce qu'il en est advenu, en particulier quand une restauration qui échoue a gardé les anciens disques.
+- Une restauration de VM bloquée s'annule (voir [Annuler une sauvegarde ou une restauration](./cancel-backup-or-restore.md)).
+
+</TabItem>
+</Tabs>
 
 ## Vérification
 

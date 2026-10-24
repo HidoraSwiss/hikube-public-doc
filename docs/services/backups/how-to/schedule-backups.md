@@ -4,6 +4,9 @@ sidebar_position: 2
 description: "Programmez la sauvegarde récurrente d'une base, d'une VM ou d'un disque Hikube, lancez une sauvegarde à la demande et repérez les ressources non protégées."
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Comment programmer des sauvegardes et sauvegarder à la demande
 
 Ce guide programme la sauvegarde récurrente d'une ressource depuis la [console Hikube](https://console.hikube.cloud), lance une sauvegarde immédiate, et montre comment repérer les ressources qui ne sont pas protégées.
@@ -12,8 +15,12 @@ Ce guide programme la sauvegarde récurrente d'une ressource depuis la [console 
 
 - Une destination **Prête** dans le projet (voir [Créer une destination](./create-destination.md)).
 - Une base PostgreSQL ou MariaDB, une VM ou un disque.
+- Pour l'onglet **API** : une clé d'API du projet (`admin` pour créer, modifier, lancer, restaurer ou supprimer ; `read` pour consulter) et les variables `HIKUBE_API`, `HIKUBE_API_KEY` et `PROJECT_ID` (voir [Préparer l'environnement](../../../api/quick-start.md#environnement)) ; les exemples utilisent `curl` et `jq`.
 
 ## Programmer une sauvegarde
+
+<Tabs groupId="interface">
+<TabItem value="console" label="Console" default>
 
 1. Ouvrez la ressource (par exemple **PostgreSQL** > votre base, ou **Instances VM** > votre VM), puis son onglet **Sauvegardes**.
 2. Dans la carte **Programmation**, cliquez sur **Programmer**.
@@ -22,6 +29,36 @@ Ce guide programme la sauvegarde récurrente d'une ressource depuis la [console 
    - **Destination** : une destination **Prête** ;
    - l'horaire, de l'une des deux façons ci-dessous.
 4. Cliquez sur **Programmer**.
+
+</TabItem>
+<TabItem value="api" label="API">
+
+Une programmation (`plan`) sauvegarde une ressource, désignée par son type (`kind`) et son nom, sur un horaire `cron` :
+
+```bash
+curl -sS -X POST "$HIKUBE_API/backup/v1alpha1/projects/$PROJECT_ID/plans" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "demopg-nightly",
+    "application": {"kind": "postgres", "name": "demopg"},
+    "destination": "backups",
+    "cron": "0 1 * * *"
+  }'
+```
+
+| Champ | Règle |
+|-------|-------|
+| `name` | Mêmes règles que le **Nom du plan** de la console ; unique dans le projet (`180007` s'il est pris) |
+| `application.kind` | `postgres`, `mariadb`, `instance` (VM) ou `disk` |
+| `application.name` | Le nom de la ressource, tel que l'API le renvoie (par exemple le `name` du cluster ou de la VM) |
+| `destination` | Une destination `ready` |
+| `cron` | Expression à cinq champs, ou `@hourly`, `@daily`, `@weekly`, `@monthly`, `@yearly`, **en UTC** ; mêmes refus que dans la console (`180105`, `180106` au-delà d'une exécution par heure) |
+
+La programmation renvoyée porte `status` (`ready` ou `error`, avec `message`), `nextRunAt` et `lastRunAt`.
+
+</TabItem>
+</Tabs>
 
 ### Horaire par préréglage
 
@@ -54,8 +91,35 @@ Un horaire est fixe en UTC : il se décale d'une heure en heure locale à chaque
 
 ## Modifier ou supprimer une programmation
 
+<Tabs groupId="interface">
+<TabItem value="console" label="Console" default>
+
 - **Modifier** : seul l'horaire se modifie. Le nom, la ressource et la destination sont fixés à la création ; pour changer de destination, supprimez la programmation et créez-en une autre.
 - **Supprimer** : les exécutions futures s'arrêtent et les archives déjà prises sont conservées. L'historique des exécutions de cette programmation disparaît avec elle.
+
+</TabItem>
+<TabItem value="api" label="API">
+
+Seul l'horaire se modifie :
+
+```bash
+curl -sS -X PATCH "$HIKUBE_API/backup/v1alpha1/projects/$PROJECT_ID/plans/demopg-nightly" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"cron": "30 2 * * *"}'
+```
+
+Pour supprimer la programmation :
+
+```bash
+curl -sS -X DELETE "$HIKUBE_API/backup/v1alpha1/projects/$PROJECT_ID/plans/demopg-nightly" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY"
+```
+
+Les programmations d'une ressource se listent avec `GET $HIKUBE_API/backup/v1alpha1/projects/$PROJECT_ID/plans?applicationName=demopg`.
+
+</TabItem>
+</Tabs>
 
 Une ressource peut avoir plusieurs programmations, par exemple une quotidienne et une mensuelle.
 
@@ -65,10 +129,40 @@ Toutes les programmations et sauvegardes d'une même base PostgreSQL doivent vis
 
 ## Sauvegarder maintenant
 
+<Tabs groupId="interface">
+<TabItem value="console" label="Console" default>
+
 1. Dans l'onglet **Sauvegardes** de la ressource, section **Sauvegarde à la demande**, choisissez la **Destination** si plusieurs sont prêtes.
 2. Cliquez sur **Sauvegarder maintenant**.
 
 La sauvegarde apparaît dans **État des exécutions**. Pour une VM ou un disque, la console affiche le pourcentage de données transférées.
+
+</TabItem>
+<TabItem value="api" label="API">
+
+Une sauvegarde à la demande est une exécution (`job`) sans programmation :
+
+```bash
+curl -sS -X POST "$HIKUBE_API/backup/v1alpha1/projects/$PROJECT_ID/jobs" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "application": {"kind": "postgres", "name": "demopg"},
+    "destination": "backups"
+  }' | jq '.job.name'
+```
+
+Suivez-la avec son nom :
+
+```bash
+curl -sS "$HIKUBE_API/backup/v1alpha1/projects/$PROJECT_ID/jobs/<nom-du-job>" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" | jq '.job | {status, message, backup, progress}'
+```
+
+`status` passe de `pending` à `running`, puis `succeeded` ou `failed`. Une exécution réussie nomme dans `backup` l'archive produite. `progress` (`bytesDone`, `bytesTotal`, `percent`) n'existe que pour une VM ou un disque.
+
+</TabItem>
+</Tabs>
 
 Une sauvegarde à la demande est refusée pendant une restauration de la même ressource.
 
@@ -91,8 +185,29 @@ Le bouton **Programmer** de cette page ouvre directement la fenêtre de programm
 
 ## Vérification
 
+<Tabs groupId="interface">
+<TabItem value="console" label="Console" default>
+
 - La carte **Programmation** affiche l'horaire, la **Prochaine** et la **Dernière** exécution.
 - **Sauvegardes** > **Activité** liste chaque exécution avec son statut et sa durée.
+
+</TabItem>
+<TabItem value="api" label="API">
+
+```bash
+# Programmation : horaire, prochaine et dernière exécution
+curl -sS "$HIKUBE_API/backup/v1alpha1/projects/$PROJECT_ID/plans/demopg-nightly" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" | jq '.plan | {status, cron, nextRunAt, lastRunAt}'
+
+# Exécutions de la programmation
+curl -sS "$HIKUBE_API/backup/v1alpha1/projects/$PROJECT_ID/jobs?plan=demopg-nightly" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" | jq '.jobs[] | {name, status, startedAt, completedAt}'
+```
+
+Ces lectures suffisent avec une clé `read`.
+
+</TabItem>
+</Tabs>
 
 ## Pour aller plus loin
 
