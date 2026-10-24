@@ -6,6 +6,8 @@ tags: [release]
 
 Die API öffnet sich mit API-Schlüsseln für Automatisierungswerkzeuge und erhält einen Dienst für Sicherung und Wiederherstellung von PostgreSQL, MariaDB, VMs und Festplatten, einschließlich der Wiederherstellung von PostgreSQL zu einem bestimmten Zeitpunkt. Verwaltete Datenbanken lassen sich neu starten, und eine VM gibt ihre interne und ihre öffentliche Adresse jetzt getrennt zurück. `PATCH`-Anfragen werden zu echten Teilaktualisierungen: Ein Feld, das im Body fehlt, behält seinen Wert.
 
+**Inkompatible Änderung**: Der Zugriff mit einer Projekt-Kubeconfig auf `api.hikube.cloud` entfällt, und diese Adresse stellt nun die öffentliche API bereit (siehe *Migration* am Ende dieser Notiz).
+
 <!-- truncate -->
 
 ## Hinzugefügt
@@ -75,6 +77,10 @@ Diese Änderungen betreffen ein bestehendes Verhalten. Prüfen Sie sie, wenn Sie
 
 - **Redis** — Die Passwortrotation erzeugt ein neues Passwort mit 32 Zeichen, das nach einem Neustart des Clusters gilt. Sie wird abgelehnt, wenn die Authentifizierung deaktiviert ist (`120206`).
 
+## Entfernt
+
+- **Zugriff per Projekt-Kubeconfig** — Der direkte Zugriff mit einer Projekt-Kubeconfig, die auf `https://api.hikube.cloud:443` zeigt, ist nicht mehr verfügbar. Die Adresse `api.hikube.cloud` stellt nun die öffentliche Hikube-API bereit. Werkzeuge, die mit dieser Kubeconfig eingerichtet sind (`kubectl`, `virtctl`, der frühere Terraform-Provider), können sich nicht mehr damit verbinden. Kubeconfigs der Kubernetes-Cluster, die Sie auf Hikube erstellen, sind nicht betroffen: Jeder Cluster behält seine eigene Adresse.
+
 ## Behoben
 
 - **Teilaktualisierungen** — Eine Aktualisierung setzt die Felder, die sie nicht nennt, nicht mehr zurück. Bisher hat ein Body ohne diese Felder:
@@ -99,4 +105,10 @@ Diese Änderungen betreffen ein bestehendes Verhalten. Prüfen Sie sie, wenn Sie
 
 :::warning Bekannte Einschränkung
 Eine geplante Sicherung kann während der Wiederherstellung eines PostgreSQL-Clusters an Ort und Stelle starten und sie scheitern lassen. Prüfen Sie vor einer solchen Wiederherstellung das `nextRunAt` der Pläne der Anwendung: Ist eine Ausführung innerhalb der nächsten 30 Minuten vorgesehen, warten Sie, bis sie beendet ist.
+:::
+
+:::warning Migration
+- **Projekt-Kubeconfig**: Ersetzen Sie die Aufrufe mit dieser Kubeconfig durch die öffentliche API. Erstellen Sie in den Projekteinstellungen einen API-Schlüssel und rufen Sie dann `https://api.hikube.cloud` mit dem Header `X-Hikube-Api-Key` auf. Siehe [Authentifizierung](/api/authentication/) und [Schnellstart](/api/quick-start/).
+- **Öffentliche API unter `api.demo.hikube.cloud`**: Wechseln Sie zu `https://api.hikube.cloud`. Die frühere Adresse bleibt während einer Übergangszeit verfügbar und wird dann entfernt.
+- Für einen Bedarf, den die API noch nicht abdeckt, etwa die VNC-Konsole einer VM, wenden Sie sich an den Support.
 :::

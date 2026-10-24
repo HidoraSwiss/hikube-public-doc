@@ -6,6 +6,8 @@ tags: [release]
 
 The API opens to automation tools with API keys, and gains a backup and restore service for PostgreSQL, MariaDB, VMs and disks, including point-in-time restore for PostgreSQL. Managed databases can be restarted, and a VM now returns its internal address and its public address separately. `PATCH` requests become true partial updates: a field left out of the body keeps its value.
 
+**Breaking change**: access with a project kubeconfig on `api.hikube.cloud` is removed, and that address now serves the public API (see *Migration* at the end of this note).
+
 <!-- truncate -->
 
 ## Added
@@ -75,6 +77,10 @@ These changes alter an existing behavior. Check them if you call the API from yo
 
 - **Redis** — Password rotation generates a new 32-character password, applied after a cluster restart. It is refused when authentication is disabled (`120206`).
 
+## Removed
+
+- **Project kubeconfig access** — Direct access with a project kubeconfig pointing at `https://api.hikube.cloud:443` is no longer available. The `api.hikube.cloud` address now serves the Hikube public API. Tools configured with that kubeconfig (`kubectl`, `virtctl`, the former Terraform provider) can no longer connect to it. Kubeconfigs of the Kubernetes clusters you create on Hikube are not affected: each cluster keeps its own address.
+
 ## Fixed
 
 - **Partial updates** — An update no longer resets the fields it does not mention. Until now, a body without these fields:
@@ -99,4 +105,10 @@ These changes alter an existing behavior. Check them if you call the API from yo
 
 :::warning Known limitation
 A scheduled backup can start during the in-place restore of a PostgreSQL cluster and make it fail. Before such a restore, check the `nextRunAt` of the application's plans: if a run is due within 30 minutes, wait for it to finish.
+:::
+
+:::warning Migration
+- **Project kubeconfig**: replace the calls made with that kubeconfig by the public API. Create an API key in the project settings, then call `https://api.hikube.cloud` with the `X-Hikube-Api-Key` header. See [Authentication](/api/authentication/) and [Quick start](/api/quick-start/).
+- **Public API on `api.demo.hikube.cloud`**: switch to `https://api.hikube.cloud`. The former address remains available for a transition period, then will be removed.
+- For a need the API does not cover yet, such as the VNC console of a VM, contact support.
 :::
