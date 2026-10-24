@@ -6,6 +6,8 @@ tags: [release]
 
 L'API si apre agli strumenti di automazione con le chiavi API, e si arricchisce di un servizio di backup e ripristino per PostgreSQL, MariaDB, VM e dischi, con il ripristino PostgreSQL a un istante preciso. I database gestiti possono essere riavviati, e una VM restituisce ora separatamente il proprio indirizzo interno e il proprio indirizzo pubblico. Le richieste `PATCH` diventano veri aggiornamenti parziali: un campo assente dal corpo mantiene il suo valore.
 
+**Modifica incompatibile**: l'accesso con un kubeconfig di progetto su `api.hikube.cloud` è stato rimosso, e questo indirizzo serve ora l'API pubblica (vedi *Migrazione* in fondo alla nota).
+
 <!-- truncate -->
 
 ## Aggiunto
@@ -75,6 +77,10 @@ Queste modifiche cambiano un comportamento esistente. Verificatele se chiamate l
 
 - **Redis** — La rotazione della password genera una nuova password di 32 caratteri, applicata dopo un riavvio del cluster. Viene rifiutata se l'autenticazione è disattivata (`120206`).
 
+## Rimosso
+
+- **Accesso con kubeconfig di progetto** — L'accesso diretto con un kubeconfig di progetto che punta a `https://api.hikube.cloud:443` non è più disponibile. L'indirizzo `api.hikube.cloud` serve ora l'API pubblica di Hikube. Gli strumenti configurati con questo kubeconfig (`kubectl`, `virtctl`, il precedente provider Terraform) non possono più collegarsi. I kubeconfig dei cluster Kubernetes che create su Hikube non sono interessati: ogni cluster mantiene il proprio indirizzo.
+
 ## Corretto
 
 - **Aggiornamenti parziali** — Un aggiornamento non reimposta più i campi che non menziona. Finora, un corpo senza questi campi:
@@ -99,4 +105,10 @@ Queste modifiche cambiano un comportamento esistente. Verificatele se chiamate l
 
 :::warning Limite noto
 Un backup programmato può avviarsi durante il ripristino sul posto di un cluster PostgreSQL e farlo fallire. Prima di un tale ripristino, verificate il `nextRunAt` dei piani dell'applicazione: se un'esecuzione è prevista nei prossimi 30 minuti, attendete che termini.
+:::
+
+:::warning Migrazione
+- **Kubeconfig di progetto**: sostituite le chiamate fatte con questo kubeconfig con l'API pubblica. Create una chiave API nelle impostazioni del progetto, poi chiamate `https://api.hikube.cloud` con l'intestazione `X-Hikube-Api-Key`. Vedi [Autenticazione](/api/authentication/) e [Avvio rapido](/api/quick-start/).
+- **API pubblica su `api.demo.hikube.cloud`**: passate a `https://api.hikube.cloud`. Il vecchio indirizzo resta disponibile per un periodo di transizione, poi sarà rimosso.
+- Per un'esigenza che l'API non copre ancora, come la console VNC di una VM, contattate il supporto.
 :::
