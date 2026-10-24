@@ -115,8 +115,9 @@ Redis auf Hikube bietet in der Konsole keine Verwaltung mehrerer Benutzer (ACL):
 
 ## Netzwerkzugriff
 
-- **Öffentliches Netzwerk deaktiviert** (Standard, „Private“ in der Übersicht): Der Cluster ist nicht im Internet erreichbar. Der Abschnitt **Connection** der Cluster-Seite zeigt anstelle des Hosts „Waiting for allocation...“ an.
-- **Öffentliches Netzwerk aktiviert** („Public“): Die Plattform weist eine öffentliche IP-Adresse zu, die im Feld **Host** angezeigt wird. Sie gewährt Zugriff auf den Master über den Redis-Standardport `6379` und folgt dem Master nach einem Failover.
+- **Interner Host**: immer zugewiesen, angezeigt im Bereich **Internal** des Abschnitts **Connection**. Er zeigt auf den Master und ist von den VMs und Kubernetes-Clustern desselben Projekts aus erreichbar, nicht aus einem anderen Projekt und nicht aus dem Internet.
+- **Öffentliches Netzwerk deaktiviert** (Standard, „Private“ in der Übersicht): Der Cluster ist nicht im Internet erreichbar. Der Bereich **External** zeigt **Disabled** an.
+- **Öffentliches Netzwerk aktiviert** („Public“): Die Plattform weist eine öffentliche IP-Adresse zu, die im Bereich **External** angezeigt wird. Sie gewährt Zugriff auf den Master über den Redis-Standardport `6379` und folgt dem Master nach einem Failover.
 
 ---
 

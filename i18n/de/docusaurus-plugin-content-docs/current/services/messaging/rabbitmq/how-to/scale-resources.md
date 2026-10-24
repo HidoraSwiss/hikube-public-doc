@@ -37,7 +37,7 @@ Die Seite **Edit RabbitMQ cluster** zeigt die Karte **Cluster settings** an. Die
 - **External access**: Aktivieren oder deaktivieren Sie den Schalter.
 
 :::warning Versionswechsel
-Wenn Sie die Version ändern, erscheint die Warnung „The cluster instances will restart“: Eine aktualisierte Version kann nicht mehr herabgestuft werden. Beim Versionswechsel werden die RabbitMQ-Knoten nacheinander neu erstellt: Mit nur einem Replica ist der Cluster während des Neustarts nicht verfügbar (etwa ein bis zwei Minuten), und die Clients müssen sich neu verbinden. Die Adresse im Feld **Host** ändert sich nicht. Testen Sie den Versionswechsel auf einem Nicht-Produktionscluster, bevor Sie ihn auf einen Produktionscluster anwenden, und prüfen Sie die Kompatibilität Ihrer Clients mit der Zielversion.
+Wenn Sie die Version ändern, erscheint die Warnung „The cluster instances will restart“: Eine aktualisierte Version kann nicht mehr herabgestuft werden. Beim Versionswechsel werden die RabbitMQ-Knoten nacheinander neu erstellt: Mit nur einem Replica ist der Cluster während des Neustarts nicht verfügbar (etwa ein bis zwei Minuten), und die Clients müssen sich neu verbinden. Die Adressen in den Bereichen **Internal** und **External** ändern sich nicht. Testen Sie den Versionswechsel auf einem Nicht-Produktionscluster, bevor Sie ihn auf einen Produktionscluster anwenden, und prüfen Sie die Kompatibilität Ihrer Clients mit der Zielversion.
 :::
 
 ### 3. Speichern

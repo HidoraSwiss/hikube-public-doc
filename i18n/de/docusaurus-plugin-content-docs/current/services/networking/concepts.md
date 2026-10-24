@@ -41,8 +41,8 @@ graph TB
 | **VPC** | Isoliertes privates Netzwerk des Projekts. Es hat keinen eigenen Adressbereich: Diesen tragen seine Subnetze. |
 | **Subnetz** | Privater IPv4-Adressbereich (CIDR-Block) innerhalb eines VPC. Eine VM wird mit einem oder mehreren Subnetzen verbunden. |
 | **CIDR-Block** | Schreibweise für einen Adressbereich, zum Beispiel `172.16.0.0/24` (256 Adressen, von `172.16.0.0` bis `172.16.0.255`). |
-| **Hauptnetzwerk** | Standardnetzwerk jeder VM, mit dem Standard-Gateway und der eventuellen öffentlichen IP. Auf der Detailseite der VM als **Primary**-Adresse angezeigt. |
-| **Sekundäre Schnittstelle** | Netzwerkschnittstelle, die der VM für jedes verbundene Subnetz hinzugefügt wird. Ihre Adressen erscheinen als **Secondary**. |
+| **Hauptnetzwerk** | Netzwerk des Projekts, mit dem jede VM über ihre Hauptschnittstelle verbunden ist, mit dem Standard-Gateway. Seine Adresse ist die **mgmt**-IP, angezeigt im Bereich **Internal** der Detailseite der VM; die eventuelle öffentliche IP erscheint im Bereich **External**. |
+| **Sekundäre Schnittstelle** | Netzwerkschnittstelle, die der VM für jedes verbundene Subnetz hinzugefügt wird. Ihre Adressen erscheinen im Bereich **Internal**, neben der **mgmt**-IP. |
 
 ---
 

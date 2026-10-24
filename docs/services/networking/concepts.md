@@ -41,8 +41,8 @@ graph TB
 | **VPC** | Réseau privé isolé du projet. Il n'a pas de plage d'adresses propre : ce sont ses sous-réseaux qui en portent. |
 | **Sous-réseau** | Plage d'adresses IPv4 privée (bloc CIDR) au sein d'un VPC. Une VM se relie à un ou plusieurs sous-réseaux. |
 | **Bloc CIDR** | Notation d'une plage d'adresses, par exemple `172.16.0.0/24` (256 adresses, de `172.16.0.0` à `172.16.0.255`). |
-| **Réseau principal** | Réseau par défaut de toute VM, avec la passerelle par défaut et l'IP publique éventuelle. Affiché comme adresse **Principale** sur la page de détail de la VM. |
-| **Interface secondaire** | Interface réseau ajoutée à la VM pour chaque sous-réseau relié. Ses adresses apparaissent comme **Secondaire**. |
+| **Réseau principal** | Réseau du projet, auquel toute VM est reliée par son interface principale, avec la passerelle par défaut. Son adresse est l'IP **mgmt**, affichée dans la zone **Interne** de la page de détail de la VM ; l'IP publique éventuelle s'affiche dans la zone **Externe**. |
+| **Interface secondaire** | Interface réseau ajoutée à la VM pour chaque sous-réseau relié. Ses adresses apparaissent dans la zone **Interne**, à côté de l'IP **mgmt**. |
 
 ---
 

@@ -49,7 +49,7 @@ Il primary scrive le sue modifiche nel binary log, che le repliche rieseguono. I
 
 ### Dove si trova l'indirizzo di connessione?
 
-Nel riquadro **Connection and network** della pagina del cluster, campo **Host**, quando l'**External Access** è attivato. La porta è `3306`. Senza accesso esterno, il campo mostra **Not defined**: il cluster resta raggiungibile dalle VM e dai cluster Kubernetes del progetto tramite un indirizzo interno, che la console non mostra; [contatti il supporto](mailto:support@hidora.io) per ottenerlo.
+Nel riquadro **Connection and network** della pagina del cluster. La zona **Internal** mostra sempre l'host interno, raggiungibile dalle VM e dai cluster Kubernetes del progetto; la zona **External** mostra l'indirizzo pubblico quando l'**External Access** è attivato, **Disabled** altrimenti. La porta è `3306`.
 
 ### Come creare un database?
 

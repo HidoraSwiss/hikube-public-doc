@@ -51,7 +51,10 @@ Fa fede l'elenco mostrato dalla procedura guidata. Il preset non può essere mod
 
 ### Dove si trova l'indirizzo di connessione?
 
-Nel riquadro **Network and Connection** della pagina del cluster, quando l'**External Access** è attivato: campo **Host** per un cluster con sharding, elenco **Replica set rs0 members** e **External connection string** per un replica set. La porta è `27017`. Su un replica set, si connetta a un membro con `directConnection=true`, senza il parametro `replicaSet`. Senza accesso esterno, il campo mostra **Not defined**: il cluster resta raggiungibile dalle VM e dai cluster Kubernetes del progetto tramite un indirizzo interno, che la console non mostra; [contatti il supporto](mailto:support@hidora.io) per ottenerlo.
+Nel riquadro **Network and Connection** della pagina del cluster. La porta è `27017`.
+
+- Dal progetto (VM, cluster Kubernetes): l'host della zona **Internal**, sempre visualizzato. Su un replica set, aggiunga `replicaSet=rs0`.
+- Da Internet, quando l'**External Access** è attivato: la zona **External**, con l'indirizzo dei router per un cluster con sharding, un indirizzo per membro e la **External connection string** per un replica set. Su un replica set, si connetta a un membro con `directConnection=true`, senza il parametro `replicaSet`.
 
 ### Perché l'utente creato nella procedura guidata non ha accesso al mio database?
 

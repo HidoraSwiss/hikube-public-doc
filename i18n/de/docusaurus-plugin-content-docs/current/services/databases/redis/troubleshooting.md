@@ -28,9 +28,9 @@ description: "Beheben Sie häufige Redis-Probleme auf Hikube: Cluster im Fehler,
 
 **Lösung**: Behalten Sie die aktuelle oder eine höhere Version bei und eine Volume-Größe, die mindestens der aktuellen entspricht.
 
-### Der Host zeigt „Waiting for allocation...“ an
+### Der Bereich External zeigt „Disabled“ oder „Waiting for allocation…“ an
 
-**Ursache**: Das öffentliche Netzwerk ist deaktiviert, oder die öffentliche IP-Adresse ist noch nicht zugewiesen.
+**Ursache**: Der externe Zugriff ist deaktiviert, oder die öffentliche IP-Adresse ist noch nicht zugewiesen. Von einer VM oder einem Kubernetes-Cluster des Projekts aus ist kein externer Zugriff nötig: Verwenden Sie den Host aus dem Bereich **Internal**.
 
 **Lösung**:
 
@@ -44,7 +44,7 @@ description: "Beheben Sie häufige Redis-Probleme auf Hikube: Cluster im Fehler,
 **Lösung**:
 
 1. Prüfen Sie, ob der **Status** im Abschnitt **Connection** **Ready** lautet.
-2. Kopieren Sie den **Host** mit der Kopier-Schaltfläche, um Tippfehler zu vermeiden.
+2. Kopieren Sie die Adresse mit ihrer Kopier-Schaltfläche, um Tippfehler zu vermeiden: Bereich **External** aus dem Internet, Bereich **Internal** aus dem Projekt.
 3. Prüfen Sie, ob keine ausgehende Firewall Ihres Netzwerks den Port `6379` blockiert.
 
 ### Authentifizierung schlägt fehl (`NOAUTH` oder `WRONGPASS`)

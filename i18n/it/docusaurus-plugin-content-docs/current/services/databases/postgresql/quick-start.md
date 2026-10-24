@@ -123,17 +123,22 @@ Se la piattaforma rifiuta un utente, il passaggio mostra « User not created » 
 Copi queste password in un gestore di password prima di lasciare la schermata: non verranno più mostrate. In caso di smarrimento, ne generi una nuova dalla scheda **Users** (**Actions** → **Change Password**).
 :::
 
-L'indirizzo del cluster resta consultabile nella pagina del cluster, riquadro **Connection and Databases**, campo **Host**.
+Il riquadro **Connection and Databases** della pagina del cluster mostra i suoi indirizzi in due zone, ciascuna con un pulsante di copia:
+
+- **Internal**, *From the project's resources only*: l'host interno, sempre presente, e la porta (`5432`). È raggiungibile dalle VM e dai cluster Kubernetes dello stesso progetto, senza accesso esterno;
+- **External**, *From the Internet*: l'indirizzo pubblico, quando l'**External Access** è attivato.
 
 ---
 
 ## Passo 5: Connessione e test
 
-Si connetta con `psql` utilizzando l'indirizzo del campo **Host**:
+Dalla sua postazione, si connetta con `psql` all'indirizzo della zona **External**:
 
 ```bash
 psql "host=<host> port=5432 dbname=myapp user=app_user sslmode=require"
 ```
+
+Da una VM o da un cluster Kubernetes del progetto, utilizzi l'host della zona **Internal**: `psql "host=<host-interno> port=5432 dbname=myapp user=app_user"`.
 
 Inserisca la password quando richiesta, quindi verifichi la connessione:
 
@@ -157,9 +162,13 @@ SELECT * FROM test;
 
 ## Passo 6: Risoluzione rapida dei problemi
 
-### Il campo Host mostra « Not defined »
+### La zona External mostra « Disabled » o « Waiting for allocation… »
 
-L'**External Access** è disattivato, oppure l'indirizzo IP pubblico non è ancora stato assegnato. Verifichi il riquadro **External Access** della pagina del cluster; se necessario, lo attivi tramite **Edit**, quindi attenda qualche istante.
+« Disabled »: l'**External Access** è disattivato. Lo attivi tramite **Edit** se deve connettersi da Internet; dal progetto, utilizzi l'host della zona **Internal**. « Waiting for allocation… »: l'indirizzo pubblico non è ancora stato assegnato, attenda qualche istante.
+
+### L'host interno non si risolve da una VM
+
+Copi il nome completo della zona **Internal**, senza abbreviarlo. Su Debian 13, il nome non si risolve senza configurazione: vedere [Raggiungere un servizio gestito del progetto](../../compute/how-to/configure-network.md#raggiungere-un-servizio-gestito-del-progetto).
 
 ### Il pulsante Next resta inattivo
 

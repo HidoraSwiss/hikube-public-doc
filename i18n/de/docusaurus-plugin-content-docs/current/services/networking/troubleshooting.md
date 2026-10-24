@@ -55,7 +55,7 @@ description: "Beheben Sie häufige Probleme mit Hikube-VPCs: abgelehnter CIDR-Bl
 
 **Lösung**:
 
-1. Prüfen Sie auf der Detailseite der VM, ob **VPC Networks** das Subnetz aufführt und **IP Addresses** eine **Secondary**-Adresse enthält.
+1. Prüfen Sie auf der Detailseite der VM, ob **VPC Networks** das Subnetz aufführt und der Bereich **Internal** neben der **mgmt**-IP eine Adresse dieses Subnetzes enthält.
 2. Listen Sie in der VM die Schnittstellen auf:
    ```bash
    ip -br link

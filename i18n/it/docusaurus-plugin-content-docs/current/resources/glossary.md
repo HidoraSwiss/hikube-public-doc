@@ -11,7 +11,7 @@ Qui trova le definizioni dei termini e dei concetti utilizzati nella documentazi
 
 | **Termine** | **Definizione** | **Documentazione** |
 |-----------|---------------|-------------------|
-| **Accesso esterno** | Opzione dei database e di RabbitMQ che assegna un IP pubblico al cluster; l'indirizzo viene visualizzato nel campo **Host** della pagina di dettaglio (per un replica set MongoDB, l'indirizzo di ogni membro). | [PostgreSQL - Concetti](../services/databases/postgresql/concepts.md) |
+| **Accesso esterno** | Opzione dei database e di RabbitMQ che assegna un IP pubblico al cluster; l'indirizzo viene visualizzato nella zona **External** della pagina di dettaglio (per un replica set MongoDB, l'indirizzo di ogni membro). L'host interno, raggiungibile dal progetto, viene visualizzato nella zona **Internal** con o senza accesso esterno. | [PostgreSQL - Concetti](../services/databases/postgresql/concepts.md) |
 | **Add-on / Estensione** | Componente attivabile su un cluster Kubernetes dal passaggio **Addons** della procedura guidata (cert-manager, Ingress NGINX, monitoring, ecc.). | [Kubernetes - Concetti](../services/kubernetes/concepts.md) |
 | **AMQP** | Advanced Message Queuing Protocol. Protocollo di messaggistica standard utilizzato in particolare da RabbitMQ per la comunicazione tra applicazioni. | [RabbitMQ - Panoramica](../services/messaging/rabbitmq/overview.md) |
 | **ClickHouse Keeper** | Servizio di consenso distribuito integrato in ClickHouse, utilizzato per il coordinamento dei nodi del cluster (alternativa a ZooKeeper). | [ClickHouse - Panoramica](../services/databases/clickhouse/overview.md) |

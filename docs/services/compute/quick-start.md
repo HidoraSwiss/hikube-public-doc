@@ -170,9 +170,9 @@ Cliquez sur le nom de la VM pour ouvrir sa page de détail. Vous y trouvez :
 
 - **Ressources & Caractéristiques** : type d'instance, image système, utilisateur par défaut, vCPU et RAM ;
 - **Stockage & Disques** : disques attachés, taille, réplication, chiffrement ;
-- **Réseau et Sécurité** : **IP Publique**, **Connexion SSH**, **Adresses IP**, **Pare-feu & Ports**.
+- **Réseau et Sécurité** : les adresses de la VM, en zone **Interne** (l'IP **mgmt**, joignable depuis le projet) et en zone **Externe** (l'IP publique, joignable depuis Internet), puis **Connexion SSH** et **Pare-feu & Ports**.
 
-**Résultat attendu :** statut **Actif**, **IP Publique** à **Active**, port **22** listé sous **Pare-feu & Ports**.
+**Résultat attendu :** statut **Actif**, une adresse dans la zone **Externe**, port **22** listé sous **Pare-feu & Ports**.
 
 </TabItem>
 <TabItem value="api" label="API">
@@ -246,7 +246,7 @@ lsblk
 | Symptôme | Vérification |
 |----------|--------------|
 | **Suivant** reste grisé à l'étape Configuration ou Stockage | Un quota du projet est dépassé : réduisez le gabarit ou la taille du disque, ou faites augmenter les quotas du projet. |
-| `Connection timed out` en SSH | Vérifiez sur la page de détail que **IP Publique** est **Active** et que le port 22 figure dans **Pare-feu & Ports**. |
+| `Connection timed out` en SSH | Vérifiez sur la page de détail que la zone **Externe** affiche une adresse et que le port 22 figure dans **Pare-feu & Ports**. |
 | `Permission denied (publickey)` | Vérifiez l'utilisateur (bloc **Connexion SSH**) et que la clé privée utilisée correspond à la clé publique listée dans **Configuration avancée** > **Clés SSH**. |
 | Statut **Erreur** ou **Échec** | Consultez le [dépannage](./troubleshooting.md). |
 

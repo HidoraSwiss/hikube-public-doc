@@ -14,7 +14,7 @@ Redis su Hikube è distribuito in architettura **Redis Sentinel** per l'alta dis
 - **Redis Sentinel** monitora le istanze Redis ed esegue una **commutazione automatica** (failover) in caso di guasto del master.
 - Un **quorum** di Sentinel decide il failover. Vengono sempre distribuiti tre Sentinel, qualunque sia il numero di repliche Redis: la commutazione funziona a partire da **2 repliche**.
 - I Sentinel contano nelle quote del progetto (CPU e memoria, alla taglia del preset del cluster).
-- L'indirizzo del campo **Host** segue il master: dopo una commutazione, punta automaticamente al nuovo master, senza cambio di indirizzo.
+- L'host della zona **Internal**, come l'indirizzo della zona **External**, segue il master: dopo una commutazione, punta automaticamente al nuovo master, senza cambio di indirizzo.
 
 :::tip
 In produzione, scelga almeno 3 repliche alla creazione: questo numero non potrà più essere modificato in seguito.
@@ -73,13 +73,13 @@ L'attivazione o la disattivazione dell'autenticazione su un cluster esistente, c
 
 ### Come connettersi a Redis?
 
-Con la rete pubblica attivata, utilizzi l'indirizzo del campo **Host** (sezione **Connection** della pagina del cluster) sulla porta `6379`:
+Con la rete pubblica attivata, utilizzi l'indirizzo della zona **External** (sezione **Connection** della pagina del cluster) sulla porta `6379`:
 
 ```bash
 REDISCLI_AUTH='<password>' redis-cli -h <host> -p 6379 ping
 ```
 
-Senza rete pubblica, l'istanza resta raggiungibile dalle VM e dai cluster Kubernetes del progetto tramite un indirizzo interno, che la console non mostra. [Contatti il supporto](mailto:support@hidora.io) per ottenerlo.
+Da una VM o da un cluster Kubernetes del progetto, utilizzi l'host della zona **Internal**, con o senza rete pubblica. Anch'esso segue il master.
 
 ### È possibile creare più utenti Redis (ACL)?
 

@@ -55,7 +55,7 @@ description: "Résolvez les problèmes courants des VPC Hikube : bloc CIDR ou no
 
 **Solution** :
 
-1. Sur la page de détail de la VM, vérifiez que **Réseaux VPC** liste le sous-réseau et que **Adresses IP** contient une adresse **Secondaire**.
+1. Sur la page de détail de la VM, vérifiez que **Réseaux VPC** liste le sous-réseau et que la zone **Interne** contient une adresse de ce sous-réseau, à côté de l'IP **mgmt**.
 2. Dans la VM, listez les interfaces :
    ```bash
    ip -br link

@@ -28,7 +28,7 @@ description: "Risolvete i problemi di MariaDB su Hikube: cluster in errore, conn
 
 **Soluzione**:
 
-1. Nel riquadro **Connection and network**, verifichi che l'**External Access** sia **Enabled** e che il campo **Host** contenga un indirizzo.
+1. Nel riquadro **Connection and network**, verifichi che la zona **External** contenga un indirizzo, e non **Disabled** o « Waiting for allocation… ». Da una VM del progetto, utilizzi piuttosto l'host della zona **Internal**.
 2. Utilizzi la porta `3306` e testi la connettività:
    ```bash
    mysqladmin -h <host> -P 3306 -u <utente> -p ping

@@ -55,7 +55,7 @@ description: "Risolvere i problemi comuni dei VPC Hikube: blocco CIDR o nome rif
 
 **Soluzione**:
 
-1. Nella pagina di dettaglio della VM, verifichi che **VPC Networks** elenchi la sottorete e che **IP Addresses** contenga un indirizzo **Secondary**.
+1. Nella pagina di dettaglio della VM, verifichi che **VPC Networks** elenchi la sottorete e che la zona **Internal** contenga un indirizzo di questa sottorete, accanto all'IP **mgmt**.
 2. Nella VM, elenchi le interfacce:
    ```bash
    ip -br link

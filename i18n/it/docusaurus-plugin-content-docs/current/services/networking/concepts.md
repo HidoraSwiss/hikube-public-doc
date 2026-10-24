@@ -41,8 +41,8 @@ graph TB
 | **VPC** | Rete privata isolata del progetto. Non ha un proprio intervallo di indirizzi: sono le sue sottoreti a definirne uno. |
 | **Sottorete** | Intervallo di indirizzi IPv4 privato (blocco CIDR) all'interno di un VPC. Una VM si collega a una o più sottoreti. |
 | **Blocco CIDR** | Notazione di un intervallo di indirizzi, ad esempio `172.16.0.0/24` (256 indirizzi, da `172.16.0.0` a `172.16.0.255`). |
-| **Rete principale** | Rete predefinita di ogni VM, con il gateway predefinito e l'eventuale IP pubblico. Mostrata come indirizzo **Primary** nella pagina di dettaglio della VM. |
-| **Interfaccia secondaria** | Interfaccia di rete aggiunta alla VM per ogni sottorete collegata. I suoi indirizzi compaiono come **Secondary**. |
+| **Rete principale** | Rete del progetto, a cui ogni VM è collegata tramite la sua interfaccia principale, con il gateway predefinito. Il suo indirizzo è l'IP **mgmt**, visualizzato nella zona **Internal** della pagina di dettaglio della VM; l'eventuale IP pubblico è visualizzato nella zona **External**. |
+| **Interfaccia secondaria** | Interfaccia di rete aggiunta alla VM per ogni sottorete collegata. I suoi indirizzi compaiono nella zona **Internal**, accanto all'IP **mgmt**. |
 
 ---
 

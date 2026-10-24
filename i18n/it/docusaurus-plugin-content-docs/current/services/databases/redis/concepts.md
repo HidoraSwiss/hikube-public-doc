@@ -115,8 +115,9 @@ Redis su Hikube non offre nella console la gestione di più utenti (ACL): l'acce
 
 ## Accesso di rete
 
-- **Public network** disattivata (impostazione predefinita, «Private» nel riepilogo): il cluster non è esposto su Internet. La sezione **Connection** della pagina del cluster mostra «Waiting for allocation...» al posto dell'host.
-- **Public network** attivata («Public»): la piattaforma assegna un indirizzo IP pubblico, mostrato nel campo **Host**. Dà accesso al master sulla porta standard di Redis, `6379`, e segue il master dopo una commutazione.
+- **Host interno**: sempre assegnato, visualizzato nella zona **Internal** della sezione **Connection**. Punta al master ed è raggiungibile dalle VM e dai cluster Kubernetes dello stesso progetto, non da un altro progetto né da Internet.
+- **Public network** disattivata (impostazione predefinita, «Private» nel riepilogo): il cluster non è esposto su Internet. La zona **External** mostra **Disabled**.
+- **Public network** attivata («Public»): la piattaforma assegna un indirizzo IP pubblico, mostrato nella zona **External**. Dà accesso al master sulla porta standard di Redis, `6379`, e segue il master dopo una commutazione.
 
 ---
 

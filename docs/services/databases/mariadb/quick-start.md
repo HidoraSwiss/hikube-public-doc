@@ -180,7 +180,10 @@ L'étape **Résumé** de l'assistant affiche, dans **Identifiants des utilisateu
 Copiez ces mots de passe immédiatement : ils ne seront plus affichés. En cas de perte, générez-en un nouveau depuis la section **Utilisateurs** (**Actions** → **Changer le mot de passe**).
 :::
 
-L'adresse reste consultable dans la carte **Connexion et réseau** de la page du cluster, champ **Hôte (Host)**.
+La carte **Connexion et réseau** de la page du cluster affiche ses adresses en deux zones, chacune avec un bouton de copie :
+
+- **Interne**, *Depuis les ressources du projet uniquement* : l'hôte interne, toujours renseigné, et le port (`3306`). Il se joint depuis les VM et les clusters Kubernetes du même projet, sans accès externe ;
+- **Externe**, *Depuis Internet* : l'adresse publique, lorsque l'**Accès externe** est activé.
 
 ### Accès à la base applicative
 
@@ -224,9 +227,13 @@ L'adresse du cluster est le champ `host` de `GET $HIKUBE_API/mariadb/v1alpha1/pr
 
 ## Étape 5 : Connexion et tests
 
+Depuis votre poste, utilisez l'adresse de la zone **Externe** :
+
 ```bash
 mysql -h <hôte> -P 3306 -u app-user -p myapp
 ```
+
+Depuis une VM ou un cluster Kubernetes du projet, utilisez l'hôte de la zone **Interne** : `mysql -h <hôte-interne> -P 3306 -u app-user -p myapp`.
 
 Saisissez le mot de passe, puis vérifiez la connexion :
 
@@ -255,9 +262,13 @@ Le client `mariadb` accepte les mêmes options : `mariadb -h <hôte> -P 3306 -u 
 
 ## Étape 6 : Dépannage rapide
 
-### Le champ Hôte (Host) affiche « Non défini »
+### La zone Externe affiche « Désactivé » ou « En attente d'attribution… »
 
-L'**Accès externe** est désactivé, ou l'adresse IP publique n'est pas encore attribuée. Activez-le via **Modifier** si besoin, puis patientez quelques instants.
+« Désactivé » : l'**Accès externe** est coupé. Activez-le via **Modifier** si vous devez vous connecter depuis Internet ; depuis le projet, utilisez l'hôte de la zone **Interne**. « En attente d'attribution… » : l'adresse publique n'est pas encore attribuée, patientez quelques instants.
+
+### L'hôte interne ne se résout pas depuis une VM
+
+Copiez le nom complet de la zone **Interne**, sans le raccourcir. Sur Debian 13, le nom ne se résout pas sans configuration : voir [Joindre un service managé du projet](../../compute/how-to/configure-network.md#joindre-un-service-managé-du-projet).
 
 ### `Access denied for user`
 

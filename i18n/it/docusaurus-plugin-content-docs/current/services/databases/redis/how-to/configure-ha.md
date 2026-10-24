@@ -50,7 +50,7 @@ Quando il master diventa indisponibile:
 2. Una replica viene promossa a nuovo master.
 3. Le altre repliche vengono riconfigurate per seguirlo.
 
-Con la rete pubblica attivata, l'indirizzo mostrato nel campo **Host** punta al master corrente: i suoi client non devono cambiare indirizzo dopo un failover, ma le connessioni aperte vengono interrotte e devono essere ristabilite.
+L'host della zona **Internal** e, con la rete pubblica attivata, l'indirizzo della zona **External** puntano al master corrente: i suoi client non devono cambiare indirizzo dopo un failover, ma le connessioni aperte vengono interrotte e devono essere ristabilite.
 
 :::note
 Configuri i suoi client Redis con la riconnessione automatica e tempi di nuovo tentativo, in modo da assorbire la commutazione.

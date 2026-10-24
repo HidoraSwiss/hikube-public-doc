@@ -45,7 +45,7 @@ The producer publishes to an exchange, never directly to a queue. Exchanges and 
 
 ### Which port should I connect to?
 
-AMQP clients connect on port **5672**, at the address displayed in the **Host** field of the cluster's **Connection** section (when **External Access** is enabled).
+AMQP clients connect on port **5672**, at one of the addresses in the cluster's **Connection** section: the host in the **Internal** zone from the project's VMs and Kubernetes clusters, the address in the **External** zone from the Internet (when **External Access** is enabled).
 
 ### Can the number of replicas or the preset be changed after creation?
 

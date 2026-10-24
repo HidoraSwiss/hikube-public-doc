@@ -33,7 +33,7 @@ FROM pg_stat_user_tables
 ORDER BY n_live_tup DESC;
 ```
 
-Then update your applications' configuration with the new cluster's address (**Host** field on its page) and the associated credentials.
+Then update your applications' configuration with the new cluster's address (**Internal** and **External** zones of its page) and the associated credentials.
 
 ## Restoring a logical export
 

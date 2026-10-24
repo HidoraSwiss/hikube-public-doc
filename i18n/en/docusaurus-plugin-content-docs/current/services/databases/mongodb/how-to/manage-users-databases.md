@@ -76,7 +76,7 @@ Open the user's **Actions** menu, choose **Delete user**, enter their exact name
 mongosh "mongodb://<host>:27017/analytics?directConnection=true&authSource=admin" --username report-reader
 ```
 
-On a replica set, `<host>` is the address of one of the **Replica set rs0 members** listed in the **Network and Connection** card.
+On a replica set, `<host>` is the address of one of the members listed in the **External** zone of the **Network and Connection** card.
 
 ```javascript
 // Must succeed

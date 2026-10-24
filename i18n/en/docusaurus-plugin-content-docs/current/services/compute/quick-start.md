@@ -100,9 +100,9 @@ Click the VM name to open its detail page. There you will find:
 
 - **Resources & Characteristics**: instance type, system image, default user, vCPU and RAM;
 - **Storage & Disks**: attached disks, size, replication, encryption;
-- **Network & Security**: **Public IP**, **SSH Connection**, **IP Addresses**, **Firewall & Ports**.
+- **Network & Security**: the VM's addresses, in the **Internal** zone (the **mgmt** IP, reachable from the project) and in the **External** zone (the public IP, reachable from the Internet), then **SSH Connection** and **Firewall & Ports**.
 
-**Expected result:** status **Running**, **Public IP** set to **Active**, port **22** listed under **Firewall & Ports**.
+**Expected result:** status **Running**, an address in the **External** zone, port **22** listed under **Firewall & Ports**.
 
 ---
 
@@ -146,7 +146,7 @@ lsblk
 | Symptom | Check |
 |----------|--------------|
 | **Next** stays greyed out at the Configuration or Storage step | A project quota is exceeded: reduce the instance type or the disk size, or have the project quotas increased. |
-| `Connection timed out` over SSH | On the detail page, check that **Public IP** is **Active** and that port 22 appears in **Firewall & Ports**. |
+| `Connection timed out` over SSH | On the detail page, check that the **External** zone shows an address and that port 22 appears in **Firewall & Ports**. |
 | `Permission denied (publickey)` | Check the user (**SSH Connection** block) and that the private key you use matches the public key listed in **Advanced Configuration** > **SSH Keys**. |
 | Status **Error** or **Failed** | See [Troubleshooting](./troubleshooting.md). |
 

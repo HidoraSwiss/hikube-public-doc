@@ -96,7 +96,7 @@ Then click **Finish** to return to the cluster list.
 2. Click the cluster to open its detail page:
    - **General Information**: **Version**, **Replicas**, **Volume Size**;
    - **VHosts** and **Users**: the items created by the wizard;
-   - **Connection**: **Host**, **Status** and **External Access** (**Enabled** or **Disabled**).
+   - **Connection**: the **Internal** and **External** address zones, and the **Status**.
 
 ---
 
@@ -109,14 +109,10 @@ To connect, you need:
 | **Username** | **Users** section of the cluster page |
 | **Password** | Copied from the wizard's **Done** screen (step 2) |
 | **VHost** | **VHosts** section of the cluster page |
-| **Host** | **Host** field of the **Connection** section |
+| **Host** | **Connection** section: **Internal** zone from the project, **External** zone from the Internet |
 | **Port** | 5672 (AMQP) |
 
-As long as the address has not been assigned, the **Host** field displays "Not available / Creating". Once the address is assigned, copy it with the copy button.
-
-:::note
-The **Host** field is filled in when **External Access** is enabled. Without external access, the cluster remains reachable from the project's VMs and Kubernetes clusters through an internal address, which the console does not display: [contact support](mailto:support@hidora.io) to get it.
-:::
+The **Internal** zone always shows the cluster's internal host, reachable from the project's VMs and Kubernetes clusters. The **External** zone shows the public address when **External Access** is enabled; otherwise it shows **Disabled**, and "Waiting for allocation…" as long as the address has not been assigned. Copy the address with the copy button.
 
 When the host is already known, the wizard's **Done** screen also displays a connection string of the form:
 
@@ -178,7 +174,7 @@ Message received: Hello Hikube!
 | The cluster stays **Creating** | Provisioning in progress | Wait a few minutes; if the status does not change, see [troubleshooting](./troubleshooting.md) |
 | **Error** status | The platform could not apply the cluster's creation or its last change | [Contact support](mailto:support@hidora.io), giving the name and identifier of the cluster |
 | `ACCESS_REFUSED` on connection | Wrong password, or user without rights on the vhost | Check the vhost in **Manage Access**; regenerate the password if needed |
-| Unable to connect (timeout) | External access disabled, wrong host or port | Check **External Access** and **Host** in the **Connection** section; the AMQP port is 5672 |
+| Unable to connect (timeout) | External access disabled, wrong host or port | Check the **External** zone of the **Connection** section (from the project, the **Internal** zone); the AMQP port is 5672 |
 | `NOT_FOUND - no vhost` | Wrong vhost name in the client | Use exactly the name displayed in the **VHosts** section |
 
 ---

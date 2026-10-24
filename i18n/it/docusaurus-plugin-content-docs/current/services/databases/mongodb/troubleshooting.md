@@ -34,7 +34,7 @@ description: "Risolvete i problemi di MongoDB su Hikube: cluster in errore, conn
 
 **Soluzione**:
 
-1. Nel riquadro **Network and Connection**, verifichi che l'**External Access** sia **Enabled** e che il campo **Host** contenga un indirizzo oppure, per un replica set, che i **Replica set rs0 members** siano elencati.
+1. Nel riquadro **Network and Connection**, verifichi che la zona **External** contenga un indirizzo (uno per membro per un replica set), e non **Disabled** o « Waiting for allocation… ».
 2. Verifichi la connettività (su un replica set, con l'indirizzo di un membro):
    ```bash
    mongosh "mongodb://<host>:27017/?directConnection=true" --eval 'db.runCommand({ ping: 1 })'

@@ -141,10 +141,11 @@ Ein Cluster, der mit einem früheren Preset (`nano`, `micro`, `small`, `medium`,
 
 ## Netzwerkzugriff
 
-- **Externer Zugriff deaktiviert** (Standard): Der Cluster ist nicht im Internet erreichbar. Das Feld **Host** der Karte **Network and Connection** zeigt **Not defined** an.
+- **Interner Host**: immer zugewiesen, angezeigt im Bereich **Internal** der Karte **Network and Connection**. Er ist von den VMs und Kubernetes-Clustern desselben Projekts aus erreichbar, nicht aus einem anderen Projekt und nicht aus dem Internet. Bei einem Replica Set fügen Sie dem Verbindungsstring `replicaSet=rs0` hinzu: Der Treiber erreicht dann das Primary.
+- **Externer Zugriff deaktiviert** (Standard): Der Cluster ist nicht im Internet erreichbar. Der Bereich **External** zeigt **Disabled** an.
 - **Externer Zugriff aktiviert**: Der Port ist der MongoDB-Standardport `27017`, ohne TLS.
-  - **Cluster mit Sharding**: Die Plattform weist den Mongos-Routern eine öffentliche Adresse zu, die im Feld **Host** angezeigt wird. Der Assistent liefert einen Verbindungsstring der Form `mongodb://<user>:<password>@<host>`.
-  - **Replica Set**: Jedes Mitglied erhält eine eigene öffentliche Adresse. Die Karte **Network and Connection** listet sie unter **Replica set rs0 members** auf, jeweils mit einer Kopierschaltfläche, und bietet einen **External connection string** der Form `mongodb://<user>:<password>@<member>:27017/?directConnection=true&authSource=admin` an. Verbinden Sie sich so direkt mit einem Mitglied, ohne den Parameter `replicaSet`: Die Mitglieder melden sich unter clusterinternen Namen, die von außen nicht aufgelöst werden. Das erreichte Mitglied kann ein Secondary sein, das keine Schreibvorgänge annimmt: Lesen Sie mit `readPreference=secondaryPreferred` und schreiben Sie auf das Primary-Mitglied.
+  - **Cluster mit Sharding**: Die Plattform weist den Mongos-Routern eine öffentliche Adresse zu, die im Bereich **External** angezeigt wird. Der Assistent liefert einen Verbindungsstring der Form `mongodb://<user>:<password>@<host>`.
+  - **Replica Set**: Jedes Mitglied erhält eine eigene öffentliche Adresse. Der Bereich **External** listet sie auf (**member 1**, **member 2**…), jeweils mit einer Kopierschaltfläche, und die Karte **Network and Connection** bietet einen **External connection string** der Form `mongodb://<user>:<password>@<member>:27017/?directConnection=true&authSource=admin` an. Verbinden Sie sich so direkt mit einem Mitglied, ohne den Parameter `replicaSet`: Die Mitglieder melden sich unter clusterinternen Namen, die von außen nicht aufgelöst werden. Das erreichte Mitglied kann ein Secondary sein, das keine Schreibvorgänge annimmt: Lesen Sie mit `readPreference=secondaryPreferred` und schreiben Sie auf das Primary-Mitglied.
 
 ---
 

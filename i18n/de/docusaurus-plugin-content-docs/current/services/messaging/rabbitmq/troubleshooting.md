@@ -37,13 +37,13 @@ description: "RabbitMQ-Probleme auf Hikube beheben: Cluster hängt bei Erstellun
 
 **Lösung**: Kehren Sie zum Schritt **General** zurück und wählen Sie einen anderen **Cluster Name**.
 
-### Das Feld „Host“ zeigt „Not available / Creating“ an
+### Der Bereich External zeigt „Disabled“ oder „Waiting for allocation…“ an
 
-**Ursache**: Die öffentliche Adresse ist noch nicht zugewiesen oder der **External Access** ist deaktiviert.
+**Ursache**: Der **External Access** ist deaktiviert oder die öffentliche Adresse ist noch nicht zugewiesen.
 
 **Lösung**:
 
-1. Prüfen Sie im Abschnitt **Connection**, ob **External Access** den Wert **Enabled** anzeigt. Falls nicht, aktivieren Sie ihn (siehe [Externen Zugriff konfigurieren](./how-to/configure-external-access.md)).
+1. „Disabled“: Aktivieren Sie den externen Zugriff (siehe [Externen Zugriff konfigurieren](./how-to/configure-external-access.md)). Aus dem Projekt ist er nicht nötig: Verwenden Sie den Host aus dem Bereich **Internal**.
 2. Wenn der externe Zugriff aktiviert ist, warten Sie und laden Sie die Seite anschließend neu.
 
 ### AMQP-Verbindung abgelehnt (`ACCESS_REFUSED`)
@@ -63,7 +63,7 @@ description: "RabbitMQ-Probleme auf Hikube beheben: Cluster hängt bei Erstellun
 
 **Lösung**:
 
-1. Prüfen Sie den **Host** und den Status des **External Access** im Abschnitt **Connection**.
+1. Prüfen Sie die im Abschnitt **Connection** verwendete Adresse: Bereich **External** aus dem Internet, Bereich **Internal** aus dem Projekt.
 2. Verwenden Sie den Port **5672**.
 3. Testen Sie von der Client-Maschine aus, ob der Port offen ist:
    ```bash

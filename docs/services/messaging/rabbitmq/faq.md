@@ -45,7 +45,7 @@ Le producteur publie vers un exchange, jamais directement vers une queue. Les ex
 
 ### Sur quel port se connecter ?
 
-Les clients AMQP se connectent sur le port **5672**, sur l'adresse affichée dans le champ **Hôte (Host)** de la section **Connexion** du cluster (lorsque l'**Accès externe** est activé).
+Les clients AMQP se connectent sur le port **5672**, sur l'une des adresses de la section **Connexion** du cluster : l'hôte de la zone **Interne** depuis les VM et les clusters Kubernetes du projet, l'adresse de la zone **Externe** depuis Internet (lorsque l'**Accès externe** est activé).
 
 ### Peut-on changer le nombre de réplicas ou le preset après la création ?
 

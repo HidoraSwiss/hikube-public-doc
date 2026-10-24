@@ -167,7 +167,7 @@ Les droits de l'utilisateur sur toutes les bases sont retirés avec lui.
 mongosh "mongodb://<hôte>:27017/analytics?directConnection=true&authSource=admin" --username report-reader
 ```
 
-Sur un replica set, `<hôte>` est l'adresse d'un des **Membres du replica set rs0** listés dans la carte **Connexion et réseau**.
+Sur un replica set, `<hôte>` est l'adresse d'un des membres listés dans la zone **Externe** de la carte **Connexion et réseau**.
 
 ```javascript
 // Doit réussir

@@ -140,7 +140,8 @@ Siehe: [Virtuelle Maschinen - Fehlerbehebung](../services/compute/troubleshootin
 
 **Lösungen:**
 - Prüfen Sie, dass **External access** auf dem Cluster aktiviert ist (**Edit**);
-- verwenden Sie die Adresse, die im Feld **Host** der Detailseite angezeigt wird. Solange sie nicht zugewiesen ist, ist keine externe Verbindung möglich. Bei einem MongoDB-Replica-Set listet die Detailseite die Adresse jedes Mitglieds auf: Verbinden Sie sich mit `directConnection=true` mit einem Mitglied;
+- verwenden Sie die Adresse, die im Bereich **External** der Detailseite angezeigt wird. Solange sie nicht zugewiesen ist („Waiting for allocation…“), ist keine externe Verbindung möglich. Bei einem MongoDB-Replica-Set listet der Bereich die Adresse jedes Mitglieds auf: Verbinden Sie sich mit `directConnection=true` mit einem Mitglied;
+- von einer VM oder einem Kubernetes-Cluster desselben Projekts aus benötigen Sie keinen externen Zugriff: Verwenden Sie den Host aus dem Bereich **Internal**;
 - prüfen Sie Benutzer und Passwort, die in der Konsole angezeigt werden.
 
 ### Passwort abgelehnt

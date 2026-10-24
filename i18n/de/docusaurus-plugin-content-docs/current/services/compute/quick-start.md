@@ -100,9 +100,9 @@ Klicken Sie auf den Namen der VM, um ihre Detailseite zu öffnen. Dort finden Si
 
 - **Resources & Characteristics**: Instanztyp, System-Image, Standardbenutzer, vCPU und RAM;
 - **Storage & Disks**: angebundene Disks, Größe, Replikation, Verschlüsselung;
-- **Network & Security**: **Public IP**, **SSH Connection**, **IP Addresses**, **Firewall & Ports**.
+- **Network & Security**: die Adressen der VM, im Bereich **Internal** (die **mgmt**-IP, aus dem Projekt erreichbar) und im Bereich **External** (die öffentliche IP, aus dem Internet erreichbar), danach **SSH Connection** und **Firewall & Ports**.
 
-**Erwartetes Ergebnis:** Status **Running**, **Public IP** auf **Active**, Port **22** unter **Firewall & Ports** aufgeführt.
+**Erwartetes Ergebnis:** Status **Running**, eine Adresse im Bereich **External**, Port **22** unter **Firewall & Ports** aufgeführt.
 
 ---
 
@@ -146,7 +146,7 @@ lsblk
 | Symptom | Prüfung |
 |----------|--------------|
 | **Next** bleibt im Schritt Configuration oder Storage ausgegraut | Ein Quota des Projekts ist überschritten: Verkleinern Sie den Instanztyp oder die Disk-Größe oder lassen Sie die Quotas des Projekts erhöhen. |
-| `Connection timed out` bei SSH | Prüfen Sie auf der Detailseite, dass **Public IP** auf **Active** steht und Port 22 unter **Firewall & Ports** aufgeführt ist. |
+| `Connection timed out` bei SSH | Prüfen Sie auf der Detailseite, dass der Bereich **External** eine Adresse anzeigt und Port 22 unter **Firewall & Ports** aufgeführt ist. |
 | `Permission denied (publickey)` | Prüfen Sie den Benutzer (Block **SSH Connection**) und dass der verwendete private Schlüssel zum öffentlichen Schlüssel passt, der unter **Advanced Configuration** > **SSH Keys** aufgeführt ist. |
 | Status **Error** oder **Failed** | Siehe [Fehlerbehebung](./troubleshooting.md). |
 

@@ -38,7 +38,7 @@ Si l'image de la VM est Debian ou Ubuntu et qu'un VPC est coché, la section aff
 Sur la page de détail de la VM, section **Réseau et Sécurité** :
 
 - **Réseaux VPC** liste chaque VPC avec ses **Sous-réseaux connectés** et leur plage, par exemple `app (172.16.0.0/24)` ;
-- **Adresses IP** ajoute une adresse **Secondaire** par sous-réseau.
+- la zone **Interne** ajoute une adresse par sous-réseau, à côté de l'IP **mgmt**.
 
 ### 4. Vérifier dans l'OS
 
@@ -74,7 +74,7 @@ sudo netplan apply
 ip -br addr show enp2s0
 ```
 
-**Résultat attendu :** `enp2s0` est `UP` avec l'adresse **Secondaire** affichée dans la console, par exemple `172.16.0.11/24`.
+**Résultat attendu :** `enp2s0` est `UP` avec l'adresse du sous-réseau affichée dans la zone **Interne** de la console, par exemple `172.16.0.11/24`.
 
 `use-routes: false` évite que l'interface VPC ne remplace la route par défaut : l'accès Internet continue de passer par l'interface principale.
 

@@ -141,10 +141,11 @@ A cluster created with a former preset (`nano`, `micro`, `small`, `medium`, `lar
 
 ## Network access
 
-- **External access disabled** (default): the cluster is not exposed on the Internet. The **Host** field of the **Network and Connection** card shows **Not defined**.
+- **Internal host**: always assigned, shown in the **Internal** zone of the **Network and Connection** card. It is reachable from the VMs and Kubernetes clusters of the same project, not from another project or from the Internet. On a replica set, add `replicaSet=rs0` to the connection string: the driver then reaches the primary.
+- **External access disabled** (default): the cluster is not exposed on the Internet. The **External** zone shows **Disabled**.
 - **External access enabled**: the port is the standard MongoDB port, `27017`, without TLS.
-  - **Sharded cluster**: the platform assigns a public address to the Mongos routers, displayed in the **Host** field. The wizard provides a connection string of the form `mongodb://<user>:<password>@<host>`.
-  - **Replica set**: each member receives its own public address. The **Network and Connection** card lists them under **Replica set rs0 members**, each with a copy button, and offers an **External connection string** of the form `mongodb://<user>:<password>@<member>:27017/?directConnection=true&authSource=admin`. Connect this way to one member in direct connection, without the `replicaSet` parameter: the members advertise themselves under in-cluster names, which do not resolve from outside. The member you reach may be a secondary, which does not accept writes: read with `readPreference=secondaryPreferred`, and write to the primary member.
+  - **Sharded cluster**: the platform assigns a public address to the Mongos routers, displayed in the **External** zone. The wizard provides a connection string of the form `mongodb://<user>:<password>@<host>`.
+  - **Replica set**: each member receives its own public address. The **External** zone lists them (**member 1**, **member 2**…), each with a copy button, and the **Network and Connection** card offers an **External connection string** of the form `mongodb://<user>:<password>@<member>:27017/?directConnection=true&authSource=admin`. Connect this way to one member in direct connection, without the `replicaSet` parameter: the members advertise themselves under in-cluster names, which do not resolve from outside. The member you reach may be a secondary, which does not accept writes: read with `readPreference=secondaryPreferred`, and write to the primary member.
 
 ---
 

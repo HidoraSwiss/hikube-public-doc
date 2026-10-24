@@ -23,9 +23,11 @@ Par défaut, un cluster RabbitMQ n'est pas exposé sur Internet. L'option **Acc�
 
 ## Récupérer l'adresse publique
 
+Depuis une VM ou un cluster Kubernetes du projet, l'accès externe n'est pas nécessaire : utilisez l'hôte de la zone **Interne**, toujours affiché.
+
 1. Ouvrez la page du cluster.
-2. Dans la section **Connexion**, vérifiez que **Accès externe** indique **Activé**.
-3. Copiez la valeur du champ **Hôte (Host)**. Tant que l'adresse n'est pas attribuée, le champ affiche « Non disponible / En création ».
+2. Dans la section **Connexion**, regardez la zone **Externe** : elle indique **Désactivé** si l'accès externe est coupé, et « En attente d'attribution… » tant que l'adresse n'est pas attribuée.
+3. Copiez l'adresse de la zone **Externe** avec son bouton de copie.
 
 Vos clients se connectent ensuite sur cet hôte, port **5672** :
 

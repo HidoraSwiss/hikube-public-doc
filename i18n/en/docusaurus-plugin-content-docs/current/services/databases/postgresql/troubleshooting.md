@@ -39,7 +39,7 @@ description: "Fix common PostgreSQL issues on Hikube: cluster stuck or in error,
 **Solution**:
 
 1. On the cluster page, check that the **External Access** card shows **Enabled**. Otherwise, enable it via **Edit**.
-2. Check that the **Host** field contains an address and not **Not defined**.
+2. Check that the **External** zone of the **Connection and Databases** card contains an address, and not **Disabled** or "Waiting for allocation…".
 3. Use port `5432` and test connectivity:
    ```bash
    pg_isready -h <host> -p 5432

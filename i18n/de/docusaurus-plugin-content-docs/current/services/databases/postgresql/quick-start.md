@@ -123,17 +123,22 @@ Lehnt die Plattform einen Benutzer ab, zeigt der Schritt anstelle seines Passwor
 Kopieren Sie diese Passwörter in einen Passwort-Manager, bevor Sie den Bildschirm verlassen: Sie werden nicht mehr angezeigt. Bei Verlust generieren Sie in der Registerkarte **Users** ein neues (**Actions** → **Change Password**).
 :::
 
-Die Adresse des Clusters bleibt auf der Seite des Clusters einsehbar, in der Karte **Connection and Databases**, Feld **Host**.
+Die Karte **Connection and Databases** auf der Seite des Clusters zeigt die Adressen des Clusters in zwei Bereichen an, jeweils mit einer Kopierschaltfläche:
+
+- **Internal**, *From the project's resources only*: der interne Host, immer vorhanden, und der Port (`5432`). Er ist von den VMs und Kubernetes-Clustern desselben Projekts aus erreichbar, ohne externen Zugriff;
+- **External**, *From the Internet*: die öffentliche Adresse, wenn der **External Access** aktiviert ist.
 
 ---
 
 ## Schritt 5: Verbindung und Tests
 
-Verbinden Sie sich mit `psql` über die Adresse aus dem Feld **Host**:
+Von Ihrem Rechner aus verbinden Sie sich mit `psql` über die Adresse aus dem Bereich **External**:
 
 ```bash
 psql "host=<host> port=5432 dbname=myapp user=app_user sslmode=require"
 ```
+
+Von einer VM oder einem Kubernetes-Cluster des Projekts aus verwenden Sie den Host aus dem Bereich **Internal**: `psql "host=<internal-host> port=5432 dbname=myapp user=app_user"`.
 
 Geben Sie das Passwort ein, wenn Sie dazu aufgefordert werden, und prüfen Sie dann die Verbindung:
 
@@ -157,9 +162,13 @@ SELECT * FROM test;
 
 ## Schritt 6: Schnelle Fehlerbehebung
 
-### Das Feld Host zeigt „Not defined“ an
+### Der Bereich External zeigt „Disabled“ oder „Waiting for allocation…“ an
 
-Der **External Access** ist deaktiviert, oder die öffentliche IP-Adresse ist noch nicht zugewiesen. Prüfen Sie die Karte **External Access** auf der Seite des Clusters; aktivieren Sie ihn bei Bedarf über **Edit** und warten Sie einen Moment.
+„Disabled“: Der **External Access** ist ausgeschaltet. Aktivieren Sie ihn über **Edit**, wenn Sie sich aus dem Internet verbinden müssen; aus dem Projekt verwenden Sie den Host aus dem Bereich **Internal**. „Waiting for allocation…“: Die öffentliche Adresse ist noch nicht zugewiesen, warten Sie einige Augenblicke.
+
+### Der interne Host wird von einer VM aus nicht aufgelöst
+
+Kopieren Sie den vollständigen Namen aus dem Bereich **Internal**, ohne ihn zu kürzen. Unter Debian 13 wird der Name ohne Konfiguration nicht aufgelöst: siehe [Einen verwalteten Dienst des Projekts erreichen](../../compute/how-to/configure-network.md#einen-verwalteten-dienst-des-projekts-erreichen).
 
 ### Die Schaltfläche Next bleibt inaktiv
 

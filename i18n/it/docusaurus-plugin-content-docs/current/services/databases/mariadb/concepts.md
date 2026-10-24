@@ -154,8 +154,9 @@ La definizione di risorse CPU/memoria libere non è proposta nella console; cont
 
 ## Accesso di rete
 
-- **Accesso esterno disattivato** (impostazione predefinita): il cluster non è esposto su Internet. Il campo **Host** del riquadro **Connection and network** mostra **Not defined**.
-- **Accesso esterno attivato**: la piattaforma assegna un indirizzo IP pubblico, mostrato nel campo **Host**. La porta è la porta MySQL standard, `3306`.
+- **Host interno**: sempre assegnato, visualizzato nella zona **Internal** del riquadro **Connection and network**. Punta al server che accetta le scritture ed è raggiungibile dalle VM e dai cluster Kubernetes dello stesso progetto, non da un altro progetto né da Internet.
+- **Accesso esterno disattivato** (impostazione predefinita): il cluster non è esposto su Internet. La zona **External** mostra **Disabled**.
+- **Accesso esterno attivato**: la piattaforma assegna un indirizzo IP pubblico, mostrato nella zona **External**. La porta è la porta MySQL standard, `3306`.
 
 ---
 

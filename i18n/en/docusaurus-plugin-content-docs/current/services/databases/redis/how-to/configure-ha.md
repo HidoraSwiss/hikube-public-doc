@@ -50,7 +50,7 @@ When the master becomes unavailable:
 2. A replica is promoted to new master.
 3. The other replicas are reconfigured to follow it.
 
-With the public network enabled, the address displayed in the **Host** field points to the current master: your clients do not have to change address after a failover, but open connections are dropped and must be re-established.
+The host in the **Internal** zone and, with the public network enabled, the address in the **External** zone point to the current master: your clients do not have to change address after a failover, but open connections are dropped and must be re-established.
 
 :::note
 Configure your Redis clients with automatic reconnection and retry delays to absorb the switchover.

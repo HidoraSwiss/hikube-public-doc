@@ -33,7 +33,7 @@ FROM pg_stat_user_tables
 ORDER BY n_live_tup DESC;
 ```
 
-Mettez ensuite à jour la configuration de vos applications avec l'adresse du nouveau cluster (champ **Hôte (Host)** de sa page) et les identifiants associés.
+Mettez ensuite à jour la configuration de vos applications avec l'adresse du nouveau cluster (zones **Interne** et **Externe** de sa page) et les identifiants associés.
 
 ## Restauration d'un export logique
 

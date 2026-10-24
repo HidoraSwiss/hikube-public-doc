@@ -76,7 +76,7 @@ For a new VM, make the same selection at the **Network** step of the **Create an
 On the detail page of each VM, **Network & Security** section:
 
 - **VPC Networks** shows `vpc-demo` and `app (172.16.0.0/24)`;
-- **IP Addresses** shows a **Secondary** address in `172.16.0.0/24`. Note the one of the second VM.
+- the **Internal** zone shows, next to the **mgmt** IP, an address in `172.16.0.0/24`. Note the one of the second VM.
 
 ---
 
@@ -110,7 +110,7 @@ sudo netplan apply
 ip -br addr show enp2s0
 ```
 
-**Expected result:** `enp2s0` is `UP` with an address in `172.16.0.x/24`, the one shown as **Secondary** in the console. Do the same on the second VM.
+**Expected result:** `enp2s0` is `UP` with an address in `172.16.0.x/24`, the one shown in the **Internal** zone of the console, next to the **mgmt** IP. Do the same on the second VM.
 
 Test communication with the second VM on its private address:
 
@@ -118,7 +118,7 @@ Test communication with the second VM on its private address:
 ping -c 3 172.16.0.11
 ```
 
-Replace `172.16.0.11` with the **Secondary** address noted in step 4. The ping should get replies; this traffic goes neither through the Internet nor through the public IP firewall.
+Replace `172.16.0.11` with the subnet address noted in step 4. The ping should get replies; this traffic goes neither through the Internet nor through the public IP firewall.
 
 ---
 

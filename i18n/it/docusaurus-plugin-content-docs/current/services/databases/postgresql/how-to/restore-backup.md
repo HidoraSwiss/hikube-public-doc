@@ -33,7 +33,7 @@ FROM pg_stat_user_tables
 ORDER BY n_live_tup DESC;
 ```
 
-Aggiorni quindi la configurazione delle sue applicazioni con l'indirizzo del nuovo cluster (campo **Host** della sua pagina) e le credenziali associate.
+Aggiorni quindi la configurazione delle sue applicazioni con l'indirizzo del nuovo cluster (zone **Internal** ed **External** della sua pagina) e le credenziali associate.
 
 ## Ripristino di un'esportazione logica
 

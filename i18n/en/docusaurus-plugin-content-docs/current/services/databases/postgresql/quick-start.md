@@ -123,17 +123,22 @@ If the platform refuses a user, the step shows “User not created” and the re
 Copy these passwords into a password manager before leaving the screen: they will not be displayed again. If one is lost, generate a new one from the **Users** tab (**Actions** → **Change Password**).
 :::
 
-The cluster address remains available on the cluster page, in the **Connection and Databases** card, **Host** field.
+The **Connection and Databases** card of the cluster page shows its addresses in two zones, each with a copy button:
+
+- **Internal**, *From the project's resources only*: the internal host, always filled in, and the port (`5432`). It is reachable from the VMs and Kubernetes clusters of the same project, without external access;
+- **External**, *From the Internet*: the public address, when **External Access** is enabled.
 
 ---
 
 ## Step 5: Connect and test
 
-Connect with `psql` using the address from the **Host** field:
+From your workstation, connect with `psql` to the address in the **External** zone:
 
 ```bash
 psql "host=<host> port=5432 dbname=myapp user=app_user sslmode=require"
 ```
+
+From a VM or a Kubernetes cluster of the project, use the host in the **Internal** zone: `psql "host=<internal-host> port=5432 dbname=myapp user=app_user"`.
 
 Enter the password when prompted, then check the connection:
 
@@ -157,9 +162,13 @@ SELECT * FROM test;
 
 ## Step 6: Quick troubleshooting
 
-### The Host field shows "Not defined"
+### The External zone shows "Disabled" or "Waiting for allocation…"
 
-**External access** is disabled, or the public IP address has not been assigned yet. Check the **External Access** card on the cluster page; enable it if needed via **Edit**, then wait a few moments.
+"Disabled": **External Access** is turned off. Enable it via **Edit** if you need to connect from the Internet; from the project, use the host in the **Internal** zone. "Waiting for allocation…": the public address has not been assigned yet, wait a few moments.
+
+### The internal host does not resolve from a VM
+
+Copy the full name from the **Internal** zone, without shortening it. On Debian 13, the name does not resolve without configuration: see [Reaching a managed service in the project](../../compute/how-to/configure-network.md#reaching-a-managed-service-in-the-project).
 
 ### The Next button stays disabled
 

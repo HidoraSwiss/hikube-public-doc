@@ -159,8 +159,9 @@ Die Festlegung freier CPU-/Arbeitsspeicher-Ressourcen (außerhalb der Presets) w
 
 ## Netzwerkzugriff
 
-- **Externer Zugriff deaktiviert** (Standard): Der Cluster ist nicht im Internet erreichbar. Das Feld **Host** auf der Seite des Clusters zeigt **Not defined** an.
-- **Externer Zugriff aktiviert**: Die Plattform weist eine öffentliche IP-Adresse zu, die im Feld **Host** angezeigt wird. Der Port ist der PostgreSQL-Standardport `5432`.
+- **Interner Host**: immer zugewiesen, angezeigt im Bereich **Internal** der Karte **Connection and Databases**. Er zeigt auf das Primary und ist von den VMs und Kubernetes-Clustern desselben Projekts aus erreichbar, nicht aus einem anderen Projekt und nicht aus dem Internet.
+- **Externer Zugriff deaktiviert** (Standard): Der Cluster ist nicht im Internet erreichbar. Der Bereich **External** zeigt **Disabled** an.
+- **Externer Zugriff aktiviert**: Die Plattform weist eine öffentliche IP-Adresse zu, die im Bereich **External** angezeigt wird. Der Port ist der PostgreSQL-Standardport `5432`.
 
 Der externe Zugriff kann nach der Erstellung über **Edit** aktiviert oder deaktiviert werden. Seine Kosten (öffentliche IP-Adresse) sind in der Angabe **Estimated cost** des Assistenten enthalten.
 
