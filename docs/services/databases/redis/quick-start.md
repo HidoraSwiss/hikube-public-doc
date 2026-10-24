@@ -153,7 +153,7 @@ L'étape **Résumé** affiche « Cluster créé avec succès ». Cliquez sur **T
 
 ```bash
 curl -sS "$HIKUBE_API/redis/v1alpha1/projects/$PROJECT_ID/clusters/democache" \
-  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" | jq '{name, status, host, replicas, preset}'
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" | jq '{name, status, host, internalHost, replicas, preset}'
 ```
 
 | `status` | Signification |
@@ -194,7 +194,7 @@ La section **Connexion** de la page du cluster affiche ses adresses en deux zone
 
 - **Utilisateur** : `default` ;
 - **Mot de passe** : le champ `password` de la réponse de création (étape 2). `GET` ne le renvoie jamais ;
-- **Hôte** : le champ `host` de `GET .../clusters/democache` (étape 3).
+- **Hôte** : le champ `host` de `GET .../clusters/democache` (étape 3) depuis Internet, `internalHost` depuis les ressources du projet.
 
 En cas de perte du mot de passe, générez-en un nouveau. La rotation révoque immédiatement l'ancien :
 

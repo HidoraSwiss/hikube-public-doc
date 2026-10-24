@@ -159,10 +159,10 @@ L'étape **Résumé** confirme la création (« Création terminée ! »). Cliqu
 
 ```bash
 curl -sS "$HIKUBE_API/mongodb/v1alpha1/projects/$PROJECT_ID/clusters/demomongo" \
-  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" | jq '{name, status, version, replicas, size, preset, external, host, sharding: .sharding.enabled}'
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" | jq '{name, status, version, replicas, size, preset, external, host, internalHost, sharding: .sharding.enabled}'
 ```
 
-**Résultat attendu :** `status` passe de `provisioning` à `ready` après quelques minutes (`error` si le provisionnement échoue, `unknown` si l'état ne peut pas être déterminé). Le champ `host` contient l'adresse publique du cluster lorsque `external` vaut `true` ; il reste vide tant que l'adresse n'est pas attribuée.
+**Résultat attendu :** `status` passe de `provisioning` à `ready` après quelques minutes (`error` si le provisionnement échoue, `unknown` si l'état ne peut pas être déterminé). Le champ `host` contient l'adresse publique du cluster lorsque `external` vaut `true` ; il reste vide tant que l'adresse n'est pas attribuée. Le champ `internalHost`, toujours renseigné, est l'hôte interne (zone **Interne** de la console), joignable depuis les VM et les clusters Kubernetes du projet.
 
 </TabItem>
 </Tabs>
@@ -214,7 +214,7 @@ La réponse contient le champ `password`.
 Le mot de passe n'est renvoyé qu'une seule fois, dans cette réponse. Enregistrez-le directement dans votre gestionnaire de secrets. En cas de perte, effectuez une rotation : `POST .../users/appuser/rotate-password` renvoie un nouveau mot de passe.
 :::
 
-L'adresse du cluster est le champ `host` de `GET $HIKUBE_API/mongodb/v1alpha1/projects/$PROJECT_ID/clusters/demomongo` (étape 3) ; le port est `27017`. Les exemples de l'étape 5 utilisent `app-user` : remplacez-le par `appuser`.
+Les adresses du cluster sont les champs de `GET $HIKUBE_API/mongodb/v1alpha1/projects/$PROJECT_ID/clusters/demomongo` (étape 3) : `host` depuis Internet, `internalHost` depuis les ressources du projet ; le port est `27017`. Les exemples de l'étape 5 utilisent `app-user` : remplacez-le par `appuser`.
 
 </TabItem>
 </Tabs>

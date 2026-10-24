@@ -186,10 +186,10 @@ Le statut du cluster est affiché à côté de son nom, dans la page du cluster 
 
 ```bash
 curl -sS "$HIKUBE_API/postgres/v1alpha1/projects/$PROJECT_ID/clusters/demopg" \
-  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" | jq '{name, status, version, replicas, size, preset, external, host}'
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" | jq '{name, status, version, replicas, size, preset, external, host, internalHost}'
 ```
 
-**Résultat attendu :** `status` passe de `provisioning` à `ready` après quelques minutes (`error` si le provisionnement échoue, `unknown` si l'état ne peut pas être déterminé). Le champ `host` contient l'adresse publique du cluster lorsque `external` vaut `true` ; il reste vide tant que l'adresse n'est pas attribuée.
+**Résultat attendu :** `status` passe de `provisioning` à `ready` après quelques minutes (`error` si le provisionnement échoue, `unknown` si l'état ne peut pas être déterminé). Le champ `host` contient l'adresse publique du cluster lorsque `external` vaut `true` ; il reste vide tant que l'adresse n'est pas attribuée. Le champ `internalHost`, toujours renseigné, est l'hôte interne (zone **Interne** de la console), joignable depuis les VM et les clusters Kubernetes du projet.
 
 </TabItem>
 </Tabs>
@@ -249,7 +249,7 @@ La réponse contient le champ `password`.
 Le mot de passe n'est renvoyé qu'une seule fois, dans cette réponse. Enregistrez-le directement dans votre gestionnaire de secrets. En cas de perte, effectuez une rotation : `POST .../users/app_user/rotate-password` renvoie un nouveau mot de passe.
 :::
 
-L'adresse du cluster est le champ `host` de `GET $HIKUBE_API/postgres/v1alpha1/projects/$PROJECT_ID/clusters/demopg` (étape 3) ; le port est `5432`.
+Les adresses du cluster sont les champs de `GET $HIKUBE_API/postgres/v1alpha1/projects/$PROJECT_ID/clusters/demopg` (étape 3) : `host` depuis Internet, `internalHost` depuis les ressources du projet ; le port est `5432`.
 
 </TabItem>
 </Tabs>

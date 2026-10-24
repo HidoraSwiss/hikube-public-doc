@@ -211,10 +211,10 @@ L'utilisateur par défaut et les adresses de la VM figurent dans sa description 
 
 ```bash
 curl -sS "$HIKUBE_API/instance/v1alpha1/projects/$PROJECT_ID/instances/vmdemo" \
-  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" | jq '{defaultUser, ips: .network.ips}'
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" | jq '{defaultUser, publicIp: .network.publicIp, internalIp: .network.internalIp}'
 ```
 
-`defaultUser` dépend de l'image (`ubuntu` ici ; vide pour une image importée). `network.ips` liste les adresses de la VM, dont l'IP publique une fois allouée : c'est elle qu'il faut utiliser dans la commande SSH, par exemple `ssh ubuntu@203.0.113.10`.
+`defaultUser` dépend de l'image (`ubuntu` ici ; vide pour une image importée). `network.publicIp` contient l'IP publique une fois allouée (zone **Externe** de la console) : c'est elle qu'il faut utiliser dans la commande SSH, par exemple `ssh ubuntu@203.0.113.10`. `network.internalIp` est l'IP **mgmt** de la zone **Interne**, joignable depuis les autres ressources du projet ; elle est renseignée tant que la VM tourne.
 
 </TabItem>
 </Tabs>

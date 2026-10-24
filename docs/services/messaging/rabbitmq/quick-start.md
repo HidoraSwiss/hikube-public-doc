@@ -197,7 +197,7 @@ La réponse de création de l'utilisateur contient le champ `password`. Il n'est
 
 ```bash
 curl -sS "$HIKUBE_API/rabbitmq/v1alpha1/projects/$PROJECT_ID/clusters/rabbitdemo" \
-  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" | jq '{name, status, version, replicas, size, external, host}'
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" | jq '{name, status, version, replicas, size, external, host, internalHost}'
 
 curl -sS "$HIKUBE_API/rabbitmq/v1alpha1/projects/$PROJECT_ID/clusters/rabbitdemo/vhosts" \
   -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" | jq '.vhosts[] | {vhostName, roles}'
@@ -206,7 +206,7 @@ curl -sS "$HIKUBE_API/rabbitmq/v1alpha1/projects/$PROJECT_ID/clusters/rabbitdemo
   -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" | jq '.users[] | {username, vhosts: .config.vhosts}'
 ```
 
-**Résultat attendu :** `status` passe de `provisioning` à `ready` (`error` en cas d'échec) ; le vhost `demo` liste `appuser` dans `roles.admin`.
+**Résultat attendu :** `status` passe de `provisioning` à `ready` (`error` en cas d'échec) ; `host` contient l'adresse publique lorsque `external` vaut `true`, `internalHost` l'hôte interne joignable depuis les ressources du projet ; le vhost `demo` liste `appuser` dans `roles.admin`.
 
 </TabItem>
 </Tabs>
