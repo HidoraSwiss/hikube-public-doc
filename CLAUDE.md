@@ -97,8 +97,15 @@ publique (IAM, compte, organisation, projet, gestion des clés, événements).
   le dit et renvoie à la console.
 - **Préversion** : l'API est en `v1alpha1` ; le dire dans un encadré
   `:::warning Préversion` sur les pages de `docs/api/`.
-- **Clés d'API** : pas encore d'écran dans la console ; la création passe par
-  le support. Mettre à jour `docs/api/authentication.md` quand l'écran arrive.
+- **Clés d'API** : créées, renouvelées et révoquées dans la console (carte
+  « Clés d'API » des paramètres du projet, console v1.4.0), ou avec une session
+  utilisateur sur `/iam/v1alpha1/projects/{projectId}/api-keys` ; ces routes ne
+  sont pas dans la surface publique (une clé ne gère pas les clés).
+- **Spec de référence** : copier le `public.swagger.json` de la version publiée
+  de `hikube-api` (artefact du job `build:swagger` du tag ou du commit de
+  release), pas celui de `dev`. La spec contient des renvois à des briques
+  internes (descriptions de champs) : les signaler, ne pas éditer la référence
+  générée à la main.
 
 ## Conventions de rédaction
 
