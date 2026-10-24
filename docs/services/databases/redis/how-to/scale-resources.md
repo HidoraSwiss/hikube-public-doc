@@ -3,6 +3,9 @@ title: "Comment modifier les ressources d'un cluster Redis"
 sidebar_position: 2
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Comment modifier les ressources d'un cluster Redis
 
 Ce guide explique comment ajuster un cluster Redis existant depuis la [console Hikube](https://console.hikube.cloud) : préconfiguration (CPU et mémoire), taille du volume, version, accès externe et authentification.
@@ -11,6 +14,7 @@ Ce guide explique comment ajuster un cluster Redis existant depuis la [console H
 
 - Un cluster **Redis** existant dans votre projet
 - Des quotas de projet suffisants pour la nouvelle configuration
+- Pour l'onglet **API** : une clé d'API `admin` du projet et les variables `HIKUBE_API`, `HIKUBE_API_KEY` et `PROJECT_ID` (voir [Préparer l'environnement](../../../../api/quick-start.md#environnement)) ; les exemples utilisent `curl` et `jq`
 
 ## Ce qui est modifiable
 
@@ -26,6 +30,9 @@ Ce guide explique comment ajuster un cluster Redis existant depuis la [console H
 Pour changer le nombre de réplicas, [contactez le support](mailto:support@hidora.io).
 
 ## Étapes
+
+<Tabs groupId="interface">
+<TabItem value="console" label="Console" default>
 
 ### 1. Ouvrir le formulaire de modification
 
@@ -51,6 +58,41 @@ Une version inférieure ou une taille de volume réduite est refusée : la conso
 :::warning
 Désactiver l'authentification sur un cluster exposé au réseau public rend vos données accessibles à quiconque connaît l'adresse. Conservez l'authentification activée.
 :::
+
+</TabItem>
+<TabItem value="api" label="API">
+
+### 1. Lire la configuration actuelle
+
+```bash
+curl -sS "$HIKUBE_API/redis/v1alpha1/projects/$PROJECT_ID/clusters/democache" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" | jq '{version, preset, size, replicas, external, authEnabled}'
+```
+
+### 2. Envoyer la nouvelle configuration
+
+`PATCH /redis/v1alpha1/projects/{projectId}/clusters/{name}` est une [mise à jour partielle](../../../../api/overview.md#mises-a-jour-partielles) : seuls les champs envoyés changent, et l'accès externe comme l'authentification restent tels quels s'ils sont absents. Par exemple, pour passer en `medium` avec un volume de 20 Go :
+
+```bash
+curl -sS -X PATCH "$HIKUBE_API/redis/v1alpha1/projects/$PROJECT_ID/clusters/democache" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"preset": "medium", "size": 20}'
+```
+
+- `version` : `v7` ou `v8` ;
+- `preset` : `nano`, `micro`, `small`, `medium`, `large`, `xlarge` ou `2xlarge` (`GET /redis/v1alpha1/presets`) ;
+- `size` : taille du volume de chaque nœud, en Go ;
+- `replicas` : l'API refuse de passer d'un nœud unique au mode cluster, ou l'inverse (code `120201`).
+
+La réponse décrit le cluster mis à jour.
+
+:::warning
+Désactiver l'authentification sur un cluster exposé au réseau public rend vos données accessibles à quiconque connaît l'adresse. Conservez `"authEnabled": true`.
+:::
+
+</TabItem>
+</Tabs>
 
 ## Vérification
 

@@ -5,8 +5,12 @@ title: Terraform (legacy)
 
 # Infrastructure as Code con Hikube (legacy)
 
-:::warning Metodo legacy
-Questo metodo gestisce Hikube tramite un kubeconfig di progetto e manifesti Kubernetes. È **deprecato**: resta funzionante per i clienti che lo utilizzano già, ma non verrà più sviluppato. Per gestire le sue risorse, utilizzi la [console Hikube](https://console.hikube.cloud).
+:::danger Metodo dismesso
+Questo metodo gestiva Hikube tramite un kubeconfig di progetto e manifesti Kubernetes. Il kubeconfig di progetto **non è più disponibile**: questo metodo non funziona più. Questa pagina è conservata a titolo di riferimento.
+:::
+
+:::info Automazione: l'API pubblica
+Per automatizzare la gestione delle sue risorse, utilizzi l'[API pubblica Hikube](../../api/overview), con [chiavi API](../../api/authentication) associate a un progetto; è attualmente in anteprima. È allo studio un provider Terraform dedicato, basato su questa API. Per gestire le sue risorse manualmente, utilizzi la [console Hikube](https://console.hikube.cloud).
 :::
 
 È possibile utilizzare **Terraform** per gestire l'infrastruttura Hikube in modo dichiarativo e riproducibile, tramite i provider Kubernetes.
@@ -17,7 +21,7 @@ Questo metodo gestisce Hikube tramite un kubeconfig di progetto e manifesti Kube
 
 ### Prerequisiti
 
-- **Un kubeconfig di progetto fornito da Hidora.** Non viene più fornito per impostazione predefinita: [contatti il supporto](mailto:support@hidora.io) per ottenerne uno.
+- **Un kubeconfig di progetto.** Non è più disponibile: veda l'avviso in cima alla pagina.
 - [Terraform](https://www.terraform.io/downloads) (versione >= 1.0)
 - [kubectl](https://kubernetes.io/docs/tasks/tools/)
 
