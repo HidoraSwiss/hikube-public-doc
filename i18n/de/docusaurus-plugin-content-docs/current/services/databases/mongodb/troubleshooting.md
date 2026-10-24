@@ -34,7 +34,7 @@ description: "Beheben Sie häufige MongoDB-Probleme auf Hikube: Cluster im Fehle
 
 **Lösung**:
 
-1. Prüfen Sie in der Karte **Network and Connection**, ob der **External Access** **Enabled** ist und das Feld **Host** eine Adresse enthält oder, bei einem Replica Set, ob die **Replica set rs0 members** aufgeführt sind.
+1. Prüfen Sie in der Karte **Network and Connection**, ob der Bereich **External** eine Adresse enthält (eine pro Mitglied bei einem Replica Set) und nicht **Disabled** oder „Waiting for allocation…“.
 2. Testen Sie die Konnektivität (bei einem Replica Set mit der Adresse eines Mitglieds):
    ```bash
    mongosh "mongodb://<host>:27017/?directConnection=true" --eval 'db.runCommand({ ping: 1 })'

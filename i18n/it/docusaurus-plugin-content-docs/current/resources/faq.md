@@ -43,7 +43,7 @@ Vedere: [Kubernetes - Avvio rapido](../services/kubernetes/quick-start.md)
 
 ## 4. Serve ancora un kubeconfig per gestire le risorse Hikube?
 
-No. VM, dischi, bucket, reti, cluster Kubernetes e database si creano e si gestiscono dalla console. Il kubeconfig di progetto non viene più fornito per impostazione predefinita; resta disponibile su richiesta al supporto per gli usi legacy come [Terraform](../tools/terraform.md).
+No. VM, dischi, bucket, reti, cluster Kubernetes e database si creano e si gestiscono dalla console, e si automatizzano con l'[API pubblica](../../api/overview). Il kubeconfig di progetto non è più disponibile; il metodo [Terraform legacy](../tools/terraform.md) che ne dipendeva è dismesso.
 
 Il kubeconfig di un **cluster Kubernetes** (domanda 3) resta invece il modo normale per accedere a quel cluster.
 
@@ -59,7 +59,9 @@ Vedere: [PostgreSQL](../services/databases/postgresql/quick-start.md), [MariaDB]
 
 ## 6. Come si espone un database su Internet?
 
-Attivi l'opzione **External access** alla creazione del cluster oppure in **Edit**. Viene quindi assegnato un IP pubblico, visualizzato nel campo **Host** della pagina di dettaglio. Per un replica set MongoDB, la pagina di dettaglio elenca l'indirizzo di ogni membro.
+Attivi l'opzione **External access** alla creazione del cluster oppure in **Edit**. Viene quindi assegnato un IP pubblico, visualizzato nella zona **External** della pagina di dettaglio. Per un replica set MongoDB, la zona elenca l'indirizzo di ogni membro.
+
+Per connettersi da una VM o da un cluster Kubernetes dello stesso progetto, l'accesso esterno non è necessario: utilizzi l'host della zona **Internal**, sempre visualizzato.
 
 :::warning
 Esponga un database solo se necessario e utilizzi password robuste.
@@ -106,7 +108,7 @@ Vedere: [PostgreSQL - Concetti](../services/databases/postgresql/concepts.md), [
 
 ## 11. I backup dei database sono disponibili nella console?
 
-Non ancora. La configurazione dei backup e il ripristino vengono effettuati oggi dal supporto. Vedere ad esempio [PostgreSQL - Backup](../services/databases/postgresql/how-to/configure-backups.md).
+Sì. I database PostgreSQL e MariaDB, così come le macchine virtuali e i dischi, si salvano e si ripristinano dalla console, menu **Infrastructure** > **Backups** e scheda **Backups** di ogni risorsa. Vedere [Backup](../services/backups/overview.md).
 
 ---
 

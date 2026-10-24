@@ -49,7 +49,7 @@ Il primary scrive le sue modifiche nel binary log, che le repliche rieseguono. I
 
 ### Dove si trova l'indirizzo di connessione?
 
-Nel riquadro **Connection and network** della pagina del cluster, campo **Host**, quando l'**External Access** è attivato. La porta è `3306`. Senza accesso esterno, il campo mostra **Not defined**: il cluster resta raggiungibile dalle VM e dai cluster Kubernetes del progetto tramite un indirizzo interno, che la console non mostra; [contatti il supporto](mailto:support@hidora.io) per ottenerlo.
+Nel riquadro **Connection and network** della pagina del cluster. La zona **Internal** mostra sempre l'host interno, raggiungibile dalle VM e dai cluster Kubernetes del progetto; la zona **External** mostra l'indirizzo pubblico quando l'**External Access** è attivato, **Disabled** altrimenti. La porta è `3306`.
 
 ### Come creare un database?
 
@@ -71,4 +71,4 @@ Queste impostazioni non sono proposte nella console; contatti il supporto.
 
 ### I backup sono disponibili?
 
-La configurazione dei backup e il ripristino non sono proposti nella console; contatti il supporto. Consulti [Configurare i backup](./how-to/configure-backups.md).
+Sì, dalla scheda **Backups** della pagina del cluster: pianificazione, backup su richiesta e ripristino. Consulti [Configurare i backup](./how-to/configure-backups.md) e il [servizio di backup](../../backups/overview.md).

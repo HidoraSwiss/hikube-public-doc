@@ -41,8 +41,8 @@ graph TB
 | **VPC** | Isolated private network of the project. It has no address range of its own: its subnets carry them. |
 | **Subnet** | Private IPv4 address range (CIDR block) within a VPC. A VM connects to one or more subnets. |
 | **CIDR block** | Notation for an address range, for example `172.16.0.0/24` (256 addresses, from `172.16.0.0` to `172.16.0.255`). |
-| **Primary network** | Default network of every VM, with the default gateway and the public IP, if any. Shown as the **Primary** address on the VM's detail page. |
-| **Secondary interface** | Network interface added to the VM for each connected subnet. Its addresses appear as **Secondary**. |
+| **Primary network** | Network of the project, to which every VM is connected through its primary interface, with the default gateway. Its address is the **mgmt** IP, shown in the **Internal** zone of the VM's detail page; the public IP, if any, is shown in the **External** zone. |
+| **Secondary interface** | Network interface added to the VM for each connected subnet. Its addresses appear in the **Internal** zone, next to the **mgmt** IP. |
 
 ---
 

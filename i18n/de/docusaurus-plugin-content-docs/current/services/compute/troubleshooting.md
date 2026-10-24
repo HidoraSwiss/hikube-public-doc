@@ -72,7 +72,7 @@ Wenn die Konsole meldet, dass die Quotas des Projekts nicht verfügbar sind, ble
 
 **Lösung**:
 
-1. Auf der Detailseite, Abschnitt **Network & Security**: **Public IP** muss auf **Active** stehen und Port **22** muss unter **Firewall & Ports** aufgeführt sein.
+1. Auf der Detailseite, Abschnitt **Network & Security**: Der Bereich **External** muss eine Adresse anzeigen (und nicht **Disabled**), und Port **22** muss unter **Firewall & Ports** aufgeführt sein.
 2. Andernfalls klicken Sie auf **Edit**, aktivieren **Public IPv4 Address**, haken **SSH (22)** unter **Allowed Ports** an und klicken dann auf **Save**.
 3. Warten Sie direkt nach der Erstellung ein bis zwei Minuten, bis das Betriebssystem vollständig gestartet ist.
 4. Testen Sie im ausführlichen Modus:

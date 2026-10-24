@@ -49,7 +49,7 @@ Le primary écrit ses modifications dans le binary log, que les réplicas rejoue
 
 ### Où trouver l'adresse de connexion ?
 
-Dans la carte **Connexion et réseau** de la page du cluster, champ **Hôte (Host)**, lorsque l'**Accès externe** est activé. Le port est `3306`. Sans accès externe, le champ affiche **Non défini** : le cluster reste joignable depuis les VM et les clusters Kubernetes du projet par une adresse interne, que la console n'affiche pas ; [contactez le support](mailto:support@hidora.io) pour l'obtenir.
+Dans la carte **Connexion et réseau** de la page du cluster. La zone **Interne** affiche toujours l'hôte interne, joignable depuis les VM et les clusters Kubernetes du projet ; la zone **Externe** affiche l'adresse publique lorsque l'**Accès externe** est activé, **Désactivé** sinon. Le port est `3306`.
 
 ### Comment créer une base de données ?
 
@@ -71,4 +71,4 @@ Ces réglages ne sont pas proposés dans la console ; contactez le support.
 
 ### Les sauvegardes sont-elles disponibles ?
 
-La configuration des sauvegardes et la restauration ne sont pas proposées dans la console ; contactez le support. Voir [Configurer les sauvegardes](./how-to/configure-backups.md).
+Oui, depuis l'onglet **Sauvegardes** de la page du cluster : programmation, sauvegarde à la demande et restauration. Voir [Configurer les sauvegardes](./how-to/configure-backups.md) et le [service de sauvegarde](../../backups/overview.md).

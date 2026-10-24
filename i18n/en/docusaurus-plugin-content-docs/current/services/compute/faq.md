@@ -49,6 +49,12 @@ At creation, click **Add a disk** at the **Storage** step. On an existing VM, op
 
 ---
 
+### How do I reach a VM that has no public IP?
+
+Through its **mgmt** IP, shown in the **Internal** zone of the **Network & Security** section: it is reachable from the other resources of the same project, for example its other VMs, and the **SSH Connection** block uses it when the VM has no public IP. From the Internet or from another project, enable **Public IPv4 Address**. See [The addresses of a VM](./how-to/configure-network.md#the-addresses-of-a-vm).
+
+---
+
 ### How do I connect over SSH?
 
 1. Add your public key in **Authorized SSH keys** (**Network** step of the wizard, or **Edit** > **Advanced Configuration** > **SSH Keys**).

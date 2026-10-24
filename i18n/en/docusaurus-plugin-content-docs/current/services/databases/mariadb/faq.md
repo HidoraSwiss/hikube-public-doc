@@ -49,7 +49,7 @@ The primary writes its changes to the binary log, which the replicas replay. If 
 
 ### Where can I find the connection address?
 
-In the **Connection and network** card of the cluster page, **Host** field, when **External Access** is enabled. The port is `3306`. Without external access, the field shows **Not defined**: the cluster remains reachable from the project's VMs and Kubernetes clusters through an internal address, which the console does not display; [contact support](mailto:support@hidora.io) to obtain it.
+In the **Connection and network** card of the cluster page. The **Internal** zone always shows the internal host, reachable from the project's VMs and Kubernetes clusters; the **External** zone shows the public address when **External Access** is enabled, **Disabled** otherwise. The port is `3306`.
 
 ### How do I create a database?
 
@@ -71,4 +71,4 @@ These settings are not offered in the console; contact support.
 
 ### Are backups available?
 
-Backup configuration and restore are not offered in the console; contact support. See [Configure backups](./how-to/configure-backups.md).
+Yes, from the **Backups** tab of the cluster page: scheduling, on-demand backup and restore. See [Configure backups](./how-to/configure-backups.md) and the [backup service](../../backups/overview.md).

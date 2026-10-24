@@ -76,7 +76,7 @@ Die Rotation widerruft das alte Passwort sofort. Aktualisieren Sie Ihre Anwendun
 mongosh "mongodb://<host>:27017/analytics?directConnection=true&authSource=admin" --username report-reader
 ```
 
-Bei einem Replica Set ist `<host>` die Adresse eines der in der Karte **Network and Connection** aufgeführten **Replica set rs0 members**.
+Bei einem Replica Set ist `<host>` die Adresse eines der Mitglieder, die im Bereich **External** der Karte **Network and Connection** aufgeführt sind.
 
 ```javascript
 // Muss gelingen

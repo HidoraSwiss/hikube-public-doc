@@ -23,6 +23,7 @@ You create and manage your clusters as self-service from the [Hikube console](ht
 - **Assign rights per vhost** to each user (**Administrator** or **Read-only**);
 - **Generate a new password** for a user;
 - **Edit** an existing cluster: version upgrade, disk size increase, external access;
+- **Restart** a cluster;
 - **Delete** a cluster, a vhost or a user.
 
 ---

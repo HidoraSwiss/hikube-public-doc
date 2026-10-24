@@ -159,8 +159,9 @@ La definizione di risorse CPU/memoria libere (al di fuori dei preset) non è pro
 
 ## Accesso di rete
 
-- **Accesso esterno disattivato** (impostazione predefinita): il cluster non è esposto su Internet. Il campo **Host** della pagina del cluster mostra **Not defined**.
-- **Accesso esterno attivato**: la piattaforma assegna un indirizzo IP pubblico, mostrato nel campo **Host**. La porta è la porta PostgreSQL standard, `5432`.
+- **Host interno**: sempre assegnato, visualizzato nella zona **Internal** del riquadro **Connection and Databases**. Punta al primario ed è raggiungibile dalle VM e dai cluster Kubernetes dello stesso progetto, non da un altro progetto né da Internet.
+- **Accesso esterno disattivato** (impostazione predefinita): il cluster non è esposto su Internet. La zona **External** mostra **Disabled**.
+- **Accesso esterno attivato**: la piattaforma assegna un indirizzo IP pubblico, mostrato nella zona **External**. La porta è la porta PostgreSQL standard, `5432`.
 
 L'accesso esterno può essere attivato o disattivato dopo la creazione, tramite **Edit**. Il suo costo (indirizzo IP pubblico) è incluso nell'**Estimated cost** della procedura guidata.
 
@@ -168,7 +169,7 @@ L'accesso esterno può essere attivato o disattivato dopo la creazione, tramite 
 
 ## Backup e ripristino
 
-La configurazione dei backup e il ripristino non sono proposti nella console; contatti il supporto. Consulti [Configurare i backup](./how-to/configure-backups.md).
+I cluster PostgreSQL si salvano verso un bucket S3 del progetto e si ripristinano dalla scheda **Backups** della loro pagina, con il [servizio di backup](../../backups/overview.md). I log delle transazioni sono archiviati in continuo tra due backup, il che permette di ripristinare il database a un istante preciso. Consulti [Configurare i backup](./how-to/configure-backups.md) e [Ripristinare un backup](./how-to/restore-backup.md).
 
 ---
 

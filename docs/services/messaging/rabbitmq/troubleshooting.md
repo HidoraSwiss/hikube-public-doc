@@ -37,13 +37,13 @@ description: "Problèmes courants de RabbitMQ sur Hikube : cluster bloqué en cr
 
 **Solution** : revenez à l'étape **Général** et choisissez un autre **Nom du cluster**.
 
-### Le champ « Hôte (Host) » affiche « Non disponible / En création »
+### La zone Externe affiche « Désactivé » ou « En attente d'attribution… »
 
-**Cause** : l'adresse publique n'est pas encore attribuée, ou l'**Accès externe** est désactivé.
+**Cause** : l'**Accès externe** est désactivé, ou l'adresse publique n'est pas encore attribuée.
 
 **Solution** :
 
-1. Vérifiez dans la section **Connexion** que **Accès externe** indique **Activé**. Sinon, activez-le (voir [Configurer l'accès externe](./how-to/configure-external-access.md)).
+1. « Désactivé » : activez l'accès externe (voir [Configurer l'accès externe](./how-to/configure-external-access.md)). Depuis le projet, il n'est pas nécessaire : utilisez l'hôte de la zone **Interne**.
 2. Si l'accès externe est activé, patientez puis rechargez la page.
 
 ### Connexion AMQP refusée (`ACCESS_REFUSED`)
@@ -63,7 +63,7 @@ description: "Problèmes courants de RabbitMQ sur Hikube : cluster bloqué en cr
 
 **Solution** :
 
-1. Vérifiez l'**Hôte (Host)** et l'état de l'**Accès externe** dans la section **Connexion**.
+1. Vérifiez l'adresse utilisée dans la section **Connexion** : zone **Externe** depuis Internet, zone **Interne** depuis le projet.
 2. Utilisez le port **5672**.
 3. Testez l'ouverture du port depuis la machine cliente :
    ```bash

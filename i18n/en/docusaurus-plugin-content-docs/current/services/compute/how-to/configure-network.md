@@ -20,7 +20,7 @@ A Hikube VM can be exposed on the Internet through a public IPv4 address, filter
 |---------------|-------|-------------|
 | **Public IPv4 Address** enabled + **Enable Firewall** checked | Only the **Allowed Ports** are reachable from the Internet | Production, targeted services (recommended) |
 | **Public IPv4 Address** enabled + firewall unchecked | All ports of the VM are reachable from the Internet | VPN, gateway, protocols with dynamic ports |
-| **Public IPv4 Address** disabled | No exposure on the Internet | Internal VM, reachable through a [VPC](../../networking/overview.md) |
+| **Public IPv4 Address** disabled | No exposure on the Internet | Internal VM, reachable by its **mgmt** IP or through a [VPC](../../networking/overview.md) |
 
 :::tip Recommendation
 Keep the firewall enabled in production and open only the ports you need.
@@ -53,10 +53,14 @@ Under **VPC Networks (Secondary)**, check a VPC, then one or more of its **Subne
 
 ## Verification
 
-On the detail page, **Network & Security** section:
+On the detail page, **Network & Security** section, the VM's addresses are split into two zones:
 
-- **Public IP**: **Active** or **Disabled**;
-- **IP Addresses**: the **Primary** address and, where applicable, the **Secondary** addresses of the VPC subnets;
+- **Internal**, *From the project's resources only*: the address tagged **mgmt**, then, where applicable, the addresses of the VPC subnets (see [The addresses of a VM](#the-addresses-of-a-vm));
+- **External**, *From the Internet*: the public IP. Without a public IP, the zone shows **Disabled** and "This instance has no public IP.". Until the address is assigned, it shows "Waiting for allocation…".
+
+Then come:
+
+- **SSH Connection**: the command ready to copy, on the public IP, or on the **mgmt** IP if the VM has no public IP;
 - **VPC Networks**: the connected VPCs and subnets;
 - **Firewall & Ports**: the open ports, or **No ports open**.
 
@@ -76,6 +80,40 @@ nc -zv -w 5 <public-ip> 8080
 :::warning Firewall disabled
 Without the Hikube firewall, the VM is fully exposed. Configure a firewall in the OS (ufw, firewalld, nftables) before disabling the option.
 :::
+
+## The addresses of a VM
+
+### The mgmt IP
+
+Every VM receives, when it starts, an address on its project's network: the **mgmt** IP (for *management*), shown in the **Internal** zone. It exists whether or not the public IP is enabled, and it is reachable from the other resources of the same project, for example its other VMs. It is the address to use between two VMs of the project without going through the Internet. While the VM is stopped, the **Internal** zone shows "Assigned when the instance starts.".
+
+The Hikube firewall does not filter this traffic: filter it, if needed, with the OS firewall. To reach the VM from another project or from the Internet, use its public IP.
+
+### Reaching a managed service in the project
+
+Databases and RabbitMQ show a full host name in their **Internal** zone, ending in `.local`. From a VM of the project, copy it as is, in full: its short form does not resolve on every image.
+
+On Debian 13, the name does not resolve without configuration: the system ignores the search domain provided by DHCP. Add these lines to the VM's **Cloud-Init script (User Data)** (if your configuration already contains `write_files` or `runcmd`, merge the entries into the existing lists):
+
+```yaml title="cloud-init.yaml"
+#cloud-config
+write_files:
+  - path: /etc/netplan/90-hikube-dns.yaml
+    permissions: '0600'
+    content: |
+      network:
+        version: 2
+        ethernets:
+          enp1s0:
+            dhcp4-overrides:
+              use-domains: true
+            dhcp6-overrides:
+              use-domains: true
+runcmd:
+  - netplan apply
+```
+
+On a VM that is already running, write the same file, then run `sudo netplan apply`. Ubuntu, AlmaLinux and Debian 12 resolve the name without configuration.
 
 ## Further reading
 

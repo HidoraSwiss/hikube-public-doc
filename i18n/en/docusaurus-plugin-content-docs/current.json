@@ -258,5 +258,21 @@
   "sidebar.docsSidebar.category.how-to-services-messaging-nats.link.generated-index.description": {
     "message": "Step-by-step guides for NATS on Hikube: each guide covers one specific task to carry out from the console, with its steps and checks.",
     "description": "The generated-index page description for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Sauvegardes": {
+    "message": "Backups",
+    "description": "The label for category 'Sauvegardes' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-backups": {
+    "message": "How-to Guides",
+    "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-backups.link.generated-index.title": {
+    "message": "Practical guides — Backups",
+    "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-backups.link.generated-index.description": {
+    "message": "Step-by-step guides for Backups on Hikube: each guide covers one specific task to carry out from the console, with its steps and checks.",
+    "description": "The generated-index page description for category 'Guides pratiques' in sidebar 'docsSidebar'"
   }
 }

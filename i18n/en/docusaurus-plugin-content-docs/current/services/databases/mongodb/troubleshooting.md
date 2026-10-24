@@ -34,7 +34,7 @@ description: "Fix common MongoDB issues on Hikube: cluster in error, connection 
 
 **Solution**:
 
-1. In the **Network and Connection** card, check that **External Access** is **Enabled** and that the **Host** field contains an address, or, for a replica set, that the **Replica set rs0 members** are listed.
+1. In the **Network and Connection** card, check that the **External** zone contains an address (one per member for a replica set), and not **Disabled** or "Waiting for allocation…".
 2. Test connectivity (on a replica set, with the address of one member):
    ```bash
    mongosh "mongodb://<host>:27017/?directConnection=true" --eval 'db.runCommand({ ping: 1 })'

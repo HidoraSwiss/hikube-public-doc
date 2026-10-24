@@ -23,6 +23,7 @@ Sie erstellen und verwalten Ihre Cluster im Self-Service in der [Hikube-Konsole]
 - jedem Benutzer **Rechte pro VHost** zuweisen (**Administrator** oder **Read-only**);
 - **ein neues Passwort** für einen Benutzer **generieren**;
 - Einen bestehenden Cluster **ändern** (**Edit**): Versions-Upgrade, Vergrößerung der Disk, externer Zugriff;
+- einen Cluster **neu starten** (**Restart**);
 - einen Cluster, einen VHost oder einen Benutzer **löschen** (**Delete**).
 
 ---

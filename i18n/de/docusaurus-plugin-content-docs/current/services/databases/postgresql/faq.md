@@ -43,11 +43,11 @@ Die Anzahl der Replicas kann nach der Erstellung nicht geändert werden; wenden 
 
 ### Wo finde ich die Verbindungsadresse?
 
-Auf der Seite des Clusters, in der Karte **Connection and Databases**, Feld **Host**. Eine Adresse wird dort nur angezeigt, wenn der **External Access** aktiviert ist; andernfalls zeigt das Feld **Not defined** an. Der Port ist `5432`.
+Auf der Seite des Clusters, in der Karte **Connection and Databases**. Der Bereich **Internal** zeigt immer den internen Host an; der Bereich **External** zeigt die öffentliche Adresse an, wenn der **External Access** aktiviert ist, andernfalls **Disabled**. Der Port ist `5432`.
 
 ### Wie verbinde ich mich ohne externen Zugriff von einer VM oder einem Kubernetes-Cluster desselben Projekts?
 
-Ohne externen Zugriff bleibt der Cluster von den VMs und Kubernetes-Clustern des Projekts über eine projektinterne Adresse erreichbar, die die Konsole nicht anzeigt. [Wenden Sie sich an den Support](mailto:support@hidora.io), um sie zu erhalten.
+Verwenden Sie den Host aus dem Bereich **Internal** auf Port `5432`: Er ist von den VMs und Kubernetes-Clustern des Projekts aus erreichbar, ohne externen Zugriff, aber nicht aus einem anderen Projekt. Kopieren Sie den vollständigen Namen; bei einer Debian-13-VM siehe [Einen verwalteten Dienst des Projekts erreichen](../../compute/how-to/configure-network.md#einen-verwalteten-dienst-des-projekts-erreichen).
 
 ### Ich habe das Passwort eines Benutzers verloren. Wie kann ich es wiederherstellen?
 
@@ -79,4 +79,4 @@ Diese Parameter werden in der Konsole nicht angeboten; wenden Sie sich an den Su
 
 ### Sind Backups verfügbar?
 
-Die Konfiguration von Backups und die Wiederherstellung werden in der Konsole nicht angeboten; wenden Sie sich an den Support. Siehe [Backups konfigurieren](./how-to/configure-backups.md).
+Ja, über die Registerkarte **Backups** der Cluster-Seite: Zeitplan, Backup auf Abruf und Wiederherstellung, auch zu einem bestimmten Zeitpunkt. Siehe [Backups konfigurieren](./how-to/configure-backups.md) und den [Backup-Service](../../backups/overview.md).

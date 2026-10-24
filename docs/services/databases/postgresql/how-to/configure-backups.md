@@ -2,36 +2,27 @@
 title: "Comment configurer les sauvegardes automatiques — PostgreSQL"
 sidebar_label: "Comment configurer les sauvegardes automatiques"
 sidebar_position: 3
+description: "Programmez les sauvegardes d'un cluster PostgreSQL Hikube depuis la console, vers un bucket de votre projet, et exportez une base à la demande avec pg_dump."
 ---
 
 # Comment configurer les sauvegardes automatiques
 
-:::info Disponibilité
-La configuration des sauvegardes PostgreSQL n'est pas encore disponible en libre-service dans la [console Hikube](https://console.hikube.cloud).
-Pour activer ou modifier les sauvegardes d'un cluster, [contactez le support](mailto:support@hidora.io).
-:::
+Les clusters PostgreSQL se sauvegardent avec le [service de sauvegarde](../../../backups/overview.md) d'Hikube, depuis l'onglet **Sauvegardes** de la page du cluster dans la [console Hikube](https://console.hikube.cloud).
 
 ## Principe
 
-Les clusters PostgreSQL Hikube savent sauvegarder une base vers un stockage objet compatible S3 :
+- **Sauvegardes complètes**, programmées ou à la demande, écrites dans un bucket S3 de votre projet ;
+- **Archivage continu des journaux de transactions** entre deux sauvegardes, qui permet de restaurer la base à un instant précis ;
+- **Rétention** en jours, fixée par la destination.
 
-- **Sauvegardes complètes** (base backups) planifiées à intervalle régulier ;
-- **Archivage continu des WAL**, qui permet la restauration à un instant précis (PITR, Point-In-Time Recovery) ;
-- **Politique de rétention** qui détermine la durée de conservation des sauvegardes.
+## Étapes
 
-## Informations à préparer
+1. Créez une destination dans **Infrastructure** > **Sauvegardes** > **Destinations** : voir [Créer une destination](../../../backups/how-to/create-destination.md).
+2. Ouvrez **PostgreSQL**, le cluster, puis l'onglet **Sauvegardes**.
+3. Cliquez sur **Programmer**, choisissez la destination et l'horaire, puis **Programmer**. Voir [Programmer des sauvegardes](../../../backups/how-to/schedule-backups.md).
 
-Pour une demande d'activation, indiquez au support :
-
-| Information | Exemple |
-|-------------|---------|
-| Projet et nom du cluster | `prod` / `orders-db` |
-| Fréquence des sauvegardes complètes | Tous les jours à 2h |
-| Durée de rétention | 30 jours |
-| Bucket de destination | Un bucket [Hikube Object Storage](../../../storage/buckets/overview.md) dédié ou un stockage S3 externe |
-
-:::warning
-Ne transmettez jamais de clés d'accès S3 par un canal non sécurisé. Le support vous indiquera la procédure adaptée.
+:::warning Une seule destination par cluster
+Toutes les sauvegardes d'un même cluster PostgreSQL doivent viser la même destination : une seconde destination est refusée.
 :::
 
 ## Sauvegarde logique à la demande
@@ -49,4 +40,4 @@ L'utilisateur doit disposer du droit **Administrateur (Admin)** ou **Lecture seu
 ## Pour aller plus loin
 
 - [Restaurer une sauvegarde](./restore-backup.md)
-- [Concepts PostgreSQL](../concepts.md)
+- [Concepts des sauvegardes](../../../backups/concepts.md)

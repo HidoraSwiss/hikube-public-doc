@@ -45,7 +45,7 @@ Der Producer veröffentlicht an einen Exchange, nie direkt an eine Queue. Exchan
 
 ### Über welchen Port verbinde ich mich?
 
-AMQP-Clients verbinden sich über den Port **5672** mit der Adresse, die im Feld **Host** des Abschnitts **Connection** des Clusters angezeigt wird (wenn der **External Access** aktiviert ist).
+AMQP-Clients verbinden sich über den Port **5672** mit einer der Adressen aus dem Abschnitt **Connection** des Clusters: mit dem Host aus dem Bereich **Internal** von den VMs und Kubernetes-Clustern des Projekts aus, mit der Adresse aus dem Bereich **External** aus dem Internet (wenn der **External Access** aktiviert ist).
 
 ### Kann ich die Anzahl der Replicas oder das Preset nach der Erstellung ändern?
 

@@ -107,14 +107,17 @@ Die Option **Enable authentication** ist im Assistenten standardmäßig aktivier
 - **Aktiviert**: Bei der Erstellung wird ein Passwort generiert und einmalig zusammen mit dem Benutzer `default` angezeigt. Sie können es jederzeit im Abschnitt **Security** der Cluster-Seite erneuern (**Rotate password**).
 - **Deaktiviert**: Der Cluster nimmt Verbindungen ohne Passwort an. Zu vermeiden, insbesondere bei aktiviertem öffentlichem Netzwerk.
 
+Die Option lässt sich nach der Erstellung über **Edit** ändern. Eine Änderung der Authentifizierung gilt, wie eine Rotation des Passworts, für die Redis-Server erst nach einem [Neustart des Clusters](./how-to/restart-cluster.md): Bis dahin behalten sie ihre bisherige Konfiguration.
+
 Redis auf Hikube bietet in der Konsole keine Verwaltung mehrerer Benutzer (ACL): Der Zugriff beruht auf diesem globalen Passwort.
 
 ---
 
 ## Netzwerkzugriff
 
-- **Öffentliches Netzwerk deaktiviert** (Standard, „Private“ in der Übersicht): Der Cluster ist nicht im Internet erreichbar. Der Abschnitt **Connection** der Cluster-Seite zeigt anstelle des Hosts „Waiting for allocation...“ an.
-- **Öffentliches Netzwerk aktiviert** („Public“): Die Plattform weist eine öffentliche IP-Adresse zu, die im Feld **Host** angezeigt wird. Sie gewährt Zugriff auf den Master über den Redis-Standardport `6379` und folgt dem Master nach einem Failover.
+- **Interner Host**: immer zugewiesen, angezeigt im Bereich **Internal** des Abschnitts **Connection**. Er zeigt auf den Master und ist von den VMs und Kubernetes-Clustern desselben Projekts aus erreichbar, nicht aus einem anderen Projekt und nicht aus dem Internet.
+- **Öffentliches Netzwerk deaktiviert** (Standard, „Private“ in der Übersicht): Der Cluster ist nicht im Internet erreichbar. Der Bereich **External** zeigt **Disabled** an.
+- **Öffentliches Netzwerk aktiviert** („Public“): Die Plattform weist eine öffentliche IP-Adresse zu, die im Bereich **External** angezeigt wird. Sie gewährt Zugriff auf den Master über den Redis-Standardport `6379` und folgt dem Master nach einem Failover.
 
 ---
 

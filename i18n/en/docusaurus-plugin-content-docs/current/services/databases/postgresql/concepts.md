@@ -159,8 +159,9 @@ Defining custom CPU/memory resources (outside presets) is not offered in the con
 
 ## Network access
 
-- **External access disabled** (default): the cluster is not exposed on the Internet. The **Host** field on the cluster page shows **Not defined**.
-- **External access enabled**: the platform assigns a public IP address, shown in the **Host** field. The port is the standard PostgreSQL port, `5432`.
+- **Internal host**: always assigned, shown in the **Internal** zone of the **Connection and Databases** card. It points to the primary and is reachable from the VMs and Kubernetes clusters of the same project, not from another project or from the Internet.
+- **External access disabled** (default): the cluster is not exposed on the Internet. The **External** zone shows **Disabled**.
+- **External access enabled**: the platform assigns a public IP address, shown in the **External** zone. The port is the standard PostgreSQL port, `5432`.
 
 External access can be enabled or disabled after creation, from **Edit**. Its cost (public IP address) is included in the wizard's **Estimated Cost**.
 
@@ -168,7 +169,7 @@ External access can be enabled or disabled after creation, from **Edit**. Its co
 
 ## Backup and restore
 
-Backup configuration and restore are not offered in the console; contact support. See [Configure backups](./how-to/configure-backups.md).
+PostgreSQL clusters are backed up to an S3 bucket in the project and restored from the **Backups** tab of their page, with the [backup service](../../backups/overview.md). Transaction logs are archived continuously between two backups, which makes it possible to restore the database to a point in time. See [Configure backups](./how-to/configure-backups.md) and [Restore a backup](./how-to/restore-backup.md).
 
 ---
 

@@ -72,7 +72,7 @@ If the console says the project quotas are unavailable, creation stays blocked u
 
 **Solution**:
 
-1. On the detail page, **Network & Security** section: **Public IP** must be **Active** and port **22** must appear under **Firewall & Ports**.
+1. On the detail page, **Network & Security** section: the **External** zone must show an address (and not **Disabled**), and port **22** must appear under **Firewall & Ports**.
 2. Otherwise, click **Edit**, enable **Public IPv4 Address**, check **SSH (22)** in **Allowed Ports**, then **Save**.
 3. Right after creation, wait one to two minutes for the OS to finish booting.
 4. Test in verbose mode:

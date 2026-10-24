@@ -62,8 +62,9 @@ graph TD
 | Erstellung eines Clusters (Version 10.6, 10.11, 11.4 oder 11.8, Preset, Disk-Größe, 1, 3 oder 5 Replicas, externer Zugriff) | Ja |
 | Benutzer und Zugriff pro Datenbank (Admin / nur Lesen), Passwortrotation | Ja |
 | Versions-Upgrade, Vergrößerung der Disk, Änderung des externen Zugriffs | Ja |
+| Neustart des Clusters | Ja |
 | Änderung des Presets oder der Anzahl der Replicas nach der Erstellung | Nein, [wenden Sie sich an den Support](mailto:support@hidora.io) |
-| Backups und Wiederherstellung | Nein, [wenden Sie sich an den Support](mailto:support@hidora.io) |
+| Geplante Backups oder Backups auf Abruf, Wiederherstellung | Ja, Registerkarte **Backups** (siehe [Backups](../../backups/overview.md)) |
 
 ---
 

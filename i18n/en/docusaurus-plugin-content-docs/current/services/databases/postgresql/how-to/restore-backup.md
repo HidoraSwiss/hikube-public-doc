@@ -1,30 +1,31 @@
 ---
 title: "How to restore a backup (PITR)"
 sidebar_position: 4
+description: "Restore a Hikube PostgreSQL cluster from the console: state of a backup, most recent state or point in time, onto the original cluster or onto another cluster."
 ---
 
 # How to restore a backup (PITR)
 
-:::info Availability
-PostgreSQL backup restore is not yet available as self-service in the [Hikube console](https://console.hikube.cloud).
-To restore a cluster, [contact support](mailto:support@hidora.io).
-:::
+A PostgreSQL archive is restored from the **Backups** tab of the cluster page, in the [Hikube console](https://console.hikube.cloud), or from **Infrastructure** > **Backups** > **Archives**.
 
 ## Principle
 
-When backups are enabled on a cluster, continuous WAL archiving makes it possible to restore data to a **precise point in time** (Point-In-Time Recovery). The restore creates a **new cluster**, under a different name; the original cluster is not modified.
+Thanks to the continuous archiving of transaction logs, a restore can bring the database back to:
 
-## Information to prepare
+- the **exact state of a backup**;
+- its **most recent state**;
+- a **precise point in time** (PITR, *Point-In-Time Recovery*), between two backups.
 
-| Information | Example |
-|-------------|---------|
-| Project and original cluster name | `prod` / `orders-db` |
-| Desired name for the restored cluster | `orders-restored` |
-| Restore point in time (with time zone) | `2026-06-15 14:30 Europe/Zurich`, or "latest available state" |
+The restore writes either **onto the original cluster**, whose content is overwritten, or **onto another existing PostgreSQL cluster** in the project, of the same major version.
+
+## Steps
+
+- [Restore a PostgreSQL or MariaDB database](../../../backups/how-to/restore-database.md)
+- [Restore a PostgreSQL database to a point in time](../../../backups/how-to/restore-point-in-time.md)
 
 ## After the restore
 
-The restored cluster appears in your project's **PostgreSQL Clusters** list. Check your data before switching your applications over:
+Check your data before putting your applications back into service:
 
 ```sql
 -- Check the data volume
@@ -33,7 +34,7 @@ FROM pg_stat_user_tables
 ORDER BY n_live_tup DESC;
 ```
 
-Then update your applications' configuration with the new cluster's address (**Host** field on its page) and the associated credentials.
+If you restored onto another cluster, update your applications' configuration with its address (**Internal** and **External** zones of its page) and its credentials.
 
 ## Restoring a logical export
 

@@ -51,7 +51,10 @@ The list displayed by the wizard is authoritative. The preset cannot be changed 
 
 ### Where can I find the connection address?
 
-In the **Network and Connection** card of the cluster page, when **External Access** is enabled: **Host** field for a sharded cluster, **Replica set rs0 members** list and **External connection string** for a replica set. The port is `27017`. On a replica set, connect to one member with `directConnection=true`, without the `replicaSet` parameter. Without external access, the field shows **Not defined**: the cluster remains reachable from the project's VMs and Kubernetes clusters through an internal address, which the console does not display; [contact support](mailto:support@hidora.io) to obtain it.
+In the **Network and Connection** card of the cluster page. The port is `27017`.
+
+- From the project (VMs, Kubernetes clusters): the host in the **Internal** zone, always shown. On a replica set, add `replicaSet=rs0`.
+- From the Internet, when **External Access** is enabled: the **External** zone, with the address of the routers for a sharded cluster, one address per member and the **External connection string** for a replica set. On a replica set, connect to one member with `directConnection=true`, without the `replicaSet` parameter.
 
 ### Why doesn't the user created in the wizard have access to my database?
 

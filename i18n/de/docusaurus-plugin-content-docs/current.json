@@ -266,5 +266,21 @@
   "sidebar.docsSidebar.category.how-to-services-databases-mariadb.link.generated-index.description": {
     "message": "Schritt-für-Schritt-Anleitungen für MariaDB auf Hikube: Jede Anleitung beschreibt eine konkrete Aufgabe in der Konsole, mit Schritten und Prüfungen.",
     "description": "The generated-index page description for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Sauvegardes": {
+    "message": "Backups",
+    "description": "The label for category 'Sauvegardes' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-backups": {
+    "message": "Praktische Anleitungen",
+    "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-backups.link.generated-index.title": {
+    "message": "Praktische Anleitungen — Backups",
+    "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-services-backups.link.generated-index.description": {
+    "message": "Schritt-für-Schritt-Anleitungen für Backups auf Hikube: Jede Anleitung beschreibt eine konkrete Aufgabe in der Konsole, mit Schritten und Prüfungen.",
+    "description": "The generated-index page description for category 'Guides pratiques' in sidebar 'docsSidebar'"
   }
 }

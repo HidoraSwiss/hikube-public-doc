@@ -6,6 +6,8 @@ description: "Créez un cluster Redis depuis la console Hikube, récupérez le m
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
 # Déployer Redis en 5 minutes
 
@@ -27,18 +29,43 @@ Ce guide vous accompagne dans la création de votre premier cluster **Redis** de
 
 - Un **compte Hikube** et un **projet** disposant de quotas suffisants (CPU, mémoire, stockage)
 - Le client **`redis-cli`** installé sur votre poste, si vous souhaitez tester une connexion depuis Internet
+- Pour l'onglet **API** : une clé d'API `admin` du projet et les variables `HIKUBE_API`, `HIKUBE_API_KEY` et `PROJECT_ID` (voir [Préparer l'environnement](../../../api/quick-start.md#environnement)) ; les exemples utilisent `curl` et `jq`
 
 ---
 
 ## Étape 1 : Créer le cluster
 
+<Tabs groupId="interface">
+<TabItem value="console" label="Console" default>
+
 1. Connectez-vous à la [console Hikube](https://console.hikube.cloud) et sélectionnez votre projet.
 2. Dans le menu latéral, ouvrez **DB & Messaging** → **Redis**. La page **Clusters Redis** s'affiche.
 3. Cliquez sur **Créer un cluster**. L'assistant **Créer un cluster Redis** s'ouvre.
 
+</TabItem>
+<TabItem value="api" label="API">
+
+Avec l'API, il n'y a pas d'assistant. Vérifiez que la clé donne accès au projet en listant ses clusters Redis, puis consultez les préconfigurations disponibles :
+
+```bash
+curl -sS "$HIKUBE_API/redis/v1alpha1/projects/$PROJECT_ID/clusters" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY"
+
+curl -sS "$HIKUBE_API/redis/v1alpha1/presets" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" | jq '.presets[] | {name, cpu, memory}'
+```
+
+**Résultat attendu :** un objet `{"totalCount": ..., "clusters": [...]}`, puis la liste des préconfigurations (séries `u1`, `s1` et `m1`) avec leur CPU et leur mémoire.
+
+</TabItem>
+</Tabs>
+
 ---
 
 ## Étape 2 : Configurer et valider
+
+<Tabs groupId="interface">
+<TabItem value="console" label="Console" default>
 
 L'assistant comporte quatre étapes : **Général**, **Configuration**, **Vérification** et **Résumé**.
 
@@ -67,9 +94,49 @@ Le **Nombre de réplicas** ne peut plus être modifié après la création.
 
 Relisez le récapitulatif (**Nom**, **Version**, **Préconfiguration**, **Réplicas**, **Taille de stockage**, **Réseau** : **Public** ou **Privé**), puis cliquez sur **Déployer**.
 
+</TabItem>
+<TabItem value="api" label="API">
+
+Créez le cluster avec `POST /redis/v1alpha1/projects/{projectId}/clusters`, avec les mêmes valeurs que dans la console :
+
+```bash
+curl -sS -X POST "$HIKUBE_API/redis/v1alpha1/projects/$PROJECT_ID/clusters" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "democache",
+    "version": "v8",
+    "preset": "s1.small",
+    "size": 10,
+    "replicas": 3,
+    "external": true,
+    "authEnabled": true
+  }' | jq '{name, status, password}'
+```
+
+| Champ | Valeur | Remarque |
+|-------|--------|----------|
+| `name` | `democache` | 16 caractères maximum, en minuscules ; identifie le cluster dans les chemins de l'API |
+| `version` | `v8` | `v7` ou `v8` |
+| `preset` | `s1.small` | Une préconfiguration de `GET /redis/v1alpha1/presets` (séries `u1`, `s1` et `m1`) |
+| `size` | `10` | Taille du volume de chaque nœud, en Go (1 à 4096) |
+| `replicas` | `3` | 1 à 8 ; `1` = nœud unique, 2 et plus = mode cluster. Le mode ne peut plus changer après la création |
+| `external` | `true` | Accès depuis Internet (**Réseau public**) |
+| `authEnabled` | `true` | Authentification par mot de passe |
+
+:::warning Mot de passe renvoyé une seule fois
+Avec `"authEnabled": true`, la réponse de création contient le champ `password`. Il n'est renvoyé qu'ici : enregistrez-le aussitôt dans votre gestionnaire de secrets.
+:::
+
+</TabItem>
+</Tabs>
+
 ---
 
 ## Étape 3 : Vérifier l'état
+
+<Tabs groupId="interface">
+<TabItem value="console" label="Console" default>
 
 L'étape **Résumé** affiche « Cluster créé avec succès ». Cliquez sur **Terminer** pour revenir à la liste **Clusters Redis**, puis ouvrez le cluster.
 
@@ -79,11 +146,33 @@ L'étape **Résumé** affiche « Cluster créé avec succès ». Cliquez sur **T
 | **Prêt** | Le cluster est opérationnel |
 | **Erreur** | La plateforme n'a pas pu appliquer la création ou la dernière modification du cluster |
 
-**Résultat attendu :** après quelques minutes, la section **Connexion** de la page du cluster affiche le **Statut** **Prêt** et l'**Hôte** du cluster.
+**Résultat attendu :** après quelques minutes, la section **Connexion** de la page du cluster affiche le **Statut** **Prêt** et l'hôte interne du cluster.
+
+</TabItem>
+<TabItem value="api" label="API">
+
+```bash
+curl -sS "$HIKUBE_API/redis/v1alpha1/projects/$PROJECT_ID/clusters/democache" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" | jq '{name, status, host, internalHost, replicas, preset}'
+```
+
+| `status` | Signification |
+|----------|---------------|
+| `provisioning` | Le cluster est en cours de provisionnement |
+| `ready` | Le cluster est opérationnel |
+| `error` | Le provisionnement a échoué |
+
+**Résultat attendu :** après quelques minutes, `status` vaut `ready` et `host` contient l'adresse du cluster.
+
+</TabItem>
+</Tabs>
 
 ---
 
 ## Étape 4 : Récupérer les identifiants
+
+<Tabs groupId="interface">
+<TabItem value="console" label="Console" default>
 
 Lorsque l'authentification est activée, l'étape **Résumé** de l'assistant affiche, dans **Identifiants des utilisateurs** :
 
@@ -95,11 +184,35 @@ Lorsque l'authentification est activée, l'étape **Résumé** de l'assistant af
 Copiez le mot de passe immédiatement : il ne sera plus affiché. En cas de perte, générez-en un nouveau depuis la section **Sécurité** de la page du cluster (**Effectuer une rotation**). Voir [Renouveler le mot de passe](./how-to/rotate-password.md).
 :::
 
-L'adresse reste consultable dans la page du cluster, section **Connexion**, champ **Hôte** (bouton de copie à droite).
+La section **Connexion** de la page du cluster affiche ses adresses en deux zones, chacune avec un bouton de copie :
+
+- **Interne**, *Depuis les ressources du projet uniquement* : l'hôte interne, toujours renseigné, et le port (`6379`). Il se joint depuis les VM et les clusters Kubernetes du même projet, sans accès externe ;
+- **Externe**, *Depuis Internet* : l'adresse publique, lorsque l'**Accès externe** est activé.
+
+</TabItem>
+<TabItem value="api" label="API">
+
+- **Utilisateur** : `default` ;
+- **Mot de passe** : le champ `password` de la réponse de création (étape 2). `GET` ne le renvoie jamais ;
+- **Hôte** : le champ `host` de `GET .../clusters/democache` (étape 3) depuis Internet, `internalHost` depuis les ressources du projet.
+
+En cas de perte du mot de passe, générez-en un nouveau. La rotation révoque immédiatement l'ancien :
+
+```bash
+curl -sS -X POST "$HIKUBE_API/redis/v1alpha1/projects/$PROJECT_ID/clusters/democache/rotate-password" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" | jq -r '.password'
+```
+
+Voir [Renouveler le mot de passe](./how-to/rotate-password.md).
+
+</TabItem>
+</Tabs>
 
 ---
 
 ## Étape 5 : Connexion et tests
+
+Depuis votre poste, utilisez l'adresse de la zone **Externe** ; depuis une VM ou un cluster Kubernetes du projet, l'hôte de la zone **Interne**.
 
 ```bash
 export REDIS_HOST=<hôte>
@@ -126,9 +239,13 @@ La variable `REDISCLI_AUTH` évite de faire apparaître le mot de passe dans l'h
 
 ## Étape 6 : Dépannage rapide
 
-### L'hôte affiche « En attente d'attribution... »
+### La zone Externe affiche « Désactivé » ou « En attente d'attribution… »
 
-Le réseau public est désactivé, ou l'adresse IP publique n'est pas encore attribuée. Activez **Accès externe** via **Modifier** si nécessaire, puis patientez quelques instants.
+« Désactivé » : l'**Accès externe** est coupé. Activez-le via **Modifier** si vous devez vous connecter depuis Internet ; depuis le projet, utilisez l'hôte de la zone **Interne**. « En attente d'attribution… » : l'adresse publique n'est pas encore attribuée, patientez quelques instants.
+
+### L'hôte interne ne se résout pas depuis une VM
+
+Copiez le nom complet de la zone **Interne**, sans le raccourcir. Sur Debian 13, le nom ne se résout pas sans configuration : voir [Joindre un service managé du projet](../../compute/how-to/configure-network.md#joindre-un-service-managé-du-projet).
 
 ### `NOAUTH Authentication required` ou `WRONGPASS`
 
@@ -146,9 +263,25 @@ La plateforme n'a pas pu appliquer la création ou la dernière modification du 
 
 ## Étape 7 : Nettoyage
 
+<Tabs groupId="interface">
+<TabItem value="console" label="Console" default>
+
 1. Ouvrez la page du cluster (**DB & Messaging** → **Redis** → nom du cluster).
 2. Cliquez sur **Supprimer**.
 3. Saisissez le nom exact du cluster dans le champ **Nom de la ressource à confirmer**, puis cliquez sur **Supprimer définitivement**.
+
+</TabItem>
+<TabItem value="api" label="API">
+
+```bash
+curl -sS -X DELETE "$HIKUBE_API/redis/v1alpha1/projects/$PROJECT_ID/clusters/democache" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY"
+```
+
+Une réponse `200` avec un objet vide `{}` confirme la suppression. L'API ne demande pas de confirmation.
+
+</TabItem>
+</Tabs>
 
 :::warning
 Cette action supprime le cluster Redis et toutes les données associées. Elle est **irréversible**.

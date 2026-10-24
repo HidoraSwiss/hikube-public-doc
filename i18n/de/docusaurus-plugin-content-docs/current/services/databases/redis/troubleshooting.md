@@ -28,9 +28,9 @@ description: "Beheben Sie häufige Redis-Probleme auf Hikube: Cluster im Fehler,
 
 **Lösung**: Behalten Sie die aktuelle oder eine höhere Version bei und eine Volume-Größe, die mindestens der aktuellen entspricht.
 
-### Der Host zeigt „Waiting for allocation...“ an
+### Der Bereich External zeigt „Disabled“ oder „Waiting for allocation…“ an
 
-**Ursache**: Das öffentliche Netzwerk ist deaktiviert, oder die öffentliche IP-Adresse ist noch nicht zugewiesen.
+**Ursache**: Der externe Zugriff ist deaktiviert, oder die öffentliche IP-Adresse ist noch nicht zugewiesen. Von einer VM oder einem Kubernetes-Cluster des Projekts aus ist kein externer Zugriff nötig: Verwenden Sie den Host aus dem Bereich **Internal**.
 
 **Lösung**:
 
@@ -44,18 +44,35 @@ description: "Beheben Sie häufige Redis-Probleme auf Hikube: Cluster im Fehler,
 **Lösung**:
 
 1. Prüfen Sie, ob der **Status** im Abschnitt **Connection** **Ready** lautet.
-2. Kopieren Sie den **Host** mit der Kopier-Schaltfläche, um Tippfehler zu vermeiden.
+2. Kopieren Sie die Adresse mit ihrer Kopier-Schaltfläche, um Tippfehler zu vermeiden: Bereich **External** aus dem Internet, Bereich **Internal** aus dem Projekt.
 3. Prüfen Sie, ob keine ausgehende Firewall Ihres Netzwerks den Port `6379` blockiert.
 
 ### Authentifizierung schlägt fehl (`NOAUTH` oder `WRONGPASS`)
 
-**Ursache**: Der Client sendet kein Passwort, verwendet ein falsches Passwort oder ein durch eine Rotation widerrufenes Passwort.
+**Ursache**: Der Client sendet kein Passwort oder verwendet ein falsches Passwort. Nach einer Rotation wird das neue Passwort abgelehnt (`WRONGPASS`), bis der Cluster neu gestartet wurde, und das alte funktioniert nach dem Neustart des Clusters nicht mehr.
 
 **Lösung**:
 
 1. Prüfen Sie den an den Client übergebenen Wert (`REDISCLI_AUTH`, Option `-a` oder Anwendungskonfiguration).
-2. Generieren Sie im Zweifel im Abschnitt **Security** ein neues Passwort (**Rotate password**) und aktualisieren Sie Ihre Anwendungen. Siehe [Passwort erneuern](./how-to/rotate-password.md).
-3. Wurde die Option **Authentication required** geändert, passen Sie die Clients entsprechend an.
+2. Zeigt die Seite des Clusters das Banner **Restart required** an, wartet eine Rotation oder eine Änderung der Authentifizierung auf einen Neustart: Klicken Sie auf **Restart now**. Siehe [Einen Cluster neu starten](./how-to/restart-cluster.md).
+3. Generieren Sie im Zweifel im Abschnitt **Security** ein neues Passwort (**Rotate password**), starten Sie den Cluster neu und aktualisieren Sie Ihre Anwendungen. Siehe [Passwort erneuern](./how-to/rotate-password.md).
+4. Wurde die Option **Authentication required** geändert, passen Sie die Clients entsprechend an.
+
+### Redis nimmt nach dem Aktivieren der Authentifizierung weiterhin Verbindungen ohne Passwort an
+
+**Ursache**: Das Aktivieren von **Authentication required** auf einem bestehenden Cluster wird sofort gespeichert, erreicht die Redis-Server aber erst nach einem Neustart des Clusters. Bis dahin behalten sie ihre bisherige Konfiguration. Dasselbe gilt für das Deaktivieren der Authentifizierung und für die Rotation des Passworts: Die Server akzeptieren das alte Passwort bis zum Neustart.
+
+**Lösung**:
+
+1. Öffnen Sie die Seite des Clusters: Das Banner **Restart required** bestätigt, dass ein Neustart aussteht.
+2. Klicken Sie auf **Restart now** (oder auf **Restart**) und bestätigen Sie mit **Restart**. Der Cluster ist etwa eine Minute lang nicht erreichbar: Wählen Sie einen Zeitpunkt mit geringer Last.
+3. Prüfen Sie, dass eine Verbindung ohne Passwort jetzt abgelehnt wird:
+   ```bash
+   redis-cli -h <host> -p 6379 ping
+   # NOAUTH Authentication required.
+   ```
+
+Siehe [Einen Cluster neu starten](./how-to/restart-cluster.md).
 
 ### Arbeitsspeicher erschöpft (`OOM command not allowed`)
 

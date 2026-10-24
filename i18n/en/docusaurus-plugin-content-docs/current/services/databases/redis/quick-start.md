@@ -79,7 +79,7 @@ The **Done** step shows "Cluster successfully created". Click **Finish** to retu
 | **Ready** | The cluster is operational |
 | **Error** | The platform could not apply the cluster's creation or its last change |
 
-**Expected result:** after a few minutes, the **Connection** section of the cluster page shows the **Status** **Ready** and the cluster's **Host**.
+**Expected result:** after a few minutes, the **Connection** section of the cluster page shows the **Status** **Ready** and the cluster's internal host.
 
 ---
 
@@ -95,11 +95,16 @@ When authentication is enabled, the wizard's **Done** step displays, under **Use
 Copy the password immediately: it will not be shown again. If it is lost, generate a new one from the **Security** section of the cluster page (**Rotate password**). See [Renew the password](./how-to/rotate-password.md).
 :::
 
-The address remains available on the cluster page, **Connection** section, **Host** field (copy button on the right).
+The **Connection** section of the cluster page shows its addresses in two zones, each with a copy button:
+
+- **Internal**, *From the project's resources only*: the internal host, always filled in, and the port (`6379`). It is reachable from the VMs and Kubernetes clusters of the same project, without external access;
+- **External**, *From the Internet*: the public address, when **External access** is enabled.
 
 ---
 
 ## Step 5: Connection and tests
+
+From your workstation, use the address in the **External** zone; from a VM or a Kubernetes cluster of the project, the host in the **Internal** zone.
 
 ```bash
 export REDIS_HOST=<host>
@@ -126,9 +131,13 @@ The `REDISCLI_AUTH` variable keeps the password out of the shell history, unlike
 
 ## Step 6: Quick troubleshooting
 
-### The host shows "Waiting for allocation..."
+### The External zone shows "Disabled" or "Waiting for allocation…"
 
-The public network is disabled, or the public IP address has not been assigned yet. Enable **External access** via **Edit** if needed, then wait a few moments.
+"Disabled": **External access** is turned off. Enable it via **Edit** if you need to connect from the Internet; from the project, use the host in the **Internal** zone. "Waiting for allocation…": the public address has not been assigned yet, wait a few moments.
+
+### The internal host does not resolve from a VM
+
+Copy the full name from the **Internal** zone, without shortening it. On Debian 13, the name does not resolve without configuration: see [Reaching a managed service in the project](../../compute/how-to/configure-network.md#reaching-a-managed-service-in-the-project).
 
 ### `NOAUTH Authentication required` or `WRONGPASS`
 

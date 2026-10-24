@@ -37,7 +37,7 @@ The **Edit RabbitMQ cluster** page displays the **Cluster settings** card. The *
 - **External access**: turn the switch on or off.
 
 :::warning Version change
-When you change the version, the warning "The cluster instances will restart" is displayed: an upgraded version cannot be downgraded. Changing the version recreates the RabbitMQ nodes one by one: with a single replica, the cluster is unavailable during the restart (about one to two minutes) and clients must reconnect. The address in the **Host** field does not change. Test the version change on a non-production cluster before applying it to a production cluster, and check that your clients are compatible with the target version.
+When you change the version, the warning "The cluster instances will restart" is displayed: an upgraded version cannot be downgraded. Changing the version recreates the RabbitMQ nodes one by one: with a single replica, the cluster is unavailable during the restart (about one to two minutes) and clients must reconnect. The addresses in the **Internal** and **External** zones do not change. Test the version change on a non-production cluster before applying it to a production cluster, and check that your clients are compatible with the target version.
 :::
 
 ### 3. Save

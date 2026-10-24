@@ -43,11 +43,11 @@ Le nombre de réplicas ne peut pas être modifié après la création ; contacte
 
 ### Où trouver l'adresse de connexion ?
 
-Dans la page du cluster, carte **Connexion et Bases de données**, champ **Hôte (Host)**. Une adresse n'y figure que si l'**Accès externe** est activé ; sinon le champ affiche **Non défini**. Le port est `5432`.
+Dans la page du cluster, carte **Connexion et Bases de données**. La zone **Interne** affiche toujours l'hôte interne ; la zone **Externe** affiche l'adresse publique lorsque l'**Accès externe** est activé, **Désactivé** sinon. Le port est `5432`.
 
 ### Comment se connecter depuis une VM ou un cluster Kubernetes du même projet sans accès externe ?
 
-Sans accès externe, le cluster reste joignable depuis les VM et les clusters Kubernetes du projet par une adresse interne au projet, que la console n'affiche pas. [Contactez le support](mailto:support@hidora.io) pour l'obtenir.
+Utilisez l'hôte de la zone **Interne**, sur le port `5432` : il est joignable depuis les VM et les clusters Kubernetes du projet, sans accès externe, mais pas depuis un autre projet. Copiez le nom complet ; sur une VM Debian 13, voir [Joindre un service managé du projet](../../compute/how-to/configure-network.md#joindre-un-service-managé-du-projet).
 
 ### J'ai perdu le mot de passe d'un utilisateur. Comment le récupérer ?
 
@@ -79,4 +79,4 @@ Ces paramètres ne sont pas proposés dans la console ; contactez le support.
 
 ### Les sauvegardes sont-elles disponibles ?
 
-La configuration des sauvegardes et la restauration ne sont pas proposées dans la console ; contactez le support. Voir [Configurer les sauvegardes](./how-to/configure-backups.md).
+Oui, depuis l'onglet **Sauvegardes** de la page du cluster : programmation, sauvegarde à la demande et restauration, y compris à un instant précis. Voir [Configurer les sauvegardes](./how-to/configure-backups.md) et le [service de sauvegarde](../../backups/overview.md).

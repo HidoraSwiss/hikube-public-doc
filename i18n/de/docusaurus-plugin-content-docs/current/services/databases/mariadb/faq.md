@@ -49,7 +49,7 @@ Der Primary schreibt seine Änderungen in das Binary Log, das die Replicas nachs
 
 ### Wo finde ich die Verbindungsadresse?
 
-In der Karte **Connection and network** auf der Seite des Clusters, Feld **Host**, wenn der **External Access** aktiviert ist. Der Port ist `3306`. Ohne externen Zugriff zeigt das Feld **Not defined** an: Der Cluster bleibt von den VMs und Kubernetes-Clustern des Projekts über eine interne Adresse erreichbar, die die Konsole nicht anzeigt; [wenden Sie sich an den Support](mailto:support@hidora.io), um sie zu erhalten.
+In der Karte **Connection and network** auf der Seite des Clusters. Der Bereich **Internal** zeigt immer den internen Host an, der von den VMs und Kubernetes-Clustern des Projekts aus erreichbar ist; der Bereich **External** zeigt die öffentliche Adresse an, wenn der **External Access** aktiviert ist, andernfalls **Disabled**. Der Port ist `3306`.
 
 ### Wie erstelle ich eine Datenbank?
 
@@ -71,4 +71,4 @@ Diese Einstellungen werden in der Konsole nicht angeboten; wenden Sie sich an de
 
 ### Sind Backups verfügbar?
 
-Die Konfiguration von Backups und die Wiederherstellung werden in der Konsole nicht angeboten; wenden Sie sich an den Support. Siehe [Backups konfigurieren](./how-to/configure-backups.md).
+Ja, über die Registerkarte **Backups** der Cluster-Seite: Zeitplan, Backup auf Abruf und Wiederherstellung. Siehe [Backups konfigurieren](./how-to/configure-backups.md) und den [Backup-Service](../../backups/overview.md).

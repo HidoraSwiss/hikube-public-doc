@@ -39,7 +39,7 @@ description: "Beheben Sie häufige PostgreSQL-Probleme auf Hikube: Cluster häng
 **Lösung**:
 
 1. Prüfen Sie auf der Seite des Clusters, ob die Karte **External Access** **Enabled** anzeigt. Andernfalls aktivieren Sie ihn über **Edit**.
-2. Prüfen Sie, ob das Feld **Host** eine Adresse enthält und nicht **Not defined**.
+2. Prüfen Sie, ob der Bereich **External** der Karte **Connection and Databases** eine Adresse enthält und nicht **Disabled** oder „Waiting for allocation…“.
 3. Verwenden Sie den Port `5432` und testen Sie die Konnektivität:
    ```bash
    pg_isready -h <host> -p 5432

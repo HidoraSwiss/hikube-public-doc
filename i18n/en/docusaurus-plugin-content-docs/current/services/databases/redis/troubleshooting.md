@@ -28,9 +28,9 @@ description: "Fix common Redis issues on Hikube: cluster in error, pending host,
 
 **Solution**: keep the current version or a higher one, and a volume size at least equal to the current size.
 
-### The host shows "Waiting for allocation..."
+### The External zone shows "Disabled" or "Waiting for allocation…"
 
-**Cause**: the public network is disabled, or the public IP address has not been assigned yet.
+**Cause**: external access is disabled, or the public IP address has not been assigned yet. From a VM or a Kubernetes cluster of the project, external access is not needed: use the host in the **Internal** zone.
 
 **Solution**:
 
@@ -44,18 +44,35 @@ description: "Fix common Redis issues on Hikube: cluster in error, pending host,
 **Solution**:
 
 1. Check that the **Status** in the **Connection** section is **Ready**.
-2. Copy the **Host** with the copy button to avoid typing errors.
+2. Copy the address with its copy button to avoid typing errors: **External** zone from the Internet, **Internal** zone from the project.
 3. Check that no outbound firewall on your network is blocking port `6379`.
 
 ### Authentication fails (`NOAUTH` or `WRONGPASS`)
 
-**Cause**: the client does not send a password, uses a wrong password, or a password revoked by a rotation.
+**Cause**: the client does not send a password or uses a wrong password. After a rotation, the new password is refused (`WRONGPASS`) until the cluster restarts, and the old one stops working once the cluster has restarted.
 
 **Solution**:
 
 1. Check the value passed to the client (`REDISCLI_AUTH`, `-a` option or application configuration).
-2. If in doubt, generate a new password from the **Security** section (**Rotate password**) and update your applications. See [Renew the password](./how-to/rotate-password.md).
-3. If the **Authentication required** option has been changed, update the clients accordingly.
+2. If the cluster page shows the **Restart required** banner, a rotation or an authentication change is waiting for a restart: click **Restart now**. See [Restart a cluster](./how-to/restart-cluster.md).
+3. If in doubt, generate a new password from the **Security** section (**Rotate password**), restart the cluster and update your applications. See [Renew the password](./how-to/rotate-password.md).
+4. If the **Authentication required** option has been changed, update the clients accordingly.
+
+### Redis still accepts connections without a password after authentication was enabled
+
+**Cause**: enabling **Authentication required** on an existing cluster is saved immediately, but only reaches the Redis servers after the cluster restarts. Until then, they keep their previous configuration. The same applies to disabling authentication and to rotating the password: the servers accept the old password until the restart.
+
+**Solution**:
+
+1. Open the cluster page: the **Restart required** banner confirms that a restart is pending.
+2. Click **Restart now** (or **Restart**), then confirm with **Restart**. The cluster is unreachable for about a minute: choose a low-traffic moment.
+3. Check that a connection without a password is now refused:
+   ```bash
+   redis-cli -h <host> -p 6379 ping
+   # NOAUTH Authentication required.
+   ```
+
+See [Restart a cluster](./how-to/restart-cluster.md).
 
 ### Memory saturated (`OOM command not allowed`)
 

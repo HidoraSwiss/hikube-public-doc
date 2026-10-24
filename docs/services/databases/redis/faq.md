@@ -14,7 +14,7 @@ Redis sur Hikube est déployé en architecture **Redis Sentinel** pour la haute 
 - **Redis Sentinel** surveille les instances Redis et effectue un **basculement automatique** (failover) en cas de panne du master.
 - Un **quorum** de sentinelles décide du failover. Trois sentinelles sont toujours déployées, quel que soit le nombre de réplicas Redis : le basculement fonctionne dès **2 réplicas**.
 - Les sentinelles comptent dans les quotas du projet (CPU et mémoire, à la taille de la préconfiguration du cluster).
-- L'adresse du champ **Hôte** suit le master : après un basculement, elle pointe automatiquement vers le nouveau master, sans changement d'adresse.
+- L'hôte de la zone **Interne**, comme l'adresse de la zone **Externe**, suit le master : après un basculement, il pointe automatiquement vers le nouveau master, sans changement d'adresse.
 
 :::tip
 En production, choisissez au moins 3 réplicas à la création : ce nombre ne peut plus être modifié ensuite.
@@ -60,7 +60,11 @@ Conservez toujours l'authentification activée, en particulier si le réseau pub
 
 ### J'ai perdu le mot de passe. Comment le récupérer ?
 
-Il ne peut pas être relu. Générez-en un nouveau depuis la section **Sécurité** de la page du cluster (**Effectuer une rotation**). Voir [Renouveler le mot de passe](./how-to/rotate-password.md).
+Il ne peut pas être relu. Générez-en un nouveau depuis la section **Sécurité** de la page du cluster (**Effectuer une rotation**), puis redémarrez le cluster : le nouveau mot de passe n'est accepté qu'après ce redémarrage. Voir [Renouveler le mot de passe](./how-to/rotate-password.md).
+
+### J'ai activé l'authentification, mais Redis accepte encore les connexions sans mot de passe. Pourquoi ?
+
+Activer ou désactiver l'authentification sur un cluster existant, comme renouveler son mot de passe, est enregistré immédiatement mais ne s'applique aux serveurs Redis qu'après un redémarrage du cluster. Tant que la page du cluster affiche le bandeau **Redémarrage requis**, cliquez sur **Redémarrer maintenant**. Le cluster est injoignable pendant environ une minute. Voir [Redémarrer un cluster](./how-to/restart-cluster.md).
 
 ### Comment scaler Redis ?
 
@@ -69,13 +73,13 @@ Il ne peut pas être relu. Générez-en un nouveau depuis la section **Sécurit�
 
 ### Comment se connecter à Redis ?
 
-Avec le réseau public activé, utilisez l'adresse du champ **Hôte** (section **Connexion** de la page du cluster) sur le port `6379` :
+Avec le réseau public activé, utilisez l'adresse de la zone **Externe** (section **Connexion** de la page du cluster) sur le port `6379` :
 
 ```bash
 REDISCLI_AUTH='<mot de passe>' redis-cli -h <hôte> -p 6379 ping
 ```
 
-Sans réseau public, l'instance reste joignable depuis les VM et les clusters Kubernetes du projet par une adresse interne, que la console n'affiche pas. [Contactez le support](mailto:support@hidora.io) pour l'obtenir.
+Depuis une VM ou un cluster Kubernetes du projet, utilisez l'hôte de la zone **Interne**, avec ou sans réseau public. Il suit lui aussi le master.
 
 ### Peut-on créer plusieurs utilisateurs Redis (ACL) ?
 

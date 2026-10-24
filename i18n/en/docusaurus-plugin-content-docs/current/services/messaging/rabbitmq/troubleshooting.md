@@ -37,13 +37,13 @@ description: "Fix common RabbitMQ issues on Hikube: cluster stuck in creation, s
 
 **Solution**: go back to the **General** step and choose another **Cluster Name**.
 
-### The "Host" field displays "Not available / Creating"
+### The External zone shows "Disabled" or "Waiting for allocation…"
 
-**Cause**: the public address has not been assigned yet, or **External Access** is disabled.
+**Cause**: **External Access** is disabled, or the public address has not been assigned yet.
 
 **Solution**:
 
-1. In the **Connection** section, check that **External Access** shows **Enabled**. If not, enable it (see [Configure external access](./how-to/configure-external-access.md)).
+1. "Disabled": enable external access (see [Configure external access](./how-to/configure-external-access.md)). From the project, it is not needed: use the host in the **Internal** zone.
 2. If external access is enabled, wait and then reload the page.
 
 ### AMQP connection refused (`ACCESS_REFUSED`)
@@ -63,7 +63,7 @@ description: "Fix common RabbitMQ issues on Hikube: cluster stuck in creation, s
 
 **Solution**:
 
-1. Check the **Host** and the state of **External Access** in the **Connection** section.
+1. Check the address used in the **Connection** section: **External** zone from the Internet, **Internal** zone from the project.
 2. Use port **5672**.
 3. Test whether the port is open from the client machine:
    ```bash

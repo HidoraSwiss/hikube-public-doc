@@ -43,7 +43,7 @@ Voir : [Kubernetes - Démarrage rapide](../services/kubernetes/quick-start.md)
 
 ## 4. Ai-je encore besoin d'un kubeconfig pour gérer mes ressources Hikube ?
 
-Non. Les VM, disques, buckets, réseaux, clusters Kubernetes et bases de données se créent et se gèrent depuis la console. Le kubeconfig de projet n'est plus délivré par défaut ; il reste disponible sur demande au support pour les usages legacy comme [Terraform](../tools/terraform.md).
+Non. Les VM, disques, buckets, réseaux, clusters Kubernetes et bases de données se créent et se gèrent depuis la console, et s'automatisent avec l'[API publique](../api/overview.md). Le kubeconfig de projet n'est plus disponible ; la méthode [Terraform legacy](../tools/terraform.md) qui en dépendait est retirée.
 
 Le kubeconfig d'un **cluster Kubernetes** (question 3) reste, lui, le moyen normal d'accéder à ce cluster.
 
@@ -59,7 +59,9 @@ Voir : [PostgreSQL](../services/databases/postgresql/quick-start.md), [MariaDB](
 
 ## 6. Comment exposer une base de données sur Internet ?
 
-Activez l'option **Accès externe** à la création du cluster ou dans **Modifier**. Une IP publique est alors attribuée et affichée dans le champ **Hôte** de la page de détail. Pour un replica set MongoDB, la page de détail liste l'adresse de chaque membre.
+Activez l'option **Accès externe** à la création du cluster ou dans **Modifier**. Une IP publique est alors attribuée et affichée dans la zone **Externe** de la page de détail. Pour un replica set MongoDB, la zone liste l'adresse de chaque membre.
+
+Pour vous connecter depuis une VM ou un cluster Kubernetes du même projet, l'accès externe n'est pas nécessaire : utilisez l'hôte de la zone **Interne**, toujours affiché.
 
 :::warning
 N'exposez une base de données que si c'est nécessaire, et utilisez des mots de passe robustes.
@@ -106,7 +108,7 @@ Voir : [PostgreSQL - Concepts](../services/databases/postgresql/concepts.md), [R
 
 ## 11. Les sauvegardes de bases de données sont-elles disponibles dans la console ?
 
-Pas encore. La configuration des sauvegardes et la restauration se font aujourd'hui par le support. Voir par exemple [PostgreSQL - Sauvegardes](../services/databases/postgresql/how-to/configure-backups.md).
+Oui. Les bases PostgreSQL et MariaDB, ainsi que les machines virtuelles et les disques, se sauvegardent et se restaurent depuis la console, menu **Infrastructure** > **Sauvegardes** et onglet **Sauvegardes** de chaque ressource. Voir [Sauvegardes](../services/backups/overview.md).
 
 ---
 

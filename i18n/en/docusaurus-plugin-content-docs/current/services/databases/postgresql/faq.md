@@ -43,11 +43,11 @@ The number of replicas cannot be changed after creation; contact support if you 
 
 ### Where can I find the connection address?
 
-On the cluster page, in the **Connection and Databases** card, **Host** field. An address appears there only if **External Access** is enabled; otherwise the field shows **Not defined**. The port is `5432`.
+On the cluster page, in the **Connection and Databases** card. The **Internal** zone always shows the internal host; the **External** zone shows the public address when **External Access** is enabled, **Disabled** otherwise. The port is `5432`.
 
 ### How do I connect from a VM or a Kubernetes cluster in the same project without external access?
 
-Without external access, the cluster remains reachable from the project's VMs and Kubernetes clusters through an address internal to the project, which the console does not display. [Contact support](mailto:support@hidora.io) to obtain it.
+Use the host in the **Internal** zone, on port `5432`: it is reachable from the project's VMs and Kubernetes clusters, without external access, but not from another project. Copy the full name; on a Debian 13 VM, see [Reaching a managed service in the project](../../compute/how-to/configure-network.md#reaching-a-managed-service-in-the-project).
 
 ### I lost a user's password. How do I recover it?
 
@@ -79,4 +79,4 @@ These parameters are not offered in the console; contact support.
 
 ### Are backups available?
 
-Backup configuration and restore are not offered in the console; contact support. See [Configure backups](./how-to/configure-backups.md).
+Yes, from the **Backups** tab of the cluster page: scheduling, on-demand backup and restore, including to a point in time. See [Configure backups](./how-to/configure-backups.md) and the [backup service](../../backups/overview.md).

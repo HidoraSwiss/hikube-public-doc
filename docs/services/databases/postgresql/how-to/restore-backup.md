@@ -1,30 +1,31 @@
 ---
 title: "Comment restaurer une sauvegarde (PITR)"
 sidebar_position: 4
+description: "Restaurez un cluster PostgreSQL Hikube depuis la console : état d'une sauvegarde, état le plus récent ou instant précis, sur le cluster d'origine ou sur un autre cluster."
 ---
 
 # Comment restaurer une sauvegarde (PITR)
 
-:::info Disponibilité
-La restauration de sauvegardes PostgreSQL n'est pas encore disponible en libre-service dans la [console Hikube](https://console.hikube.cloud).
-Pour restaurer un cluster, [contactez le support](mailto:support@hidora.io).
-:::
+Une archive PostgreSQL se restaure depuis l'onglet **Sauvegardes** de la page du cluster, dans la [console Hikube](https://console.hikube.cloud), ou depuis **Infrastructure** > **Sauvegardes** > **Archives**.
 
 ## Principe
 
-Lorsque les sauvegardes sont activées sur un cluster, l'archivage continu des WAL permet de restaurer les données à un **instant précis** (Point-In-Time Recovery). La restauration crée un **nouveau cluster**, sous un nom différent ; le cluster d'origine n'est pas modifié.
+Grâce à l'archivage continu des journaux de transactions, une restauration peut ramener la base :
 
-## Informations à préparer
+- à l'**état exact d'une sauvegarde** ;
+- à son **état le plus récent** ;
+- à un **instant précis** (PITR, *Point-In-Time Recovery*), entre deux sauvegardes.
 
-| Information | Exemple |
-|-------------|---------|
-| Projet et nom du cluster d'origine | `prod` / `orders-db` |
-| Nom souhaité pour le cluster restauré | `orders-restored` |
-| Instant de restauration (avec fuseau horaire) | `2026-06-15 14:30 Europe/Zurich`, ou « dernier état disponible » |
+La restauration écrit soit **sur le cluster d'origine**, dont le contenu est écrasé, soit **sur un autre cluster PostgreSQL** existant du projet, de la même version majeure.
+
+## Étapes
+
+- [Restaurer une base PostgreSQL ou MariaDB](../../../backups/how-to/restore-database.md)
+- [Restaurer une base PostgreSQL à un instant précis](../../../backups/how-to/restore-point-in-time.md)
 
 ## Après la restauration
 
-Le cluster restauré apparaît dans la liste **Clusters PostgreSQL** de votre projet. Vérifiez vos données avant de basculer vos applications :
+Vérifiez vos données avant de remettre vos applications en service :
 
 ```sql
 -- Contrôler le volume de données
@@ -33,7 +34,7 @@ FROM pg_stat_user_tables
 ORDER BY n_live_tup DESC;
 ```
 
-Mettez ensuite à jour la configuration de vos applications avec l'adresse du nouveau cluster (champ **Hôte (Host)** de sa page) et les identifiants associés.
+Si vous avez restauré sur un autre cluster, mettez à jour la configuration de vos applications avec son adresse (zones **Interne** et **Externe** de sa page) et ses identifiants.
 
 ## Restauration d'un export logique
 

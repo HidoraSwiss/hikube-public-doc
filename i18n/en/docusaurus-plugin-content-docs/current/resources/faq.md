@@ -43,7 +43,7 @@ See: [Kubernetes - Quick start](../services/kubernetes/quick-start.md)
 
 ## 4. Do I still need a kubeconfig to manage my Hikube resources?
 
-No. VMs, disks, buckets, networks, Kubernetes clusters and databases are created and managed from the console. The project kubeconfig is no longer issued by default; it remains available on request from support for legacy uses such as [Terraform](../tools/terraform.md).
+No. VMs, disks, buckets, networks, Kubernetes clusters and databases are created and managed from the console, and automated with the [public API](../../api/overview). The project kubeconfig is no longer available; the [legacy Terraform](../tools/terraform.md) method that relied on it is retired.
 
 The kubeconfig of a **Kubernetes cluster** (question 3), on the other hand, remains the normal way to access that cluster.
 
@@ -59,7 +59,9 @@ See: [PostgreSQL](../services/databases/postgresql/quick-start.md), [MariaDB](..
 
 ## 6. How do I expose a database to the Internet?
 
-Enable the **External access** option when creating the cluster or in **Edit**. A public IP is then assigned and shown in the **Host** field of the detail page. For a MongoDB replica set, the detail page lists the address of each member.
+Enable the **External access** option when creating the cluster or in **Edit**. A public IP is then assigned and shown in the **External** zone of the detail page. For a MongoDB replica set, the zone lists the address of each member.
+
+To connect from a VM or a Kubernetes cluster of the same project, external access is not needed: use the host in the **Internal** zone, which is always shown.
 
 :::warning
 Only expose a database if necessary, and use strong passwords.
@@ -106,7 +108,7 @@ See: [PostgreSQL - Concepts](../services/databases/postgresql/concepts.md), [Red
 
 ## 11. Are database backups available in the console?
 
-Not yet. Backup configuration and restores are currently handled by support. See for example [PostgreSQL - Backups](../services/databases/postgresql/how-to/configure-backups.md).
+Yes. PostgreSQL and MariaDB databases, as well as virtual machines and disks, are backed up and restored from the console, in the **Infrastructure** > **Backups** menu and the **Backups** tab of each resource. See [Backups](../services/backups/overview.md).
 
 ---
 

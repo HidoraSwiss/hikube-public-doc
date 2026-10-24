@@ -23,9 +23,11 @@ Al passaggio **Configuration** della procedura guidata **Create a RabbitMQ clust
 
 ## Recuperare l'indirizzo pubblico
 
+Da una VM o da un cluster Kubernetes del progetto, l'accesso esterno non è necessario: utilizzi l'host della zona **Internal**, sempre visualizzato.
+
 1. Apra la pagina del cluster.
-2. Nella sezione **Connection**, verifichi che **External Access** indichi **Enabled**.
-3. Copi il valore del campo **Host**. Finché l'indirizzo non è assegnato, il campo mostra « Not available / Creating ».
+2. Nella sezione **Connection**, osservi la zona **External**: indica **Disabled** se l'accesso esterno è disattivato, e « Waiting for allocation… » finché l'indirizzo non è assegnato.
+3. Copi l'indirizzo della zona **External** con il suo pulsante di copia.
 
 I suoi client si connettono quindi a questo host, porta **5672**:
 

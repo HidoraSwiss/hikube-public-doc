@@ -107,14 +107,17 @@ The **Enable authentication** option is on by default in the wizard:
 - **Enabled**: a password is generated at creation and displayed only once, together with the `default` user. You can renew it at any time from the **Security** section of the cluster page (**Rotate password**).
 - **Disabled**: the cluster accepts connections without a password. Avoid this, especially with the public network enabled.
 
+The option can still be changed after creation, from **Edit**. An authentication change, like a password rotation, only applies to the Redis servers after a [cluster restart](./how-to/restart-cluster.md): until then, they keep their previous configuration.
+
 Redis on Hikube does not expose multi-user management (ACL) in the console: access relies on this cluster-wide password.
 
 ---
 
 ## Network access
 
-- **Public network disabled** (default, "Private" in the summary): the cluster is not exposed on the Internet. The **Connection** section of the cluster page shows "Waiting for allocation..." instead of the host.
-- **Public network enabled** ("Public"): the platform assigns a public IP address, displayed in the **Host** field. It gives access to the master on the standard Redis port, `6379`, and follows the master after a failover.
+- **Internal host**: always assigned, shown in the **Internal** zone of the **Connection** section. It points to the master and is reachable from the VMs and Kubernetes clusters of the same project, not from another project or from the Internet.
+- **Public network disabled** (default, "Private" in the summary): the cluster is not exposed on the Internet. The **External** zone shows **Disabled**.
+- **Public network enabled** ("Public"): the platform assigns a public IP address, displayed in the **External** zone. It gives access to the master on the standard Redis port, `6379`, and follows the master after a failover.
 
 ---
 

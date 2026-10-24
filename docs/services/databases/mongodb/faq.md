@@ -51,7 +51,10 @@ La liste affichée par l'assistant fait foi. La préconfiguration ne peut pas ê
 
 ### Où trouver l'adresse de connexion ?
 
-Dans la carte **Connexion et réseau** de la page du cluster, lorsque l'**Accès externe** est activé : champ **Hôte (Host)** pour un cluster shardé, liste **Membres du replica set rs0** et **Chaîne de connexion externe** pour un replica set. Le port est `27017`. Sur un replica set, connectez-vous à un membre avec `directConnection=true`, sans paramètre `replicaSet`. Sans accès externe, le champ affiche **Non défini** : le cluster reste joignable depuis les VM et les clusters Kubernetes du projet par une adresse interne, que la console n'affiche pas ; [contactez le support](mailto:support@hidora.io) pour l'obtenir.
+Dans la carte **Connexion et réseau** de la page du cluster. Le port est `27017`.
+
+- Depuis le projet (VM, clusters Kubernetes) : l'hôte de la zone **Interne**, toujours affiché. Sur un replica set, ajoutez `replicaSet=rs0`.
+- Depuis Internet, lorsque l'**Accès externe** est activé : la zone **Externe**, avec l'adresse des routeurs pour un cluster shardé, une adresse par membre et la **Chaîne de connexion externe** pour un replica set. Sur un replica set, connectez-vous à un membre avec `directConnection=true`, sans paramètre `replicaSet`.
 
 ### Pourquoi l'utilisateur créé dans l'assistant n'a-t-il pas accès à ma base ?
 

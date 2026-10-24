@@ -101,7 +101,10 @@ The wizard's **Finish** step displays, under **User Credentials**, the **Passwor
 Copy these passwords immediately: they will not be displayed again. If one is lost, generate a new one from the **Users** section (**Actions** → **Change Password**).
 :::
 
-The address remains available in the **Connection and network** card of the cluster page, **Host** field.
+The **Connection and network** card of the cluster page shows its addresses in two zones, each with a copy button:
+
+- **Internal**, *From the project's resources only*: the internal host, always filled in, and the port (`3306`). It is reachable from the VMs and Kubernetes clusters of the same project, without external access;
+- **External**, *From the Internet*: the public address, when **External Access** is enabled.
 
 ### Access to the application database
 
@@ -111,9 +114,13 @@ The `myapp` database entered in the **Users** step has been created, and the use
 
 ## Step 5: Connect and test
 
+From your workstation, use the address in the **External** zone:
+
 ```bash
 mysql -h <host> -P 3306 -u app-user -p myapp
 ```
+
+From a VM or a Kubernetes cluster of the project, use the host in the **Internal** zone: `mysql -h <internal-host> -P 3306 -u app-user -p myapp`.
 
 Enter the password, then check the connection:
 
@@ -142,9 +149,13 @@ The `mariadb` client accepts the same options: `mariadb -h <host> -P 3306 -u app
 
 ## Step 6: Quick troubleshooting
 
-### The Host field shows "Not defined"
+### The External zone shows "Disabled" or "Waiting for allocation…"
 
-**External access** is disabled, or the public IP address has not been assigned yet. Enable it via **Edit** if needed, then wait a few moments.
+"Disabled": **External Access** is turned off. Enable it via **Edit** if you need to connect from the Internet; from the project, use the host in the **Internal** zone. "Waiting for allocation…": the public address has not been assigned yet, wait a few moments.
+
+### The internal host does not resolve from a VM
+
+Copy the full name from the **Internal** zone, without shortening it. On Debian 13, the name does not resolve without configuration: see [Reaching a managed service in the project](../../compute/how-to/configure-network.md#reaching-a-managed-service-in-the-project).
 
 ### `Access denied for user`
 

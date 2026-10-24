@@ -141,10 +141,11 @@ Un cluster creato con un vecchio preset (`nano`, `micro`, `small`, `medium`, `la
 
 ## Accesso di rete
 
-- **External access** disattivato (impostazione predefinita): il cluster non è esposto su Internet. Il campo **Host** del riquadro **Network and Connection** mostra **Not defined**.
+- **Host interno**: sempre assegnato, visualizzato nella zona **Internal** del riquadro **Network and Connection**. È raggiungibile dalle VM e dai cluster Kubernetes dello stesso progetto, non da un altro progetto né da Internet. Su un replica set, aggiunga `replicaSet=rs0` alla stringa di connessione: il driver raggiunge allora il primario.
+- **External access** disattivato (impostazione predefinita): il cluster non è esposto su Internet. La zona **External** mostra **Disabled**.
 - **External access** attivato: la porta è quella standard di MongoDB, `27017`, senza TLS.
-  - **Cluster con sharding**: la piattaforma assegna un indirizzo pubblico ai router Mongos, mostrato nel campo **Host**. La procedura guidata fornisce una stringa di connessione nella forma `mongodb://<utente>:<password>@<host>`.
-  - **Replica set**: ciascun membro riceve il proprio indirizzo pubblico. Il riquadro **Network and Connection** li elenca in **Replica set rs0 members**, ciascuno con un pulsante di copia, e propone una **External connection string** nella forma `mongodb://<user>:<password>@<membro>:27017/?directConnection=true&authSource=admin`. Si connetta così a un membro in connessione diretta, senza il parametro `replicaSet`: i membri si annunciano con nomi interni al cluster, che non si risolvono dall'esterno. Il membro raggiunto può essere un secondario, che non accetta scritture: legga con `readPreference=secondaryPreferred` e scriva sul membro primario.
+  - **Cluster con sharding**: la piattaforma assegna un indirizzo pubblico ai router Mongos, mostrato nella zona **External**. La procedura guidata fornisce una stringa di connessione nella forma `mongodb://<utente>:<password>@<host>`.
+  - **Replica set**: ciascun membro riceve il proprio indirizzo pubblico. La zona **External** li elenca (**member 1**, **member 2**…), ciascuno con un pulsante di copia, e il riquadro **Network and Connection** propone una **External connection string** nella forma `mongodb://<user>:<password>@<membro>:27017/?directConnection=true&authSource=admin`. Si connetta così a un membro in connessione diretta, senza il parametro `replicaSet`: i membri si annunciano con nomi interni al cluster, che non si risolvono dall'esterno. Il membro raggiunto può essere un secondario, che non accetta scritture: legga con `readPreference=secondaryPreferred` e scriva sul membro primario.
 
 ---
 

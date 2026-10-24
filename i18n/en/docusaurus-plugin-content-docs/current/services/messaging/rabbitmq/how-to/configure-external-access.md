@@ -23,9 +23,11 @@ At the **Configuration** step of the **Create a RabbitMQ cluster** wizard, enabl
 
 ## Retrieve the public address
 
+From a VM or a Kubernetes cluster of the project, external access is not needed: use the host in the **Internal** zone, which is always shown.
+
 1. Open the cluster page.
-2. In the **Connection** section, check that **External Access** shows **Enabled**.
-3. Copy the value of the **Host** field. As long as the address has not been assigned, the field displays "Not available / Creating".
+2. In the **Connection** section, look at the **External** zone: it shows **Disabled** if external access is turned off, and "Waiting for allocation…" as long as the address has not been assigned.
+3. Copy the address in the **External** zone with its copy button.
 
 Your clients then connect to this host, port **5672**:
 

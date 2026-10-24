@@ -1,21 +1,14 @@
 ---
 title: "Comment restaurer une sauvegarde"
 sidebar_position: 4
+description: "Restaurez un cluster MariaDB Hikube depuis la console, sur le cluster d'origine ou sur un autre cluster, ou rejouez vous-même un export mysqldump."
 ---
 
 # Comment restaurer une sauvegarde
 
-:::info Disponibilité
-La restauration de sauvegardes MariaDB n'est pas encore disponible en libre-service dans la [console Hikube](https://console.hikube.cloud).
-Pour restaurer un cluster à partir d'une sauvegarde gérée par la plateforme, [contactez le support](mailto:support@hidora.io).
-:::
+Une archive MariaDB se restaure depuis l'onglet **Sauvegardes** de la page du cluster, dans la [console Hikube](https://console.hikube.cloud), ou depuis **Infrastructure** > **Sauvegardes** > **Archives**. Voir [Restaurer une base PostgreSQL ou MariaDB](../../../backups/how-to/restore-database.md).
 
-## Informations à préparer
-
-| Information | Exemple |
-|-------------|---------|
-| Projet et nom du cluster | `prod` / `shop-db` |
-| Sauvegarde à restaurer | La plus récente, ou une date précise |
+La restauration écrit soit **sur le cluster d'origine**, soit **sur un autre cluster MariaDB** existant du projet. L'archive est rejouée dans la cible : chaque table qu'elle contient remplace la table du même nom ; les tables et bases qu'elle ne contient pas sont conservées.
 
 ## Restauration d'un export logique
 

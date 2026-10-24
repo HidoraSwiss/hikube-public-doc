@@ -43,11 +43,11 @@ Il numero di repliche non può essere modificato dopo la creazione; contatti il 
 
 ### Dove si trova l'indirizzo di connessione?
 
-Nella pagina del cluster, riquadro **Connection and Databases**, campo **Host**. Vi compare un indirizzo solo se l'**External Access** è attivato; altrimenti il campo mostra **Not defined**. La porta è `5432`.
+Nella pagina del cluster, riquadro **Connection and Databases**. La zona **Internal** mostra sempre l'host interno; la zona **External** mostra l'indirizzo pubblico quando l'**External Access** è attivato, **Disabled** altrimenti. La porta è `5432`.
 
 ### Come connettersi da una VM o da un cluster Kubernetes dello stesso progetto senza accesso esterno?
 
-Senza accesso esterno, il cluster resta raggiungibile dalle VM e dai cluster Kubernetes del progetto tramite un indirizzo interno al progetto, che la console non mostra. [Contatti il supporto](mailto:support@hidora.io) per ottenerlo.
+Utilizzi l'host della zona **Internal**, sulla porta `5432`: è raggiungibile dalle VM e dai cluster Kubernetes del progetto, senza accesso esterno, ma non da un altro progetto. Copi il nome completo; su una VM Debian 13, vedere [Raggiungere un servizio gestito del progetto](../../compute/how-to/configure-network.md#raggiungere-un-servizio-gestito-del-progetto).
 
 ### Ho smarrito la password di un utente. Come recuperarla?
 
@@ -79,4 +79,4 @@ Questi parametri non sono proposti nella console; contatti il supporto.
 
 ### I backup sono disponibili?
 
-La configurazione dei backup e il ripristino non sono proposti nella console; contatti il supporto. Consulti [Configurare i backup](./how-to/configure-backups.md).
+Sì, dalla scheda **Backups** della pagina del cluster: pianificazione, backup su richiesta e ripristino, anche a un istante preciso. Consulti [Configurare i backup](./how-to/configure-backups.md) e il [servizio di backup](../../backups/overview.md).

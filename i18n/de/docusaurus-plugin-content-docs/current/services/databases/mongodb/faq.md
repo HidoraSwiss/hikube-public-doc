@@ -51,7 +51,10 @@ Maßgeblich ist die im Assistenten angezeigte Liste. Das Preset kann nach der Er
 
 ### Wo finde ich die Verbindungsadresse?
 
-In der Karte **Network and Connection** auf der Seite des Clusters, wenn der **External Access** aktiviert ist: Feld **Host** bei einem Cluster mit Sharding, Liste **Replica set rs0 members** und **External connection string** bei einem Replica Set. Der Port ist `27017`. Bei einem Replica Set verbinden Sie sich mit `directConnection=true` mit einem Mitglied, ohne den Parameter `replicaSet`. Ohne externen Zugriff zeigt das Feld **Not defined** an: Der Cluster bleibt von den VMs und Kubernetes-Clustern des Projekts über eine interne Adresse erreichbar, die die Konsole nicht anzeigt; [wenden Sie sich an den Support](mailto:support@hidora.io), um sie zu erhalten.
+In der Karte **Network and Connection** auf der Seite des Clusters. Der Port ist `27017`.
+
+- Aus dem Projekt (VMs, Kubernetes-Cluster): der Host aus dem Bereich **Internal**, der immer angezeigt wird. Bei einem Replica Set fügen Sie `replicaSet=rs0` hinzu.
+- Aus dem Internet, wenn der **External Access** aktiviert ist: der Bereich **External**, mit der Adresse der Router bei einem Cluster mit Sharding, einer Adresse pro Mitglied und dem **External connection string** bei einem Replica Set. Bei einem Replica Set verbinden Sie sich mit `directConnection=true` mit einem Mitglied, ohne den Parameter `replicaSet`.
 
 ### Warum hat der im Assistenten erstellte Benutzer keinen Zugriff auf meine Datenbank?
 

@@ -14,7 +14,7 @@ Redis auf Hikube wird für die Hochverfügbarkeit in einer **Redis-Sentinel**-Ar
 - **Redis Sentinel** überwacht die Redis-Instanzen und führt bei einem Ausfall des Masters ein **automatisches Failover** durch.
 - Ein **Quorum** aus Sentinels entscheidet über das Failover. Es werden immer drei Sentinels bereitgestellt, unabhängig von der Anzahl der Redis-Replicas: Das Failover funktioniert ab **2 Replicas**.
 - Die Sentinels zählen zu den Quotas des Projekts (CPU und Arbeitsspeicher, in der Größe des Presets des Clusters).
-- Die Adresse im Feld **Host** folgt dem Master: Nach einem Failover zeigt sie automatisch auf den neuen Master, ohne dass sich die Adresse ändert.
+- Der Host aus dem Bereich **Internal** folgt ebenso wie die Adresse aus dem Bereich **External** dem Master: Nach einem Failover zeigt er automatisch auf den neuen Master, ohne dass sich die Adresse ändert.
 
 :::tip
 Wählen Sie für die Produktion bei der Erstellung mindestens 3 Replicas: Diese Anzahl kann danach nicht mehr geändert werden.
@@ -60,7 +60,11 @@ Lassen Sie die Authentifizierung immer aktiviert, insbesondere wenn das öffentl
 
 ### Ich habe das Passwort verloren. Wie kann ich es wiederherstellen?
 
-Es kann nicht erneut gelesen werden. Generieren Sie im Abschnitt **Security** der Cluster-Seite ein neues (**Rotate password**). Siehe [Passwort erneuern](./how-to/rotate-password.md).
+Es kann nicht erneut gelesen werden. Generieren Sie im Abschnitt **Security** der Cluster-Seite ein neues (**Rotate password**) und starten Sie den Cluster anschließend neu: Das neue Passwort wird erst nach diesem Neustart akzeptiert. Siehe [Passwort erneuern](./how-to/rotate-password.md).
+
+### Ich habe die Authentifizierung aktiviert, aber Redis nimmt weiterhin Verbindungen ohne Passwort an. Warum?
+
+Das Aktivieren oder Deaktivieren der Authentifizierung auf einem bestehenden Cluster wird, wie die Erneuerung seines Passworts, sofort gespeichert, gilt für die Redis-Server aber erst nach einem Neustart des Clusters. Solange die Seite des Clusters das Banner **Restart required** anzeigt, klicken Sie auf **Restart now**. Der Cluster ist etwa eine Minute lang nicht erreichbar. Siehe [Einen Cluster neu starten](./how-to/restart-cluster.md).
 
 ### Wie skaliere ich Redis?
 
@@ -69,13 +73,13 @@ Es kann nicht erneut gelesen werden. Generieren Sie im Abschnitt **Security** de
 
 ### Wie verbinde ich mich mit Redis?
 
-Bei aktiviertem öffentlichem Netzwerk verwenden Sie die Adresse aus dem Feld **Host** (Abschnitt **Connection** der Cluster-Seite) auf Port `6379`:
+Bei aktiviertem öffentlichem Netzwerk verwenden Sie die Adresse aus dem Bereich **External** (Abschnitt **Connection** der Cluster-Seite) auf Port `6379`:
 
 ```bash
 REDISCLI_AUTH='<password>' redis-cli -h <host> -p 6379 ping
 ```
 
-Ohne öffentliches Netzwerk bleibt die Instanz von den VMs und Kubernetes-Clustern des Projekts über eine interne Adresse erreichbar, die die Konsole nicht anzeigt. [Wenden Sie sich an den Support](mailto:support@hidora.io), um sie zu erhalten.
+Von einer VM oder einem Kubernetes-Cluster des Projekts aus verwenden Sie den Host aus dem Bereich **Internal**, mit oder ohne öffentliches Netzwerk. Auch er folgt dem Master.
 
 ### Kann ich mehrere Redis-Benutzer (ACL) anlegen?
 

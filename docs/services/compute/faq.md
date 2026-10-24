@@ -49,6 +49,12 @@ Par exemple, `u1.xlarge` offre 4 vCPU et 16 Go de RAM. Le gabarit peut être cha
 
 ---
 
+### Comment joindre une VM qui n'a pas d'IP publique ?
+
+Par son IP **mgmt**, affichée dans la zone **Interne** de la section **Réseau et Sécurité** : elle est joignable depuis les autres ressources du même projet, par exemple ses autres VM, et le bloc **Connexion SSH** l'utilise lorsque la VM n'a pas d'IP publique. Depuis Internet ou depuis un autre projet, activez **Adresse IPv4 Publique**. Voir [Les adresses d'une VM](./how-to/configure-network.md#les-adresses-dune-vm).
+
+---
+
 ### Comment me connecter en SSH ?
 
 1. Ajoutez votre clé publique dans **Clés SSH autorisées** (étape **Réseau** de l'assistant, ou **Modifier** > **Configuration avancée** > **Clés SSH**).

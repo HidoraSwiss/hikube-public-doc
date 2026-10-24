@@ -107,14 +107,17 @@ L'option **Activer l'authentification** est active par défaut dans l'assistant 
 - **Activée** : un mot de passe est généré à la création et affiché une seule fois, avec l'utilisateur `default`. Vous pouvez le renouveler à tout moment depuis la section **Sécurité** de la page du cluster (**Effectuer une rotation**).
 - **Désactivée** : le cluster accepte les connexions sans mot de passe. À éviter, en particulier avec le réseau public activé.
 
+L'option reste modifiable après la création, depuis **Modifier**. Un changement d'authentification, comme une rotation du mot de passe, ne s'applique aux serveurs Redis qu'après un [redémarrage du cluster](./how-to/restart-cluster.md) : d'ici là, ils gardent leur configuration précédente.
+
 Redis sur Hikube n'expose pas de gestion d'utilisateurs multiples (ACL) dans la console : l'accès repose sur ce mot de passe global.
 
 ---
 
 ## Accès réseau
 
-- **Réseau public désactivé** (par défaut, « Privé » dans le récapitulatif) : le cluster n'est pas exposé sur Internet. La section **Connexion** de la page du cluster affiche « En attente d'attribution... » à la place de l'hôte.
-- **Réseau public activé** (« Public ») : la plateforme attribue une adresse IP publique, affichée dans le champ **Hôte**. Elle donne accès au master sur le port Redis standard, `6379`, et suit le master après un basculement.
+- **Hôte interne** : toujours attribué, affiché dans la zone **Interne** de la section **Connexion**. Il pointe vers le master et se joint depuis les VM et les clusters Kubernetes du même projet, pas depuis un autre projet ni depuis Internet.
+- **Réseau public désactivé** (par défaut, « Privé » dans le récapitulatif) : le cluster n'est pas exposé sur Internet. La zone **Externe** affiche **Désactivé**.
+- **Réseau public activé** (« Public ») : la plateforme attribue une adresse IP publique, affichée dans la zone **Externe**. Elle donne accès au master sur le port Redis standard, `6379`, et suit le master après un basculement.
 
 ---
 

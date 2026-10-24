@@ -88,7 +88,7 @@ Il passaggio **Finish** conferma la creazione («Creation complete!»). Faccia c
 | **Ready** | Il cluster è operativo |
 | **Error** | La piattaforma non è riuscita ad applicare la creazione o l'ultima modifica del cluster |
 
-**Risultato atteso:** dopo alcuni minuti, lo stato passa a **Ready**. La pagina mostra la **MongoDB Version**, le **Replicas**, la **Allocated Size** e il **Preset**, nonché il riquadro **Network and Connection** (**Host**, **External Access**, **Sharding**). Per un replica set con accesso esterno, il campo **Host** è sostituito da **Replica set rs0 members**: un indirizzo per membro, ciascuno con un pulsante di copia.
+**Risultato atteso:** dopo alcuni minuti, lo stato passa a **Ready**. La pagina mostra la **MongoDB Version**, le **Replicas**, la **Allocated Size** e il **Preset**, nonché il riquadro **Network and Connection**: le zone di indirizzi **Internal** ed **External**, e lo **Sharding**. Per un replica set con accesso esterno, la zona **External** elenca un indirizzo per membro (**member 1**, **member 2**…), ciascuno con un pulsante di copia.
 
 ---
 
@@ -110,13 +110,19 @@ L'utente dispone del ruolo scelto sul database indicato al passaggio **Users**: 
 
 ## Passo 5: Connessione e test
 
-Su un replica set, si connetta direttamente a un membro: copi uno degli indirizzi elencati in **Replica set rs0 members**, oppure la **External connection string** del riquadro **Network and Connection**.
+Dalla sua postazione, su un replica set, si connetta direttamente a un membro: copi uno degli indirizzi della zona **External**, oppure la **External connection string** del riquadro **Network and Connection**.
 
 ```bash
 mongosh "mongodb://<membro>:27017/myapp?directConnection=true&authSource=admin" --username app-user
 ```
 
-Su un cluster con sharding, utilizzi l'indirizzo del campo **Host**: `mongosh "mongodb://<host>:27017/myapp?authSource=admin" --username app-user`.
+Su un cluster con sharding, utilizzi l'indirizzo della zona **External**: `mongosh "mongodb://<host>:27017/myapp?authSource=admin" --username app-user`.
+
+Da una VM o da un cluster Kubernetes del progetto, utilizzi l'host della zona **Internal**, senza accesso esterno. Su un replica set, aggiunga `replicaSet=rs0`, come ricorda la console: il driver trova allora da solo il primario.
+
+```bash
+mongosh "mongodb://<host-interno>:27017/myapp?replicaSet=rs0&authSource=admin" --username app-user
+```
 
 La connessione non è cifrata (nessun TLS): non aggiunga `--tls`.
 
@@ -143,11 +149,15 @@ Il membro raggiunto può essere un secondario, che non accetta scritture: `inser
 
 ## Passo 6: Risoluzione rapida dei problemi
 
-### Il campo Host mostra «Not defined»
+### La zona External mostra «Disabled» o «Waiting for allocation…»
 
-L'**External access** è disattivato, oppure l'indirizzo pubblico non è ancora stato assegnato. Se necessario, lo attivi tramite **Edit**, quindi attenda qualche istante.
+«Disabled»: l'**External access** è disattivato. Lo attivi tramite **Edit** se deve connettersi da Internet; dal progetto, utilizzi l'host della zona **Internal**. «Waiting for allocation…»: l'indirizzo pubblico non è ancora stato assegnato, attenda qualche istante.
 
-Su un replica set con accesso esterno, ciascun membro riceve il proprio indirizzo pubblico: il riquadro **Network and Connection** li elenca in **Replica set rs0 members** non appena sono assegnati. Si connetta a uno di essi con `directConnection=true`, senza il parametro `replicaSet`: i membri si annunciano con nomi interni al cluster, che non si risolvono dall'esterno.
+Su un replica set con accesso esterno, ciascun membro riceve il proprio indirizzo pubblico: la zona **External** li elenca non appena sono assegnati. Si connetta a uno di essi con `directConnection=true`, senza il parametro `replicaSet`: i membri si annunciano con nomi interni al cluster, che non si risolvono dall'esterno.
+
+### L'host interno non si risolve da una VM
+
+Copi il nome completo della zona **Internal**, senza abbreviarlo. Su Debian 13, il nome non si risolve senza configurazione: vedere [Raggiungere un servizio gestito del progetto](../../compute/how-to/configure-network.md#raggiungere-un-servizio-gestito-del-progetto).
 
 ### `Authentication failed`
 

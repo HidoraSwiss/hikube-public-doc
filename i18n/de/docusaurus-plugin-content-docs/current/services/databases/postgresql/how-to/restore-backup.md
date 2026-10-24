@@ -1,30 +1,31 @@
 ---
 title: "Ein Backup wiederherstellen (PITR)"
 sidebar_position: 4
+description: "Stellen Sie einen Hikube-PostgreSQL-Cluster in der Konsole wieder her: Stand eines Backups, neuester Stand oder bestimmter Zeitpunkt, auf dem ursprünglichen Cluster oder auf einem anderen Cluster."
 ---
 
 # Ein Backup wiederherstellen (PITR)
 
-:::info Verfügbarkeit
-Die Wiederherstellung von PostgreSQL-Backups ist in der [Hikube-Konsole](https://console.hikube.cloud) noch nicht als Self-Service verfügbar.
-Um einen Cluster wiederherzustellen, [wenden Sie sich an den Support](mailto:support@hidora.io).
-:::
+Ein PostgreSQL-Archiv wird über die Registerkarte **Backups** der Cluster-Seite in der [Hikube-Konsole](https://console.hikube.cloud) wiederhergestellt oder über **Infrastructure** > **Backups** > **Archives**.
 
 ## Prinzip
 
-Wenn auf einem Cluster Backups aktiviert sind, ermöglicht die kontinuierliche WAL-Archivierung, die Daten zu einem **bestimmten Zeitpunkt** wiederherzustellen (Point-In-Time Recovery). Die Wiederherstellung erstellt einen **neuen Cluster** unter einem anderen Namen; der ursprüngliche Cluster wird nicht verändert.
+Dank der kontinuierlichen Archivierung der Transaktionsprotokolle kann eine Wiederherstellung die Datenbank zurückversetzen:
 
-## Vorzubereitende Informationen
+- auf den **exakten Stand eines Backups**;
+- auf ihren **neuesten Stand**;
+- auf einen **bestimmten Zeitpunkt** (PITR, *Point-In-Time Recovery*) zwischen zwei Backups.
 
-| Information | Beispiel |
-|-------------|---------|
-| Projekt und Name des ursprünglichen Clusters | `prod` / `orders-db` |
-| Gewünschter Name für den wiederhergestellten Cluster | `orders-restored` |
-| Wiederherstellungszeitpunkt (mit Zeitzone) | `2026-06-15 14:30 Europe/Zurich` oder „letzter verfügbarer Stand“ |
+Die Wiederherstellung schreibt entweder **auf den ursprünglichen Cluster**, dessen Inhalt überschrieben wird, oder **auf einen anderen bestehenden PostgreSQL-Cluster** des Projekts mit derselben Hauptversion.
+
+## Schritte
+
+- [Eine PostgreSQL- oder MariaDB-Datenbank wiederherstellen](../../../backups/how-to/restore-database.md)
+- [Eine PostgreSQL-Datenbank zu einem bestimmten Zeitpunkt wiederherstellen](../../../backups/how-to/restore-point-in-time.md)
 
 ## Nach der Wiederherstellung
 
-Der wiederhergestellte Cluster erscheint in der Liste **PostgreSQL Clusters** Ihres Projekts. Prüfen Sie Ihre Daten, bevor Sie Ihre Anwendungen umstellen:
+Prüfen Sie Ihre Daten, bevor Sie Ihre Anwendungen wieder in Betrieb nehmen:
 
 ```sql
 -- Datenvolumen kontrollieren
@@ -33,7 +34,7 @@ FROM pg_stat_user_tables
 ORDER BY n_live_tup DESC;
 ```
 
-Aktualisieren Sie anschließend die Konfiguration Ihrer Anwendungen mit der Adresse des neuen Clusters (Feld **Host** auf seiner Seite) und den zugehörigen Zugangsdaten.
+Wenn Sie auf einem anderen Cluster wiederhergestellt haben, aktualisieren Sie die Konfiguration Ihrer Anwendungen mit seiner Adresse (Bereiche **Internal** und **External** auf seiner Seite) und seinen Zugangsdaten.
 
 ## Wiederherstellung eines logischen Exports
 

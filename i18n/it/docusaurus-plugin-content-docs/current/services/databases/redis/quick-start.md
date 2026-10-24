@@ -79,7 +79,7 @@ Il passaggio **Done** mostra «Cluster successfully created». Faccia clic su **
 | **Ready** | Il cluster è operativo |
 | **Error** | La piattaforma non è riuscita ad applicare la creazione o l'ultima modifica del cluster |
 
-**Risultato atteso:** dopo alcuni minuti, la sezione **Connection** della pagina del cluster mostra lo **Status** **Ready** e l'**Host** del cluster.
+**Risultato atteso:** dopo alcuni minuti, la sezione **Connection** della pagina del cluster mostra lo **Status** **Ready** e l'host interno del cluster.
 
 ---
 
@@ -95,11 +95,16 @@ Quando l'autenticazione è attivata, il passaggio **Done** della procedura guida
 Copi subito la password: non verrà più mostrata. In caso di smarrimento, ne generi una nuova dalla sezione **Security** della pagina del cluster (**Rotate password**). Si veda [Rinnovare la password](./how-to/rotate-password.md).
 :::
 
-L'indirizzo resta consultabile nella pagina del cluster, sezione **Connection**, campo **Host** (pulsante di copia a destra).
+La sezione **Connection** della pagina del cluster mostra i suoi indirizzi in due zone, ciascuna con un pulsante di copia:
+
+- **Internal**, *From the project's resources only*: l'host interno, sempre presente, e la porta (`6379`). È raggiungibile dalle VM e dai cluster Kubernetes dello stesso progetto, senza accesso esterno;
+- **External**, *From the Internet*: l'indirizzo pubblico, quando l'**External access** è attivato.
 
 ---
 
 ## Passo 5: Connessione e test
+
+Dalla sua postazione, utilizzi l'indirizzo della zona **External**; da una VM o da un cluster Kubernetes del progetto, l'host della zona **Internal**.
 
 ```bash
 export REDIS_HOST=<host>
@@ -126,9 +131,13 @@ La variabile `REDISCLI_AUTH` evita che la password compaia nella cronologia dell
 
 ## Passo 6: Risoluzione rapida dei problemi
 
-### L'host mostra «Waiting for allocation...»
+### La zona External mostra «Disabled» o «Waiting for allocation…»
 
-La rete pubblica è disattivata, oppure l'indirizzo IP pubblico non è ancora stato assegnato. Se necessario, attivi **External access** tramite **Edit**, quindi attenda qualche istante.
+«Disabled»: l'**External access** è disattivato. Lo attivi tramite **Edit** se deve connettersi da Internet; dal progetto, utilizzi l'host della zona **Internal**. «Waiting for allocation…»: l'indirizzo pubblico non è ancora stato assegnato, attenda qualche istante.
+
+### L'host interno non si risolve da una VM
+
+Copi il nome completo della zona **Internal**, senza abbreviarlo. Su Debian 13, il nome non si risolve senza configurazione: vedere [Raggiungere un servizio gestito del progetto](../../compute/how-to/configure-network.md#raggiungere-un-servizio-gestito-del-progetto).
 
 ### `NOAUTH Authentication required` o `WRONGPASS`
 

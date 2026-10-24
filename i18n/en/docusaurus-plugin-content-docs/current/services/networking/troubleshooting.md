@@ -55,7 +55,7 @@ description: "Fix common Hikube VPC problems: CIDR block or name rejected, VPC i
 
 **Solution**:
 
-1. On the VM's detail page, check that **VPC Networks** lists the subnet and that **IP Addresses** contains a **Secondary** address.
+1. On the VM's detail page, check that **VPC Networks** lists the subnet and that the **Internal** zone contains an address of this subnet, next to the **mgmt** IP.
 2. In the VM, list the interfaces:
    ```bash
    ip -br link

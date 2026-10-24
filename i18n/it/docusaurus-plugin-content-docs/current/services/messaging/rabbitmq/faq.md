@@ -45,7 +45,7 @@ Il producer pubblica verso un exchange, mai direttamente verso una queue. Exchan
 
 ### Su quale porta connettersi?
 
-I client AMQP si connettono sulla porta **5672**, all'indirizzo mostrato nel campo **Host** della sezione **Connection** del cluster (quando l'**External Access** è attivato).
+I client AMQP si connettono sulla porta **5672**, a uno degli indirizzi della sezione **Connection** del cluster: l'host della zona **Internal** dalle VM e dai cluster Kubernetes del progetto, l'indirizzo della zona **External** da Internet (quando l'**External Access** è attivato).
 
 ### È possibile cambiare il numero di repliche o il preset dopo la creazione?
 

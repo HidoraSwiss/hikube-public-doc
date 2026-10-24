@@ -43,7 +43,7 @@ Siehe: [Kubernetes - Schnellstart](../services/kubernetes/quick-start.md)
 
 ## 4. Brauche ich noch eine kubeconfig, um meine Hikube-Ressourcen zu verwalten?
 
-Nein. VMs, Disks, Buckets, Netzwerke, Kubernetes-Cluster und Datenbanken werden in der Konsole erstellt und verwaltet. Die Projekt-kubeconfig wird nicht mehr standardmäßig ausgegeben; für Legacy-Anwendungsfälle wie [Terraform](../tools/terraform.md) ist sie weiterhin auf Anfrage beim Support erhältlich.
+Nein. VMs, Disks, Buckets, Netzwerke, Kubernetes-Cluster und Datenbanken werden in der Konsole erstellt und verwaltet und lassen sich mit der [öffentlichen API](../../api/overview) automatisieren. Die Projekt-kubeconfig ist nicht mehr verfügbar; die darauf beruhende [Legacy-Methode Terraform](../tools/terraform.md) ist eingestellt.
 
 Die kubeconfig eines **Kubernetes-Clusters** (Frage 3) bleibt hingegen der normale Weg, auf diesen Cluster zuzugreifen.
 
@@ -59,7 +59,9 @@ Siehe: [PostgreSQL](../services/databases/postgresql/quick-start.md), [MariaDB](
 
 ## 6. Wie mache ich eine Datenbank im Internet erreichbar?
 
-Aktivieren Sie die Option **External access** bei der Erstellung des Clusters oder über **Edit**. Daraufhin wird eine öffentliche IP zugewiesen und im Feld **Host** der Detailseite angezeigt. Bei einem MongoDB-Replica-Set listet die Detailseite die Adresse jedes Mitglieds auf.
+Aktivieren Sie die Option **External access** bei der Erstellung des Clusters oder über **Edit**. Daraufhin wird eine öffentliche IP zugewiesen und im Bereich **External** der Detailseite angezeigt. Bei einem MongoDB-Replica-Set listet der Bereich die Adresse jedes Mitglieds auf.
+
+Um sich von einer VM oder einem Kubernetes-Cluster desselben Projekts aus zu verbinden, ist kein externer Zugriff nötig: Verwenden Sie den Host aus dem Bereich **Internal**, der immer angezeigt wird.
 
 :::warning
 Machen Sie eine Datenbank nur erreichbar, wenn es nötig ist, und verwenden Sie starke Passwörter.
@@ -106,7 +108,7 @@ Siehe: [PostgreSQL - Konzepte](../services/databases/postgresql/concepts.md), [R
 
 ## 11. Sind Datenbank-Backups in der Konsole verfügbar?
 
-Noch nicht. Die Konfiguration der Backups und die Wiederherstellung erfolgen derzeit über den Support. Siehe zum Beispiel [PostgreSQL - Backups](../services/databases/postgresql/how-to/configure-backups.md).
+Ja. PostgreSQL- und MariaDB-Datenbanken sowie virtuelle Maschinen und Disks werden in der Konsole gesichert und wiederhergestellt, über das Menü **Infrastructure** > **Backups** und die Registerkarte **Backups** jeder Ressource. Siehe [Backups](../services/backups/overview.md).
 
 ---
 

@@ -39,7 +39,7 @@ description: "Risolvete i problemi comuni di PostgreSQL su Hikube: cluster blocc
 **Soluzione**:
 
 1. Nella pagina del cluster, verifichi che il riquadro **External Access** indichi **Enabled**. Altrimenti, lo attivi tramite **Edit**.
-2. Verifichi che il campo **Host** contenga un indirizzo e non **Not defined**.
+2. Verifichi che la zona **External** del riquadro **Connection and Databases** contenga un indirizzo, e non **Disabled** o « Waiting for allocation… ».
 3. Utilizzi la porta `5432` e testi la connettività:
    ```bash
    pg_isready -h <host> -p 5432

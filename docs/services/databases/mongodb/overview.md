@@ -54,6 +54,7 @@ Lorsque l'option **Sharding (Topologie distribuée)** est activée à la créati
 | Création d'un cluster (version 6.0, 7.0 ou 8.0, préconfiguration, taille du disque, 1, 3 ou 5 réplicas, accès externe, sharding) | Oui |
 | Utilisateurs et accès par base (admin / lecture seule), rotation du mot de passe | Oui |
 | Montée de version, augmentation de la taille du disque, modification de l'accès externe | Oui |
+| Redémarrage du cluster | Oui |
 | Modification de la préconfiguration, du nombre de réplicas ou du sharding après création | Non, [contactez le support](mailto:support@hidora.io) |
 | Sauvegardes et restauration | Non, [contactez le support](mailto:support@hidora.io) |
 

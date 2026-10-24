@@ -6,6 +6,8 @@ description: "Créez un VPC avec un sous-réseau depuis la console Hikube, relie
 ---
 
 import NavigationFooter from '@site/src/components/NavigationFooter';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
 # Créer un VPC et y relier deux VM
 
@@ -17,19 +19,41 @@ Ce guide crée un VPC avec un sous-réseau depuis la [console Hikube](https://co
 
 - Un compte Hikube et un **projet** (voir [Démarrage rapide Hikube](../../getting-started/quick-start.md)).
 - Deux VM Linux dans ce projet, dont au moins une accessible en SSH (voir [Créer votre première VM](../compute/quick-start.md)). Vous pouvez aussi les créer pendant ce guide.
+- Pour l'onglet **API** : une clé d'API `admin` du projet et les variables `HIKUBE_API`, `HIKUBE_API_KEY` et `PROJECT_ID` (voir [Préparer l'environnement](../../api/quick-start.md#environnement)) ; les exemples utilisent `curl` et `jq`
 
 ---
 
 ## Étape 1 : Ouvrir l'assistant de création de VPC
+
+<Tabs groupId="interface">
+<TabItem value="console" label="Console" default>
 
 1. Dans le menu latéral, ouvrez **Infrastructure** > **Réseau**. La page **Virtual Private Clouds** liste les VPC du projet.
 2. Cliquez sur **Créer un VPC**.
 
 L'assistant **Créer un VPC** comporte trois étapes : **Général**, **Sous-réseaux** et **Vérification**.
 
+</TabItem>
+<TabItem value="api" label="API">
+
+Avec l'API, il n'y a pas d'assistant. Listez les VPC du projet pour vérifier l'accès :
+
+```bash
+curl -sS "$HIKUBE_API/network/v1alpha1/projects/$PROJECT_ID/vpcs" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY"
+```
+
+**Résultat attendu :** un objet JSON `{"totalCount": ..., "vpcs": [...]}`.
+
+</TabItem>
+</Tabs>
+
 ---
 
 ## Étape 2 : Configurer et valider
+
+<Tabs groupId="interface">
+<TabItem value="console" label="Console" default>
 
 ### Général
 
@@ -50,9 +74,40 @@ Le **Résumé de la configuration** reprend le **Nom du VPC** et ses **Sous-rés
 
 La console affiche **VPC créé** et revient à la liste.
 
+</TabItem>
+<TabItem value="api" label="API">
+
+Le VPC et ses sous-réseaux se créent en deux requêtes. Créez d'abord le VPC :
+
+```bash
+curl -sS -X POST "$HIKUBE_API/network/v1alpha1/projects/$PROJECT_ID/vpcs" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"name": "vpcdemo"}'
+```
+
+`name` : 3 à 16 caractères, en minuscules ; ce nom identifie le VPC dans les chemins de l'API.
+
+Ajoutez ensuite le sous-réseau `app` :
+
+```bash
+curl -sS -X POST "$HIKUBE_API/network/v1alpha1/projects/$PROJECT_ID/vpcs/vpcdemo/subnets" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"subnetName": "app", "cidr": "172.16.0.0/24"}'
+```
+
+Répétez la requête pour d'autres sous-réseaux, par exemple `db` en `172.16.1.0/24`. Un sous-réseau ne doit chevaucher ni un autre sous-réseau du VPC ni une plage réservée.
+
+</TabItem>
+</Tabs>
+
 ---
 
 ## Étape 3 : Vérifier l'état
+
+<Tabs groupId="interface">
+<TabItem value="console" label="Console" default>
 
 Dans la liste des VPC, le statut de `vpc-demo` (colonne **État** en vue tableau) doit passer de **En cours de provisionnement** à **Prêt**.
 
@@ -60,9 +115,28 @@ Ouvrez le menu **Actions** du VPC et cliquez sur **Voir les sous-réseaux** : la
 
 **Résultat attendu :** VPC **Prêt**, sous-réseau `app` listé.
 
+</TabItem>
+<TabItem value="api" label="API">
+
+```bash
+curl -sS "$HIKUBE_API/network/v1alpha1/projects/$PROJECT_ID/vpcs/vpcdemo" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" | jq '{name, status}'
+
+curl -sS "$HIKUBE_API/network/v1alpha1/projects/$PROJECT_ID/vpcs/vpcdemo/subnets" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY"
+```
+
+**Résultat attendu :** `status` passe de `provisioning` à `ready`, et la liste des sous-réseaux contient `{"subnetName": "app", "cidr": "172.16.0.0/24"}`.
+
+</TabItem>
+</Tabs>
+
 ---
 
 ## Étape 4 : Relier les VM au sous-réseau
+
+<Tabs groupId="interface">
+<TabItem value="console" label="Console" default>
 
 Pour chacune des deux VM :
 
@@ -76,7 +150,35 @@ Pour une nouvelle VM, faites la même sélection à l'étape **Réseau** de l'as
 Sur la page de détail de chaque VM, section **Réseau et Sécurité** :
 
 - **Réseaux VPC** affiche `vpc-demo` et `app (172.16.0.0/24)` ;
-- **Adresses IP** affiche une adresse **Secondaire** dans `172.16.0.0/24`. Notez celle de la seconde VM.
+- la zone **Interne** affiche, à côté de l'IP **mgmt**, une adresse dans `172.16.0.0/24`. Notez celle de la seconde VM.
+
+</TabItem>
+<TabItem value="api" label="API">
+
+Une VM se relie à un sous-réseau en modifiant la VM (`PATCH /instance/v1alpha1/projects/{projectId}/instances/{name}`). C'est une [mise à jour partielle](../../api/overview.md#mises-a-jour-partielles) : un corps qui ne contient que `network.vpcs` garde le type d'instance, les disques, l'adresse publique et le pare-feu. Pour chacune des deux VM :
+
+```bash
+VM=vm1   # nom de la VM
+
+curl -sS -X PATCH "$HIKUBE_API/instance/v1alpha1/projects/$PROJECT_ID/instances/$VM" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"network": {"vpcs": [{"name": "vpcdemo", "subnets": ["app"]}]}}'
+```
+
+La liste `vpcs` remplace les connexions VPC actuelles de la VM, et `[]` les retire toutes ; chaque connexion doit nommer au moins un sous-réseau. Pour une nouvelle VM, placez le même bloc `network.vpcs` dans le corps de création.
+
+Relevez ensuite l'adresse privée de chaque VM :
+
+```bash
+curl -sS "$HIKUBE_API/instance/v1alpha1/projects/$PROJECT_ID/instances/$VM" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" | jq '{vpcs: .network.vpcs, ips: .network.ips}'
+```
+
+`network.ips` contient une adresse dans `172.16.0.0/24`. Notez celle de la seconde VM.
+
+</TabItem>
+</Tabs>
 
 ---
 
@@ -110,7 +212,7 @@ sudo netplan apply
 ip -br addr show enp2s0
 ```
 
-**Résultat attendu :** `enp2s0` est `UP` avec une adresse en `172.16.0.x/24`, celle affichée comme **Secondaire** dans la console. Faites de même sur la seconde VM.
+**Résultat attendu :** `enp2s0` est `UP` avec une adresse en `172.16.0.x/24`, celle affichée dans la zone **Interne** de la console, à côté de l'IP **mgmt**. Faites de même sur la seconde VM.
 
 Testez la communication avec la seconde VM sur son adresse privée :
 
@@ -118,7 +220,7 @@ Testez la communication avec la seconde VM sur son adresse privée :
 ping -c 3 172.16.0.11
 ```
 
-Remplacez `172.16.0.11` par l'adresse **Secondaire** relevée à l'étape 4. Le ping doit répondre ; ce trafic ne passe ni par Internet ni par le pare-feu de l'IP publique.
+Remplacez `172.16.0.11` par l'adresse du sous-réseau relevée à l'étape 4. Le ping doit répondre ; ce trafic ne passe ni par Internet ni par le pare-feu de l'IP publique.
 
 ---
 
@@ -135,11 +237,29 @@ Remplacez `172.16.0.11` par l'adresse **Secondaire** relevée à l'étape 4. Le 
 
 ## Étape 7 : Nettoyage
 
+<Tabs groupId="interface">
+<TabItem value="console" label="Console" default>
+
 1. Détachez les VM : **Modifier** > **Réseau & Sécurité**, décochez `vpc-demo`, puis **Enregistrer**.
 2. Dans **Réseau**, ouvrez le menu **Actions** du VPC et cliquez sur **Supprimer**.
 3. Saisissez le nom du VPC pour confirmer, puis cliquez sur **Supprimer définitivement**.
 
 La suppression d'un VPC supprime aussi ses sous-réseaux. Elle est refusée tant qu'une VM y est reliée : la console affiche **Suppression impossible** avec la liste des VM concernées.
+
+</TabItem>
+<TabItem value="api" label="API">
+
+1. Détachez les VM du VPC. Une liste `network.vpcs` vide est ignorée par l'API : à ce jour, retirer le dernier VPC d'une VM se fait depuis la console (onglet Console, étape 1). Si la VM n'est plus utile, vous pouvez aussi la supprimer.
+2. Supprimez le VPC :
+   ```bash
+   curl -sS -X DELETE "$HIKUBE_API/network/v1alpha1/projects/$PROJECT_ID/vpcs/vpcdemo" \
+     -H "X-Hikube-Api-Key: $HIKUBE_API_KEY"
+   ```
+
+La suppression d'un VPC supprime aussi ses sous-réseaux. Elle est refusée tant qu'une VM y est reliée.
+
+</TabItem>
+</Tabs>
 
 ---
 

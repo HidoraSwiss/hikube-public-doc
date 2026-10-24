@@ -140,7 +140,8 @@ Voir : [Machines virtuelles - Dépannage](../services/compute/troubleshooting.md
 
 **Solutions :**
 - vérifiez que l'**Accès externe** est activé sur le cluster (**Modifier**) ;
-- utilisez l'adresse affichée dans le champ **Hôte** de la page de détail. Tant qu'elle n'est pas attribuée, la connexion externe n'est pas possible. Pour un replica set MongoDB, la page de détail liste l'adresse de chaque membre : connectez-vous à un membre avec `directConnection=true` ;
+- utilisez l'adresse affichée dans la zone **Externe** de la page de détail. Tant qu'elle n'est pas attribuée (« En attente d'attribution… »), la connexion externe n'est pas possible. Pour un replica set MongoDB, la zone liste l'adresse de chaque membre : connectez-vous à un membre avec `directConnection=true` ;
+- depuis une VM ou un cluster Kubernetes du même projet, vous n'avez pas besoin d'accès externe : utilisez l'hôte de la zone **Interne** ;
 - vérifiez l'utilisateur et le mot de passe affichés dans la console.
 
 ### Mot de passe refusé

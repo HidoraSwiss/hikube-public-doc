@@ -58,8 +58,9 @@ graph TD
 | Databases and PostgreSQL extensions | Yes |
 | Users, per-database rights (admin / read-only), password rotation | Yes |
 | Version upgrade, preset change, disk size increase, change of external access | Yes |
+| Cluster restart | Yes |
 | Changing the number of replicas after creation | No, [contact support](mailto:support@hidora.io) |
-| Backups and restore | No, [contact support](mailto:support@hidora.io) |
+| Scheduled or on-demand backups, restore (including to a point in time) | Yes, **Backups** tab (see [Backups](../../backups/overview.md)) |
 
 ---
 

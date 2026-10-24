@@ -101,7 +101,10 @@ Il passaggio **Finish** della procedura guidata mostra, in **User Credentials**,
 Copi subito queste password: non verranno più mostrate. In caso di smarrimento, ne generi una nuova dalla sezione **Users** (**Actions** → **Change Password**).
 :::
 
-L'indirizzo resta consultabile nel riquadro **Connection and network** della pagina del cluster, campo **Host**.
+Il riquadro **Connection and network** della pagina del cluster mostra i suoi indirizzi in due zone, ciascuna con un pulsante di copia:
+
+- **Internal**, *From the project's resources only*: l'host interno, sempre presente, e la porta (`3306`). È raggiungibile dalle VM e dai cluster Kubernetes dello stesso progetto, senza accesso esterno;
+- **External**, *From the Internet*: l'indirizzo pubblico, quando l'**External Access** è attivato.
 
 ### Accesso al database applicativo
 
@@ -111,9 +114,13 @@ Il database `myapp` indicato al passaggio **Users** è stato creato, e l'utente 
 
 ## Passo 5: Connessione e test
 
+Dalla sua postazione, utilizzi l'indirizzo della zona **External**:
+
 ```bash
 mysql -h <host> -P 3306 -u app-user -p myapp
 ```
+
+Da una VM o da un cluster Kubernetes del progetto, utilizzi l'host della zona **Internal**: `mysql -h <host-interno> -P 3306 -u app-user -p myapp`.
 
 Inserisca la password, quindi verifichi la connessione:
 
@@ -142,9 +149,13 @@ Il client `mariadb` accetta le stesse opzioni: `mariadb -h <host> -P 3306 -u app
 
 ## Passo 6: Risoluzione rapida dei problemi
 
-### Il campo Host mostra « Not defined »
+### La zona External mostra « Disabled » o « Waiting for allocation… »
 
-L'**External Access** è disattivato, oppure l'indirizzo IP pubblico non è ancora stato assegnato. Se necessario, lo attivi tramite **Edit**, quindi attenda qualche istante.
+« Disabled »: l'**External Access** è disattivato. Lo attivi tramite **Edit** se deve connettersi da Internet; dal progetto, utilizzi l'host della zona **Internal**. « Waiting for allocation… »: l'indirizzo pubblico non è ancora stato assegnato, attenda qualche istante.
+
+### L'host interno non si risolve da una VM
+
+Copi il nome completo della zona **Internal**, senza abbreviarlo. Su Debian 13, il nome non si risolve senza configurazione: vedere [Raggiungere un servizio gestito del progetto](../../compute/how-to/configure-network.md#raggiungere-un-servizio-gestito-del-progetto).
 
 ### `Access denied for user`
 

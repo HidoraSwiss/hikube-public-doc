@@ -14,7 +14,7 @@ Redis on Hikube is deployed with a **Redis Sentinel** architecture for high avai
 - **Redis Sentinel** monitors the Redis instances and performs an **automatic switchover** (failover) if the master fails.
 - A **quorum** of sentinels decides on the failover. Three sentinels are always deployed, whatever the number of Redis replicas: switchover works from **2 replicas**.
 - Sentinels count against the project quotas (CPU and memory, at the size of the cluster's preset).
-- The address in the **Host** field follows the master: after a switchover, it automatically points to the new master, with no change of address.
+- The host in the **Internal** zone, like the address in the **External** zone, follows the master: after a switchover, it automatically points to the new master, with no change of address.
 
 :::tip
 In production, choose at least 3 replicas at creation: this number cannot be changed afterwards.
@@ -60,7 +60,11 @@ Always keep authentication enabled, especially if the public network is enabled.
 
 ### I lost the password. How can I recover it?
 
-It cannot be read back. Generate a new one from the **Security** section of the cluster page (**Rotate password**). See [Renew the password](./how-to/rotate-password.md).
+It cannot be read back. Generate a new one from the **Security** section of the cluster page (**Rotate password**), then restart the cluster: the new password is only accepted after this restart. See [Renew the password](./how-to/rotate-password.md).
+
+### I enabled authentication, but Redis still accepts connections without a password. Why?
+
+Enabling or disabling authentication on an existing cluster, like renewing its password, is saved immediately but only applies to the Redis servers after the cluster restarts. While the cluster page shows the **Restart required** banner, click **Restart now**. The cluster is unreachable for about a minute. See [Restart a cluster](./how-to/restart-cluster.md).
 
 ### How do I scale Redis?
 
@@ -69,13 +73,13 @@ It cannot be read back. Generate a new one from the **Security** section of the 
 
 ### How do I connect to Redis?
 
-With the public network enabled, use the address in the **Host** field (**Connection** section of the cluster page) on port `6379`:
+With the public network enabled, use the address in the **External** zone (**Connection** section of the cluster page) on port `6379`:
 
 ```bash
 REDISCLI_AUTH='<password>' redis-cli -h <host> -p 6379 ping
 ```
 
-Without the public network, the instance remains reachable from the project's VMs and Kubernetes clusters through an internal address, which the console does not display. [Contact support](mailto:support@hidora.io) to obtain it.
+From a VM or a Kubernetes cluster of the project, use the host in the **Internal** zone, with or without the public network. It also follows the master.
 
 ### Can I create several Redis users (ACL)?
 
