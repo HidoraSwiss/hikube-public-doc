@@ -61,7 +61,7 @@ Non. Hikube ne conserve qu'une empreinte du secret, qui n'est affiché qu'à la 
 
 ### Toutes mes requêtes renvoient `403` avec le code `10002`. Pourquoi ?
 
-Cette réponse unique couvre tous les refus : clé invalide, expirée ou révoquée, mauvais identifiant de projet, scope insuffisant, ou opération non accessible aux clés. Voir [Accès refusé](./errors.md#acces-refuse).
+Cette réponse unique couvre tous les refus : clé absente, invalide, expirée ou révoquée, mauvais identifiant de projet, scope insuffisant, ou opération non accessible aux clés. Vérifiez d'abord que l'en-tête `X-Hikube-Api-Key` est bien envoyé : une requête sans clé reçoit aussi `403`, pas `401`. Voir [Accès refusé](./errors.md#acces-refuse).
 
 ---
 
@@ -79,4 +79,12 @@ Pas encore. Vous pouvez générer un client dans votre langage depuis la [spéci
 
 ### L'API impose-t-elle un nombre maximal de requêtes ?
 
-La préversion ne documente pas de limite de débit. Évitez néanmoins d'interroger l'état d'une ressource en boucle serrée : un intervalle de quelques secondes entre deux `GET` suffit pour suivre une création.
+Oui. Les requêtes sont limitées par clé d'API (aujourd'hui une rafale de 120 requêtes, puis 300 par minute) et par adresse IP (une rafale de 300, puis 600 par minute). Ces valeurs peuvent évoluer. Au-delà, l'API répond `429` avec le code `10008` : attendez le délai de l'en-tête `Retry-After`, puis réessayez. Les en-têtes `X-RateLimit-Limit` et `X-RateLimit-Remaining` de chaque réponse indiquent où vous en êtes. Voir [Limites de débit](./errors.md#limites-de-debit).
+
+Pour suivre une création, un intervalle de quelques secondes entre deux `GET` suffit.
+
+---
+
+### Que donner au support pour analyser une requête ?
+
+L'identifiant de la requête : l'en-tête `x-request-id`, présent sur chaque réponse, ou le champ `requestId` du corps d'une erreur. Jamais le secret de la clé. Voir [Identifiant de requête](./errors.md#identifiant-de-requete).

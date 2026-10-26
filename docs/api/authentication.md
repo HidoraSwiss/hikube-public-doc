@@ -24,6 +24,8 @@ curl -sS "$HIKUBE_API/instance/v1alpha1/projects/$PROJECT_ID/instances" \
 
 N'utilisez pas l'en-tête `Authorization` : il est réservé aux sessions de la console. Si une requête porte les deux, c'est la clé d'API qui s'applique.
 
+Une requête sans clé est refusée en `403` avec le code `10002`, comme une clé invalide (voir [Accès refusé](./errors.md#acces-refuse)). Le refus suit le format d'erreur de l'API, avec son `requestId`.
+
 Une clé a la forme `sk_hk_<keyId>_<secret>` :
 
 - `sk_hk_` est un préfixe fixe, qui permet aux outils de détection de secrets de reconnaître une clé Hikube oubliée dans un dépôt ou un journal ;
@@ -81,6 +83,7 @@ La liste des clés d'un projet indique, pour chaque clé, sa date d'expiration (
 - **Une clé, un projet.** Une clé n'agit que sur son projet. Une requête qui vise un autre projet, ou l'organisation, est refusée.
 - **Opérations accessibles.** Une clé n'appelle que les opérations de la [référence de l'API](./reference/hikube-api.info.mdx). La gestion du compte, de l'organisation, des projets, des membres et des clés elles-mêmes reste réservée aux utilisateurs connectés : **une clé ne peut pas créer ni révoquer de clé**.
 - **Nombre de clés par projet.** Le nombre de clés actives d'un projet est limité selon l'offre de l'organisation : **1** pour l'offre d'essai Starter, **16** pour l'offre Entreprise. Les clés expirées ne comptent pas. Au-delà, la création est refusée (code `60009`) ; révoquez une clé pour libérer une place, ou contactez le support pour adapter la limite.
+- **Débit.** Les requêtes sont limitées par clé et par adresse IP. Au-delà, l'API répond `429` avec le code `10008` et un en-tête `Retry-After` : voir [Limites de débit](./errors.md#limites-de-debit).
 - **Qui gère les clés.** Seuls les administrateurs du projet, ou de son organisation, créent, listent et révoquent les clés d'un projet. Personne ne peut créer une clé dont les scopes dépassent ses propres droits (code `60003`).
 
 :::note Offre Starter

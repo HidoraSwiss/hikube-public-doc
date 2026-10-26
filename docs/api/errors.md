@@ -9,6 +9,8 @@ import NavigationFooter from '@site/src/components/NavigationFooter';
 
 Une requête en échec renvoie un **code HTTP** et un **corps JSON** qui porte un **code numérique** stable. Basez la logique de vos scripts sur le code HTTP et sur ce code numérique, jamais sur le texte du message, qui peut évoluer.
 
+Ce format vaut pour toutes les erreurs, y compris les refus d'authentification et les dépassements de [limite de débit](#limites-de-debit).
+
 ---
 
 ## Format
@@ -29,6 +31,15 @@ Une requête en échec renvoie un **code HTTP** et un **corps JSON** qui porte u
 | `message` | chaîne | Description lisible, en anglais. Pour une erreur de validation, il nomme le champ en cause |
 | `details` | tableau | Informations complémentaires, le plus souvent vide. Par exemple, la liste des VM qui utilisent encore un VPC, ou les types de GPU indisponibles |
 
+### Identifiant de requête {#identifiant-de-requete}
+
+Chaque réponse, y compris une réponse `2xx`, porte un en-tête `x-request-id`. Le corps d'une erreur reprend cet identifiant dans `requestId`. Pour toute demande d'analyse au support, communiquez l'un ou l'autre : conservez l'en-tête dans les journaux de vos outils, il permet de retrouver aussi une requête qui a réussi.
+
+```bash
+curl -sS -D - -o /dev/null "$HIKUBE_API/disk/v1alpha1/projects/$PROJECT_ID/disks" \
+  -H "X-Hikube-Api-Key: $HIKUBE_API_KEY" | grep -i '^x-request-id'
+```
+
 ---
 
 ## Codes HTTP
@@ -36,12 +47,13 @@ Une requête en échec renvoie un **code HTTP** et un **corps JSON** qui porte u
 | Code HTTP | Signification | Que faire |
 |-----------|---------------|-----------|
 | `400` | Requête invalide : champ manquant ou mal formé, valeur hors limites, opération impossible dans l'état actuel de la ressource | Corrigez la requête d'après `message` ; ne réessayez pas à l'identique |
-| `401` | Aucune clé d'API présentée | Ajoutez l'en-tête `X-Hikube-Api-Key` |
-| `403` | Accès refusé (code `10002`) | Voir [Accès refusé](#acces-refuse) |
+| `401` | Jeton utilisateur invalide ou expiré (code `10001`). Ne concerne que les sessions de la console, pas les clés d'API | Avec une clé d'API, n'envoyez pas d'en-tête `Authorization` |
+| `403` | Accès refusé (code `10002`), y compris pour une requête sans clé | Voir [Accès refusé](#acces-refuse) |
 | `404` | Ressource introuvable dans le projet | Vérifiez le nom de la ressource dans le chemin |
 | `409` | Conflit : une ressource porte déjà ce nom, est encore utilisée, ou a été modifiée en même temps | Changez de nom, libérez la ressource, ou relisez-la avant de réessayer |
+| `429` | Trop de requêtes (code `10008`) | Attendez le délai indiqué par l'en-tête `Retry-After`, puis réessayez. Voir [Limites de débit](#limites-de-debit) |
 | `500` | Erreur interne | Réessayez plus tard ; si l'erreur persiste, contactez le support avec le `requestId` |
-| `503` | Service momentanément indisponible | Réessayez avec un délai croissant (par exemple 1 s, 2 s, 4 s…) |
+| `503` | Service momentanément indisponible. Avec le code `10004`, la clé n'a pas pu être vérifiée : elle n'est pas jugée invalide | Réessayez avec un délai croissant (par exemple 1 s, 2 s, 4 s…) |
 
 ---
 
@@ -49,6 +61,7 @@ Une requête en échec renvoie un **code HTTP** et un **corps JSON** qui porte u
 
 Tout refus d'accès lié à la clé renvoie la **même** réponse `403` avec le code `10002`, quelle qu'en soit la raison :
 
+- aucune clé présentée (en-tête `X-Hikube-Api-Key` absent ou vide) ;
 - clé mal formée, inconnue, révoquée ou expirée ;
 - clé d'un autre projet que celui du chemin, ou projet inexistant ;
 - scope insuffisant (par exemple une clé `read` pour une création) ;
@@ -62,13 +75,47 @@ Cette réponse uniforme est volontaire : elle ne révèle rien sur l'existence d
 
 | Code | HTTP | Signification |
 |------|------|---------------|
-| `10001` | 401 | Authentification absente ou invalide |
+| `10001` | 401 | Jeton utilisateur invalide ou expiré. Une requête sans clé ni jeton reçoit `10002`, pas `10001` |
 | `10002` | 403 | Accès refusé (voir ci-dessus) |
 | `10004` | 503 | La clé n'a pas pu être vérifiée pour le moment. Ce n'est pas un refus : la clé n'est pas en cause, réessayez |
+| `10008` | 429 | Trop de requêtes : attendez le délai de `Retry-After`, puis réessayez (voir [Limites de débit](#limites-de-debit)) |
 | `10005` | 403 ou 400 | Refus d'une règle de la plateforme : le message nomme le champ refusé, `details` la règle et sa raison |
 | `10006` | 400 | Un chemin de `updateMask` ne désigne aucun champ modifiable de la requête `PATCH` (voir [Mises à jour partielles](./overview.md#mises-a-jour-partielles)) |
 
 Un client qui annule sa requête ou dépasse son propre délai reçoit `499` ou `504`, sans code numérique.
+
+---
+
+## Limites de débit {#limites-de-debit}
+
+Les requêtes sont limitées **par clé d'API** et **par adresse IP**. Les deux limites s'appliquent ensemble : une requête est refusée dès que l'une d'elles est atteinte. Valeurs actuelles, susceptibles d'évoluer :
+
+| Limite | Rafale | Débit soutenu |
+|--------|--------|---------------|
+| Par clé d'API | 120 requêtes | 300 requêtes par minute |
+| Par adresse IP | 300 requêtes | 600 requêtes par minute |
+
+La rafale est le nombre de requêtes acceptées d'un coup. Elle se reconstitue ensuite au rythme du débit soutenu.
+
+Chaque réponse porte deux en-têtes, qui décrivent la limite la plus contraignante pour l'appelant :
+
+| En-tête | Description |
+|---------|-------------|
+| `X-RateLimit-Limit` | Nombre de requêtes autorisées par cette limite |
+| `X-RateLimit-Remaining` | Nombre de requêtes encore disponibles |
+
+Au-delà, la requête est refusée en `429` avec le code `10008`. La réponse porte un en-tête `Retry-After`, en secondes (5 aujourd'hui) : attendez ce délai, puis réessayez. Ne réessayez pas tout de suite, la requête serait de nouveau refusée.
+
+```json
+{
+  "requestId": "4bf92f3577b34da6a3ce929d0e0e4736",
+  "code": 10008,
+  "message": "Too many requests. Please slow down.",
+  "details": []
+}
+```
+
+Plusieurs outils qui partagent une clé ou une adresse IP (par exemple les tâches d'un même pipeline derrière une passerelle NAT) partagent aussi sa limite. Donnez une clé à chaque outil, et espacez les `GET` qui suivent l'état d'une ressource.
 
 ---
 
@@ -141,6 +188,7 @@ Ces codes concernent la gestion des clés (création, liste, révocation), rése
 ## Réessayer sans risque
 
 - Réessayez les réponses `503` et `10004` avec un délai croissant et un nombre de tentatives borné.
+- Après une `429`, attendez le délai de l'en-tête `Retry-After` avant de réessayer.
 - Ne réessayez pas une `400` ou une `403` à l'identique : la requête ou la clé doit d'abord être corrigée.
 - Après une création qui a échoué par délai dépassé, consultez la ressource avec `GET` avant de la recréer : elle a pu être créée, et une nouvelle tentative renverrait `409`.
 
