@@ -11,13 +11,9 @@
     "message": "Dienste",
     "description": "The label for category 'Services' in sidebar 'docsSidebar'"
   },
-  "sidebar.docsSidebar.category.Storage": {
-    "message": "Speicher",
-    "description": "The label for category 'Storage' in sidebar 'docsSidebar'"
-  },
-  "sidebar.docsSidebar.category.Buckets": {
-    "message": "Buckets",
-    "description": "The label for category 'Buckets' in sidebar 'docsSidebar'"
+  "sidebar.docsSidebar.category.Buckets S3": {
+    "message": "S3-Buckets",
+    "description": "The label for category 'Buckets S3' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.how-to-services-storage-buckets": {
     "message": "Praktische Anleitungen",

@@ -1,6 +1,7 @@
 ---
 title: Speicher
 sidebar_position: 0
+displayed_sidebar: docsSidebar
 ---
 
 import ServiceCardGrid from '@site/src/components/ServiceCardGrid';
