@@ -114,22 +114,17 @@ const sidebars = {
       type: "category",
       label: "Services",
       items: [
+        // Disques et Buckets S3 au même niveau que les autres services, comme
+        // dans le menu Infrastructure de la console.
         {
           type: "category",
-          label: "Storage",
-          link: { type: "doc", id: "services/storage/index" },
-          items: [
-            {
-              type: "category",
-              label: "Disques",
-              items: diatasisItems("services/storage/disks"),
-            },
-            {
-              type: "category",
-              label: "Buckets",
-              items: diatasisItems("services/storage/buckets"),
-            },
-          ],
+          label: "Disques",
+          items: diatasisItems("services/storage/disks"),
+        },
+        {
+          type: "category",
+          label: "Buckets S3",
+          items: diatasisItems("services/storage/buckets"),
         },
         {
           type: "category",
