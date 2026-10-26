@@ -33,7 +33,7 @@ Ce format vaut pour toutes les erreurs, y compris les refus d'authentification e
 
 ### Identifiant de requête {#identifiant-de-requete}
 
-Chaque réponse, y compris une réponse `2xx`, porte un en-tête `x-request-id`. Le corps d'une erreur reprend cet identifiant dans `requestId`. Pour toute demande d'analyse au support, communiquez l'un ou l'autre : conservez l'en-tête dans les journaux de vos outils, il permet de retrouver aussi une requête qui a réussi.
+Chaque réponse, y compris une réponse `2xx`, porte un en-tête `x-request-id`. Le corps d'une erreur porte en plus un `requestId`, qui n'a pas toujours la même valeur que l'en-tête. Pour toute demande d'analyse au support, communiquez l'un ou l'autre, et les deux si vous les avez : conservez l'en-tête dans les journaux de vos outils, il permet de retrouver aussi une requête qui a réussi.
 
 ```bash
 curl -sS -D - -o /dev/null "$HIKUBE_API/disk/v1alpha1/projects/$PROJECT_ID/disks" \

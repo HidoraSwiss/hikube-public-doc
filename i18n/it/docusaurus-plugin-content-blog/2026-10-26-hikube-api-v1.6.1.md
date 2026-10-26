@@ -12,7 +12,7 @@ L'API applica ora limiti di frequenza per chiave API e per indirizzo IP. Tutti i
 
 - **Limiti di frequenza** — Le richieste sono limitate per chiave API (oggi un picco di 120 richieste, poi 300 al minuto) e per indirizzo IP (un picco di 300, poi 600 al minuto). Questi valori possono cambiare. Oltre, l'API risponde `429` con il codice `10008`, e un'intestazione `Retry-After` indica in secondi quanto attendere prima di riprovare. Ogni risposta porta anche `X-RateLimit-Limit` e `X-RateLimit-Remaining`, che descrivono il limite più restrittivo per il chiamante. Vedi [Limiti di frequenza](/api/errors/#limites-de-debit).
 
-- **Identificativo di richiesta** — Ogni risposta, comprese quelle riuscite, porta un'intestazione `x-request-id`. Il corpo di un errore lo riprende in `requestId`. Comunicate l'uno o l'altro al supporto per ogni richiesta di analisi. Vedi [Identificativo di richiesta](/api/errors/#identifiant-de-requete).
+- **Identificativo di richiesta** — Ogni risposta, comprese quelle riuscite, porta un'intestazione `x-request-id`. Il corpo di un errore porta inoltre un `requestId`. Comunicate l'uno o l'altro al supporto per ogni richiesta di analisi, ed entrambi se li avete. Vedi [Identificativo di richiesta](/api/errors/#identifiant-de-requete).
 
 ## Modificato
 

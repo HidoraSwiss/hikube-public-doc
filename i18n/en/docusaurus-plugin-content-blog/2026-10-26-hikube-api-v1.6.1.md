@@ -12,7 +12,7 @@ The API now applies rate limits per API key and per IP address. All its errors, 
 
 - **Rate limits** — Requests are limited per API key (currently a burst of 120 requests, then 300 per minute) and per IP address (a burst of 300, then 600 per minute). These values may change. Beyond them, the API answers `429` with code `10008`, and a `Retry-After` header gives, in seconds, how long to wait before retrying. Every response also carries `X-RateLimit-Limit` and `X-RateLimit-Remaining`, which describe the caller's most restrictive limit. See [Rate limits](/api/errors/#limites-de-debit).
 
-- **Request identifier** — Every response, successful ones included, carries an `x-request-id` header. The body of an error repeats it in `requestId`. Give either one to support for any investigation. See [Request identifier](/api/errors/#identifiant-de-requete).
+- **Request identifier** — Every response, successful ones included, carries an `x-request-id` header. The body of an error also carries a `requestId`. Give either one to support for any investigation, and both if you have them. See [Request identifier](/api/errors/#identifiant-de-requete).
 
 ## Changed
 

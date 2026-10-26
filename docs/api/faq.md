@@ -87,4 +87,4 @@ Pour suivre une création, un intervalle de quelques secondes entre deux `GET` s
 
 ### Que donner au support pour analyser une requête ?
 
-L'identifiant de la requête : l'en-tête `x-request-id`, présent sur chaque réponse, ou le champ `requestId` du corps d'une erreur. Jamais le secret de la clé. Voir [Identifiant de requête](./errors.md#identifiant-de-requete).
+L'identifiant de la requête : l'en-tête `x-request-id`, présent sur chaque réponse, et le champ `requestId` du corps d'une erreur. L'un ou l'autre suffit ; donnez les deux si vous les avez. Jamais le secret de la clé. Voir [Identifiant de requête](./errors.md#identifiant-de-requete).

@@ -12,7 +12,7 @@ L'API applique désormais des limites de débit par clé d'API et par adresse IP
 
 - **Limites de débit** — Les requêtes sont limitées par clé d'API (aujourd'hui une rafale de 120 requêtes, puis 300 par minute) et par adresse IP (une rafale de 300, puis 600 par minute). Ces valeurs peuvent évoluer. Au-delà, l'API répond `429` avec le code `10008`, et un en-tête `Retry-After` donne en secondes le délai à attendre avant de réessayer. Chaque réponse porte aussi `X-RateLimit-Limit` et `X-RateLimit-Remaining`, qui décrivent la limite la plus contraignante pour l'appelant. Voir [Limites de débit](/api/errors/#limites-de-debit).
 
-- **Identifiant de requête** — Chaque réponse, y compris une réponse réussie, porte un en-tête `x-request-id`. Le corps d'une erreur le reprend dans `requestId`. Communiquez l'un ou l'autre au support pour toute demande d'analyse. Voir [Identifiant de requête](/api/errors/#identifiant-de-requete).
+- **Identifiant de requête** — Chaque réponse, y compris une réponse réussie, porte un en-tête `x-request-id`. Le corps d'une erreur porte en plus un `requestId`. Communiquez l'un ou l'autre au support pour toute demande d'analyse, et les deux si vous les avez. Voir [Identifiant de requête](/api/errors/#identifiant-de-requete).
 
 ## Modifié
 
