@@ -57,6 +57,7 @@ A code reads as a service prefix followed by three digits: `001`–`099` are pla
 | 10004 | The api-key could not be checked (temporary); retry, the key is not known to be invalid |
 | 10005 | Refused by a platform admission policy; the message names the field, `details` the policy and its reason |
 | 10006 | Invalid update_mask: a path names no updatable field, or one key of a collection |
+| 10008 | Too many requests (HTTP 429); wait for the `Retry-After` header, then retry |
 
 ### Instance
 
