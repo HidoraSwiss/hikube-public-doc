@@ -68,6 +68,8 @@ Non. Les clés d'un utilisateur sont limitées à son bucket : `aws s3 ls` sans 
 
 L'option **Activer le verrouillage (Object Lock / WORM)** verrouille chaque objet 365 jours après son écriture. La plateforme applique cette rétention en mode `COMPLIANCE` : personne ne peut modifier ni supprimer un objet, ni raccourcir sa rétention avant l'échéance. La rétention WORM est fixée par la plateforme : 365 jours en mode COMPLIANCE. Elle ne peut pas être modifiée, ni à la création ni ensuite. L'option sert à l'archivage réglementaire ou à la protection des sauvegardes contre une suppression accidentelle ou malveillante. Elle se choisit à la création du bucket et ne peut plus être retirée ensuite. Supprimer un bucket verrouillé le retire de la console, mais ne supprime pas ses objets : ils restent verrouillés jusqu'à l'échéance de leur rétention.
 
+Pour conserver un objet au-delà de 365 jours ou poser un verrou juridique, voir [Comment gérer la rétention des objets d'un bucket verrouillé](./how-to/manage-object-retention.md).
+
 ---
 
 ### Le chiffrement peut-il être activé après coup ?
