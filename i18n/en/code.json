@@ -337,5 +337,13 @@
   "hikube.navigationFooter.ariaLabel": {
     "message": "Further reading",
     "description": "Accessible label of the navigation block at the bottom of a doc page"
+  },
+  "hikube.apiEnv.title": {
+    "message": "Variables used by the examples",
+    "description": "Title of the code block that sets the variables used by the API examples"
+  },
+  "hikube.apiEnv.keyComment": {
+    "message": "Read the key from your secrets manager; never commit it.",
+    "description": "Shell comment above the API key variable in the API examples"
   }
 }

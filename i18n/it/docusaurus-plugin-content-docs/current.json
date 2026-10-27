@@ -278,5 +278,9 @@
   "sidebar.docsSidebar.category.how-to-services-backups.link.generated-index.description": {
     "message": "Guide passo passo per Backup su Hikube: ogni guida descrive un'operazione precisa da svolgere dalla console, con i passaggi e le verifiche.",
     "description": "The generated-index page description for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.api-reference": {
+    "message": "Riferimento",
+    "description": "The label for category 'Référence' in sidebar 'docsSidebar'"
   }
 }

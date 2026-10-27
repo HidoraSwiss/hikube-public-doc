@@ -1,5 +1,6 @@
 import React from 'react';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
+import {translate} from '@docusaurus/Translate';
 import CodeBlock from '@theme/CodeBlock';
 
 /**
@@ -24,10 +25,20 @@ export function HikubeApiUrl() {
 export function ApiEnv() {
   const url = useHikubeApiUrl();
   return (
-    <CodeBlock language="bash" title="Variables utilisées par les exemples">
+    <CodeBlock
+      language="bash"
+      title={translate({
+        id: 'hikube.apiEnv.title',
+        message: 'Variables utilisées par les exemples',
+        description: 'Title of the code block that sets the variables used by the API examples',
+      })}>
       {[
         `export HIKUBE_API="${url}"`,
-        '# Lisez la clé depuis votre gestionnaire de secrets ; ne la versionnez jamais.',
+        `# ${translate({
+          id: 'hikube.apiEnv.keyComment',
+          message: 'Lisez la clé depuis votre gestionnaire de secrets ; ne la versionnez jamais.',
+          description: 'Shell comment above the API key variable in the API examples',
+        })}`,
         'export HIKUBE_API_KEY="sk_hk_<keyId>_<secret>"',
         'export PROJECT_ID="<project_id>"',
       ].join('\n')}
