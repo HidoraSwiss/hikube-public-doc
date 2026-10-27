@@ -377,5 +377,13 @@
   "theme.SearchPage.noResultsText": {
     "message": "Keine Dokumente gefunden",
     "description": "Search plugin (@easyops-cn/docusaurus-search-local)"
+  },
+  "hikube.apiEnv.title": {
+    "message": "In den Beispielen verwendete Variablen",
+    "description": "Title of the code block that sets the variables used by the API examples"
+  },
+  "hikube.apiEnv.keyComment": {
+    "message": "Lesen Sie den Schlüssel aus Ihrem Secret-Manager; versionieren Sie ihn nie.",
+    "description": "Shell comment above the API key variable in the API examples"
   }
 }
