@@ -153,6 +153,7 @@ Einige nützliche fachliche Codes:
 | `20201` / `20202` | 400 | Die VM ist bereits gestartet / bereits gestoppt |
 | `20204`, `20205`, `20207` | 400 | Angeforderte GPU nicht verfügbar, in unzureichender Anzahl oder nicht auf demselben Server zusammenführbar |
 | `20206` | 400 | Keine öffentliche IPv4-Adresse mehr verfügbar |
+| `20209` | 400 | Die VM kann noch nicht starten: Ihre letzte Änderung wird noch angewendet. Versuchen Sie es in einigen Sekunden erneut |
 | `30007` | 400 | Die Disk ist an eine VM angehängt: Trennen Sie sie, bevor Sie sie löschen |
 | `80201`, `110201`, `120201`, `140201`, `150201` | 400 | Wechsel von einer einzelnen Instanz zu einem replizierten Cluster (oder umgekehrt) nach der Erstellung nicht möglich |
 | `80205`, `110205`, `120205`, `140205`, `150205` | 400 | Neustart einer Datenbank, die noch erstellt wird: Es gibt nichts neu zu starten, versuchen Sie es erneut, sobald der Cluster bereit ist |
