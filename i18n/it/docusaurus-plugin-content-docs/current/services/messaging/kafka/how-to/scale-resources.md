@@ -25,13 +25,13 @@ I preset si applicano separatamente ai broker Kafka e ai nodi ZooKeeper:
 
 | Preset | CPU | Memoria |
 |--------|-----|---------|
-| `nano` | 250m | 128Mi |
-| `micro` | 500m | 256Mi |
-| `small` | 1 | 512Mi |
-| `medium` | 1 | 1Gi |
-| `large` | 2 | 2Gi |
-| `xlarge` | 4 | 4Gi |
-| `2xlarge` | 8 | 8Gi |
+| `t1.nano` | 250m | 128Mi |
+| `t1.micro` | 500m | 256Mi |
+| `t1.small` | 1 | 512Mi |
+| `c1.small` | 1 | 1Gi |
+| `c1.medium` | 2 | 2Gi |
+| `c1.large` | 4 | 4Gi |
+| `c1.xlarge` | 8 | 8Gi |
 
 :::note
 È possibile richiedere valori espliciti di CPU/memoria al posto di un preset; in tal caso sostituiscono il preset.

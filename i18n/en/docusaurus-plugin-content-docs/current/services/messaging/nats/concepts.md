@@ -59,7 +59,7 @@ graph TB
 | **Stream** | Persistent collection of messages in JetStream, with a configurable retention policy. |
 | **Consumer** | Durable subscription in JetStream with position tracking (offset) and acknowledgment. |
 | **Request/Reply** | Synchronous communication model — a client sends a request and waits for a reply. |
-| **Resource preset** | Predefined CPU/memory profile (nano to 2xlarge). |
+| **Resource preset** | Predefined CPU/memory profile (`t1.nano` to `c1.xlarge`). |
 
 ---
 
@@ -136,13 +136,13 @@ NATS users (name and password) are part of the instance configuration. To create
 
 | Preset | CPU | Memory |
 |--------|-----|--------|
-| `nano` | 250m | 128Mi |
-| `micro` | 500m | 256Mi |
-| `small` | 1 | 512Mi |
-| `medium` | 1 | 1Gi |
-| `large` | 2 | 2Gi |
-| `xlarge` | 4 | 4Gi |
-| `2xlarge` | 8 | 8Gi |
+| `t1.nano` | 250m | 128Mi |
+| `t1.micro` | 500m | 256Mi |
+| `t1.small` | 1 | 512Mi |
+| `c1.small` | 1 | 1Gi |
+| `c1.medium` | 2 | 2Gi |
+| `c1.large` | 4 | 4Gi |
+| `c1.xlarge` | 8 | 8Gi |
 
 ---
 

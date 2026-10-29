@@ -62,7 +62,7 @@ Le diagnosi riportate di seguito si effettuano dai suoi strumenti client Kafka. 
 
 ### Broker riavviato per mancanza di memoria
 
-**Causa**: il broker consuma più memoria del limite assegnato. Ciò accade spesso con i preset `nano` o `micro` sotto carico.
+**Causa**: il broker consuma più memoria del limite assegnato. Ciò accade spesso con i preset `t1.nano` o `t1.micro` sotto carico.
 
 **Soluzione**: richieda un preset superiore o risorse esplicite per i broker. Questa opzione non è disponibile nella console; contatti il supporto.
 

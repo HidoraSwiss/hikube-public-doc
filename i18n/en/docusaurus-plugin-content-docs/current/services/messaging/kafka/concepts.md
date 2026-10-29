@@ -72,7 +72,7 @@ graph TB
 | **Replication Factor** | Number of copies of each partition on different brokers. |
 | **Consumer Group** | Group of consumers that share the partitions of a topic for parallel processing. |
 | **Retention** | Maximum duration or size for keeping messages in a topic. |
-| **Resource preset** | Predefined CPU/memory profile (nano to 2xlarge) applied to brokers and ZooKeeper. |
+| **Resource preset** | Predefined CPU/memory profile (`t1.nano` to `c1.xlarge`) applied to brokers and ZooKeeper. |
 
 ---
 
@@ -141,13 +141,13 @@ Presets apply separately to the **Kafka brokers** and to **ZooKeeper**:
 
 | Preset | CPU | Memory |
 |--------|-----|--------|
-| `nano` | 250m | 128Mi |
-| `micro` | 500m | 256Mi |
-| `small` | 1 | 512Mi |
-| `medium` | 1 | 1Gi |
-| `large` | 2 | 2Gi |
-| `xlarge` | 4 | 4Gi |
-| `2xlarge` | 8 | 8Gi |
+| `t1.nano` | 250m | 128Mi |
+| `t1.micro` | 500m | 256Mi |
+| `t1.small` | 1 | 512Mi |
+| `c1.small` | 1 | 1Gi |
+| `c1.medium` | 2 | 2Gi |
+| `c1.large` | 4 | 4Gi |
+| `c1.xlarge` | 8 | 8Gi |
 
 ---
 

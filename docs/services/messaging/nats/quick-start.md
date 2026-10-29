@@ -44,7 +44,7 @@ Rassemblez les paramètres de l'instance souhaitée :
 | Projet | Projet Hikube dans lequel créer l'instance | `demo01` |
 | Nom | Nom de l'instance NATS | `events` |
 | Réplicas | Nombre de serveurs NATS (3 pour la haute disponibilité de JetStream) | `3` |
-| Preset | Profil CPU/mémoire (voir [Concepts](./concepts.md#presets-de-ressources)) | `small` |
+| Preset | Profil CPU/mémoire (voir [Concepts](./concepts.md#presets-de-ressources)) | `t1.small` |
 | JetStream | Activation et taille du volume de persistance | Activé, `10 Go` |
 | Utilisateurs | Noms des comptes à créer | `user1` |
 | Configuration avancée | Paramètres NATS à ajuster (`max_payload`, `write_deadline`…) | `max_payload: 16MB` |

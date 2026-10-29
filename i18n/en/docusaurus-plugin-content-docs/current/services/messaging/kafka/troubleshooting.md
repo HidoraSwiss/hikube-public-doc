@@ -62,7 +62,7 @@ The diagnostics below are run from your Kafka client tools. When an action is ne
 
 ### Broker restarted due to lack of memory
 
-**Cause**: the broker consumes more memory than its allocated limit. This frequently happens with the `nano` or `micro` presets under load.
+**Cause**: the broker consumes more memory than its allocated limit. This frequently happens with the `t1.nano` or `t1.micro` presets under load.
 
 **Solution**: request a larger preset or explicit resources for the brokers. This option is not available in the console; contact support.
 

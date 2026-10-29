@@ -44,9 +44,9 @@ Gather the parameters of the desired instance:
 | Project | Hikube project in which to create the instance | `demo01` |
 | Name | Name of the Kafka instance | `events` |
 | Brokers | Number of Kafka brokers | `3` |
-| Broker preset | CPU/memory profile (see [Concepts](./concepts.md#resource-presets)) | `small` |
+| Broker preset | CPU/memory profile (see [Concepts](./concepts.md#resource-presets)) | `t1.small` |
 | Broker storage | Volume size per broker | `10 GB` |
-| ZooKeeper | Number of instances (odd), preset and storage size | `3`, `small`, `5 GB` |
+| ZooKeeper | Number of instances (odd), preset and storage size | `3`, `t1.small`, `5 GB` |
 | Topics | Name, partitions, replicas and options (`retention.ms`, `cleanup.policy`…) | `my-topic`, 3 partitions, 3 replicas |
 | External access | Whether to expose the cluster outside the platform | No |
 

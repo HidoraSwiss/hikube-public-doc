@@ -72,7 +72,7 @@ graph TB
 | **Replication Factor** | Anzahl der Kopien jeder Partition auf verschiedenen Brokern. |
 | **Consumer Group** | Gruppe von Consumern, die die Partitionen eines Topics für die parallele Verarbeitung untereinander aufteilen. |
 | **Retention** | Maximale Dauer oder Größe, für die Nachrichten in einem Topic aufbewahrt werden. |
-| **Ressourcen-Preset** | Vordefiniertes CPU-/Arbeitsspeicherprofil (nano bis 2xlarge), das auf die Broker und auf ZooKeeper angewendet wird. |
+| **Ressourcen-Preset** | Vordefiniertes CPU-/Arbeitsspeicherprofil (`t1.nano` bis `c1.xlarge`), das auf die Broker und auf ZooKeeper angewendet wird. |
 
 ---
 
@@ -141,13 +141,13 @@ Die Presets gelten getrennt für die **Kafka-Broker** und für **ZooKeeper**:
 
 | Preset | CPU | Arbeitsspeicher |
 |--------|-----|---------|
-| `nano` | 250m | 128Mi |
-| `micro` | 500m | 256Mi |
-| `small` | 1 | 512Mi |
-| `medium` | 1 | 1Gi |
-| `large` | 2 | 2Gi |
-| `xlarge` | 4 | 4Gi |
-| `2xlarge` | 8 | 8Gi |
+| `t1.nano` | 250m | 128Mi |
+| `t1.micro` | 500m | 256Mi |
+| `t1.small` | 1 | 512Mi |
+| `c1.small` | 1 | 1Gi |
+| `c1.medium` | 2 | 2Gi |
+| `c1.large` | 4 | 4Gi |
+| `c1.xlarge` | 8 | 8Gi |
 
 ---
 

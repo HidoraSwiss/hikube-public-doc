@@ -71,7 +71,7 @@ graph TB
 | **Replica** | Copie d'un shard. Assure la redondance et permet la lecture parallèle. |
 | **ClickHouse Keeper** | Service de coordination distribué (alternative à ZooKeeper) qui gère la réplication et le consensus entre les nœuds. |
 | **OLAP** | Online Analytical Processing — modèle d'accès aux données optimisé pour les requêtes analytiques (agrégations, scans de colonnes). |
-| **Preset** | Profil de ressources prédéfini (nano à 2xlarge) alloué à chaque réplica. |
+| **Preset** | Profil de ressources prédéfini (`t1.nano` à `c1.xlarge`) alloué à chaque réplica. |
 
 ---
 
@@ -153,13 +153,13 @@ Un utilisateur `admin` est créé automatiquement avec les droits complets.
 
 | Preset | CPU | Mémoire |
 |--------|-----|---------|
-| `nano` | 250m | 128Mi |
-| `micro` | 500m | 256Mi |
-| `small` | 1 | 512Mi |
-| `medium` | 1 | 1Gi |
-| `large` | 2 | 2Gi |
-| `xlarge` | 4 | 4Gi |
-| `2xlarge` | 8 | 8Gi |
+| `t1.nano` | 250m | 128Mi |
+| `t1.micro` | 500m | 256Mi |
+| `t1.small` | 1 | 512Mi |
+| `c1.small` | 1 | 1Gi |
+| `c1.medium` | 2 | 2Gi |
+| `c1.large` | 4 | 4Gi |
+| `c1.xlarge` | 8 | 8Gi |
 
 ---
 
