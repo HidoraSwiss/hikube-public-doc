@@ -44,7 +44,7 @@ Stellen Sie die Parameter der gewünschten Instanz zusammen:
 | Projekt | Hikube-Projekt, in dem die Instanz erstellt wird | `demo01` |
 | Name | Name der NATS-Instanz | `events` |
 | Replicas | Anzahl der NATS-Server (3 für die Hochverfügbarkeit von JetStream) | `3` |
-| Preset | CPU-/Arbeitsspeicherprofil (siehe [Konzepte](./concepts.md#ressourcen-presets)) | `small` |
+| Preset | CPU-/Arbeitsspeicherprofil (siehe [Konzepte](./concepts.md#ressourcen-presets)) | `t1.small` |
 | JetStream | Aktivierung und Größe des Persistenz-Volumes | Aktiviert, `10 GB` |
 | Benutzer | Namen der zu erstellenden Konten | `user1` |
 | Erweiterte Konfiguration | Anzupassende NATS-Parameter (`max_payload`, `write_deadline`…) | `max_payload: 16MB` |

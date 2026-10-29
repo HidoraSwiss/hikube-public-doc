@@ -62,7 +62,7 @@ Les diagnostics ci-dessous se font depuis vos outils clients Kafka. Lorsqu'une a
 
 ### Broker redémarré par manque de mémoire
 
-**Cause** : le broker consomme plus de mémoire que la limite allouée. Cela se produit fréquemment avec les presets `nano` ou `micro` sous charge.
+**Cause** : le broker consomme plus de mémoire que la limite allouée. Cela se produit fréquemment avec les presets `t1.nano` ou `t1.micro` sous charge.
 
 **Solution** : demandez un preset supérieur ou des ressources explicites pour les brokers. Cette option n'est pas proposée dans la console ; contactez le support.
 

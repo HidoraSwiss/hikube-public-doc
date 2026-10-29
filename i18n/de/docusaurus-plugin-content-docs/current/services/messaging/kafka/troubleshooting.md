@@ -62,7 +62,7 @@ Die folgenden Diagnosen führen Sie mit Ihren Kafka-Client-Werkzeugen durch. Wen
 
 ### Broker wegen Speichermangels neu gestartet
 
-**Ursache**: Der Broker verbraucht mehr Arbeitsspeicher als das zugewiesene Limit. Das tritt häufig mit den Presets `nano` oder `micro` unter Last auf.
+**Ursache**: Der Broker verbraucht mehr Arbeitsspeicher als das zugewiesene Limit. Das tritt häufig mit den Presets `t1.nano` oder `t1.micro` unter Last auf.
 
 **Lösung**: Fordern Sie ein größeres Preset oder explizite Ressourcen für die Broker an. Diese Option wird in der Konsole nicht angeboten; wenden Sie sich an den Support.
 

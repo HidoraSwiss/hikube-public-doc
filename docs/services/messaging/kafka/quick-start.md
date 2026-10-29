@@ -44,9 +44,9 @@ Rassemblez les paramètres de l'instance souhaitée :
 | Projet | Projet Hikube dans lequel créer l'instance | `demo01` |
 | Nom | Nom de l'instance Kafka | `events` |
 | Brokers | Nombre de brokers Kafka | `3` |
-| Preset des brokers | Profil CPU/mémoire (voir [Concepts](./concepts.md#presets-de-ressources)) | `small` |
+| Preset des brokers | Profil CPU/mémoire (voir [Concepts](./concepts.md#presets-de-ressources)) | `t1.small` |
 | Stockage des brokers | Taille du volume par broker | `10 Go` |
-| ZooKeeper | Nombre d'instances (impair), preset et taille de stockage | `3`, `small`, `5 Go` |
+| ZooKeeper | Nombre d'instances (impair), preset et taille de stockage | `3`, `t1.small`, `5 Go` |
 | Topics | Nom, partitions, réplicas et options (`retention.ms`, `cleanup.policy`…) | `my-topic`, 3 partitions, 3 réplicas |
 | Accès externe | Exposer ou non le cluster en dehors de la plateforme | Non |
 

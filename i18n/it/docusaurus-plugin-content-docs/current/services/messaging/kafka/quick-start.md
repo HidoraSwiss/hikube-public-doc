@@ -44,9 +44,9 @@ Raccolga i parametri dell'istanza desiderata:
 | Progetto | Progetto Hikube in cui creare l'istanza | `demo01` |
 | Nome | Nome dell'istanza Kafka | `events` |
 | Broker | Numero di broker Kafka | `3` |
-| Preset dei broker | Profilo CPU/memoria (vedere [Concetti](./concepts.md#preset-di-risorse)) | `small` |
+| Preset dei broker | Profilo CPU/memoria (vedere [Concetti](./concepts.md#preset-di-risorse)) | `t1.small` |
 | Storage dei broker | Dimensione del volume per broker | `10 GB` |
-| ZooKeeper | Numero di istanze (dispari), preset e dimensione dello storage | `3`, `small`, `5 GB` |
+| ZooKeeper | Numero di istanze (dispari), preset e dimensione dello storage | `3`, `t1.small`, `5 GB` |
 | Topic | Nome, partizioni, repliche e opzioni (`retention.ms`, `cleanup.policy`…) | `my-topic`, 3 partizioni, 3 repliche |
 | Accesso esterno | Esporre o meno il cluster all'esterno della piattaforma | No |
 

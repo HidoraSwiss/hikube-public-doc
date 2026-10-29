@@ -58,7 +58,7 @@ Una configurazione replicata si basa su **ClickHouse Keeper** (3 istanze consigl
 | Progetto | `analytics` |
 | Nome dell'istanza | `events-ch` |
 | Shard / repliche per shard | `1` / `2` |
-| Preset per replica | `large` (2 CPU, 2Gi) |
+| Preset per replica | `c1.medium` (2 CPU, 2Gi) |
 | Dimensione dello storage per replica | `50 GB` |
 | Utenti e diritti | `app` (accesso completo), `analyst` (sola lettura) |
 | Accesso da Internet | Sì / No |

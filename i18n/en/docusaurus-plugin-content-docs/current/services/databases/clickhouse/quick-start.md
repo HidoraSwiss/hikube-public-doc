@@ -58,7 +58,7 @@ A replicated configuration relies on **ClickHouse Keeper** (3 instances recommen
 | Project | `analytics` |
 | Instance name | `events-ch` |
 | Shards / replicas per shard | `1` / `2` |
-| Preset per replica | `large` (2 CPU, 2Gi) |
+| Preset per replica | `c1.medium` (2 CPU, 2Gi) |
 | Storage size per replica | `50 GB` |
 | Users and rights | `app` (full access), `analyst` (read-only) |
 | Access from the Internet | Yes / No |

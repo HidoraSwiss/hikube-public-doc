@@ -59,7 +59,7 @@ graph TB
 | **Stream** | Persistente Sammlung von Nachrichten in JetStream mit konfigurierbarer Aufbewahrungsrichtlinie. |
 | **Consumer** | Dauerhaftes Abonnement in JetStream mit Positionsverfolgung (Offset) und Acknowledgment. |
 | **Request/Reply** | Synchrones Kommunikationsmodell — ein Client sendet eine Anfrage und wartet auf eine Antwort. |
-| **Ressourcen-Preset** | Vordefiniertes CPU-/Arbeitsspeicherprofil (nano bis 2xlarge). |
+| **Ressourcen-Preset** | Vordefiniertes CPU-/Arbeitsspeicherprofil (`t1.nano` bis `c1.xlarge`). |
 
 ---
 
@@ -136,13 +136,13 @@ NATS-Benutzer (Name und Passwort) sind Teil der Instanzkonfiguration. Ihre Erste
 
 | Preset | CPU | Arbeitsspeicher |
 |--------|-----|---------|
-| `nano` | 250m | 128Mi |
-| `micro` | 500m | 256Mi |
-| `small` | 1 | 512Mi |
-| `medium` | 1 | 1Gi |
-| `large` | 2 | 2Gi |
-| `xlarge` | 4 | 4Gi |
-| `2xlarge` | 8 | 8Gi |
+| `t1.nano` | 250m | 128Mi |
+| `t1.micro` | 500m | 256Mi |
+| `t1.small` | 1 | 512Mi |
+| `c1.small` | 1 | 1Gi |
+| `c1.medium` | 2 | 2Gi |
+| `c1.large` | 4 | 4Gi |
+| `c1.xlarge` | 8 | 8Gi |
 
 ---
 

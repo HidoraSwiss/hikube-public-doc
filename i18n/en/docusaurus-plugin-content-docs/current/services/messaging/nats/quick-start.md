@@ -44,7 +44,7 @@ Gather the parameters of the instance you want:
 | Project | Hikube project in which to create the instance | `demo01` |
 | Name | Name of the NATS instance | `events` |
 | Replicas | Number of NATS servers (3 for JetStream high availability) | `3` |
-| Preset | CPU/memory profile (see [Concepts](./concepts.md#resource-presets)) | `small` |
+| Preset | CPU/memory profile (see [Concepts](./concepts.md#resource-presets)) | `t1.small` |
 | JetStream | Enablement and size of the persistence volume | Enabled, `10 GB` |
 | Users | Names of the accounts to create | `user1` |
 | Advanced configuration | NATS parameters to adjust (`max_payload`, `write_deadline`…) | `max_payload: 16MB` |

@@ -44,9 +44,9 @@ Stellen Sie die Parameter der gewünschten Instanz zusammen:
 | Projekt | Hikube-Projekt, in dem die Instanz erstellt wird | `demo01` |
 | Name | Name der Kafka-Instanz | `events` |
 | Broker | Anzahl der Kafka-Broker | `3` |
-| Preset der Broker | CPU-/Arbeitsspeicherprofil (siehe [Konzepte](./concepts.md#ressourcen-presets)) | `small` |
+| Preset der Broker | CPU-/Arbeitsspeicherprofil (siehe [Konzepte](./concepts.md#ressourcen-presets)) | `t1.small` |
 | Speicher der Broker | Volume-Größe pro Broker | `10 GB` |
-| ZooKeeper | Anzahl der Instanzen (ungerade), Preset und Speichergröße | `3`, `small`, `5 GB` |
+| ZooKeeper | Anzahl der Instanzen (ungerade), Preset und Speichergröße | `3`, `t1.small`, `5 GB` |
 | Topics | Name, Partitionen, Replicas und Optionen (`retention.ms`, `cleanup.policy` …) | `my-topic`, 3 Partitionen, 3 Replicas |
 | Externer Zugriff | Den Cluster außerhalb der Plattform erreichbar machen oder nicht | Nein |
 

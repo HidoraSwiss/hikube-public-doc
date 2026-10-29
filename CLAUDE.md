@@ -138,7 +138,7 @@ Mermaid est supporté nativement (blocs ` ```mermaid `).
 
 - **RabbitMQ, NATS, Kafka** sont sous `services/messaging/`, pas `services/databases/`
 - La console dit **MariaDB** (pas MySQL) : le dossier est `services/databases/mariadb/`
-- Les presets de ressources (`resourcesPreset`) sont partagés entre tous les services DB : nano, micro, small, medium, large, xlarge, 2xlarge
+- Presets de ressources : les noms plats (nano, micro, small, medium, large, xlarge, 2xlarge) sont dépréciés, ne plus les écrire. Bases gérées par la console (PostgreSQL, MariaDB, MongoDB, Redis, RabbitMQ) : séries `u1`, `s1`, `m1`, aux tailles des VM du même nom. Services fournis par le support (ClickHouse, NATS, Kafka) : `t1.nano` à `c1.xlarge`, équivalents exacts des anciens noms (nano→`t1.nano`, micro→`t1.micro`, small→`t1.small`, medium→`c1.small`, large→`c1.medium`, xlarge→`c1.large`, 2xlarge→`c1.xlarge`). Les anciens noms ne restent cités que pour dire qu'un cluster existant conserve le sien
 - Si `resources` (CPU/mémoire explicites) est défini, `resourcesPreset` est ignoré
 - Les opérateurs varient par service : Spotahome (Redis), CloudNativePG (PostgreSQL), etc.
 - `onBrokenLinks: 'warn'` : le build ne casse pas sur les liens cassés, il faut vérifier les warnings manuellement

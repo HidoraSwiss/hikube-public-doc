@@ -58,7 +58,7 @@ Eine replizierte Konfiguration stützt sich für die Koordination auf **ClickHou
 | Projekt | `analytics` |
 | Name der Instanz | `events-ch` |
 | Shards / Replicas pro Shard | `1` / `2` |
-| Preset pro Replica | `large` (2 CPU, 2Gi) |
+| Preset pro Replica | `c1.medium` (2 CPU, 2Gi) |
 | Speichergröße pro Replica | `50 GB` |
 | Benutzer und Rechte | `app` (Vollzugriff), `analyst` (nur Lesen) |
 | Zugriff aus dem Internet | Ja / Nein |

@@ -44,7 +44,7 @@ Raccolga i parametri dell'istanza desiderata:
 | Progetto | Progetto Hikube in cui creare l'istanza | `demo01` |
 | Nome | Nome dell'istanza NATS | `events` |
 | Repliche | Numero di server NATS (3 per l'alta disponibilità di JetStream) | `3` |
-| Preset | Profilo CPU/memoria (vedere [Concetti](./concepts.md#preset-di-risorse)) | `small` |
+| Preset | Profilo CPU/memoria (vedere [Concetti](./concepts.md#preset-di-risorse)) | `t1.small` |
 | JetStream | Attivazione e dimensione del volume di persistenza | Attivato, `10 GB` |
 | Utenti | Nomi degli account da creare | `user1` |
 | Configurazione avanzata | Parametri NATS da regolare (`max_payload`, `write_deadline`…) | `max_payload: 16MB` |
