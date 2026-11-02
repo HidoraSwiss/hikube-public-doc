@@ -51,14 +51,11 @@ const SERVICE_NAMES = {
   "services/databases/mariadb": "MariaDB",
   "services/databases/mongodb": "MongoDB",
   "services/databases/redis": "Redis",
-  "services/databases/clickhouse": "ClickHouse",
   "services/compute": "Machines virtuelles",
   "services/gpu": "GPU",
   "services/kubernetes": "Kubernetes",
   "services/networking": "Réseau",
   "services/messaging/rabbitmq": "RabbitMQ",
-  "services/messaging/kafka": "Kafka",
-  "services/messaging/nats": "NATS",
 };
 
 /**
@@ -157,11 +154,6 @@ const sidebars = {
               label: "Redis",
               items: diatasisItems("services/databases/redis"),
             },
-            {
-              type: "category",
-              label: "ClickHouse",
-              items: diatasisItems("services/databases/clickhouse"),
-            },
           ],
         },
         {
@@ -216,16 +208,6 @@ const sidebars = {
               type: "category",
               label: "RabbitMQ",
               items: diatasisItems("services/messaging/rabbitmq"),
-            },
-            {
-              type: "category",
-              label: "Kafka",
-              items: diatasisItems("services/messaging/kafka"),
-            },
-            {
-              type: "category",
-              label: "NATS",
-              items: diatasisItems("services/messaging/nats"),
             },
           ],
         },

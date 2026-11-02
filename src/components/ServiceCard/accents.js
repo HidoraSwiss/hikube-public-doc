@@ -26,9 +26,7 @@ const KEYWORDS = [
   ['networking', 'compute'],
   ['vpc', 'compute'],
   ['messaging', 'messaging'],
-  ['kafka', 'messaging'],
   ['rabbitmq', 'messaging'],
-  ['nats', 'messaging'],
   ['storage', 'storage'],
   ['disk', 'storage'],
   ['bucket', 'storage'],
@@ -38,7 +36,6 @@ const KEYWORDS = [
   ['mysql', 'databases'],
   ['mariadb', 'databases'],
   ['redis', 'databases'],
-  ['clickhouse', 'databases'],
   ['mongo', 'databases'],
 ];
 

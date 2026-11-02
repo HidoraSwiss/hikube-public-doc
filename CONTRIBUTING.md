@@ -138,6 +138,6 @@ Toutes les modifications vont dans le dossier `docs/`.
 
 ## Pièges connus
 
-- **RabbitMQ, NATS, Kafka** sont sous `services/messaging/`, pas `services/databases/`
+- **RabbitMQ** est sous `services/messaging/`, pas `services/databases/`
 - Si `resources` (CPU/mémoire explicites) est défini, `resourcesPreset` est ignoré
 - `onBrokenLinks: 'warn'` : le build ne casse pas sur les liens cassés, vérifier les warnings manuellement

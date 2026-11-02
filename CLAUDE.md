@@ -17,8 +17,8 @@ docs/
 ├── services/
 │   ├── kubernetes/           # Clusters K8s (overview, concepts, quick-start, how-to/, plugins/, faq, troubleshooting)
 │   ├── compute/              # Machines virtuelles
-│   ├── databases/            # PostgreSQL, MariaDB, MongoDB, Redis, ClickHouse
-│   ├── messaging/            # RabbitMQ, Kafka, NATS
+│   ├── databases/            # PostgreSQL, MariaDB, MongoDB, Redis
+│   ├── messaging/            # RabbitMQ
 │   ├── storage/              # disks/ (disques), buckets/ (object storage S3)
 │   ├── networking/           # VPC et sous-réseaux (menu « Réseau »)
 │   └── gpu/                  # GPU as a Service
@@ -64,8 +64,9 @@ kubeconfig de projet (ex-tenant) + `kubectl apply` de manifestes
   (kubeconfig téléchargé depuis la page du cluster dans la console).
 - L'API publique (clés d'API) se documente **à côté** de la console, jamais à
   sa place : voir « API publique » ci-dessous.
-- Service ou option absent de la console : encadré `:::info Disponibilité`
-  renvoyant au support (cas actuel : ClickHouse, Kafka, NATS).
+- Option absente de la console : encadré `:::info Disponibilité` renvoyant au
+  support. Un service que ni la console ni l'API ne proposent n'est pas
+  documenté du tout (ClickHouse, Kafka et NATS ont été retirés pour cette raison).
 - Terminologie : « organisation » et « projet » (plus « tenant »).
 
 ## API publique
@@ -136,7 +137,7 @@ Mermaid est supporté nativement (blocs ` ```mermaid `).
 
 ## Pièges connus
 
-- **RabbitMQ, NATS, Kafka** sont sous `services/messaging/`, pas `services/databases/`
+- **RabbitMQ** est sous `services/messaging/`, pas `services/databases/`
 - La console dit **MariaDB** (pas MySQL) : le dossier est `services/databases/mariadb/`
 - Les presets de ressources (`resourcesPreset`) sont partagés entre tous les services DB : nano, micro, small, medium, large, xlarge, 2xlarge
 - Si `resources` (CPU/mémoire explicites) est défini, `resourcesPreset` est ignoré

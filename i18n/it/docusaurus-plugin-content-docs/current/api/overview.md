@@ -43,7 +43,6 @@ L'elenco completo delle operazioni, con i relativi parametri e risposte, si trov
 - **Account, organizzazione, progetti, membri e ruoli**: riservati alla console.
 - **Chiavi API**: una chiave non può creare né revocare chiavi (vedere [Autenticazione](./authentication.md)).
 - **Flusso di eventi in tempo reale** della console.
-- **Servizi assenti dalla console** (ClickHouse, Kafka, NATS): su richiesta al supporto.
 
 Un'operazione assente dal riferimento non può essere chiamata con una chiave API, anche se la console la propone.
 

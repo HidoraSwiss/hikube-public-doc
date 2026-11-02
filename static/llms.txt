@@ -69,14 +69,11 @@ This documentation is available in 4 languages:
 - [MariaDB](https://docs.hikube.cloud/en/services/databases/mariadb/overview/)
 - [MongoDB](https://docs.hikube.cloud/en/services/databases/mongodb/overview/)
 - [Redis](https://docs.hikube.cloud/en/services/databases/redis/overview/)
-- [ClickHouse (on request)](https://docs.hikube.cloud/en/services/databases/clickhouse/overview/)
 
 ## Managed Messaging
 
 - [Overview](https://docs.hikube.cloud/en/services/messaging/)
 - [RabbitMQ](https://docs.hikube.cloud/en/services/messaging/rabbitmq/overview/)
-- [Kafka (on request)](https://docs.hikube.cloud/en/services/messaging/kafka/overview/)
-- [NATS (on request)](https://docs.hikube.cloud/en/services/messaging/nats/overview/)
 
 ## Tools
 

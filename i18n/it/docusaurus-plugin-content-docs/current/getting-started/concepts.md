@@ -81,8 +81,6 @@ Hikube gestisce per lei l'infrastruttura sottostante di ogni servizio: alta disp
 | Database | [PostgreSQL](../services/databases/postgresql/overview.md), [MariaDB](../services/databases/mariadb/overview.md), [MongoDB](../services/databases/mongodb/overview.md), [Redis](../services/databases/redis/overview.md) |
 | Messaggistica | [RabbitMQ](../services/messaging/rabbitmq/overview.md) |
 
-Alcuni servizi (ClickHouse, Kafka, NATS) non sono ancora disponibili in modalità self-service nella console: vengono forniti su richiesta dal supporto.
-
 ---
 
 ## Sovranità e disponibilità

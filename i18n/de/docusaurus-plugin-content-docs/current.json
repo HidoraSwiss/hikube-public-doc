@@ -27,18 +27,6 @@
     "message": "Datenbanken",
     "description": "The label for category 'Databases' in sidebar 'docsSidebar'"
   },
-  "sidebar.docsSidebar.category.ClickHouse": {
-    "message": "ClickHouse",
-    "description": "The label for category 'ClickHouse' in sidebar 'docsSidebar'"
-  },
-  "sidebar.docsSidebar.category.how-to-services-databases-clickhouse": {
-    "message": "Praktische Anleitungen",
-    "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
-  },
-  "sidebar.docsSidebar.category.how-to-services-databases-clickhouse.link.generated-index.title": {
-    "message": "Praktische Anleitungen — ClickHouse",
-    "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
-  },
   "sidebar.docsSidebar.category.PostgreSQL": {
     "message": "PostgreSQL",
     "description": "The label for category 'PostgreSQL' in sidebar 'docsSidebar'"
@@ -119,18 +107,6 @@
     "message": "Messaging",
     "description": "The label for category 'Messaging' in sidebar 'docsSidebar'"
   },
-  "sidebar.docsSidebar.category.Kafka": {
-    "message": "Kafka",
-    "description": "The label for category 'Kafka' in sidebar 'docsSidebar'"
-  },
-  "sidebar.docsSidebar.category.how-to-services-messaging-kafka": {
-    "message": "Praktische Anleitungen",
-    "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
-  },
-  "sidebar.docsSidebar.category.how-to-services-messaging-kafka.link.generated-index.title": {
-    "message": "Praktische Anleitungen — Kafka",
-    "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
-  },
   "sidebar.docsSidebar.category.RabbitMQ": {
     "message": "RabbitMQ",
     "description": "The label for category 'RabbitMQ' in sidebar 'docsSidebar'"
@@ -141,18 +117,6 @@
   },
   "sidebar.docsSidebar.category.how-to-services-messaging-rabbitmq.link.generated-index.title": {
     "message": "Praktische Anleitungen — RabbitMQ",
-    "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
-  },
-  "sidebar.docsSidebar.category.NATS": {
-    "message": "NATS",
-    "description": "The label for category 'NATS' in sidebar 'docsSidebar'"
-  },
-  "sidebar.docsSidebar.category.how-to-services-messaging-nats": {
-    "message": "Praktische Anleitungen",
-    "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
-  },
-  "sidebar.docsSidebar.category.how-to-services-messaging-nats.link.generated-index.title": {
-    "message": "Praktische Anleitungen — NATS",
     "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.Ressources": {
@@ -219,10 +183,6 @@
     "message": "Schritt-für-Schritt-Anleitungen für Redis auf Hikube: Jede Anleitung beschreibt eine konkrete Aufgabe in der Konsole, mit Schritten und Prüfungen.",
     "description": "The generated-index page description for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
-  "sidebar.docsSidebar.category.how-to-services-databases-clickhouse.link.generated-index.description": {
-    "message": "Schritt-für-Schritt-Anleitungen für ClickHouse auf Hikube: Jede Anleitung beschreibt eine konkrete Aufgabe in der Konsole, mit Schritten und Prüfungen.",
-    "description": "The generated-index page description for category 'Guides pratiques' in sidebar 'docsSidebar'"
-  },
   "sidebar.docsSidebar.category.how-to-services-compute.link.generated-index.description": {
     "message": "Schritt-für-Schritt-Anleitungen für Virtuelle Maschinen auf Hikube: Jede Anleitung beschreibt eine konkrete Aufgabe in der Konsole, mit Schritten und Prüfungen.",
     "description": "The generated-index page description for category 'Guides pratiques' in sidebar 'docsSidebar'"
@@ -241,14 +201,6 @@
   },
   "sidebar.docsSidebar.category.how-to-services-messaging-rabbitmq.link.generated-index.description": {
     "message": "Schritt-für-Schritt-Anleitungen für RabbitMQ auf Hikube: Jede Anleitung beschreibt eine konkrete Aufgabe in der Konsole, mit Schritten und Prüfungen.",
-    "description": "The generated-index page description for category 'Guides pratiques' in sidebar 'docsSidebar'"
-  },
-  "sidebar.docsSidebar.category.how-to-services-messaging-kafka.link.generated-index.description": {
-    "message": "Schritt-für-Schritt-Anleitungen für Kafka auf Hikube: Jede Anleitung beschreibt eine konkrete Aufgabe in der Konsole, mit Schritten und Prüfungen.",
-    "description": "The generated-index page description for category 'Guides pratiques' in sidebar 'docsSidebar'"
-  },
-  "sidebar.docsSidebar.category.how-to-services-messaging-nats.link.generated-index.description": {
-    "message": "Schritt-für-Schritt-Anleitungen für NATS auf Hikube: Jede Anleitung beschreibt eine konkrete Aufgabe in der Konsole, mit Schritten und Prüfungen.",
     "description": "The generated-index page description for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.how-to-services-databases-mariadb": {

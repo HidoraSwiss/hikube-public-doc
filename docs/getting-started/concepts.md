@@ -81,8 +81,6 @@ Hikube opère pour vous l'infrastructure sous-jacente de chaque service : haute 
 | Bases de données | [PostgreSQL](../services/databases/postgresql/overview.md), [MariaDB](../services/databases/mariadb/overview.md), [MongoDB](../services/databases/mongodb/overview.md), [Redis](../services/databases/redis/overview.md) |
 | Messagerie | [RabbitMQ](../services/messaging/rabbitmq/overview.md) |
 
-Certains services (ClickHouse, Kafka, NATS) ne sont pas encore proposés en libre-service dans la console : ils sont provisionnés à la demande par le support.
-
 ---
 
 ## Souveraineté et disponibilité

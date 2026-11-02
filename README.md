@@ -35,8 +35,8 @@ Chaque service est décrit depuis la **[console](https://console.hikube.cloud)**
 | <img src="static/img/services/kubernetes.svg" width="32" alt=""> | **[Kubernetes](https://docs.hikube.cloud/services/kubernetes/overview)** | Clusters managés, groupes de nœuds, autoscaling et extensions prêtes à l'emploi |
 | <img src="static/img/services/compute.svg" width="32" alt=""> | **[Machines virtuelles](https://docs.hikube.cloud/services/compute/overview)** | VM Linux et Windows, disques persistants, IP publique |
 | <img src="static/img/services/gpu.svg" width="32" alt=""> | **[GPU](https://docs.hikube.cloud/services/gpu/overview)** | GPU NVIDIA pour l'IA, le machine learning et le calcul intensif |
-| <img src="static/img/services/postgresql.svg" width="32" alt=""> | **[Bases de données](https://docs.hikube.cloud/services/databases)** | PostgreSQL, MariaDB, MongoDB, Redis, ClickHouse |
-| <img src="static/img/services/rabbitmq.svg" width="32" alt=""> | **[Messagerie](https://docs.hikube.cloud/services/messaging)** | RabbitMQ, Kafka, NATS |
+| <img src="static/img/services/postgresql.svg" width="32" alt=""> | **[Bases de données](https://docs.hikube.cloud/services/databases)** | PostgreSQL, MariaDB, MongoDB, Redis |
+| <img src="static/img/services/rabbitmq.svg" width="32" alt=""> | **[Messagerie](https://docs.hikube.cloud/services/messaging)** | RabbitMQ |
 | <img src="static/img/services/s3.svg" width="32" alt=""> | **[Stockage](https://docs.hikube.cloud/services/storage)** | Disques persistants et buckets compatibles S3 |
 | <img src="static/img/services/networking.svg" width="32" alt=""> | **[Réseau](https://docs.hikube.cloud/services/networking/overview)** | VPC et sous-réseaux privés entre vos ressources |
 | <img src="static/img/services/terraform.svg" width="32" alt=""> | **[Terraform](https://docs.hikube.cloud/tools/terraform)** | Décrire son infrastructure Hikube en code |

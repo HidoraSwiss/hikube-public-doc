@@ -81,8 +81,6 @@ Hikube operates the underlying infrastructure of each service for you: high avai
 | Databases | [PostgreSQL](../services/databases/postgresql/overview.md), [MariaDB](../services/databases/mariadb/overview.md), [MongoDB](../services/databases/mongodb/overview.md), [Redis](../services/databases/redis/overview.md) |
 | Messaging | [RabbitMQ](../services/messaging/rabbitmq/overview.md) |
 
-Some services (ClickHouse, Kafka, NATS) are not yet offered as self-service in the console: they are provisioned on request by support.
-
 ---
 
 ## Sovereignty and availability

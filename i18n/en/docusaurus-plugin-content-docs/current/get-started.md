@@ -43,10 +43,10 @@ Hikube is a sovereign cloud platform, hosted in Switzerland, for deploying virtu
   },
   {
     title: "Messaging",
-    description: "RabbitMQ as self-service; Kafka and NATS on request.",
+    description: "RabbitMQ message broker, as self-service.",
     icon: "/img/services/rabbitmq.svg",
     href: "services/messaging/",
-    tags: ["Streaming", "Queues"],
+    tags: ["AMQP", "Queues"],
   },
   {
     title: "Storage",
