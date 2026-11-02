@@ -43,7 +43,6 @@ Die vollständige Liste der Operationen mit ihren Parametern und Antworten finde
 - **Konto, Organisation, Projekte, Mitglieder und Rollen**: der Konsole vorbehalten.
 - **API-Schlüssel**: Ein Schlüssel kann keinen Schlüssel erstellen oder widerrufen (siehe [Authentifizierung](./authentication.md)).
 - **Echtzeit-Ereignisströme** der Konsole.
-- **Dienste, die nicht in der Konsole verfügbar sind** (ClickHouse, Kafka, NATS): auf Anfrage beim Support.
 
 Eine Operation, die nicht in der Referenz steht, kann nicht mit einem API-Schlüssel aufgerufen werden, auch wenn die Konsole sie anbietet.
 

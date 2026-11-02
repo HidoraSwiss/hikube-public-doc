@@ -17,11 +17,6 @@ Hikube bietet vollständig verwaltete Datenbanken, die Sie über die [Hikube-Kon
 | MariaDB | Relational (MySQL-kompatibel) | Ja | CMS, Webanwendungen, bestehende MySQL-Anwendungen |
 | MongoDB | Dokument | Ja | Halbstrukturierte Daten, Kataloge, JSON-Anwendungen |
 | Redis | In-Memory-Key-Value | Ja | Cache, Sitzungen, Warteschlangen |
-| ClickHouse | Spaltenorientierte Analytik | Auf Anfrage | Analytics, Logs, OLAP |
-
-:::info
-ClickHouse ist in der Konsole noch nicht im Self-Service verfügbar. Um eine Instanz bereitzustellen, [wenden Sie sich an den Support](mailto:support@hidora.io).
-:::
 
 ## Verfügbare Dienste
 
@@ -53,12 +48,5 @@ ClickHouse ist in der Konsole noch nicht im Self-Service verfügbar. Um eine Ins
     icon: "/img/services/redis.svg",
     href: "./redis/overview",
     tags: ["Key-Value", "In-Memory"],
-  },
-  {
-    title: "ClickHouse",
-    description: "Spaltenorientierte Analysedatenbank für OLAP-Abfragen in großem Maßstab. Auf Anfrage verfügbar.",
-    icon: "/img/services/clickhouse.svg",
-    href: "./clickhouse/overview",
-    tags: ["Analytik", "Auf Anfrage"],
   },
 ]} />

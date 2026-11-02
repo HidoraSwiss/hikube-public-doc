@@ -43,7 +43,6 @@ The complete list of operations, with their parameters and responses, is in the 
 - **Account, organization, projects, members and roles**: console only.
 - **API keys**: a key cannot create or revoke a key (see [Authentication](./authentication.md)).
 - The console's **real-time event stream**.
-- **Services not available in the console** (ClickHouse, Kafka, NATS): on request from support.
 
 An operation that is not in the reference cannot be called with an API key, even if the console offers it.
 

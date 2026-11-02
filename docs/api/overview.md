@@ -43,7 +43,6 @@ La liste exhaustive des opérations, avec leurs paramètres et leurs réponses, 
 - **Compte, organisation, projets, membres et rôles** : réservés à la console.
 - **Clés d'API** : une clé ne peut pas créer ni révoquer de clé (voir [Authentification](./authentication.md)).
 - **Flux d'événements temps réel** de la console.
-- **Services absents de la console** (ClickHouse, Kafka, NATS) : sur demande auprès du support.
 
 Une opération absente de la référence n'est pas appelable avec une clé d'API, même si la console la propose.
 

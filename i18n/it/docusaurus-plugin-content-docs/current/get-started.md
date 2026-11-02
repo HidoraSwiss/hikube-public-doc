@@ -43,10 +43,10 @@ Hikube è una piattaforma cloud sovrana, ospitata in Svizzera, per distribuire m
   },
   {
     title: "Messaggistica",
-    description: "RabbitMQ in modalità self-service; Kafka e NATS su richiesta.",
+    description: "Broker di messaggi RabbitMQ, in modalità self-service.",
     icon: "/img/services/rabbitmq.svg",
     href: "services/messaging/",
-    tags: ["Streaming", "Code"],
+    tags: ["AMQP", "Code"],
   },
   {
     title: "Storage",

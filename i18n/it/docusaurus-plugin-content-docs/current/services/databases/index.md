@@ -17,11 +17,6 @@ Hikube offre database completamente gestiti, che lei crea e amministra dalla [co
 | MariaDB | Relazionale (compatibile MySQL) | Sì | CMS, applicazioni web, applicazioni MySQL esistenti |
 | MongoDB | Documentale | Sì | Dati semi-strutturati, cataloghi, applicazioni JSON |
 | Redis | Chiave-valore in memoria | Sì | Cache, sessioni, code |
-| ClickHouse | Analitico colonnare | Su richiesta | Analytics, log, OLAP |
-
-:::info
-ClickHouse non è ancora disponibile in modalità self-service nella console. Per effettuare il provisioning di un'istanza, [contatti il supporto](mailto:support@hidora.io).
-:::
 
 ## Servizi disponibili
 
@@ -53,12 +48,5 @@ ClickHouse non è ancora disponibile in modalità self-service nella console. Pe
     icon: "/img/services/redis.svg",
     href: "./redis/overview",
     tags: ["Chiave-valore", "In-memory"],
-  },
-  {
-    title: "ClickHouse",
-    description: "Database analitico colonnare per query OLAP su larga scala. Disponibile su richiesta.",
-    icon: "/img/services/clickhouse.svg",
-    href: "./clickhouse/overview",
-    tags: ["Analitico", "Su richiesta"],
   },
 ]} />

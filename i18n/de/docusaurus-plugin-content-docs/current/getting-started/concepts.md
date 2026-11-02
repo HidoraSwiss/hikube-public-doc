@@ -81,8 +81,6 @@ Hikube betreibt für Sie die zugrunde liegende Infrastruktur jedes Services: Hoc
 | Datenbanken | [PostgreSQL](../services/databases/postgresql/overview.md), [MariaDB](../services/databases/mariadb/overview.md), [MongoDB](../services/databases/mongodb/overview.md), [Redis](../services/databases/redis/overview.md) |
 | Messaging | [RabbitMQ](../services/messaging/rabbitmq/overview.md) |
 
-Einige Services (ClickHouse, Kafka, NATS) werden in der Konsole noch nicht als Self-Service angeboten: Sie werden auf Anfrage vom Support bereitgestellt.
-
 ---
 
 ## Souveränität und Verfügbarkeit
