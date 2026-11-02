@@ -153,6 +153,7 @@ Alcuni codici di business utili:
 | `20201` / `20202` | 400 | La VM è già avviata / già arrestata |
 | `20204`, `20205`, `20207` | 400 | GPU richiesta non disponibile, in quantità insufficiente, o impossibile da riunire su uno stesso server |
 | `20206` | 400 | Nessun indirizzo IPv4 pubblico disponibile |
+| `20209` | 400 | La VM non può ancora avviarsi: la sua ultima modifica è ancora in fase di applicazione. Riprovi tra qualche secondo |
 | `30007` | 400 | Il disco è collegato a una VM: lo scolleghi prima di eliminarlo |
 | `80201`, `110201`, `120201`, `140201`, `150201` | 400 | Passaggio da un'istanza singola a un cluster replicato (o viceversa) impossibile dopo la creazione |
 | `80205`, `110205`, `120205`, `140205`, `150205` | 400 | Riavvio di un database ancora in fase di creazione: nulla da riavviare, riprovi quando il cluster è pronto |

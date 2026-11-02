@@ -153,6 +153,7 @@ Quelques codes métier utiles :
 | `20201` / `20202` | 400 | La VM est déjà démarrée / déjà arrêtée |
 | `20204`, `20205`, `20207` | 400 | GPU demandé indisponible, en quantité insuffisante, ou impossible à réunir sur un même serveur |
 | `20206` | 400 | Plus d'adresse IPv4 publique disponible |
+| `20209` | 400 | La VM ne peut pas encore démarrer : sa dernière modification est en cours d'application. Réessayez dans quelques secondes |
 | `30007` | 400 | Le disque est attaché à une VM : détachez-le avant de le supprimer |
 | `80201`, `110201`, `120201`, `140201`, `150201` | 400 | Passage d'une instance unique à un cluster répliqué (ou l'inverse) impossible après la création |
 | `80205`, `110205`, `120205`, `140205`, `150205` | 400 | Redémarrage d'une base encore en cours de création : rien à redémarrer, réessayez une fois le cluster prêt |

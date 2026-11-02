@@ -153,6 +153,7 @@ A few useful business codes:
 | `20201` / `20202` | 400 | The VM is already started / already stopped |
 | `20204`, `20205`, `20207` | 400 | Requested GPU unavailable, insufficient quantity, or impossible to gather on a single server |
 | `20206` | 400 | No public IPv4 address left |
+| `20209` | 400 | The VM cannot start yet: its latest update is still being applied. Retry in a few seconds |
 | `30007` | 400 | The disk is attached to a VM: detach it before deleting it |
 | `80201`, `110201`, `120201`, `140201`, `150201` | 400 | Switching from a single instance to a replicated cluster (or the reverse) is not possible after creation |
 | `80205`, `110205`, `120205`, `140205`, `150205` | 400 | Restart of a database still being created: nothing to restart, retry once the cluster is ready |

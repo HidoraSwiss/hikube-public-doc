@@ -144,6 +144,8 @@ La modification passe par `PATCH /instance/v1alpha1/projects/{projectId}/instanc
 - une liste envoyée remplace la liste actuelle, et `[]` la vide : `gpus`, `sshKeys`, `network.vpcs`, `network.firewall.allowedInboundPorts` ;
 - `userData: ""` retire les données utilisateur d'une VM Linux ; sur une VM Windows, elles sont générées par la plateforme et ne se modifient pas.
 
+Une modification est enregistrée dès la réponse, mais s'applique à la VM en une trentaine de secondes. Jusque-là, démarrer la VM est refusé (code `20209`) : elle démarrerait sur sa configuration précédente. Réessayez quelques secondes plus tard.
+
 Exemple : passer la VM en `u1.2xlarge` :
 
 ```bash
