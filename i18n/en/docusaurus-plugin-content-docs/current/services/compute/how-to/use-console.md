@@ -34,8 +34,7 @@ For sustained work, SSH (Linux) or RDP (Windows) remain more comfortable and fas
 
 The **Console** tab only appears while the VM is running (or migrating). A stopped VM has no console to open: start it first (see [Start a VM](./manage-lifecycle.md#2-start-a-vm)).
 
-{/* Screenshot to add: Console tab of a VM, Screen (VNC) view, toolbar visible.
-    Expected files: /img/console/compute/vm-console-vnc.fr.png and .en.png */}
+![Console tab of a VM, Screen (VNC) view: toolbar and the VM's login prompt](/img/console/compute/vm-console-vnc.en.png)
 
 The screen and the serial port are independent: you can open both at the same time, for example in two browser tabs.
 
@@ -64,8 +63,7 @@ If the browser refuses access to the clipboard, a **Paste text** window opens: p
 
 The **Serial console** view shows the VM's serial port in a terminal. When it opens, a banner recalls the organization, the project and the VM, then says: "Press Enter to show the login prompt."
 
-{/* Screenshot to add: Console tab of a VM, Serial console view, banner and login prompt.
-    Expected files: /img/console/compute/vm-console-serial.fr.png and .en.png */}
+![Console tab of a VM, Serial console view: Hikube banner and login prompt](/img/console/compute/vm-console-serial.en.png)
 
 Press Enter: the VM's login prompt appears, if its system offers one on the serial port (common Linux images do). Log in with a user of the VM and its password.
 

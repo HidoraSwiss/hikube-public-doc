@@ -34,8 +34,7 @@ Für längere Arbeiten bleiben SSH (Linux) oder RDP (Windows) komfortabler und s
 
 Der Reiter **Console** erscheint nur, solange die VM läuft (oder migriert wird). Eine gestoppte VM hat keine Konsole: Starten Sie sie zuerst (siehe [Eine VM starten](./manage-lifecycle.md#2-eine-vm-starten)).
 
-{/* Screenshot hinzufügen: Reiter Console einer VM, Ansicht Screen (VNC), Werkzeugleiste sichtbar.
-    Erwartete Dateien: /img/console/compute/vm-console-vnc.fr.png und .en.png */}
+![Reiter Console einer VM, Ansicht Screen (VNC): Werkzeugleiste und Anmeldeaufforderung der VM](/img/console/compute/vm-console-vnc.en.png)
 
 Bildschirm und serielle Schnittstelle sind unabhängig voneinander: Sie können beide gleichzeitig öffnen, zum Beispiel in zwei Browser-Tabs.
 
@@ -64,8 +63,7 @@ Verweigert der Browser den Zugriff auf die Zwischenablage, öffnet sich ein Fens
 
 Die Ansicht **Serial console** zeigt die serielle Schnittstelle der VM in einem Terminal. Beim Öffnen nennt ein Banner die Organisation, das Projekt und die VM und zeigt dann: „Press Enter to show the login prompt.“
 
-{/* Screenshot hinzufügen: Reiter Console einer VM, Ansicht Serial console, Banner und Anmeldeaufforderung.
-    Erwartete Dateien: /img/console/compute/vm-console-serial.fr.png und .en.png */}
+![Reiter Console einer VM, Ansicht Serial console: Hikube-Banner und Anmeldeaufforderung](/img/console/compute/vm-console-serial.en.png)
 
 Drücken Sie Enter: Die Anmeldeaufforderung der VM erscheint, sofern ihr System eine auf der seriellen Schnittstelle anbietet (bei gängigen Linux-Images der Fall). Melden Sie sich mit einem Benutzer der VM und dessen Passwort an.
 

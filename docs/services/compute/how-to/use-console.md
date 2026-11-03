@@ -34,8 +34,7 @@ Pour un travail suivi, SSH (Linux) ou RDP (Windows) restent plus confortables et
 
 L'onglet **Console** n'apparaît que lorsque la VM est en marche (ou en cours de migration). Une VM arrêtée n'a pas de console à ouvrir : démarrez-la d'abord (voir [Démarrer une VM](./manage-lifecycle.md#2-démarrer-une-vm)).
 
-{/* Capture à ajouter : onglet Console d'une VM, vue Écran (VNC), barre d'outils visible.
-    Fichiers attendus : /img/console/compute/vm-console-vnc.fr.png et .en.png */}
+![Onglet Console d'une VM, vue Écran (VNC) : barre d'outils et invite de connexion de la VM](/img/console/compute/vm-console-vnc.fr.png)
 
 L'écran et le port série sont indépendants : vous pouvez ouvrir les deux en même temps, par exemple dans deux onglets du navigateur.
 
@@ -64,8 +63,7 @@ Si le navigateur refuse l'accès au presse-papiers, une fenêtre **Coller du tex
 
 La vue **Console série** affiche le port série de la VM dans un terminal. À l'ouverture, une bannière rappelle l'organisation, le projet et la VM, puis indique : « Appuyez sur Entrée pour afficher l'invite de connexion. »
 
-{/* Capture à ajouter : onglet Console d'une VM, vue Console série, bannière et invite de connexion.
-    Fichiers attendus : /img/console/compute/vm-console-serial.fr.png et .en.png */}
+![Onglet Console d'une VM, vue Console série : bannière Hikube et invite de connexion](/img/console/compute/vm-console-serial.fr.png)
 
 Appuyez sur Entrée : l'invite de connexion de la VM s'affiche, si son système en propose une sur le port série (c'est le cas des images Linux courantes). Connectez-vous avec un utilisateur de la VM et son mot de passe.
 

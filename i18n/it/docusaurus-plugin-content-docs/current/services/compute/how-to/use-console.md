@@ -34,8 +34,7 @@ Per un lavoro prolungato, SSH (Linux) o RDP (Windows) restano più comodi e più
 
 La scheda **Console** compare solo quando la VM è in esecuzione (o in migrazione). Una VM arrestata non ha console da aprire: la avvii prima (vedere [Avviare una VM](./manage-lifecycle.md#2-avviare-una-vm)).
 
-{/* Screenshot da aggiungere: scheda Console di una VM, vista Screen (VNC), barra degli strumenti visibile.
-    File attesi: /img/console/compute/vm-console-vnc.fr.png e .en.png */}
+![Scheda Console di una VM, vista Screen (VNC): barra degli strumenti e prompt di login della VM](/img/console/compute/vm-console-vnc.en.png)
 
 Lo schermo e la porta seriale sono indipendenti: può aprirli entrambi contemporaneamente, ad esempio in due schede del browser.
 
@@ -64,8 +63,7 @@ Se il browser rifiuta l'accesso agli appunti, si apre una finestra **Paste text*
 
 La vista **Serial console** mostra la porta seriale della VM in un terminale. All'apertura, un banner ricorda l'organizzazione, il progetto e la VM, poi indica: «Press Enter to show the login prompt.»
 
-{/* Screenshot da aggiungere: scheda Console di una VM, vista Serial console, banner e prompt di login.
-    File attesi: /img/console/compute/vm-console-serial.fr.png e .en.png */}
+![Scheda Console di una VM, vista Serial console: banner Hikube e prompt di login](/img/console/compute/vm-console-serial.en.png)
 
 Prema Invio: compare il prompt di login della VM, se il suo sistema ne propone uno sulla porta seriale (è il caso delle immagini Linux più comuni). Acceda con un utente della VM e la relativa password.
 
