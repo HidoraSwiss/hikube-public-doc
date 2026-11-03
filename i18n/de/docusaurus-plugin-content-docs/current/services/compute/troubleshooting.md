@@ -134,4 +134,5 @@ Wenn die Konsole meldet, dass die Quotas des Projekts nicht verfügbar sind, ble
 
 1. Starten Sie **Restart** im Abschnitt **Actions** der Detailseite.
 2. Wenn eine kürzliche Änderung an cloud-init die Ursache ist, korrigieren Sie das Skript unter **Edit** > **Advanced Configuration** und starten Sie dann **Reload UserData** und **Restart**.
-3. Ein Zugriff über serielle Konsole oder VNC wird in der Konsole nicht angeboten; wenden Sie sich für eine Low-Level-Diagnose an den [Support](mailto:support@hidora.io).
+3. Öffnen Sie den Reiter **Console** der VM, um ihren Bildschirm oder ihre serielle Schnittstelle zu sehen und die Konfiguration direkt in der VM zu korrigieren (siehe [Die Konsole einer VM öffnen](./how-to/use-console.md)). Die Anmeldung an der seriellen Schnittstelle erfordert ein Konto mit Passwort in der VM.
+4. Hilft das alles nicht, wenden Sie sich an den [Support](mailto:support@hidora.io).

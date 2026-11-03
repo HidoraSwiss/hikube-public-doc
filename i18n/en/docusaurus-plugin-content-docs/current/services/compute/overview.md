@@ -166,8 +166,8 @@ Importing a custom image (ISO or QCOW2 from an HTTPS URL) is done by creating a 
 - **SSH**: the detail page shows the ready-to-copy `ssh <user>@<ip>` command, with the image's default user. For a custom image, that user is not known: the console says so instead of showing a command. Access uses the public SSH keys entered in the wizard.
 - **Windows**: an administrator password is generated at creation and shown only once. Access is over RDP.
 
-:::note Serial console and VNC
-Serial console or VNC access is not offered in the console; contact [support](mailto:support@hidora.io) if you need it for diagnostics.
+:::note VM console
+The **Console** tab of a running VM's page shows its screen and its serial port in the browser, even when the VM can no longer be reached over the network. See [Open the console of a VM](./how-to/use-console.md).
 :::
 
 ---

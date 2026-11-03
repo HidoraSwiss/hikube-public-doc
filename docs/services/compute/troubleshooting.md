@@ -134,4 +134,5 @@ Si la console indique que les quotas du projet sont indisponibles, la création 
 
 1. Lancez **Redémarrer** depuis la section **Actions** de la page de détail.
 2. Si une modification récente du cloud-init est en cause, corrigez le script dans **Modifier** > **Configuration avancée**, puis lancez **Recharger UserData** et **Redémarrer**.
-3. L'accès console série ou VNC n'est pas proposé dans la console ; contactez le [support](mailto:support@hidora.io) pour un diagnostic de bas niveau.
+3. Ouvrez l'onglet **Console** de la VM pour voir son écran ou son port série, et corriger la configuration depuis la VM elle-même (voir [Ouvrir la console d'une VM](./how-to/use-console.md)). Se connecter sur le port série demande un compte avec mot de passe dans la VM.
+4. Si rien de tout cela ne suffit, contactez le [support](mailto:support@hidora.io).

@@ -166,8 +166,8 @@ Ein eigenes Image (ISO oder QCOW2 von einer HTTPS-URL) importieren Sie, indem Si
 - **SSH**: Die Detailseite zeigt den kopierfertigen Befehl `ssh <user>@<ip>` mit dem Standardbenutzer des Images an. Bei einem benutzerdefinierten Image ist dieser Benutzer nicht bekannt: Die Konsole weist darauf hin, statt einen Befehl anzuzeigen. Der Zugriff erfolgt mit den im Assistenten eingegebenen öffentlichen SSH-Schlüsseln.
 - **Windows**: Bei der Erstellung wird ein Administratorpasswort generiert und nur ein einziges Mal angezeigt. Der Zugriff erfolgt per RDP.
 
-:::note Serielle Konsole und VNC
-Ein Zugriff über serielle Konsole oder VNC wird in der Konsole nicht angeboten; wenden Sie sich an den [Support](mailto:support@hidora.io), wenn Sie ihn für eine Diagnose benötigen.
+:::note Konsole der VM
+Der Reiter **Console** auf der Seite einer laufenden VM zeigt ihren Bildschirm und ihre serielle Schnittstelle im Browser, auch wenn die VM über das Netzwerk nicht mehr erreichbar ist. Siehe [Die Konsole einer VM öffnen](./how-to/use-console.md).
 :::
 
 ---

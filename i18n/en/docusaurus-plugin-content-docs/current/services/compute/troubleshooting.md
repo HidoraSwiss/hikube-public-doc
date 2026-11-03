@@ -134,4 +134,5 @@ If the console says the project quotas are unavailable, creation stays blocked u
 
 1. Run **Restart** from the **Actions** section of the detail page.
 2. If a recent cloud-init change is the cause, fix the script in **Edit** > **Advanced Configuration**, then run **Reload UserData** and **Restart**.
-3. Serial console or VNC access is not offered in the console; contact [support](mailto:support@hidora.io) for low-level diagnostics.
+3. Open the VM's **Console** tab to see its screen or its serial port, and fix the configuration from the VM itself (see [Open the console of a VM](./how-to/use-console.md)). Logging in on the serial port requires an account with a password inside the VM.
+4. If none of this helps, contact [support](mailto:support@hidora.io).

@@ -86,7 +86,7 @@ nc -zv -w 5 <public-ip> 3389
 Ändern Sie nach der Anmeldung das Passwort und spielen Sie die Windows-Updates ein.
 
 :::note Installation von Ihrem eigenen ISO
-Die Installation von Windows von einem eigenen ISO erfordert während der Installation einen grafischen Konsolenzugriff (VNC). Diese Option wird in der Konsole nicht angeboten; wenden Sie sich an den [Support](mailto:support@hidora.io).
+Eine Installation von Windows von einem eigenen ISO verfolgen Sie am Bildschirm der VM, in ihrem Reiter **Console** (siehe [Die Konsole einer VM öffnen](./use-console.md)). Um eine solche Installation vorzubereiten, wenden Sie sich an den [Support](mailto:support@hidora.io).
 :::
 
 ## Weiterführende Informationen
