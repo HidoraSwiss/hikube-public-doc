@@ -112,7 +112,7 @@ Nicht über **Edit**: Die System-Disk einer bestehenden VM hat keine Aktion („
 
 ### Kann ich auf die serielle Konsole oder VNC der VM zugreifen?
 
-Diese Option wird in der Konsole nicht angeboten; wenden Sie sich an den [Support](mailto:support@hidora.io). Der Zugriff erfolgt per SSH (Linux) oder RDP (Windows).
+Ja, über den Reiter **Console** auf der Seite einer laufenden VM: **Screen (VNC)** für den grafischen Bildschirm, **Serial console** für die serielle Schnittstelle. Erforderlich sind mindestens die Rolle **Use** im Projekt und, für die Anmeldung an der seriellen Schnittstelle, ein Konto mit Passwort in der VM. Siehe [Die Konsole einer VM öffnen](./how-to/use-console.md). Für die tägliche Arbeit erfolgt der Zugriff per SSH (Linux) oder RDP (Windows).
 
 ---
 

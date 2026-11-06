@@ -166,8 +166,8 @@ L'importazione di un'immagine personalizzata (ISO o QCOW2 da un URL HTTPS) avvie
 - **SSH**: la pagina di dettaglio mostra il comando `ssh <utente>@<ip>` pronto da copiare, con l'utente predefinito dell'immagine. Per un'immagine personalizzata questo utente non è noto: la console lo segnala invece di proporre un comando. L'accesso avviene con le chiavi SSH pubbliche inserite nella procedura guidata.
 - **Windows**: una password di amministratore viene generata alla creazione e mostrata una sola volta. L'accesso avviene in RDP.
 
-:::note Console seriale e VNC
-L'accesso tramite console seriale o VNC non è disponibile nella console; contatti il [supporto](mailto:support@hidora.io) se ne ha bisogno per una diagnosi.
+:::note Console della VM
+La scheda **Console** della pagina di una VM in esecuzione mostra il suo schermo e la sua porta seriale nel browser, anche quando la VM non è più raggiungibile in rete. Vedere [Aprire la console di una VM](./how-to/use-console.md).
 :::
 
 ---

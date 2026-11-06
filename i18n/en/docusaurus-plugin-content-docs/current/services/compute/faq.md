@@ -112,7 +112,7 @@ Not from **Edit**: the system disk of an existing VM has no action ("The system 
 
 ### Can I access the VM's serial console or VNC?
 
-This option is not offered in the console; contact [support](mailto:support@hidora.io). Access is over SSH (Linux) or RDP (Windows).
+Yes, from the **Console** tab of a running VM's page: **Screen (VNC)** for the graphical screen, **Serial console** for the serial port. It requires at least the **Use** role on the project, and an account with a password inside the VM to log in on the serial port. See [Open the console of a VM](./how-to/use-console.md). For everyday work, access is over SSH (Linux) or RDP (Windows).
 
 ---
 
