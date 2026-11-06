@@ -105,6 +105,7 @@ const sidebars = {
         "getting-started/introduction",
         "getting-started/concepts",
         "getting-started/quick-start",
+        "getting-started/domain-verification",
       ],
     },
     {
