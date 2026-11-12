@@ -40,7 +40,7 @@ Ein Konto, das sich über die [SSO-Verbindung](../quick-start.md) seiner Organis
 
 ## Passwort oder zweiter Faktor verloren
 
-- **Passwort vergessen**: Geben Sie auf der Anmeldeseite Ihre Adresse ein und klicken Sie dann unter dem Passwortfeld auf **Passwort vergessen?**. Sie erhalten per E-Mail einen Link. Er fragt zuerst Ihren zweiten Faktor ab, dann ein neues Passwort. Ihr zweiter Faktor bleibt derselbe. Ein SSO-Konto erhält nur eine E-Mail, die es zur SSO-Verbindung seiner Organisation verweist: Sein Passwort wird bei Ihrem Identitätsanbieter verwaltet.
+- **Passwort vergessen**: Geben Sie auf der Anmeldeseite Ihre Adresse ein und klicken Sie dann unter dem Passwortfeld auf **Passwort vergessen?**. Sie erhalten per E-Mail einen Link. Er fragt zuerst Ihren zweiten Faktor ab, dann ein neues Passwort. Ihr zweiter Faktor bleibt derselbe; ein Konto, das noch keinen hat, richtet beim Zurücksetzen einen ein. Ein SSO-Konto erhält nur eine E-Mail, die es zur SSO-Verbindung seiner Organisation verweist: Sein Passwort wird bei Ihrem Identitätsanbieter verwaltet.
 
 Zweiter Faktor verloren:
 

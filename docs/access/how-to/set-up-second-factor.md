@@ -40,7 +40,7 @@ Un compte qui se connecte par la [connexion SSO](../quick-start.md) de son organ
 
 ## Mot de passe ou second facteur perdu
 
-- **Mot de passe oublié** : sur la page de connexion, saisissez votre adresse, puis cliquez sur **Mot de passe oublié ?** sous le champ du mot de passe. Vous recevez par e-mail un lien. Il demande d'abord votre second facteur, puis un nouveau mot de passe. Votre second facteur reste le même. Un compte SSO reçoit seulement un e-mail qui le renvoie vers la connexion SSO de son organisation : son mot de passe se gère chez votre fournisseur d'identité.
+- **Mot de passe oublié** : sur la page de connexion, saisissez votre adresse, puis cliquez sur **Mot de passe oublié ?** sous le champ du mot de passe. Vous recevez par e-mail un lien. Il demande d'abord votre second facteur, puis un nouveau mot de passe. Votre second facteur reste le même ; un compte qui n'en a pas encore en enregistre un pendant la réinitialisation. Un compte SSO reçoit seulement un e-mail qui le renvoie vers la connexion SSO de son organisation : son mot de passe se gère chez votre fournisseur d'identité.
 
 Second facteur perdu :
 
