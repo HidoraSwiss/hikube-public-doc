@@ -1,6 +1,6 @@
 ---
-sidebar_position: 7
-title: Auth0
+sidebar_position: 13
+title: "Comment configurer Auth0 pour le SSO"
 description: "Préparer une application Auth0 pour la connexion SSO de votre organisation Hikube : Regular Web Application, inscriptions fermées et claim des rôles écrit par une Action."
 ---
 
@@ -14,8 +14,8 @@ locataire Auth0 de test. Contactez le support avant de la mettre en production.
 :::
 
 Cette page décrit la partie Auth0. Lisez d'abord
-[Avant de commencer](./before-you-start.md), puis revenez à
-[Créer la connexion SSO](./create-connection.md) pour la partie Hikube.
+[Démarrage rapide](../quick-start.md), puis revenez à
+[Créer la connexion SSO](./configure-sso-connection.md) pour la partie Hikube.
 
 ## 1. Créer l'application
 
@@ -34,7 +34,7 @@ alors se connecter.
 ## 3. Écrire le claim des rôles (facultatif)
 
 Faites-le seulement si Auth0 doit décider des rangs dans Hikube (voir
-[Donner les rangs depuis votre fournisseur](./role-bindings.md)).
+[Donner les rangs depuis votre fournisseur](./sso-role-bindings.md)).
 
 Écrivez les rôles dans le jeton d'identité par une Action **post-login**. Les
 noms `roles` et `groups` sont réservés par Auth0 : utilisez un nom avec espace
@@ -64,9 +64,9 @@ personnalisé.
 
 <NavigationFooter
   nextSteps={[
-    {label: "Créer la connexion SSO", href: "../create-connection"},
+    {label: "Créer la connexion SSO", href: "../configure-sso-connection"},
   ]}
   seeAlso={[
-    {label: "Donner les rangs depuis votre fournisseur", href: "../role-bindings"},
+    {label: "Donner les rangs depuis votre fournisseur", href: "../sso-role-bindings"},
   ]}
 />

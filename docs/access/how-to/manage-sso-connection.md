@@ -1,6 +1,6 @@
 ---
-sidebar_position: 8
-title: Gérer la connexion SSO
+sidebar_position: 9
+title: "Comment gérer la connexion SSO"
 description: "Modifier, désactiver, remplacer le fournisseur ou supprimer la connexion SSO de votre organisation Hikube, et n'admettre que les personnes invitées."
 ---
 
@@ -29,7 +29,7 @@ enregistrement DNS.
 Avec **Invitation requise**, une première connexion ne crée aucun compte. Seules
 les personnes que vous invitez se connectent.
 
-Pour admettre quelqu'un, [invitez-le](../invitations.md) comme d'habitude :
+Pour admettre quelqu'un, [invitez-le](./invite-members.md) comme d'habitude :
 
 - pour une adresse d'un domaine autorisé, Hikube crée tout de suite son compte
   SSO, avec les rangs invités, **sans envoyer d'e-mail**. Dites à la personne
@@ -103,8 +103,8 @@ continue de se connecter avec son mot de passe et son second facteur.
 
 <NavigationFooter
   seeAlso={[
-    {label: "Sécurité et retrait des accès", href: "../security"},
-    {label: "Inviter des personnes", href: "../../invitations"},
-    {label: "Vérifier un domaine", href: "../../domains"},
+    {label: "FAQ", href: "../../faq"},
+    {label: "Inviter des personnes", href: "../invite-members"},
+    {label: "Vérifier un domaine", href: "../verify-domain"},
   ]}
 />

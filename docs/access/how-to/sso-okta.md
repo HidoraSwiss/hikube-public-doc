@@ -1,6 +1,6 @@
 ---
-sidebar_position: 4
-title: Okta
+sidebar_position: 10
+title: "Comment configurer Okta pour le SSO"
 description: "Préparer une application Okta pour la connexion SSO de votre organisation Hikube : intégration OIDC, assignations, URL de découverte et claim groups pour les rangs."
 ---
 
@@ -15,8 +15,8 @@ d'application.
 :::
 
 Cette page décrit la partie Okta. Lisez d'abord
-[Avant de commencer](./before-you-start.md), puis revenez à
-[Créer la connexion SSO](./create-connection.md) pour la partie Hikube.
+[Démarrage rapide](../quick-start.md), puis revenez à
+[Créer la connexion SSO](./configure-sso-connection.md) pour la partie Hikube.
 
 ## 1. Créer l'application
 
@@ -49,7 +49,7 @@ Avec un domaine personnalisé, remplacez `acme.okta.com` par ce domaine.
 ## 4. Ajouter le claim `groups` (facultatif)
 
 Faites-le seulement si Okta doit décider des rangs dans Hikube (voir
-[Donner les rangs depuis votre fournisseur](./role-bindings.md)).
+[Donner les rangs depuis votre fournisseur](./sso-role-bindings.md)).
 
 1. Ouvrez **Security → API → Authorization Servers**, puis le serveur choisi à
    l'étape 3 et l'onglet **Claims**.
@@ -75,10 +75,10 @@ serveur s'applique à toutes les applications qui l'utilisent.
 
 <NavigationFooter
   nextSteps={[
-    {label: "Créer la connexion SSO", href: "../create-connection"},
+    {label: "Créer la connexion SSO", href: "../configure-sso-connection"},
   ]}
   seeAlso={[
-    {label: "Donner les rangs depuis votre fournisseur", href: "../role-bindings"},
-    {label: "Microsoft Entra ID", href: "../entra-id"},
+    {label: "Donner les rangs depuis votre fournisseur", href: "../sso-role-bindings"},
+    {label: "Microsoft Entra ID", href: "../sso-entra-id"},
   ]}
 />

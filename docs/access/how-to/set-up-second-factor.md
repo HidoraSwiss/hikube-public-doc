@@ -1,6 +1,6 @@
 ---
-sidebar_position: 5
-title: Second facteur
+sidebar_position: 4
+title: "Comment enregistrer son second facteur"
 description: "Le second facteur (MFA) est obligatoire pour tout compte Hikube avec un mot de passe : enrôlement à la connexion, facteurs acceptés, comptes SSO et perte du second facteur."
 ---
 
@@ -44,7 +44,7 @@ contactez le support.
 
 ## Comptes SSO
 
-Un compte qui se connecte par la [connexion SSO](./sso/before-you-start.md) de
+Un compte qui se connecte par la [connexion SSO](../quick-start.md) de
 son organisation n'a ni mot de passe ni second facteur dans Hikube. Son second
 facteur est celui de votre fournisseur d'identité : imposez-le chez lui.
 
@@ -52,7 +52,7 @@ facteur est celui de votre fournisseur d'identité : imposez-le chez lui.
 
 - **Compte de l'organisation** : un administrateur de l'organisation peut
   réinitialiser ses identifiants (voir
-  [Confier un compte à l'organisation](./account-transfer.md#ce-que-vos-administrateurs-peuvent-faire)).
+  [Confier un compte à l'organisation](./transfer-account.md#ce-que-vos-administrateurs-peuvent-faire)).
   La personne reçoit un lien valable 24 heures pour choisir un nouveau mot de
   passe et un nouveau second facteur.
 - **Compte personnel** : contactez le support.
@@ -64,7 +64,7 @@ La page de connexion propose **Mot de passe oublié** pour le seul mot de passe.
 
 <NavigationFooter
   seeAlso={[
-    {label: "Rangs et qui fait quoi", href: "../overview"},
-    {label: "Sécurité de la connexion SSO", href: "../sso/security"},
+    {label: "Concepts", href: "../../concepts"},
+    {label: "FAQ", href: "../../faq"},
   ]}
 />

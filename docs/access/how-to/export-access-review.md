@@ -1,6 +1,6 @@
 ---
-sidebar_position: 6
-title: Revue des accès
+sidebar_position: 5
+title: "Comment exporter la revue des accès"
 description: "Exporter la revue des accès d'une organisation Hikube : qui tient quel rang, depuis quand, par qui, dernière connexion, inactivité et membres externes."
 ---
 
@@ -72,7 +72,7 @@ La colonne **Inactif** utilise le seuil de 90 jours par défaut.
 
 <NavigationFooter
   seeAlso={[
-    {label: "Gérer les membres", href: "../members"},
-    {label: "Sécurité et retrait des accès", href: "../sso/security"},
+    {label: "Gérer les membres", href: "../manage-members"},
+    {label: "FAQ", href: "../../faq"},
   ]}
 />

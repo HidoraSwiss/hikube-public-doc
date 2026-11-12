@@ -1,6 +1,6 @@
 ---
-sidebar_position: 2
-title: Inviter des personnes
+sidebar_position: 1
+title: "Comment inviter des personnes"
 description: "Inviter des personnes dans une organisation ou un projet Hikube, renvoyer ou annuler une invitation, accepter ou refuser une invitation reçue, membres externes."
 ---
 
@@ -30,14 +30,14 @@ L'invitation est valable **7 jours**.
   trouve l'invitation à sa prochaine connexion à la console.
 - **La personne n'a pas de compte** : elle reçoit un e-mail pour créer son
   compte. Elle y vérifie son adresse, choisit un mot de passe et enregistre un
-  [second facteur](./mfa.md).
+  [second facteur](./set-up-second-factor.md).
 
 Inviter de nouveau une adresse qui a déjà une invitation en attente remplace
 l'ancienne.
 
 Pour inviter sur un seul projet, utilisez **Inviter** dans la carte **Membres
 du projet** des paramètres du projet (voir
-[Membres d'un projet](./members.md#membres-dun-projet)).
+[Membres d'un projet](./manage-members.md#membres-dun-projet)).
 
 ## Suivre, renvoyer ou annuler
 
@@ -105,14 +105,14 @@ support. Les comptes personnels ne sont jamais restreints.
 
 Si votre connexion SSO a l'option **Invitation requise**, inviter une adresse
 d'un domaine autorisé crée tout de suite son compte SSO, sans e-mail. Voir
-[Gérer la connexion SSO](./sso/manage-connection.md#invitation-requise).
+[Gérer la connexion SSO](./manage-sso-connection.md#invitation-requise).
 
 <NavigationFooter
   nextSteps={[
-    {label: "Gérer les membres", href: "../members"},
+    {label: "Gérer les membres", href: "../manage-members"},
   ]}
   seeAlso={[
-    {label: "Confier un compte à l'organisation", href: "../account-transfer"},
-    {label: "Second facteur", href: "../mfa"},
+    {label: "Confier un compte à l'organisation", href: "../transfer-account"},
+    {label: "Second facteur", href: "../set-up-second-factor"},
   ]}
 />

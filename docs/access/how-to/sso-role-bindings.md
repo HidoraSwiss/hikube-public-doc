@@ -1,6 +1,6 @@
 ---
-sidebar_position: 3
-title: Donner les rangs depuis votre fournisseur
+sidebar_position: 8
+title: "Comment donner les rangs depuis votre fournisseur"
 description: "Role bindings : une valeur du claim des rôles de votre fournisseur d'identité donne un rang Hikube sur l'organisation ou un projet. Une seule source de droits par connexion."
 ---
 
@@ -59,7 +59,7 @@ disparu, sauf si un autre role binding donne le même rang.
 ## Mettre en place les role bindings
 
 Prérequis : le rang **Super-administration**, et une connexion SSO créée (voir
-[Créer la connexion SSO](./create-connection.md)).
+[Créer la connexion SSO](./configure-sso-connection.md)).
 
 ### 1. Renseigner le claim des rôles
 
@@ -112,17 +112,17 @@ restants accordent.
 
 ## Revue des accès
 
-La [revue des accès](../access-review.md) indique, pour chaque rang d'un compte
+La [revue des accès](./export-access-review.md) indique, pour chaque rang d'un compte
 SSO, la source **Fournisseur d'identité**, la connexion et les role bindings qui
 le donnent.
 
 <NavigationFooter
   nextSteps={[
-    {label: "Gérer la connexion SSO", href: "../manage-connection"},
+    {label: "Gérer la connexion SSO", href: "../manage-sso-connection"},
   ]}
   seeAlso={[
-    {label: "Okta : claim groups", href: "../okta"},
-    {label: "Entra ID : rôles d'application", href: "../entra-id"},
-    {label: "Rangs et qui fait quoi", href: "../../overview"},
+    {label: "Okta : claim groups", href: "../sso-okta"},
+    {label: "Entra ID : rôles d'application", href: "../sso-entra-id"},
+    {label: "Concepts", href: "../../concepts"},
   ]}
 />

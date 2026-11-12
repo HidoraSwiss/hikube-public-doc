@@ -1,5 +1,5 @@
 ---
-sidebar_position: 20
+sidebar_position: 7
 title: "Dépannage — Gestion des accès"
 sidebar_label: Dépannage
 description: "Codes d'erreur 60xxx de la gestion des accès Hikube (membres, invitations, domaines, connexion SSO, role bindings) : signification et action."
@@ -18,12 +18,12 @@ contactez le support, indiquez le message affiché et l'heure de l'opération.
 | Code | Message | Que faire |
 |---|---|---|
 | `60003` | Vous ne pouvez pas donner un rang supérieur au vôtre | Demandez à un membre de rang suffisant |
-| `60206` | Les rangs de ce compte viennent du fournisseur d'identité | Changez-les dans votre annuaire (voir [role bindings](./sso/role-bindings.md)) |
+| `60206` | Les rangs de ce compte viennent du fournisseur d'identité | Changez-les dans votre annuaire (voir [role bindings](./how-to/sso-role-bindings.md)) |
 | `60207` | L'organisation doit garder au moins un super-administrateur pouvant se connecter avec un mot de passe | Nommez d'abord un autre super-administrateur |
 | `60208` | Ce membre a un rang supérieur au vôtre | Demandez à un super-administrateur |
-| `60209` | Vous ne pouvez pas réduire ni retirer vos propres rangs | Demandez à un autre administrateur, ou [quittez l'organisation](./members.md#quitter-lorganisation-ou-un-projet) |
+| `60209` | Vous ne pouvez pas réduire ni retirer vos propres rangs | Demandez à un autre administrateur, ou [quittez l'organisation](./how-to/manage-members.md#quitter-lorganisation-ou-un-projet) |
 | `60210` | Le projet doit garder au moins un administrateur direct | Nommez d'abord un autre administrateur du projet |
-| `60211` | Un super-administrateur doit avoir un mot de passe et un second facteur, sans lien avec un fournisseur d'identité | Enregistrez un [second facteur](./mfa.md), ou choisissez un compte avec mot de passe |
+| `60211` | Un super-administrateur doit avoir un mot de passe et un second facteur, sans lien avec un fournisseur d'identité | Enregistrez un [second facteur](./how-to/set-up-second-factor.md), ou choisissez un compte avec mot de passe |
 | `60115` | Rang inconnu, ou **Super-administration** demandée sur un projet | Choisissez **Lecture**, **Utilisation** ou **Administration** sur un projet |
 | `60015` | Le rang n'est pas encore prêt sur un projet tout juste créé | Réessayez dans quelques secondes |
 | `60005` | Service momentanément indisponible | Réessayez |
@@ -37,7 +37,7 @@ contactez le support, indiquez le message affiché et l'heure de l'opération.
 | `60214` | L'organisation a atteint son nombre maximal de membres | Retirez un membre, ou contactez le support |
 | `60215` | Nombre maximal d'invitations en attente atteint | Annulez des invitations, ou attendez qu'elles soient acceptées |
 | `60216` | Trop d'invitations envoyées dans l'heure | Réessayez plus tard |
-| `60222` | L'organisation qui possède votre compte ne lui permet pas de rejoindre d'autres organisations | Demandez à ses administrateurs (voir [Membres externes](./invitations.md#membres-externes)) |
+| `60222` | L'organisation qui possède votre compte ne lui permet pas de rejoindre d'autres organisations | Demandez à ses administrateurs (voir [Membres externes](./how-to/invite-members.md#membres-externes)) |
 | `60120` | Invitation invalide : adresse, doublon, aucun rang ou projet | Corrigez la saisie |
 
 ## Transfert de compte
@@ -68,12 +68,12 @@ contactez le support, indiquez le message affiché et l'heure de l'opération.
 
 | Code | Message | Que faire |
 |---|---|---|
-| `60112` | Document de découverte refusé : injoignable, émetteur différent, point de terminaison ou signature manquants ; ou passage de Google à un autre fournisseur | Copiez l'URL de découverte telle que votre fournisseur l'affiche (voir [Avant de commencer](./sso/before-you-start.md#exigences-techniques)) |
+| `60112` | Document de découverte refusé : injoignable, émetteur différent, point de terminaison ou signature manquants ; ou passage de Google à un autre fournisseur | Copiez l'URL de découverte telle que votre fournisseur l'affiche (voir [Exigences techniques](./concepts.md#exigences-techniques)) |
 | `60119` | SAML n'est pas pris en charge | Utilisez OpenID Connect |
 | `60113` | Nom de claim invalide | Un nom ou un chemin pointé ; un point dans un nom s'écrit `\.` |
 | `60114` | Scope invalide, ou projet du role binding introuvable | Retirez `offline_access` ; choisissez un projet de l'organisation |
 | `60118` | Champ hors limites : connexion Google sans exactement un domaine, valeur de plus de 255 caractères, 257e role binding… | Corrigez le champ nommé dans le message |
-| `60200` | Un domaine autorisé, ou celui requis pour activer, n'est pas vérifié | [Vérifiez le domaine](./domains.md) |
+| `60200` | Un domaine autorisé, ou celui requis pour activer, n'est pas vérifié | [Vérifiez le domaine](./how-to/verify-domain.md) |
 | `60201` | L'enregistrement TXT d'un domaine a disparu | Republiez-le, puis réessayez |
 | `60218` | L'organisation a déjà une connexion SSO | Modifiez ou remplacez la connexion existante |
 | `60117` | Role binding sur une connexion sans claim des rôles | Renseignez d'abord le **Claim des rôles** |
@@ -111,6 +111,6 @@ contactez le support, indiquez le message affiché et l'heure de l'opération.
 <NavigationFooter
   seeAlso={[
     {label: "Erreurs de l'API", href: "../../api/errors"},
-    {label: "Sécurité et retrait des accès", href: "../sso/security"},
+    {label: "FAQ", href: "../faq"},
   ]}
 />

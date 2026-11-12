@@ -1,6 +1,6 @@
 ---
-sidebar_position: 5
-title: Microsoft Entra ID
+sidebar_position: 11
+title: "Comment configurer Microsoft Entra ID pour le SSO"
 description: "Préparer une application Microsoft Entra ID pour la connexion SSO de votre organisation Hikube : inscription mono-locataire, claims, rôles d'application et assignation obligatoire."
 ---
 
@@ -16,8 +16,8 @@ vérifié : préférez les rôles d'application.
 :::
 
 Cette page décrit la partie Entra ID. Lisez d'abord
-[Avant de commencer](./before-you-start.md), puis revenez à
-[Créer la connexion SSO](./create-connection.md) pour la partie Hikube.
+[Démarrage rapide](../quick-start.md), puis revenez à
+[Créer la connexion SSO](./configure-sso-connection.md) pour la partie Hikube.
 
 ## 1. Inscrire l'application
 
@@ -54,7 +54,7 @@ Sans ce consentement, chaque personne doit consentir à sa première connexion.
 ## 5. Créer les rôles d'application (facultatif)
 
 Faites-le seulement si Entra ID doit décider des rangs dans Hikube (voir
-[Donner les rangs depuis votre fournisseur](./role-bindings.md)).
+[Donner les rangs depuis votre fournisseur](./sso-role-bindings.md)).
 
 1. Ouvrez **App roles → Create app role** et créez un rôle par niveau d'accès,
    par exemple `hikube-admins` et `hikube-devs`. **Allowed member types** :
@@ -109,10 +109,10 @@ se connecte alors sans aucun rang. Préférez les rôles d'application.
 
 <NavigationFooter
   nextSteps={[
-    {label: "Créer la connexion SSO", href: "../create-connection"},
+    {label: "Créer la connexion SSO", href: "../configure-sso-connection"},
   ]}
   seeAlso={[
-    {label: "Donner les rangs depuis votre fournisseur", href: "../role-bindings"},
-    {label: "Okta", href: "../okta"},
+    {label: "Donner les rangs depuis votre fournisseur", href: "../sso-role-bindings"},
+    {label: "Okta", href: "../sso-okta"},
   ]}
 />

@@ -1,6 +1,6 @@
 ---
-sidebar_position: 3
-title: Gérer les membres
+sidebar_position: 2
+title: "Comment gérer les membres"
 description: "Changer les rangs d'un membre, retirer un accès, quitter une organisation ou un projet, et déléguer l'accès d'un projet à ses administrateurs dans la console Hikube."
 ---
 
@@ -39,7 +39,7 @@ Vous ne pouvez pas modifier :
 - un membre de rang supérieur au vôtre ;
 - vos propres rangs ;
 - un compte SSO dont les rangs viennent du fournisseur d'identité (voir
-  [role bindings](./sso/role-bindings.md)).
+  [role bindings](./sso-role-bindings.md)).
 
 Seul un super-administrateur donne **Super-administration**, et seulement à un
 compte avec un mot de passe et un second facteur, sans lien avec un fournisseur
@@ -60,7 +60,7 @@ effet.
 :::warning Clés d'API
 Retirer un membre ne révoque pas les clés d'API qu'il a créées : une clé garde
 ses scopes. Révoquez-les dans la carte **Clés d'API** des paramètres du projet
-(voir [Authentification de l'API](../../api/authentication)).
+(voir [Authentification de l'API](../../../api/authentication)).
 :::
 
 ## Quitter l'organisation ou un projet
@@ -123,10 +123,10 @@ envoyée pendant la délégation reste valable après sa désactivation.
 
 <NavigationFooter
   nextSteps={[
-    {label: "Inviter des personnes", href: "../invitations"},
+    {label: "Inviter des personnes", href: "../invite-members"},
   ]}
   seeAlso={[
-    {label: "Rangs et qui fait quoi", href: "../overview"},
-    {label: "Revue des accès", href: "../access-review"},
+    {label: "Concepts", href: "../../concepts"},
+    {label: "Revue des accès", href: "../export-access-review"},
   ]}
 />

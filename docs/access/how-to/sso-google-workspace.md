@@ -1,6 +1,6 @@
 ---
-sidebar_position: 6
-title: Google Workspace
+sidebar_position: 12
+title: "Comment configurer Google Workspace pour le SSO"
 description: "Préparer un client OAuth Google Workspace pour la connexion SSO de votre organisation Hikube : écran de consentement interne, URI de redirection et domaine principal."
 ---
 
@@ -16,8 +16,8 @@ production.
 :::
 
 Cette page décrit la partie Google. Lisez d'abord
-[Avant de commencer](./before-you-start.md), puis revenez à
-[Créer la connexion SSO](./create-connection.md) pour la partie Hikube.
+[Démarrage rapide](../quick-start.md), puis revenez à
+[Créer la connexion SSO](./configure-sso-connection.md) pour la partie Hikube.
 
 ## 1. Restreindre l'application à votre Workspace
 
@@ -63,9 +63,9 @@ fournisseur, ni l'inverse. Supprimez la connexion et créez-en une nouvelle.
 
 <NavigationFooter
   nextSteps={[
-    {label: "Créer la connexion SSO", href: "../create-connection"},
+    {label: "Créer la connexion SSO", href: "../configure-sso-connection"},
   ]}
   seeAlso={[
-    {label: "Gérer les membres", href: "../../members"},
+    {label: "Gérer les membres", href: "../manage-members"},
   ]}
 />

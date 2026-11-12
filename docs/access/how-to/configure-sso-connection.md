@@ -1,6 +1,6 @@
 ---
-sidebar_position: 2
-title: Créer la connexion SSO
+sidebar_position: 7
+title: "Comment configurer la connexion SSO"
 description: "Créer la connexion SSO de votre organisation dans la console Hikube : URL de découverte, client id, secret, domaines autorisés, claims, URI de redirection et activation."
 ---
 
@@ -14,13 +14,13 @@ Ce guide crée la connexion SSO de l'organisation `acme`, pour les adresses
 ## Prérequis
 
 - Le rang **Super-administration** sur l'organisation.
-- Le domaine `acme.com` vérifié (voir [Vérifier un domaine](../domains.md)).
+- Le domaine `acme.com` vérifié (voir [Vérifier un domaine](./verify-domain.md)).
 - Une application enregistrée chez votre fournisseur d'identité, avec son
-  client id et son secret : [Okta](./okta.md),
-  [Microsoft Entra ID](./entra-id.md),
-  [Google Workspace](./google-workspace.md) ou [Auth0](./auth0.md). Vous y
+  client id et son secret : [Okta](./sso-okta.md),
+  [Microsoft Entra ID](./sso-entra-id.md),
+  [Google Workspace](./sso-google-workspace.md) ou [Auth0](./sso-auth0.md). Vous y
   ajouterez l'URI de redirection à l'étape 3.
-- La [liste de contrôle](./before-you-start.md#liste-de-contrôle) parcourue.
+- La [liste de contrôle](../quick-start.md#liste-de-contrôle) parcourue.
 
 ## 1. Ouvrir la page de la connexion
 
@@ -43,7 +43,7 @@ La page **Connexion unique (SSO)** affiche **Aucune connexion SSO**.
 | **Secret du client** | | Écriture seule : il n'est jamais réaffiché |
 | **Domaines autorisés** | `acme.com` coché | Aucun coché : tous les domaines vérifiés de l'organisation. Un sous-domaine est un domaine à part |
 | **Confirmer l'adresse par un lien** | Activé | Désactivez-le seulement si votre fournisseur envoie `email_verified` dans le jeton d'identité |
-| **Invitation requise** | Désactivé | Activé : seules les personnes invitées se connectent (voir [Gérer la connexion](./manage-connection.md#invitation-requise)) |
+| **Invitation requise** | Désactivé | Activé : seules les personnes invitées se connectent (voir [Gérer la connexion](./manage-sso-connection.md#invitation-requise)) |
 | **Claim du prénom** / **Claim du nom** | Vides | Vides : `given_name` et `family_name` |
 | **Claim des rôles** | Vide, ou `groups` | Vide : les rangs se donnent dans Hikube. Renseigné : les role bindings décident des rangs des comptes SSO |
 
@@ -79,7 +79,7 @@ Un claim peut être un chemin pointé, par exemple `hikube.roles` pour le champ 
 
 À l'activation, Hikube contrôle à nouveau l'enregistrement DNS de chaque
 domaine servi. S'il a disparu, l'activation est refusée : republiez
-l'enregistrement (voir [Vérifier un domaine](../domains.md)).
+l'enregistrement (voir [Vérifier un domaine](./verify-domain.md)).
 
 ## 5. Tester
 
@@ -98,8 +98,8 @@ l'enregistrement (voir [Vérifier un domaine](../domains.md)).
   confirme son adresse par le lien reçu. Le compte apparaît dans les membres
   une fois confirmé. Il est supprimé s'il n'est pas confirmé sous 24 heures.
 - **Rangs.** Un administrateur donne ensuite un rang depuis
-  [la page des membres](../members.md). Avec un claim des rôles, les
-  [role bindings](./role-bindings.md) donnent les rangs à chaque connexion.
+  [la page des membres](./manage-members.md). Avec un claim des rôles, les
+  [role bindings](./sso-role-bindings.md) donnent les rangs à chaque connexion.
 - **Domaines.** L'adresse du jeton d'identité doit être sur un domaine
   autorisé, comparé exactement. Avec `acme.com` seul, `bob@eu.acme.com` est
   refusé.
@@ -113,11 +113,11 @@ l'enregistrement (voir [Vérifier un domaine](../domains.md)).
 
 <NavigationFooter
   nextSteps={[
-    {label: "Donner les rangs depuis votre fournisseur", href: "../role-bindings"},
-    {label: "Gérer la connexion SSO", href: "../manage-connection"},
+    {label: "Donner les rangs depuis votre fournisseur", href: "../sso-role-bindings"},
+    {label: "Gérer la connexion SSO", href: "../manage-sso-connection"},
   ]}
   seeAlso={[
-    {label: "Avant de commencer", href: "../before-you-start"},
+    {label: "Démarrage rapide", href: "../../quick-start"},
     {label: "Dépannage", href: "../../troubleshooting"},
   ]}
 />

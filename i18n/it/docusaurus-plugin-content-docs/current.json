@@ -239,12 +239,16 @@
     "message": "Gestione degli accessi",
     "description": "The label for category 'Gestion des accès' in sidebar 'docsSidebar'"
   },
-  "sidebar.docsSidebar.category.Connexion SSO": {
-    "message": "Connessione SSO",
-    "description": "The label for category 'Connexion SSO' in sidebar 'docsSidebar'"
+  "sidebar.docsSidebar.category.how-to-access": {
+    "message": "Guide pratiche",
+    "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
-  "sidebar.docsSidebar.category.Fournisseurs d'identité": {
-    "message": "Provider di identità",
-    "description": "The label for category 'Fournisseurs d'identité' in sidebar 'docsSidebar'"
+  "sidebar.docsSidebar.category.how-to-access.link.generated-index.title": {
+    "message": "Guide pratiche — Gestione degli accessi",
+    "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-access.link.generated-index.description": {
+    "message": "Guide passo passo per la gestione degli accessi su Hikube: ogni guida descrive un'operazione precisa da svolgere dalla console, con i passaggi e le verifiche.",
+    "description": "The generated-index page description for category 'Guides pratiques' in sidebar 'docsSidebar'"
   }
 }

@@ -239,12 +239,16 @@
     "message": "Zugriffsverwaltung",
     "description": "The label for category 'Gestion des accès' in sidebar 'docsSidebar'"
   },
-  "sidebar.docsSidebar.category.Connexion SSO": {
-    "message": "SSO-Verbindung",
-    "description": "The label for category 'Connexion SSO' in sidebar 'docsSidebar'"
+  "sidebar.docsSidebar.category.how-to-access": {
+    "message": "Praktische Anleitungen",
+    "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
   },
-  "sidebar.docsSidebar.category.Fournisseurs d'identité": {
-    "message": "Identitätsanbieter",
-    "description": "The label for category 'Fournisseurs d'identité' in sidebar 'docsSidebar'"
+  "sidebar.docsSidebar.category.how-to-access.link.generated-index.title": {
+    "message": "Praktische Anleitungen — Zugriffsverwaltung",
+    "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-access.link.generated-index.description": {
+    "message": "Schritt-für-Schritt-Anleitungen für die Zugriffsverwaltung auf Hikube: Jede Anleitung beschreibt eine konkrete Aufgabe in der Konsole, mit Schritten und Prüfungen.",
+    "description": "The generated-index page description for category 'Guides pratiques' in sidebar 'docsSidebar'"
   }
 }

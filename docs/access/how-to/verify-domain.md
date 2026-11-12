@@ -1,6 +1,6 @@
 ---
-sidebar_position: 7
-title: Vérifier un domaine
+sidebar_position: 6
+title: "Comment vérifier un domaine"
 description: "Prouver que votre organisation possède un domaine par un enregistrement DNS TXT _hikube-challenge : déclaration, vérification, expiration, relance, délégation par CNAME et retrait."
 ---
 
@@ -11,9 +11,9 @@ import NavigationFooter from '@site/src/components/NavigationFooter';
 Une organisation prouve qu'elle possède un domaine, par exemple `acme.com`, en
 publiant un enregistrement DNS TXT. Un domaine vérifié sert à :
 
-- la [connexion SSO](./sso/before-you-start.md) : seules les adresses des
+- la [connexion SSO](../quick-start.md) : seules les adresses des
   domaines vérifiés peuvent l'utiliser ;
-- le [transfert d'un compte](./account-transfer.md) à l'organisation.
+- le [transfert d'un compte](./transfer-account.md) à l'organisation.
 
 Prérequis : le rang **Administration** ou plus.
 
@@ -151,10 +151,10 @@ plus aucun domaine est désactivée.
 
 <NavigationFooter
   nextSteps={[
-    {label: "Créer la connexion SSO", href: "../sso/create-connection"},
+    {label: "Créer la connexion SSO", href: "../configure-sso-connection"},
   ]}
   seeAlso={[
-    {label: "Avant de commencer (SSO)", href: "../sso/before-you-start"},
-    {label: "Dépannage", href: "../troubleshooting"},
+    {label: "Démarrage rapide", href: "../../quick-start"},
+    {label: "Dépannage", href: "../../troubleshooting"},
   ]}
 />

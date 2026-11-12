@@ -1,6 +1,6 @@
 ---
-sidebar_position: 4
-title: Confier un compte à l'organisation
+sidebar_position: 3
+title: "Comment confier un compte à l'organisation"
 description: "Transférer un compte Hikube personnel à l'organisation : conditions, effets, ce que les administrateurs peuvent ensuite faire, et lien avec la connexion SSO."
 ---
 
@@ -22,7 +22,7 @@ un compte à votre organisation, contactez le support.
 
 Rien n'est transféré sans l'accord de la personne. Le transfert demande :
 
-- une adresse e-mail **vérifiée**, sur un [domaine vérifié](./domains.md) de
+- une adresse e-mail **vérifiée**, sur un [domaine vérifié](./verify-domain.md) de
   l'organisation, dont l'enregistrement DNS est toujours en place ;
 - être membre de l'organisation, ou accepter son invitation au même moment ;
 - **aucun accès dans une autre organisation**, ni sur elle ni sur un de ses
@@ -37,7 +37,7 @@ compte : elle devient membre externe.
 - Le compte garde son mot de passe et son second facteur.
 - Les super-administrateurs de l'organisation voient le transfert.
 - Par défaut, le compte ne peut plus rejoindre une autre organisation (voir
-  [Membres externes](./invitations.md#membres-externes)).
+  [Membres externes](./invite-members.md#membres-externes)).
 
 ### Avec une connexion SSO active
 
@@ -46,7 +46,7 @@ l'adresse, le transfert se termine à la prochaine connexion de la personne par
 votre fournisseur, après son mot de passe et son second facteur. Le compte
 devient alors un compte SSO : son mot de passe et son second facteur Hikube sont
 retirés. Avec un claim des rôles, ses rangs donnés dans Hikube sont remplacés
-par ceux des [role bindings](./sso/role-bindings.md).
+par ceux des [role bindings](./sso-role-bindings.md).
 
 Un super-administrateur n'est jamais converti : il garde son mot de passe.
 
@@ -75,7 +75,7 @@ appartient à la personne : vos administrateurs ne le modifient pas.
 
 <NavigationFooter
   seeAlso={[
-    {label: "Rangs et qui fait quoi", href: "../overview"},
-    {label: "Vérifier un domaine", href: "../domains"},
+    {label: "Concepts", href: "../../concepts"},
+    {label: "Vérifier un domaine", href: "../verify-domain"},
   ]}
 />
