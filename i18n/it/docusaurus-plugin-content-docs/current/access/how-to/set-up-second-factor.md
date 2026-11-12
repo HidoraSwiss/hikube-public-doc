@@ -40,7 +40,7 @@ Un account che accede tramite la [connessione SSO](../quick-start.md) della prop
 
 ## Password o secondo fattore perso
 
-- **Password dimenticata**: nella pagina di accesso inserisca il suo indirizzo, poi faccia clic su **Forgot Password?** sotto il campo della password. Riceve per e-mail un link per scegliere una nuova password. Il suo secondo fattore resta lo stesso. Un account SSO non ha questo link: la sua password si gestisce presso il suo provider di identità.
+- **Password dimenticata**: nella pagina di accesso inserisca il suo indirizzo, poi faccia clic su **Forgot Password?** sotto il campo della password. Riceve per e-mail un link. Chiede prima il suo secondo fattore, poi una nuova password. Il suo secondo fattore resta lo stesso. Un account SSO riceve solo un'e-mail che lo rimanda alla connessione SSO della sua organizzazione: la sua password si gestisce presso il suo provider di identità.
 
 Secondo fattore perso:
 

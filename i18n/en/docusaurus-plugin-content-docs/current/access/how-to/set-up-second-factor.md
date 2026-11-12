@@ -40,7 +40,7 @@ An account that signs in through its organization's [SSO connection](../quick-st
 
 ## Lost password or second factor
 
-- **Forgotten password**: on the sign-in page, enter your address, then click **Forgot Password?** below the password field. You receive an e-mail with a link to choose a new password. Your second factor stays the same. An SSO account does not get this link: its password is managed at your identity provider.
+- **Forgotten password**: on the sign-in page, enter your address, then click **Forgot Password?** below the password field. You receive an e-mail with a link. It asks for your second factor first, then a new password. Your second factor stays the same. An SSO account only receives an e-mail that sends it to its organization's SSO connection: its password is managed at your identity provider.
 
 Lost second factor:
 
