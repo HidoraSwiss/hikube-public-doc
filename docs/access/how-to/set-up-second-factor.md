@@ -40,6 +40,10 @@ Un compte qui se connecte par la [connexion SSO](../quick-start.md) de son organ
 
 ## Mot de passe ou second facteur perdu
 
+- **Mot de passe oublié** : sur la page de connexion, saisissez votre adresse, puis cliquez sur **Mot de passe oublié ?** sous le champ du mot de passe. Vous recevez par e-mail un lien pour choisir un nouveau mot de passe. Votre second facteur reste le même. Un compte SSO n'a pas ce lien : son mot de passe se gère chez votre fournisseur d'identité.
+
+Second facteur perdu :
+
 - **Compte de l'organisation** : un administrateur de l'organisation peut réinitialiser ses identifiants (voir [Confier un compte à l'organisation](./transfer-account.md#ce-que-vos-administrateurs-peuvent-faire)). La personne reçoit un lien valable 24 heures pour choisir un nouveau mot de passe et un nouveau second facteur.
 - **Compte personnel** : contactez le support.
 - **Plus aucun super-administrateur ne peut se connecter** : contactez le support. Après vérification de votre identité, le support réinitialise les identifiants d'un super-administrateur.

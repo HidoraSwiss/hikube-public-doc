@@ -40,6 +40,10 @@ An account that signs in through its organization's [SSO connection](../quick-st
 
 ## Lost password or second factor
 
+- **Forgotten password**: on the sign-in page, enter your address, then click **Forgot Password?** below the password field. You receive an e-mail with a link to choose a new password. Your second factor stays the same. An SSO account does not get this link: its password is managed at your identity provider.
+
+Lost second factor:
+
 - **Organization account**: an administrator of the organization can reset its credentials (see [Hand an account over to the organization](./transfer-account.md#what-your-administrators-can-do)). The person receives a link valid for 24 hours to choose a new password and a new second factor.
 - **Personal account**: contact support.
 - **No super admin can sign in any more**: contact support. After verifying your identity, support resets the credentials of a super admin.

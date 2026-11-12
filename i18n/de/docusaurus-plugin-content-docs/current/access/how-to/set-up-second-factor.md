@@ -40,6 +40,10 @@ Ein Konto, das sich über die [SSO-Verbindung](../quick-start.md) seiner Organis
 
 ## Passwort oder zweiter Faktor verloren
 
+- **Passwort vergessen**: Geben Sie auf der Anmeldeseite Ihre Adresse ein und klicken Sie dann unter dem Passwortfeld auf **Passwort vergessen?**. Sie erhalten per E-Mail einen Link, um ein neues Passwort zu wählen. Ihr zweiter Faktor bleibt derselbe. Ein SSO-Konto hat diesen Link nicht: Sein Passwort wird bei Ihrem Identitätsanbieter verwaltet.
+
+Zweiter Faktor verloren:
+
 - **Organisationskonto**: Ein Administrator der Organisation kann seine Zugangsdaten zurücksetzen (siehe [Ein Konto an die Organisation übertragen](./transfer-account.md#was-ihre-administratoren-tun-können)). Die Person erhält einen 24 Stunden gültigen Link, um ein neues Passwort und einen neuen zweiten Faktor zu wählen.
 - **Persönliches Konto**: Wenden Sie sich an den Support.
 - **Kein Super-Administrator kann sich mehr anmelden**: Wenden Sie sich an den Support. Nach Überprüfung Ihrer Identität setzt der Support die Zugangsdaten eines Super-Administrators zurück.
