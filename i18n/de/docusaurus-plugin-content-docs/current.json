@@ -234,5 +234,17 @@
   "sidebar.docsSidebar.category.api-reference": {
     "message": "Referenz",
     "description": "The label for category 'Référence' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Gestion des accès": {
+    "message": "Zugriffsverwaltung",
+    "description": "The label for category 'Gestion des accès' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Connexion SSO": {
+    "message": "SSO-Verbindung",
+    "description": "The label for category 'Connexion SSO' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Fournisseurs d'identité": {
+    "message": "Identitätsanbieter",
+    "description": "The label for category 'Fournisseurs d'identité' in sidebar 'docsSidebar'"
   }
 }

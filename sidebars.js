@@ -109,6 +109,41 @@ const sidebars = {
     },
     {
       type: "category",
+      label: "Gestion des accès",
+      items: [
+        "access/overview",
+        "access/invitations",
+        "access/members",
+        "access/account-transfer",
+        "access/mfa",
+        "access/access-review",
+        "access/domains",
+        {
+          type: "category",
+          label: "Connexion SSO",
+          items: [
+            "access/sso/before-you-start",
+            "access/sso/create-connection",
+            "access/sso/role-bindings",
+            {
+              type: "category",
+              label: "Fournisseurs d'identité",
+              items: [
+                "access/sso/okta",
+                "access/sso/entra-id",
+                "access/sso/google-workspace",
+                "access/sso/auth0",
+              ],
+            },
+            "access/sso/manage-connection",
+            "access/sso/security",
+          ],
+        },
+        "access/troubleshooting",
+      ],
+    },
+    {
+      type: "category",
       label: "Services",
       items: [
         // Disques et Buckets S3 au même niveau que les autres services, comme
