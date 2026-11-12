@@ -10,12 +10,9 @@ import NavigationFooter from '@site/src/components/NavigationFooter';
 
 ## Organisation et projets
 
-- L'**organisation** représente votre entreprise. Elle regroupe vos membres et
-  vos projets.
-- Un **projet** est un espace isolé de l'organisation : vos VM, clusters et
-  bases de données y vivent.
-- Un rang sur l'organisation vaut pour tous ses projets. Un rang sur un projet
-  s'y ajoute.
+- L'**organisation** représente votre entreprise. Elle regroupe vos membres et vos projets.
+- Un **projet** est un espace isolé de l'organisation : vos VM, clusters et bases de données y vivent.
+- Un rang sur l'organisation vaut pour tous ses projets. Un rang sur un projet s'y ajoute.
 
 ## Les quatre rangs
 
@@ -26,12 +23,10 @@ import NavigationFooter from '@site/src/components/NavigationFooter';
 | **Administration** | `admin` | Créer, modifier et supprimer les ressources ; gérer les membres |
 | **Super-administration** | `superadmin` | Tous les droits, dont donner ce rang ; gérer la connexion SSO |
 
-Un rang inclut les droits des rangs inférieurs. Un membre qui tient plusieurs
-rangs sur une même portée est affiché avec le plus élevé.
+Un rang inclut les droits des rangs inférieurs. Un membre qui tient plusieurs rangs sur une même portée est affiché avec le plus élevé.
 
 :::note Pas de super-administration de projet
-**Super-administration** est un rang de l'organisation seulement. Sur un
-projet, le rang le plus élevé est **Administration**.
+**Super-administration** est un rang de l'organisation seulement. Sur un projet, le rang le plus élevé est **Administration**.
 :::
 
 ## Qui peut faire quoi dans l'organisation
@@ -52,13 +47,9 @@ projet, le rang le plus élevé est **Administration**.
 Règles qui protègent l'organisation :
 
 - personne ne donne un rang supérieur au sien ;
-- personne ne baisse ni ne retire son propre rang : pour partir, on
-  [quitte l'organisation](./how-to/manage-members.md#quitter-lorganisation-ou-un-projet) ;
-- l'organisation garde toujours au moins un super-administrateur qui se
-  connecte avec un mot de passe ;
-- **Super-administration** ne va qu'à un compte avec un mot de passe et un
-  second facteur, sans lien avec un fournisseur d'identité. L'organisation garde
-  ainsi un accès si sa connexion SSO tombe.
+- personne ne baisse ni ne retire son propre rang : pour partir, on [quitte l'organisation](./how-to/manage-members.md#quitter-lorganisation-ou-un-projet) ;
+- l'organisation garde toujours au moins un super-administrateur qui se connecte avec un mot de passe ;
+- **Super-administration** ne va qu'à un compte avec un mot de passe et un second facteur, sans lien avec un fournisseur d'identité. L'organisation garde ainsi un accès si sa connexion SSO tombe.
 
 ## Types de membres
 
@@ -69,46 +60,28 @@ Règles qui protègent l'organisation :
 | **Compte personnel** (membre externe) | La personne | Donner et retirer ses accès dans votre organisation, rien d'autre |
 | **Compte d'une autre organisation** (membre externe) | L'autre organisation | Donner et retirer ses accès dans votre organisation, rien d'autre |
 
-Un membre externe garde son compte, ses identifiants et ses accès ailleurs.
-Retirer son accès chez vous ne touche pas le reste.
+Un membre externe garde son compte, ses identifiants et ses accès ailleurs. Retirer son accès chez vous ne touche pas le reste.
 
-Un **membre d'un seul projet** tient des rangs sur un ou plusieurs projets, et
-aucun sur l'organisation. La page des membres l'affiche avec le badge
-**Projets seulement**. Il voit le nom de l'organisation et ses projets, rien
-d'autre. Son accès prend fin avec le projet.
+Un **membre d'un seul projet** tient des rangs sur un ou plusieurs projets, et aucun sur l'organisation. La page des membres l'affiche avec le badge **Projets seulement**. Il voit le nom de l'organisation et ses projets, rien d'autre. Son accès prend fin avec le projet.
 
-Par défaut, un compte qui appartient à une organisation ne peut pas rejoindre
-une autre organisation : la **collaboration externe** est refusée.
+Par défaut, un compte qui appartient à une organisation ne peut pas rejoindre une autre organisation : la **collaboration externe** est refusée.
 
 ## Second facteur
 
-Tout compte qui se connecte avec un mot de passe Hikube présente aussi un
-second facteur. Un compte SSO n'a ni mot de passe ni second facteur dans
-Hikube : sa MFA est celle de votre fournisseur d'identité. Voir
-[Second facteur](./how-to/set-up-second-factor.md).
+Tout compte qui se connecte avec un mot de passe Hikube présente aussi un second facteur. Un compte SSO n'a ni mot de passe ni second facteur dans Hikube : sa MFA est celle de votre fournisseur d'identité. Voir [Second facteur](./how-to/set-up-second-factor.md).
 
 ## Domaine vérifié
 
-Un domaine vérifié prouve que l'organisation possède un domaine, par exemple
-`acme.com`, grâce à un enregistrement DNS `TXT` nommé
-`_hikube-challenge.acme.com`. Un domaine n'appartient qu'à une organisation. Un
-sous-domaine est un domaine à part. L'enregistrement doit rester publié. Voir
-[Vérifier un domaine](./how-to/verify-domain.md).
+Un domaine vérifié prouve que l'organisation possède un domaine, par exemple `acme.com`, grâce à un enregistrement DNS `TXT` nommé `_hikube-challenge.acme.com`. Un domaine n'appartient qu'à une organisation. Un sous-domaine est un domaine à part. L'enregistrement doit rester publié. Voir [Vérifier un domaine](./how-to/verify-domain.md).
 
 ## Connexion SSO
 
-Avec la connexion unique (SSO), les personnes de votre organisation se
-connectent avec le compte de leur entreprise, chez votre **fournisseur
-d'identité**, au lieu d'un mot de passe Hikube.
+Avec la connexion unique (SSO), les personnes de votre organisation se connectent avec le compte de leur entreprise, chez votre **fournisseur d'identité**, au lieu d'un mot de passe Hikube.
 
-- **Une seule connexion par organisation**, en OpenID Connect. SAML n'est pas
-  pris en charge.
-- **Les domaines vérifiés seulement.** Seules les adresses des domaines
-  autorisés de la connexion, tous vérifiés, peuvent l'utiliser.
-- **Un compte SSO** est créé à la première connexion d'une personne. Il
-  appartient à l'organisation.
-- **Les comptes avec un mot de passe** continuent de se connecter avec lui et
-  ne sont jamais redirigés vers votre fournisseur.
+- **Une seule connexion par organisation**, en OpenID Connect. SAML n'est pas pris en charge.
+- **Les domaines vérifiés seulement.** Seules les adresses des domaines autorisés de la connexion, tous vérifiés, peuvent l'utiliser.
+- **Un compte SSO** est créé à la première connexion d'une personne. Il appartient à l'organisation.
+- **Les comptes avec un mot de passe** continuent de se connecter avec lui et ne sont jamais redirigés vers votre fournisseur.
 
 ### Exigences techniques
 
@@ -131,23 +104,18 @@ d'identité**, au lieu d'un mot de passe Hikube.
 | [Google Workspace](./how-to/sso-google-workspace.md) | Non vérifié |
 | [Auth0](./how-to/sso-auth0.md) | Non vérifié |
 
-Tout autre fournisseur OpenID Connect qui respecte les exigences ci-dessus peut
-convenir. Il n'a pas été vérifié par Hikube : contactez le support avant de le
-mettre en production.
+Tout autre fournisseur OpenID Connect qui respecte les exigences ci-dessus peut convenir. Il n'a pas été vérifié par Hikube : contactez le support avant de le mettre en production.
 
 ## Role bindings : une seule source de droits
 
-Un **role binding** associe une valeur du claim des rôles de votre fournisseur
-(un groupe ou un rôle de votre annuaire) à un rang Hikube, sur l'organisation ou
-sur un projet. Chaque connexion SSO a une seule source de droits :
+Un **role binding** associe une valeur du claim des rôles de votre fournisseur (un groupe ou un rôle de votre annuaire) à un rang Hikube, sur l'organisation ou sur un projet. Chaque connexion SSO a une seule source de droits :
 
 | Claim des rôles | D'où viennent les rangs des comptes SSO |
 |---|---|
 | **Renseigné** | Des role bindings uniquement, à chaque connexion. Ils ne se changent plus dans Hikube |
 | **Vide** | De Hikube : un administrateur les donne depuis la page des membres |
 
-Un role binding ne donne jamais **Super-administration**. Voir
-[Donner les rangs depuis votre fournisseur](./how-to/sso-role-bindings.md).
+Un role binding ne donne jamais **Super-administration**. Voir [Donner les rangs depuis votre fournisseur](./how-to/sso-role-bindings.md).
 
 <NavigationFooter
   nextSteps={[

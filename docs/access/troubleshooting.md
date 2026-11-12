@@ -9,9 +9,7 @@ import NavigationFooter from '@site/src/components/NavigationFooter';
 
 # Dépannage — Gestion des accès
 
-La console affiche un message pour chaque refus. Les tableaux ci-dessous donnent
-le code de l'erreur (`60xxx`), sa signification et l'action à mener. Si vous
-contactez le support, indiquez le message affiché et l'heure de l'opération.
+La console affiche un message pour chaque refus. Les tableaux ci-dessous donnent le code de l'erreur (`60xxx`), sa signification et l'action à mener. Si vous contactez le support, indiquez le message affiché et l'heure de l'opération.
 
 ## Membres et rangs
 
@@ -85,26 +83,21 @@ contactez le support, indiquez le message affiché et l'heure de l'opération.
 
 ### Une personne est refusée à la connexion
 
-- Son adresse n'est pas sur un **Domaine autorisé** : `bob@eu.acme.com` n'est
-  pas `acme.com`.
-- Son adresse n'est pas dans le jeton d'identité (Entra ID : attribut de
-  messagerie vide).
+- Son adresse n'est pas sur un **Domaine autorisé** : `bob@eu.acme.com` n'est pas `acme.com`.
+- Son adresse n'est pas dans le jeton d'identité (Entra ID : attribut de messagerie vide).
 - Elle n'est pas assignée à l'application chez votre fournisseur.
 - **Invitation requise** est activée et elle n'a pas été invitée.
 
 ### Une personne se connecte mais n'a aucun accès
 
 - Sans claim des rôles : un administrateur doit lui donner un rang.
-- Avec un claim des rôles : aucun role binding ne correspond à une valeur de
-  son jeton. Vérifiez la valeur exacte, majuscules comprises. Avec Entra ID et
-  le claim `groups`, au-delà de 200 groupes le claim est absent.
+- Avec un claim des rôles : aucun role binding ne correspond à une valeur de son jeton. Vérifiez la valeur exacte, majuscules comprises. Avec Entra ID et le claim `groups`, au-delà de 200 groupes le claim est absent.
 - Avec **Confirmer l'adresse par un lien** : elle n'a pas encore ouvert le lien.
 - La limite de membres est atteinte.
 
 ### Plus personne ne peut se connecter par SSO
 
-- Le secret client a expiré chez votre fournisseur : saisissez le nouveau dans
-  **Modifier les réglages**.
+- Le secret client a expiré chez votre fournisseur : saisissez le nouveau dans **Modifier les réglages**.
 - La connexion est **Inactive** : un domaine autorisé a peut-être été retiré.
 - Connectez-vous avec un super-administrateur qui a un mot de passe.
 

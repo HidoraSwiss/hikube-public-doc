@@ -8,10 +8,7 @@ import NavigationFooter from '@site/src/components/NavigationFooter';
 
 # Gestion des accès
 
-La gestion des accès décide **qui** entre dans votre organisation Hikube et
-**ce que chaque personne peut y faire**. Elle se pilote depuis la
-[console](https://console.hikube.cloud), menu de votre profil → **Membres de
-l'organisation**.
+La gestion des accès décide **qui** entre dans votre organisation Hikube et **ce que chaque personne peut y faire**. Elle se pilote depuis la [console](https://console.hikube.cloud), menu de votre profil → **Membres de l'organisation**.
 
 ## Ce qu'elle couvre
 
@@ -27,22 +24,16 @@ l'organisation**.
 
 ## Pour qui
 
-- **Les membres** consultent la liste des membres, répondent à leurs
-  invitations et peuvent quitter une organisation.
-- **Les administrateurs** invitent, changent les rangs, retirent des accès,
-  gèrent les domaines et exportent la revue des accès.
-- **Les super-administrateurs** donnent la **Super-administration** et gèrent la
-  connexion SSO.
+- **Les membres** consultent la liste des membres, répondent à leurs invitations et peuvent quitter une organisation.
+- **Les administrateurs** invitent, changent les rangs, retirent des accès, gèrent les domaines et exportent la revue des accès.
+- **Les super-administrateurs** donnent la **Super-administration** et gèrent la connexion SSO.
 
 ## Les accès retirés prennent effet vite
 
-Un rang baissé, un membre retiré, un role binding supprimé : la personne est
-déconnectée et le changement s'applique sous **5 minutes** au plus.
+Un rang baissé, un membre retiré, un role binding supprimé : la personne est déconnectée et le changement s'applique sous **5 minutes** au plus.
 
 :::info Console et API
-La gestion des accès se fait dans la console. Une
-[clé d'API](../../api/authentication) ne peut pas l'appeler : une clé agit sur
-les ressources d'un projet, jamais sur les accès.
+La gestion des accès se fait dans la console. Une [clé d'API](../../api/authentication) ne peut pas l'appeler : une clé agit sur les ressources d'un projet, jamais sur les accès.
 :::
 
 <NavigationFooter

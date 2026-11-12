@@ -8,8 +8,7 @@ import NavigationFooter from '@site/src/components/NavigationFooter';
 
 # Revue des accès
 
-La revue des accès est un export CSV de tous les rangs de tous les membres de
-l'organisation. Elle sert aux revues périodiques et aux audits.
+La revue des accès est un export CSV de tous les rangs de tous les membres de l'organisation. Elle sert aux revues périodiques et aux audits.
 
 ## Exporter la revue
 
@@ -18,8 +17,7 @@ Prérequis : le rang **Administration** ou plus.
 1. Ouvrez **Membres de l'organisation**, onglet **Membres**.
 2. Cliquez sur **Exporter la revue des accès**.
 
-La console télécharge `revue-des-acces-acme-2026-11-12.csv`. Une ligne par rang
-et par portée, triée par e-mail puis par projet.
+La console télécharge `revue-des-acces-acme-2026-11-12.csv`. Une ligne par rang et par portée, triée par e-mail puis par projet.
 
 ## Colonnes
 
@@ -40,33 +38,24 @@ et par portée, triée par e-mail puis par projet.
 
 ## Dernière connexion et inactivité
 
-Hikube enregistre la première requête de chaque connexion à la console. Un
-membre est **inactif** quand il ne s'est pas connecté depuis **90 jours**. Un
-compte sans connexion enregistrée compte depuis sa création.
+Hikube enregistre la première requête de chaque connexion à la console. Un membre est **inactif** quand il ne s'est pas connecté depuis **90 jours**. Un compte sans connexion enregistrée compte depuis sa création.
 
-Une organisation peut aussi bloquer automatiquement ses propres comptes
-inactifs :
+Une organisation peut aussi bloquer automatiquement ses propres comptes inactifs :
 
-- seuls les comptes de l'organisation sont bloqués. Les membres externes sont
-  seulement signalés, et un super-administrateur n'est jamais bloqué ainsi ;
-- le blocage a lieu à la prochaine consultation de la liste des membres ou de
-  la revue des accès ;
-- les jours comptent au plus tôt depuis l'activation du réglage : l'activer ne
-  bloque personne tout de suite ;
+- seuls les comptes de l'organisation sont bloqués. Les membres externes sont seulement signalés, et un super-administrateur n'est jamais bloqué ainsi ;
+- le blocage a lieu à la prochaine consultation de la liste des membres ou de la revue des accès ;
+- les jours comptent au plus tôt depuis l'activation du réglage : l'activer ne bloque personne tout de suite ;
 - un administrateur débloque le compte.
 
 :::info Disponibilité
-Le seuil d'inactivité (de 1 à 3650 jours) et le blocage des comptes inactifs ne
-se règlent pas encore dans la console. Pour les changer, contactez le support.
-La colonne **Inactif** utilise le seuil de 90 jours par défaut.
+Le seuil d'inactivité (de 1 à 3650 jours) et le blocage des comptes inactifs ne se règlent pas encore dans la console. Pour les changer, contactez le support. La colonne **Inactif** utilise le seuil de 90 jours par défaut.
 :::
 
 ## Que vérifier
 
 - les **Membres externes** : leurs accès sont-ils toujours justifiés ?
 - les comptes **Inactifs** : retirez les accès qui ne servent plus ;
-- les rangs **Administration** et **Super-administration** : gardez-en le moins
-  possible, mais au moins un super-administrateur avec un mot de passe ;
+- les rangs **Administration** et **Super-administration** : gardez-en le moins possible, mais au moins un super-administrateur avec un mot de passe ;
 - les **Adresses hors des domaines vérifiés** ;
 - pour les comptes SSO, les **Role bindings** qui donnent chaque rang.
 

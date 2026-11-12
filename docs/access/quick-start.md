@@ -8,41 +8,25 @@ import NavigationFooter from '@site/src/components/NavigationFooter';
 
 # Démarrage rapide : connexion SSO
 
-Ce guide met en place la connexion SSO de l'organisation `acme`. Les personnes
-dont l'adresse est en `@acme.com` se connecteront ensuite à Hikube avec le
-compte de leur entreprise.
+Ce guide met en place la connexion SSO de l'organisation `acme`. Les personnes dont l'adresse est en `@acme.com` se connecteront ensuite à Hikube avec le compte de leur entreprise.
 
 ## Avant de commencer
 
 - Le rang **Super-administration** sur l'organisation.
 - Un accès d'administration à votre fournisseur d'identité.
-- Une application web **confidentielle**, dédiée à Hikube, enregistrée chez
-  votre fournisseur, avec son client id et son secret :
-  [Okta](./how-to/sso-okta.md), [Microsoft Entra ID](./how-to/sso-entra-id.md),
-  [Google Workspace](./how-to/sso-google-workspace.md) ou
-  [Auth0](./how-to/sso-auth0.md).
+- Une application web **confidentielle**, dédiée à Hikube, enregistrée chez votre fournisseur, avec son client id et son secret : [Okta](./how-to/sso-okta.md), [Microsoft Entra ID](./how-to/sso-entra-id.md), [Google Workspace](./how-to/sso-google-workspace.md) ou [Auth0](./how-to/sso-auth0.md).
 
 ### Liste de contrôle
 
-1. **Claims dans le jeton d'identité.** `email`, le prénom, le nom et, si vous
-   l'utilisez, le claim des rôles doivent être dans le **jeton d'identité**.
-   Hikube ne les lit nulle part ailleurs.
-2. **Confirmation de l'adresse.** Laissez **Confirmer l'adresse par un lien**
-   activé, sauf si votre fournisseur envoie `email_verified` dans le jeton
-   d'identité. Microsoft Entra ID ne l'envoie pas.
+1. **Claims dans le jeton d'identité.** `email`, le prénom, le nom et, si vous l'utilisez, le claim des rôles doivent être dans le **jeton d'identité**. Hikube ne les lit nulle part ailleurs.
+2. **Confirmation de l'adresse.** Laissez **Confirmer l'adresse par un lien** activé, sauf si votre fournisseur envoie `email_verified` dans le jeton d'identité. Microsoft Entra ID ne l'envoie pas.
 3. **PKCE.** Laissez-le actif, sauf si votre fournisseur le refuse.
-4. **Claim des rôles.** Renseignez-le seulement si votre fournisseur doit
-   décider des rangs (voir [role bindings](./how-to/sso-role-bindings.md)).
-5. **Second facteur.** La MFA des comptes SSO est imposée par votre
-   fournisseur, pas par Hikube.
-6. **Invitation ou pas.** Par défaut, toute personne d'un domaine autorisé que
-   votre fournisseur laisse passer obtient un compte. **Invitation requise**
-   n'admet que les personnes invitées.
-7. **Un super-administrateur avec mot de passe.** Gardez-en au moins un : c'est
-   votre accès de secours si votre fournisseur est indisponible.
+4. **Claim des rôles.** Renseignez-le seulement si votre fournisseur doit décider des rangs (voir [role bindings](./how-to/sso-role-bindings.md)).
+5. **Second facteur.** La MFA des comptes SSO est imposée par votre fournisseur, pas par Hikube.
+6. **Invitation ou pas.** Par défaut, toute personne d'un domaine autorisé que votre fournisseur laisse passer obtient un compte. **Invitation requise** n'admet que les personnes invitées.
+7. **Un super-administrateur avec mot de passe.** Gardez-en au moins un : c'est votre accès de secours si votre fournisseur est indisponible.
 
-Les exigences techniques complètes sont dans
-[Concepts](./concepts.md#exigences-techniques).
+Les exigences techniques complètes sont dans [Concepts](./concepts.md#exigences-techniques).
 
 ## Étape 1 : vérifier le domaine
 
@@ -51,23 +35,19 @@ Les exigences techniques complètes sont dans
 3. Publiez l'enregistrement `TXT` affiché dans la zone DNS de `acme.com`.
 4. Cliquez sur **Vérifier**.
 
-**Résultat attendu** : `acme.com` porte le statut **Vérifié**. Détails :
-[Vérifier un domaine](./how-to/verify-domain.md).
+**Résultat attendu** : `acme.com` porte le statut **Vérifié**. Détails : [Vérifier un domaine](./how-to/verify-domain.md).
 
 ## Étape 2 : créer la connexion
 
 1. Ouvrez l'onglet **Connexion SSO**, puis cliquez sur **Créer la connexion**.
 2. Remplissez au minimum :
    - **Nom affiché** : `Acme` ;
-   - **URL de découverte** :
-     `https://acme.okta.com/oauth2/default/.well-known/openid-configuration` ;
+   - **URL de découverte** : `https://acme.okta.com/oauth2/default/.well-known/openid-configuration` ;
    - **Client id** et **Secret du client** : ceux de l'application ;
    - **Domaines autorisés** : cochez `acme.com`.
 3. Cliquez sur **Créer**.
 
-**Résultat attendu** : **Connexion SSO créée.** La connexion est **Inactive**.
-Tous les champs sont décrits dans
-[Configurer la connexion SSO](./how-to/configure-sso-connection.md).
+**Résultat attendu** : **Connexion SSO créée.** La connexion est **Inactive**. Tous les champs sont décrits dans [Configurer la connexion SSO](./how-to/configure-sso-connection.md).
 
 ## Étape 3 : enregistrer l'URI de redirection et activer
 
@@ -79,24 +59,19 @@ Tous les champs sont décrits dans
 
 ## Étape 4 : tester la connexion
 
-1. Ouvrez une fenêtre de navigation privée sur
-   [console.hikube.cloud](https://console.hikube.cloud).
+1. Ouvrez une fenêtre de navigation privée sur [console.hikube.cloud](https://console.hikube.cloud).
 2. Saisissez une adresse `@acme.com` qui n'a pas de mot de passe Hikube.
 3. Connectez-vous chez votre fournisseur.
 4. Ouvrez le lien de confirmation reçu par e-mail.
 
-**Résultat attendu** : la personne arrive dans la console. Elle apparaît dans
-**Membres de l'organisation** avec le badge **Aucun rang**.
+**Résultat attendu** : la personne arrive dans la console. Elle apparaît dans **Membres de l'organisation** avec le badge **Aucun rang**.
 
 ## Étape 5 : donner les rangs
 
-- **Sans claim des rôles** : sur la ligne de la personne, **Modifier**, puis
-  choisissez son rang (voir [Gérer les membres](./how-to/manage-members.md)).
-- **Avec un claim des rôles** : créez un role binding par groupe (voir
-  [Donner les rangs depuis votre fournisseur](./how-to/sso-role-bindings.md)).
+- **Sans claim des rôles** : sur la ligne de la personne, **Modifier**, puis choisissez son rang (voir [Gérer les membres](./how-to/manage-members.md)).
+- **Avec un claim des rôles** : créez un role binding par groupe (voir [Donner les rangs depuis votre fournisseur](./how-to/sso-role-bindings.md)).
 
-**Résultat attendu** : après actualisation, la personne voit les projets de son
-rang.
+**Résultat attendu** : après actualisation, la personne voit les projets de son rang.
 
 ## Étape 6 : dépannage rapide
 
@@ -112,8 +87,7 @@ Plus de cas : [Dépannage](./troubleshooting.md).
 
 ## Étape 7 : désactiver ou supprimer
 
-- **Désactiver** : plus personne ne se connecte par votre fournisseur. Les
-  comptes SSO et leurs accès sont gardés.
+- **Désactiver** : plus personne ne se connecte par votre fournisseur. Les comptes SSO et leurs accès sont gardés.
 - **Supprimer** : les comptes SSO créés par la connexion sont supprimés.
 
 Voir [Gérer la connexion SSO](./how-to/manage-sso-connection.md).
