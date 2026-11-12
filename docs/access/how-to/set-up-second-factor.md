@@ -38,13 +38,11 @@ La console affiche cette page quand votre session a été ouverte sans second fa
 
 Un compte qui se connecte par la [connexion SSO](../quick-start.md) de son organisation n'a ni mot de passe ni second facteur dans Hikube. Son second facteur est celui de votre fournisseur d'identité : imposez-le chez lui.
 
-## Second facteur perdu
+## Mot de passe ou second facteur perdu
 
 - **Compte de l'organisation** : un administrateur de l'organisation peut réinitialiser ses identifiants (voir [Confier un compte à l'organisation](./transfer-account.md#ce-que-vos-administrateurs-peuvent-faire)). La personne reçoit un lien valable 24 heures pour choisir un nouveau mot de passe et un nouveau second facteur.
 - **Compte personnel** : contactez le support.
 - **Plus aucun super-administrateur ne peut se connecter** : contactez le support. Après vérification de votre identité, le support réinitialise les identifiants d'un super-administrateur.
-
-La page de connexion propose **Mot de passe oublié** pour le seul mot de passe.
 
 <NavigationFooter
   seeAlso={[

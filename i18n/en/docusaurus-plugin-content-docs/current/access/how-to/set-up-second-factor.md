@@ -38,13 +38,11 @@ The console shows this page when your session was opened without a second factor
 
 An account that signs in through its organization's [SSO connection](../quick-start.md) has neither a password nor a second factor in Hikube. Its second factor is that of your identity provider: enforce it there.
 
-## Lost second factor
+## Lost password or second factor
 
 - **Organization account**: an administrator of the organization can reset its credentials (see [Hand an account over to the organization](./transfer-account.md#what-your-administrators-can-do)). The person receives a link valid for 24 hours to choose a new password and a new second factor.
 - **Personal account**: contact support.
 - **No super admin can sign in any more**: contact support. After verifying your identity, support resets the credentials of a super admin.
-
-The sign-in page offers **Forgot Password?** for the password only.
 
 <NavigationFooter
   seeAlso={[

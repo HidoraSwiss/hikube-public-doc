@@ -38,13 +38,11 @@ La console mostra questa pagina quando la sua sessione è stata aperta senza sec
 
 Un account che accede tramite la [connessione SSO](../quick-start.md) della propria organizzazione non ha né password né secondo fattore in Hikube. Il suo secondo fattore è quello del suo provider di identità: lo imponga presso di lui.
 
-## Secondo fattore perso
+## Password o secondo fattore perso
 
 - **Account dell'organizzazione**: un amministratore dell'organizzazione può reimpostarne le credenziali (vedere [Affidare un account all'organizzazione](./transfer-account.md#cosa-possono-fare-i-suoi-amministratori)). La persona riceve un link valido 24 ore per scegliere una nuova password e un nuovo secondo fattore.
 - **Account personale**: contatti il supporto.
 - **Nessun super amministratore riesce più ad accedere**: contatti il supporto. Dopo la verifica della sua identità, il supporto reimposta le credenziali di un super amministratore.
-
-La pagina di accesso propone **Forgot Password?** solo per la password.
 
 <NavigationFooter
   seeAlso={[
