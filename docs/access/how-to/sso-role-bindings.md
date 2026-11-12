@@ -69,6 +69,8 @@ La console affiche **Role binding de « acme-devs » ajouté. Il s'applique à l
 
 Répétez pour chaque groupe. Une connexion porte au plus 256 role bindings, et une valeur n'y figure qu'une fois.
 
+![Dialogue Ajouter un role binding : acme-devs, Organisation, Utilisation](/img/console/access/role-binding-add.fr.png)
+
 ### 3. Modifier ou supprimer un role binding
 
 - **Modifier** : changez la valeur, la portée ou le rang, puis **Enregistrer**.

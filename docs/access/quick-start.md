@@ -37,6 +37,8 @@ Les exigences techniques complètes sont dans [Concepts](./concepts.md#exigences
 
 **Résultat attendu** : `acme.com` porte le statut **Vérifié**. Détails : [Vérifier un domaine](./how-to/verify-domain.md).
 
+![Onglet Domaines : acme.com en attente, avec l’enregistrement TXT à publier](/img/console/access/domain-pending.fr.png)
+
 ## Étape 2 : créer la connexion
 
 1. Ouvrez l'onglet **Connexion SSO**, puis cliquez sur **Créer la connexion**.
@@ -49,6 +51,8 @@ Les exigences techniques complètes sont dans [Concepts](./concepts.md#exigences
 
 **Résultat attendu** : **Connexion SSO créée.** La connexion est **Inactive**. Tous les champs sont décrits dans [Configurer la connexion SSO](./how-to/configure-sso-connection.md).
 
+![Formulaire Créer la connexion SSO rempli pour Okta](/img/console/access/sso-create.fr.png)
+
 ## Étape 3 : enregistrer l'URI de redirection et activer
 
 1. Dans la carte **Connexion SSO**, copiez l'**URI de redirection**.
@@ -56,6 +60,8 @@ Les exigences techniques complètes sont dans [Concepts](./concepts.md#exigences
 3. Dans Hikube, cliquez sur **Activer**.
 
 **Résultat attendu** : **Connexion SSO activée.** Le statut passe à **Active**.
+
+![Connexion SSO active : URI de redirection, réglages et role bindings](/img/console/access/sso-connection.fr.png)
 
 ## Étape 4 : tester la connexion
 

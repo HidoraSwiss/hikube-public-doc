@@ -15,6 +15,8 @@ import NavigationFooter from '@site/src/components/NavigationFooter';
 
 Badges possibles : **Vous**, **Compte désactivé**, **Projets seulement** (aucun rang sur l'organisation), **Aucun rang** (un compte SSO à qui aucun role binding ne donne de rang).
 
+![Liste des membres de l’organisation et invitations en attente](/img/console/access/members.fr.png)
+
 ## Changer les rangs d'un membre
 
 Prérequis : le rang **Administration** ou plus.

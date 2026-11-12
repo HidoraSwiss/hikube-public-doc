@@ -29,6 +29,8 @@ Inviter de nouveau une adresse qui a déjà une invitation en attente remplace l
 
 Pour inviter sur un seul projet, utilisez **Inviter** dans la carte **Membres du projet** des paramètres du projet (voir [Membres d'un projet](./manage-members.md#membres-dun-projet)).
 
+![Dialogue Inviter des personnes : deux adresses, rang Utilisation sur l’organisation](/img/console/access/invite.fr.png)
+
 ## Suivre, renvoyer ou annuler
 
 La carte **Invitations en attente** liste l'**E-mail**, les **Rangs invités** et la date **Expire le**. Une invitation expirée porte le badge **Expirée**.

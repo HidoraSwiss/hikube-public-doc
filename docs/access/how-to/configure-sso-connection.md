@@ -32,7 +32,7 @@ La page **Connexion unique (SSO)** affiche **Aucune connexion SSO**.
 | Champ | Exemple | À savoir |
 |---|---|---|
 | **Nom affiché** | `Acme` | Le nom que voient les personnes à la connexion, 64 caractères au plus |
-| **URL de découverte** | `https://acme.okta.com/oauth2/default/.well-known/openid-configuration` | Telle que votre fournisseur l'affiche, en `https`. Son émetteur doit être l'URL suivie de `/.well-known/openid-configuration` |
+| **URL de découverte** | `https://acme.okta.com/oauth2/default/.well-known/openid-configuration` | Telle que votre fournisseur l'affiche, en `https`. L'URL est l'émetteur suivi de `/.well-known/openid-configuration` |
 | **Client id** | `0oa1b2c3d4e5f6g7h8i9` | L'identifiant de l'application chez votre fournisseur |
 | **Secret du client** | | Écriture seule : il n'est jamais réaffiché |
 | **Domaines autorisés** | `acme.com` coché | Aucun coché : tous les domaines vérifiés de l'organisation. Un sous-domaine est un domaine à part |
@@ -55,6 +55,8 @@ Hikube lit le document de découverte et refuse une connexion dont l'émetteur, 
 :::note Claims imbriqués
 Un claim peut être un chemin pointé, par exemple `hikube.roles` pour le champ `roles` de l'objet `hikube`. Un point à l'intérieur d'un nom s'écrit `\.` : `https://acme\.com/roles`.
 :::
+
+![Formulaire Créer la connexion SSO rempli pour Okta](/img/console/access/sso-create.fr.png)
 
 ## 3. Enregistrer l'URI de redirection
 

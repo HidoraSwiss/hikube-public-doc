@@ -30,6 +30,8 @@ La console affiche l'enregistrement à publier :
 
 Chaque champ a un bouton de copie. Le jeton est propre à votre organisation et à ce domaine. Le domaine est **En attente**.
 
+![Onglet Domaines : acme.com en attente, avec l’enregistrement TXT à publier](/img/console/access/domain-pending.fr.png)
+
 ## 2. Publier l'enregistrement
 
 Publiez l'enregistrement `TXT` dans la zone DNS de `acme.com` **dans les 7 jours**.
