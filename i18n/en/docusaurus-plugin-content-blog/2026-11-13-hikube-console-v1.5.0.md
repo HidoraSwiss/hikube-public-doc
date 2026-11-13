@@ -46,15 +46,7 @@ These changes alter an existing behavior of the console.
 
 - **Projects** — A project's settings open read-only to anyone who is not a super admin of the organization: only a super admin edits or deletes a project.
 
-- **Sign-in** — When your organizations and projects cannot be loaded, the console shows **Access unavailable**, with **Refresh** and **Log out**, instead of loading forever.
-
-- **VM instances** — Keys typed into the instance console count as activity: the console session no longer closes while you work in the instance.
-
 ## Fixed
-
-- **Sign-in** — The confirmation link received by e-mail during a first SSO sign-in, opened in a new tab, now completes the sign-in instead of showing an error.
-
-- **Invitations** — An invited person who does not belong to any organization yet lands on their invitations, instead of looping towards project creation.
 
 - **Resource lists** — Rows no longer flash when nothing displayed has changed.
 

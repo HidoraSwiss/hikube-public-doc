@@ -46,15 +46,7 @@ Diese Änderungen betreffen ein bestehendes Verhalten der Konsole.
 
 - **Projekte** — Die Einstellungen eines Projekts öffnen sich schreibgeschützt für alle, die nicht Super-Administrator der Organisation sind: Nur ein Super-Administrator bearbeitet oder löscht ein Projekt.
 
-- **Anmeldung** — Können Ihre Organisationen und Projekte nicht geladen werden, zeigt die Konsole **Access unavailable** mit **Refresh** und **Log out**, statt endlos zu laden.
-
-- **VM-Instanzen** — In der Instanzkonsole eingegebene Tasten zählen als Aktivität: Die Konsolensitzung wird nicht mehr beendet, während Sie in der Instanz arbeiten.
-
 ## Behoben
-
-- **Anmeldung** — Der Bestätigungslink, der bei einer ersten SSO-Anmeldung per E-Mail eintrifft und in einem neuen Tab geöffnet wird, schließt die Anmeldung jetzt ab, statt einen Fehler anzuzeigen.
-
-- **Einladungen** — Eine eingeladene Person, die noch zu keiner Organisation gehört, landet auf ihren Einladungen, statt in einer Schleife zur Projekterstellung zu geraten.
 
 - **Ressourcenlisten** — Zeilen flackern nicht mehr, wenn sich nichts Angezeigtes geändert hat.
 

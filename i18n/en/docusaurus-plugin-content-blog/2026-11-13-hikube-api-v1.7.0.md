@@ -71,10 +71,6 @@ These changes alter an existing behavior. Check them if you call the API from yo
 
 - **Second factor** — A session opened without a second factor is refused with the code `10007` (HTTP 401), except for an SSO account.
 
-- **Projects** — A project-only member lists and reads the projects where they hold a tier. The list returns every project to a member of the organization.
-
-- **Removing access** — Lowering or removing a tier closes the person's sessions: the change applies within 5 minutes.
-
 ## Removed
 
 - **Direct user creation** — `POST /iam/v1alpha1/organizations/{organization_id}/users` is removed. Invitations replace it.

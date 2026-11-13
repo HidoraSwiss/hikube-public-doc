@@ -46,15 +46,7 @@ Ces changements modifient un comportement existant de la console.
 
 - **Projets** — Les paramètres d'un projet s'ouvrent en lecture seule à qui n'est pas super-administrateur de l'organisation : seul un super-administrateur modifie ou supprime un projet.
 
-- **Connexion** — Quand vos organisations et vos projets ne peuvent pas être chargés, la console affiche **Accès impossible**, avec **Actualiser** et **Se déconnecter**, au lieu de charger sans fin.
-
-- **Instances VM** — Les touches tapées dans la console d'instance comptent comme de l'activité : la session de la console ne se ferme plus pendant que vous travaillez dans l'instance.
-
 ## Corrigé
-
-- **Connexion** — Le lien de confirmation reçu par e-mail lors d'une première connexion SSO, ouvert dans un nouvel onglet, termine bien la connexion au lieu d'afficher une erreur.
-
-- **Invitations** — Une personne invitée qui n'appartient encore à aucune organisation arrive sur ses invitations, au lieu de tourner en boucle vers la création d'un projet.
 
 - **Listes de ressources** — Les lignes ne clignotent plus quand rien d'affiché n'a changé.
 

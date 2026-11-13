@@ -71,10 +71,6 @@ Diese Änderungen betreffen ein bestehendes Verhalten. Prüfen Sie sie, wenn Sie
 
 - **Zweiter Faktor** — Eine Sitzung, die ohne zweiten Faktor geöffnet wurde, wird mit dem Code `10007` (HTTP 401) abgelehnt, außer bei einem SSO-Konto.
 
-- **Projekte** — Ein Mitglied eines einzelnen Projekts listet und liest die Projekte, auf denen es einen Rang hat. Die Liste gibt einem Mitglied der Organisation alle Projekte zurück.
-
-- **Entzug eines Zugriffs** — Das Senken oder Entziehen eines Rangs beendet die Sitzungen der Person: Die Änderung wirkt innerhalb von 5 Minuten.
-
 ## Entfernt
 
 - **Direkte Erstellung eines Benutzers** — `POST /iam/v1alpha1/organizations/{organization_id}/users` wird entfernt. Einladungen ersetzen sie.

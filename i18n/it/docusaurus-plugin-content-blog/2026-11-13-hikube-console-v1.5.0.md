@@ -46,15 +46,7 @@ Queste modifiche cambiano un comportamento esistente della console.
 
 - **Progetti** — Le impostazioni di un progetto si aprono in sola lettura per chi non è super-amministratore dell'organizzazione: solo un super-amministratore modifica o elimina un progetto.
 
-- **Accesso** — Quando le vostre organizzazioni e i vostri progetti non possono essere caricati, la console mostra **Access unavailable**, con **Refresh** e **Log out**, invece di caricare all'infinito.
-
-- **Istanze VM** — I tasti digitati nella console dell'istanza contano come attività: la sessione della console non si chiude più mentre lavorate nell'istanza.
-
 ## Corretto
-
-- **Accesso** — Il link di conferma ricevuto via e-mail durante un primo accesso SSO, aperto in una nuova scheda, completa ora correttamente l'accesso invece di mostrare un errore.
-
-- **Inviti** — Una persona invitata che non appartiene ancora ad alcuna organizzazione arriva ai propri inviti, invece di girare in loop verso la creazione di un progetto.
 
 - **Elenchi di risorse** — Le righe non lampeggiano più quando nulla di ciò che è mostrato è cambiato.
 

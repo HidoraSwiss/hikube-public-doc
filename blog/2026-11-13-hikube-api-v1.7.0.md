@@ -71,10 +71,6 @@ Ces changements modifient un comportement existant. Vérifiez-les si vous appele
 
 - **Second facteur** — Une session ouverte sans second facteur est refusée avec le code `10007` (HTTP 401), sauf pour un compte SSO.
 
-- **Projets** — Un membre d'un seul projet liste et lit les projets où il tient un rang. La liste renvoie tous les projets à un membre de l'organisation.
-
-- **Retrait d'un accès** — Baisser ou retirer un rang ferme les sessions de la personne : le changement s'applique sous 5 minutes.
-
 ## Retiré
 
 - **Création directe d'un utilisateur** — `POST /iam/v1alpha1/organizations/{organization_id}/users` est retiré. Les invitations le remplacent.

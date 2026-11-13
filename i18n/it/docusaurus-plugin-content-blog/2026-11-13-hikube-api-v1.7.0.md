@@ -71,10 +71,6 @@ Queste modifiche cambiano un comportamento esistente. Verificatele se chiamate l
 
 - **Secondo fattore** — Una sessione aperta senza secondo fattore viene rifiutata con il codice `10007` (HTTP 401), tranne che per un account SSO.
 
-- **Progetti** — Un membro di un solo progetto elenca e legge i progetti in cui ha un livello. L'elenco restituisce tutti i progetti a un membro dell'organizzazione.
-
-- **Rimozione di un accesso** — Abbassare o rimuovere un livello chiude le sessioni della persona: la modifica si applica entro 5 minuti.
-
 ## Rimosso
 
 - **Creazione diretta di un utente** — `POST /iam/v1alpha1/organizations/{organization_id}/users` è rimosso. Gli inviti lo sostituiscono.
