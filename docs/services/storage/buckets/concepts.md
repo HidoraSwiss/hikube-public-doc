@@ -58,7 +58,7 @@ graph TB
 | **Endpoint S3** | Adresse du service S3 (par exemple `prod.s3.hikube.cloud`), affichée sur la page du bucket. |
 | **Utilisateur S3** | Identité rattachée à un bucket, avec un droit **Lecture seule** ou **Lecture / Écriture**. Un bucket peut avoir plusieurs utilisateurs. |
 | **Access Key ID / Secret Access Key** | Paire de clés d'authentification S3 d'un utilisateur, générée à sa création. La clé secrète n'est affichée qu'une seule fois. |
-| **Verrouillage (WORM)** | Object Lock (*Write Once, Read Many*) : chaque objet est verrouillé 365 jours après son écriture, en mode `COMPLIANCE` ; personne ne peut le modifier ni le supprimer avant l'échéance. |
+| **Verrouillage (WORM)** | Object Lock (*Write Once, Read Many*) : chaque objet est verrouillé jusqu'à l'échéance de sa rétention, en mode `COMPLIANCE` ; personne ne peut le modifier ni le supprimer avant. La rétention par défaut est de 365 jours après l'écriture ; elle se modifie avec un client S3, et chaque objet peut recevoir la sienne. |
 | **Chiffrement au repos (LUKS)** | Chiffrement des données stockées sur disque. |
 
 ---
@@ -98,7 +98,7 @@ La suppression d'un bucket se confirme en saisissant son nom. Ce qu'il advient d
 | Bucket | Effet de la suppression |
 |--------|-------------------------|
 | Sans verrouillage | Le bucket et tous ses objets sont définitivement supprimés, même s'il n'est pas vide. |
-| Verrouillé (WORM) | Le bucket est retiré de la console, mais la plateforme conserve son stockage et tous ses objets. Chaque objet reste verrouillé 365 jours après son écriture (mode `COMPLIANCE`). |
+| Verrouillé (WORM) | Le bucket est retiré de la console, mais la plateforme conserve son stockage et tous ses objets. Chaque objet reste verrouillé jusqu'à l'échéance de sa rétention (mode `COMPLIANCE`, 365 jours après son écriture par défaut). |
 
 La fenêtre de confirmation indique le cas qui s'applique.
 

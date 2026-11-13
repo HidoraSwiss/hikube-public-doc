@@ -162,7 +162,7 @@ Vedere: [PostgreSQL](../services/databases/postgresql/troubleshooting.md), [Mari
 
 L'eliminazione di un bucket senza WORM è definitiva e comporta la perdita di tutti i suoi oggetti, anche se non è vuoto. Copi prima i dati da conservare con il suo client S3 (ad esempio `aws s3 sync`). Se l'eliminazione non riesce, riprovi, quindi contatti il supporto.
 
-Un bucket bloccato (WORM) viene rimosso dalla console, ma i suoi oggetti non vengono eliminati: ogni oggetto resta bloccato 365 giorni dopo la sua scrittura (modalità COMPLIANCE).
+Un bucket bloccato (WORM) viene rimosso dalla console, ma i suoi oggetti non vengono eliminati: ogni oggetto resta bloccato fino alla scadenza della sua conservazione (modalità COMPLIANCE, per impostazione predefinita 365 giorni dopo la sua scrittura).
 
 ### Accesso S3 negato (`AccessDenied`)
 

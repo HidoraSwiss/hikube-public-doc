@@ -162,7 +162,7 @@ See: [PostgreSQL](../services/databases/postgresql/troubleshooting.md), [MariaDB
 
 Deleting a bucket without WORM is permanent and removes all its objects, even if it is not empty. First copy the data you want to keep with your S3 client (for example `aws s3 sync`). If the deletion fails, try again, then contact support.
 
-A locked bucket (WORM) is removed from the console, but its objects are not deleted: each object stays locked for 365 days after it is written (COMPLIANCE mode).
+A locked bucket (WORM) is removed from the console, but its objects are not deleted: each object stays locked until its retention expires (COMPLIANCE mode, 365 days after it is written by default).
 
 ### S3 access denied (`AccessDenied`)
 

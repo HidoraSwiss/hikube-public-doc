@@ -98,7 +98,7 @@ Questa architettura garantisce la **disponibilità e la durabilità** dei dati, 
 - Il diritto di **sola lettura** permette di concedere un accesso in consultazione senza rischio di modifica
 - Tutti gli accessi passano per **HTTPS** con autenticazione tramite chiave S3; l'accesso anonimo non è possibile
 - La **cifratura a riposo (LUKS)** protegge i dati memorizzati su disco
-- Il **blocco (WORM)** impedisce l'eliminazione o la modifica degli oggetti per 365 giorni
+- Il **blocco (WORM)** impedisce l'eliminazione o la modifica degli oggetti fino alla scadenza della loro conservazione (365 giorni per impostazione predefinita, modificabile)
 
 ---
 

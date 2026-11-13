@@ -162,7 +162,7 @@ Voir : [PostgreSQL](../services/databases/postgresql/troubleshooting.md), [Maria
 
 La suppression d'un bucket sans WORM est définitive et emporte tous ses objets, même s'il n'est pas vide. Copiez d'abord les données à conserver avec votre client S3 (par exemple `aws s3 sync`). Si la suppression échoue, réessayez puis contactez le support.
 
-Un bucket verrouillé (WORM) est retiré de la console, mais ses objets ne sont pas supprimés : chaque objet reste verrouillé 365 jours après son écriture (mode COMPLIANCE).
+Un bucket verrouillé (WORM) est retiré de la console, mais ses objets ne sont pas supprimés : chaque objet reste verrouillé jusqu'à l'échéance de sa rétention (mode COMPLIANCE, 365 jours après son écriture par défaut).
 
 ### Accès S3 refusé (`AccessDenied`)
 

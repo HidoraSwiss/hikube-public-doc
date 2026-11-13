@@ -1,13 +1,13 @@
 ---
 title: "Aufbewahrung der Objekte eines gesperrten Buckets verwalten"
-description: "Prüfen Sie die Sperre eines WORM-Buckets, verlängern Sie die Aufbewahrung eines Objekts und setzen Sie einen Legal Hold mit den Standardbefehlen von S3 Object Lock."
+description: "Prüfen und ändern Sie die Standardaufbewahrung eines WORM-Buckets, legen Sie die Aufbewahrung eines Objekts fest oder verlängern Sie sie und setzen Sie einen Legal Hold mit den Standardbefehlen von S3 Object Lock."
 ---
 
 # Aufbewahrung der Objekte eines gesperrten Buckets verwalten
 
-Ein mit **Enable Object Lock (WORM)** erstellter Bucket sperrt jedes Objekt nach dem Schreiben 365 Tage lang im Modus `COMPLIANCE`. Diese Anleitung zeigt, wie Sie diese Sperre prüfen und ein Objekt mit den Standardbefehlen von S3 Object Lock länger aufbewahren: eigene Aufbewahrung pro Objekt, Verlängerung, gesetzliche Aufbewahrungssperre (*Legal Hold*).
+Ein mit **Enable Object Lock (WORM)** erstellter Bucket sperrt standardmäßig jedes Objekt nach dem Schreiben 365 Tage lang im Modus `COMPLIANCE`. Diese Anleitung zeigt, wie Sie diese Sperre prüfen und mit den Standardbefehlen von S3 Object Lock anpassen: Standardaufbewahrung des Buckets, eigene Aufbewahrung eines Objekts, Verlängerung, gesetzliche Aufbewahrungssperre (*Legal Hold*).
 
-Diese Vorgänge erfolgen mit einem S3-Client. Konsole und API von Hikube zeigen nur die Standardaufbewahrung des Buckets.
+Diese Vorgänge erfolgen mit einem S3-Client. Konsole und API von Hikube zeigen die Standardaufbewahrung, mit der der Bucket erstellt wurde (365 Tage): Eine mit einem S3-Client vorgenommene Änderung spiegeln sie nicht wider.
 
 ## Voraussetzungen
 
@@ -23,7 +23,7 @@ Eine Aufbewahrung im Modus `COMPLIANCE` kann weder verkürzt noch entfernt werde
 
 | Mechanismus | Dauer | Gesetzt durch | Aufhebung |
 |-------------|-------|---------------|-----------|
-| **Aufbewahrung** (*Retention*) | Bis zu einem Datum (`RetainUntilDate`) | Den Bucket beim Schreiben jedes Objekts (365 Tage) oder Sie, Objekt für Objekt | Automatisch bei Ablauf; kann nur verlängert werden |
+| **Aufbewahrung** (*Retention*) | Bis zu einem Datum (`RetainUntilDate`) | Den Bucket beim Schreiben jedes Objekts (Standardaufbewahrung, 365 Tage, sofern nicht geändert) oder Sie, Objekt für Objekt | Automatisch bei Ablauf; kann nur verlängert werden |
 | **Legal Hold** | Ohne Ablauf | Sie, Objekt für Objekt | Wenn Sie ihn entfernen (`Status=OFF`) |
 
 Beide wirken zusammen: Ein Objekt kann erst gelöscht werden, wenn seine Aufbewahrung abgelaufen **und** sein Legal Hold entfernt ist.
@@ -55,9 +55,29 @@ aws --endpoint-url "$S3_ENDPOINT" s3api get-object-lock-configuration \
 
 `DefaultRetention` ist die Aufbewahrung, die für jedes ohne eigene Aufbewahrung geschriebene Objekt gilt.
 
-### 2. Ein Objekt mit eigener Aufbewahrung hochladen
+### 2. Die Standardaufbewahrung des Buckets ändern
 
-Um ein Objekt länger als 365 Tage aufzubewahren (etwa ein regulatorisches Archiv über zehn Jahre), geben Sie ihm beim Hochladen ein Ablaufdatum. Wählen Sie ein Datum **nach** dem Standardablauf (365 Tage nach dem Hochladen): Die eigene Aufbewahrung eines Objekts dient dazu, es länger aufzubewahren.
+Jeder Benutzer mit **Read / Write** kann die Standardaufbewahrung ersetzen, in Tagen (`Days`) oder in Jahren (`Years`). Beispiel für 55 Tage:
+
+```bash
+aws --endpoint-url "$S3_ENDPOINT" s3api put-object-lock-configuration \
+  --bucket "$BUCKET_NAME" \
+  --object-lock-configuration '{"ObjectLockEnabled":"Enabled","Rule":{"DefaultRetention":{"Mode":"COMPLIANCE","Days":55}}}'
+```
+
+Der neue Wert gilt nur für danach geschriebene Objekte: Ein bereits gesperrtes Objekt behält seinen Ablauf. Ohne `Rule` hat der Bucket keine Standardaufbewahrung mehr, und ein ohne eigene Aufbewahrung geschriebenes Objekt wird nicht gesperrt. Führen Sie Schritt 1 erneut aus, um den geltenden Wert zu prüfen.
+
+:::info Anzeige in der Konsole
+Die Hikube-Konsole und die API zeigen immer die bei der Erstellung des Buckets gewählte Standardaufbewahrung an (365 Tage): Eine mit einem S3-Client vorgenommene Änderung erscheint dort nicht. Nur Schritt 1 liefert den tatsächlich geltenden Wert. Die Änderung der Standardaufbewahrung über die Konsole wird in Kürze verfügbar sein.
+:::
+
+:::warning Wer die Aufbewahrung ändern kann
+Ein Schlüssel mit **Read / Write** genügt, um die Standardaufbewahrung der künftigen Objekte zu verkürzen oder zu entfernen. Behalten Sie diese Schlüssel den Anwendungen vor, die in den Bucket schreiben, und geben Sie allen anderen **Read-only**.
+:::
+
+### 3. Ein Objekt mit eigener Aufbewahrung hochladen
+
+Ein beim Hochladen angegebenes Ablaufdatum ersetzt für dieses Objekt die Standardaufbewahrung, ob es länger (etwa ein regulatorisches Archiv über zehn Jahre) oder kürzer ist (ein Backup, das 55 Tage in einem Bucket mit 365 Tagen aufbewahrt wird).
 
 ```bash
 # Ablaufdatum: ISO 8601, in UTC
@@ -69,7 +89,7 @@ aws --endpoint-url "$S3_ENDPOINT" s3api put-object \
   --object-lock-retain-until-date "$RETAIN_UNTIL"
 ```
 
-### 3. Die Aufbewahrung eines Objekts lesen
+### 4. Die Aufbewahrung eines Objekts lesen
 
 ```bash
 aws --endpoint-url "$S3_ENDPOINT" s3api get-object-retention \
@@ -87,7 +107,7 @@ aws --endpoint-url "$S3_ENDPOINT" s3api get-object-retention \
 }
 ```
 
-### 4. Die Aufbewahrung eines Objekts verlängern
+### 5. Die Aufbewahrung eines Objekts verlängern
 
 Eine Aufbewahrung kann nur **verlängert** werden: Das neue Datum muss nach dem aktuellen Ablauf liegen, sonst wird die Anfrage abgelehnt.
 
@@ -97,7 +117,7 @@ aws --endpoint-url "$S3_ENDPOINT" s3api put-object-retention \
   --retention '{"Mode":"COMPLIANCE","RetainUntilDate":"2040-12-31T00:00:00Z"}'
 ```
 
-### 5. Einen Legal Hold setzen oder entfernen
+### 6. Einen Legal Hold setzen oder entfernen
 
 Ein Legal Hold verhindert das Löschen eines Objekts ohne Ablaufdatum, zum Beispiel während eines Rechtsstreits oder einer Prüfung:
 
@@ -128,10 +148,11 @@ Der Modus `GOVERNANCE` wird akzeptiert, aber die Benutzer eines Buckets dürfen 
 | Symptom | Wahrscheinliche Ursache | Maßnahme |
 |---------|-------------------------|----------|
 | `get-object-lock-configuration` schlägt fehl | Bucket ohne Sperre erstellt | Die Sperre lässt sich nur bei der Erstellung aktivieren: Erstellen Sie einen gesperrten Bucket und kopieren Sie die Objekte hinein |
-| `AccessDenied` bei `put-object-retention` oder `put-object-legal-hold` | Benutzer mit **Read-only** | Verwenden Sie einen Benutzer mit **Read / Write** |
-| Verlängerung abgelehnt | Neues Datum vor dem aktuellen Ablauf | Wählen Sie ein Datum nach dem aktuellen Ablauf (Schritt 3) |
+| `AccessDenied` bei `put-object-lock-configuration`, `put-object-retention` oder `put-object-legal-hold` | Benutzer mit **Read-only** | Verwenden Sie einen Benutzer mit **Read / Write** |
+| Verlängerung abgelehnt | Neues Datum vor dem aktuellen Ablauf | Wählen Sie ein Datum nach dem aktuellen Ablauf (Schritt 4) |
 | Datum beim Hochladen abgelehnt | Datum in der Vergangenheit oder falsches Format | Datum in der Zukunft, im Format ISO 8601 in UTC (`2036-12-31T00:00:00Z`) |
-| `AccessDenied` beim Löschen eines Objekts | Aufbewahrung läuft noch oder Legal Hold gesetzt | Lesen Sie die Aufbewahrung (Schritt 3) und den Legal Hold (Schritt 5) des Objekts |
+| Objekt mit unerwarteter Aufbewahrung geschrieben | Standardaufbewahrung von einem Benutzer des Buckets geändert | Lesen Sie die Standardaufbewahrung (Schritt 1) und stellen Sie sie bei Bedarf wieder her (Schritt 2) |
+| `AccessDenied` beim Löschen eines Objekts | Aufbewahrung läuft noch oder Legal Hold gesetzt | Lesen Sie die Aufbewahrung (Schritt 4) und den Legal Hold (Schritt 6) des Objekts |
 
 ## Weiterführende Informationen
 

@@ -46,7 +46,7 @@ Der Assistent umfasst drei Schritte.
 
 1. Geben Sie den **Bucket name** ein (standardmäßig wird ein Name vorgeschlagen). Regeln: Kleinbuchstaben, Ziffern und Bindestriche; beginnt mit einem Buchstaben und endet mit einem Buchstaben oder einer Ziffer; höchstens 16 Zeichen. Beispiel: `demo-assets`.
 2. Lassen Sie für diese Anleitung folgende Optionen deaktiviert:
-   - **Enable Object Lock (WORM)**: jedes Objekt wird nach dem Schreiben 365 Tage lang im Modus COMPLIANCE gesperrt; niemand kann es vor Ablauf ändern oder löschen. Die Dauer ist nicht änderbar, die Sperre lässt sich nach der Erstellung nicht mehr entfernen, und das Löschen des Buckets löscht seine Objekte nicht;
+   - **Enable Object Lock (WORM)**: jedes Objekt wird standardmäßig nach dem Schreiben 365 Tage lang im Modus COMPLIANCE gesperrt; niemand kann es vor Ablauf ändern oder löschen. Diese Standarddauer lässt sich danach mit einem S3-Client ändern (siehe [Aufbewahrung der Objekte eines gesperrten Buckets verwalten](./how-to/manage-object-retention.md)), die Sperre lässt sich nach der Erstellung nicht mehr entfernen, und das Löschen des Buckets löscht seine Objekte nicht;
    - **Enable encryption at rest (LUKS)**: verschlüsselt die gespeicherten Daten; kann nach der Erstellung nicht geändert werden.
 3. Klicken Sie auf **Next**.
 
@@ -183,7 +183,7 @@ Siehe auch die [vollständige Fehlerbehebung](./troubleshooting.md).
 3. Geben Sie den genauen Namen des Buckets in **Resource name to confirm** ein und klicken Sie dann auf **Permanently delete**.
 
 :::warning Unwiderrufliches Löschen
-Das Löschen eines Buckets ist endgültig und entfernt alle seine Objekte, auch wenn er nicht leer ist. Kopieren Sie die zu behaltenden Daten, bevor Sie ihn löschen. Ausnahme ist ein gesperrter Bucket (WORM): Er wird aus der Konsole entfernt, seine Objekte bleiben jedoch erhalten und nach ihrem Schreiben 365 Tage lang gesperrt.
+Das Löschen eines Buckets ist endgültig und entfernt alle seine Objekte, auch wenn er nicht leer ist. Kopieren Sie die zu behaltenden Daten, bevor Sie ihn löschen. Ausnahme ist ein gesperrter Bucket (WORM): Er wird aus der Konsole entfernt, seine Objekte bleiben jedoch erhalten und bis zum Ablauf ihrer Aufbewahrung gesperrt (standardmäßig 365 Tage nach dem Schreiben).
 :::
 
 <NavigationFooter

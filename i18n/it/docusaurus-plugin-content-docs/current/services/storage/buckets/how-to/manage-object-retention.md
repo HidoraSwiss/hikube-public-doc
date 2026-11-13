@@ -1,13 +1,13 @@
 ---
 title: "Come gestire la conservazione degli oggetti di un bucket bloccato"
-description: "Verificate il blocco di un bucket WORM, prolungate la conservazione di un oggetto e applicate un blocco legale con i comandi standard di S3 Object Lock."
+description: "Verificate e modificate la conservazione predefinita di un bucket WORM, fissate o prolungate la conservazione di un oggetto e applicate un blocco legale con i comandi standard di S3 Object Lock."
 ---
 
 # Come gestire la conservazione degli oggetti di un bucket bloccato
 
-Un bucket creato con **Enable Object Lock (WORM)** blocca ogni oggetto per 365 giorni dopo la sua scrittura, in modalità `COMPLIANCE`. Questa guida mostra come verificare questo blocco e, con i comandi standard di S3 Object Lock, conservare un oggetto più a lungo: conservazione propria dell'oggetto, proroga, blocco legale (*legal hold*).
+Un bucket creato con **Enable Object Lock (WORM)** blocca per impostazione predefinita ogni oggetto per 365 giorni dopo la sua scrittura, in modalità `COMPLIANCE`. Questa guida mostra come verificare questo blocco e adattarlo con i comandi standard di S3 Object Lock: conservazione predefinita del bucket, conservazione propria di un oggetto, proroga, blocco legale (*legal hold*).
 
-Queste operazioni si eseguono con un client S3. La console e l'API Hikube mostrano solo la conservazione predefinita del bucket.
+Queste operazioni si eseguono con un client S3. La console e l'API Hikube mostrano la conservazione predefinita con cui il bucket è stato creato (365 giorni): non riflettono una modifica fatta con un client S3.
 
 ## Prerequisiti
 
@@ -23,7 +23,7 @@ Una conservazione in modalità `COMPLIANCE` non può essere né ridotta né rimo
 
 | Meccanismo | Durata | Chi lo applica | Rimozione |
 |------------|--------|----------------|-----------|
-| **Conservazione** (*retention*) | Fino a una data (`RetainUntilDate`) | Il bucket, alla scrittura di ogni oggetto (365 giorni), oppure voi, oggetto per oggetto | Automatica alla scadenza; può solo essere prorogata |
+| **Conservazione** (*retention*) | Fino a una data (`RetainUntilDate`) | Il bucket, alla scrittura di ogni oggetto (conservazione predefinita, 365 giorni salvo modifica), oppure voi, oggetto per oggetto | Automatica alla scadenza; può solo essere prorogata |
 | **Blocco legale** (*legal hold*) | Senza scadenza | Voi, oggetto per oggetto | Quando lo rimuovete (`Status=OFF`) |
 
 I due si sommano: un oggetto può essere eliminato solo quando la sua conservazione è scaduta **e** il suo blocco legale è stato rimosso.
@@ -55,9 +55,29 @@ aws --endpoint-url "$S3_ENDPOINT" s3api get-object-lock-configuration \
 
 `DefaultRetention` è la conservazione applicata a ogni oggetto scritto senza una conservazione propria.
 
-### 2. Caricare un oggetto con una conservazione propria
+### 2. Modificare la conservazione predefinita del bucket
 
-Per conservare un oggetto oltre 365 giorni (un archivio normativo di dieci anni, per esempio), assegnategli una data di scadenza al caricamento. Scegliete una data **successiva** alla scadenza predefinita (365 giorni dopo il caricamento): la conservazione propria di un oggetto serve a conservarlo più a lungo.
+Qualsiasi utente in **Read / Write** può sostituire la conservazione predefinita, in giorni (`Days`) o in anni (`Years`). Esempio per 55 giorni:
+
+```bash
+aws --endpoint-url "$S3_ENDPOINT" s3api put-object-lock-configuration \
+  --bucket "$BUCKET_NAME" \
+  --object-lock-configuration '{"ObjectLockEnabled":"Enabled","Rule":{"DefaultRetention":{"Mode":"COMPLIANCE","Days":55}}}'
+```
+
+Il nuovo valore si applica solo agli oggetti scritti in seguito: un oggetto già bloccato mantiene la sua scadenza. Senza `Rule`, il bucket non ha più una conservazione predefinita e un oggetto scritto senza una conservazione propria non viene bloccato. Rieseguite il passo 1 per verificare il valore in vigore.
+
+:::info Visualizzazione nella console
+La console e l'API Hikube mostrano sempre la conservazione predefinita scelta alla creazione del bucket (365 giorni): una modifica fatta con un client S3 non vi compare. Solo il passaggio 1 indica il valore in vigore. La modifica della conservazione predefinita dalla console sarà presto disponibile.
+:::
+
+:::warning Chi può modificare la conservazione
+Una chiave in **Read / Write** basta per ridurre o rimuovere la conservazione predefinita dei prossimi oggetti. Riservate queste chiavi alle applicazioni che scrivono nel bucket e assegnate **Read-only** agli altri.
+:::
+
+### 3. Caricare un oggetto con una conservazione propria
+
+Una data di scadenza assegnata al caricamento sostituisce la conservazione predefinita per quell'oggetto, che sia più lunga (un archivio normativo di dieci anni, per esempio) o più breve (un backup conservato 55 giorni in un bucket a 365 giorni).
 
 ```bash
 # Data di scadenza: ISO 8601, in UTC
@@ -69,7 +89,7 @@ aws --endpoint-url "$S3_ENDPOINT" s3api put-object \
   --object-lock-retain-until-date "$RETAIN_UNTIL"
 ```
 
-### 3. Leggere la conservazione di un oggetto
+### 4. Leggere la conservazione di un oggetto
 
 ```bash
 aws --endpoint-url "$S3_ENDPOINT" s3api get-object-retention \
@@ -87,7 +107,7 @@ aws --endpoint-url "$S3_ENDPOINT" s3api get-object-retention \
 }
 ```
 
-### 4. Prorogare la conservazione di un oggetto
+### 5. Prorogare la conservazione di un oggetto
 
 Una conservazione può solo essere **prorogata**: la nuova data deve essere successiva alla scadenza attuale, altrimenti la richiesta viene rifiutata.
 
@@ -97,7 +117,7 @@ aws --endpoint-url "$S3_ENDPOINT" s3api put-object-retention \
   --retention '{"Mode":"COMPLIANCE","RetainUntilDate":"2040-12-31T00:00:00Z"}'
 ```
 
-### 5. Applicare o rimuovere un blocco legale
+### 6. Applicare o rimuovere un blocco legale
 
 Il blocco legale impedisce l'eliminazione di un oggetto senza data di scadenza, per esempio durante un contenzioso o un audit:
 
@@ -128,10 +148,11 @@ La modalità `GOVERNANCE` è accettata, ma gli utenti di un bucket non hanno il 
 | Sintomo | Causa probabile | Azione |
 |---------|-----------------|--------|
 | `get-object-lock-configuration` fallisce | Bucket creato senza blocco | Il blocco si attiva solo alla creazione: create un bucket bloccato e copiatevi gli oggetti |
-| `AccessDenied` su `put-object-retention` o `put-object-legal-hold` | Utente in **Read-only** | Usate un utente in **Read / Write** |
-| Proroga rifiutata | Nuova data precedente alla scadenza attuale | Scegliete una data successiva alla scadenza attuale (passo 3) |
+| `AccessDenied` su `put-object-lock-configuration`, `put-object-retention` o `put-object-legal-hold` | Utente in **Read-only** | Usate un utente in **Read / Write** |
+| Proroga rifiutata | Nuova data precedente alla scadenza attuale | Scegliete una data successiva alla scadenza attuale (passo 4) |
 | Data rifiutata al caricamento | Data passata o formato errato | Data futura, in formato ISO 8601 UTC (`2036-12-31T00:00:00Z`) |
-| `AccessDenied` all'eliminazione di un oggetto | Conservazione in corso o blocco legale applicato | Leggete la conservazione (passo 3) e il blocco legale (passo 5) dell'oggetto |
+| Oggetto scritto con una conservazione inattesa | Conservazione predefinita modificata da un utente del bucket | Leggete la conservazione predefinita (passo 1) e ripristinatela se necessario (passo 2) |
+| `AccessDenied` all'eliminazione di un oggetto | Conservazione in corso o blocco legale applicato | Leggete la conservazione (passo 4) e il blocco legale (passo 6) dell'oggetto |
 
 ## Per approfondire
 

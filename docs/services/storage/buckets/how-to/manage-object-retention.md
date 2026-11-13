@@ -1,13 +1,13 @@
 ---
 title: "Comment gérer la rétention des objets d'un bucket verrouillé"
-description: "Consultez le verrouillage d'un bucket WORM, prolongez la rétention d'un objet et posez un verrou juridique avec les commandes S3 Object Lock."
+description: "Consultez et modifiez la rétention par défaut d'un bucket WORM, fixez ou prolongez la rétention d'un objet et posez un verrou juridique avec les commandes S3 Object Lock."
 ---
 
 # Comment gérer la rétention des objets d'un bucket verrouillé
 
-Un bucket créé avec **Activer le verrouillage (Object Lock / WORM)** verrouille chaque objet 365 jours après son écriture, en mode `COMPLIANCE`. Ce guide montre comment consulter ce verrouillage et, avec les commandes S3 Object Lock standard, conserver un objet plus longtemps : rétention propre à l'objet, prolongation, verrou juridique (*legal hold*).
+Un bucket créé avec **Activer le verrouillage (Object Lock / WORM)** verrouille par défaut chaque objet 365 jours après son écriture, en mode `COMPLIANCE`. Ce guide montre comment consulter ce verrouillage et l'adapter avec les commandes S3 Object Lock standard : rétention par défaut du bucket, rétention propre à un objet, prolongation, verrou juridique (*legal hold*).
 
-Ces opérations se font avec un client S3. La console et l'API Hikube n'exposent que la rétention par défaut du bucket.
+Ces opérations se font avec un client S3. La console et l'API Hikube affichent la rétention par défaut avec laquelle le bucket a été créé (365 jours) : elles ne reflètent pas une modification faite avec un client S3.
 
 ## Prérequis
 
@@ -23,7 +23,7 @@ Une rétention en mode `COMPLIANCE` ne peut être ni raccourcie ni retirée. L'o
 
 | Mécanisme | Durée | Qui le pose | Levée |
 |-----------|-------|-------------|-------|
-| **Rétention** | Jusqu'à une date (`RetainUntilDate`) | Le bucket, à l'écriture de chaque objet (365 jours), ou vous, objet par objet | Automatique à l'échéance ; ne peut être que prolongée |
+| **Rétention** | Jusqu'à une date (`RetainUntilDate`) | Le bucket, à l'écriture de chaque objet (rétention par défaut, 365 jours sauf modification), ou vous, objet par objet | Automatique à l'échéance ; ne peut être que prolongée |
 | **Verrou juridique** (*legal hold*) | Sans échéance | Vous, objet par objet | Quand vous le retirez (`Status=OFF`) |
 
 Les deux se cumulent : un objet ne peut être supprimé qu'une fois sa rétention échue **et** son verrou juridique retiré.
@@ -55,9 +55,29 @@ aws --endpoint-url "$S3_ENDPOINT" s3api get-object-lock-configuration \
 
 `DefaultRetention` est la rétention appliquée à tout objet écrit sans rétention propre.
 
-### 2. Envoyer un objet avec sa propre rétention
+### 2. Modifier la rétention par défaut du bucket
 
-Pour conserver un objet au-delà de 365 jours (archive réglementaire de dix ans, par exemple), donnez-lui une date d'échéance à l'envoi. Choisissez une date **postérieure** à l'échéance par défaut (365 jours après l'envoi) : la rétention propre à un objet sert à le garder plus longtemps.
+Tout utilisateur en **Lecture / Écriture** peut remplacer la rétention par défaut, en jours (`Days`) ou en années (`Years`). Exemple pour 55 jours :
+
+```bash
+aws --endpoint-url "$S3_ENDPOINT" s3api put-object-lock-configuration \
+  --bucket "$BUCKET_NAME" \
+  --object-lock-configuration '{"ObjectLockEnabled":"Enabled","Rule":{"DefaultRetention":{"Mode":"COMPLIANCE","Days":55}}}'
+```
+
+La nouvelle valeur ne s'applique qu'aux objets écrits ensuite : un objet déjà verrouillé garde son échéance. Sans `Rule`, le bucket n'a plus de rétention par défaut et un objet écrit sans rétention propre n'est pas verrouillé. Relancez l'étape 1 pour vérifier la valeur en place.
+
+:::info Affichage dans la console
+La console et l'API Hikube affichent toujours la rétention par défaut choisie à la création du bucket (365 jours) : une modification faite avec un client S3 n'y apparaît pas. Seule l'étape 1 donne la valeur en place. La modification de la rétention par défaut depuis la console sera bientôt disponible.
+:::
+
+:::warning Qui peut modifier la rétention
+Une clé en **Lecture / Écriture** suffit pour raccourcir ou retirer la rétention par défaut des prochains objets. Réservez ces clés aux applications qui écrivent dans le bucket et donnez la **Lecture seule** aux autres.
+:::
+
+### 3. Envoyer un objet avec sa propre rétention
+
+Une date d'échéance donnée à l'envoi remplace la rétention par défaut pour cet objet, qu'elle soit plus longue (archive réglementaire de dix ans, par exemple) ou plus courte (sauvegarde gardée 55 jours dans un bucket à 365 jours).
 
 ```bash
 # Date d'échéance : ISO 8601, en UTC
@@ -69,7 +89,7 @@ aws --endpoint-url "$S3_ENDPOINT" s3api put-object \
   --object-lock-retain-until-date "$RETAIN_UNTIL"
 ```
 
-### 3. Lire la rétention d'un objet
+### 4. Lire la rétention d'un objet
 
 ```bash
 aws --endpoint-url "$S3_ENDPOINT" s3api get-object-retention \
@@ -87,7 +107,7 @@ aws --endpoint-url "$S3_ENDPOINT" s3api get-object-retention \
 }
 ```
 
-### 4. Prolonger la rétention d'un objet
+### 5. Prolonger la rétention d'un objet
 
 Une rétention ne peut être que **prolongée** : la nouvelle date doit être postérieure à l'échéance actuelle, sinon la requête est refusée.
 
@@ -97,7 +117,7 @@ aws --endpoint-url "$S3_ENDPOINT" s3api put-object-retention \
   --retention '{"Mode":"COMPLIANCE","RetainUntilDate":"2040-12-31T00:00:00Z"}'
 ```
 
-### 5. Poser ou retirer un verrou juridique
+### 6. Poser ou retirer un verrou juridique
 
 Le verrou juridique bloque la suppression d'un objet sans date d'échéance, par exemple pendant un litige ou un audit :
 
@@ -128,10 +148,11 @@ Le mode `GOVERNANCE` est accepté, mais les utilisateurs d'un bucket n'ont pas l
 | Symptôme | Cause probable | Action |
 |----------|----------------|--------|
 | `get-object-lock-configuration` échoue | Bucket créé sans verrouillage | Le verrouillage ne s'active qu'à la création : créez un bucket verrouillé et copiez-y les objets |
-| `AccessDenied` sur `put-object-retention` ou `put-object-legal-hold` | Utilisateur en **Lecture seule** | Utilisez un utilisateur en **Lecture / Écriture** |
-| Prolongation refusée | Nouvelle date antérieure à l'échéance actuelle | Choisissez une date postérieure à l'échéance actuelle (étape 3) |
+| `AccessDenied` sur `put-object-lock-configuration`, `put-object-retention` ou `put-object-legal-hold` | Utilisateur en **Lecture seule** | Utilisez un utilisateur en **Lecture / Écriture** |
+| Prolongation refusée | Nouvelle date antérieure à l'échéance actuelle | Choisissez une date postérieure à l'échéance actuelle (étape 4) |
 | Date refusée à l'envoi | Date passée ou format incorrect | Date future, au format ISO 8601 en UTC (`2036-12-31T00:00:00Z`) |
-| `AccessDenied` à la suppression d'un objet | Rétention en cours ou verrou juridique posé | Lisez la rétention (étape 3) et le verrou juridique (étape 5) de l'objet |
+| Objet écrit avec une rétention inattendue | Rétention par défaut modifiée par un utilisateur du bucket | Lisez la rétention par défaut (étape 1) et rétablissez-la si besoin (étape 2) |
+| `AccessDenied` à la suppression d'un objet | Rétention en cours ou verrou juridique posé | Lisez la rétention (étape 4) et le verrou juridique (étape 6) de l'objet |
 
 ## Pour aller plus loin
 

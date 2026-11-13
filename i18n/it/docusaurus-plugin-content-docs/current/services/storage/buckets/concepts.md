@@ -58,7 +58,7 @@ graph TB
 | **S3 Endpoint** | Indirizzo del servizio S3 (ad esempio `prod.s3.hikube.cloud`), visualizzato nella pagina del bucket. |
 | **Utente S3** | Identità associata a un bucket, con un diritto **Read-only** o **Read / Write**. Un bucket può avere più utenti. |
 | **Access Key ID / Secret Access Key** | Coppia di chiavi di autenticazione S3 di un utente, generata alla sua creazione. La chiave segreta viene mostrata una sola volta. |
-| **Object Lock (WORM)** | Object Lock (*Write Once, Read Many*): ogni oggetto è bloccato per 365 giorni dopo la sua scrittura, in modalità `COMPLIANCE`; nessuno può modificarlo né eliminarlo prima della scadenza. |
+| **Object Lock (WORM)** | Object Lock (*Write Once, Read Many*): ogni oggetto è bloccato fino alla scadenza della sua conservazione, in modalità `COMPLIANCE`; nessuno può modificarlo né eliminarlo prima. La conservazione predefinita è di 365 giorni dopo la scrittura; si modifica con un client S3 e ogni oggetto può riceverne una propria. |
 | **Encryption at rest (LUKS)** | Cifratura dei dati memorizzati su disco. |
 
 ---
@@ -98,7 +98,7 @@ L'eliminazione di un bucket si conferma inserendone il nome. Ciò che accade agl
 | Bucket | Effetto dell'eliminazione |
 |--------|---------------------------|
 | Senza blocco | Il bucket e tutti i suoi oggetti vengono eliminati definitivamente, anche se non è vuoto. |
-| Bloccato (WORM) | Il bucket viene rimosso dalla console, ma la piattaforma conserva il suo storage e tutti i suoi oggetti. Ogni oggetto resta bloccato per 365 giorni dopo la sua scrittura (modalità `COMPLIANCE`). |
+| Bloccato (WORM) | Il bucket viene rimosso dalla console, ma la piattaforma conserva il suo storage e tutti i suoi oggetti. Ogni oggetto resta bloccato fino alla scadenza della sua conservazione (modalità `COMPLIANCE`, per impostazione predefinita 365 giorni dopo la sua scrittura). |
 
 La finestra di conferma indica il caso che si applica.
 

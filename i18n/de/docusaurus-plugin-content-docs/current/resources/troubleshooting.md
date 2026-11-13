@@ -162,7 +162,7 @@ Siehe: [PostgreSQL](../services/databases/postgresql/troubleshooting.md), [Maria
 
 Das Löschen eines Buckets ohne WORM ist endgültig und entfernt alle seine Objekte, auch wenn er nicht leer ist. Kopieren Sie zuerst die zu behaltenden Daten mit Ihrem S3-Client (zum Beispiel `aws s3 sync`). Schlägt das Löschen fehl, versuchen Sie es erneut und wenden Sie sich dann an den Support.
 
-Ein gesperrter Bucket (WORM) wird aus der Konsole entfernt, seine Objekte werden jedoch nicht gelöscht: Jedes Objekt bleibt 365 Tage nach dem Schreiben gesperrt (COMPLIANCE-Modus).
+Ein gesperrter Bucket (WORM) wird aus der Konsole entfernt, seine Objekte werden jedoch nicht gelöscht: Jedes Objekt bleibt bis zum Ablauf seiner Aufbewahrung gesperrt (COMPLIANCE-Modus, standardmäßig 365 Tage nach dem Schreiben).
 
 ### S3-Zugriff verweigert (`AccessDenied`)
 

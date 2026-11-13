@@ -98,7 +98,7 @@ This architecture ensures the **availability and durability** of data, while rem
 - The **read-only** permission lets you distribute view access with no risk of modification
 - All access goes through **HTTPS** with S3 key authentication; anonymous access is not possible
 - **Encryption at rest (LUKS)** protects the data stored on disk
-- **Locking (WORM)** prevents objects from being deleted or modified for 365 days
+- **Locking (WORM)** prevents objects from being deleted or modified until their retention expires (365 days by default, can be changed)
 
 ---
 
