@@ -58,7 +58,7 @@ graph TB
 | **S3 Endpoint** | Address of the S3 service (for example `prod.s3.hikube.cloud`), displayed on the bucket page. |
 | **S3 user** | Identity attached to a bucket, with a **Read-only** or **Read / Write** permission. A bucket can have several users. |
 | **Access Key ID / Secret Access Key** | A user's S3 authentication key pair, generated when the user is created. The secret key is displayed only once. |
-| **Locking (WORM)** | Object Lock (*Write Once, Read Many*): each object is locked for 365 days after it is written, in `COMPLIANCE` mode; no one can modify or delete it before then. |
+| **Locking (WORM)** | Object Lock (*Write Once, Read Many*): each object is locked until its retention expires, in `COMPLIANCE` mode; no one can modify or delete it before then. The default retention is 365 days after the object is written; it can be changed with an S3 client, and each object can be given its own. |
 | **Encryption at rest (LUKS)** | Encryption of the data stored on disk. |
 
 ---
@@ -98,7 +98,7 @@ Deleting a bucket is confirmed by entering its name. What happens to the objects
 | Bucket | Effect of the deletion |
 |--------|------------------------|
 | Without locking | The bucket and all its objects are permanently deleted, even if it is not empty. |
-| Locked (WORM) | The bucket is removed from the console, but the platform keeps its storage and all its objects. Each object stays locked for 365 days after it was written (`COMPLIANCE` mode). |
+| Locked (WORM) | The bucket is removed from the console, but the platform keeps its storage and all its objects. Each object stays locked until its retention expires (`COMPLIANCE` mode, 365 days after it was written by default). |
 
 The confirmation window states which case applies.
 

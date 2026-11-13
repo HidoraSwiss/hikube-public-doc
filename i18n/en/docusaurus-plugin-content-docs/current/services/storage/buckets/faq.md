@@ -66,9 +66,9 @@ No. A user's keys are limited to their bucket: `aws s3 ls` without a bucket name
 
 ### What is locking (WORM) for?
 
-The **Enable Object Lock (WORM)** option locks each object for 365 days after it is written. The platform applies this retention in `COMPLIANCE` mode: no one can modify or delete an object, or shorten its retention, before it expires. WORM retention is set by the platform: 365 days in COMPLIANCE mode. It cannot be changed, either at creation or afterwards. The option is used for regulatory archiving or to protect backups against accidental or malicious deletion. It is chosen when the bucket is created and cannot be removed afterwards. Deleting a locked bucket removes it from the console but does not delete its objects: they stay locked until their retention expires.
+The **Enable Object Lock (WORM)** option locks each object by default for 365 days after it is written, in `COMPLIANCE` mode: no one can modify or delete an object, or shorten its retention, before it expires. This default retention is the one the bucket is created with; a **Read / Write** user can change it afterwards with an S3 client, and each object can be given its own retention when it is uploaded. A change only applies to objects written afterwards: an object that is already locked keeps its expiry. The option is used for regulatory archiving or to protect backups against accidental or malicious deletion. It is chosen when the bucket is created and cannot be removed afterwards. Deleting a locked bucket removes it from the console but does not delete its objects: they stay locked until their retention expires.
 
-To keep an object beyond 365 days or place a legal hold on it, see [How to manage object retention in a locked bucket](./how-to/manage-object-retention.md).
+To change the default retention, set an object's retention or place a legal hold, see [How to manage object retention in a locked bucket](./how-to/manage-object-retention.md).
 
 ---
 

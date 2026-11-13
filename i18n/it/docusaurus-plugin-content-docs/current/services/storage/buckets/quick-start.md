@@ -46,7 +46,7 @@ La procedura guidata comprende tre passaggi.
 
 1. Inserisca il nome nel campo **Bucket name** (viene proposto un nome predefinito). Regole: lettere minuscole, cifre e trattini; inizia con una lettera e termina con una lettera o una cifra; massimo 16 caratteri. Esempio: `demo-assets`.
 2. Per questa guida lasci deselezionate le opzioni:
-   - **Enable Object Lock (WORM)**: ogni oggetto è bloccato per 365 giorni dopo la sua scrittura, in modalità COMPLIANCE; nessuno può modificarlo né eliminarlo prima della scadenza. La durata non è modificabile, il blocco non può più essere rimosso dopo la creazione ed eliminare il bucket non ne elimina gli oggetti;
+   - **Enable Object Lock (WORM)**: ogni oggetto è bloccato per impostazione predefinita per 365 giorni dopo la sua scrittura, in modalità COMPLIANCE; nessuno può modificarlo né eliminarlo prima della scadenza. Questa durata predefinita si modifica in seguito con un client S3 (vedere [Come gestire la conservazione degli oggetti di un bucket bloccato](./how-to/manage-object-retention.md)), il blocco non può più essere rimosso dopo la creazione ed eliminare il bucket non ne elimina gli oggetti;
    - **Enable encryption at rest (LUKS)**: cifra i dati memorizzati; non può essere modificata dopo la creazione.
 3. Faccia clic su **Next**.
 
@@ -183,7 +183,7 @@ Vedere anche la [risoluzione dei problemi completa](./troubleshooting.md).
 3. Inserisca il nome esatto del bucket in **Resource name to confirm**, quindi faccia clic su **Permanently delete**.
 
 :::warning Eliminazione irreversibile
-L'eliminazione di un bucket è definitiva e comporta la perdita di tutti i suoi oggetti, anche se non è vuoto. Copi i dati da conservare prima di eliminarlo. Fa eccezione un bucket bloccato (WORM): viene rimosso dalla console, ma i suoi oggetti sono conservati e restano bloccati per 365 giorni dopo la loro scrittura.
+L'eliminazione di un bucket è definitiva e comporta la perdita di tutti i suoi oggetti, anche se non è vuoto. Copi i dati da conservare prima di eliminarlo. Fa eccezione un bucket bloccato (WORM): viene rimosso dalla console, ma i suoi oggetti sono conservati e restano bloccati fino alla scadenza della loro conservazione (per impostazione predefinita 365 giorni dopo la loro scrittura).
 :::
 
 <NavigationFooter

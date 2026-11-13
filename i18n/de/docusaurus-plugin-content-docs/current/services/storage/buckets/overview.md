@@ -98,7 +98,7 @@ Diese Architektur gewährleistet die **Verfügbarkeit und Dauerhaftigkeit** der 
 - Das Recht **Nur-Lesen** ermöglicht es, einen Lesezugriff ohne Änderungsrisiko zu vergeben
 - Alle Zugriffe laufen über **HTTPS** mit Authentifizierung per S3-Schlüssel; anonymer Zugriff ist nicht möglich
 - Die **Verschlüsselung im Ruhezustand (LUKS)** schützt die auf der Disk gespeicherten Daten
-- Die **Sperre (WORM)** verhindert das Löschen oder Ändern der Objekte während 365 Tagen
+- Die **Sperre (WORM)** verhindert das Löschen oder Ändern der Objekte bis zum Ablauf ihrer Aufbewahrung (standardmäßig 365 Tage, änderbar)
 
 ---
 

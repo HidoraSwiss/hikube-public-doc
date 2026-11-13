@@ -58,7 +58,7 @@ graph TB
 | **S3 Endpoint** | Adresse des S3-Dienstes (zum Beispiel `prod.s3.hikube.cloud`), auf der Seite des Buckets angezeigt. |
 | **S3-Benutzer** | Einem Bucket zugeordnete Identität, mit dem Recht **Read-only** oder **Read / Write**. Ein Bucket kann mehrere Benutzer haben. |
 | **Access Key ID / Secret Access Key** | S3-Authentifizierungsschlüsselpaar eines Benutzers, bei seiner Erstellung generiert. Der geheime Schlüssel wird nur ein einziges Mal angezeigt. |
-| **Locking (WORM)** | Object Lock (*Write Once, Read Many*): Jedes Objekt wird nach dem Schreiben 365 Tage lang im Modus `COMPLIANCE` gesperrt; niemand kann es vor Ablauf ändern oder löschen. |
+| **Locking (WORM)** | Object Lock (*Write Once, Read Many*): Jedes Objekt wird bis zum Ablauf seiner Aufbewahrung im Modus `COMPLIANCE` gesperrt; niemand kann es vorher ändern oder löschen. Die Standardaufbewahrung beträgt 365 Tage nach dem Schreiben; sie lässt sich mit einem S3-Client ändern, und jedes Objekt kann seine eigene erhalten. |
 | **Encryption at rest (LUKS)** | Verschlüsselung der auf der Disk gespeicherten Daten. |
 
 ---
@@ -98,7 +98,7 @@ Das Löschen eines Buckets wird durch Eingabe seines Namens bestätigt. Was mit 
 | Bucket | Wirkung des Löschens |
 |--------|----------------------|
 | Ohne Sperre | Der Bucket und alle seine Objekte werden endgültig gelöscht, auch wenn er nicht leer ist. |
-| Gesperrt (WORM) | Der Bucket wird aus der Konsole entfernt, die Plattform behält jedoch seinen Speicher und alle seine Objekte. Jedes Objekt bleibt nach dem Schreiben 365 Tage lang gesperrt (Modus `COMPLIANCE`). |
+| Gesperrt (WORM) | Der Bucket wird aus der Konsole entfernt, die Plattform behält jedoch seinen Speicher und alle seine Objekte. Jedes Objekt bleibt bis zum Ablauf seiner Aufbewahrung gesperrt (Modus `COMPLIANCE`, standardmäßig 365 Tage nach dem Schreiben). |
 
 Das Bestätigungsfenster gibt an, welcher Fall zutrifft.
 

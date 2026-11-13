@@ -70,7 +70,7 @@ L'assistant comporte trois étapes.
 
 1. Saisissez le **Nom du bucket** (un nom est proposé par défaut). Règles : minuscules, chiffres et tirets ; commence par une lettre et se termine par une lettre ou un chiffre ; 16 caractères maximum. Exemple : `demo-assets`.
 2. Laissez décochées pour ce guide les options :
-   - **Activer le verrouillage (Object Lock / WORM)** : chaque objet est verrouillé 365 jours après son écriture, en mode COMPLIANCE ; personne ne peut le modifier ni le supprimer avant l'échéance. La durée n'est pas modifiable, le verrouillage ne peut plus être retiré après la création, et supprimer le bucket ne supprime pas ses objets ;
+   - **Activer le verrouillage (Object Lock / WORM)** : chaque objet est verrouillé par défaut 365 jours après son écriture, en mode COMPLIANCE ; personne ne peut le modifier ni le supprimer avant l'échéance. Cette durée par défaut se modifie ensuite avec un client S3 (voir [Comment gérer la rétention des objets d'un bucket verrouillé](./how-to/manage-object-retention.md)), le verrouillage ne peut plus être retiré après la création, et supprimer le bucket ne supprime pas ses objets ;
    - **Activer le chiffrement au repos (LUKS)** : chiffre les données stockées ; ne peut pas être modifié après la création.
 3. Cliquez sur **Suivant**.
 
@@ -304,7 +304,7 @@ Voir aussi le [dépannage complet](./troubleshooting.md).
 </Tabs>
 
 :::warning Suppression irréversible
-La suppression d'un bucket est définitive et emporte tous ses objets, même s'il n'est pas vide. Copiez les données à conserver avant de le supprimer. Un bucket verrouillé (WORM) fait exception : il est retiré de la console, mais ses objets sont conservés et restent verrouillés 365 jours après leur écriture.
+La suppression d'un bucket est définitive et emporte tous ses objets, même s'il n'est pas vide. Copiez les données à conserver avant de le supprimer. Un bucket verrouillé (WORM) fait exception : il est retiré de la console, mais ses objets sont conservés et restent verrouillés jusqu'à l'échéance de leur rétention (365 jours après leur écriture par défaut).
 :::
 
 <NavigationFooter

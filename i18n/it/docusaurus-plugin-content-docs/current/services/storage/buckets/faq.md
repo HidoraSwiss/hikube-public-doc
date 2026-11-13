@@ -66,9 +66,9 @@ No. Le chiavi di un utente sono limitate al suo bucket: `aws s3 ls` senza nome d
 
 ### A cosa serve il blocco (WORM)?
 
-L'opzione **Enable Object Lock (WORM)** blocca ogni oggetto per 365 giorni dopo la sua scrittura. La piattaforma applica questa conservazione in modalità `COMPLIANCE`: nessuno può modificare o eliminare un oggetto, né ridurne la conservazione prima della scadenza. La conservazione WORM è fissata dalla piattaforma: 365 giorni in modalità COMPLIANCE. Non può essere modificata, né alla creazione né in seguito. L'opzione serve per l'archiviazione normativa o per proteggere i backup da un'eliminazione accidentale o malevola. Si sceglie alla creazione del bucket e non può più essere rimossa in seguito. Eliminare un bucket bloccato lo rimuove dalla console, ma non ne elimina gli oggetti: restano bloccati fino alla scadenza della loro conservazione.
+L'opzione **Enable Object Lock (WORM)** blocca per impostazione predefinita ogni oggetto per 365 giorni dopo la sua scrittura, in modalità `COMPLIANCE`: nessuno può modificare o eliminare un oggetto, né ridurne la conservazione prima della scadenza. Questa conservazione predefinita è quella del bucket alla sua creazione; un utente in **Read / Write** può modificarla in seguito con un client S3, e ogni oggetto può ricevere una conservazione propria al caricamento. Una modifica vale solo per gli oggetti scritti dopo: un oggetto già bloccato mantiene la sua scadenza. L'opzione serve per l'archiviazione normativa o per proteggere i backup da un'eliminazione accidentale o malevola. Si sceglie alla creazione del bucket e non può più essere rimossa in seguito. Eliminare un bucket bloccato lo rimuove dalla console, ma non ne elimina gli oggetti: restano bloccati fino alla scadenza della loro conservazione.
 
-Per conservare un oggetto oltre 365 giorni o applicargli un blocco legale (legal hold), vedere [Come gestire la conservazione degli oggetti di un bucket bloccato](./how-to/manage-object-retention.md).
+Per modificare la conservazione predefinita, fissare la conservazione di un oggetto o applicare un blocco legale (legal hold), vedere [Come gestire la conservazione degli oggetti di un bucket bloccato](./how-to/manage-object-retention.md).
 
 ---
 

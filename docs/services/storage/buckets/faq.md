@@ -66,9 +66,9 @@ Non. Les clés d'un utilisateur sont limitées à son bucket : `aws s3 ls` sans 
 
 ### À quoi sert le verrouillage (WORM) ?
 
-L'option **Activer le verrouillage (Object Lock / WORM)** verrouille chaque objet 365 jours après son écriture. La plateforme applique cette rétention en mode `COMPLIANCE` : personne ne peut modifier ni supprimer un objet, ni raccourcir sa rétention avant l'échéance. La rétention WORM est fixée par la plateforme : 365 jours en mode COMPLIANCE. Elle ne peut pas être modifiée, ni à la création ni ensuite. L'option sert à l'archivage réglementaire ou à la protection des sauvegardes contre une suppression accidentelle ou malveillante. Elle se choisit à la création du bucket et ne peut plus être retirée ensuite. Supprimer un bucket verrouillé le retire de la console, mais ne supprime pas ses objets : ils restent verrouillés jusqu'à l'échéance de leur rétention.
+L'option **Activer le verrouillage (Object Lock / WORM)** verrouille par défaut chaque objet 365 jours après son écriture, en mode `COMPLIANCE` : personne ne peut modifier ni supprimer un objet, ni raccourcir sa rétention avant l'échéance. Cette rétention par défaut est celle du bucket à sa création ; un utilisateur en **Lecture / Écriture** peut la modifier ensuite avec un client S3, et chaque objet peut recevoir sa propre rétention à l'envoi. Une modification ne vaut que pour les objets écrits après : un objet déjà verrouillé garde son échéance. L'option sert à l'archivage réglementaire ou à la protection des sauvegardes contre une suppression accidentelle ou malveillante. Elle se choisit à la création du bucket et ne peut plus être retirée ensuite. Supprimer un bucket verrouillé le retire de la console, mais ne supprime pas ses objets : ils restent verrouillés jusqu'à l'échéance de leur rétention.
 
-Pour conserver un objet au-delà de 365 jours ou poser un verrou juridique, voir [Comment gérer la rétention des objets d'un bucket verrouillé](./how-to/manage-object-retention.md).
+Pour changer la rétention par défaut, fixer la rétention d'un objet ou poser un verrou juridique, voir [Comment gérer la rétention des objets d'un bucket verrouillé](./how-to/manage-object-retention.md).
 
 ---
 

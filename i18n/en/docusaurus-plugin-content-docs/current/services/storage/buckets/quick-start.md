@@ -46,7 +46,7 @@ The wizard has three steps.
 
 1. Enter the **Bucket name** (a name is suggested by default). Rules: lowercase letters, digits and hyphens; starts with a letter and ends with a letter or a digit; 16 characters maximum. Example: `demo-assets`.
 2. For this guide, leave these options unchecked:
-   - **Enable Object Lock (WORM)**: each object is locked for 365 days after it is written, in COMPLIANCE mode; no one can modify or delete it before then. The duration cannot be changed, locking cannot be removed after creation, and deleting the bucket does not delete its objects;
+   - **Enable Object Lock (WORM)**: each object is locked by default for 365 days after it is written, in COMPLIANCE mode; no one can modify or delete it before then. This default duration can be changed afterwards with an S3 client (see [How to manage object retention in a locked bucket](./how-to/manage-object-retention.md)), locking cannot be removed after creation, and deleting the bucket does not delete its objects;
    - **Enable encryption at rest (LUKS)**: encrypts the stored data; cannot be changed after creation.
 3. Click **Next**.
 
@@ -183,7 +183,7 @@ See also the [full troubleshooting guide](./troubleshooting.md).
 3. Enter the exact bucket name in **Resource name to confirm**, then click **Permanently delete**.
 
 :::warning Irreversible deletion
-Deleting a bucket is permanent and removes all its objects, even if it is not empty. Copy the data you want to keep before deleting it. A locked bucket (WORM) is the exception: it is removed from the console, but its objects are kept and stay locked for 365 days after they were written.
+Deleting a bucket is permanent and removes all its objects, even if it is not empty. Copy the data you want to keep before deleting it. A locked bucket (WORM) is the exception: it is removed from the console, but its objects are kept and stay locked until their retention expires (365 days after they were written by default).
 :::
 
 <NavigationFooter
