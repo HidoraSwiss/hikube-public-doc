@@ -134,7 +134,7 @@ Chaque service a sa plage de codes. Les derniers chiffres suivent la même logiq
 | `20xxx` | Machines virtuelles |
 | `30xxx` | Disques |
 | `50xxx` | Buckets |
-| `60xxx` | Clés d'API |
+| `60xxx` | Clés d'API et [gestion des accès](../access/troubleshooting.md) |
 | `70xxx` | Kubernetes |
 | `80xxx` | PostgreSQL |
 | `110xxx` | MariaDB |

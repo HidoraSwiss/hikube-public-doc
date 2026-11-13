@@ -226,5 +226,21 @@
   "sidebar.docsSidebar.category.api-reference": {
     "message": "Reference",
     "description": "The label for category 'Référence' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Gestion des accès": {
+    "message": "Access management",
+    "description": "The label for category 'Gestion des accès' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-access": {
+    "message": "How-to Guides",
+    "description": "The label for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-access.link.generated-index.title": {
+    "message": "Practical guides — Access management",
+    "description": "The generated-index page title for category 'Guides pratiques' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.how-to-access.link.generated-index.description": {
+    "message": "Step-by-step guides for access management on Hikube: each guide covers one specific task to carry out from the console, with its steps and checks.",
+    "description": "The generated-index page description for category 'Guides pratiques' in sidebar 'docsSidebar'"
   }
 }
