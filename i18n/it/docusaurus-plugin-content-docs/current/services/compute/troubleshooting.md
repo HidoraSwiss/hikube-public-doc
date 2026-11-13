@@ -134,4 +134,5 @@ Se la console indica che le quote del progetto non sono disponibili, la creazion
 
 1. Avvii **Restart** dalla sezione **Actions** della pagina di dettaglio.
 2. Se è in causa una modifica recente del cloud-init, corregga lo script in **Edit** > **Advanced Configuration**, poi avvii **Reload UserData** e **Restart**.
-3. L'accesso tramite console seriale o VNC non è disponibile nella console; contatti il [supporto](mailto:support@hidora.io) per una diagnosi di basso livello.
+3. Apra la scheda **Console** della VM per vedere il suo schermo o la sua porta seriale, e correggere la configurazione dalla VM stessa (vedere [Aprire la console di una VM](./how-to/use-console.md)). Accedere dalla porta seriale richiede un account con password nella VM.
+4. Se nulla di tutto ciò basta, contatti il [supporto](mailto:support@hidora.io).

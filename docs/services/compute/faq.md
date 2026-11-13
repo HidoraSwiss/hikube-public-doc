@@ -112,7 +112,7 @@ Pas depuis **Modifier** : le disque système d'une VM existante n'a aucune actio
 
 ### Puis-je accéder à la console série ou VNC de la VM ?
 
-Cette option n'est pas proposée dans la console ; contactez le [support](mailto:support@hidora.io). L'accès se fait en SSH (Linux) ou en RDP (Windows).
+Oui, depuis l'onglet **Console** de la page d'une VM en marche : **Écran (VNC)** pour l'écran graphique, **Console série** pour le port série. Il faut au moins le rôle **Utilisation** sur le projet, et un compte avec mot de passe dans la VM pour se connecter sur le port série. Voir [Ouvrir la console d'une VM](./how-to/use-console.md). Pour le travail courant, l'accès se fait en SSH (Linux) ou en RDP (Windows).
 
 ---
 
