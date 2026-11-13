@@ -67,6 +67,10 @@ aws --endpoint-url "$S3_ENDPOINT" s3api put-object-lock-configuration \
 
 Der neue Wert gilt nur für danach geschriebene Objekte: Ein bereits gesperrtes Objekt behält seinen Ablauf. Ohne `Rule` hat der Bucket keine Standardaufbewahrung mehr, und ein ohne eigene Aufbewahrung geschriebenes Objekt wird nicht gesperrt. Führen Sie Schritt 1 erneut aus, um den geltenden Wert zu prüfen.
 
+:::info Anzeige in der Konsole
+Die Hikube-Konsole und die API zeigen immer die bei der Erstellung des Buckets gewählte Standardaufbewahrung an (365 Tage): Eine mit einem S3-Client vorgenommene Änderung erscheint dort nicht. Nur Schritt 1 liefert den tatsächlich geltenden Wert. Die Änderung der Standardaufbewahrung über die Konsole wird in Kürze verfügbar sein.
+:::
+
 :::warning Wer die Aufbewahrung ändern kann
 Ein Schlüssel mit **Read / Write** genügt, um die Standardaufbewahrung der künftigen Objekte zu verkürzen oder zu entfernen. Behalten Sie diese Schlüssel den Anwendungen vor, die in den Bucket schreiben, und geben Sie allen anderen **Read-only**.
 :::

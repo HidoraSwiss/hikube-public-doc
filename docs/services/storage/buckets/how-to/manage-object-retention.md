@@ -67,6 +67,10 @@ aws --endpoint-url "$S3_ENDPOINT" s3api put-object-lock-configuration \
 
 La nouvelle valeur ne s'applique qu'aux objets écrits ensuite : un objet déjà verrouillé garde son échéance. Sans `Rule`, le bucket n'a plus de rétention par défaut et un objet écrit sans rétention propre n'est pas verrouillé. Relancez l'étape 1 pour vérifier la valeur en place.
 
+:::info Affichage dans la console
+La console et l'API Hikube affichent toujours la rétention par défaut choisie à la création du bucket (365 jours) : une modification faite avec un client S3 n'y apparaît pas. Seule l'étape 1 donne la valeur en place. La modification de la rétention par défaut depuis la console sera bientôt disponible.
+:::
+
 :::warning Qui peut modifier la rétention
 Une clé en **Lecture / Écriture** suffit pour raccourcir ou retirer la rétention par défaut des prochains objets. Réservez ces clés aux applications qui écrivent dans le bucket et donnez la **Lecture seule** aux autres.
 :::

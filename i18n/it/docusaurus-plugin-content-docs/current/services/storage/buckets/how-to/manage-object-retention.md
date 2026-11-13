@@ -67,6 +67,10 @@ aws --endpoint-url "$S3_ENDPOINT" s3api put-object-lock-configuration \
 
 Il nuovo valore si applica solo agli oggetti scritti in seguito: un oggetto già bloccato mantiene la sua scadenza. Senza `Rule`, il bucket non ha più una conservazione predefinita e un oggetto scritto senza una conservazione propria non viene bloccato. Rieseguite il passo 1 per verificare il valore in vigore.
 
+:::info Visualizzazione nella console
+La console e l'API Hikube mostrano sempre la conservazione predefinita scelta alla creazione del bucket (365 giorni): una modifica fatta con un client S3 non vi compare. Solo il passaggio 1 indica il valore in vigore. La modifica della conservazione predefinita dalla console sarà presto disponibile.
+:::
+
 :::warning Chi può modificare la conservazione
 Una chiave in **Read / Write** basta per ridurre o rimuovere la conservazione predefinita dei prossimi oggetti. Riservate queste chiavi alle applicazioni che scrivono nel bucket e assegnate **Read-only** agli altri.
 :::

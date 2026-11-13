@@ -67,6 +67,10 @@ aws --endpoint-url "$S3_ENDPOINT" s3api put-object-lock-configuration \
 
 The new value only applies to objects written afterwards: an object that is already locked keeps its expiry. Without `Rule`, the bucket no longer has a default retention and an object written without a retention of its own is not locked. Run step 1 again to check the value in place.
 
+:::info Display in the console
+The Hikube console and API always show the default retention chosen when the bucket was created (365 days): a change made with an S3 client does not appear there. Only step 1 gives the value in place. Changing the default retention from the console will be available soon.
+:::
+
 :::warning Who can change the retention
 A **Read / Write** key is enough to shorten or remove the default retention of future objects. Reserve these keys for the applications that write to the bucket and give the others **Read-only** access.
 :::
