@@ -114,6 +114,12 @@ const sidebars = {
     },
     {
       type: "category",
+      label: "Tutoriels",
+      link: { type: "doc", id: "tutorials/index" },
+      items: ["tutorials/web-app-postgresql"],
+    },
+    {
+      type: "category",
       label: "Gestion des accès",
       items: diatasisItems("access", [], "/access/how-to"),
     },
