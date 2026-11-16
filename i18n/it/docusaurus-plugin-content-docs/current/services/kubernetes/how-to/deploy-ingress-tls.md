@@ -111,7 +111,7 @@ kubectl apply -f ingress-tls.yaml
 L'annotazione `cert-manager.io/cluster-issuer: letsencrypt-prod` indica a Cert-Manager di ottenere automaticamente un certificato per i domini della sezione `tls`.
 :::
 
-### 6. Verificare il certificato
+### 6. Verificare il certificato {#verifier-certificat}
 
 ```bash
 kubectl get certificate

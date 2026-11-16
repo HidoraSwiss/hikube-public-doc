@@ -170,6 +170,19 @@ Se crea i suoi cluster tramite l'API, questi casi corrispondono ai codici di err
 
 ---
 
+### Un pod non raggiunge un database gestito del progetto {#base-managee-injoignable}
+
+**Causa**: a seconda del messaggio del client, il nome del database non è ancora risolto, la password viene rifiutata, oppure il database non si trova nello stesso progetto del cluster.
+
+**Soluzione**:
+
+1. `could not translate host name` (o equivalente) nei primissimi minuti del cluster: il DNS del cluster si sta ancora avviando. Riprovi la connessione un minuto più tardi.
+2. Verifichi che l'host utilizzato sia il nome completo della zona **Internal** del riquadro **Connection and Databases**, copiato con il pulsante di copia, senza abbreviarlo.
+3. `password authentication failed`: la password non corrisponde all'utente. La verifichi, oppure la cambi dalla scheda **Users** del database (**Actions** → **Change Password**), quindi aggiorni il `Secret` che la contiene.
+4. Timeout: verifichi che il database e il cluster si trovino nello **stesso progetto**. L'host interno non è raggiungibile da un altro progetto; per un database di un altro progetto, attivi il suo **External access**.
+
+---
+
 ### PVC nello stato Pending
 
 **Causa**: la classe di storage richiesta non esiste nel cluster oppure la capacità di storage è insufficiente.

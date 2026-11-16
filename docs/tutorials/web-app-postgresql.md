@@ -10,12 +10,12 @@ import NavigationFooter from '@site/src/components/NavigationFooter';
 
 Ce tutoriel vous fait construire une application web complète sur Hikube : un cluster Kubernetes qui fait tourner l'application, une base **PostgreSQL** managée qui stocke ses données, une publication en HTTPS avec un certificat automatique, puis la surveillance de l'ensemble.
 
-L'application d'exemple est [Miniflux](https://miniflux.app), un lecteur de flux RSS open source : une seule image de conteneur, une base PostgreSQL, une interface web. Le parcours reste le même pour votre propre application.
+L'application d'exemple est [Miniflux](https://miniflux.app), un lecteur de flux RSS open source : une seule image de conteneur, une base PostgreSQL, une interface web.
 
 | | |
 |---|---|
 | **Difficulté** | Intermédiaire |
-| **Durée** | Environ 45 minutes, dont 15 à 20 minutes d'attente pendant la création du cluster |
+| **Durée** | Environ 45 minutes |
 | **Vous apprendrez à** | Relier un cluster Kubernetes à une base managée du même projet, passer des identifiants par un `Secret`, publier un service en HTTPS |
 
 ---
@@ -108,7 +108,7 @@ Il n'est affiché qu'une fois. Copiez-le dans votre gestionnaire de mots de pass
 
 ## Étape 3 : Se connecter au cluster
 
-Le cluster doit être **Prêt** et avoir au moins un nœud actif. Comptez 15 à 20 minutes après sa création.
+Attendez que le cluster soit **Prêt** et que son premier nœud ait démarré, quelques minutes après sa création.
 
 1. Ouvrez **Infrastructure** > **Kubernetes**, puis la page du cluster `tuto-web`.
 2. Dans la section **Actions**, cliquez sur **Kubeconfig**. Le navigateur télécharge `kubeconfig-tuto-web.yaml`.
@@ -126,7 +126,7 @@ kubernetes-tuto-web-worker-pool-1-xxxxx-xxxxx  Ready    <none>   3m    v1.xx.x
 ```
 
 :::note Le cluster est Prêt, mais aucun nœud n'apparaît
-Le statut **Prêt** concerne le control plane. Le premier nœud et les addons démarrent ensuite, en quelques minutes : si `kubectl get nodes` répond `No resources found`, patientez et relancez la commande.
+Le statut **Prêt** concerne le control plane. Le premier nœud et les addons démarrent ensuite : si `kubectl get nodes` répond `No resources found`, patientez et relancez la commande.
 :::
 
 Vérifiez aussi que les addons tournent :
@@ -175,11 +175,7 @@ Supprimez le secret de test :
 kubectl delete secret pg-test
 ```
 
-:::tip En cas d'échec
-- `could not translate host name` dans les toutes premières minutes du cluster : le DNS du cluster démarre encore, relancez la commande.
-- `password authentication failed` : le mot de passe ne correspond pas. Vérifiez-le, ou changez-le depuis l'onglet **Utilisateurs** de `tuto-db`.
-- Un délai dépassé : vérifiez que la base et le cluster sont dans le **même projet**. L'hôte interne n'est pas joignable depuis un autre projet.
-:::
+Si la commande échoue, voir [Un pod ne joint pas une base de données managée du projet](../services/kubernetes/troubleshooting.md#base-managee-injoignable).
 
 ---
 
@@ -293,16 +289,12 @@ level=INFO msg="Starting HTTP server" listen_address=0.0.0.0:8080
 
 ### Passer à deux réplicas
 
-Une fois le schéma créé, ajoutez un second pod : l'application reste disponible si l'un des deux redémarre.
+Le déploiement a démarré un seul pod, le temps que Miniflux crée ses tables. Maintenant que le schéma existe, ajoutez un second pod : l'application reste disponible si l'un des deux redémarre.
 
 ```bash
 kubectl scale deployment/miniflux --replicas=2
 kubectl get pods -l app=miniflux
 ```
-
-:::note Pourquoi un seul réplica d'abord
-Au premier démarrage, Miniflux crée ses tables. Deux pods qui démarrent ensemble sur une base vide se disputent cette création : l'un d'eux redémarre une ou deux fois avant de se stabiliser. Démarrer à un réplica évite ce bruit ; c'est une bonne pratique pour toute application qui migre son schéma au démarrage.
-:::
 
 **Résultat attendu** : deux pods `miniflux-…` en `Running`, `1/1`.
 
@@ -402,26 +394,33 @@ kubectl get secret miniflux-admin -o jsonpath='{.data.password}' | base64 -d; ec
 
 Connectez-vous, puis ajoutez un premier flux (**Feeds** → **Add feed**). Chaque flux et chaque article sont enregistrés dans la base `tuto-db`.
 
-:::tip Le certificat reste à `False`
-Vérifiez que `dig +short miniflux.example.com` renvoie bien l'IP du contrôleur, puis lisez la cause dans `kubectl describe certificate miniflux-tls` et `kubectl get challenges`. Le port 80 doit rester joignable depuis Internet : Let's Encrypt y valide le domaine. Pour vos essais répétés, utilisez d'abord le serveur de staging de Let's Encrypt (voir [Comment déployer un Ingress avec TLS](../services/kubernetes/how-to/deploy-ingress-tls.md)).
-:::
+Si le certificat reste à `False`, voir la [vérification du certificat](../services/kubernetes/how-to/deploy-ingress-tls.md#verifier-certificat) dans le guide Ingress avec TLS.
 
 ---
 
 ## Étape 7 : Surveiller l'application
 
-L'addon **Monitoring Agents**, activé à l'étape 1, collecte déjà les métriques et les journaux du cluster. Pour un premier regard depuis votre poste :
+L'addon **Monitoring Agents**, activé à l'étape 1, collecte déjà les métriques et les journaux du cluster. Regardez d'abord ce que consomment vos deux pods :
 
 ```bash
-# Consommation des pods de l'application
 kubectl top pods -l app=miniflux
-
-# Journaux des deux réplicas, en continu
-kubectl logs -l app=miniflux --prefix -f
-
-# Événements récents du namespace (redémarrages, échecs de sondes...)
-kubectl get events --sort-by=.metadata.creationTimestamp | tail -20
 ```
+
+**Résultat attendu** : une ligne par réplica, avec une consommation faible tant que l'application reçoit peu de trafic.
+
+```console
+NAME                        CPU(cores)   MEMORY(bytes)
+miniflux-xxxxxxxxxx-xxxxx   1m           12Mi
+miniflux-xxxxxxxxxx-yyyyy   1m           12Mi
+```
+
+Lisez ensuite les journaux des deux réplicas :
+
+```bash
+kubectl logs -l app=miniflux --prefix --tail=5
+```
+
+**Résultat attendu** : les dernières lignes de chaque pod, préfixées par son nom, dont `Starting HTTP server`.
 
 Côté base, la page du cluster `tuto-db` affiche son statut, et l'onglet **Utilisateurs** gère les mots de passe.
 

@@ -10,12 +10,12 @@ import NavigationFooter from '@site/src/components/NavigationFooter';
 
 In diesem Tutorial bauen Sie auf Hikube eine vollständige Webanwendung auf: einen Kubernetes-Cluster, auf dem die Anwendung läuft, eine verwaltete **PostgreSQL**-Datenbank, die ihre Daten speichert, eine Veröffentlichung über HTTPS mit automatischem Zertifikat und schließlich die Überwachung des Ganzen.
 
-Die Beispielanwendung ist [Miniflux](https://miniflux.app), ein quelloffener RSS-Feed-Reader: ein einziges Container-Image, eine PostgreSQL-Datenbank, eine Weboberfläche. Der Ablauf bleibt für Ihre eigene Anwendung derselbe.
+Die Beispielanwendung ist [Miniflux](https://miniflux.app), ein quelloffener RSS-Feed-Reader: ein einziges Container-Image, eine PostgreSQL-Datenbank, eine Weboberfläche.
 
 | | |
 |---|---|
 | **Schwierigkeit** | Mittel |
-| **Dauer** | Etwa 45 Minuten, davon 15 bis 20 Minuten Wartezeit während der Erstellung des Clusters |
+| **Dauer** | Etwa 45 Minuten |
 | **Sie lernen** | Einen Kubernetes-Cluster mit einer verwalteten Datenbank desselben Projekts zu verbinden, Zugangsdaten über ein `Secret` zu übergeben und einen Dienst über HTTPS zu veröffentlichen |
 
 ---
@@ -108,7 +108,7 @@ Es wird nur einmal angezeigt. Kopieren Sie es in Ihren Passwort-Manager, bevor S
 
 ## Schritt 3: Mit dem Cluster verbinden
 
-Der Cluster muss **Ready** sein und mindestens einen aktiven Node haben. Rechnen Sie nach seiner Erstellung mit 15 bis 20 Minuten.
+Warten Sie, bis der Cluster **Ready** ist und sein erster Node gestartet ist, einige Minuten nach seiner Erstellung.
 
 1. Öffnen Sie **Infrastructure** > **Kubernetes** und dann die Seite des Clusters `tuto-web`.
 2. Klicken Sie im Abschnitt **Actions** auf **Kubeconfig**. Der Browser lädt `kubeconfig-tuto-web.yaml` herunter.
@@ -126,7 +126,7 @@ kubernetes-tuto-web-worker-pool-1-xxxxx-xxxxx  Ready    <none>   3m    v1.xx.x
 ```
 
 :::note Der Cluster ist Ready, aber es erscheint kein Node
-Der Status **Ready** betrifft die Control Plane. Der erste Node und die Addons starten danach innerhalb weniger Minuten: Antwortet `kubectl get nodes` mit `No resources found`, warten Sie kurz und führen Sie den Befehl erneut aus.
+Der Status **Ready** betrifft die Control Plane. Der erste Node und die Addons starten danach: Antwortet `kubectl get nodes` mit `No resources found`, warten Sie kurz und führen Sie den Befehl erneut aus.
 :::
 
 Prüfen Sie außerdem, dass die Addons laufen:
@@ -175,11 +175,7 @@ Löschen Sie das Test-Secret:
 kubectl delete secret pg-test
 ```
 
-:::tip Bei einem Fehlschlag
-- `could not translate host name` in den allerersten Minuten des Clusters: Das DNS des Clusters startet noch, führen Sie den Befehl erneut aus.
-- `password authentication failed`: Das Passwort stimmt nicht. Prüfen Sie es oder ändern Sie es in der Registerkarte **Users** von `tuto-db`.
-- Eine Zeitüberschreitung: Prüfen Sie, dass sich Datenbank und Cluster im **selben Projekt** befinden. Der interne Host ist aus einem anderen Projekt nicht erreichbar.
-:::
+Wenn der Befehl fehlschlägt, siehe [Ein Pod erreicht eine verwaltete Datenbank des Projekts nicht](../services/kubernetes/troubleshooting.md#base-managee-injoignable).
 
 ---
 
@@ -293,16 +289,12 @@ level=INFO msg="Starting HTTP server" listen_address=0.0.0.0:8080
 
 ### Auf zwei Replicas erhöhen
 
-Sobald das Schema erstellt ist, fügen Sie einen zweiten Pod hinzu: Die Anwendung bleibt verfügbar, wenn einer der beiden neu startet.
+Das Deployment hat nur einen Pod gestartet, während Miniflux seine Tabellen anlegt. Nun, da das Schema existiert, fügen Sie einen zweiten Pod hinzu: Die Anwendung bleibt verfügbar, wenn einer der beiden neu startet.
 
 ```bash
 kubectl scale deployment/miniflux --replicas=2
 kubectl get pods -l app=miniflux
 ```
-
-:::note Warum zuerst nur ein Replica
-Beim ersten Start legt Miniflux seine Tabellen an. Starten zwei Pods gleichzeitig auf einer leeren Datenbank, konkurrieren sie um diese Erstellung: Einer von beiden startet ein- oder zweimal neu, bevor er sich stabilisiert. Mit einem Replica zu beginnen vermeidet dieses Rauschen; das ist eine bewährte Praxis für jede Anwendung, die ihr Schema beim Start migriert.
-:::
 
 **Erwartetes Ergebnis:** zwei Pods `miniflux-…` im Status `Running`, `1/1`.
 
@@ -402,26 +394,33 @@ kubectl get secret miniflux-admin -o jsonpath='{.data.password}' | base64 -d; ec
 
 Melden Sie sich an und fügen Sie dann einen ersten Feed hinzu (**Feeds** → **Add feed**). Jeder Feed und jeder Artikel wird in der Datenbank `tuto-db` gespeichert.
 
-:::tip Das Zertifikat bleibt auf False
-Prüfen Sie, dass `dig +short miniflux.example.com` tatsächlich die IP des Controllers zurückgibt, und lesen Sie dann die Ursache in `kubectl describe certificate miniflux-tls` und `kubectl get challenges`. Port 80 muss aus dem Internet erreichbar bleiben: Let's Encrypt validiert dort die Domain. Für wiederholte Tests verwenden Sie zunächst den Staging-Server von Let's Encrypt (siehe [Einen Ingress mit TLS bereitstellen](../services/kubernetes/how-to/deploy-ingress-tls.md)).
-:::
+Wenn das Zertifikat auf `False` bleibt, siehe die [Prüfung des Zertifikats](../services/kubernetes/how-to/deploy-ingress-tls.md#verifier-certificat) in der Anleitung zu Ingress mit TLS.
 
 ---
 
 ## Schritt 7: Die Anwendung überwachen
 
-Das Addon **Monitoring Agents**, das in Schritt 1 aktiviert wurde, erfasst bereits die Metriken und Logs des Clusters. Für einen ersten Blick von Ihrem Rechner aus:
+Das Addon **Monitoring Agents**, das in Schritt 1 aktiviert wurde, erfasst bereits die Metriken und Logs des Clusters. Sehen Sie zuerst nach, was Ihre beiden Pods verbrauchen:
 
 ```bash
-# Verbrauch der Pods der Anwendung
 kubectl top pods -l app=miniflux
-
-# Logs der beiden Replicas, fortlaufend
-kubectl logs -l app=miniflux --prefix -f
-
-# Letzte Ereignisse des Namespace (Neustarts, fehlgeschlagene Probes...)
-kubectl get events --sort-by=.metadata.creationTimestamp | tail -20
 ```
+
+**Erwartetes Ergebnis:** eine Zeile pro Replica, mit geringem Verbrauch, solange die Anwendung wenig Traffic erhält.
+
+```console
+NAME                        CPU(cores)   MEMORY(bytes)
+miniflux-xxxxxxxxxx-xxxxx   1m           12Mi
+miniflux-xxxxxxxxxx-yyyyy   1m           12Mi
+```
+
+Lesen Sie anschließend die Logs der beiden Replicas:
+
+```bash
+kubectl logs -l app=miniflux --prefix --tail=5
+```
+
+**Erwartetes Ergebnis:** die letzten Zeilen jedes Pods, mit seinem Namen als Präfix, darunter `Starting HTTP server`.
 
 Auf der Datenbankseite zeigt die Seite des Clusters `tuto-db` seinen Status an, und die Registerkarte **Users** verwaltet die Passwörter.
 

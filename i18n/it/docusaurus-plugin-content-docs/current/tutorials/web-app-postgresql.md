@@ -10,12 +10,12 @@ import NavigationFooter from '@site/src/components/NavigationFooter';
 
 Questo tutorial le fa costruire un'applicazione web completa su Hikube: un cluster Kubernetes che esegue l'applicazione, un database **PostgreSQL** gestito che ne conserva i dati, una pubblicazione in HTTPS con certificato automatico e infine il monitoraggio dell'insieme.
 
-L'applicazione di esempio è [Miniflux](https://miniflux.app), un lettore di feed RSS open source: una sola immagine di container, un database PostgreSQL, un'interfaccia web. Il percorso resta lo stesso per la sua applicazione.
+L'applicazione di esempio è [Miniflux](https://miniflux.app), un lettore di feed RSS open source: una sola immagine di container, un database PostgreSQL, un'interfaccia web.
 
 | | |
 |---|---|
 | **Difficoltà** | Intermedio |
-| **Durata** | Circa 45 minuti, di cui 15-20 minuti di attesa durante la creazione del cluster |
+| **Durata** | Circa 45 minuti |
 | **Imparerà a** | Collegare un cluster Kubernetes a un database gestito dello stesso progetto, passare le credenziali tramite un `Secret`, pubblicare un servizio in HTTPS |
 
 ---
@@ -108,7 +108,7 @@ Viene mostrata una sola volta. La copi in un gestore di password prima di fare c
 
 ## Passo 3: Connettersi al cluster
 
-Il cluster deve essere **Ready** e avere almeno un nodo attivo. Conti 15-20 minuti dalla sua creazione.
+Attenda che il cluster sia **Ready** e che il suo primo nodo si sia avviato, qualche minuto dopo la creazione.
 
 1. Apra **Infrastructure** > **Kubernetes**, quindi la pagina del cluster `tuto-web`.
 2. Nella sezione **Actions**, faccia clic su **Kubeconfig**. Il browser scarica `kubeconfig-tuto-web.yaml`.
@@ -126,7 +126,7 @@ kubernetes-tuto-web-worker-pool-1-xxxxx-xxxxx  Ready    <none>   3m    v1.xx.x
 ```
 
 :::note Il cluster è Ready, ma non compare alcun nodo
-Lo stato **Ready** riguarda il control plane. Il primo nodo e gli addon si avviano subito dopo, in qualche minuto: se `kubectl get nodes` risponde `No resources found`, attenda e rilanci il comando.
+Lo stato **Ready** riguarda il control plane. Il primo nodo e gli addon si avviano subito dopo: se `kubectl get nodes` risponde `No resources found`, attenda e rilanci il comando.
 :::
 
 Verifichi anche che gli addon siano in esecuzione:
@@ -175,11 +175,7 @@ Elimini il secret di test:
 kubectl delete secret pg-test
 ```
 
-:::tip In caso di errore
-- `could not translate host name` nei primissimi minuti del cluster: il DNS del cluster si sta ancora avviando, rilanci il comando.
-- `password authentication failed`: la password non corrisponde. La verifichi, oppure la cambi dalla scheda **Users** di `tuto-db`.
-- Un timeout: verifichi che il database e il cluster si trovino nello **stesso progetto**. L'host interno non è raggiungibile da un altro progetto.
-:::
+Se il comando non riesce, vedere [Un pod non raggiunge un database gestito del progetto](../services/kubernetes/troubleshooting.md#base-managee-injoignable).
 
 ---
 
@@ -293,16 +289,12 @@ level=INFO msg="Starting HTTP server" listen_address=0.0.0.0:8080
 
 ### Passare a due repliche
 
-Una volta creato lo schema, aggiunga un secondo pod: l'applicazione resta disponibile se uno dei due si riavvia.
+La distribuzione ha avviato un solo pod, il tempo che Miniflux creasse le proprie tabelle. Ora che lo schema esiste, aggiunga un secondo pod: l'applicazione resta disponibile se uno dei due si riavvia.
 
 ```bash
 kubectl scale deployment/miniflux --replicas=2
 kubectl get pods -l app=miniflux
 ```
-
-:::note Perché una sola replica all'inizio
-Al primo avvio, Miniflux crea le proprie tabelle. Due pod che si avviano insieme su un database vuoto si contendono questa creazione: uno dei due si riavvia una o due volte prima di stabilizzarsi. Partire con una replica evita questo rumore; è una buona pratica per qualsiasi applicazione che migra il proprio schema all'avvio.
-:::
 
 **Risultato atteso**: due pod `miniflux-…` in `Running`, `1/1`.
 
@@ -402,26 +394,33 @@ kubectl get secret miniflux-admin -o jsonpath='{.data.password}' | base64 -d; ec
 
 Si connetta, quindi aggiunga un primo feed (**Feeds** → **Add feed**). Ogni feed e ogni articolo vengono salvati nel database `tuto-db`.
 
-:::tip Il certificato resta a `False`
-Verifichi che `dig +short miniflux.example.com` restituisca davvero l'IP del controller, poi legga la causa in `kubectl describe certificate miniflux-tls` e `kubectl get challenges`. La porta 80 deve restare raggiungibile da Internet: Let's Encrypt vi convalida il dominio. Per le sue prove ripetute, utilizzi prima il server di staging di Let's Encrypt (vedere [Come distribuire un Ingress con TLS](../services/kubernetes/how-to/deploy-ingress-tls.md)).
-:::
+Se il certificato resta a `False`, vedere la [verifica del certificato](../services/kubernetes/how-to/deploy-ingress-tls.md#verifier-certificat) nella guida Ingress con TLS.
 
 ---
 
 ## Passo 7: Monitorare l'applicazione
 
-L'addon **Monitoring Agents**, attivato al passo 1, raccoglie già le metriche e i log del cluster. Per una prima occhiata dalla sua postazione:
+L'addon **Monitoring Agents**, attivato al passo 1, raccoglie già le metriche e i log del cluster. Guardi prima cosa consumano i suoi due pod:
 
 ```bash
-# Consumo dei pod dell'applicazione
 kubectl top pods -l app=miniflux
-
-# Log delle due repliche, in continuo
-kubectl logs -l app=miniflux --prefix -f
-
-# Eventi recenti del namespace (riavvii, errori delle sonde...)
-kubectl get events --sort-by=.metadata.creationTimestamp | tail -20
 ```
+
+**Risultato atteso**: una riga per replica, con un consumo basso finché l'applicazione riceve poco traffico.
+
+```console
+NAME                        CPU(cores)   MEMORY(bytes)
+miniflux-xxxxxxxxxx-xxxxx   1m           12Mi
+miniflux-xxxxxxxxxx-yyyyy   1m           12Mi
+```
+
+Legga poi i log delle due repliche:
+
+```bash
+kubectl logs -l app=miniflux --prefix --tail=5
+```
+
+**Risultato atteso**: le ultime righe di ogni pod, precedute dal suo nome, tra cui `Starting HTTP server`.
 
 Sul lato database, la pagina del cluster `tuto-db` mostra il suo stato e la scheda **Users** gestisce le password.
 

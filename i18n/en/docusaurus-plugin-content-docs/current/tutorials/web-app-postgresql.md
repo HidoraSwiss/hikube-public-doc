@@ -10,12 +10,12 @@ import NavigationFooter from '@site/src/components/NavigationFooter';
 
 In this tutorial, you build a complete web application on Hikube: a Kubernetes cluster that runs the application, a managed **PostgreSQL** database that stores its data, an HTTPS publication with an automatic certificate, and then monitoring of the whole setup.
 
-The example application is [Miniflux](https://miniflux.app), an open source RSS feed reader: a single container image, a PostgreSQL database, a web interface. The walkthrough stays the same for your own application.
+The example application is [Miniflux](https://miniflux.app), an open source RSS feed reader: a single container image, a PostgreSQL database, a web interface.
 
 | | |
 |---|---|
 | **Difficulty** | Intermediate |
-| **Duration** | About 45 minutes, including 15 to 20 minutes of waiting while the cluster is created |
+| **Duration** | About 45 minutes |
 | **You will learn to** | Connect a Kubernetes cluster to a managed database in the same project, pass credentials through a `Secret`, publish a service over HTTPS |
 
 ---
@@ -108,7 +108,7 @@ It is displayed only once. Copy it into your password manager before clicking **
 
 ## Step 3: Connect to the cluster
 
-The cluster must be **Ready** and have at least one active node. Allow 15 to 20 minutes after its creation.
+Wait for the cluster to be **Ready** and its first node to have started, a few minutes after its creation.
 
 1. Open **Infrastructure** > **Kubernetes**, then the `tuto-web` cluster page.
 2. In the **Actions** section, click **Kubeconfig**. The browser downloads `kubeconfig-tuto-web.yaml`.
@@ -126,7 +126,7 @@ kubernetes-tuto-web-worker-pool-1-xxxxx-xxxxx  Ready    <none>   3m    v1.xx.x
 ```
 
 :::note The cluster is Ready, but no node appears
-The **Ready** status applies to the control plane. The first node and the addons start afterwards, within a few minutes: if `kubectl get nodes` answers `No resources found`, wait and run the command again.
+The **Ready** status applies to the control plane. The first node and the addons start afterwards: if `kubectl get nodes` answers `No resources found`, wait and run the command again.
 :::
 
 Also check that the addons are running:
@@ -175,11 +175,7 @@ Delete the test secret:
 kubectl delete secret pg-test
 ```
 
-:::tip If it fails
-- `could not translate host name` in the very first minutes of the cluster: the cluster DNS is still starting, run the command again.
-- `password authentication failed`: the password does not match. Check it, or change it from the **Users** tab of `tuto-db`.
-- A timeout: check that the database and the cluster are in the **same project**. The internal host cannot be reached from another project.
-:::
+If the command fails, see [A pod cannot reach a managed database in the project](../services/kubernetes/troubleshooting.md#base-managee-injoignable).
 
 ---
 
@@ -293,16 +289,12 @@ level=INFO msg="Starting HTTP server" listen_address=0.0.0.0:8080
 
 ### Scale to two replicas
 
-Once the schema is created, add a second pod: the application stays available if one of the two restarts.
+The deployment started a single pod, while Miniflux created its tables. Now that the schema exists, add a second pod: the application stays available if one of the two restarts.
 
 ```bash
 kubectl scale deployment/miniflux --replicas=2
 kubectl get pods -l app=miniflux
 ```
-
-:::note Why a single replica first
-On first startup, Miniflux creates its tables. Two pods starting together on an empty database compete for this creation: one of them restarts once or twice before stabilizing. Starting with one replica avoids this noise; it is good practice for any application that migrates its schema at startup.
-:::
 
 **Expected result**: two `miniflux-…` pods in `Running`, `1/1`.
 
@@ -402,26 +394,33 @@ kubectl get secret miniflux-admin -o jsonpath='{.data.password}' | base64 -d; ec
 
 Sign in, then add a first feed (**Feeds** → **Add feed**). Each feed and each article is stored in the `tuto-db` database.
 
-:::tip The certificate stays at False
-Check that `dig +short miniflux.example.com` returns the controller's IP, then read the cause in `kubectl describe certificate miniflux-tls` and `kubectl get challenges`. Port 80 must remain reachable from the Internet: Let's Encrypt validates the domain through it. For repeated tests, use the Let's Encrypt staging server first (see [How to deploy an Ingress with TLS](../services/kubernetes/how-to/deploy-ingress-tls.md)).
-:::
+If the certificate stays at `False`, see the [certificate check](../services/kubernetes/how-to/deploy-ingress-tls.md#verifier-certificat) in the Ingress with TLS guide.
 
 ---
 
 ## Step 7: Monitor the application
 
-The **Monitoring Agents** addon, enabled in step 1, already collects the cluster's metrics and logs. For a first look from your workstation:
+The **Monitoring Agents** addon, enabled in step 1, already collects the cluster's metrics and logs. First look at what your two pods consume:
 
 ```bash
-# Resource usage of the application pods
 kubectl top pods -l app=miniflux
-
-# Logs of both replicas, streamed
-kubectl logs -l app=miniflux --prefix -f
-
-# Recent events in the namespace (restarts, probe failures...)
-kubectl get events --sort-by=.metadata.creationTimestamp | tail -20
 ```
+
+**Expected result**: one line per replica, with low consumption as long as the application receives little traffic.
+
+```console
+NAME                        CPU(cores)   MEMORY(bytes)
+miniflux-xxxxxxxxxx-xxxxx   1m           12Mi
+miniflux-xxxxxxxxxx-yyyyy   1m           12Mi
+```
+
+Then read the logs of both replicas:
+
+```bash
+kubectl logs -l app=miniflux --prefix --tail=5
+```
+
+**Expected result**: the last lines of each pod, prefixed with its name, including `Starting HTTP server`.
 
 On the database side, the `tuto-db` cluster page shows its status, and the **Users** tab manages passwords.
 
