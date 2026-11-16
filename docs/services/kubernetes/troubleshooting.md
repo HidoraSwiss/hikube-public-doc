@@ -170,6 +170,19 @@ Si vous créez vos clusters par l'API, ces cas correspondent aux codes d'erreur 
 
 ---
 
+### Un pod ne joint pas une base de données managée du projet {#base-managee-injoignable}
+
+**Cause** : selon le message du client, le nom de la base n'est pas encore résolu, le mot de passe est refusé, ou la base n'est pas dans le même projet que le cluster.
+
+**Solution** :
+
+1. `could not translate host name` (ou équivalent) dans les toutes premières minutes du cluster : le DNS du cluster démarre encore. Relancez la connexion une minute plus tard.
+2. Vérifiez que l'hôte utilisé est le nom complet de la zone **Interne** de la carte **Connexion et Bases de données**, copié avec le bouton de copie, sans le raccourcir.
+3. `password authentication failed` : le mot de passe ne correspond pas à l'utilisateur. Vérifiez-le, ou changez-le depuis l'onglet **Utilisateurs** de la base (**Actions** → **Changer le mot de passe**), puis mettez à jour le `Secret` qui le contient.
+4. Délai dépassé : vérifiez que la base et le cluster sont dans le **même projet**. L'hôte interne n'est pas joignable depuis un autre projet ; pour une base d'un autre projet, activez son **Accès externe**.
+
+---
+
 ### PVC en état Pending
 
 **Cause** : la classe de stockage demandée n'existe pas dans le cluster ou la capacité de stockage est insuffisante.

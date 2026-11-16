@@ -170,6 +170,19 @@ Wenn Sie Ihre Cluster über die API erstellen, entsprechen diese Fälle den Fehl
 
 ---
 
+### Ein Pod erreicht eine verwaltete Datenbank des Projekts nicht {#base-managee-injoignable}
+
+**Ursache**: Je nach Meldung des Clients ist der Name der Datenbank noch nicht aufgelöst, das Passwort wird abgelehnt oder die Datenbank befindet sich nicht im selben Projekt wie der Cluster.
+
+**Lösung**:
+
+1. `could not translate host name` (oder Ähnliches) in den allerersten Minuten des Clusters: Das DNS des Clusters startet noch. Wiederholen Sie die Verbindung eine Minute später.
+2. Prüfen Sie, dass der verwendete Host der vollständige Name aus dem Bereich **Internal** der Karte **Connection and Databases** ist, mit der Kopierschaltfläche kopiert und nicht gekürzt.
+3. `password authentication failed`: Das Passwort passt nicht zum Benutzer. Prüfen Sie es oder ändern Sie es in der Registerkarte **Users** der Datenbank (**Actions** → **Change Password**) und aktualisieren Sie dann das `Secret`, das es enthält.
+4. Zeitüberschreitung: Prüfen Sie, dass sich Datenbank und Cluster im **selben Projekt** befinden. Der interne Host ist aus einem anderen Projekt nicht erreichbar; für eine Datenbank eines anderen Projekts aktivieren Sie deren **External access**.
+
+---
+
 ### PVC im Zustand Pending
 
 **Ursache**: Die angeforderte Speicherklasse existiert im Cluster nicht oder die Speicherkapazität reicht nicht aus.

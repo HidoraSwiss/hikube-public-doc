@@ -7,6 +7,10 @@
     "message": "Iniziare",
     "description": "The label for category 'Démarrer' in sidebar 'docsSidebar'"
   },
+  "sidebar.docsSidebar.category.Tutoriels": {
+    "message": "Tutorial",
+    "description": "The label for category 'Tutoriels' in sidebar 'docsSidebar'"
+  },
   "sidebar.docsSidebar.category.Services": {
     "message": "Servizi",
     "description": "The label for category 'Services' in sidebar 'docsSidebar'"
