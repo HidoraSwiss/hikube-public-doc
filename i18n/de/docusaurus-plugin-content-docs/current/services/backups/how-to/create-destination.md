@@ -48,6 +48,7 @@ Wenn der gewählte Bucket mit Objektsperre erstellt wurde, wird jedes Archiv dar
 
 - Die Aufbewahrung muss mindestens 365 Tage betragen. Ein kürzerer Wert wird sowohl bei der Erstellung als auch bei der Änderung abgelehnt, mit Angabe des genauen Minimums.
 - Die Sperre eines Buckets ändert sich nie: Sie wird bei seiner Erstellung festgelegt.
+- Dieses Minimum bleibt bei 365 Tagen, auch wenn die Standardaufbewahrung des Buckets mit einem S3-Client geändert wurde (siehe [Aufbewahrung der Objekte eines gesperrten Buckets verwalten](../../storage/buckets/how-to/manage-object-retention.md)).
 
 ## Ein Ziel löschen
 

@@ -57,15 +57,23 @@ aws --endpoint-url "$S3_ENDPOINT" s3api get-object-lock-configuration \
 
 ### 2. Modifier la rétention par défaut du bucket
 
-Tout utilisateur en **Lecture / Écriture** peut remplacer la rétention par défaut, en jours (`Days`) ou en années (`Years`). Exemple pour 55 jours :
+Tout utilisateur en **Lecture / Écriture** peut remplacer la rétention par défaut, en jours (`Days`) ou en années (`Years`). Exemple pour 30 jours :
 
 ```bash
 aws --endpoint-url "$S3_ENDPOINT" s3api put-object-lock-configuration \
   --bucket "$BUCKET_NAME" \
-  --object-lock-configuration '{"ObjectLockEnabled":"Enabled","Rule":{"DefaultRetention":{"Mode":"COMPLIANCE","Days":55}}}'
+  --object-lock-configuration '{"ObjectLockEnabled":"Enabled","Rule":{"DefaultRetention":{"Mode":"COMPLIANCE","Days":30}}}'
 ```
 
 La nouvelle valeur ne s'applique qu'aux objets écrits ensuite : un objet déjà verrouillé garde son échéance. Sans `Rule`, le bucket n'a plus de rétention par défaut et un objet écrit sans rétention propre n'est pas verrouillé. Relancez l'étape 1 pour vérifier la valeur en place.
+
+:::tip Choisir la durée avant la première écriture
+Pour un bucket verrouillé 30 jours, par exemple, modifiez la rétention par défaut juste après la création du bucket, avant d'y écrire le moindre objet, puis vérifiez-la (étape 1). Les objets écrits avant la modification restent verrouillés 365 jours, sans possibilité de raccourcir. Configurez votre application ou votre outil de sauvegarde seulement ensuite.
+:::
+
+:::note Destinations de sauvegarde Hikube
+Une [destination de sauvegarde](../../../backups/how-to/create-destination.md#utiliser-un-bucket-verrouillé-worm) créée sur un bucket verrouillé exige toujours une rétention d'au moins 365 jours, même si la rétention par défaut du bucket a été modifiée. Une rétention par défaut plus courte sert aux applications et aux outils qui écrivent directement dans le bucket.
+:::
 
 :::info Affichage dans la console
 La console et l'API Hikube affichent toujours la rétention par défaut choisie à la création du bucket (365 jours) : une modification faite avec un client S3 n'y apparaît pas. Seule l'étape 1 donne la valeur en place. La modification de la rétention par défaut depuis la console sera bientôt disponible.
@@ -77,7 +85,7 @@ Une clé en **Lecture / Écriture** suffit pour raccourcir ou retirer la rétent
 
 ### 3. Envoyer un objet avec sa propre rétention
 
-Une date d'échéance donnée à l'envoi remplace la rétention par défaut pour cet objet, qu'elle soit plus longue (archive réglementaire de dix ans, par exemple) ou plus courte (sauvegarde gardée 55 jours dans un bucket à 365 jours).
+Une date d'échéance donnée à l'envoi remplace la rétention par défaut pour cet objet, qu'elle soit plus longue (archive réglementaire de dix ans, par exemple) ou plus courte (sauvegarde gardée 30 jours dans un bucket à 365 jours).
 
 ```bash
 # Date d'échéance : ISO 8601, en UTC

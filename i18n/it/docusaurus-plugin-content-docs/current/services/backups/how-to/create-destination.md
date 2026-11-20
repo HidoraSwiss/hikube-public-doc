@@ -48,6 +48,7 @@ Se il bucket scelto è stato creato con il blocco degli oggetti, ogni archivio v
 
 - La conservazione deve essere di almeno 365 giorni. Un valore più breve viene rifiutato, sia alla creazione sia alla modifica, con il minimo esatto.
 - Il blocco di un bucket non cambia mai: viene fissato alla sua creazione.
+- Questo minimo resta di 365 giorni anche se la conservazione predefinita del bucket è stata modificata con un client S3 (vedere [Come gestire la conservazione degli oggetti di un bucket bloccato](../../storage/buckets/how-to/manage-object-retention.md)).
 
 ## Eliminare una destinazione
 

@@ -48,6 +48,7 @@ If the chosen bucket was created with object locking, each archive is locked the
 
 - The retention must be at least 365 days. A shorter value is refused, at creation as well as when changing it, with the exact minimum.
 - A bucket's locking never changes: it is set when the bucket is created.
+- This minimum stays at 365 days even if the bucket's default retention was changed with an S3 client (see [How to manage object retention in a locked bucket](../../storage/buckets/how-to/manage-object-retention.md)).
 
 ## Delete a destination
 

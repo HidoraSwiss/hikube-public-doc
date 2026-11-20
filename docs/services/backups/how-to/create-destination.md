@@ -117,6 +117,7 @@ Si le bucket choisi a été créé avec le verrouillage d'objets, chaque archive
 
 - La rétention doit être d'au moins 365 jours. Une valeur plus courte est refusée, à la création comme à la modification, avec le minimum exact.
 - Le verrouillage d'un bucket ne change jamais : il est fixé à sa création.
+- Ce minimum reste de 365 jours même si la rétention par défaut du bucket a été modifiée avec un client S3 (voir [Comment gérer la rétention des objets d'un bucket verrouillé](../../storage/buckets/how-to/manage-object-retention.md)).
 - Avec l'API, la destination l'indique par `objectLock: true` et `objectLockDays` (365), qui est aussi sa rétention minimale (`180218` en dessous).
 
 ## Supprimer une destination

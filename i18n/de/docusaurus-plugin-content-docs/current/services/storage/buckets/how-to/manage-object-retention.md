@@ -57,15 +57,23 @@ aws --endpoint-url "$S3_ENDPOINT" s3api get-object-lock-configuration \
 
 ### 2. Die Standardaufbewahrung des Buckets ändern
 
-Jeder Benutzer mit **Read / Write** kann die Standardaufbewahrung ersetzen, in Tagen (`Days`) oder in Jahren (`Years`). Beispiel für 55 Tage:
+Jeder Benutzer mit **Read / Write** kann die Standardaufbewahrung ersetzen, in Tagen (`Days`) oder in Jahren (`Years`). Beispiel für 30 Tage:
 
 ```bash
 aws --endpoint-url "$S3_ENDPOINT" s3api put-object-lock-configuration \
   --bucket "$BUCKET_NAME" \
-  --object-lock-configuration '{"ObjectLockEnabled":"Enabled","Rule":{"DefaultRetention":{"Mode":"COMPLIANCE","Days":55}}}'
+  --object-lock-configuration '{"ObjectLockEnabled":"Enabled","Rule":{"DefaultRetention":{"Mode":"COMPLIANCE","Days":30}}}'
 ```
 
 Der neue Wert gilt nur für danach geschriebene Objekte: Ein bereits gesperrtes Objekt behält seinen Ablauf. Ohne `Rule` hat der Bucket keine Standardaufbewahrung mehr, und ein ohne eigene Aufbewahrung geschriebenes Objekt wird nicht gesperrt. Führen Sie Schritt 1 erneut aus, um den geltenden Wert zu prüfen.
+
+:::tip Die Dauer vor dem ersten Schreiben wählen
+Für einen Bucket, der zum Beispiel 30 Tage sperrt, ändern Sie die Standardaufbewahrung direkt nach der Erstellung des Buckets, bevor Sie ein Objekt hineinschreiben, und prüfen Sie sie anschließend (Schritt 1). Vor der Änderung geschriebene Objekte bleiben 365 Tage gesperrt, ohne Möglichkeit zur Verkürzung. Konfigurieren Sie Ihre Anwendung oder Ihr Backup-Werkzeug erst danach.
+:::
+
+:::note Hikube-Backupziele
+Ein auf einem gesperrten Bucket erstelltes [Backupziel](../../../backups/how-to/create-destination.md#einen-gesperrten-bucket-worm-verwenden) verlangt immer eine Aufbewahrung von mindestens 365 Tagen, auch wenn die Standardaufbewahrung des Buckets geändert wurde. Eine kürzere Standardaufbewahrung dient Anwendungen und Werkzeugen, die direkt in den Bucket schreiben.
+:::
 
 :::info Anzeige in der Konsole
 Die Hikube-Konsole und die API zeigen immer die bei der Erstellung des Buckets gewählte Standardaufbewahrung an (365 Tage): Eine mit einem S3-Client vorgenommene Änderung erscheint dort nicht. Nur Schritt 1 liefert den tatsächlich geltenden Wert. Die Änderung der Standardaufbewahrung über die Konsole wird in Kürze verfügbar sein.
@@ -77,7 +85,7 @@ Ein Schlüssel mit **Read / Write** genügt, um die Standardaufbewahrung der kü
 
 ### 3. Ein Objekt mit eigener Aufbewahrung hochladen
 
-Ein beim Hochladen angegebenes Ablaufdatum ersetzt für dieses Objekt die Standardaufbewahrung, ob es länger (etwa ein regulatorisches Archiv über zehn Jahre) oder kürzer ist (ein Backup, das 55 Tage in einem Bucket mit 365 Tagen aufbewahrt wird).
+Ein beim Hochladen angegebenes Ablaufdatum ersetzt für dieses Objekt die Standardaufbewahrung, ob es länger (etwa ein regulatorisches Archiv über zehn Jahre) oder kürzer ist (ein Backup, das 30 Tage in einem Bucket mit 365 Tagen aufbewahrt wird).
 
 ```bash
 # Ablaufdatum: ISO 8601, in UTC

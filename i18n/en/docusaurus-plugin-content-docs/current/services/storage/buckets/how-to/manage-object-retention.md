@@ -57,15 +57,23 @@ aws --endpoint-url "$S3_ENDPOINT" s3api get-object-lock-configuration \
 
 ### 2. Change the bucket's default retention
 
-Any **Read / Write** user can replace the default retention, in days (`Days`) or years (`Years`). Example for 55 days:
+Any **Read / Write** user can replace the default retention, in days (`Days`) or years (`Years`). Example for 30 days:
 
 ```bash
 aws --endpoint-url "$S3_ENDPOINT" s3api put-object-lock-configuration \
   --bucket "$BUCKET_NAME" \
-  --object-lock-configuration '{"ObjectLockEnabled":"Enabled","Rule":{"DefaultRetention":{"Mode":"COMPLIANCE","Days":55}}}'
+  --object-lock-configuration '{"ObjectLockEnabled":"Enabled","Rule":{"DefaultRetention":{"Mode":"COMPLIANCE","Days":30}}}'
 ```
 
 The new value only applies to objects written afterwards: an object that is already locked keeps its expiry. Without `Rule`, the bucket no longer has a default retention and an object written without a retention of its own is not locked. Run step 1 again to check the value in place.
+
+:::tip Choose the duration before the first write
+For a bucket locked for 30 days, for example, change the default retention right after creating the bucket, before writing any object to it, then check it (step 1). Objects written before the change stay locked for 365 days, and that cannot be shortened. Only then configure your application or backup tool.
+:::
+
+:::note Hikube backup destinations
+A [backup destination](../../../backups/how-to/create-destination.md#use-a-locked-bucket-worm) created on a locked bucket always requires a retention of at least 365 days, even if the bucket's default retention was changed. A shorter default retention is for applications and tools that write directly to the bucket.
+:::
 
 :::info Display in the console
 The Hikube console and API always show the default retention chosen when the bucket was created (365 days): a change made with an S3 client does not appear there. Only step 1 gives the value in place. Changing the default retention from the console will be available soon.
@@ -77,7 +85,7 @@ A **Read / Write** key is enough to shorten or remove the default retention of f
 
 ### 3. Upload an object with its own retention
 
-An expiry date given at upload replaces the default retention for that object, whether it is longer (a ten-year regulatory archive, for example) or shorter (a backup kept for 55 days in a 365-day bucket).
+An expiry date given at upload replaces the default retention for that object, whether it is longer (a ten-year regulatory archive, for example) or shorter (a backup kept for 30 days in a 365-day bucket).
 
 ```bash
 # Expiry date: ISO 8601, in UTC
