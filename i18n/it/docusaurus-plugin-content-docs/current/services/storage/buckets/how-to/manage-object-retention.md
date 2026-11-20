@@ -57,15 +57,23 @@ aws --endpoint-url "$S3_ENDPOINT" s3api get-object-lock-configuration \
 
 ### 2. Modificare la conservazione predefinita del bucket
 
-Qualsiasi utente in **Read / Write** può sostituire la conservazione predefinita, in giorni (`Days`) o in anni (`Years`). Esempio per 55 giorni:
+Qualsiasi utente in **Read / Write** può sostituire la conservazione predefinita, in giorni (`Days`) o in anni (`Years`). Esempio per 30 giorni:
 
 ```bash
 aws --endpoint-url "$S3_ENDPOINT" s3api put-object-lock-configuration \
   --bucket "$BUCKET_NAME" \
-  --object-lock-configuration '{"ObjectLockEnabled":"Enabled","Rule":{"DefaultRetention":{"Mode":"COMPLIANCE","Days":55}}}'
+  --object-lock-configuration '{"ObjectLockEnabled":"Enabled","Rule":{"DefaultRetention":{"Mode":"COMPLIANCE","Days":30}}}'
 ```
 
 Il nuovo valore si applica solo agli oggetti scritti in seguito: un oggetto già bloccato mantiene la sua scadenza. Senza `Rule`, il bucket non ha più una conservazione predefinita e un oggetto scritto senza una conservazione propria non viene bloccato. Rieseguite il passo 1 per verificare il valore in vigore.
+
+:::tip Scegliere la durata prima della prima scrittura
+Per un bucket bloccato 30 giorni, per esempio, modificate la conservazione predefinita subito dopo la creazione del bucket, prima di scrivervi qualsiasi oggetto, poi verificatela (passo 1). Gli oggetti scritti prima della modifica restano bloccati 365 giorni, senza possibilità di accorciarli. Configurate la vostra applicazione o il vostro strumento di backup solo dopo.
+:::
+
+:::note Destinazioni di backup Hikube
+Una [destinazione di backup](../../../backups/how-to/create-destination.md#usare-un-bucket-bloccato-worm) creata su un bucket bloccato richiede sempre una conservazione di almeno 365 giorni, anche se la conservazione predefinita del bucket è stata modificata. Una conservazione predefinita più breve serve alle applicazioni e agli strumenti che scrivono direttamente nel bucket.
+:::
 
 :::info Visualizzazione nella console
 La console e l'API Hikube mostrano sempre la conservazione predefinita scelta alla creazione del bucket (365 giorni): una modifica fatta con un client S3 non vi compare. Solo il passaggio 1 indica il valore in vigore. La modifica della conservazione predefinita dalla console sarà presto disponibile.
@@ -77,7 +85,7 @@ Una chiave in **Read / Write** basta per ridurre o rimuovere la conservazione pr
 
 ### 3. Caricare un oggetto con una conservazione propria
 
-Una data di scadenza assegnata al caricamento sostituisce la conservazione predefinita per quell'oggetto, che sia più lunga (un archivio normativo di dieci anni, per esempio) o più breve (un backup conservato 55 giorni in un bucket a 365 giorni).
+Una data di scadenza assegnata al caricamento sostituisce la conservazione predefinita per quell'oggetto, che sia più lunga (un archivio normativo di dieci anni, per esempio) o più breve (un backup conservato 30 giorni in un bucket a 365 giorni).
 
 ```bash
 # Data di scadenza: ISO 8601, in UTC
