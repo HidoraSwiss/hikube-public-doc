@@ -12,3 +12,4 @@ Per un'attività specifica su un solo servizio, consulti piuttosto le guide prat
 | Tutorial | Servizi | Difficoltà | Durata |
 |----------|---------|------------|--------|
 | [Distribuire un'applicazione web con PostgreSQL su Kubernetes](./web-app-postgresql.md) | Kubernetes, PostgreSQL | Intermedio | 45 min |
+| [Servire un modello linguistico su GPU con Kubernetes](./llm-gpu-kubernetes.md) | Kubernetes, GPU | Intermedio | 45 min |

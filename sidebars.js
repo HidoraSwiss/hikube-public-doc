@@ -116,7 +116,7 @@ const sidebars = {
       type: "category",
       label: "Tutoriels",
       link: { type: "doc", id: "tutorials/index" },
-      items: ["tutorials/web-app-postgresql"],
+      items: ["tutorials/web-app-postgresql", "tutorials/llm-gpu-kubernetes"],
     },
     {
       type: "category",

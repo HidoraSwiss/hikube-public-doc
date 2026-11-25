@@ -12,3 +12,4 @@ Für eine gezielte Aufgabe an einem einzelnen Dienst finden Sie stattdessen die 
 | Tutorial | Dienste | Schwierigkeit | Dauer |
 |----------|----------|------------|-------|
 | [Eine Webanwendung mit PostgreSQL auf Kubernetes bereitstellen](./web-app-postgresql.md) | Kubernetes, PostgreSQL | Mittel | 45 Min. |
+| [Ein Sprachmodell auf einer GPU mit Kubernetes bereitstellen](./llm-gpu-kubernetes.md) | Kubernetes, GPU | Mittel | 45 Min. |
