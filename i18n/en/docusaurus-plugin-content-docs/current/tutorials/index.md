@@ -12,3 +12,4 @@ For a specific task on a single service, see the how-to guides of the relevant s
 | Tutorial | Services | Difficulty | Duration |
 |----------|----------|------------|----------|
 | [Deploy a web application with PostgreSQL on Kubernetes](./web-app-postgresql.md) | Kubernetes, PostgreSQL | Intermediate | 45 min |
+| [Serve a language model on a GPU with Kubernetes](./llm-gpu-kubernetes.md) | Kubernetes, GPU | Intermediate | 45 min |

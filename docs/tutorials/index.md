@@ -12,3 +12,4 @@ Pour une tâche précise sur un seul service, consultez plutôt les guides prati
 | Tutoriel | Services | Difficulté | Durée |
 |----------|----------|------------|-------|
 | [Déployer une application web avec PostgreSQL sur Kubernetes](./web-app-postgresql.md) | Kubernetes, PostgreSQL | Intermédiaire | 45 min |
+| [Servir un modèle de langage sur GPU avec Kubernetes](./llm-gpu-kubernetes.md) | Kubernetes, GPU | Intermédiaire | 45 min |
