@@ -30,7 +30,7 @@ Die Hikube-Cluster enthalten:
 
 Standardmäßig können alle Pods ohne Einschränkung miteinander kommunizieren. Mit NetworkPolicies schränken Sie diese Kommunikation ein.
 
-Die Erreichbarkeit aus dem Internet läuft über die Node-Gruppen, die in der Konsole als **Exposed on the internet (Public IP)** markiert sind und den Controller [Ingress NGINX](../plugins/ingress-nginx.md) hosten.
+Die Erreichbarkeit aus dem Internet läuft über die Node-Gruppen, bei denen in der Konsole die Option **Internet traffic entry (public IP)** aktiviert ist und die den Controller [Ingress NGINX](../plugins/ingress-nginx.md) hosten.
 
 ### 2. Eine NetworkPolicy erstellen
 

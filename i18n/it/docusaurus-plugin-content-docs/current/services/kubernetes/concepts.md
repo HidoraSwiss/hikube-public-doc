@@ -161,7 +161,7 @@ I gruppi di nodi si configurano nel passaggio **Nodes** della procedura guidata 
 | **Minimum nodes** | Numero di nodi sempre presenti. 0 è accettato | 1 |
 | **Maximum nodes** | Tetto dell'auto-scaling (tra 1 e 100, maggiore o uguale al minimo; 50 al massimo consigliato) | 3 |
 | **Instance type** | Modello dei nodi, scelto per serie e poi per dimensione | nessuno (scelta obbligatoria) |
-| **Exposed on the internet (Public IP)** | I nodi del gruppo ospitano il controller Ingress NGINX e ricevono il traffico in ingresso | attivato per il primo gruppo |
+| **Internet traffic entry (public IP)** | I nodi del gruppo ospitano il controller Ingress NGINX e ricevono il traffico in ingresso | attivato per il primo gruppo |
 | **GPU** | Modello e numero di GPU collegate a ogni nodo del gruppo | nessuno |
 
 :::note

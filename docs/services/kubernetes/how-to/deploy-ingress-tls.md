@@ -23,7 +23,7 @@ Les deux addons sont cochés par défaut à la création d'un cluster. Pour vér
 
 ### 2. Vérifier le groupe de nœuds exposé
 
-Le contrôleur Ingress NGINX s'exécute sur les nœuds des groupes marqués **Exposé sur internet (IP Publique)**. Le premier groupe du cluster l'est toujours. Pour dédier un autre groupe au trafic entrant, activez cette option sur sa carte dans la section **Groupes de nœuds** de la page **Modifier**.
+Le contrôleur Ingress NGINX s'exécute sur les nœuds des groupes dont l'option **Entrée du trafic Internet (IP publique)** est activée. Elle l'est toujours pour le premier groupe du cluster. Pour dédier un autre groupe au trafic entrant, activez cette option sur sa carte dans la section **Groupes de nœuds** de la page **Modifier**.
 
 :::tip
 Dédier un groupe de nœuds à l'Ingress permet d'isoler le trafic entrant et de dimensionner indépendamment les ressources d'exposition HTTP/HTTPS.

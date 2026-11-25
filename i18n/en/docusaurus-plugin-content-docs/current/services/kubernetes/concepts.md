@@ -161,7 +161,7 @@ Node groups are configured in the **Nodes** step of the wizard (title **Worker N
 | **Minimum nodes** | Number of nodes always present. 0 is accepted | 1 |
 | **Maximum nodes** | Autoscaling ceiling (between 1 and 100, greater than or equal to the minimum; 50 recommended maximum) | 3 |
 | **Instance type** | Node flavor, chosen by series then by size | none (required choice) |
-| **Exposed on the internet (Public IP)** | The group's nodes host the Ingress NGINX controller and receive incoming traffic | enabled for the first group |
+| **Internet traffic entry (public IP)** | The group's nodes host the Ingress NGINX controller and receive incoming traffic | enabled for the first group |
 | **GPU** | Model and number of GPUs attached to each node of the group | none |
 
 :::note

@@ -60,7 +60,7 @@ Eine erste Gruppe, `worker-pool-1`, ist bereits vorhanden. Klappen Sie sie auf u
 | **Minimum nodes** | 1 |
 | **Maximum nodes** | 3 |
 | **Instance type** | Serie **Standard (S)**, Größe **Large** (`s1.large`, 4 vCPU, 8 GB) |
-| **Exposed on the internet (Public IP)** | Aktiviert (für die erste Gruppe vorgegeben) |
+| **Internet traffic entry (public IP)** | Aktiviert (für die erste Gruppe vorgegeben) |
 
 ![Kubernetes-Assistent, Schritt Nodes: Node-Gruppe und Instanztyp](/img/console/kubernetes/wizard-nodes.en.png)
 
@@ -245,7 +245,7 @@ Um die Anwendung unter Ihrer eigenen Domain zu veröffentlichen, legen Sie einen
 | Die Schaltfläche **Kubeconfig** ist deaktiviert („Reserved for project administrators.“) | Die kubeconfig ist den Projektadministratoren vorbehalten: Wenden Sie sich an einen Projektadministrator. |
 | `kubectl get nodes` listet keinen Node im Status `Ready` | Prüfen Sie unter **Node Pools** die Anzahl aktiver Nodes und dann `kubectl describe node <node-name>`. |
 | Pods im Status `Pending` | `kubectl describe pod <pod-name>`; wenn die Nodes ausgelastet sind, erhöhen Sie **Maximum nodes** über **Edit**. |
-| Der Ingress antwortet nicht | Prüfen Sie, dass das Addon **Ingress NGINX** aktiviert ist und mindestens eine Gruppe **Exposed on the internet (Public IP)** ist. |
+| Der Ingress antwortet nicht | Prüfen Sie, dass das Addon **Ingress NGINX** aktiviert ist und bei mindestens einer Gruppe die Option **Internet traffic entry (public IP)** aktiviert ist. |
 
 Weitere Informationen finden Sie auf der Seite [Fehlerbehebung](./troubleshooting.md).
 

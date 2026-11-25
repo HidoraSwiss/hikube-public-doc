@@ -161,7 +161,7 @@ Die Node-Gruppen werden im Schritt **Nodes** des Assistenten konfiguriert (Titel
 | **Minimum nodes** | Anzahl der Nodes, die immer vorhanden sind. 0 ist zulässig | 1 |
 | **Maximum nodes** | Obergrenze des Autoscalings (zwischen 1 und 100, größer oder gleich dem Minimum; empfohlenes Maximum 50) | 3 |
 | **Instance type** | Größe der Nodes, gewählt nach Serie und dann nach Größe | keiner (Auswahl erforderlich) |
-| **Exposed on the internet (Public IP)** | Die Nodes der Gruppe hosten den Ingress-NGINX-Controller und empfangen den eingehenden Traffic | für die erste Gruppe aktiviert |
+| **Internet traffic entry (public IP)** | Die Nodes der Gruppe hosten den Ingress-NGINX-Controller und empfangen den eingehenden Traffic | für die erste Gruppe aktiviert |
 | **GPU** | Modell und Anzahl der GPUs, die an jeden Node der Gruppe angebunden werden | keine |
 
 :::note

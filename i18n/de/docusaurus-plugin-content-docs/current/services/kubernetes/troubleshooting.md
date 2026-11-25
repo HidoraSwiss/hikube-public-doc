@@ -137,7 +137,7 @@ Wenn Sie Ihre Cluster über die API erstellen, entsprechen diese Fälle den Fehl
 **Lösung**:
 
 1. Prüfen Sie auf der Detailseite des Clusters, ob **Ingress NGINX** im Abschnitt **Extensions** aufgeführt ist. Andernfalls aktivieren Sie es über **Edit** > **Extensions & Addons**.
-2. Prüfen Sie, ob mindestens eine Node-Gruppe **Exposed on the internet (Public IP)** ist und der Controller eine externe IP hat:
+2. Prüfen Sie, ob bei mindestens einer Node-Gruppe die Option **Internet traffic entry (public IP)** aktiviert ist und der Controller eine externe IP hat:
    ```bash
    kubectl get svc -A | grep ingress-nginx-controller
    ```

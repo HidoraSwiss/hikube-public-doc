@@ -23,7 +23,7 @@ I due addon sono selezionati per impostazione predefinita alla creazione di un c
 
 ### 2. Verificare il gruppo di nodi esposto
 
-Il controller Ingress NGINX viene eseguito sui nodi dei gruppi contrassegnati **Exposed on the internet (Public IP)**. Il primo gruppo del cluster lo è sempre. Per dedicare un altro gruppo al traffico in ingresso, attivi questa opzione sulla relativa scheda nella sezione **Node groups** della pagina **Edit**.
+Il controller Ingress NGINX viene eseguito sui nodi dei gruppi con l'opzione **Internet traffic entry (public IP)** attivata. Per il primo gruppo del cluster è sempre attivata. Per dedicare un altro gruppo al traffico in ingresso, attivi questa opzione sulla relativa scheda nella sezione **Node groups** della pagina **Edit**.
 
 :::tip
 Dedicare un gruppo di nodi all'Ingress consente di isolare il traffico in ingresso e di dimensionare in modo indipendente le risorse di esposizione HTTP/HTTPS.

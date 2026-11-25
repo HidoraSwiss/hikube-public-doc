@@ -23,7 +23,7 @@ Beide Addons sind bei der Erstellung eines Clusters standardmäßig ausgewählt.
 
 ### 2. Die erreichbare Node-Gruppe prüfen
 
-Der Ingress-NGINX-Controller läuft auf den Nodes der Gruppen, die als **Exposed on the internet (Public IP)** markiert sind. Die erste Gruppe des Clusters ist es immer. Um eine andere Gruppe dem eingehenden Traffic zu widmen, aktivieren Sie diese Option auf ihrer Karte im Abschnitt **Node groups** der Seite **Edit**.
+Der Ingress-NGINX-Controller läuft auf den Nodes der Gruppen, bei denen die Option **Internet traffic entry (public IP)** aktiviert ist. Für die erste Gruppe des Clusters ist sie immer aktiviert. Um eine andere Gruppe dem eingehenden Traffic zu widmen, aktivieren Sie diese Option auf ihrer Karte im Abschnitt **Node groups** der Seite **Edit**.
 
 :::tip
 Wenn Sie eine Node-Gruppe dem Ingress widmen, isolieren Sie den eingehenden Traffic und dimensionieren die Ressourcen für die HTTP/HTTPS-Bereitstellung unabhängig.

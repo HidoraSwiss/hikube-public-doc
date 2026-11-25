@@ -65,7 +65,7 @@ Il cluster è la risorsa più lunga da creare: inizi da questo, creerà il datab
 | | **Kubernetes Version** | la versione preselezionata |
 | | **Control Plane Instance Size** | **s1.small — 1 CPU / 2Gi** |
 | | **Control Plane High Availability** | **3 (HA)** |
-| **Nodes** | Gruppo `worker-pool-1` | **Instance type** `s1.large`, **Minimum nodes** 1, **Maximum nodes** 3, **Exposed on the internet (Public IP)** attivato |
+| **Nodes** | Gruppo `worker-pool-1` | **Instance type** `s1.large`, **Minimum nodes** 1, **Maximum nodes** 3, **Internet traffic entry (public IP)** attivato |
 | **Addons** | | Mantenga **Cert-Manager**, **Ingress NGINX** e **Monitoring Agents**, selezionati per impostazione predefinita |
 
 3. Al passaggio **Summary**, faccia clic su **Create cluster**.

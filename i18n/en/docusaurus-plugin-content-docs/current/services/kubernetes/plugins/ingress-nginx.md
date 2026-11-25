@@ -16,7 +16,7 @@ The cluster detail page shows **Ingress NGINX** in the **Extensions** section wh
 
 ### Exposure
 
-The controller is exposed by a Service of type `LoadBalancer` and runs on the nodes of the groups marked **Exposed on the internet (Public IP)** (**Nodes** step). The cluster's first group is always exposed. The PROXY protocol is not enabled by default.
+The controller is exposed by a Service of type `LoadBalancer` and runs on the nodes of the groups with **Internet traffic entry (public IP)** enabled (**Nodes** step). It is always enabled for the cluster's first group. The PROXY protocol is not enabled by default.
 
 :::note
 Choosing the exposure method (`LoadBalancer` or `Proxied`) and declaring hostnames at the addon level are not offered in the console; contact support.

@@ -87,7 +87,7 @@ Un premier groupe, `worker-pool-1`, est déjà présent. Dépliez-le et renseign
 | **Nombre minimum de nœuds** | 1 |
 | **Nombre maximum de nœuds** | 3 |
 | **Type d'instance** | Série **Standard (S)**, taille **Large** (`s1.large`, 4 vCPU, 8 Go) |
-| **Exposé sur internet (IP Publique)** | Activé (imposé pour le premier groupe) |
+| **Entrée du trafic Internet (IP publique)** | Activé (imposé pour le premier groupe) |
 
 ![Assistant Kubernetes, étape Nœuds : groupe de nœuds et type d'instance](/img/console/kubernetes/wizard-nodes.fr.png)
 
@@ -351,7 +351,7 @@ Pour publier l'application sous votre propre domaine, créez un enregistrement D
 | Le bouton **Kubeconfig** est désactivé (« Réservé aux administrateurs du projet. ») | Le kubeconfig est réservé aux administrateurs du projet : adressez-vous à un administrateur du projet. |
 | `kubectl get nodes` ne liste aucun nœud `Ready` | Vérifiez dans **Pools de Nœuds** le nombre de nœuds actifs, puis `kubectl describe node <nom-du-nœud>`. |
 | Pods en `Pending` | `kubectl describe pod <nom-du-pod>` ; si les nœuds sont saturés, augmentez le **Nombre maximum de nœuds** via **Modifier**. |
-| L'Ingress ne répond pas | Vérifiez que l'addon **Ingress NGINX** est activé et qu'au moins un groupe est **Exposé sur internet (IP Publique)**. |
+| L'Ingress ne répond pas | Vérifiez que l'addon **Ingress NGINX** est activé et qu'au moins un groupe a l'option **Entrée du trafic Internet (IP publique)** activée. |
 
 Pour aller plus loin, consultez la page [Dépannage](./troubleshooting.md).
 

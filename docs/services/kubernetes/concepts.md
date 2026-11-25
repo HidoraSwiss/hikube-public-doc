@@ -161,7 +161,7 @@ Les groupes de nœuds se configurent à l'étape **Nœuds** de l'assistant (titr
 | **Nombre minimum de nœuds** | Nombre de nœuds toujours présents. 0 est accepté | 1 |
 | **Nombre maximum de nœuds** | Plafond de l'auto-scaling (entre 1 et 100, supérieur ou égal au minimum ; 50 au maximum recommandé) | 3 |
 | **Type d'instance** | Gabarit des nœuds, choisi par série puis par taille | aucun (choix obligatoire) |
-| **Exposé sur internet (IP Publique)** | Les nœuds du groupe hébergent le contrôleur Ingress NGINX et reçoivent le trafic entrant | activé pour le premier groupe |
+| **Entrée du trafic Internet (IP publique)** | Les nœuds du groupe hébergent le contrôleur Ingress NGINX et reçoivent le trafic entrant | activé pour le premier groupe |
 | **GPU** | Modèle et nombre de GPU attachés à chaque nœud du groupe | aucun |
 
 :::note

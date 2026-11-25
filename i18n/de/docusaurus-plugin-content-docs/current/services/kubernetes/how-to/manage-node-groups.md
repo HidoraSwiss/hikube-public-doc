@@ -40,7 +40,7 @@ Die Bearbeitungsseite enthält die Abschnitte **General information**, **Node gr
    - **Node disk size**: zum Beispiel 100 GB;
    - **Minimum nodes** und **Maximum nodes**: zum Beispiel 1 und 10;
    - **Instance type**: zum Beispiel Serie **Universal (U)**, Größe **4XLarge** (`u1.4xlarge`);
-   - **Exposed on the internet (Public IP)**: nur aktivieren, wenn diese Gruppe eingehenden Traffic empfangen soll (Ingress NGINX);
+   - **Internet traffic entry (public IP)**: nur aktivieren, wenn diese Gruppe eingehenden Traffic empfangen soll (Ingress NGINX);
    - **GPU**: bei Bedarf, siehe [GPUs hinzufügen](#5-gpus-hinzufügen).
 3. Klicken Sie auf **Save**.
 

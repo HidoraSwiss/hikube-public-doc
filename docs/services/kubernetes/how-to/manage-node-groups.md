@@ -82,7 +82,7 @@ curl -sS -X PATCH "$HIKUBE_API/kubernetes/v1alpha1/projects/$PROJECT_ID/clusters
    - **Taille du disque des nœuds** : par exemple 100 Go ;
    - **Nombre minimum de nœuds** et **Nombre maximum de nœuds** : par exemple 1 et 10 ;
    - **Type d'instance** : par exemple série **Universel (U)**, taille **4XLarge** (`u1.4xlarge`) ;
-   - **Exposé sur internet (IP Publique)** : à activer seulement si ce groupe doit recevoir le trafic entrant (Ingress NGINX) ;
+   - **Entrée du trafic Internet (IP publique)** : à activer seulement si ce groupe doit recevoir le trafic entrant (Ingress NGINX) ;
    - **GPU** : si nécessaire, voir [Ajouter des GPU](#5-ajouter-des-gpu).
 3. Cliquez sur **Enregistrer**.
 
