@@ -65,7 +65,7 @@ Der Cluster ist die Ressource mit der längsten Erstellungszeit: Beginnen Sie mi
 | | **Kubernetes Version** | die vorausgewählte Version |
 | | **Control Plane Instance Size** | **s1.small — 1 CPU / 2Gi** |
 | | **Control Plane High Availability** | **3 (HA)** |
-| **Nodes** | Gruppe `worker-pool-1` | **Instance type** `s1.large`, **Minimum nodes** 1, **Maximum nodes** 3, **Exposed on the internet (Public IP)** aktiviert |
+| **Nodes** | Gruppe `worker-pool-1` | **Instance type** `s1.large`, **Minimum nodes** 1, **Maximum nodes** 3, **Internet traffic entry (public IP)** aktiviert |
 | **Addons** | | Behalten Sie **Cert-Manager**, **Ingress NGINX** und **Monitoring Agents** bei, die standardmäßig ausgewählt sind |
 
 3. Klicken Sie im Schritt **Summary** auf **Create cluster**.

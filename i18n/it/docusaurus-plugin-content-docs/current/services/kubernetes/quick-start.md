@@ -60,7 +60,7 @@ Faccia clic su **Next**.
 | **Minimum nodes** | 1 |
 | **Maximum nodes** | 3 |
 | **Instance type** | Serie **Standard (S)**, dimensione **Large** (`s1.large`, 4 vCPU, 8 GB) |
-| **Exposed on the internet (Public IP)** | Attivato (imposto per il primo gruppo) |
+| **Internet traffic entry (public IP)** | Attivato (imposto per il primo gruppo) |
 
 ![Procedura guidata Kubernetes, passo Nodes: gruppo di nodi e tipo di istanza](/img/console/kubernetes/wizard-nodes.en.png)
 
@@ -245,7 +245,7 @@ Per pubblicare l'applicazione con il suo dominio, crei un record DNS che punti a
 | Il pulsante **Kubeconfig** è disattivato («Reserved for project administrators.») | Il kubeconfig è riservato agli amministratori del progetto: si rivolga a un amministratore del progetto. |
 | `kubectl get nodes` non elenca alcun nodo `Ready` | Verifichi in **Node Pools** il numero di nodi attivi, quindi `kubectl describe node <nome-del-nodo>`. |
 | Pod in `Pending` | `kubectl describe pod <nome-del-pod>`; se i nodi sono saturi, aumenti i **Maximum nodes** tramite **Edit**. |
-| L'Ingress non risponde | Verifichi che l'addon **Ingress NGINX** sia attivato e che almeno un gruppo sia **Exposed on the internet (Public IP)**. |
+| L'Ingress non risponde | Verifichi che l'addon **Ingress NGINX** sia attivato e che almeno un gruppo abbia l'opzione **Internet traffic entry (public IP)** attivata. |
 
 Per approfondire, consulti la pagina [Risoluzione dei problemi](./troubleshooting.md).
 

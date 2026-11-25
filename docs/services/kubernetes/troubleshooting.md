@@ -137,7 +137,7 @@ Si vous créez vos clusters par l'API, ces cas correspondent aux codes d'erreur 
 **Solution** :
 
 1. Vérifiez sur la page de détail du cluster que **Ingress NGINX** figure dans la section **Extensions**. Sinon, activez-le via **Modifier** > **Extensions & Addons**.
-2. Vérifiez qu'au moins un groupe de nœuds est **Exposé sur internet (IP Publique)** et que le contrôleur a une IP externe :
+2. Vérifiez qu'au moins un groupe de nœuds a l'option **Entrée du trafic Internet (IP publique)** activée et que le contrôleur a une IP externe :
    ```bash
    kubectl get svc -A | grep ingress-nginx-controller
    ```

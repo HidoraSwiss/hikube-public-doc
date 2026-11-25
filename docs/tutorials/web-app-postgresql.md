@@ -65,7 +65,7 @@ Le cluster est la ressource la plus longue à créer : commencez par lui, vous c
 | | **Version de Kubernetes** | la version présélectionnée |
 | | **Taille de l'instance Control Plane** | **s1.small — 1 CPU / 2Gi** |
 | | **Haute Disponibilité du Control Plane** | **3 (HA)** |
-| **Nœuds** | Groupe `worker-pool-1` | **Type d'instance** `s1.large`, **Nombre minimum de nœuds** 1, **Nombre maximum de nœuds** 3, **Exposé sur internet (IP Publique)** activé |
+| **Nœuds** | Groupe `worker-pool-1` | **Type d'instance** `s1.large`, **Nombre minimum de nœuds** 1, **Nombre maximum de nœuds** 3, **Entrée du trafic Internet (IP publique)** activé |
 | **Addons** | | Gardez **Cert-Manager**, **Ingress NGINX** et **Monitoring Agents**, cochés par défaut |
 
 3. À l'étape **Vérification**, cliquez sur **Déployer**.

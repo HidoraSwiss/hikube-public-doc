@@ -40,7 +40,7 @@ La pagina di modifica presenta le sezioni **General information**, **Node groups
    - **Node disk size**: ad esempio 100 GB;
    - **Minimum nodes** e **Maximum nodes**: ad esempio 1 e 10;
    - **Instance type**: ad esempio serie **Universal (U)**, dimensione **4XLarge** (`u1.4xlarge`);
-   - **Exposed on the internet (Public IP)**: da attivare solo se questo gruppo deve ricevere il traffico in ingresso (Ingress NGINX);
+   - **Internet traffic entry (public IP)**: da attivare solo se questo gruppo deve ricevere il traffico in ingresso (Ingress NGINX);
    - **GPU**: se necessario, vedere [Aggiungere GPU](#5-aggiungere-gpu).
 3. Faccia clic su **Save**.
 

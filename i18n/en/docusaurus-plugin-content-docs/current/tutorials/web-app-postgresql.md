@@ -65,7 +65,7 @@ The cluster is the slowest resource to create: start with it, and create the dat
 | | **Kubernetes Version** | the preselected version |
 | | **Control Plane Instance Size** | **s1.small — 1 CPU / 2Gi** |
 | | **Control Plane High Availability** | **3 (HA)** |
-| **Nodes** | Group `worker-pool-1` | **Instance type** `s1.large`, **Minimum nodes** 1, **Maximum nodes** 3, **Exposed on the internet (Public IP)** enabled |
+| **Nodes** | Group `worker-pool-1` | **Instance type** `s1.large`, **Minimum nodes** 1, **Maximum nodes** 3, **Internet traffic entry (public IP)** enabled |
 | **Addons** | | Keep **Cert-Manager**, **Ingress NGINX** and **Monitoring Agents**, checked by default |
 
 3. At the **Summary** step, click **Create cluster**.

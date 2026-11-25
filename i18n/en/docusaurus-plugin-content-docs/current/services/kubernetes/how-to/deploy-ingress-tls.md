@@ -23,7 +23,7 @@ Both addons are checked by default when a cluster is created. To check or enable
 
 ### 2. Check the exposed node group
 
-The Ingress NGINX controller runs on the nodes of the groups marked **Exposed on the internet (Public IP)**. The cluster's first group always is. To dedicate another group to incoming traffic, enable this option on its card in the **Node groups** section of the **Edit** page.
+The Ingress NGINX controller runs on the nodes of the groups with **Internet traffic entry (public IP)** enabled. It is always enabled for the cluster's first group. To dedicate another group to incoming traffic, enable this option on its card in the **Node groups** section of the **Edit** page.
 
 :::tip
 Dedicating a node group to the Ingress lets you isolate incoming traffic and size the HTTP/HTTPS exposure resources independently.

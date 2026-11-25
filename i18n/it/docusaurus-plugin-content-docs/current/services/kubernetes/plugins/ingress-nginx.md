@@ -16,7 +16,7 @@ La pagina di dettaglio del cluster mostra **Ingress NGINX** nella sezione **Exte
 
 ### Esposizione
 
-Il controller è esposto tramite un Service di tipo `LoadBalancer` e viene eseguito sui nodi dei gruppi contrassegnati **Exposed on the internet (Public IP)** (passaggio **Nodes**). Il primo gruppo del cluster è sempre esposto. Il PROXY protocol non è attivato per impostazione predefinita.
+Il controller è esposto tramite un Service di tipo `LoadBalancer` e viene eseguito sui nodi dei gruppi con l'opzione **Internet traffic entry (public IP)** attivata (passaggio **Nodes**). Per il primo gruppo del cluster è sempre attivata. Il PROXY protocol non è attivato per impostazione predefinita.
 
 :::note
 La scelta del metodo di esposizione (`LoadBalancer` o `Proxied`) e la dichiarazione di nomi host a livello dell'addon non sono disponibili nella console; contatti il supporto.

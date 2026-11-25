@@ -16,7 +16,7 @@ La page de détail du cluster affiche **Ingress NGINX** dans la section **Extens
 
 ### Exposition
 
-Le contrôleur est exposé par un Service de type `LoadBalancer` et s'exécute sur les nœuds des groupes marqués **Exposé sur internet (IP Publique)** (étape **Nœuds**). Le premier groupe du cluster est toujours exposé. Le PROXY protocol n'est pas activé par défaut.
+Le contrôleur est exposé par un Service de type `LoadBalancer` et s'exécute sur les nœuds des groupes dont l'option **Entrée du trafic Internet (IP publique)** est activée (étape **Nœuds**). Elle l'est toujours pour le premier groupe du cluster. Le PROXY protocol n'est pas activé par défaut.
 
 :::note
 Le choix de la méthode d'exposition (`LoadBalancer` ou `Proxied`) et la déclaration de noms d'hôtes au niveau de l'addon ne sont pas proposés dans la console ; contactez le support.

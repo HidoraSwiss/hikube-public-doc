@@ -16,7 +16,7 @@ Die Detailseite des Clusters zeigt **Ingress NGINX** im Abschnitt **Extensions**
 
 ### Erreichbarkeit
 
-Der Controller wird über einen Service vom Typ `LoadBalancer` bereitgestellt und läuft auf den Nodes der Gruppen, die als **Exposed on the internet (Public IP)** markiert sind (Schritt **Nodes**). Die erste Gruppe des Clusters ist immer erreichbar. Das PROXY-Protokoll ist standardmäßig nicht aktiviert.
+Der Controller wird über einen Service vom Typ `LoadBalancer` bereitgestellt und läuft auf den Nodes der Gruppen, bei denen die Option **Internet traffic entry (public IP)** aktiviert ist (Schritt **Nodes**). Für die erste Gruppe des Clusters ist sie immer aktiviert. Das PROXY-Protokoll ist standardmäßig nicht aktiviert.
 
 :::note
 Die Wahl der Bereitstellungsmethode (`LoadBalancer` oder `Proxied`) und die Deklaration von Hostnamen auf Ebene des Addons werden in der Konsole nicht angeboten; wenden Sie sich an den Support.

@@ -40,7 +40,7 @@ The edit page shows the **General information**, **Node groups** and **Extension
    - **Node disk size**: for example 100 GB;
    - **Minimum nodes** and **Maximum nodes**: for example 1 and 10;
    - **Instance type**: for example **Universal (U)** series, size **4XLarge** (`u1.4xlarge`);
-   - **Exposed on the internet (Public IP)**: enable only if this group must receive incoming traffic (Ingress NGINX);
+   - **Internet traffic entry (public IP)**: enable only if this group must receive incoming traffic (Ingress NGINX);
    - **GPU**: if needed, see [Add GPUs](#5-add-gpus).
 3. Click **Save**.
 

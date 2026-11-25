@@ -30,7 +30,7 @@ Les clusters Hikube intègrent :
 
 Par défaut, tous les pods peuvent communiquer entre eux sans restriction. Les NetworkPolicies permettent de restreindre ces communications.
 
-L'exposition vers internet passe par les groupes de nœuds marqués **Exposé sur internet (IP Publique)** dans la console, qui hébergent le contrôleur [Ingress NGINX](../plugins/ingress-nginx.md).
+L'exposition vers internet passe par les groupes de nœuds dont l'option **Entrée du trafic Internet (IP publique)** est activée dans la console, qui hébergent le contrôleur [Ingress NGINX](../plugins/ingress-nginx.md).
 
 ### 2. Créer une NetworkPolicy
 
